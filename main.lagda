@@ -108,57 +108,92 @@ and a replacement $\rho : U \rightarrow V$, we write $M \{ \rho \} : \Term{V}$ f
 $M$ with $\rho(x)$.
 
 \begin{code}
-rep : ∀ {U V : FinSet} → (El U → El V) → Term U → Term V
-rep ρ (var x) = var (ρ x)
-rep ρ ⊥ = ⊥
-rep ρ (app M N) = app (rep ρ M) (rep ρ N)
-rep ρ (Λ A M) = Λ A (rep (lift ρ) M)
-rep ρ (φ ⇒ ψ) = rep ρ φ ⇒ rep ρ ψ
+infix 60 _<_>
+_<_> : ∀ {U V} → Term U → Rep U V → Term V
+(var x) < ρ > = var (ρ x)
+⊥ < ρ > = ⊥
+(app M N) < ρ > = app (M < ρ >) (N < ρ >)
+(Λ A M) < ρ > = Λ A (M < lift ρ >)
+(φ ⇒ ψ) < ρ > = (φ < ρ >) ⇒ (ψ < ρ >)
 \end{code}
 
 With this as the action on arrows, $\Term{}$ becomes a functor $\FinSet \rightarrow \Set$.
 
 \begin{code}
-repwd : ∀ {U V : FinSet} {ρ ρ' : El U → El V} → ρ ∼ ρ' → rep ρ ∼ rep ρ'
+repwd : ∀ {U V : FinSet} {ρ ρ' : El U → El V} → ρ ∼ ρ' → ∀ M → M < ρ > ≡ M < ρ' >
 repwd ρ-is-ρ' (var x) = wd var (ρ-is-ρ' x)
 repwd ρ-is-ρ' ⊥ = ref
 repwd ρ-is-ρ' (app M N)= wd2 app (repwd ρ-is-ρ' M) (repwd ρ-is-ρ' N)
 repwd ρ-is-ρ' (Λ A M) = wd (Λ A) (repwd (liftwd ρ-is-ρ') M)
 repwd ρ-is-ρ' (φ ⇒ ψ) = wd2 _⇒_ (repwd ρ-is-ρ' φ) (repwd ρ-is-ρ' ψ)
 
-repid : ∀ {V : FinSet} → rep (id (El V)) ∼ id (Term V)
+repid : ∀ {V : FinSet} M → M < id (El V) > ≡ M
 repid (var x) = ref
 repid ⊥ = ref
 repid (app M N) = wd2 app (repid M) (repid N)
 repid (Λ A M) = wd (Λ A) (trans (repwd liftid M) (repid M))
 repid (φ ⇒ ψ) = wd2 _⇒_ (repid φ) (repid ψ)
 
-repcomp : ∀ {U V W : FinSet} (σ : El V → El W) (ρ : El U → El V) → rep (σ ∘ ρ) ∼ rep σ ∘ rep ρ
+repcomp : ∀ {U V W : FinSet} (σ : El V → El W) (ρ : El U → El V) M → M < σ ∘ ρ > ≡ M < ρ > < σ >
 repcomp ρ σ (var x) = ref
 repcomp ρ σ ⊥ = ref
 repcomp ρ σ (app M N) = wd2 app (repcomp ρ σ M) (repcomp ρ σ N)
 repcomp ρ σ (Λ A M) = wd (Λ A) (trans (repwd liftcomp M) (repcomp (lift ρ) (lift σ) M))
 repcomp ρ σ (φ ⇒ ψ) = wd2 _⇒_ (repcomp ρ σ φ) (repcomp ρ σ ψ)
+\end{code}
 
+A \emph{substitution} $\sigma$ from $U$ to $V$, $\sigma : U \Rightarrow V$, is a function $\sigma : U \rightarrow \Term{V}$.
+
+\begin{code}
 Sub : FinSet → FinSet → Set
 Sub U V = El U → Term V
+\end{code}
 
-idSub : ∀ V → Sub V V
-idSub V = var
+We need the following definition before we can define $M[\sigma]$, the result of applying
+a substitution $\sigma$ to a term $M$.
 
+Given a substitution $\sigma : U \Rightarrow V$,  define the substitution $\sigma + 1 :
+U + 1 \Rightarrow V + 1$ as follows.
+
+\begin{code}
 liftSub : ∀ {U} {V} → Sub U V → Sub (Lift U) (Lift V)
 liftSub _ ⊥ = var ⊥
-liftSub σ (↑ x) = rep ↑ (σ x)
+liftSub σ (↑ x) = σ x < ↑ >
 
 liftSub-wd : ∀ {U V} {σ σ' : Sub U V} → σ ∼ σ' → liftSub σ ∼ liftSub σ'
 liftSub-wd σ-is-σ' ⊥ = ref
-liftSub-wd σ-is-σ' (↑ x) = wd (rep ↑) (σ-is-σ' x)
+liftSub-wd σ-is-σ' (↑ x) = wd (λ x → x < ↑ >) (σ-is-σ' x)
+\end{code}
+
+Now define $M[\sigma]$ as follows.
+
+\begin{code}
+--Term is a monad with unit var and the following multiplication
+infix 60 _[_]
+_[_] : ∀ {U V : FinSet} → Term U → Sub U V → Term V
+(var x) [ σ ] = σ x
+⊥ [ σ ] = ⊥
+(app M N) [ σ ] = app (M [ σ ]) (N [ σ ])
+(Λ A M) [ σ ] = Λ A (M [ liftSub σ ])
+(φ ⇒ ψ) [ σ ] = (φ [ σ ]) ⇒ (ψ [ σ ])
+
+subwd : ∀ {U V : FinSet} {σ σ' : Sub U V} → σ ∼ σ' → ∀ M → M [ σ ] ≡ M [ σ' ]
+subwd σ-is-σ' (var x) = σ-is-σ' x
+subwd σ-is-σ' ⊥ = ref
+subwd σ-is-σ' (app M N) = wd2 app (subwd σ-is-σ' M) (subwd σ-is-σ' N)
+subwd σ-is-σ' (Λ A M) = wd (Λ A) (subwd (liftSub-wd σ-is-σ') M)
+subwd σ-is-σ' (φ ⇒ ψ) = wd2 _⇒_ (subwd σ-is-σ' φ) (subwd σ-is-σ' ψ)
+
+--The first monad law
+
+idSub : ∀ V → Sub V V
+idSub V = var
 
 liftSub-id : ∀ {V : FinSet} → liftSub (idSub V) ∼ idSub (Lift V)
 liftSub-id ⊥ = ref
 liftSub-id (↑ x) = ref
 
-liftSub-rep : ∀ {U V W : FinSet} (σ : Sub U V) (ρ : El V → El W) (x : El (Lift U)) → liftSub (λ x → rep ρ (σ x)) x ≡ rep (lift ρ) (liftSub σ x)
+liftSub-rep : ∀ {U V W : FinSet} (σ : Sub U V) (ρ : El V → El W) (x : El (Lift U)) → liftSub (λ x → σ x < ρ >) x ≡ liftSub σ x < lift ρ >
 liftSub-rep σ ρ ⊥ = ref
 liftSub-rep σ ρ (↑ x) = trans (sym (repcomp ↑ ρ (σ x))) (repcomp (lift ρ) ↑ (σ x))
 
@@ -171,24 +206,7 @@ var-lift : ∀ {U V : FinSet} {ρ : El U → El V} → var ∘ lift ρ ∼ liftS
 var-lift ⊥ = ref
 var-lift (↑ x) = ref
 
---Term is a monad with unit var and the following multiplication
-sub : ∀ {U V : FinSet} → Sub U V → Term U → Term V
-sub σ (var x) = σ x
-sub σ ⊥ = ⊥
-sub σ (app M N) = app (sub σ M) (sub σ N)
-sub σ (Λ A M) = Λ A (sub (liftSub σ) M)
-sub σ (φ ⇒ ψ) = sub σ φ ⇒ sub σ ψ
-
-subwd : ∀ {U V : FinSet} {σ σ' : Sub U V} → σ ∼ σ' → sub σ ∼ sub σ'
-subwd σ-is-σ' (var x) = σ-is-σ' x
-subwd σ-is-σ' ⊥ = ref
-subwd σ-is-σ' (app M N) = wd2 app (subwd σ-is-σ' M) (subwd σ-is-σ' N)
-subwd σ-is-σ' (Λ A M) = wd (Λ A) (subwd (liftSub-wd σ-is-σ') M)
-subwd σ-is-σ' (φ ⇒ ψ) = wd2 _⇒_ (subwd σ-is-σ' φ) (subwd σ-is-σ' ψ)
-
---The first monad law
-
-subvar : ∀ {V : FinSet} (M : Term V) → sub var M ≡ M
+subvar : ∀ {V : FinSet} (M : Term V) → M [ idSub V ] ≡ M
 subvar (var x) = ref
 subvar ⊥ = ref
 subvar (app M N) = wd2 app (subvar M) (subvar N)
@@ -197,17 +215,16 @@ subvar (φ ⇒ ψ) = wd2 _⇒_ (subvar φ) (subvar ψ)
 
 infix 75 _•_
 _•_ : ∀ {U V W : FinSet} → Sub V W → Sub U V → Sub U W
-(σ • ρ) x = sub σ (ρ x)
+(σ • ρ) x = ρ x [ σ ]
 
-rep-sub : ∀ {U} {V} {W} (σ : Sub U V) (ρ : El V → El W) → rep ρ ∘ sub σ ∼ sub (rep ρ ∘ σ)
+rep-sub : ∀ {U} {V} {W} (σ : Sub U V) (ρ : Rep V W) (M : Term U) → M [ σ ] < ρ > ≡ M [ (λ x → σ x < ρ >) ]
 rep-sub σ ρ (var x) = ref
 rep-sub σ ρ ⊥ = ref
 rep-sub σ ρ (app M N) = wd2 app (rep-sub σ ρ M) (rep-sub σ ρ N)
 rep-sub σ ρ (Λ A M) = wd (Λ A) (trans (rep-sub (liftSub σ) (lift ρ) M) (subwd (λ x → sym (liftSub-rep σ ρ x)) M))
 rep-sub σ ρ (φ ⇒ ψ) = wd2 _⇒_ (rep-sub σ ρ φ) (rep-sub σ ρ ψ) 
 
-sub-rep : ∀ {U} {V} {W} (σ : Sub V W) (ρ : El U → El V) →
-  sub σ ∘ rep ρ ∼ sub (σ ∘ ρ)
+sub-rep : ∀ {U} {V} {W} (σ : Sub V W) (ρ : El U → El V) M → M < ρ > [ σ ] ≡ M [ σ ∘ ρ ]
 sub-rep σ ρ (var x) = ref
 sub-rep σ ρ ⊥ = ref
 sub-rep σ ρ (app M N) = wd2 app (sub-rep σ ρ M) (sub-rep σ ρ N)
@@ -221,15 +238,14 @@ liftSub-comp σ ρ (↑ x) = trans (rep-sub σ ↑ (ρ x)) (sym (sub-rep (liftSu
 
 -- The second monad law
 
-subcomp : ∀ {U} {V} {W} (σ : Sub V W) (ρ : Sub U V) →
-  sub (σ • ρ) ∼ sub σ ∘ sub ρ
+subcomp : ∀ {U} {V} {W} (σ : Sub V W) (ρ : Sub U V) M → M [ σ • ρ ] ≡ M [ ρ ] [ σ ]
 subcomp σ ρ (var x) = ref
 subcomp σ ρ ⊥ = ref
 subcomp σ ρ (app M N) = wd2 app (subcomp σ ρ M) (subcomp σ ρ N)
 subcomp σ ρ (Λ A M) = wd (Λ A) (trans (subwd (liftSub-comp σ ρ) M)  (subcomp (liftSub σ) (liftSub ρ) M))
 subcomp σ ρ (φ ⇒ ψ) = wd2 _⇒_ (subcomp σ ρ φ) (subcomp σ ρ ψ)
 
-rep-is-sub : ∀ {U} {V} {ρ : El U → El V} → rep ρ ∼ sub (var ∘ ρ)
+rep-is-sub : ∀ {U} {V} {ρ : El U → El V} M → M < ρ > ≡ M [ var ∘ ρ ]
 rep-is-sub (var x) = ref
 rep-is-sub ⊥ = ref
 rep-is-sub (app M N) = wd2 app (rep-is-sub M) (rep-is-sub N)
@@ -244,7 +260,7 @@ typeof x (Γ ,, _) = typeof x Γ
 
 propof : ∀ {V} {P} → El P → Context V P → Term V
 propof () 〈〉
-propof p (Γ , _) = rep ↑ (propof p Γ)
+propof p (Γ , _) = propof p Γ < ↑ >
 propof p (_ ,, φ) = φ
 
 liftSub-var' : ∀ {U} {V} (ρ : El U → El V) → liftSub (var ∘ ρ) ∼ var ∘ lift ρ
@@ -256,21 +272,22 @@ botsub M ⊥ = M
 botsub _ (↑ x) = var x
 
 sub-botsub : ∀ {U} {V} (σ : Sub U V) (M : Term U) (x : El (Lift U)) →
-  sub σ (botsub M x) ≡ sub (botsub (sub σ M)) (liftSub σ x)
+  botsub M x [ σ ] ≡ liftSub σ x [ botsub (M [ σ ]) ]
 sub-botsub σ M ⊥ = ref
 sub-botsub σ M (↑ x) = let open Equational-Reasoning (Term _) in 
   ∵ σ x
-  ≡ sub var (σ x)                        [[ subvar (σ x) ]]
-  ≡ sub (botsub (sub σ M)) (rep ↑ (σ x)) [[ sub-rep (botsub (sub σ M)) ↑ (σ x) ]]
+  ≡ σ x [ var ]                        [[ subvar (σ x) ]]
+  ≡ σ x < ↑ > [ botsub (M [ σ ]) ]     [[ sub-rep (botsub (M [ σ ])) ↑ (σ x) ]]
 
 rep-botsub : ∀ {U} {V} (ρ : El U → El V) (M : Term U) (x : El (Lift U)) →
-  rep ρ (botsub M x) ≡ botsub (rep ρ M) (lift ρ x)
+  botsub M x < ρ > ≡ botsub (M < ρ >) (lift ρ x)
 rep-botsub ρ M x = trans (rep-is-sub (botsub M x)) 
-  (trans (sub-botsub (var ∘ ρ) M x) (trans (subwd (λ x₁ → wd (λ y → botsub y x₁) (sym (rep-is-sub M))) (liftSub (λ z → var (ρ z)) x)) (wd (sub (botsub (rep ρ M))) (liftSub-var' ρ x))))
+  (trans (sub-botsub (var ∘ ρ) M x) (trans (subwd (λ x₁ → wd (λ y → botsub y x₁) (sym (rep-is-sub M))) (liftSub (λ z → var (ρ z)) x)) 
+  (wd (λ x → x [ botsub (M < ρ >)]) (liftSub-var' ρ x))))
 --TODO Inline this?
 
 subbot : ∀ {V} → Term (Lift V) → Term V → Term V
-subbot M N = sub (botsub N) M
+subbot M N = M [ botsub N ]
 \end{code}
 
 We write $M ≃ N$ iff the terms $M$ and $N$ are $\beta$-convertible, and similarly for proofs.
@@ -284,8 +301,8 @@ data _↠_ : ∀ {V} → Term V → Term V → Set where
   Λ : ∀ {V} {M N : Term (Lift V)} {A} → M ↠ N → Λ A M ↠ Λ A N
   imp : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ↠ φ' → ψ ↠ ψ' → φ ⇒ ψ ↠ φ' ⇒ ψ'
 
-repred : ∀ {U} {V} {ρ : El U → El V} {M N : Term U} → M ↠ N → rep ρ M ↠ rep ρ N
-repred {U} {V} {ρ} (β A M N) = subst (λ x → app (Λ A (rep (lift ρ) M)) (rep ρ N) ↠ x) (sym (trans (rep-sub (botsub N) ρ M) (sym (trans (sub-rep _ _ M) (subwd (λ x → sym (rep-botsub ρ N x)) M))))) (β A (rep (lift _) M) (rep _ N))
+repred : ∀ {U} {V} {ρ : El U → El V} {M N : Term U} → M ↠ N → M < ρ > ↠ N < ρ >
+repred {U} {V} {ρ} (β A M N) = subst (λ x → app (Λ A (M < lift ρ > )) (N < ρ >) ↠ x) (sym (trans (rep-sub (botsub N) ρ M) (sym (trans (sub-rep _ _ M) (subwd (λ x → sym (rep-botsub ρ N x)) M))))) (β A (M < lift _ >) (N < _ >))
 repred ref = ref
 repred (↠trans M↠N N↠P) = ↠trans (repred M↠N) (repred N↠P)
 repred (app M↠N M'↠N') = app (repred M↠N) (repred M'↠N')
@@ -296,14 +313,14 @@ liftSub-red : ∀ {U} {V} {ρ σ : Sub U V} → (∀ x → ρ x ↠ σ x) → (�
 liftSub-red ρ↠σ ⊥ = ref
 liftSub-red ρ↠σ (↑ x) = repred (ρ↠σ x)
 
-subred : ∀ {U} {V} {ρ σ : Sub U V} (M : Term U) → (∀ x → ρ x ↠ σ x) → sub ρ M ↠ sub σ M
+subred : ∀ {U} {V} {ρ σ : Sub U V} (M : Term U) → (∀ x → ρ x ↠ σ x) → M [ ρ ] ↠ M [ σ ]
 subred (var x) ρ↠σ = ρ↠σ x
 subred ⊥ ρ↠σ = ref
 subred (app M N) ρ↠σ = app (subred M ρ↠σ) (subred N ρ↠σ)
 subred (Λ A M) ρ↠σ = Λ (subred M (liftSub-red ρ↠σ))
 subred (φ ⇒ ψ) ρ↠σ = imp (subred φ ρ↠σ) (subred ψ ρ↠σ)
 
-subsub : ∀ {U} {V} {W} (σ : Sub V W) (ρ : Sub U V) → sub σ ∘ sub ρ ∼ sub (σ • ρ)
+subsub : ∀ {U} {V} {W} (σ : Sub V W) (ρ : Sub U V) M → M [ ρ ] [ σ ] ≡ M [ σ • ρ ]
 subsub σ ρ (var x) = ref
 subsub σ ρ ⊥ = ref
 subsub σ ρ (app M N) = wd2 app (subsub σ ρ M) (subsub σ ρ N)
@@ -311,9 +328,9 @@ subsub σ ρ (Λ A M) = wd (Λ A) (trans (subsub (liftSub σ) (liftSub ρ) M)
   (subwd (λ x → sym (liftSub-comp σ ρ x)) M))
 subsub σ ρ (φ ⇒ ψ) = wd2 _⇒_ (subsub σ ρ φ) (subsub σ ρ ψ)
 
-subredr : ∀ {U} {V} {σ : Sub U V} {M N : Term U} → M ↠ N → sub σ M ↠ sub σ N
-subredr {U} {V} {σ} (β A M N) = subst (λ x → app (Λ A (sub (liftSub σ) M)) (sub σ N) ↠ x) (sym (trans (subsub σ (botsub N) M) 
-  (sym (trans (subsub (botsub (sub σ N)) (liftSub σ) M) (subwd (λ x → sym (sub-botsub σ N x)) M))))) (β A (sub (liftSub σ) M) (sub σ N))
+subredr : ∀ {U} {V} {σ : Sub U V} {M N : Term U} → M ↠ N → M [ σ ] ↠ N [ σ ]
+subredr {U} {V} {σ} (β A M N) = subst (λ x → app (Λ A (M [ liftSub σ ])) (N [ σ ]) ↠ x) (sym (trans (subsub σ (botsub N) M) 
+  (sym (trans (subsub (botsub (N [ σ ])) (liftSub σ) M) (subwd (λ x → sym (sub-botsub σ N x)) M))))) (β A (M [ liftSub σ ]) (N [ σ ]))
 subredr ref = ref
 subredr (↠trans M↠N N↠P) = ↠trans (subredr M↠N) (subredr N↠P)
 subredr (app M↠M' N↠N') = app (subredr M↠M') (subredr N↠N')
@@ -358,7 +375,7 @@ SNappr : ∀ {V} {M N : Term V} → SN (app M N) → SN N
 SNappr {V} {M} {N} (SNI MN-is-SN) = SNI (λ P N▷P → SNappr (MN-is-SN (app M P) (app ref N▷P)))
 
 SNsub : ∀ {V} {M : Term (Lift V)} {N} → SN (subbot M N) → SN M
-SNsub {V} {M} {N} (SNI MN-is-SN) = SNI (λ P M▷P → SNsub (MN-is-SN (sub (botsub N) P) (subredr M▷P)))
+SNsub {V} {M} {N} (SNI MN-is-SN) = SNI (λ P M▷P → SNsub (MN-is-SN (P [ botsub N ]) (subredr M▷P)))
 \end{code}
 
 The rules of deduction of the system are as follows.

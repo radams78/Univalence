@@ -23,6 +23,7 @@ _∘_ : ∀ {A B C : Set} → (B → C) → (A → B) → A → C
 We use the inductively defined equality $=$ on every datatype.
 
 \begin{code}
+infix 50 _≡_
 data _≡_ {A : Set} (a : A) : A → Set where
   ref : a ≡ a
 
@@ -80,6 +81,13 @@ data El : FinSet → Set where
   ↑ : ∀ {V} → El V → El (Lift V)
 \end{code}
 
+A \emph{replacement} from $U$ to $V$ is simply a function $U \rightarrow V$.
+
+\begin{code}
+Rep : FinSet → FinSet → Set
+Rep U V = El U → El V
+\end{code}
+
 Given $f : A \rightarrow B$, define $f + 1 : A + 1 \rightarrow B + 1$ by
 \begin{align*}
 (f + 1)(\bot) & = \bot \\
@@ -87,11 +95,11 @@ Given $f : A \rightarrow B$, define $f + 1 : A + 1 \rightarrow B + 1$ by
 \end{align*}
 
 \begin{code}
-lift : ∀ {U} {V} → (El U → El V) → El (Lift U) → El (Lift V)
+lift : ∀ {U} {V} → Rep U V → Rep (Lift U) (Lift V)
 lift _ ⊥ = ⊥
 lift f (↑ x) = ↑ (f x)
 
-liftwd : ∀ {U} {V} {f g : El U → El V} → f ∼ g → lift f ∼ lift g
+liftwd : ∀ {U} {V} {f g : Rep U V} → f ∼ g → lift f ∼ lift g
 liftwd f-is-g ⊥ = ref
 liftwd f-is-g (↑ x) = wd ↑ (f-is-g x)
 \end{code}
@@ -107,7 +115,7 @@ liftid : ∀ {V} → lift (id (El V)) ∼ id (El (Lift V))
 liftid ⊥ = ref
 liftid (↑ _) = ref
 
-liftcomp : ∀ {U} {V} {W} {g : El V → El W} {f : El U → El V} → lift (g ∘ f) ∼ lift g ∘ lift f
+liftcomp : ∀ {U} {V} {W} {g : Rep V W} {f : Rep U V} → lift (g ∘ f) ∼ lift g ∘ lift f
 liftcomp ⊥ = ref
 liftcomp (↑ _) = ref
 \end{code}
