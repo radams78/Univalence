@@ -37,6 +37,8 @@
 
 \newtheorem{lemma}{Lemma}
 
+\newcommand{\Set}{\mathbf{Set}}
+
 \begin{document}
 
 \maketitle
@@ -69,6 +71,9 @@ The syntax of the system is given by the following grammar.
 where $p$ ranges over proof variables and $x$ ranges over term variables.  The variable $p$ is bound within $\delta$ in the proof $\lambda p : \phi . \delta$,
 and the variable $x$ is bound within $M$ in the term $\lambda x : A . M$.  We identify proofs and terms up to $\alpha$-conversion.
 
+\newcommand{\Term}[1]{\mathbf{Term} \left( #1 \right)}
+In the implementation, we write $\Term{V}$ for the set of all terms with free variables a subset of $V$, where $V : \FinSet$.
+
 \begin{code}
 infix 80 _⇒_
 data Type : Set where
@@ -96,15 +101,24 @@ data Context : FinSet → FinSet → Set₁ where
   〈〉 : Context ∅ ∅
   _,_ : ∀ {V} {P} → Context V P → Type → Context (Lift V) P
   _,,_ : ∀ {V} {P} → Context V P → Term V → Context V (Lift P)
+\end{code}
 
---The operation of replacing one variable with another in a term
+Let $U, V : \FinSet$.  A \emph{replacement} from $U$ to $V$ is just a function $U \rightarrow V$.  Given a term $M : \Term{U}$
+and a replacement $\rho : U \rightarrow V$, we write $M \{ \rho \} : \Term{V}$ for the result of replacing each variable $x$ in
+$M$ with $\rho(x)$.
+
+\begin{code}
 rep : ∀ {U V : FinSet} → (El U → El V) → Term U → Term V
 rep ρ (var x) = var (ρ x)
 rep ρ ⊥ = ⊥
 rep ρ (app M N) = app (rep ρ M) (rep ρ N)
 rep ρ (Λ A M) = Λ A (rep (lift ρ) M)
 rep ρ (φ ⇒ ψ) = rep ρ φ ⇒ rep ρ ψ
+\end{code}
 
+With this as the action on arrows, $\Term{}$ becomes a functor $\FinSet \rightarrow \Set$.
+
+\begin{code}
 repwd : ∀ {U V : FinSet} {ρ ρ' : El U → El V} → ρ ∼ ρ' → rep ρ ∼ rep ρ'
 repwd ρ-is-ρ' (var x) = wd var (ρ-is-ρ' x)
 repwd ρ-is-ρ' ⊥ = ref
@@ -112,12 +126,19 @@ repwd ρ-is-ρ' (app M N)= wd2 app (repwd ρ-is-ρ' M) (repwd ρ-is-ρ' N)
 repwd ρ-is-ρ' (Λ A M) = wd (Λ A) (repwd (liftwd ρ-is-ρ') M)
 repwd ρ-is-ρ' (φ ⇒ ψ) = wd2 _⇒_ (repwd ρ-is-ρ' φ) (repwd ρ-is-ρ' ψ)
 
-rep-comp : ∀ {U V W : FinSet} (σ : El V → El W) (ρ : El U → El V) → rep (σ ∘ ρ) ∼ rep σ ∘ rep ρ
-rep-comp ρ σ (var x) = ref
-rep-comp ρ σ ⊥ = ref
-rep-comp ρ σ (app M N) = wd2 app (rep-comp ρ σ M) (rep-comp ρ σ N)
-rep-comp ρ σ (Λ A M) = wd (Λ A) (trans (repwd liftcomp M) (rep-comp (lift ρ) (lift σ) M))
-rep-comp ρ σ (φ ⇒ ψ) = wd2 _⇒_ (rep-comp ρ σ φ) (rep-comp ρ σ ψ)
+repid : ∀ {V : FinSet} → rep (id (El V)) ∼ id (Term V)
+repid (var x) = ref
+repid ⊥ = ref
+repid (app M N) = wd2 app (repid M) (repid N)
+repid (Λ A M) = wd (Λ A) (trans (repwd liftid M) (repid M))
+repid (φ ⇒ ψ) = wd2 _⇒_ (repid φ) (repid ψ)
+
+repcomp : ∀ {U V W : FinSet} (σ : El V → El W) (ρ : El U → El V) → rep (σ ∘ ρ) ∼ rep σ ∘ rep ρ
+repcomp ρ σ (var x) = ref
+repcomp ρ σ ⊥ = ref
+repcomp ρ σ (app M N) = wd2 app (repcomp ρ σ M) (repcomp ρ σ N)
+repcomp ρ σ (Λ A M) = wd (Λ A) (trans (repwd liftcomp M) (repcomp (lift ρ) (lift σ) M))
+repcomp ρ σ (φ ⇒ ψ) = wd2 _⇒_ (repcomp ρ σ φ) (repcomp ρ σ ψ)
 
 liftTerm : ∀ {V : FinSet} → Term V → Term (Lift V)
 liftTerm = rep ↑
@@ -125,6 +146,9 @@ liftTerm = rep ↑
 
 Sub : FinSet → FinSet → Set
 Sub U V = El U → Term V
+
+idSub : ∀ V → Sub V V
+idSub V = var
 
 liftSub : ∀ {U} {V} → Sub U V → Sub (Lift U) (Lift V)
 liftSub _ ⊥ = var ⊥
@@ -134,13 +158,13 @@ liftSub-wd : ∀ {U V} {σ σ' : Sub U V} → σ ∼ σ' → liftSub σ ∼ lift
 liftSub-wd σ-is-σ' ⊥ = ref
 liftSub-wd σ-is-σ' (↑ x) = wd (rep ↑) (σ-is-σ' x)
 
-liftSub-var : ∀ {V : FinSet} (x : El (Lift V)) → liftSub var x ≡ var x
-liftSub-var ⊥ = ref
-liftSub-var (↑ x) = ref
+liftSub-id : ∀ {V : FinSet} → liftSub (idSub V) ∼ idSub (Lift V)
+liftSub-id ⊥ = ref
+liftSub-id (↑ x) = ref
 
 liftSub-rep : ∀ {U V W : FinSet} (σ : Sub U V) (ρ : El V → El W) (x : El (Lift U)) → liftSub (λ x → rep ρ (σ x)) x ≡ rep (lift ρ) (liftSub σ x)
 liftSub-rep σ ρ ⊥ = ref
-liftSub-rep σ ρ (↑ x) = trans (sym (rep-comp ↑ ρ (σ x))) (rep-comp (lift ρ) ↑ (σ x))
+liftSub-rep σ ρ (↑ x) = trans (sym (repcomp ↑ ρ (σ x))) (repcomp (lift ρ) ↑ (σ x))
 
 liftSub-lift : ∀ {U V W : FinSet} (σ : Sub V W) (ρ : El U → El V) (x : El (Lift U)) →
   liftSub σ (lift ρ x) ≡ liftSub (λ x → σ (ρ x)) x
@@ -172,7 +196,7 @@ subvar : ∀ {V : FinSet} (M : Term V) → sub var M ≡ M
 subvar (var x) = ref
 subvar ⊥ = ref
 subvar (app M N) = wd2 app (subvar M) (subvar N)
-subvar (Λ A M) = wd (Λ A) (trans (subwd liftSub-var M) (subvar M))
+subvar (Λ A M) = wd (Λ A) (trans (subwd liftSub-id M) (subvar M))
 subvar (φ ⇒ ψ) = wd2 _⇒_ (subvar φ) (subvar ψ)
 
 infix 75 _•_
@@ -239,7 +263,7 @@ botsub-liftTerm : ∀ {V} (M N : Term V) → sub (botsub M) (liftTerm N) ≡ N
 botsub-liftTerm M (var x) = ref
 botsub-liftTerm M ⊥ = ref
 botsub-liftTerm M (app N P) = wd2 app (botsub-liftTerm M N) (botsub-liftTerm M P)
-botsub-liftTerm M (Λ A N) = wd (Λ A) (trans (sub-rep _ _ N) (trans (subwd (λ x → trans (liftSub-lift (botsub M) ↑ x) (liftSub-var x)) N) (subvar N)))
+botsub-liftTerm M (Λ A N) = wd (Λ A) (trans (sub-rep _ _ N) (trans (subwd (λ x → trans (liftSub-lift (botsub M) ↑ x) (liftSub-id x)) N) (subvar N)))
 botsub-liftTerm M (φ ⇒ ψ) = wd2 _⇒_ (botsub-liftTerm M φ) (botsub-liftTerm M ψ)
 
 sub-botsub : ∀ {U} {V} (σ : Sub U V) (M : Term U) (x : El (Lift U)) →
