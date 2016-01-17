@@ -42,12 +42,15 @@ wd2 : ∀ {A B C : Set} (f : A → B → C) {a a' : A} {b b' : B} → a ≡ a' �
 wd2 _ ref ref = ref
 
 module Equational-Reasoning (A : Set) where
+  infix 2 ∵_
   ∵_ : ∀ (a : A) → a ≡ a
   ∵ _ = ref
 
+  infix 1 _≡_[_]
   _≡_[_] : ∀ {a b : A} → a ≡ b → ∀ c → b ≡ c → a ≡ c
   δ ≡ c [ δ' ] = trans δ δ'
 
+  infix 1 _≡_[[_]]
   _≡_[[_]] : ∀ {a b : A} → a ≡ b → ∀ c → c ≡ b → a ≡ c
   δ ≡ c [[ δ' ]] = trans δ (sym δ')
 \end{code}

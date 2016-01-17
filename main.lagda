@@ -140,10 +140,6 @@ repcomp ρ σ (app M N) = wd2 app (repcomp ρ σ M) (repcomp ρ σ N)
 repcomp ρ σ (Λ A M) = wd (Λ A) (trans (repwd liftcomp M) (repcomp (lift ρ) (lift σ) M))
 repcomp ρ σ (φ ⇒ ψ) = wd2 _⇒_ (repcomp ρ σ φ) (repcomp ρ σ ψ)
 
-liftTerm : ∀ {V : FinSet} → Term V → Term (Lift V)
-liftTerm = rep ↑
---TODO Inline this?
-
 Sub : FinSet → FinSet → Set
 Sub U V = El U → Term V
 
@@ -152,7 +148,7 @@ idSub V = var
 
 liftSub : ∀ {U} {V} → Sub U V → Sub (Lift U) (Lift V)
 liftSub _ ⊥ = var ⊥
-liftSub σ (↑ x) = liftTerm (σ x)
+liftSub σ (↑ x) = rep ↑ (σ x)
 
 liftSub-wd : ∀ {U V} {σ σ' : Sub U V} → σ ∼ σ' → liftSub σ ∼ liftSub σ'
 liftSub-wd σ-is-σ' ⊥ = ref
@@ -248,7 +244,7 @@ typeof x (Γ ,, _) = typeof x Γ
 
 propof : ∀ {V} {P} → El P → Context V P → Term V
 propof () 〈〉
-propof p (Γ , _) = liftTerm (propof p Γ)
+propof p (Γ , _) = rep ↑ (propof p Γ)
 propof p (_ ,, φ) = φ
 
 liftSub-var' : ∀ {U} {V} (ρ : El U → El V) → liftSub (var ∘ ρ) ∼ var ∘ lift ρ
@@ -259,17 +255,13 @@ botsub : ∀ {V} → Term V → Sub (Lift V) V
 botsub M ⊥ = M
 botsub _ (↑ x) = var x
 
-botsub-liftTerm : ∀ {V} (M N : Term V) → sub (botsub M) (liftTerm N) ≡ N
-botsub-liftTerm M (var x) = ref
-botsub-liftTerm M ⊥ = ref
-botsub-liftTerm M (app N P) = wd2 app (botsub-liftTerm M N) (botsub-liftTerm M P)
-botsub-liftTerm M (Λ A N) = wd (Λ A) (trans (sub-rep _ _ N) (trans (subwd (λ x → trans (liftSub-lift (botsub M) ↑ x) (liftSub-id x)) N) (subvar N)))
-botsub-liftTerm M (φ ⇒ ψ) = wd2 _⇒_ (botsub-liftTerm M φ) (botsub-liftTerm M ψ)
-
 sub-botsub : ∀ {U} {V} (σ : Sub U V) (M : Term U) (x : El (Lift U)) →
   sub σ (botsub M x) ≡ sub (botsub (sub σ M)) (liftSub σ x)
 sub-botsub σ M ⊥ = ref
-sub-botsub σ M (↑ x) = sym (botsub-liftTerm (sub σ M) (σ x))
+sub-botsub σ M (↑ x) = let open Equational-Reasoning (Term _) in 
+  ∵ σ x
+  ≡ sub var (σ x)                        [[ subvar (σ x) ]]
+  ≡ sub (botsub (sub σ M)) (rep ↑ (σ x)) [[ sub-rep (botsub (sub σ M)) ↑ (σ x) ]]
 
 rep-botsub : ∀ {U} {V} (ρ : El U → El V) (M : Term U) (x : El (Lift U)) →
   rep ρ (botsub M x) ≡ botsub (rep ρ M) (lift ρ x)
