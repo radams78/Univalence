@@ -36,7 +36,10 @@ data PContext : FinSet → Set where
   〈〉 : PContext ∅
   _,_ : ∀ {P} → PContext P → Prp → PContext (Lift P)
 
---Proof V P is the set of all proofs with term variables among V and proof variables among P
+propof : ∀ {P} → El P → PContext P → Prp
+propof ⊥ (_ , φ) = φ
+propof (↑ p) (Γ , _) = propof p Γ
+
 data Proof : FinSet → Set where
   var : ∀ {P} → El P → Proof P
   app : ∀ {P} → Proof P → Proof P → Proof P
@@ -269,10 +272,6 @@ rep-is-sub {Q = Q} {ρ} (Λ φ δ) = let open Equational-Reasoning (Proof Q) in
 \end{code}
 
 \begin{code}
-propof : ∀ {P} → El P → PContext P → Prp
-propof ⊥ (_ , φ) = φ
-propof (↑ p) (Γ , _) = propof p Γ
-
 liftSub-var' : ∀ {P} {Q} (ρ : El P → El Q) → liftSub (var ∘ ρ) ∼ var ∘ lift ρ
 liftSub-var' ρ ⊥ = ref
 liftSub-var' ρ (↑ x) = ref
@@ -291,10 +290,13 @@ sub-botsub σ δ (↑ x) = let open Equational-Reasoning (Proof _) in
 
 rep-botsub : ∀ {P} {Q} (ρ : El P → El Q) (δ : Proof P) (x : El (Lift P)) →
   botsub δ x < ρ > ≡ botsub (δ < ρ >) (lift ρ x)
-rep-botsub ρ δ x = trans (rep-is-sub (botsub δ x)) 
-  (trans (sub-botsub (var ∘ ρ) δ x) (trans (subwd (λ x₁ → wd (λ y → botsub y x₁) (sym (rep-is-sub δ))) (liftSub (λ z → var (ρ z)) x)) 
-  (wd (λ x → x ⟦ botsub (δ < ρ >)⟧) (liftSub-var' ρ x))))
---TODO Inline this?
+rep-botsub {P} {Q} ρ δ x = let open Equational-Reasoning (Proof Q) in 
+  ∵ botsub δ x < ρ >
+  ≡ botsub δ x ⟦ var ∘ ρ ⟧                               [ rep-is-sub _ ]
+  ≡ liftSub (var ∘ ρ) x    ⟦ botsub (δ ⟦ var ∘ ρ ⟧) ⟧    [ sub-botsub (var ∘ ρ) δ x ]
+  ≡ liftSub var (lift ρ x) ⟦ botsub (δ ⟦ var ∘ ρ ⟧) ⟧    [ wd (λ x → x ⟦ botsub (δ ⟦ var ∘ ρ ⟧) ⟧) (liftSub-comp₂ var ρ x) ]
+  ≡ var (lift ρ x)         ⟦ botsub (δ ⟦ var ∘ ρ ⟧) ⟧    [ wd (λ x → x ⟦ botsub (δ ⟦ var ∘ ρ ⟧) ⟧) (liftSub-id (lift ρ x)) ]
+  ≡ botsub (δ < ρ >) (lift ρ x)                          [[ wd (λ y → botsub y (lift ρ x)) (rep-is-sub δ) ]]
 
 subbot : ∀ {Q} → Proof (Lift Q) → Proof Q → Proof Q
 subbot δ ε = δ ⟦ botsub ε ⟧
