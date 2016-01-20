@@ -30,6 +30,9 @@ data _≡_ {A : Set} (a : A) : A → Set where
 subst : ∀ {A : Set} (P : A → Set) {a} {b} → a ≡ b → P a → P b
 subst P ref Pa = Pa
 
+subst2 : ∀ {A B : Set} (P : A → B → Set) {a a' b b'} → a ≡ a' → b ≡ b' → P a b → P a' b'
+subst2 P ref ref Pab = Pab
+
 sym : ∀ {A : Set} {a b : A} → a ≡ b → b ≡ a
 sym ref = ref
 

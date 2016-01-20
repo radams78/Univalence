@@ -309,14 +309,31 @@ data _↠_ : ∀ {Q} → Proof Q → Proof Q → Set where
   ↠trans : ∀ {Q} {γ δ ε : Proof Q} → γ ↠ δ → δ ↠ ε → γ ↠ ε
   app : ∀ {Q} {δ δ' ε ε' : Proof Q} → δ ↠ δ' → ε ↠ ε' → app δ ε ↠ app δ' ε'
   ξ : ∀ {Q} {δ ε : Proof (Lift Q)} {φ} → δ ↠ ε → Λ φ δ ↠ Λ φ ε
+
+data _≃_ : ∀ {Q} → Proof Q → Proof Q → Set₁ where
+  β : ∀ {Q} {φ} {δ : Proof (Lift Q)} {ε} → app (Λ φ δ) ε ≃ subbot δ ε
+  ref : ∀ {Q} {δ : Proof Q} → δ ≃ δ
+  ≃sym : ∀ {Q} {δ ε : Proof Q} → δ ≃ ε → ε ≃ ε
+  ≃trans : ∀ {Q} {δ ε P : Proof Q} → δ ≃ ε → ε ≃ P → δ ≃ P
+  app : ∀ {Q} {δ M' ε N' : Proof Q} → δ ≃ M' → ε ≃ N' → app δ ε ≃ app M' N'
+  Λ : ∀ {Q} {δ ε : Proof (Lift Q)} {φ} → δ ≃ ε → Λ φ δ ≃ Λ φ ε
 \end{code}
 
 \begin{lemma}
 \begin{enumerate}
 \item
+\label{subredl}
 If $\delta \twoheadrightarrow \epsilon$ then $\delta [ \sigma ] \twoheadrightarrow \epsilon [ \sigma ]$.
+\item
+\label{subredr}
+If $\sigma \twoheadrightarrow \tau$ then $\delta [ \sigma ] \twoheadrightarrow \delta [ \tau ]$.
 \end{enumerate}
 \end{lemma}
+
+\begin{proof}
+For part \ref{subredr}, we first prove that if $\sigma \twoheadrightarrow \tau$ then $\sigma + 1 \twoheadrightarrow \tau + 1$
+using part \ref{subredl}.
+\end{proof}
 
 \begin{code}
 subredl : ∀ {P} {Q} {ρ : Sub P Q} {δ ε : Proof P} → δ ↠ ε → δ ⟦ ρ ⟧ ↠ ε ⟦ ρ ⟧
@@ -332,22 +349,14 @@ subredl (↠trans r r₁) = ↠trans (subredl r) (subredl r₁)
 subredl (app r r₁) = app (subredl r) (subredl r₁)
 subredl (ξ r) = ξ (subredl r)
 
-{-liftSub-red : ∀ {P} {Q} {ρ σ : Sub P Q} → (∀ x → ρ x ↠ σ x) → (∀ x → liftSub ρ x ↠ liftSub σ x)
+liftSub-red : ∀ {P} {Q} {ρ σ : Sub P Q} → (∀ x → ρ x ↠ σ x) → (∀ x → liftSub ρ x ↠ liftSub σ x)
 liftSub-red ρ↠σ ⊥ = ref
-liftSub-red ρ↠σ (↑ x) = repred (ρ↠σ x)
+liftSub-red {ρ = ρ} ρ↠σ (↑ x) = subst2 _↠_ (sym (rep-is-sub _)) (sym (rep-is-sub _)) (subredl (ρ↠σ x))
 
 subredr : ∀ {P} {Q} {ρ σ : Sub P Q} (δ : Proof P) → (∀ x → ρ x ↠ σ x) → δ ⟦ ρ ⟧ ↠ δ ⟦ σ ⟧
 subredr (var x) ρ↠σ = ρ↠σ x
-subredr (app δ ε) ρ↠σ = app (subred δ ρ↠σ) (subred ε ρ↠σ)
-subredr (Λ φ δ) ρ↠σ = ξ (subred δ (liftSub-red ρ↠σ))-}
-
-data _≃_ : ∀ {Q} → Proof Q → Proof Q → Set₁ where
-  β : ∀ {Q} {φ} {δ : Proof (Lift Q)} {ε} → app (Λ φ δ) ε ≃ subbot δ ε
-  ref : ∀ {Q} {δ : Proof Q} → δ ≃ δ
-  ≃sym : ∀ {Q} {δ ε : Proof Q} → δ ≃ ε → ε ≃ ε
-  ≃trans : ∀ {Q} {δ ε P : Proof Q} → δ ≃ ε → ε ≃ P → δ ≃ P
-  app : ∀ {Q} {δ M' ε N' : Proof Q} → δ ≃ M' → ε ≃ N' → app δ ε ≃ app M' N'
-  Λ : ∀ {Q} {δ ε : Proof (Lift Q)} {φ} → δ ≃ ε → Λ φ δ ≃ Λ φ ε
+subredr (app δ ε) ρ↠σ = app (subredr δ ρ↠σ) (subredr ε ρ↠σ)
+subredr (Λ φ δ) ρ↠σ = ξ (subredr δ (liftSub-red ρ↠σ))
 \end{code}
 
 The \emph{strongly normalizable} terms are defined inductively as follows.
