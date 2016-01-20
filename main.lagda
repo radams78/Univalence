@@ -13,6 +13,7 @@
 \usepackage{autofe}
 \usepackage{fancyvrb}
 \usepackage{proof}
+\usepackage{stmaryrd}
 
 \DeclareUnicodeCharacter{8988}{\ensuremath{\ulcorner}}
 \DeclareUnicodeCharacter{8989}{\ensuremath{\urcorner}}
@@ -24,6 +25,7 @@
 \renewcommand{\textbeta}{\ensuremath{\beta}}
 \renewcommand{\textGamma}{\ensuremath{\Gamma}}
 \renewcommand{\textdelta}{\ensuremath{\delta}}
+\renewcommand{\textDelta}{\ensuremath{\Delta}}
 \renewcommand{\textepsilon}{\ensuremath{\epsilon}}
 \renewcommand{\textLambda}{\ensuremath{\Lambda}}
 \renewcommand{\textlambda}{\ensuremath{\lambda}}
@@ -32,6 +34,7 @@
 \renewcommand{\textsigma}{\ensuremath{\sigma}}
 \renewcommand{\textrho}{\ensuremath{\rho}}
 \renewcommand{\textOmega}{\ensuremath{\Omega}}
+\renewcommand{\texttau}{\ensuremath{\tau}}
 
 \DefineVerbatimEnvironment{code}{Verbatim}{}
 
@@ -65,8 +68,9 @@ The syntax of the system is given by the following grammar.
 \text{Proof} & \delta & ::= & p \mid \delta \delta \mid \lambda p : \phi . \delta \\
 \text{Term} & M, \phi & ::= & x \mid \bot \mid M M \mid \phi \rightarrow \phi \mid \lambda x : A . M \\
 \text{Type} & A & ::= & \Omega \mid A \rightarrow A \\
-\text{Context} & \Gamma & ::= & \langle \rangle \mid \Gamma, p : \phi \mid \Gamma , x : A \\
-\text{Judgement} & \mathcal{J} & ::= & \Gamma \vald \mid \Gamma \vdash \delta : \phi \mid \Gamma \vdash M : A
+\text{Term Context} & \Gamma & ::= & \langle \rangle \mid \Gamma , x : A \\
+\text{Proof Context} & \Delta & ::= & \langle \rangle \mid \Delta, p : \phi \\
+\text{Judgement} & \mathcal{J} & ::= & \Gamma \vald \mid \Gamma \vdash M : A \mid \Gamma, \Delta \vald \mid \Gamma \vdash \delta : \phi 
 \end{array} \]
 where $p$ ranges over proof variables and $x$ ranges over term variables.  The variable $p$ is bound within $\delta$ in the proof $\lambda p : \phi . \delta$,
 and the variable $x$ is bound within $M$ in the term $\lambda x : A . M$.  We identify proofs and terms up to $\alpha$-conversion.
@@ -80,6 +84,12 @@ data Type : Set where
   Ω : Type
   _⇒_ : Type → Type → Type
 
+--Context V P is the set of all contexts whose domain consists of the term variables in V and the proof variables in P
+infix 80 _,_
+data TContext : FinSet → Set where
+  〈〉 : TContext ∅
+  _,_ : ∀ {V} → TContext V → Type → TContext (Lift V)
+
 --Term V is the set of all terms M with FV(M) ⊆ V
 data Term : FinSet → Set where
   var : ∀ {V} → El V → Term V
@@ -88,19 +98,15 @@ data Term : FinSet → Set where
   Λ : ∀ {V} → Type → Term (Lift V) → Term V
   _⇒_ : ∀ {V} → Term V → Term V → Term V
 
+data PContext (V : FinSet) : FinSet → Set where
+  〈〉 : PContext V ∅
+  _,_ : ∀ {P} → PContext V P → Term V → PContext V (Lift P)
+
 --Proof V P is the set of all proofs with term variables among V and proof variables among P
 data Proof (V : FinSet) : FinSet → Set₁ where
   var : ∀ {P} → El P → Proof V P
   app : ∀ {P} → Proof V P → Proof V P → Proof V P
   Λ : ∀ {P} → Term V → Proof V (Lift P) → Proof V P
-
---Context V P is the set of all contexts whose domain consists of the term variables in V and the proof variables in P
-infix 80 _,_
-infix 80 _,,_
-data Context : FinSet → FinSet → Set₁ where
-  〈〉 : Context ∅ ∅
-  _,_ : ∀ {V} {P} → Context V P → Type → Context (Lift V) P
-  _,,_ : ∀ {V} {P} → Context V P → Term V → Context V (Lift P)
 \end{code}
 
 Let $U, V : \FinSet$.  A \emph{replacement} from $U$ to $V$ is just a function $U \rightarrow V$.  Given a term $M : \Term{U}$
@@ -337,16 +343,13 @@ rep-is-sub {V = V} {ρ} (Λ A M) = let open Equational-Reasoning (Term V) in
 --wd (Λ A) (trans (rep-is-sub M) (subwd {!!} M))
 rep-is-sub (φ ⇒ ψ) = wd2 _⇒_ (rep-is-sub φ) (rep-is-sub ψ)
 
-typeof : ∀ {V} {P} → El V → Context V P → Type
-typeof () 〈〉
+typeof : ∀ {V} → El V → TContext V → Type
 typeof ⊥ (_ , A) = A
 typeof (↑ x) (Γ , _) = typeof x Γ
-typeof x (Γ ,, _) = typeof x Γ
 
-propof : ∀ {V} {P} → El P → Context V P → Term V
-propof () 〈〉
-propof p (Γ , _) = propof p Γ < ↑ >
-propof p (_ ,, φ) = φ
+propof : ∀ {V} {P} → El P → PContext V P → Term V
+propof ⊥ (_ , φ) = φ
+propof (↑ p) (Γ , _) = propof p Γ
 
 liftSub-var' : ∀ {U} {V} (ρ : El U → El V) → liftSub (var ∘ ρ) ∼ var ∘ lift ρ
 liftSub-var' ρ ⊥ = ref
@@ -485,23 +488,26 @@ The rules of deduction of the system are as follows.
 
 \begin{code}
 mutual
-  data valid : ∀ {V} {P} → Context V P → Set₁ where
-    〈〉 : valid 〈〉
-    ctxV : ∀ {V} {P} {Γ : Context V P} {A} → valid Γ → valid (Γ , A)
-    ctxP : ∀ {V} {P} {Γ : Context V P} {φ} → Γ ⊢ φ ∶ Ω → valid (Γ ,, φ)
+  data Tvalid : ∀ {V} → TContext V → Set₁ where
+    〈〉 : Tvalid 〈〉
+    _,_ : ∀ {V} {Γ : TContext V} → Tvalid Γ → ∀ A → Tvalid (Γ , A)
 
-  data _⊢_∶_ : ∀ {V} {P} → Context V P → Term V → Type → Set₁ where
-    var : ∀ {V} {P} {Γ : Context V P} {x} → valid Γ → Γ ⊢ var x ∶ typeof x Γ
-    ⊥ : ∀ {V} {P} {Γ : Context V P} → valid Γ → Γ ⊢ ⊥ ∶ Ω
-    imp : ∀ {V} {P} {Γ : Context V P} {φ} {ψ} → Γ ⊢ φ ∶ Ω → Γ ⊢ ψ ∶ Ω → Γ ⊢ φ ⇒ ψ ∶ Ω
-    app : ∀ {V} {P} {Γ : Context V P} {M} {N} {A} {B} → Γ ⊢ M ∶ A ⇒ B → Γ ⊢ N ∶ A → Γ ⊢ app M N ∶ B
-    Λ : ∀ {V} {P} {Γ : Context V P} {A} {M} {B} → Γ , A ⊢ M ∶ B → Γ ⊢ Λ A M ∶ A ⇒ B
+  data _⊢_∶_ : ∀ {V} → TContext V → Term V → Type → Set₁ where
+    var : ∀ {V} {Γ : TContext V} {x} → Tvalid Γ → Γ ⊢ var x ∶ typeof x Γ
+    ⊥ : ∀ {V} {Γ : TContext V} → Tvalid Γ → Γ ⊢ ⊥ ∶ Ω
+    imp : ∀ {V} {Γ : TContext V} {φ} {ψ} → Γ ⊢ φ ∶ Ω → Γ ⊢ ψ ∶ Ω → Γ ⊢ φ ⇒ ψ ∶ Ω
+    app : ∀ {V} {Γ : TContext V} {M} {N} {A} {B} → Γ ⊢ M ∶ A ⇒ B → Γ ⊢ N ∶ A → Γ ⊢ app M N ∶ B
+    Λ : ∀ {V} {Γ : TContext V} {A} {M} {B} → Γ , A ⊢ M ∶ B → Γ ⊢ Λ A M ∶ A ⇒ B
 
-data _⊢_∶∶_ : ∀ {V} {P} → Context V P → Proof V P → Term V → Set₁ where
-  var : ∀ {V} {P} {Γ : Context V P} {p} → valid Γ → Γ ⊢ var p ∶∶ propof p Γ
-  app : ∀ {V} {P} {Γ : Context V P} {δ} {ε} {φ} {ψ} → Γ ⊢ δ ∶∶ φ ⇒ ψ → Γ ⊢ ε ∶∶ φ → Γ ⊢ app δ ε ∶∶ ψ
-  Λ : ∀ {V} {P} {Γ : Context V P} {φ} {δ} {ψ} → Γ ,, φ ⊢ δ ∶∶ ψ → Γ ⊢ Λ φ δ ∶∶ φ ⇒ ψ
-  conv : ∀ {V} {P} {Γ : Context V P} {δ} {φ} {ψ} → Γ ⊢ δ ∶∶ φ → Γ ⊢ ψ ∶ Ω → φ ≃ ψ → Γ ⊢ δ ∶∶ ψ
+data Pvalid : ∀ {V} {P} → TContext V → PContext V P → Set₁ where
+  〈〉 : ∀ {V} {Γ : TContext V} → Tvalid Γ → Pvalid Γ 〈〉
+  _,_ : ∀ {V} {P} {Γ : TContext V} {Δ : PContext V P} {φ : Term V} → Pvalid Γ Δ → Γ ⊢ φ ∶ Ω → Pvalid Γ (Δ , φ)
+
+data _,,_⊢_∶∶_ : ∀ {V} {P} → TContext V → PContext V P → Proof V P → Term V → Set₁ where
+  var : ∀ {V} {P} {Γ : TContext V} {Δ : PContext V P} {p} → Pvalid Γ Δ → Γ ,, Δ ⊢ var p ∶∶ propof p Δ
+  app : ∀ {V} {P} {Γ : TContext V} {Δ : PContext V P} {δ} {ε} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ ⇒ ψ → Γ ,, Δ ⊢ ε ∶∶ φ → Γ ,, Δ ⊢ app δ ε ∶∶ ψ
+  Λ : ∀ {V} {P} {Γ : TContext V} {Δ : PContext V P} {φ} {δ} {ψ} → Γ ,, Δ , φ ⊢ δ ∶∶ ψ → Γ ,, Δ ⊢ Λ φ δ ∶∶ φ ⇒ ψ
+  conv : ∀ {V} {P} {Γ : TContext V} {Δ : PContext V P} {δ} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ → Γ ⊢ ψ ∶ Ω → φ ≃ ψ → Γ ,, Δ ⊢ δ ∶∶ ψ
 \end{code}
 
 \end{document}
