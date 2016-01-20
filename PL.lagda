@@ -167,6 +167,7 @@ subwd σ-is-σ' (Λ A δ) = wd (Λ A) (subwd (liftSub-wd σ-is-σ') δ)
 
 This interacts with our previous operations in a good way:
 \begin{lemma}
+$ $
 \begin{enumerate}
 \item
 $M[\id{Q}] \equiv M$
@@ -181,26 +182,26 @@ $M[\sigma \circ \rho] \equiv δ < \rho > [ \sigma ]$
 subid : ∀ {Q : FinSet} (δ : Proof Q) → δ ⟦ idSub Q ⟧ ≡ δ
 subid (var x) = ref
 subid (app δ ε) = wd2 app (subid δ) (subid ε)
-subid {Q} (Λ A δ) = let open Equational-Reasoning (Proof Q) in 
-  ∵ Λ A (δ ⟦ liftSub (idSub Q) ⟧)
-  ≡ Λ A (δ ⟦ idSub (Lift Q) ⟧)     [ wd (Λ A) (subwd liftSub-id δ) ]
-  ≡ Λ A δ                          [ wd (Λ A) (subid δ) ]
+subid {Q} (Λ φ δ) = let open Equational-Reasoning (Proof Q) in 
+  ∵ Λ φ (δ ⟦ liftSub (idSub Q) ⟧)
+  ≡ Λ φ (δ ⟦ idSub (Lift Q) ⟧)     [ wd (Λ φ) (subwd liftSub-id δ) ]
+  ≡ Λ φ δ                          [ wd (Λ φ) (subid δ) ]
 
 rep-sub : ∀ {P} {Q} {R} (σ : Sub P Q) (ρ : Rep Q R) (δ : Proof P) → δ ⟦ σ ⟧ < ρ > ≡ δ ⟦ ρ •₁ σ ⟧
 rep-sub σ ρ (var x) = ref
 rep-sub σ ρ (app δ ε) = wd2 app (rep-sub σ ρ δ) (rep-sub σ ρ ε)
-rep-sub {R = R} σ ρ (Λ A δ) = let open Equational-Reasoning (Proof R) in 
-  ∵ Λ A ((δ ⟦ liftSub σ ⟧) < lift ρ >) 
-  ≡ Λ A (δ ⟦ lift ρ •₁ liftSub σ ⟧) [ wd (Λ A) (rep-sub (liftSub σ) (lift ρ) δ) ]
-  ≡ Λ A (δ ⟦ liftSub (ρ •₁ σ) ⟧)    [[ wd (Λ A) (subwd (liftSub-comp₁ σ ρ) δ) ]]
+rep-sub {R = R} σ ρ (Λ φ δ) = let open Equational-Reasoning (Proof R) in 
+  ∵ Λ φ ((δ ⟦ liftSub σ ⟧) < lift ρ >) 
+  ≡ Λ φ (δ ⟦ lift ρ •₁ liftSub σ ⟧) [ wd (Λ φ) (rep-sub (liftSub σ) (lift ρ) δ) ]
+  ≡ Λ φ (δ ⟦ liftSub (ρ •₁ σ) ⟧)    [[ wd (Λ φ) (subwd (liftSub-comp₁ σ ρ) δ) ]]
 
 sub-rep : ∀ {P} {Q} {R} (σ : Sub Q R) (ρ : Rep P Q) δ → δ < ρ > ⟦ σ ⟧ ≡ δ ⟦ σ ∘ ρ ⟧
 sub-rep σ ρ (var x) = ref
 sub-rep σ ρ (app δ ε) = wd2 app (sub-rep σ ρ δ) (sub-rep σ ρ ε)
-sub-rep {R = R} σ ρ (Λ A δ) = let open Equational-Reasoning (Proof R) in 
-  ∵ Λ A ((δ < lift ρ >) ⟦ liftSub σ ⟧)
-  ≡ Λ A (δ ⟦ liftSub σ ∘ lift ρ ⟧)      [ wd (Λ A) (sub-rep (liftSub σ) (lift ρ) δ) ]
-  ≡ Λ A (δ ⟦ liftSub (σ ∘ ρ) ⟧)         [[ wd (Λ A) (subwd (liftSub-comp₂ σ ρ) δ) ]]
+sub-rep {R = R} σ ρ (Λ φ δ) = let open Equational-Reasoning (Proof R) in 
+  ∵ Λ φ ((δ < lift ρ >) ⟦ liftSub σ ⟧)
+  ≡ Λ φ (δ ⟦ liftSub σ ∘ lift ρ ⟧)      [ wd (Λ φ) (sub-rep (liftSub σ) (lift ρ) δ) ]
+  ≡ Λ φ (δ ⟦ liftSub (σ ∘ ρ) ⟧)         [[ wd (Λ φ) (subwd (liftSub-comp₂ σ ρ) δ) ]]
 \end{code}
 
 We define the composition of two substitutions, as follows.
@@ -230,7 +231,7 @@ liftSub-comp σ ρ (↑ x) = trans (rep-sub σ ↑ (ρ x)) (sym (sub-rep (liftSu
 subcomp : ∀ {P} {Q} {R} (σ : Sub Q R) (ρ : Sub P Q) δ → δ ⟦ σ • ρ ⟧ ≡ δ ⟦ ρ ⟧ ⟦ σ ⟧
 subcomp σ ρ (var x) = ref
 subcomp σ ρ (app δ ε) = wd2 app (subcomp σ ρ δ) (subcomp σ ρ ε)
-subcomp σ ρ (Λ A δ) = wd (Λ A) (trans (subwd (liftSub-comp σ ρ) δ)  (subcomp (liftSub σ) (liftSub ρ) δ))
+subcomp σ ρ (Λ φ δ) = wd (Λ φ) (trans (subwd (liftSub-comp σ ρ) δ)  (subcomp (liftSub σ) (liftSub ρ) δ))
 \end{code}
 
 \begin{lemma}
@@ -238,7 +239,7 @@ The finite sets and substitutions form a category under this composition.
 \end{lemma}
 
 \begin{code}
-assoc : ∀ {P Q R X} {ρ : Sub R X} {σ : Sub Q R} {τ : Sub P Q} →
+assoc : ∀ {P Q R S} {ρ : Sub R S} {σ : Sub Q R} {τ : Sub P Q} →
   ρ • (σ • τ) ∼ (ρ • σ) • τ
 assoc {P} {Q} {R} {X} {ρ} {σ} {τ} x = sym (subcomp ρ σ (τ x))
 
@@ -247,19 +248,27 @@ subunitl {P} {Q} {σ} x = subid (σ x)
 
 subunitr : ∀ {P} {Q} {σ : Sub P Q} → σ • idSub P ∼ σ
 subunitr _ = ref
+\end{code}
 
--- The second monad law
+Replacement is a special case of substitution, in the following sense:
 
+\begin{lemma}
+For any replacement $\rho$,
+\[ \delta \{ \rho \} \equiv \delta [ \rho ] \]
+\end{lemma}
+
+\begin{code}
 rep-is-sub : ∀ {P} {Q} {ρ : El P → El Q} δ → δ < ρ > ≡ δ ⟦ var ∘ ρ ⟧
 rep-is-sub (var x) = ref
 rep-is-sub (app δ ε) = wd2 app (rep-is-sub δ) (rep-is-sub ε)
-rep-is-sub {Q = Q} {ρ} (Λ A δ) = let open Equational-Reasoning (Proof Q) in 
-  ∵ Λ A (δ < lift ρ >)
-  ≡ Λ A (δ ⟦ var ∘ lift ρ ⟧)         [ wd (Λ A) (rep-is-sub δ) ]
-  ≡ Λ A (δ ⟦ liftSub var ∘ lift ρ ⟧) [[ wd (Λ A) (subwd (λ x → liftSub-id (lift ρ x)) δ) ]]
-  ≡ Λ A (δ ⟦ liftSub (var ∘ ρ) ⟧)    [[ wd (Λ A) (subwd (liftSub-comp₂ var ρ) δ) ]]
---wd (Λ A) (trans (rep-is-sub δ) (subwd {!!} δ))
+rep-is-sub {Q = Q} {ρ} (Λ φ δ) = let open Equational-Reasoning (Proof Q) in 
+  ∵ Λ φ (δ < lift ρ >)
+  ≡ Λ φ (δ ⟦ var ∘ lift ρ ⟧)         [ wd (Λ φ) (rep-is-sub δ) ]
+  ≡ Λ φ (δ ⟦ liftSub var ∘ lift ρ ⟧) [[ wd (Λ φ) (subwd (λ x → liftSub-id (lift ρ x)) δ) ]]
+  ≡ Λ φ (δ ⟦ liftSub (var ∘ ρ) ⟧)    [[ wd (Λ φ) (subwd (liftSub-comp₂ var ρ) δ) ]]
+\end{code}
 
+\begin{code}
 propof : ∀ {P} → El P → PContext P → Prp
 propof ⊥ (_ , φ) = φ
 propof (↑ p) (Γ , _) = propof p Γ
@@ -295,14 +304,14 @@ We write $δ ≃ N$ iff the terms $M$ and $N$ are $\beta$-convertible, and simil
 
 \begin{code}
 data _↠_ : ∀ {Q} → Proof Q → Proof Q → Set where
-  β : ∀ {Q} A (δ : Proof (Lift Q)) ε → app (Λ A δ) ε ↠ subbot δ ε
+  β : ∀ {Q} φ (δ : Proof (Lift Q)) ε → app (Λ φ δ) ε ↠ subbot δ ε
   ref : ∀ {Q} {δ : Proof Q} → δ ↠ δ
   ↠trans : ∀ {Q} {δ ε P : Proof Q} → δ ↠ ε → ε ↠ P → δ ↠ P
   app : ∀ {Q} {δ δ' ε ε' : Proof Q} → δ ↠ δ' → ε ↠ ε' → app δ ε ↠ app δ' ε'
   ξ : ∀ {Q} {δ ε : Proof (Lift Q)} {φ} → δ ↠ ε → Λ φ δ ↠ Λ φ ε
 
 repred : ∀ {P} {Q} {ρ : El P → El Q} {δ ε : Proof P} → δ ↠ ε → δ < ρ > ↠ ε < ρ >
-repred {P} {Q} {ρ} (β A δ ε) = subst (λ x → app (Λ A (δ < lift ρ > )) (ε < ρ >) ↠ x) (sym (trans (rep-sub (botsub ε) ρ δ) (sym (trans (sub-rep _ _ δ) (subwd (λ x → sym (rep-botsub ρ ε x)) δ))))) (β A (δ < lift _ >) (ε < _ >))
+repred {P} {Q} {ρ} (β φ δ ε) = subst (λ x → app (Λ φ (δ < lift ρ > )) (ε < ρ >) ↠ x) (sym (trans (rep-sub (botsub ε) ρ δ) (sym (trans (sub-rep _ _ δ) (subwd (λ x → sym (rep-botsub ρ ε x)) δ))))) (β φ (δ < lift _ >) (ε < _ >))
 repred ref = ref
 repred (↠trans M↠ε N↠P) = ↠trans (repred M↠ε) (repred N↠P)
 repred (app M↠ε M'↠N') = app (repred M↠ε) (repred M'↠N')
@@ -320,24 +329,24 @@ subred (Λ φ δ) ρ↠σ = ξ (subred δ (liftSub-red ρ↠σ))
 subsub : ∀ {P} {Q} {R} (σ : Sub Q R) (ρ : Sub P Q) δ → δ ⟦ ρ ⟧ ⟦ σ ⟧ ≡ δ ⟦ σ • ρ ⟧
 subsub σ ρ (var x) = ref
 subsub σ ρ (app δ ε) = wd2 app (subsub σ ρ δ) (subsub σ ρ ε)
-subsub σ ρ (Λ A δ) = wd (Λ A) (trans (subsub (liftSub σ) (liftSub ρ) δ) 
+subsub σ ρ (Λ φ δ) = wd (Λ φ) (trans (subsub (liftSub σ) (liftSub ρ) δ) 
   (subwd (λ x → sym (liftSub-comp σ ρ x)) δ))
 
 subredr : ∀ {P} {Q} {σ : Sub P Q} {δ ε : Proof P} → δ ↠ ε → δ ⟦ σ ⟧ ↠ ε ⟦ σ ⟧
-subredr {P} {Q} {σ} (β A δ ε) = subst (λ x → app (Λ A (δ ⟦ liftSub σ ⟧)) (ε ⟦ σ ⟧) ↠ x) (sym (trans (subsub σ (botsub ε) δ) 
-  (sym (trans (subsub (botsub (ε ⟦ σ ⟧)) (liftSub σ) δ) (subwd (λ x → sym (sub-botsub σ ε x)) δ))))) (β A (δ ⟦ liftSub σ ⟧) (ε ⟦ σ ⟧))
+subredr {P} {Q} {σ} (β φ δ ε) = subst (λ x → app (Λ φ (δ ⟦ liftSub σ ⟧)) (ε ⟦ σ ⟧) ↠ x) (sym (trans (subsub σ (botsub ε) δ) 
+  (sym (trans (subsub (botsub (ε ⟦ σ ⟧)) (liftSub σ) δ) (subwd (λ x → sym (sub-botsub σ ε x)) δ))))) (β φ (δ ⟦ liftSub σ ⟧) (ε ⟦ σ ⟧))
 subredr ref = ref
 subredr (↠trans M↠ε N↠P) = ↠trans (subredr M↠ε) (subredr N↠P)
 subredr (app M↠M' N↠N') = app (subredr M↠M') (subredr N↠N')
 subredr (ξ δ↠δ') = ξ (subredr δ↠δ')
 
 data _≃_ : ∀ {Q} → Proof Q → Proof Q → Set₁ where
-  β : ∀ {Q} {A} {δ : Proof (Lift Q)} {ε} → app (Λ A δ) ε ≃ subbot δ ε
+  β : ∀ {Q} {φ} {δ : Proof (Lift Q)} {ε} → app (Λ φ δ) ε ≃ subbot δ ε
   ref : ∀ {Q} {δ : Proof Q} → δ ≃ δ
   ≃sym : ∀ {Q} {δ ε : Proof Q} → δ ≃ ε → ε ≃ ε
   ≃trans : ∀ {Q} {δ ε P : Proof Q} → δ ≃ ε → ε ≃ P → δ ≃ P
   app : ∀ {Q} {δ M' ε N' : Proof Q} → δ ≃ M' → ε ≃ N' → app δ ε ≃ app M' N'
-  Λ : ∀ {Q} {δ ε : Proof (Lift Q)} {A} → δ ≃ ε → Λ A δ ≃ Λ A ε
+  Λ : ∀ {Q} {δ ε : Proof (Lift Q)} {φ} → δ ≃ ε → Λ φ δ ≃ Λ φ ε
 \end{code}
 
 The \emph{strongly normalizable} terms are defined inductively as follows.
