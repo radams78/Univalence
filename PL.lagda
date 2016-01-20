@@ -271,72 +271,75 @@ rep-is-sub {Q = Q} {ρ} (Λ φ δ) = let open Equational-Reasoning (Proof Q) in
   ≡ Λ φ (δ ⟦ liftSub (var ∘ ρ) ⟧)    [[ wd (Λ φ) (subwd (liftSub-comp₂ var ρ) δ) ]]
 \end{code}
 
+Given $\delta : \Proof{P}$, let $[\bot := \delta] : P + 1 \Rightarrow P$ be the substitution that maps
+$\bot$ to $\delta$, and $\uparrow x$ to $x$ for $x \in P$.  We write $\delta[\epsilon]$ for $\delta[\bot := \epsilon]$.
+
 \begin{code}
 botsub : ∀ {Q} → Proof Q → Sub (Lift Q) Q
 botsub δ ⊥ = δ
 botsub _ (↑ x) = var x
 
-sub-botsub : ∀ {P} {Q} (σ : Sub P Q) (δ : Proof P) (x : El (Lift P)) →
-  botsub δ x ⟦ σ ⟧ ≡ liftSub σ x ⟦ botsub (δ ⟦ σ ⟧) ⟧
+subbot : ∀ {P} → Proof (Lift P) → Proof P → Proof P
+subbot δ ε = δ ⟦ botsub ε ⟧
+\end{code}
+
+\begin{lemma}
+Let $\delta : \Proof{P}$ and $\sigma : P \Rightarrow Q$.  Then
+\[ \sigma \bullet [\bot := \delta] \sim [\bot := \delta [\sigma]] \circ (\sigma + 1) \]
+\end{lemma}
+
+\begin{code}
+sub-botsub : ∀ {P} {Q} (σ : Sub P Q) (δ : Proof P) →
+  σ • botsub δ ∼ botsub (δ ⟦ σ ⟧) • liftSub σ
 sub-botsub σ δ ⊥ = ref
 sub-botsub σ δ (↑ x) = let open Equational-Reasoning (Proof _) in 
   ∵ σ x
   ≡ σ x ⟦ idSub _ ⟧                    [[ subid (σ x) ]]
   ≡ σ x < ↑ > ⟦ botsub (δ ⟦ σ ⟧) ⟧     [[ sub-rep (botsub (δ ⟦ σ ⟧)) ↑ (σ x) ]]
-
-rep-botsub : ∀ {P} {Q} (ρ : El P → El Q) (δ : Proof P) (x : El (Lift P)) →
-  botsub δ x < ρ > ≡ botsub (δ < ρ >) (lift ρ x)
-rep-botsub {P} {Q} ρ δ x = let open Equational-Reasoning (Proof Q) in 
-  ∵ botsub δ x < ρ >
-  ≡ botsub δ x ⟦ var ∘ ρ ⟧                               [ rep-is-sub _ ]
-  ≡ liftSub (var ∘ ρ) x    ⟦ botsub (δ ⟦ var ∘ ρ ⟧) ⟧    [ sub-botsub (var ∘ ρ) δ x ]
-  ≡ liftSub var (lift ρ x) ⟦ botsub (δ ⟦ var ∘ ρ ⟧) ⟧    [ wd (λ x → x ⟦ botsub (δ ⟦ var ∘ ρ ⟧) ⟧) (liftSub-comp₂ var ρ x) ]
-  ≡ var (lift ρ x)         ⟦ botsub (δ ⟦ var ∘ ρ ⟧) ⟧    [ wd (λ x → x ⟦ botsub (δ ⟦ var ∘ ρ ⟧) ⟧) (liftSub-id (lift ρ x)) ]
-  ≡ botsub (δ < ρ >) (lift ρ x)                          [[ wd (λ y → botsub y (lift ρ x)) (rep-is-sub δ) ]]
-
-subbot : ∀ {Q} → Proof (Lift Q) → Proof Q → Proof Q
-subbot δ ε = δ ⟦ botsub ε ⟧
 \end{code}
 
-We write $δ ≃ N$ iff the terms $M$ and $N$ are $\beta$-convertible, and similarly for proofs.
+We write $\delta \twoheadrightarrow \epsilon$ iff $\delta$ $\beta$-reduces to $\epsilon$ in zero or more steps, and $\delta \simeq \epsilon$ iff the terms $\delta$ and $\epsilon$ are $\beta$-convertible.
+
+Given substitutions $\rho$ and $\sigma$, we write $\rho \twoheadrightarrow \sigma$ iff $\rho(x) \twoheadrightarrow \sigma(x)$ for all $x$, and $\rho \simeq \sigma$ iff $\rho(x) \simeq \sigma(x)$ for all $x$.
 
 \begin{code}
 data _↠_ : ∀ {Q} → Proof Q → Proof Q → Set where
   β : ∀ {Q} φ (δ : Proof (Lift Q)) ε → app (Λ φ δ) ε ↠ subbot δ ε
   ref : ∀ {Q} {δ : Proof Q} → δ ↠ δ
-  ↠trans : ∀ {Q} {δ ε P : Proof Q} → δ ↠ ε → ε ↠ P → δ ↠ P
+  ↠trans : ∀ {Q} {γ δ ε : Proof Q} → γ ↠ δ → δ ↠ ε → γ ↠ ε
   app : ∀ {Q} {δ δ' ε ε' : Proof Q} → δ ↠ δ' → ε ↠ ε' → app δ ε ↠ app δ' ε'
   ξ : ∀ {Q} {δ ε : Proof (Lift Q)} {φ} → δ ↠ ε → Λ φ δ ↠ Λ φ ε
+\end{code}
 
-repred : ∀ {P} {Q} {ρ : El P → El Q} {δ ε : Proof P} → δ ↠ ε → δ < ρ > ↠ ε < ρ >
-repred {P} {Q} {ρ} (β φ δ ε) = subst (λ x → app (Λ φ (δ < lift ρ > )) (ε < ρ >) ↠ x) (sym (trans (rep-sub (botsub ε) ρ δ) (sym (trans (sub-rep _ _ δ) (subwd (λ x → sym (rep-botsub ρ ε x)) δ))))) (β φ (δ < lift _ >) (ε < _ >))
-repred ref = ref
-repred (↠trans M↠ε N↠P) = ↠trans (repred M↠ε) (repred N↠P)
-repred (app M↠ε M'↠N') = app (repred M↠ε) (repred M'↠N')
-repred (ξ M↠ε) = ξ (repred M↠ε)
+\begin{lemma}
+\begin{enumerate}
+\item
+If $\delta \twoheadrightarrow \epsilon$ then $\delta [ \sigma ] \twoheadrightarrow \epsilon [ \sigma ]$.
+\end{enumerate}
+\end{lemma}
 
-liftSub-red : ∀ {P} {Q} {ρ σ : Sub P Q} → (∀ x → ρ x ↠ σ x) → (∀ x → liftSub ρ x ↠ liftSub σ x)
+\begin{code}
+subredl : ∀ {P} {Q} {ρ : Sub P Q} {δ ε : Proof P} → δ ↠ ε → δ ⟦ ρ ⟧ ↠ ε ⟦ ρ ⟧
+subredl {Q = Q} {ρ = ρ} (β φ δ ε) = subst (λ x → app (Λ φ (δ ⟦ liftSub ρ ⟧)) (ε ⟦ ρ ⟧) ↠ x) 
+  (let open Equational-Reasoning (Proof Q) in 
+    ∵ δ ⟦ liftSub ρ ⟧ ⟦ botsub (ε ⟦ ρ ⟧) ⟧
+    ≡ δ ⟦ botsub (ε ⟦ ρ ⟧) • liftSub ρ ⟧     [[ subcomp (botsub (ε ⟦ ρ ⟧)) (liftSub ρ) δ ]]
+    ≡ δ ⟦ ρ • botsub ε ⟧                     [[ subwd (sub-botsub ρ ε) δ ]]
+    ≡ δ ⟦ botsub ε ⟧ ⟦ ρ ⟧                   [ subcomp ρ (botsub ε) δ ]) 
+  (β _ _ _)
+subredl ref = ref
+subredl (↠trans r r₁) = ↠trans (subredl r) (subredl r₁)
+subredl (app r r₁) = app (subredl r) (subredl r₁)
+subredl (ξ r) = ξ (subredl r)
+
+{-liftSub-red : ∀ {P} {Q} {ρ σ : Sub P Q} → (∀ x → ρ x ↠ σ x) → (∀ x → liftSub ρ x ↠ liftSub σ x)
 liftSub-red ρ↠σ ⊥ = ref
 liftSub-red ρ↠σ (↑ x) = repred (ρ↠σ x)
 
-subred : ∀ {P} {Q} {ρ σ : Sub P Q} (δ : Proof P) → (∀ x → ρ x ↠ σ x) → δ ⟦ ρ ⟧ ↠ δ ⟦ σ ⟧
-subred (var x) ρ↠σ = ρ↠σ x
-subred (app δ ε) ρ↠σ = app (subred δ ρ↠σ) (subred ε ρ↠σ)
-subred (Λ φ δ) ρ↠σ = ξ (subred δ (liftSub-red ρ↠σ))
-
-subsub : ∀ {P} {Q} {R} (σ : Sub Q R) (ρ : Sub P Q) δ → δ ⟦ ρ ⟧ ⟦ σ ⟧ ≡ δ ⟦ σ • ρ ⟧
-subsub σ ρ (var x) = ref
-subsub σ ρ (app δ ε) = wd2 app (subsub σ ρ δ) (subsub σ ρ ε)
-subsub σ ρ (Λ φ δ) = wd (Λ φ) (trans (subsub (liftSub σ) (liftSub ρ) δ) 
-  (subwd (λ x → sym (liftSub-comp σ ρ x)) δ))
-
-subredr : ∀ {P} {Q} {σ : Sub P Q} {δ ε : Proof P} → δ ↠ ε → δ ⟦ σ ⟧ ↠ ε ⟦ σ ⟧
-subredr {P} {Q} {σ} (β φ δ ε) = subst (λ x → app (Λ φ (δ ⟦ liftSub σ ⟧)) (ε ⟦ σ ⟧) ↠ x) (sym (trans (subsub σ (botsub ε) δ) 
-  (sym (trans (subsub (botsub (ε ⟦ σ ⟧)) (liftSub σ) δ) (subwd (λ x → sym (sub-botsub σ ε x)) δ))))) (β φ (δ ⟦ liftSub σ ⟧) (ε ⟦ σ ⟧))
-subredr ref = ref
-subredr (↠trans M↠ε N↠P) = ↠trans (subredr M↠ε) (subredr N↠P)
-subredr (app M↠M' N↠N') = app (subredr M↠M') (subredr N↠N')
-subredr (ξ δ↠δ') = ξ (subredr δ↠δ')
+subredr : ∀ {P} {Q} {ρ σ : Sub P Q} (δ : Proof P) → (∀ x → ρ x ↠ σ x) → δ ⟦ ρ ⟧ ↠ δ ⟦ σ ⟧
+subredr (var x) ρ↠σ = ρ↠σ x
+subredr (app δ ε) ρ↠σ = app (subred δ ρ↠σ) (subred ε ρ↠σ)
+subredr (Λ φ δ) ρ↠σ = ξ (subred δ (liftSub-red ρ↠σ))-}
 
 data _≃_ : ∀ {Q} → Proof Q → Proof Q → Set₁ where
   β : ∀ {Q} {φ} {δ : Proof (Lift Q)} {ε} → app (Λ φ δ) ε ≃ subbot δ ε
@@ -375,7 +378,7 @@ SNappr : ∀ {Q} {δ ε : Proof Q} → SN (app δ ε) → SN ε
 SNappr {Q} {δ} {ε} (SNI δN-is-SN) = SNI (λ P N▷P → SNappr (δN-is-SN (app δ P) (app ref N▷P)))
 
 SNsub : ∀ {Q} {δ : Proof (Lift Q)} {ε} → SN (subbot δ ε) → SN δ
-SNsub {Q} {δ} {ε} (SNI δN-is-SN) = SNI (λ P δ▷P → SNsub (δN-is-SN (P ⟦ botsub ε ⟧) (subredr δ▷P)))
+SNsub {Q} {δ} {ε} (SNI δN-is-SN) = SNI (λ P δ▷P → SNsub (δN-is-SN (P ⟦ botsub ε ⟧) (subredl δ▷P)))
 \end{code}
 
 The rules of deduction of the system are as follows.

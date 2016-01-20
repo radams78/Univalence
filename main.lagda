@@ -23,6 +23,7 @@
 \DeclareUnicodeCharacter{9655}{\ensuremath{\rhd}}
 \DeclareUnicodeCharacter{10219}{\ensuremath{\rangle\rangle}}
 \renewcommand{\textbeta}{\ensuremath{\beta}}
+\renewcommand{\textgamma}{\ensuremath{\gamma}}
 \renewcommand{\textGamma}{\ensuremath{\Gamma}}
 \renewcommand{\textdelta}{\ensuremath{\delta}}
 \renewcommand{\textDelta}{\ensuremath{\Delta}}
