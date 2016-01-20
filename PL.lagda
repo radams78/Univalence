@@ -272,10 +272,6 @@ rep-is-sub {Q = Q} {ρ} (Λ φ δ) = let open Equational-Reasoning (Proof Q) in
 \end{code}
 
 \begin{code}
-liftSub-var' : ∀ {P} {Q} (ρ : El P → El Q) → liftSub (var ∘ ρ) ∼ var ∘ lift ρ
-liftSub-var' ρ ⊥ = ref
-liftSub-var' ρ (↑ x) = ref
-
 botsub : ∀ {Q} → Proof Q → Sub (Lift Q) Q
 botsub δ ⊥ = δ
 botsub _ (↑ x) = var x
