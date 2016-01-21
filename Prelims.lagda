@@ -11,6 +11,13 @@ postulate suc : Level → Level
 {-# BUILTIN LEVELSUC suc #-}
 \end{code}
 
+\subsection{Conjunction}
+
+\begin{code}
+data _∧_ {i} (P Q : Set i) : Set i where
+  _,_ : P → Q → P ∧ Q
+\end{code}
+
 \subsection{Functions}
 
 \newcommand{\id}[1]{\mathrm{id}_{#1}}

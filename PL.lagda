@@ -44,7 +44,7 @@ data Proof : FinSet → Set where
   Λ : ∀ {P} → Prp → Proof (Lift P) → Proof P
 \end{code}
 
-Let $P, Q : \FinSet$.  A \emph{replacement} from $P$ to $Q$ is just a function $P \rightarrow Q$.  Given a term $M : \Proof{P}$
+Let $P, Q : \FinSet$.  Given a term $M : \Proof{P}$
 and a replacement $\rho : P \rightarrow Q$, we write $M \{ \rho \} : \Proof{Q}$ for the result of replacing each variable $x$ in
 $M$ with $\rho(x)$.
 
@@ -143,7 +143,6 @@ liftSub-comp₁ {R = R} σ ρ (↑ x) = let open Equational-Reasoning (Proof (Li
    ∵ σ x < ρ > < ↑ > 
    ≡ σ x < ↑ ∘ ρ >        [[ repcomp ↑ ρ (σ x) ]]
    ≡ σ x < ↑ > < lift ρ > [ repcomp (lift ρ) ↑ (σ x) ]
---because lift ρ (↑ x) = ↑ (ρ x)
 
 liftSub-comp₂ : ∀ {P Q R : FinSet} (σ : Sub Q R) (ρ : Rep P Q) →
   liftSub (σ ∘ ρ) ∼ liftSub σ ∘ lift ρ
@@ -309,27 +308,20 @@ data _→₁_ : ∀ {P} → Proof P → Proof P → Set where
   appl : ∀ {P} {δ} {δ'} {ε : Proof P} → δ →₁ δ' → app δ ε →₁ app δ' ε
   appr : ∀ {P} {δ ε ε' : Proof P} → ε →₁ ε' → app δ ε →₁ app δ ε'
 
-data _↠_ : ∀ {Q} → Proof Q → Proof Q → Set where
-  β : ∀ {Q} φ (δ : Proof (Lift Q)) ε → app (Λ φ δ) ε ↠ subbot δ ε
-  ref : ∀ {P} {δ : Proof P} → δ ↠ δ
-  ↠trans : ∀ {Q} {γ δ ε : Proof Q} → γ ↠ δ → δ ↠ ε → γ ↠ ε
-  app : ∀ {Q} {δ δ' ε ε' : Proof Q} → δ ↠ δ' → ε ↠ ε' → app δ ε ↠ app δ' ε'
-  ξ : ∀ {Q} {δ ε : Proof (Lift Q)} {φ} → δ ↠ ε → Λ φ δ ↠ Λ φ ε
+data _↠⁺_ {P} : Proof P → Proof P → Set where
+  red : ∀ {δ} {ε} → δ →₁ ε → δ ↠⁺ ε 
+  ↠⁺trans : ∀ {γ} {δ} {ε} → γ ↠⁺ δ → δ ↠⁺ ε → γ ↠⁺ ε
 
-data _↠⁺_ : ∀ {Q} → Proof Q → Proof Q → Set where
-  β : ∀ {Q} φ (δ : Proof (Lift Q)) ε → app (Λ φ δ) ε ↠⁺ subbot δ ε
-  ↠⁺trans : ∀ {Q} {γ δ ε : Proof Q} → γ ↠⁺ δ → δ ↠ ε → γ ↠⁺ ε
-  appl : ∀ {Q} {δ δ' ε ε' : Proof Q} → δ ↠⁺ δ' → ε ↠ ε' → app δ ε ↠⁺ app δ' ε'
-  appr : ∀ {Q} {δ δ' ε ε' : Proof Q} → δ ↠ δ' → ε ↠⁺ ε' → app δ ε ↠⁺ app δ' ε'
-  ξ : ∀ {Q} {δ ε : Proof (Lift Q)} {φ} → δ ↠⁺ ε → Λ φ δ ↠⁺ Λ φ ε
+data _↠_ {P} : Proof P → Proof P → Set where
+  red : ∀ {δ} {ε} → δ →₁ ε → δ ↠ ε
+  ref : ∀ {δ} → δ ↠ δ
+  ↠trans : ∀ {γ} {δ} {ε} → γ ↠ δ → δ ↠ ε → γ ↠ ε
 
-data _≃_ : ∀ {Q} → Proof Q → Proof Q → Set₁ where
-  β : ∀ {Q} {φ} {δ : Proof (Lift Q)} {ε} → app (Λ φ δ) ε ≃ subbot δ ε
-  ref : ∀ {Q} {δ : Proof Q} → δ ≃ δ
-  ≃sym : ∀ {Q} {δ ε : Proof Q} → δ ≃ ε → ε ≃ ε
-  ≃trans : ∀ {Q} {δ ε P : Proof Q} → δ ≃ ε → ε ≃ P → δ ≃ P
-  app : ∀ {Q} {δ M' ε N' : Proof Q} → δ ≃ M' → ε ≃ N' → app δ ε ≃ app M' N'
-  Λ : ∀ {Q} {δ ε : Proof (Lift Q)} {φ} → δ ≃ ε → Λ φ δ ≃ Λ φ ε
+data _≃_ {P} : Proof P → Proof P → Set where
+  red : ∀ {δ} {ε} → δ →₁ ε → δ ≃ ε
+  ref : ∀ {δ} → δ ≃ δ
+  ≃sym : ∀ {δ} {ε} → δ ≃ ε → ε ≃ δ
+  ≃trans : ∀ {γ} {δ} {ε} → γ ≃ δ → δ ≃ ε → γ ≃ ε
 \end{code}
 
 \begin{lemma}
@@ -360,41 +352,6 @@ sub₁redl {P} {Q} {ρ} (β .{P} {φ} {δ} {ε}) = subst (λ x → app (Λ φ (�
 sub₁redl (ξ δ→₁ε) = ξ (sub₁redl δ→₁ε)
 sub₁redl (appl δ→₁ε) = appl (sub₁redl δ→₁ε)
 sub₁redl (appr δ→₁ε) = appr (sub₁redl δ→₁ε)
-
-subredl : ∀ {P} {Q} {ρ : Sub P Q} {δ ε : Proof P} → δ ↠ ε → δ ⟦ ρ ⟧ ↠ ε ⟦ ρ ⟧
-subredl {Q = Q} {ρ = ρ} (β φ δ ε) = subst (λ x → app (Λ φ (δ ⟦ liftSub ρ ⟧)) (ε ⟦ ρ ⟧) ↠ x) 
-  (let open Equational-Reasoning (Proof Q) in 
-    ∵ δ ⟦ liftSub ρ ⟧ ⟦ botsub (ε ⟦ ρ ⟧) ⟧
-    ≡ δ ⟦ botsub (ε ⟦ ρ ⟧) • liftSub ρ ⟧     [[ subcomp (botsub (ε ⟦ ρ ⟧)) (liftSub ρ) δ ]]
-    ≡ δ ⟦ ρ • botsub ε ⟧                     [[ subwd (sub-botsub ρ ε) δ ]]
-    ≡ δ ⟦ botsub ε ⟧ ⟦ ρ ⟧                   [ subcomp ρ (botsub ε) δ ]) 
-  (β _ _ _)
-subredl (↠trans r r₁) = ↠trans (subredl r) (subredl r₁)
-subredl (app r r₁) = app (subredl r) (subredl r₁)
-subredl (ξ r) = ξ (subredl r)
-subredl ref = ref
-
-sub⁺redl : ∀ {P} {Q} {ρ : Sub P Q} {δ ε : Proof P} → δ ↠⁺ ε → δ ⟦ ρ ⟧ ↠⁺ ε ⟦ ρ ⟧
-sub⁺redl {Q = Q} {ρ = ρ} (β φ δ ε) = subst (λ x → app (Λ φ (δ ⟦ liftSub ρ ⟧)) (ε ⟦ ρ ⟧) ↠⁺ x) 
-  (let open Equational-Reasoning (Proof Q) in 
-    ∵ δ ⟦ liftSub ρ ⟧ ⟦ botsub (ε ⟦ ρ ⟧) ⟧
-    ≡ δ ⟦ botsub (ε ⟦ ρ ⟧) • liftSub ρ ⟧     [[ subcomp (botsub (ε ⟦ ρ ⟧)) (liftSub ρ) δ ]]
-    ≡ δ ⟦ ρ • botsub ε ⟧                     [[ subwd (sub-botsub ρ ε) δ ]]
-    ≡ δ ⟦ botsub ε ⟧ ⟦ ρ ⟧                   [ subcomp ρ (botsub ε) δ ]) 
-  (β _ _ _)
-sub⁺redl (↠⁺trans r r₁) = ↠⁺trans (sub⁺redl r) (subredl r₁)
-sub⁺redl (appl r r₁) = appl (sub⁺redl r) (subredl r₁)
-sub⁺redl (appr r r₁) = appr (subredl r) (sub⁺redl r₁)
-sub⁺redl (ξ r) = ξ (sub⁺redl r)
-
-liftSub-red : ∀ {P} {Q} {ρ σ : Sub P Q} → (∀ x → ρ x ↠ σ x) → (∀ x → liftSub ρ x ↠ liftSub σ x)
-liftSub-red ρ↠σ ⊥ = ref
-liftSub-red {ρ = ρ} ρ↠σ (↑ x) = subst2 _↠_ (sym (rep-is-sub _)) (sym (rep-is-sub _)) (subredl (ρ↠σ x))
-
-subredr : ∀ {P} {Q} {ρ σ : Sub P Q} (δ : Proof P) → (∀ x → ρ x ↠ σ x) → δ ⟦ ρ ⟧ ↠ δ ⟦ σ ⟧
-subredr (var x) ρ↠σ = ρ↠σ x
-subredr (app δ ε) ρ↠σ = app (subredr δ ρ↠σ) (subredr ε ρ↠σ)
-subredr (Λ φ δ) ρ↠σ = ξ (subredr δ (liftSub-red ρ↠σ))
 \end{code}
 
 The \emph{strongly normalizable} terms are defined inductively as follows.
@@ -446,13 +403,22 @@ The rules of deduction of the system are as follows.
 
 \[ \infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \rightarrow \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
 
-
 \begin{code}
-data _⊢_∶∶_ : ∀ {P} → PContext P → Proof P → Prp → Set₁ where
-  var : ∀ {P} {Γ : PContext P} {p} → Γ ⊢ var p ∶∶ propof p Γ
-  app : ∀ {P} {Γ : PContext P} {δ} {ε} {φ} {ψ} → Γ ⊢ δ ∶∶ φ ⇒ ψ → Γ ⊢ ε ∶∶ φ → Γ ⊢ app δ ε ∶∶ ψ
-  Λ : ∀ {P} {Γ : PContext P} {φ} {δ} {ψ} → Γ , φ ⊢ δ ∶∶ ψ → Γ ⊢ Λ φ δ ∶∶ φ ⇒ ψ
+data _⊢_∷_ : ∀ {P} → PContext P → Proof P → Prp → Set₁ where
+  var : ∀ {P} {Γ : PContext P} {p} → Γ ⊢ var p ∷ propof p Γ
+  app : ∀ {P} {Γ : PContext P} {δ} {ε} {φ} {ψ} → Γ ⊢ δ ∷ φ ⇒ ψ → Γ ⊢ ε ∷ φ → Γ ⊢ app δ ε ∷ ψ
+  Λ : ∀ {P} {Γ : PContext P} {φ} {δ} {ψ} → (Γ , φ) ⊢ δ ∷ ψ → Γ ⊢ Λ φ δ ∷ φ ⇒ ψ
 \end{code}
 
+We define the sets of \emph{computable} proofs $C_\Gamma(\phi)$ for each context $\Gamma$ and proposition $\phi$ as follows:
 
+\begin{align*}
+C_\Gamma(\bot) & = \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in SN \} \\
+C_\Gamma(\phi \rightarrow \psi) & = \{ \delta \mid \Gamma : \delta : \phi \rightarrow \psi, \forall \epsilon \in C_\Gamma(\phi). \delta \epsilon \in C_\Gamma(\psi) \}
+\end{align*}
 
+\begin{code}
+C : ∀ {P} → PContext P → Prp → Proof P → Set₁
+C Γ ⊥ δ = (Γ ⊢ δ ∷ ⊥) ∧ SN δ
+C Γ (φ ⇒ ψ) δ = (Γ ⊢ δ ∷ φ ⇒ ψ) ∧ (∀ ε → C Γ φ ε → C Γ ψ (app δ ε))
+\end{code}

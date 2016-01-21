@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1453372056 "main.lagda" "main.pdf" "main" 1453372057
+["pdflatex"] 1453374348 "main.lagda" "main.pdf" "main" 1453374349
   "/etc/texmf/web2c/texmf.cnf" 1451915225 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
@@ -89,11 +89,11 @@
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1453282123 1043118 e5f694c73465b1932df10e6845fb7f54 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1452867214 809542 966216d598c1a54c6abbe158512e1513 ""
   "PHOPL.lagda" 1453287784 20926 b1737bf97149aabf40e2398037572cd1 ""
-  "PL.lagda" 1453372039 20582 7cbce227c70b93549c8b905b63ccb15a ""
-  "Prelims.lagda" 1453304779 3637 fe010b1ef8dc35cc59b4d20b7d1817c2 ""
-  "main.aux" 1453372057 705 406bba61713f533c913e5469fa7d6454 ""
+  "PL.lagda" 1453374336 17946 c7b935be69fcb672c36e35480c6dfa96 ""
+  "Prelims.lagda" 1453374317 3759 1f75362392df3fef35d1c84bf74a98bc ""
+  "main.aux" 1453374349 783 8f5ade3d3ec8463906bcb9a52186953c ""
   "main.lagda" 1453369819 1789 60441116259fdfa3bdcc84f52c2e8772 ""
   (generated)
   "main.log"
-  "main.pdf"
   "main.aux"
+  "main.pdf"
