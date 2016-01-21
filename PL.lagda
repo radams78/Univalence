@@ -426,6 +426,16 @@ SNappr {Q} {δ} {ε} (SNI δε-is-SN) = SNI (λ ε' ε→₁ε' → SNappr (δε
 
 SNsub : ∀ {Q} {δ : Proof (Lift Q)} {ε} → SN (subbot δ ε) → SN δ
 SNsub {Q} {δ} {ε} (SNI δε-is-SN) = SNI (λ δ' δ→₁δ' → SNsub (δε-is-SN (δ' ⟦ botsub ε ⟧) (sub₁redl δ→₁δ')))
+
+preSNexp : ∀ {P} {δ : Proof (Lift P)} {ε} {φ} → SN (subbot δ ε) → SN ε → ∀ γ → (app (Λ φ δ) ε) →₁ γ → SN γ
+preSNexp {P} {δ} {ε} SNδε SNε .(δ ⟦ botsub ε ⟧) β = SNδε
+preSNexp {P} {δ} {ε} {φ} SNδε SNε (app .(Λ φ ε₁) .ε) (appl (ξ {.P} {.φ} {.δ} {ε₁} δ→₁ε₁)) = 
+  preSNexp SNδε SNε (app (Λ φ ε₁) ε) (appl (ξ δ→₁ε₁))
+preSNexp {P} {δ} {ε} {φ} SNδε SNε .(app (Λ φ δ) ε') (appr {.P} {.(Λ φ δ)} {.ε} {ε'} ε→₁ε') = 
+  preSNexp SNδε SNε (app (Λ φ δ) ε') (appr ε→₁ε')
+
+SNexp : ∀ {P} {δ : Proof (Lift P)} {ε} {φ} → SN (subbot δ ε) → SN ε → SN (app (Λ φ δ) ε)
+SNexp SNδε SNε = SNI (preSNexp SNδε SNε)
 \end{code}
 
 The rules of deduction of the system are as follows.
