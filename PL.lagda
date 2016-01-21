@@ -10,8 +10,6 @@ Fix sets of \emph{proof variables} and \emph{term variables}.
 The syntax of the system is given by the following grammar.
 
 \newcommand{\vald}{\ensuremath{\ \mathrm{valid}}}
-%Changes from Marc and Thierry's system:
-%Taken out the proof c of \bot
 \[ \begin{array}{lrcl}
 \text{Proof} & \delta & ::= & p \mid \delta \delta \mid \lambda p : \phi . \delta \\
 \text{Proposition} & φ & ::= & ⊥ \mid \phi \rightarrow \phi \\
@@ -298,17 +296,32 @@ sub-botsub σ δ (↑ x) = let open Equational-Reasoning (Proof _) in
   ≡ σ x < ↑ > ⟦ botsub (δ ⟦ σ ⟧) ⟧     [[ sub-rep (botsub (δ ⟦ σ ⟧)) ↑ (σ x) ]]
 \end{code}
 
-We write $\delta \twoheadrightarrow \epsilon$ iff $\delta$ $\beta$-reduces to $\epsilon$ in zero or more steps, and $\delta \simeq \epsilon$ iff the terms $\delta$ and $\epsilon$ are $\beta$-convertible.
+We write $\delta \twoheadrightarrow \epsilon$ iff $\delta$ $\beta$-reduces to $\epsilon$ in zero or more steps, 
+$\delta \twoheadrightarrow^+ \epsilon$ iff $\delta$ $\beta$-reduces to $\epsilon$ in one or more steps,
+and $\delta \simeq \epsilon$ iff the terms $\delta$ and $\epsilon$ are $\beta$-convertible.
 
 Given substitutions $\rho$ and $\sigma$, we write $\rho \twoheadrightarrow \sigma$ iff $\rho(x) \twoheadrightarrow \sigma(x)$ for all $x$, and $\rho \simeq \sigma$ iff $\rho(x) \simeq \sigma(x)$ for all $x$.
 
 \begin{code}
+data _→₁_ : ∀ {P} → Proof P → Proof P → Set where
+  β : ∀ {P} {φ} {δ} {ε : Proof P} → app (Λ φ δ) ε →₁ subbot δ ε
+  ξ : ∀ {P} {φ} {δ} {ε : Proof (Lift P)} → δ →₁ ε → Λ φ δ →₁ Λ φ ε
+  appl : ∀ {P} {δ} {δ'} {ε : Proof P} → δ →₁ δ' → app δ ε →₁ app δ' ε
+  appr : ∀ {P} {δ ε ε' : Proof P} → ε →₁ ε' → app δ ε →₁ app δ ε'
+
 data _↠_ : ∀ {Q} → Proof Q → Proof Q → Set where
   β : ∀ {Q} φ (δ : Proof (Lift Q)) ε → app (Λ φ δ) ε ↠ subbot δ ε
-  ref : ∀ {Q} {δ : Proof Q} → δ ↠ δ
+  ref : ∀ {P} {δ : Proof P} → δ ↠ δ
   ↠trans : ∀ {Q} {γ δ ε : Proof Q} → γ ↠ δ → δ ↠ ε → γ ↠ ε
   app : ∀ {Q} {δ δ' ε ε' : Proof Q} → δ ↠ δ' → ε ↠ ε' → app δ ε ↠ app δ' ε'
   ξ : ∀ {Q} {δ ε : Proof (Lift Q)} {φ} → δ ↠ ε → Λ φ δ ↠ Λ φ ε
+
+data _↠⁺_ : ∀ {Q} → Proof Q → Proof Q → Set where
+  β : ∀ {Q} φ (δ : Proof (Lift Q)) ε → app (Λ φ δ) ε ↠⁺ subbot δ ε
+  ↠⁺trans : ∀ {Q} {γ δ ε : Proof Q} → γ ↠⁺ δ → δ ↠ ε → γ ↠⁺ ε
+  appl : ∀ {Q} {δ δ' ε ε' : Proof Q} → δ ↠⁺ δ' → ε ↠ ε' → app δ ε ↠⁺ app δ' ε'
+  appr : ∀ {Q} {δ δ' ε ε' : Proof Q} → δ ↠ δ' → ε ↠⁺ ε' → app δ ε ↠⁺ app δ' ε'
+  ξ : ∀ {Q} {δ ε : Proof (Lift Q)} {φ} → δ ↠⁺ ε → Λ φ δ ↠⁺ Λ φ ε
 
 data _≃_ : ∀ {Q} → Proof Q → Proof Q → Set₁ where
   β : ∀ {Q} {φ} {δ : Proof (Lift Q)} {ε} → app (Λ φ δ) ε ≃ subbot δ ε
@@ -336,6 +349,18 @@ using part \ref{subredl}.
 \end{proof}
 
 \begin{code}
+sub₁redl : ∀ {P} {Q} {ρ : Sub P Q} {δ ε : Proof P} → δ →₁ ε → δ ⟦ ρ ⟧ →₁ ε ⟦ ρ ⟧
+sub₁redl {P} {Q} {ρ} (β .{P} {φ} {δ} {ε}) = subst (λ x → app (Λ φ (δ ⟦ liftSub ρ ⟧)) (ε ⟦ ρ ⟧) →₁ x) 
+  (let open Equational-Reasoning (Proof Q) in 
+  ∵ (δ ⟦ liftSub ρ ⟧) ⟦ botsub (ε ⟦ ρ ⟧) ⟧
+  ≡ δ ⟦ botsub (ε ⟦ ρ ⟧) • liftSub ρ ⟧ [[ subcomp (botsub (ε ⟦ ρ ⟧)) (liftSub ρ) δ ]]
+  ≡ δ ⟦ ρ • botsub ε ⟧                 [[ subwd (sub-botsub ρ ε) δ ]]
+  ≡ (δ ⟦ botsub ε ⟧) ⟦ ρ ⟧             [ subcomp ρ (botsub ε) δ ]) 
+  β
+sub₁redl (ξ δ→₁ε) = ξ (sub₁redl δ→₁ε)
+sub₁redl (appl δ→₁ε) = appl (sub₁redl δ→₁ε)
+sub₁redl (appr δ→₁ε) = appr (sub₁redl δ→₁ε)
+
 subredl : ∀ {P} {Q} {ρ : Sub P Q} {δ ε : Proof P} → δ ↠ ε → δ ⟦ ρ ⟧ ↠ ε ⟦ ρ ⟧
 subredl {Q = Q} {ρ = ρ} (β φ δ ε) = subst (λ x → app (Λ φ (δ ⟦ liftSub ρ ⟧)) (ε ⟦ ρ ⟧) ↠ x) 
   (let open Equational-Reasoning (Proof Q) in 
@@ -344,10 +369,23 @@ subredl {Q = Q} {ρ = ρ} (β φ δ ε) = subst (λ x → app (Λ φ (δ ⟦ lif
     ≡ δ ⟦ ρ • botsub ε ⟧                     [[ subwd (sub-botsub ρ ε) δ ]]
     ≡ δ ⟦ botsub ε ⟧ ⟦ ρ ⟧                   [ subcomp ρ (botsub ε) δ ]) 
   (β _ _ _)
-subredl ref = ref
 subredl (↠trans r r₁) = ↠trans (subredl r) (subredl r₁)
 subredl (app r r₁) = app (subredl r) (subredl r₁)
 subredl (ξ r) = ξ (subredl r)
+subredl ref = ref
+
+sub⁺redl : ∀ {P} {Q} {ρ : Sub P Q} {δ ε : Proof P} → δ ↠⁺ ε → δ ⟦ ρ ⟧ ↠⁺ ε ⟦ ρ ⟧
+sub⁺redl {Q = Q} {ρ = ρ} (β φ δ ε) = subst (λ x → app (Λ φ (δ ⟦ liftSub ρ ⟧)) (ε ⟦ ρ ⟧) ↠⁺ x) 
+  (let open Equational-Reasoning (Proof Q) in 
+    ∵ δ ⟦ liftSub ρ ⟧ ⟦ botsub (ε ⟦ ρ ⟧) ⟧
+    ≡ δ ⟦ botsub (ε ⟦ ρ ⟧) • liftSub ρ ⟧     [[ subcomp (botsub (ε ⟦ ρ ⟧)) (liftSub ρ) δ ]]
+    ≡ δ ⟦ ρ • botsub ε ⟧                     [[ subwd (sub-botsub ρ ε) δ ]]
+    ≡ δ ⟦ botsub ε ⟧ ⟦ ρ ⟧                   [ subcomp ρ (botsub ε) δ ]) 
+  (β _ _ _)
+sub⁺redl (↠⁺trans r r₁) = ↠⁺trans (sub⁺redl r) (subredl r₁)
+sub⁺redl (appl r r₁) = appl (sub⁺redl r) (subredl r₁)
+sub⁺redl (appr r r₁) = appr (subredl r) (sub⁺redl r₁)
+sub⁺redl (ξ r) = ξ (sub⁺redl r)
 
 liftSub-red : ∀ {P} {Q} {ρ σ : Sub P Q} → (∀ x → ρ x ↠ σ x) → (∀ x → liftSub ρ x ↠ liftSub σ x)
 liftSub-red ρ↠σ ⊥ = ref
@@ -362,8 +400,8 @@ subredr (Λ φ δ) ρ↠σ = ξ (subredr δ (liftSub-red ρ↠σ))
 The \emph{strongly normalizable} terms are defined inductively as follows.
 
 \begin{code}
-data SN {Q} : Proof Q → Set₁ where
-  SNI : ∀ {δ} → (∀ ε → δ ↠ ε → SN ε) → SN δ
+data SN {P} : Proof P → Set₁ where
+  SNI : ∀ {φ} → (∀ ψ → φ →₁ ψ → SN ψ) → SN φ
 \end{code}
 
 \begin{lemma}
@@ -371,23 +409,53 @@ data SN {Q} : Proof Q → Set₁ where
 \item
 If $δε \in SN$ then $δ \in SN$ and $ε \in SN$.
 \item
-If $δ[x:=N] \in SN$ then $δ \in SN$.
+If $δ[\bot:=N] \in SN$ then $δ \in SN$.
 \item
-If $δ \in SN$ and $δ \rhd N$ then $ε \in SN$.
+If $δ \in SN$ and $δ \twoheadrightarrow \epsilon$ then $ε \in SN$.
 \item
-If $δ[x:=N]\vec{P} \in SN$ and $ε \in SN$ then $(\lambda x δ) ε \vec{P} \in SN$.
+If $δ[x:=ε]\vec{γ} \in SN$ and $ε \in SN$ then $(\lambda x : φ . δ) ε \vec{γ} \in SN$.
 \end{enumerate}
 \end{lemma}
 
 \begin{code}
 SNappl : ∀ {Q} {δ ε : Proof Q} → SN (app δ ε) → SN δ
-SNappl {Q} {δ} {ε} (SNI δN-is-SN) = SNI (λ P δ▷P → SNappl (δN-is-SN (app P ε) (app δ▷P ref)))
+SNappl {Q} {δ} {ε} (SNI δε-is-SN) = SNI (λ δ' δ→₁δ' → SNappl (δε-is-SN (app δ' ε) (appl δ→₁δ')))
 
 SNappr : ∀ {Q} {δ ε : Proof Q} → SN (app δ ε) → SN ε
-SNappr {Q} {δ} {ε} (SNI δN-is-SN) = SNI (λ P N▷P → SNappr (δN-is-SN (app δ P) (app ref N▷P)))
+SNappr {Q} {δ} {ε} (SNI δε-is-SN) = SNI (λ ε' ε→₁ε' → SNappr (δε-is-SN (app δ ε') (appr ε→₁ε')))
 
 SNsub : ∀ {Q} {δ : Proof (Lift Q)} {ε} → SN (subbot δ ε) → SN δ
-SNsub {Q} {δ} {ε} (SNI δN-is-SN) = SNI (λ P δ▷P → SNsub (δN-is-SN (P ⟦ botsub ε ⟧) (subredl δ▷P)))
+SNsub {Q} {δ} {ε} (SNI δε-is-SN) = SNI (λ δ' δ→₁δ' → SNsub {!subred!})
+
+SNred⁺ : ∀ {P} {δ ε : Proof P} → SN δ → δ ↠⁺ ε → SN ε
+SNred⁺ {ε = ε} (SNI SNδ) δ↠ε = {!!}
+
+--If s ↠ t then s ≡ t or s ↠⁺ t
+red : ∀ {P} {s t : Proof P} (φ : Set₁) → (s ≡ t → φ) → (s ↠⁺ t → φ) → s ↠ t → φ
+red φ H K (β φ₁ δ ε) = K (β φ₁ δ ε)
+red φ H K ref = H ref
+red φ H K (↠trans {P} {r} {s} {t} rreds sredt) = red (s ↠ t → φ) (λ x x₁ → red φ (λ x₂ → H (trans x x₂)) (λ x₂ → K (↠⁺trans (subst (λ x₃ → x₃ ↠⁺ t) (sym x) x₂) ref)) sredt) (λ x x₁ → K (↠⁺trans x x₁)) rreds sredt
+red φ H K (app {P} {δ} {δ'} {ε} {ε'} sredt sredt₁) =  red φ (λ δisδ' → red φ (λ εisε' → H (wd2 app δisδ' εisε')) (λ ε↠⁺ε' → K (appr sredt ε↠⁺ε')) sredt₁) (λ δisδ' → K (appl δisδ' sredt₁)) sredt
+red φ H K (ξ sredt) = red φ (λ x → H (wd (Λ _) x)) (λ x → K (ξ x)) sredt
+
+SNred : ∀ {P} {δ ε : Proof P} → SN δ → δ ↠ ε → SN ε
+SNred SNδ = red (SN _) (λ x → subst SN x SNδ) (SNred⁺ SNδ) 
+
+--Applying application to a list of terms
+APP : ∀ {P} → Proof P → List (Proof P) → Proof P
+APP δ 〈〉 = δ
+APP δ (εε ∷ ε) = app (APP δ εε) ε
+
+SNexp : ∀ {P} {δ : Proof (Lift P)} {ε} {γγ} {φ} → SN (APP (subbot δ ε) γγ) → SN ε → SN (APP (app (Λ φ δ) ε) γγ)
+SNexp SNδεγγ SNε = SNI {!aux!}
+  where aux : ∀ {P} {δ : Proof (Lift P)} {ε} {γγ} {φ} {γ'} → SN (APP (subbot δ ε) γγ) → SN ε → APP (app (Λ φ δ) ε) γγ ↠⁺ γ' → SN γ'
+        aux {P} {δ} {ε} {〈〉} {φ} SNδε SNε₁ (β .φ .δ .ε) = SNδε
+        aux {P} {δ} {ε} {〈〉} SNδε SNε₁ (↠⁺trans Λφδε↠γ' Λφδε↠γ′₁) = SNred (aux {P} {δ} {ε} {〈〉} SNδε SNε₁ Λφδε↠γ') Λφδε↠γ′₁
+        aux {P} {δ} {ε} {〈〉} SNδε SNε₁ (appl (↠⁺trans r x) r₁) = SNred {!!} {!!}
+--(aux {P} {δ} {ε} {〈〉} SNδε SNε₁ (appl r r₁)) (app x ref)
+        aux {P} {δ} {ε} {〈〉} SNδε SNε₁ (appl (ξ r) r₁) = {!!}
+        aux {P} {δ} {ε} {〈〉} SNδε SNε (appr r r₁) = {!!}
+        aux {P} {δ} {ε} {γγ ∷ x} SNδεγγ₁ SNε₁ Λφδεγγ↠γ' = {!!}
 \end{code}
 
 The rules of deduction of the system are as follows.

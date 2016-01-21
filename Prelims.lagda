@@ -2,6 +2,13 @@
 
 \begin{code}
 module Prelims where
+
+postulate Level : Set
+postulate zro : Level
+postulate suc : Level → Level
+{-# BUILTIN LEVEL Level #-}
+{-# BUILTIN LEVELZERO zro #-}
+{-# BUILTIN LEVELSUC suc #-}
 \end{code}
 
 \subsection{Functions}
@@ -27,7 +34,7 @@ infix 50 _≡_
 data _≡_ {A : Set} (a : A) : A → Set where
   ref : a ≡ a
 
-subst : ∀ {A : Set} (P : A → Set) {a} {b} → a ≡ b → P a → P b
+subst : ∀ {i} {A : Set} (P : A → Set i) {a} {b} → a ≡ b → P a → P b
 subst P ref Pa = Pa
 
 subst2 : ∀ {A B : Set} (P : A → B → Set) {a a' b b'} → a ≡ a' → b ≡ b' → P a b → P a' b'
@@ -121,4 +128,8 @@ liftid (↑ _) = ref
 liftcomp : ∀ {U} {V} {W} {g : Rep V W} {f : Rep U V} → lift (g ∘ f) ∼ lift g ∘ lift f
 liftcomp ⊥ = ref
 liftcomp (↑ _) = ref
+
+data List (A : Set) : Set where
+  〈〉 : List A
+  _∷_ : List A → A → List A
 \end{code}
