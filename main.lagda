@@ -15,6 +15,7 @@
 \usepackage{proof}
 \usepackage{stmaryrd}
 
+\DeclareUnicodeCharacter{8759}{\ensuremath{::}}
 \DeclareUnicodeCharacter{8988}{\ensuremath{\ulcorner}}
 \DeclareUnicodeCharacter{8989}{\ensuremath{\urcorner}}
 \DeclareUnicodeCharacter{8803}{\ensuremath{\overline{\equiv}}}
@@ -22,6 +23,7 @@
 \DeclareUnicodeCharacter{9002}{\ensuremath{\rangle}}
 \DeclareUnicodeCharacter{9655}{\ensuremath{\rhd}}
 \DeclareUnicodeCharacter{10219}{\ensuremath{\rangle\rangle}}
+
 \renewcommand{\textbeta}{\ensuremath{\beta}}
 \renewcommand{\textgamma}{\ensuremath{\gamma}}
 \renewcommand{\textGamma}{\ensuremath{\Gamma}}

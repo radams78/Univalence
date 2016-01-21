@@ -413,7 +413,7 @@ If $δ[\bot:=N] \in SN$ then $δ \in SN$.
 \item
 If $δ \in SN$ and $δ \twoheadrightarrow \epsilon$ then $ε \in SN$.
 \item
-If $δ[x:=ε]\vec{γ} \in SN$ and $ε \in SN$ then $(\lambda x : φ . δ) ε \vec{γ} \in SN$.
+If $δ[x:=ε] \in SN$ and $ε \in SN$ then $(\lambda x : φ . δ) ε \in SN$.
 \end{enumerate}
 \end{lemma}
 
@@ -426,36 +426,6 @@ SNappr {Q} {δ} {ε} (SNI δε-is-SN) = SNI (λ ε' ε→₁ε' → SNappr (δε
 
 SNsub : ∀ {Q} {δ : Proof (Lift Q)} {ε} → SN (subbot δ ε) → SN δ
 SNsub {Q} {δ} {ε} (SNI δε-is-SN) = SNI (λ δ' δ→₁δ' → SNsub (δε-is-SN (δ' ⟦ botsub ε ⟧) (sub₁redl δ→₁δ')))
-
-SNred⁺ : ∀ {P} {δ ε : Proof P} → SN δ → δ ↠⁺ ε → SN ε
-SNred⁺ {ε = ε} (SNI SNδ) δ↠ε = {!!}
-
---If s ↠ t then s ≡ t or s ↠⁺ t
-red : ∀ {P} {s t : Proof P} (φ : Set₁) → (s ≡ t → φ) → (s ↠⁺ t → φ) → s ↠ t → φ
-red φ H K (β φ₁ δ ε) = K (β φ₁ δ ε)
-red φ H K ref = H ref
-red φ H K (↠trans {P} {r} {s} {t} rreds sredt) = red (s ↠ t → φ) (λ x x₁ → red φ (λ x₂ → H (trans x x₂)) (λ x₂ → K (↠⁺trans (subst (λ x₃ → x₃ ↠⁺ t) (sym x) x₂) ref)) sredt) (λ x x₁ → K (↠⁺trans x x₁)) rreds sredt
-red φ H K (app {P} {δ} {δ'} {ε} {ε'} sredt sredt₁) =  red φ (λ δisδ' → red φ (λ εisε' → H (wd2 app δisδ' εisε')) (λ ε↠⁺ε' → K (appr sredt ε↠⁺ε')) sredt₁) (λ δisδ' → K (appl δisδ' sredt₁)) sredt
-red φ H K (ξ sredt) = red φ (λ x → H (wd (Λ _) x)) (λ x → K (ξ x)) sredt
-
-SNred : ∀ {P} {δ ε : Proof P} → SN δ → δ ↠ ε → SN ε
-SNred SNδ = red (SN _) (λ x → subst SN x SNδ) (SNred⁺ SNδ) 
-
---Applying application to a list of terms
-APP : ∀ {P} → Proof P → List (Proof P) → Proof P
-APP δ 〈〉 = δ
-APP δ (εε ∷ ε) = app (APP δ εε) ε
-
-SNexp : ∀ {P} {δ : Proof (Lift P)} {ε} {γγ} {φ} → SN (APP (subbot δ ε) γγ) → SN ε → SN (APP (app (Λ φ δ) ε) γγ)
-SNexp SNδεγγ SNε = SNI {!aux!}
-  where aux : ∀ {P} {δ : Proof (Lift P)} {ε} {γγ} {φ} {γ'} → SN (APP (subbot δ ε) γγ) → SN ε → APP (app (Λ φ δ) ε) γγ ↠⁺ γ' → SN γ'
-        aux {P} {δ} {ε} {〈〉} {φ} SNδε SNε₁ (β .φ .δ .ε) = SNδε
-        aux {P} {δ} {ε} {〈〉} SNδε SNε₁ (↠⁺trans Λφδε↠γ' Λφδε↠γ′₁) = SNred (aux {P} {δ} {ε} {〈〉} SNδε SNε₁ Λφδε↠γ') Λφδε↠γ′₁
-        aux {P} {δ} {ε} {〈〉} SNδε SNε₁ (appl (↠⁺trans r x) r₁) = SNred {!!} {!!}
---(aux {P} {δ} {ε} {〈〉} SNδε SNε₁ (appl r r₁)) (app x ref)
-        aux {P} {δ} {ε} {〈〉} SNδε SNε₁ (appl (ξ r) r₁) = {!!}
-        aux {P} {δ} {ε} {〈〉} SNδε SNε (appr r r₁) = {!!}
-        aux {P} {δ} {ε} {γγ ∷ x} SNδεγγ₁ SNε₁ Λφδεγγ↠γ' = {!!}
 \end{code}
 
 The rules of deduction of the system are as follows.
