@@ -425,7 +425,7 @@ SNappr : ∀ {Q} {δ ε : Proof Q} → SN (app δ ε) → SN ε
 SNappr {Q} {δ} {ε} (SNI δε-is-SN) = SNI (λ ε' ε→₁ε' → SNappr (δε-is-SN (app δ ε') (appr ε→₁ε')))
 
 SNsub : ∀ {Q} {δ : Proof (Lift Q)} {ε} → SN (subbot δ ε) → SN δ
-SNsub {Q} {δ} {ε} (SNI δε-is-SN) = SNI (λ δ' δ→₁δ' → SNsub {!subred!})
+SNsub {Q} {δ} {ε} (SNI δε-is-SN) = SNI (λ δ' δ→₁δ' → SNsub (δε-is-SN (δ' ⟦ botsub ε ⟧) (sub₁redl δ→₁δ')))
 
 SNred⁺ : ∀ {P} {δ ε : Proof P} → SN δ → δ ↠⁺ ε → SN ε
 SNred⁺ {ε = ε} (SNI SNδ) δ↠ε = {!!}
