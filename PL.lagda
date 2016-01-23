@@ -422,3 +422,13 @@ C : ∀ {P} → PContext P → Prp → Proof P → Set₁
 C Γ ⊥ δ = (Γ ⊢ δ ∷ ⊥) ∧ SN δ
 C Γ (φ ⇒ ψ) δ = (Γ ⊢ δ ∷ φ ⇒ ψ) ∧ (∀ ε → C Γ φ ε → C Γ ψ (app δ ε))
 \end{code}
+
+\begin{lemma}
+\[ C_\Gamma(\phi) \subseteq SN \]
+\end{lemma}
+
+\begin{code}
+CsubSN : ∀ {P} {Γ : PContext P} {φ} {δ} → C Γ φ δ → SN δ
+CsubSN {P} {Γ} {⊥} (_ , SNδ) = SNδ
+CsubSN {P} {Γ} {φ ⇒ ψ} (x , x₁) = {!!}
+\end{code}
