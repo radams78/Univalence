@@ -1,6 +1,7 @@
 \begin{code}
 module PL where
-open import Prelims
+
+open import Grammar
 \end{code}
 
 \section{Propositional Logic}
@@ -13,32 +14,45 @@ The syntax of the system is given by the following grammar.
 \[ \begin{array}{lrcl}
 \text{Proof} & \delta & ::= & p \mid \delta \delta \mid \lambda p : \phi . \delta \\
 \text{Proposition} & φ & ::= & ⊥ \mid \phi \rightarrow \phi \\
-\text{Proof Context} & \Delta & ::= & \langle \rangle \mid \Delta, p : \phi \\
-\text{Judgement} & \mathcal{J} & ::= & \Delta \vdash \delta : \phi
+\text{Context} & \Gamma & ::= & \langle \rangle \mid \Gamma, p : \phi \\
+\text{Judgement} & \mathcal{J} & ::= & \Gamma \vdash \delta : \phi
 \end{array} \]
 where $p$ ranges over proof variables and $x$ ranges over term variables.  The variable $p$ is bound within $\delta$ in the proof $\lambda p : \phi . \delta$,
 and the variable $x$ is bound within $M$ in the term $\lambda x : A . M$.  We identify proofs and terms up to $\alpha$-conversion.
 
-\newcommand{\FV}[1]{\mathrm{FV} \left( {#1} \right)}
-\newcommand{\Proof}[1]{\mathbf{Proof} \left( {#1} \right)}
-We write $\Proof{P}$ for the set of all proofs $\delta$ with $\FV{\delta} \subseteq V$.
-
 \begin{code}
-infix 75 _⇒_
-data Prp : Set where
+data PLExpKind : Set where
+  -Proof : PLExpKind
+  -Prp   : PLExpKind
+
+data PLCon : ∀ {K : PLExpKind} → ConstructorKind K → Set where
+  app : PLCon (Π (out -Proof) (out {K = -Proof}))
+  lam : PLCon (Π (out -Prp) (Π (Π -Proof (out -Proof)) (out {K = -Proof})))
+  bot : PLCon (out {K = -Prp})
+  imp : PLCon (Π (out -Prp) (Π (out -Prp) (out {K = -Prp})))
+
+data PLparent : PLExpKind → PLExpKind → Set where
+  PLparentI : PLparent -Proof -Prp
+
+Propositional-Logic : Grammar
+Propositional-Logic = record { 
+  ExpressionKind = PLExpKind; 
+  Constructor = PLCon;
+  parent = PLparent}
+
+module Propositional-Logic where
+  open Grammar.Grammar Propositional-Logic
+
+  Prp : Set
+  Prp = Expression ∅ -Prp
+
   ⊥ : Prp
+  ⊥ = app bot out
+
   _⇒_ : Prp → Prp → Prp
+  φ ⇒ ψ = app imp (app (out φ) (app (out ψ) out))
 
-infix 80 _,_
-data PContext : FinSet → Set where
-  〈〉 : PContext ∅
-  _,_ : ∀ {P} → PContext P → Prp → PContext (Lift P)
-
-propof : ∀ {P} → El P → PContext P → Prp
-propof ⊥ (_ , φ) = φ
-propof (↑ p) (Γ , _) = propof p Γ
-
-data Proof : FinSet → Set where
+{-data Proof : FinSet → Set where
   var : ∀ {P} → El P → Proof P
   app : ∀ {P} → Proof P → Proof P → Proof P
   Λ : ∀ {P} → Prp → Proof (Lift P) → Proof P
@@ -430,5 +444,5 @@ C Γ (φ ⇒ ψ) δ = (Γ ⊢ δ ∷ φ ⇒ ψ) ∧ (∀ ε → C Γ φ ε → C
 \begin{code}
 CsubSN : ∀ {P} {Γ : PContext P} {φ} {δ} → C Γ φ δ → SN δ
 CsubSN {P} {Γ} {⊥} (_ , SNδ) = SNδ
-CsubSN {P} {Γ} {φ ⇒ ψ} (x , x₁) = {!!}
+CsubSN {P} {Γ} {φ ⇒ ψ} (x , x₁) = {!!}-}
 \end{code}

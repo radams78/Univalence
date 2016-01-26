@@ -88,7 +88,7 @@ Applicator C P V * = Out C P V *
 Applicator C P V ([ α ] β) = In C P V α → Applicator C P V β
 
 apply' : ∀ {A} {n} {α} → Out' A {n} α → Applicator' A α
-apply' {α = α} M = ?
+apply' {α = α} M = {!!}
 
 apply : ∀ {C} {P} {V} {α} → Out C P V α → Applicator C P V α
 apply {α = *} M = M

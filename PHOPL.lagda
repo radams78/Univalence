@@ -1,6 +1,7 @@
 \begin{code}
 module PHOPL where
-open import Prelims
+open import Prelims hiding (⊥)
+open import Grammar
 \end{code}
 
 \section{Predicative Higher-Order Propositional Logic}
@@ -13,7 +14,7 @@ The syntax of the system is given by the following grammar.
 %Taken out the proof c of \bot
 \[ \begin{array}{lrcl}
 \text{Proof} & \delta & ::= & p \mid \delta \delta \mid \lambda p : \phi . \delta \\
-\text{Term} & M, \phi & ::= & x \mid \bot \mid M M \mid \phi \rightarrow \phi \mid \lambda x : A . M \\
+\text{Term} & M, \phi & ::= & x \mid \bot \mid M M \mid \lambda x : A . M \mid \phi \rightarrow \phi \\
 \text{Type} & A & ::= & \Omega \mid A \rightarrow A \\
 \text{Term Context} & \Gamma & ::= & \langle \rangle \mid \Gamma , x : A \\
 \text{Proof Context} & \Delta & ::= & \langle \rangle \mid \Delta, p : \phi \\
@@ -26,29 +27,97 @@ and the variable $x$ is bound within $M$ in the term $\lambda x : A . M$.  We id
 In the implementation, we write $\Term{V}$ for the set of all terms with free variables a subset of $V$, where $V : \FinSet$.
 
 \begin{code}
-infix 80 _⇒_
-data Type : Set where
+data PHOPLkind : Set where
+  -Proof : PHOPLkind
+  -Term  : PHOPLkind
+  -Type  : PHOPLkind
+
+data PHOPLcon : ∀ {K : PHOPLkind} → ConstructorKind K → Set where
+  -appProof : PHOPLcon (Π (out -Proof) (Π (out -Proof) (out {K = -Proof})))
+  -lamProof : PHOPLcon (Π (out -Term) (Π (Π -Proof (out -Proof)) (out {K = -Proof})))
+  -bot : PHOPLcon (out {K = -Term})
+  -imp : PHOPLcon (Π (out -Term) (Π (out -Term) (out {K = -Term})))
+  -appTerm : PHOPLcon (Π (out -Term) (Π (out -Term) (out {K = -Term})))
+  -lamTerm : PHOPLcon (Π (out -Type) (Π (Π -Term (out -Term)) (out {K = -Term})))
+  -Omega : PHOPLcon (out {K = -Type})
+  -func  : PHOPLcon (Π (out -Type) (Π (out -Type) (out {K = -Type})))
+
+data PHOPLparent : PHOPLkind → PHOPLkind → Set where
+  ProofTerm : PHOPLparent -Proof -Term
+  TermType  : PHOPLparent -Term -Type
+
+PHOPL : Grammar
+PHOPL = record { 
+  ExpressionKind = PHOPLkind; 
+  Constructor = PHOPLcon; 
+  parent = PHOPLparent }
+
+module PHOPL where
+  open Grammar.Grammar PHOPL
+
+  Type : Set
+  Type = Expression ∅ -Type
+
+  liftType : ∀ {V} → Type → Expression V -Type
+  liftType (var ())
+  liftType (app -Omega out) = app -Omega out
+  liftType (app -func (app (out A) (app (out B) out))) = app -func (app (out (liftType A)) (app (out (liftType B)) out)) 
+
   Ω : Type
+  Ω = app -Omega out
+
   _⇒_ : Type → Type → Type
+  φ ⇒ ψ = app -func (app (out φ) (app (out ψ) out))
 
---Context V P is the set of all contexts whose domain consists of the term variables in V and the proof variables in P
-infix 80 _,_
-data TContext : FinSet → Set where
-  〈〉 : TContext ∅
-  _,_ : ∀ {V} → TContext V → Type → TContext (Lift V)
+  VAlphabet : FinSet → Alphabet
+  VAlphabet ∅ = ∅
+  VAlphabet (Lift X) = VAlphabet X , -Term
 
---Term V is the set of all terms M with FV(M) ⊆ V
-data Term : FinSet → Set where
-  var : ∀ {V} → El V → Term V
+  TContext : FinSet → Set
+  TContext V = Context (VAlphabet V)
+
+  T〈〉 : TContext ∅
+  T〈〉 = 〈〉
+
+  _T,_ : ∀ {V} → TContext V → Type → TContext (Lift V)
+  _T,_ {V} Γ A = _,_ {VAlphabet V} { -Term} { -Type} {TermType} Γ (liftType A)
+
+  Term : FinSet → Set
+  Term V = Expression (VAlphabet V) -Term
+
   ⊥ : ∀ {V} → Term V
-  app : ∀ {V} → Term V → Term V → Term V
-  Λ : ∀ {V} → Type → Term (Lift V) → Term V
-  _⇒_ : ∀ {V} → Term V → Term V → Term V
+  ⊥ = app -bot out
 
-data PContext (V : FinSet) : FinSet → Set where
-  〈〉 : PContext V ∅
-  _,_ : ∀ {P} → PContext V P → Term V → PContext V (Lift P)
+  appTerm : ∀ {V} → Term V → Term V → Term V
+  appTerm M N = app -appTerm (app (out M) (app (out N) out))
 
+  ΛTerm : ∀ {V} → Type → Term (Lift V) → Term V
+  ΛTerm A M = app -lamTerm (app (out (liftType A)) (app (Λ (out M)) out))
+
+  _⊃_ : ∀ {V} → Term V → Term V → Term V
+  φ ⊃ ψ = app -imp (app (out φ) (app (out ψ) out))
+
+  PAlphabet : FinSet → Alphabet → Alphabet
+  PAlphabet ∅ A = A
+  PAlphabet (Lift P) A = PAlphabet P A , -Proof
+
+  liftVar : ∀ {A} {K} P → Var A K → Var (PAlphabet P A) K
+  liftVar ∅ x = x
+  liftVar (Lift P) x = ↑ (liftVar P x)
+
+  liftExp : ∀ {V} {K} P → Expression (VAlphabet V) K → Expression (PAlphabet P (VAlphabet V)) K
+  liftExp P E = E 〈 (λ _ → liftVar P) 〉
+
+  PContext : FinSet → FinSet → Set
+  PContext V P = Context (VAlphabet V) → Context (PAlphabet P (VAlphabet V))
+
+  P〈〉 : ∀ {V} → PContext V ∅
+  P〈〉 Γ = Γ
+
+  _P,_ : ∀ {V} {P} → PContext V P → Term V → PContext V (Lift P)
+  _P,_ {V} {P} Δ φ Γ = _,_ {PAlphabet P (VAlphabet V)} { -Proof} { -Term} {ProofTerm} (Δ Γ) (liftExp P φ)
+
+{-
 --Proof V P is the set of all proofs with term variables among V and proof variables among P
 data Proof (V : FinSet) : FinSet → Set₁ where
   var : ∀ {P} → El P → Proof V P
@@ -454,6 +523,5 @@ data _,,_⊢_∶∶_ : ∀ {V} {P} → TContext V → PContext V P → Proof V P
   var : ∀ {V} {P} {Γ : TContext V} {Δ : PContext V P} {p} → Pvalid Γ Δ → Γ ,, Δ ⊢ var p ∶∶ propof p Δ
   app : ∀ {V} {P} {Γ : TContext V} {Δ : PContext V P} {δ} {ε} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ ⇒ ψ → Γ ,, Δ ⊢ ε ∶∶ φ → Γ ,, Δ ⊢ app δ ε ∶∶ ψ
   Λ : ∀ {V} {P} {Γ : TContext V} {Δ : PContext V P} {φ} {δ} {ψ} → Γ ,, Δ , φ ⊢ δ ∶∶ ψ → Γ ,, Δ ⊢ Λ φ δ ∶∶ φ ⇒ ψ
-  conv : ∀ {V} {P} {Γ : TContext V} {Δ : PContext V P} {δ} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ → Γ ⊢ ψ ∶ Ω → φ ≃ ψ → Γ ,, Δ ⊢ δ ∶∶ ψ
+  conv : ∀ {V} {P} {Γ : TContext V} {Δ : PContext V P} {δ} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ → Γ ⊢ ψ ∶ Ω → φ ≃ ψ → Γ ,, Δ ⊢ δ ∶∶ ψ -}
 \end{code}
-

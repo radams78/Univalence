@@ -24,21 +24,23 @@
 \DeclareUnicodeCharacter{9655}{\ensuremath{\rhd}}
 \DeclareUnicodeCharacter{10219}{\ensuremath{\rangle\rangle}}
 
-\renewcommand{\textbeta}{\ensuremath{\beta}}
-\renewcommand{\textgamma}{\ensuremath{\gamma}}
-\renewcommand{\textGamma}{\ensuremath{\Gamma}}
-\renewcommand{\textdelta}{\ensuremath{\delta}}
-\renewcommand{\textDelta}{\ensuremath{\Delta}}
-\renewcommand{\textepsilon}{\ensuremath{\epsilon}}
-\renewcommand{\textLambda}{\ensuremath{\Lambda}}
-\renewcommand{\textlambda}{\ensuremath{\lambda}}
-\renewcommand{\textphi}{\ensuremath{\phi}}
-\renewcommand{\textpsi}{\ensuremath{\psi}}
-\renewcommand{\textsigma}{\ensuremath{\sigma}}
-\renewcommand{\textrho}{\ensuremath{\rho}}
-\renewcommand{\textOmega}{\ensuremath{\Omega}}
-\renewcommand{\texttau}{\ensuremath{\tau}}
-\renewcommand{\textxi}{\ensuremath{\xi}}
+\usepackage{textalpha}
+
+% \renewcommand{\textbeta}{\ensuremath{\beta}}
+% \renewcommand{\textgamma}{\ensuremath{\gamma}}
+% \renewcommand{\textGamma}{\ensuremath{\Gamma}}
+% \renewcommand{\textdelta}{\ensuremath{\delta}}
+% \renewcommand{\textDelta}{\ensuremath{\Delta}}
+% \renewcommand{\textepsilon}{\ensuremath{\epsilon}}
+% \renewcommand{\textLambda}{\ensuremath{\Lambda}}
+% \renewcommand{\textlambda}{\ensuremath{\lambda}}
+% \renewcommand{\textphi}{\ensuremath{\phi}}
+% \renewcommand{\textpsi}{\ensuremath{\psi}}
+% \renewcommand{\textsigma}{\ensuremath{\sigma}}
+% \renewcommand{\textrho}{\ensuremath{\rho}}
+% \renewcommand{\textOmega}{\ensuremath{\Omega}}
+% \renewcommand{\texttau}{\ensuremath{\tau}}
+% \renewcommand{\textxi}{\ensuremath{\xi}}
 
 \DefineVerbatimEnvironment{code}{Verbatim}{}
 
@@ -50,17 +52,9 @@
 
 \maketitle
 
-\begin{code}
-module main where
-\end{code}
-
 \input{Prelims.lagda}
-\begin{code}
-open import Prelims
-\end{code}
-
+\input{Grammar.lagda}
 \input{PL.lagda}
-
 \input{PHOPL.lagda}
 
 \end{document}
