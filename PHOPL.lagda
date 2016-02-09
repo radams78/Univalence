@@ -54,6 +54,7 @@ PHOPL = record {
 
 module PHOPL where
   open Grammar.Grammar PHOPL
+  open import Reduction PHOPL
 
   Type : Set
   Type = Expression ∅ -Type
@@ -66,6 +67,7 @@ module PHOPL where
   Ω : Type
   Ω = app -Omega out
 
+  infix 75 _⇒_
   _⇒_ : Type → Type → Type
   φ ⇒ ψ = app -func (app (out φ) (app (out ψ) out))
 
@@ -83,6 +85,7 @@ module PHOPL where
   lowerType (app -Omega out) = Ω
   lowerType (app -func (app (out φ) (app (out ψ) out))) = lowerType φ ⇒ lowerType ψ
 
+  infix 80 _,_
   data TContext : FinSet → Set where
     〈〉 : TContext ∅
     _,_ : ∀ {V} → TContext V → Type → TContext (Lift V)
@@ -150,31 +153,8 @@ module PHOPL where
   propof Prelims.⊥ (_ , φ) = φ
   propof (↑ x) (Γ , _) = propof x Γ
 
-  data β : ∀ {V} {K} → Expression V K → Expression V K → Set where
-    βI : ∀ {V} A (M : Term (Lift V)) N → β (appTerm (ΛTerm A M) N) (M ⟦ x₀:= N ⟧)
-{-
-\begin{lemma}
-\begin{enumerate}
-\item
-If $MN \in SN$ then $M \in SN$ and $N \in SN$.
-\item
-If $M[x:=N] \in SN$ then $M \in SN$.
-\item
-If $M \in SN$ and $M \rhd N$ then $N \in SN$.
-\item
-If $M[x:=N]\vec{P} \in SN$ and $N \in SN$ then $(\lambda x M) N \vec{P} \in SN$.
-\end{enumerate}
-\end{lemma}
-
-\begin{code}
-SNappl : ∀ {V} {M N : Term V} → SN (app M N) → SN M
-SNappl {V} {M} {N} (SNI MN-is-SN) = SNI (λ P M▷P → SNappl (MN-is-SN (app P N) (app M▷P ref)))
-
-SNappr : ∀ {V} {M N : Term V} → SN (app M N) → SN N
-SNappr {V} {M} {N} (SNI MN-is-SN) = SNI (λ P N▷P → SNappr (MN-is-SN (app M P) (app ref N▷P)))
-
-SNsub : ∀ {V} {M : Term (Lift V)} {N} → SN (subbot M N) → SN M
-SNsub {V} {M} {N} (SNI MN-is-SN) = SNI (λ P M▷P → SNsub (MN-is-SN (P ⟦ botsub N ⟧) (subredr M▷P)))
+  data β : Reduction where
+    βI : ∀ {V} A (M : Term (Lift V)) N → β -appTerm (app (out (ΛTerm A M)) (app (out N) out)) (M ⟦ x₀:= N ⟧)
 \end{code}
 
 The rules of deduction of the system are as follows.
@@ -198,25 +178,27 @@ The rules of deduction of the system are as follows.
 \[ \infer[(\phi \simeq \phi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
 
 \begin{code}
-mutual
-  data Tvalid : ∀ {V} → TContext V → Set₁ where
-    〈〉 : Tvalid 〈〉
-    _,_ : ∀ {V} {Γ : TContext V} → Tvalid Γ → ∀ A → Tvalid (Γ , A)
+  mutual
+    data Tvalid : ∀ {V} → TContext V → Set₁ where
+      〈〉 : Tvalid 〈〉
+      _,_ : ∀ {V} {Γ : TContext V} → Tvalid Γ → ∀ A → Tvalid (Γ , A)
 
-  data _⊢_∶_ : ∀ {V} → TContext V → Term V → Type → Set₁ where
-    var : ∀ {V} {Γ : TContext V} {x} → Tvalid Γ → Γ ⊢ var x ∶ typeof x Γ
-    ⊥ : ∀ {V} {Γ : TContext V} → Tvalid Γ → Γ ⊢ ⊥ ∶ Ω
-    imp : ∀ {V} {Γ : TContext V} {φ} {ψ} → Γ ⊢ φ ∶ Ω → Γ ⊢ ψ ∶ Ω → Γ ⊢ φ ⇒ ψ ∶ Ω
-    app : ∀ {V} {Γ : TContext V} {M} {N} {A} {B} → Γ ⊢ M ∶ A ⇒ B → Γ ⊢ N ∶ A → Γ ⊢ app M N ∶ B
-    Λ : ∀ {V} {Γ : TContext V} {A} {M} {B} → Γ , A ⊢ M ∶ B → Γ ⊢ Λ A M ∶ A ⇒ B
+    infix 10 _⊢_∶_
+    data _⊢_∶_ : ∀ {V} → TContext V → Term V → Type → Set₁ where
+      var : ∀ {V} {Γ : TContext V} {x} → Tvalid Γ → Γ ⊢ var (inVar x) ∶ typeof' x Γ
+      ⊥R : ∀ {V} {Γ : TContext V} → Tvalid Γ → Γ ⊢ ⊥ ∶ Ω
+      imp : ∀ {V} {Γ : TContext V} {φ} {ψ} → Γ ⊢ φ ∶ Ω → Γ ⊢ ψ ∶ Ω → Γ ⊢ φ ⊃ ψ ∶ Ω
+      app : ∀ {V} {Γ : TContext V} {M} {N} {A} {B} → Γ ⊢ M ∶ A ⇒ B → Γ ⊢ N ∶ A → Γ ⊢ appTerm M N ∶ B
+      Λ : ∀ {V} {Γ : TContext V} {A} {M} {B} → Γ , A ⊢ M ∶ B → Γ ⊢ ΛTerm A M ∶ A ⇒ B
 
-data Pvalid : ∀ {V} {P} → TContext V → PContext V P → Set₁ where
-  〈〉 : ∀ {V} {Γ : TContext V} → Tvalid Γ → Pvalid Γ 〈〉
-  _,_ : ∀ {V} {P} {Γ : TContext V} {Δ : PContext V P} {φ : Term V} → Pvalid Γ Δ → Γ ⊢ φ ∶ Ω → Pvalid Γ (Δ , φ)
+  data Pvalid : ∀ {V} {P} → TContext V → PContext' V P → Set₁ where
+    〈〉 : ∀ {V} {Γ : TContext V} → Tvalid Γ → Pvalid Γ 〈〉
+    _,_ : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {φ : Term V} → Pvalid Γ Δ → Γ ⊢ φ ∶ Ω → Pvalid Γ (Δ , φ)
 
-data _,,_⊢_∶∶_ : ∀ {V} {P} → TContext V → PContext V P → Proof V P → Term V → Set₁ where
-  var : ∀ {V} {P} {Γ : TContext V} {Δ : PContext V P} {p} → Pvalid Γ Δ → Γ ,, Δ ⊢ var p ∶∶ propof p Δ
-  app : ∀ {V} {P} {Γ : TContext V} {Δ : PContext V P} {δ} {ε} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ ⇒ ψ → Γ ,, Δ ⊢ ε ∶∶ φ → Γ ,, Δ ⊢ app δ ε ∶∶ ψ
-  Λ : ∀ {V} {P} {Γ : TContext V} {Δ : PContext V P} {φ} {δ} {ψ} → Γ ,, Δ , φ ⊢ δ ∶∶ ψ → Γ ,, Δ ⊢ Λ φ δ ∶∶ φ ⇒ ψ
-  conv : ∀ {V} {P} {Γ : TContext V} {Δ : PContext V P} {δ} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ → Γ ⊢ ψ ∶ Ω → φ ≃ ψ → Γ ,, Δ ⊢ δ ∶∶ ψ -}
+  infix 10 _,,_⊢_∶∶_
+  data _,,_⊢_∶∶_ : ∀ {V} {P} → TContext V → PContext' V P → Proof V P → Term V → Set₁ where
+    var : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {p} → Pvalid Γ Δ → Γ ,, Δ ⊢ varP p ∶∶ propof p Δ -- TODO Make inVar and varP naming consistent
+    app : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {δ} {ε} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ ⊃ ψ → Γ ,, Δ ⊢ ε ∶∶ φ → Γ ,, Δ ⊢ appP {V} {P} δ ε ∶∶ ψ
+    Λ : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {φ} {δ} {ψ} → Γ ,, Δ , φ ⊢ δ ∶∶ ψ → Γ ,, Δ ⊢ ΛP {V} {P} φ δ ∶∶ φ ⊃ ψ
+    convR : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {δ} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ → Γ ⊢ ψ ∶ Ω → φ ≃〈 β 〉 ψ → Γ ,, Δ ⊢ δ ∶∶ ψ
 \end{code}
