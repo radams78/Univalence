@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.1.15)  25 JAN 2016 22:17
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.1.15)  2 FEB 2016 14:41
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -341,23 +341,16 @@ LaTeX Font Info:    Try loading font information for LGR+cmtt on input line 69.
 File: lgrcmtt.fd 2013/09/01 v1.0 Greek European Computer Typewriter
 ) [2])
 (./Grammar.lagda [3]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 12.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 14.
  (/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 12.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 14.
 
 (/usr/share/texlive/texmf-dist/tex/latex/ucs/data/uni-32.def
 File: uni-32.def 2013/05/13 UCS: Unicode data U+2000..U+20FF
-) [4] [5]
-(/usr/share/texlive/texmf-dist/tex/latex/ucs/data/uni-39.def
-File: uni-39.def 2013/05/13 UCS: Unicode data U+2700..U+27FF
-)) (./PL.lagda
-
-LaTeX Warning: Command \textphi invalid in math mode on input line 15.
-
-[6] [7]
+) [4]
 LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 102
 .
 LaTeX Font Info:    No file OMScmtt.fd. on input line 102.
@@ -367,159 +360,51 @@ LaTeX Font Warning: Font shape `OMS/cmtt/m/n' undefined
 (Font)              using `OMS/cmsy/m/n' instead
 (Font)              for symbol `textbullet' on input line 102.
 
-[8]
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 175.
-
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 175.
-
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 177.
-
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 177.
-
-[9]
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 221.
-
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 221.
-
-[10] [11]
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 367.
-
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 367.
-
-
-LaTeX Warning: Command \textepsilon invalid in math mode on input line 367.
-
-
-LaTeX Warning: Command \textepsilon invalid in math mode on input line 367.
-
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 367.
-
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 367.
-
-
-LaTeX Warning: Command \textepsilon invalid in math mode on input line 367.
-
-
-LaTeX Warning: Command \textepsilon invalid in math mode on input line 367.
-
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 369.
-
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 369.
-
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 369.
-
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 369.
-
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 371.
-
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 371.
-
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 371.
-
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 371.
-
-
-LaTeX Warning: Command \textepsilon invalid in math mode on input line 371.
-
-
-LaTeX Warning: Command \textepsilon invalid in math mode on input line 371.
-
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 373.
-
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 373.
-
-
-LaTeX Warning: Command \textepsilon invalid in math mode on input line 373.
-
-
-LaTeX Warning: Command \textepsilon invalid in math mode on input line 373.
-
-
-LaTeX Warning: Command \textepsilon invalid in math mode on input line 373.
-
-
-LaTeX Warning: Command \textepsilon invalid in math mode on input line 373.
-
-
-LaTeX Warning: Command \textphi invalid in math mode on input line 373.
-
-
-LaTeX Warning: Command \textphi invalid in math mode on input line 373.
-
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 373.
-
-
-LaTeX Warning: Command \textdelta invalid in math mode on input line 373.
-
-
-LaTeX Warning: Command \textepsilon invalid in math mode on input line 373.
-
-
-LaTeX Warning: Command \textepsilon invalid in math mode on input line 373.
-
-[12]) (./PHOPL.lagda [13] [14] [15]
-
-LaTeX Warning: Command \textbullet invalid in math mode on input line 137.
-
-LaTeX Font Info:    Font shape `OMS/cmr/m/it' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 137.
-
-LaTeX Warning: Command \textbullet invalid in math mode on input line 137.
-
-[16] [17] [18] [19] [20] [21]) [22] (./main.aux)
-
-LaTeX Font Warning: Some font shapes were not available, defaults substituted.
-
- ) 
+(/usr/share/texlive/texmf-dist/tex/latex/ucs/data/uni-0.def
+File: uni-0.def 2013/05/13 UCS: Unicode data U+0000..U+00FF
+) [5] [6] [7]
+[8] (/usr/share/texlive/texmf-dist/tex/latex/ucs/data/uni-39.def
+File: uni-39.def 2013/05/13 UCS: Unicode data U+2700..U+27FF
+) [9] [10])
+(./PL.lagda
+
+LaTeX Warning: Command \textphi invalid in math mode on input line 16.
+
+[11]
+! Undefined control sequence.
+l.61 ...P, Q : \FinSet$.  Given a term $M : \Proof
+                                                  {P}$
+? X
+ 
 Here is how much of TeX's memory you used:
- 5191 strings out of 494952
- 73245 string characters out of 6179835
- 108485 words of memory out of 5000000
- 8322 multiletter control sequences out of 15000+600000
- 16615 words of font info for 59 fonts, out of 8000000 for 9000
+ 5661 strings out of 494952
+ 78107 string characters out of 6179835
+ 109376 words of memory out of 5000000
+ 8794 multiletter control sequences out of 15000+600000
+ 15928 words of font info for 60 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
  31i,8n,27p,500b,652s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texl
-ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/
-type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
-msfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy1
-0.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/
-share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb></usr/share/t
-exlive/texmf-dist/fonts/type1/public/cbfonts/gttn1000.pfb></usr/share/texlive/t
-exmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/share/texlive/te
-xmf-dist/fonts/type1/public/stmaryrd/stmary10.pfb>
-Output written on main.pdf (22 pages, 239041 bytes).
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/
+share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/
+texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.
+pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></
+usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/sha
+re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/tex
+live/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texlive/t
+exmf-dist/fonts/type1/public/cbfonts/gttn1000.pfb></usr/share/texlive/texmf-dis
+t/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/share/texlive/texmf-dist
+/fonts/type1/public/stmaryrd/stmary10.pfb>
+Output written on main.pdf (11 pages, 213839 bytes).
 PDF statistics:
- 144 PDF objects out of 1000 (max. 8388607)
- 101 compressed objects within 2 object streams
+ 112 PDF objects out of 1000 (max. 8388607)
+ 80 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
