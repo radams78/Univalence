@@ -188,7 +188,7 @@ If $R$ respects replacement and $\sigma \twoheadrightarrow_R \tau$ then $E[\sigm
       respect-rep R →
       ρ ↠〈 R 〉s σ → redB R (EE ⟦ ρ ⟧B) (EE ⟦ σ ⟧B)
     subredrB {EE = out} _ _ = ref
-    subredrB {U} {V} {K} {Π L C} {ρ} {σ} {R} {app A EE} hyp ρ↠σ = trans-red (redappl (subredrA hyp ρ↠σ)) (redappr (subredrB hyp ρ↠σ))
+    subredrB {U} {V} {K} {Π₂ L C} {ρ} {σ} {R} {app A EE} hyp ρ↠σ = trans-red (redappl (subredrA hyp ρ↠σ)) (redappr (subredrB hyp ρ↠σ))
 
     subredrA : ∀ {U} {V} {K} {ρ σ : Sub U V} {R : Reduction} {A : Abstraction U K} →
       respect-rep R →

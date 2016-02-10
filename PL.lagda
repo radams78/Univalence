@@ -26,10 +26,10 @@ data PLExpKind : Set where
   -Prp   : PLExpKind
 
 data PLCon : ∀ {K : PLExpKind} → ConstructorKind K → Set where
-  app : PLCon (Π (out -Proof) (out {K = -Proof}))
-  lam : PLCon (Π (out -Prp) (Π (Π -Proof (out -Proof)) (out {K = -Proof})))
-  bot : PLCon (out {K = -Prp})
-  imp : PLCon (Π (out -Prp) (Π (out -Prp) (out {K = -Prp})))
+  app : PLCon (Π₂ (out -Proof) (Π₂ (out -Proof) (out₂ {K = -Proof})))
+  lam : PLCon (Π₂ (out -Prp) (Π₂ (Π -Proof (out -Proof)) (out₂ {K = -Proof})))
+  bot : PLCon (out₂ {K = -Prp})
+  imp : PLCon (Π₂ (out -Prp) (Π₂ (out -Prp) (out₂ {K = -Prp})))
 
 data PLparent : PLExpKind → PLExpKind → Set where
   PLparentI : PLparent -Proof -Prp

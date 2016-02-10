@@ -32,13 +32,23 @@ c([x_{11}, \ldots, x_{1r_1}]E_1, \ldots, [x_{m1}, \ldots, x_{mr_m}]E_m) \enspace
 The subexpressions of the form $[x_{i1}, \ldots, x_{ir_i}]E_i$ shall be called \emph{abstractions}, and the pieces of syntax of the form $(A_{i1}, \ldots, A_{ij})B_i$ that occur in constructor kinds shall be called \emph{abstraction kinds}.
 
 \begin{code}
-data AbstractionKind (ExpressionKind : Set) : Set where
-  out : ExpressionKind → AbstractionKind ExpressionKind
-  Π   : ExpressionKind → AbstractionKind ExpressionKind → AbstractionKind ExpressionKind
+mutual
+  data KindClass (ExpressionKind : Set) : Set where
+    -Expression  : KindClass ExpressionKind
+    -Abstraction : KindClass ExpressionKind
+    -Constructor : ExpressionKind → KindClass ExpressionKind
 
-data ConstructorKind {ExpressionKind : Set} (K : ExpressionKind) : Set where
-  out : ConstructorKind K
-  Π   : AbstractionKind ExpressionKind → ConstructorKind K → ConstructorKind K
+  data Kind (ExpressionKind : Set) : KindClass ExpressionKind → Set where
+    out  : ExpressionKind → Kind ExpressionKind -Abstraction
+    Π    : ExpressionKind → Kind ExpressionKind -Abstraction → Kind ExpressionKind -Abstraction
+    out₂ : ∀ {K} → Kind ExpressionKind (-Constructor K)
+    Π₂   : ∀ {K} → Kind ExpressionKind -Abstraction → Kind ExpressionKind (-Constructor K) → Kind ExpressionKind (-Constructor K)
+
+AbstractionKind : Set → Set
+AbstractionKind ExpressionKind = Kind ExpressionKind -Abstraction
+
+ConstructorKind : ∀ {ExpressionKind} → ExpressionKind → Set
+ConstructorKind {ExpressionKind} K = Kind ExpressionKind (-Constructor K)
 
 record Grammar : Set₁ where
   field
@@ -74,8 +84,8 @@ to $\alpha$-conversion.
       app : ∀ {C : ConstructorKind K} → Constructor C → Body V C → Expression V K
 
     data Body (V : Alphabet) {K : ExpressionKind} : ConstructorKind K → Set where
-      out : Body V out
-      app : ∀ {A} {C} → Abstraction V A → Body V C → Body V (Π A C)
+      out : Body V out₂
+      app : ∀ {A} {C} → Abstraction V A → Body V C → Body V (Π₂ A C)
 
     data Abstraction (V : Alphabet) : AbstractionKind ExpressionKind → Set where
       out : ∀ {K} → Expression V K → Abstraction V (out K)
@@ -154,8 +164,8 @@ alphabets and replacements to the category of sets.
     rep-wd {U} {V} {K} {app c EE} ρ-is-ρ' = wd (app c) (rep-wdB ρ-is-ρ')
 
     rep-wdB : ∀ {U} {V} {K} {C : ConstructorKind K} {EE : Body U C} {ρ ρ' : Rep U V} → ρ ∼R ρ' → EE 〈 ρ 〉B ≡ EE 〈 ρ' 〉B
-    rep-wdB {U} {V} {K} {out} {out} ρ-is-ρ' = ref
-    rep-wdB {U} {V} {K} {Π A C} {app A' EE} ρ-is-ρ' = wd2 app (rep-wdA ρ-is-ρ') (rep-wdB ρ-is-ρ')
+    rep-wdB {U} {V} .{K} {out₂ {K}} {out} ρ-is-ρ' = ref
+    rep-wdB {U} {V} {K} {Π₂ A C} {app A' EE} ρ-is-ρ' = wd2 app (rep-wdA ρ-is-ρ') (rep-wdB ρ-is-ρ')
 
     rep-wdA : ∀ {U} {V} {A} {E : Abstraction U A} {ρ ρ' : Rep U V} → ρ ∼R ρ' → E 〈 ρ 〉A ≡ E 〈 ρ' 〉A
     rep-wdA {U} {V} {out K} {out E} ρ-is-ρ' = wd out (rep-wd ρ-is-ρ')
@@ -181,7 +191,7 @@ alphabets and replacements to the category of sets.
 
     rep-compB : ∀ {U} {V} {W} {K} {C : ConstructorKind K} {ρ : Rep U V} {ρ' : Rep V W} {EE : Body U C} → EE 〈 ρ' •R ρ 〉B ≡ EE 〈 ρ 〉B 〈 ρ' 〉B
     rep-compB {EE = out} = ref
-    rep-compB {U} {V} {W} {K} {Π L C} {ρ} {ρ'} {app A EE} = wd2 app rep-compA rep-compB
+    rep-compB {U} {V} {W} {K} {Π₂ L C} {ρ} {ρ'} {app A EE} = wd2 app rep-compA rep-compB
 
     rep-compA : ∀ {U} {V} {W} {K} {ρ : Rep U V} {ρ' : Rep V W} {A : Abstraction U K} → A 〈 ρ' •R ρ 〉A ≡ A 〈 ρ 〉A 〈 ρ' 〉A
     rep-compA {A = out _} = wd out rep-comp
@@ -339,7 +349,7 @@ $M[\sigma \bullet_2 \rho] \equiv M \langle \rho \rangle [ \sigma ]$
     sub-comp₁B : ∀ {U} {V} {W} {K} {C : ConstructorKind K} {EE : Body U C} {ρ : Rep V W} {σ : Sub U V} →
       EE ⟦ ρ •₁ σ ⟧B ≡ EE ⟦ σ ⟧B 〈 ρ 〉B
     sub-comp₁B {EE = out} = ref
-    sub-comp₁B {U} {V} {W} {K} {(Π L C)} {app A EE} = wd2 app sub-comp₁A sub-comp₁B
+    sub-comp₁B {U} {V} {W} {K} {(Π₂ L C)} {app A EE} = wd2 app sub-comp₁A sub-comp₁B
 
     sub-comp₁A : ∀ {U} {V} {W} {K} {A : Abstraction U K} {ρ : Rep V W} {σ : Sub U V} →
       A ⟦ ρ •₁ σ ⟧A ≡ A ⟦ σ ⟧A 〈 ρ 〉A
@@ -354,7 +364,7 @@ $M[\sigma \bullet_2 \rho] \equiv M \langle \rho \rangle [ \sigma ]$
     sub-comp₂B : ∀ {U} {V} {W} {K} {C : ConstructorKind K} {EE : Body U C}
       {σ : Sub V W} {ρ : Rep U V} → EE ⟦ σ •₂ ρ ⟧B ≡ EE 〈 ρ 〉B ⟦ σ ⟧B
     sub-comp₂B {EE = out} = ref
-    sub-comp₂B {U} {V} {W} {K} {Π L C} {app A EE} = wd2 app sub-comp₂A sub-comp₂B
+    sub-comp₂B {U} {V} {W} {K} {Π₂ L C} {app A EE} = wd2 app sub-comp₂A sub-comp₂B
 
     sub-comp₂A : ∀ {U} {V} {W} {K} {A : Abstraction U K} {σ : Sub V W} {ρ : Rep U V} → A ⟦ σ •₂ ρ ⟧A ≡ A 〈 ρ 〉A ⟦ σ ⟧A
     sub-comp₂A {A = out E} = wd out (sub-comp₂ {E = E})
@@ -399,7 +409,7 @@ We define the composition of two substitutions, as follows.
     sub-compB : ∀ {U} {V} {W} {K} {C : ConstructorKind K} {EE : Body U C} {σ : Sub V W} {ρ : Sub U V} →
       EE ⟦ σ • ρ ⟧B ≡ EE ⟦ ρ ⟧B ⟦ σ ⟧B
     sub-compB {EE = out} = ref
-    sub-compB {U} {V} {W} {K} {(Π L C)} {app A EE} = wd2 app sub-compA sub-compB
+    sub-compB {U} {V} {W} {K} {(Π₂ L C)} {app A EE} = wd2 app sub-compA sub-compB
 
     sub-comp : ∀ {U} {V} {W} {K} {E : Expression U K} {σ : Sub V W} {ρ : Sub U V} →
       E ⟦ σ • ρ ⟧ ≡ E ⟦ ρ ⟧ ⟦ σ ⟧

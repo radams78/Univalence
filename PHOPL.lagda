@@ -33,14 +33,14 @@ data PHOPLkind : Set where
   -Type  : PHOPLkind
 
 data PHOPLcon : ∀ {K : PHOPLkind} → ConstructorKind K → Set where
-  -appProof : PHOPLcon (Π (out -Proof) (Π (out -Proof) (out {K = -Proof})))
-  -lamProof : PHOPLcon (Π (out -Term) (Π (Π -Proof (out -Proof)) (out {K = -Proof})))
-  -bot : PHOPLcon (out {K = -Term})
-  -imp : PHOPLcon (Π (out -Term) (Π (out -Term) (out {K = -Term})))
-  -appTerm : PHOPLcon (Π (out -Term) (Π (out -Term) (out {K = -Term})))
-  -lamTerm : PHOPLcon (Π (out -Type) (Π (Π -Term (out -Term)) (out {K = -Term})))
-  -Omega : PHOPLcon (out {K = -Type})
-  -func  : PHOPLcon (Π (out -Type) (Π (out -Type) (out {K = -Type})))
+  -appProof : PHOPLcon (Π₂ (out -Proof) (Π₂ (out -Proof) (out₂ {K = -Proof})))
+  -lamProof : PHOPLcon (Π₂ (out -Term) (Π₂ (Π -Proof (out -Proof)) (out₂ {K = -Proof})))
+  -bot : PHOPLcon (out₂ {K = -Term})
+  -imp : PHOPLcon (Π₂ (out -Term) (Π₂ (out -Term) (out₂ {K = -Term})))
+  -appTerm : PHOPLcon (Π₂ (out -Term) (Π₂ (out -Term) (out₂ {K = -Term})))
+  -lamTerm : PHOPLcon (Π₂ (out -Type) (Π₂ (Π -Term (out -Term)) (out₂ {K = -Term})))
+  -Omega : PHOPLcon (out₂ {K = -Type})
+  -func  : PHOPLcon (Π₂ (out -Type) (Π₂ (out -Type) (out₂ {K = -Type})))
 
 data PHOPLparent : PHOPLkind → PHOPLkind → Set where
   ProofTerm : PHOPLparent -Proof -Term
