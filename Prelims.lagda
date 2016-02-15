@@ -11,6 +11,17 @@ postulate suc : Level → Level
 {-# BUILTIN LEVELSUC suc #-}
 \end{code}
 
+\subsection{Booleans}
+
+\begin{code}
+data Bool : Set where
+  true : Bool
+  false : Bool
+
+data IsTrue : Bool → Set where
+  isTrue : IsTrue true
+\end{code}
+
 \subsection{Conjunction}
 
 \begin{code}
