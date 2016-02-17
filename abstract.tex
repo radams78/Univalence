@@ -13,11 +13,17 @@ Gothenburg, Sweden \\
 
 \usepackage{proof}
 \usepackage{amssymb}
+\usepackage{amsthm}
 
 \newcommand{\vald}{\ \mathrm{valid}}
 \newcommand{\univ}[4]{\mathsf{univ}_{{#1},{#2}} \left( {#3} , {#4} \right)}
 \newcommand{\triplelambda}{\lambda \!\! \lambda \!\! \lambda}
 \newcommand{\reff}[1]{\mathsf{ref} \left( {#1} \right)}
+\newcommand{\eqdef}{\stackrel{\mathrm{def}}{=}}
+\newcommand{\SN}{\mathbf{SN}}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
 
 \begin{document}
 
@@ -72,14 +78,14 @@ On top of this system, we add an extensional equality relation.  We extend the g
 
 \[
 \begin{array}{lrcl}
-\text{Equality Proof} & P & ::= & e \mid \reff{M} \mid P \supset P \mid \univ{\phi}{\phi}{\delta}{\delta} \mid \triplelambda e : x =_A x . P \mid P P\\
+\text{Path} & P & ::= & e \mid \reff{M} \mid P \supset P \mid \univ{\phi}{\phi}{\delta}{\delta} \mid \triplelambda e : x =_A x . P \mid P P\\
 \text{Proof} & \delta & ::= & \cdots \mid P^+ \mid P^- \\
 \text{Context} & \Gamma & ::= & \cdots \mid \Gamma, e : M =_A M \\
 \text{Judgement} & \mathcal{J} & ::= & \cdots \mid \Gamma \vdash P : M =_A M
 \end{array}
 \]
 
-Note that, in the equality proof $\triplelambda e : x =_A y . P$, the term variables $x$ and $y$ and the proof variable $e$ are all bound within $P$.
+Note that, in the path $\triplelambda e : x =_A y . P$, the term variables $x$ and $y$ and the proof variable $e$ are all bound within $P$.
 
 We add the following rules of deduction
 
@@ -103,6 +109,28 @@ We add the following rules of deduction
 \infer{\Gamma \vdash PQ : MN =_B M' N'}{\Gamma \vdash P : M =_{A \rightarrow B} M' \quad \Gamma \vdash Q : N =_A N'} \]
 
 \[ \infer[M \simeq_\beta M', N \simeq_\beta N']{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
+
+\section{Path Substitution}
+
+Every term in the system is functional; that is, it maps equal terms to equal terms.  That is, if $M : B$ depends on a variable $x : A$ and we have a proof of $N =_A N'$,
+then we can construct a proof of $[N/x]M =_B [N'/x]M$.  We call this construction \emph{path substitution}.  The definition is as follows.
+
+Given paths $P_1$, \ldots, $P_n$; term variales $x_1$, \ldots, $x_n$; and a term $M$, define the path $\{ P_1 / x_1, \ldots, P_n / x_n \} M$ as follows.
+\begin{align*}
+\{ P_1 / x_1, \ldots, P_n / x_n \} x_i & \eqdef P_i \\
+\{ P_1 / x_1, \ldots, P_n / x_n \} y & \eqdef \reff{y} & (y \not\equiv x_1, \ldots, x_n) \\
+\{ P_1 / x_1, \ldots, P_n / x_n \} \bot & \eqdef \reff{\bot} \\
+\{ \vec{P} / \vec{x} \} (MN) & \eqdef \{ \vec{P} / \vec{x} \} M \{ \vec{P} / \vec{x} \} N \\
+\{ \vec{P} / \vec{x} \} (\lambda y : A . M) & \eqdef \triplelambda e : a =_A a' . \{ \vec{P} / \vec{x} , e / y \} M \\
+\{ \vec{P} / \vec{x} \} (\phi \rightarrow \psi) & \eqdef \{ \vec{P} / \vec{x} \} \phi \rightarrow \{ \vec{P} / \vec{x} \} \psi
+\end{align*}
+
+\begin{lemma}
+If $\Gamma, x_1 : A_1, \ldots, x_n : A_n \vdash M : B$ and $\Gamma \vdash P_i : N_i =_{A_i} N_i'$ for $i = 1, \ldots, n$, then
+$\Gamma \vdash \{ \vec{P} / \vec{x} \} M : [ \vec{N} / \vec{x} ] M =_B [ \vec{N'} / \vec{x} ] M$.
+\end{lemma}
+
+We also define $M \bullet P$ to be $\{ P / x \} (Mx)$.  Thus, if $M : A \rightarrow B$ and $P : N =_A N'$, then $M \bullet P : MN =_B MN'$.
 
 \section{The Reduction Relation}
 
@@ -129,10 +157,61 @@ We define the following reduction relation on proofs and equality proofs.
 \reff{M} \reff{N} \rightsquigarrow \reff{MN}
 \\
 (\reff{\lambda x:A.M})P \rightsquigarrow \{ P / x \} M
+\qquad
+(\triplelambda e : x =_A y.P)Q \rightsquigarrow [M/x, N/y, Q/e]P
 \end{gather*}
+where, in the last clause, we have $Q : M =_A N$.
+%TODO Fix this
 
 \section{Proof of Strong Normalization}
 
+The proof of strong normalization follows the method of Tait %TODO Cite
+We define the set of \emph{computable} proofs of each term, terms of each type
+and paths of each equation (in a context $\Gamma$) as follows.
+
+\begin{align*}
+E_\Gamma(\Omega) & \eqdef \{ M \mid \Gamma \vdash M : \Omega, M \in \SN \} \\
+E_\Gamma(A \rightarrow B) & \eqdef \{ M \mid \Gamma \vdash M : A \rightarrow B, M \in \SN,
+& \forall N \in E_\Gamma(A). MN \in E_\Gamma(B), \\
+& \forall N, N' \in E_\Gamma(A). \forall P \in E_\Gamma(N =_A N´). M \bullet P \in E_\Gamma(MN =_B MN') \} \\
+E_\Gamma(\bot) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
+E_\Gamma(\phi \rightarrow \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \rightarrow \psi, \delta \in \SN, \\
+& \forall \epsilon \in E_\Gamma(\phi). \delta \epsilon \in E_\Gamma(\psi) \} \\
+E_\Gamma(\phi) & \eqdef E_\Gamma(nf(\phi)) & (\phi \mbox{ a normalizable term of type $\Omega$}) \\
+E_\Gamma(\phi =_\Omega \psi) & \eqdef \{ P \mid \Gamma \vdash P : \phi =_\Omega \psi, P \in \SN, \\
+& P^+ \in E_\Gamma(\phi \rightarrow \psi), P^- \in E_\Gamma(\psi \rightarrow \phi) \} \\
+E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \rightarrow B} M', P \in \SN, \\
+& \forall N, N' \in E_\Gamma(A), Q \in E_\Gamma(N =_A N'). PQ \in E_\Gamma(MN =_B M'N') \}
+\end{align*}
+
+A \emph{computable substitution} $\sigma : \Gamma \rightarrow \Delta$ is a function mapping variables to terms such that,
+for every $x : A$ in $\Gamma$, we have $\Delta \vdash \sigma(x) : A$.
+
+A \emph{path} between computable substitutions $\rho : \sigma \rightarrow \sigma' : \Gamma \rightarrow \Delta$ is a function mapping
+variables to paths such that, for every $x : A$ in $\Gamma$, we have $\Delta \vdash \rho(x) : \sigma(x) =_A \sigma´(x)$.
+
+Our main theorem is the following:
+
+\begin{theorem}
+\begin{enumerate}
+\item
+If $\sigma : \Gamma \rightarrow \Delta$ and $\Delta \vdash M : A$, then $\sigma M \in E_\Gamma(A)$.
+\item
+If $\sigma : \Gamma \rightarrow \Delta$ and $\Delta \vdash P : M =_A N$, then $\sigma P \in E_\Gamma(\sigma M =_A \sigma N)$.
+\item
+If $\rho : \sigma \rightarrow \sigma' : \Gamma \rightarrow \Delta$ and $\Delta \vdash M : A$, then $\rho M \in E_\Gamma(\sigma M =_A \sigma' M)$.
+\end{enumerate}
+\end{theorem}
+
+This is proven by induction on derivations.  The difficult part is proving that each term constructed is strongly normalizing.  Tait's proof used confluence, which is not available to us here.  Our reduction relation is not confluent in general.  However, it is confluent on the computable terms.  It turns out that, with this result, the induction hypothesis always gives us
+confluence of the terms required.
+
+The remainder of the proof is straightforward: the substitution $id$ mapping $x$ to $x$ is a computable substitution.
+Hence, if $\Gamma \vdash M : A$, then $id \, M \equiv M$ is computable, hence in $\SN$; and if $\Gamma \vdash P : M = N : A$ then $id \, P \equiv P$ is computable, hence in $\SN$.
+
 \section{Future Work}
+
+In the future, we wish to extend this work in several directions.  We wish to add constructions $\mathsf{sym}(P)$ and $\mathsf{trans}(P,Q)$ that make our equality into an equivalence
+relation, and provide reduction rules for each of these.  We wish to extend our logic by placing the equations $M =_A N$ inside $\Omega$, and allow quantification over any type in $A$ (including $\Omega$) in our logic.  This would move our system ever closer to homotopy type theory.  Our ultimate goal is to provide a strongly normalizing reduction relation for homotopy type theory, including the terms involving the univalence axiom, and we believe we have taken the first step.
 
 \end{document}
