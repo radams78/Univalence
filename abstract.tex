@@ -10,6 +10,8 @@ Bergen, Norway \\
 University of Gothenburg,
 Gothenburg, Sweden \\
 \email{coquand@chalmers.se}}
+\titlerunning{Strongly Normalizang Computation Rule for Univalence}
+\authorrunning{R. Adams, M. Bezem, T. Coquand}
 
 \usepackage{proof}
 \usepackage{amssymb}
@@ -95,7 +97,7 @@ We add the following rules of deduction
 
 \[ \infer{\Gamma \vdash \reff{M} : M =_A M}{\Gamma \vdash M : A}
 \qquad
-\infer{\Gamma \vdash P \rightarrow Q : \phi \rightarrow \psi =_\Omega \phi' \rightarrow \psi´}{\Gamma \vdash P : \phi =_\Omega \phi´}{\Gamma \vdash Q : \psi =_\Omega \psi´} \]
+\infer{\Gamma \vdash P \rightarrow Q : \phi \rightarrow \psi =_\Omega \phi' \rightarrow \psi´}{\Gamma \vdash P : \phi =_\Omega \phi´ \quad \Gamma \vdash Q : \psi =_\Omega \psi´} \]
 
 \[ \infer{\Gamma \vdash \univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi}{\Gamma \vdash \delta : \phi \rightarrow \psi \quad \Gamma \vdash \epsilon : \psi \rightarrow \phi} 
 \qquad
@@ -103,12 +105,11 @@ We add the following rules of deduction
 \qquad
 \infer{\Gamma \vdash P^- : \psi \rightarrow \phi}{\Gamma \vdash P : \psi =_\Omega \psi} \]
 
-\[ \infer{\Gamma \vdash \triplelambda e : x =_A y . P : M =_{A \rightarrow B} N}{\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A \rightarrow B \quad
-\Gamma, x : A, y : A, e : x =_A y \vdash M x =_B N y}
-\qquad
-\infer{\Gamma \vdash PQ : MN =_B M' N'}{\Gamma \vdash P : M =_{A \rightarrow B} M' \quad \Gamma \vdash Q : N =_A N'} \]
+\[ \infer{\Gamma \vdash \triplelambda e : x =_A y . P : M =_{A \rightarrow B} N}{\Gamma, x : A, y : A, e : x =_A y \vdash M x =_B N y} \]
 
-\[ \infer[M \simeq_\beta M', N \simeq_\beta N']{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
+\[ \infer{\Gamma \vdash PQ : MN =_B M' N'}{\Gamma \vdash P : M =_{A \rightarrow B} M' \quad \Gamma \vdash Q : N =_A N'} \]
+
+\[ \infer[(M \simeq_\beta M', N \simeq_\beta N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
 
 \section{Path Substitution}
 
@@ -165,7 +166,7 @@ where, in the last clause, we have $Q : M =_A N$.
 
 \section{Proof of Strong Normalization}
 
-The proof of strong normalization follows the method of Tait %TODO Cite
+The proof of strong normalization follows the method of Tait \cite{Tait1967}
 We define the set of \emph{computable} proofs of each term, terms of each type
 and paths of each equation (in a context $\Gamma$) as follows.
 
@@ -213,5 +214,7 @@ Hence, if $\Gamma \vdash M : A$, then $id \, M \equiv M$ is computable, hence in
 
 In the future, we wish to extend this work in several directions.  We wish to add constructions $\mathsf{sym}(P)$ and $\mathsf{trans}(P,Q)$ that make our equality into an equivalence
 relation, and provide reduction rules for each of these.  We wish to extend our logic by placing the equations $M =_A N$ inside $\Omega$, and allow quantification over any type in $A$ (including $\Omega$) in our logic.  This would move our system ever closer to homotopy type theory.  Our ultimate goal is to provide a strongly normalizing reduction relation for homotopy type theory, including the terms involving the univalence axiom, and we believe we have taken the first step.
+
+\bibliography{type}
 
 \end{document}

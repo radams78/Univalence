@@ -659,14 +659,6 @@
   Volume                   = {3}
 }
 
-@Misc{,
-  Title                    = {Notes on Adjunctions, Monads and Lawvere Theories},
-
-  Author                   = {Filip B\'{a}r},
-
-  Keywords                 = {PROPs}
-}
-
 @PhdThesis{Baelde2008,
   Title                    = {A Linear Approach to the Proof Theory of Least and Greatest Fixed Points},
   Author                   = {David Baelde},
@@ -1045,22 +1037,6 @@
   Series                   = {Texts in Theoretical Computer Science}
 }
 
-@Misc{,
-  Title                    = {A {K}ripke Model for Simplicial Sets},
-
-  Author                   = {Marc Bezem and Thierry Coquand},
-
-  Keywords                 = {homotopy type theory}
-}
-
-@Misc{,
-  Title                    = {A Model of Type Theory of Cubical Sets},
-
-  Author                   = {Marc Bezem and Thierry Coquand and Simon Huber},
-
-  Keywords                 = {homotopy type theory}
-}
-
 @Article{bp:dbnnd,
   Title                    = {de {B}ruijn notation as a nested datatype},
   Author                   = {Richard S. Bird and Ross Paterson},
@@ -1345,23 +1321,19 @@
   Url                      = {http://arxiv.org/abs/1303.5039}
 }
 
-@Unpublished{,
-  Title                    = {Quantum Computations Without Definite Causal Structure},
-  Author                   = {Giulio Chiribella and Giacomo Mauro D'Ariano and Paolo Perinotti and Benoit Valiron},
-  Note                     = {arXiv:0912.0195},
-  Year                     = {2013},
-
-  Abstract                 = {We show that quantum theory allows for transformations of black boxes that cannot be realized by inserting the input black boxes within a circuit in a pre-defined causal order. The simplest example of such a transformation is the classical switch of black boxes, where two input black boxes are arranged in two different orders conditionally on the value of a classical bit. The quantum version of this transformation—the quantum switch—produces an output circuit where the order of the connections is controlled by a quantum bit, which becomes entangled with the circuit structure. Simulating these transformations in a circuit with fixed causal structure requires either postselection, or an extra query to the input black boxes.},
-  Keywords                 = {indefinite causal structure}
-}
-
 @Unpublished{Cho2015,
   Title                    = {Total and Partial Computation in Categorical Quantum Foundations},
   Author                   = {Kenta Cho},
   Year                     = {2015},
-
-  Abstract                 = {This paper uncovers the fundamental relationship between total and partial computation in the form of an equivalence of certain categories. This equivalence involves on the one hand effectuses, which are categories for total computation, introduced by Jacobs for the study of quantum/effect logic. On the other hand, it involves what we call FinPACs with effects; they are finitely partially additive categories equipped with effect algebra structures, serving as categories for partial computation. It turns out that the Kleisli category of the lift monad (−) + 1 on an effectus is always a FinPAC with effects, and this construction gives rise to the equivalence. Additionally, state-and-effect triangles over FinPACs with effects are presented.},
-  Keywords                 = {effectus},
+abstract = {This paper uncovers the fundamental relationship between total and partial computation in the form
+of an equivalence of certain categories. This equivalence involves on the one hand effectuses, which
+are categories for total computation, introduced by Jacobs for the study of quantum/effect logic.
+On the other hand, it involves what we call FinPACs with effects; they are finitely partially additive
+categories equipped with effect algebra structures, serving as categories for partial computation. It
+turns out that the Kleisli category of the lift monad (−) + 1 on an effectus is always a FinPAC with
+effects, and this construction gives rise to the equivalence. Additionally, state-and-effect triangles
+over FinPACs with effects are presented.},
+keywords = {effectus},
   Owner                    = {robin},
   Timestamp                = {2015.07.31}
 }
@@ -2732,14 +2704,6 @@
   Timestamp                = {2014.02.28}
 }
 
-@Unpublished{,
-  Title                    = {A Recipe for State-and-Effect Triangles},
-  Author                   = {Bart Jacobs},
-
-  Abstract                 = {In the semantics of programming languages one can view programs as state transformers, or as predicate transformers. Recently the author has introduced `state-and-effect' triangles which captures this situation categorically, involving an adjunction between state- and predicate-transformers. The current paper exploits a classical result in category theory, part of Jon Beck's monadicity theorem, to systematically construct such a state-and-effect triangle from an adjunction. The power of this construction is illustrated in many examples, both for the Boolean and probabilistic (quantitative) case.},
-  Keywords                 = {duality, predicate transformer, state transformer, state-and-effect triangle}
-}
-
 @Unpublished{Jacobs14,
   Title                    = {New Directions in Categorical Logic, for Classical, Probabilistic and Quantum Logic},
   Author                   = {Bart Jacobs},
@@ -2846,20 +2810,6 @@
   Annote                   = {To read (HIGH)},
   Owner                    = {robin},
   Timestamp                = {2014.02.25}
-}
-
-@InProceedings{JWW2015,
-  Title                    = {States of Convex Sets},
-  Author                   = {Bart Jacobs and Bas Westerbaan and Bram Westerbaan},
-  Booktitle                = {FoSSaCS 2015},
-  Year                     = {2015},
-  Editor                   = {Andy Pitts},
-  Pages                    = {87--101},
-  Publisher                = {Springer},
-  Series                   = {LNCS},
-  Volume                   = {9034},
-
-  Keywords                 = {effectus}
 }
 
 @Article{Jencova2008,
@@ -3721,15 +3671,6 @@
   Keywords                 = {proof theory of fixed points},
   Owner                    = {robin},
   Timestamp                = {2012.03.20}
-}
-
-@Book{MM2005,
-  Title                    = {Abstraction, Refinement and Proof for Probabilistic Systems},
-  Author                   = {Annabelle McIver and Carroll Morgan},
-  Publisher                = {Springer},
-  Year                     = {2005},
-
-  Keywords                 = {probabilistic algorithms}
 }
 
 @Article{DBLP:journals/jar/McKinnaP99,
@@ -5049,30 +4990,6 @@
   Url                      = {mitpress.mit.edu/sites/default/files/titles/content/sicm}
 }
 
-@InProceedings{,
-  Title                    = {A {H}oare Logic for the State Monad},
-  Author                   = {Wouter Swierstra},
-  Booktitle                = {TPHOLs 2009},
-  Year                     = {2009},
-  Editor                   = {S. Berghofer and others},
-  Pages                    = {440--451},
-  Publisher                = {Springer},
-  Series                   = {LNCS},
-  Volume                   = {5674}
-}
-
-@Article{Tait1967,
-  Title                    = {Intensional IInterpretation of FFunctional of Finite Type I},
-  Author                   = {W. W. Tait},
-  Journal                  = {Journal of Symbolic Logic},
-  Year                     = {1967},
-  Pages                    = {198-212},
-  Volume                   = {32},
-
-  Owner                    = {robin},
-  Timestamp                = {2016.02.18}
-}
-
 @Book{tak:pt,
   Title                    = {Proof Theory},
   Author                   = {G. Takeuti},
@@ -5508,5 +5425,84 @@
   Annote                   = {To read (LOW)},
   Owner                    = {robin},
   Timestamp                = {2014.05.14}
+}
+
+
+
+@Book{MM2005,
+  author = 	 {Annabelle McIver and Carroll Morgan},
+  title = 	 {Abstraction, Refinement and Proof for Probabilistic Systems},
+  publisher = 	 {Springer},
+  year = 	 {2005},
+  keywords =     {probabilistic algorithms}
+}
+
+@InProceedings{JWW2015,
+  author = 	 {Bart Jacobs and Bas Westerbaan and Bram Westerbaan},
+  title = 	 {States of Convex Sets},
+  booktitle = {FoSSaCS 2015},
+  year = 	 {2015},
+  editor = 	 {Andy Pitts},
+  volume = 	 {9034},
+  series = 	 {LNCS},
+  pages = 	 {87--101},
+  publisher = {Springer},
+  keywords =     {effectus}
+}
+
+@Unpublished{,
+  author = 	 {Giulio Chiribella and Giacomo Mauro D'Ariano and Paolo Perinotti and Benoit Valiron},
+  title = 	 {Quantum Computations Without Definite Causal Structure},
+  note = 	 {arXiv:0912.0195},
+  year = 	 {2013},
+  keywords =     {indefinite causal structure},
+  abstract =     {We show that quantum theory allows for transformations of black boxes that cannot be realized
+by inserting the input black boxes within a circuit in a pre-defined causal order. The simplest
+example of such a transformation is the classical switch of black boxes, where two input black boxes
+are arranged in two different orders conditionally on the value of a classical bit. The quantum
+version of this transformation—the quantum switch—produces an output circuit where the order of
+the connections is controlled by a quantum bit, which becomes entangled with the circuit structure.
+Simulating these transformations in a circuit with fixed causal structure requires either postselection,
+or an extra query to the input black boxes.}
+}
+
+
+@Misc{,
+  author = 	 {Filip B\'{a}r},
+  title = 	 {Notes on Adjunctions, Monads and Lawvere Theories},
+  keywords =     {PROPs}
+}
+
+
+
+@InProceedings{,
+  author = 	 {Wouter Swierstra},
+  title = 	 {A {H}oare Logic for the State Monad},
+  booktitle = {TPHOLs 2009},
+  year = 	 {2009},
+  editor = 	 {S. Berghofer and others},
+  volume = 	 {5674},
+  series = 	 {LNCS},
+  pages = 	 {440--451},
+  publisher = {Springer}
+}
+
+@Unpublished{,
+  author = 	 {Bart Jacobs},
+  title = 	 {A Recipe for State-and-Effect Triangles},
+keywords = {duality, predicate transformer, state transformer, state-and-effect triangle},
+abstract = {In the semantics of programming languages one can view programs as state transformers, or as predicate transformers.  Recently the author has introduced `state-and-effect' triangles which captures this situation categorically, involving an adjunction between state- and predicate-transformers.  The current paper exploits a classical result in category theory, part of Jon Beck's monadicity theorem, to systematically construct such a state-and-effect triangle from an adjunction.  The power of this construction is illustrated in many examples, both for the Boolean and probabilistic (quantitative) case.}
+}
+
+@Misc{,
+  author = 	 {Marc Bezem and Thierry Coquand},
+title = 	 {A {K}ripke Model for Simplicial Sets},
+  keywords = {homotopy type theory}
+}
+
+@Misc{,
+  author = 	 {Marc Bezem and Thierry Coquand and Simon Huber},
+title = 	 {A Model of Type Theory of Cubical Sets},
+keywords = {homotopy type theory}
 }
 
