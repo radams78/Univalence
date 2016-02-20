@@ -172,9 +172,9 @@ If $R$ respects replacement and $\sigma \twoheadrightarrow_R \tau$ then $E[\sigm
 \end{lemma}
 
 \begin{code}
-  liftSub-red : ∀ {U} {V} {K} {ρ σ : Sub U V} {R : Reduction} → 
+  liftSub-red : ∀ {U} {V} {K} {δ} {ρ σ : Sub U V} {R : Reduction} → 
     respect-rep R →
-    ρ ↠〈 R 〉s σ → Sub↑ {K = K} ρ ↠〈 R 〉s Sub↑ σ
+    ρ ↠〈 R 〉s σ → Sub↑ {K = K} {δ} ρ ↠〈 R 〉s Sub↑ σ
   liftSub-red _ _ _ x₀ = ref
   liftSub-red hyp ρ↠σ L (↑ x) = repred hyp (ρ↠σ L x)
 
@@ -271,5 +271,6 @@ The \emph{domain} of this context is the alphabet $\{ x_1, \ldots, x_n \}$.
     _,_ : ∀ {V} {K} {δ} → Context V → Expression'' V (parent K δ) → Context (V , K [ δ ])
 
   typeof : ∀ {V} {K} {δ} (x : Var V K) (Γ : Context V) → Expression'' V (parent K δ)
-  typeof {V} {K} {δ} x Γ = {!!}
+  typeof Grammar.x₀ (Γ , A) = {!A!}
+  typeof (Grammar.↑ x) Γ = {!!}
 \end{code}

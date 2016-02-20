@@ -51,15 +51,20 @@ AbstractionKind ExpressionKind = Kind ExpressionKind -Abstraction
 ConstructorKind : ∀ {ExpressionKind} → ExpressionKind → Set
 ConstructorKind {ExpressionKind} K = Kind ExpressionKind (-Constructor K)
 
-record Grammar : Set₁ where
+record Taxonomy : Set₁ where
   field
-    ExpressionKind : Set
-    hasVars        : ExpressionKind → Bool
-    Constructor    : ∀ {K : ExpressionKind} → ConstructorKind K → Set
-    parent         : ∀ K → IsTrue (hasVars K) → ExpressionKind
+    VarKind : Set
+    NonVarKind : Set
 
-  HasVars : ExpressionKind → Set
-  HasVars K = IsTrue (hasVars K)
+  data ExpressionKind : Set where
+    varKind : VarKind → ExpressionKind
+    nonVarKind : NonVarKind → ExpressionKind
+
+record toGrammar (T : Taxonomy) : Set₁ where
+  open Taxonomy T
+  field
+    Constructor    : ∀ {K : ExpressionKind} → ConstructorKind K → Set
+    parent         : VarKind → ExpressionKind
 \end{code}
 
 An \emph{alphabet} $V = \{ V_E \}_E$ consists of a set $V_E$ of \emph{variables} of kind $E$ for each expression kind $E$..  The \emph{expressions}
@@ -77,17 +82,17 @@ to $\alpha$-conversion.
 \begin{code}
   data Alphabet : Set where
     ∅ : Alphabet
-    _,_[_] : Alphabet → ∀ K → HasVars K → Alphabet
+    _,_ : Alphabet → VarKind → Alphabet
 
   data Var : Alphabet → ExpressionKind → Set where
-    x₀ : ∀ {V} {K} {δ} → Var (V , K [ δ ]) K
-    ↑ : ∀ {V} {K} {δ} {L} → Var V L → Var (V , K [ δ ]) L
+    x₀ : ∀ {V} {K} → Var (V , K) (varKind K)
+    ↑ : ∀ {V} {K} {L} → Var V L → Var (V , K) L
 
   data Expression' (V : Alphabet) : ∀ C → Kind ExpressionKind C → Set where
     var : ∀ {K} → Var V K → Expression' V -Expression (base K)
     app : ∀ {K} {C : ConstructorKind K} → Constructor C → Expression' V (-Constructor K) C → Expression' V -Expression (base K)
     out : ∀ {K} → Expression' V -Expression (base K) → Expression' V -Abstraction (out K)
-    Λ   : ∀ {K} {δ} {A} → Expression' (V , K [ δ ]) -Abstraction A → Expression' V -Abstraction (Π K A)
+    Λ   : ∀ {K} {A} → Expression' (V , K) -Abstraction A → Expression' V -Abstraction (Π (varKind K) A)
     out₂ : ∀ {K} → Expression' V (-Constructor K) out₂
     app₂ : ∀ {K} {A} {C} → Expression' V -Abstraction A → Expression' V (-Constructor K) C → Expression' V (-Constructor K) (Π₂ A C)
 
@@ -129,19 +134,19 @@ Given a replacement $\rho : U \rightarrow V$, we can `lift´ this to a replaceme
 Under this operation, the mapping $(- , K)$ becomes an endofunctor on the category of alphabets and replacements.
 
 \begin{code}
-  Rep↑ : ∀ {U} {V} {K} {δ} → Rep U V → Rep (U , K [ δ ]) (V , K [ δ ])
-  Rep↑ _ _ x₀ = x₀
+  Rep↑ : ∀ {U} {V} {K} → Rep U V → Rep (U , K) (V , K)
+  Rep↑ ρ .(varKind _) x₀ = x₀
   Rep↑ ρ K (↑ x) = ↑ (ρ K x)
 
-  Rep↑-wd : ∀ {U} {V} {K} {δ} {ρ ρ' : Rep U V} → ρ ∼R ρ' → Rep↑ {K = K} {δ} ρ ∼R Rep↑ ρ'
+  Rep↑-wd : ∀ {U} {V} {K} {ρ ρ' : Rep U V} → ρ ∼R ρ' → Rep↑ {K = K} ρ ∼R Rep↑ ρ'
   Rep↑-wd ρ-is-ρ' x₀ = ref
   Rep↑-wd ρ-is-ρ' (↑ x) = wd ↑ (ρ-is-ρ' x)
 
-  Rep↑-id : ∀ {V} {K} {δ} → Rep↑ (idRep V) ∼R idRep (V , K [ δ ])
+  Rep↑-id : ∀ {V} {K} → Rep↑ (idRep V) ∼R idRep (V , K)
   Rep↑-id x₀ = ref
   Rep↑-id (↑ _) = ref
 
-  Rep↑-comp : ∀ {U} {V} {W} {K} {δ} {ρ' : Rep V W} {ρ : Rep U V} → Rep↑ {K = K} {δ} (ρ' •R ρ) ∼R Rep↑ ρ' •R Rep↑ ρ
+  Rep↑-comp : ∀ {U} {V} {W} {K} {ρ' : Rep V W} {ρ : Rep U V} → Rep↑ {K = K} (ρ' •R ρ) ∼R Rep↑ ρ' •R Rep↑ ρ
   Rep↑-comp x₀ = ref
   Rep↑-comp (↑ _) = ref
 \end{code}
@@ -178,7 +183,7 @@ alphabets and replacements to the category of sets.
 
     rep-wdA : ∀ {U} {V} {A} {E : Expression' U -Abstraction A} {ρ ρ' : Rep U V} → ρ ∼R ρ' → E 〈 ρ 〉A ≡ E 〈 ρ' 〉A
     rep-wdA {U} {V} {out K} {out E} ρ-is-ρ' = wd out (rep-wd ρ-is-ρ')
-    rep-wdA {U} {V} .{Π K A} {Λ {K} {_} {A} E} ρ-is-ρ' = wd Λ (rep-wdA (Rep↑-wd ρ-is-ρ'))
+    rep-wdA {U} {V} .{Π (varKind _) _} {Λ E} ρ-is-ρ' = wd Λ (rep-wdA (Rep↑-wd ρ-is-ρ'))
 
   mutual
     rep-id : ∀ {V} {K} {E : Expression'' V K} → E 〈 idRep V 〉 ≡ E
@@ -204,12 +209,12 @@ alphabets and replacements to the category of sets.
 
     rep-compA : ∀ {U} {V} {W} {K} {ρ : Rep U V} {ρ' : Rep V W} {A : Expression' U -Abstraction K} → A 〈 ρ' •R ρ 〉A ≡ A 〈 ρ 〉A 〈 ρ' 〉A
     rep-compA {A = out _} = wd out rep-comp
-    rep-compA {U} {V} {W} .{Π K L} {ρ} {ρ'} {Λ {K} {_} {L} A} = wd Λ (trans (rep-wdA Rep↑-comp) rep-compA)
+    rep-compA {U} {V} {W} .{Π (varKind K) L} {ρ} {ρ'} {Λ {K} {L} A} = wd Λ (trans (rep-wdA Rep↑-comp) rep-compA)
 \end{code}
 
 This provides us with the canonical mapping from an expression over $V$ to an expression over $(V , K)$:
 \begin{code}
-  lift : ∀ {V} {K} {δ} {L} → Expression'' V L → Expression'' (V , K [ δ ]) L
+  lift : ∀ {V} {K} {L} → Expression'' V L → Expression'' (V , K) L
   lift E = E 〈 (λ _ → ↑) 〉
 \end{code}
 
@@ -251,12 +256,12 @@ Given a substitution $\sigma : U \Rightarrow V$,  define a substitution $
 (\sigma , K) : (U , K) \Rightarrow (V , K)$ as follows.
 
 \begin{code}
-  Sub↑ : ∀ {U} {V} {K} {δ} → Sub U V → Sub (U , K [ δ ]) (V , K [ δ ])
-  Sub↑ _ _ x₀ = var x₀
+  Sub↑ : ∀ {U} {V} {K} → Sub U V → Sub (U , K) (V , K)
+  Sub↑ _ .(varKind _) x₀ = var x₀
   Sub↑ σ K (↑ x) = lift (σ K x)
 
-  Sub↑-wd : ∀ {U} {V} {K} {δ} {σ σ' : Sub U V} → σ ∼ σ' → Sub↑ {K = K} {δ} σ ∼ Sub↑ σ'
-  Sub↑-wd {K = K} σ-is-σ' .K x₀ = ref
+  Sub↑-wd : ∀ {U} {V} {K} {σ σ' : Sub U V} → σ ∼ σ' → Sub↑ {K = K} σ ∼ Sub↑ σ'
+  Sub↑-wd {K = K} σ-is-σ' ._ x₀ = ref
   Sub↑-wd σ-is-σ' L (↑ x) = wd lift (σ-is-σ' L x)
 \end{code}
 
@@ -273,19 +278,19 @@ $(\sigma \bullet_2 \rho, K) = (\sigma , K) \bullet_2 (\rho , K)$
 \end{lemma}
 
 \begin{code}
-  Sub↑-id : ∀ {V} {K} {δ} → Sub↑ {V} {V} {K} {δ} idSub ∼ idSub
-  Sub↑-id {K = K} .K x₀ = ref
+  Sub↑-id : ∀ {V} {K} → Sub↑ {V} {V} {K} idSub ∼ idSub
+  Sub↑-id {K = K} ._ x₀ = ref
   Sub↑-id _ (↑ _) = ref
 
-  Sub↑-comp₁ : ∀ {U} {V} {W} {K} {δ} {ρ : Rep V W} {σ : Sub U V} → Sub↑ {δ = δ} (ρ •₁ σ) ∼ Rep↑ ρ •₁ Sub↑ σ
-  Sub↑-comp₁ {K = K} .K x₀ = ref
-  Sub↑-comp₁ {U} {V} {W} {K} {δ} {ρ} {σ} L (↑ x) = let open Equational-Reasoning (Expression'' (W , K [ δ ]) L) in 
+  Sub↑-comp₁ : ∀ {U} {V} {W} {K} {ρ : Rep V W} {σ : Sub U V} → Sub↑ (ρ •₁ σ) ∼ Rep↑ ρ •₁ Sub↑ σ
+  Sub↑-comp₁ {K = K} ._ x₀ = ref
+  Sub↑-comp₁ {U} {V} {W} {K} {ρ} {σ} L (↑ x) = let open Equational-Reasoning (Expression'' (W , K) L) in 
     ∵ lift (σ L x 〈 ρ 〉)
     ≡ σ L x 〈 (λ _ x → ↑ (ρ _ x)) 〉 [[ rep-comp ]]
     ≡ (lift (σ L x)) 〈 Rep↑ ρ 〉     [ rep-comp ]
 
-  Sub↑-comp₂ : ∀ {U} {V} {W} {K} {δ} {σ : Sub V W} {ρ : Rep U V} → Sub↑ {δ = δ} (σ •₂ ρ) ∼ Sub↑ σ •₂ Rep↑ ρ
-  Sub↑-comp₂ {K = K} .K x₀ = ref
+  Sub↑-comp₂ : ∀ {U} {V} {W} {K} {σ : Sub V W} {ρ : Rep U V} → Sub↑ {K = K} (σ •₂ ρ) ∼ Sub↑ σ •₂ Rep↑ ρ
+  Sub↑-comp₂ {K = K} ._ x₀ = ref
   Sub↑-comp₂ L (↑ x) = ref
 \end{code}
 
@@ -320,7 +325,7 @@ which we denote $E [ \sigma ]$.
 
     sub-wdA : ∀ {U} {V} {K} {A : Expression' U -Abstraction K} {σ σ' : Sub U V} → σ ∼ σ' → A ⟦ σ ⟧A ≡ A ⟦ σ' ⟧A
     sub-wdA {A = out E} σ-is-σ' = wd out (sub-wd {E = E} σ-is-σ')
-    sub-wdA {U} {V} .{Π K L} {Λ {K} {δ} {L} A} σ-is-σ' = wd Λ (sub-wdA (Sub↑-wd σ-is-σ'))
+    sub-wdA {U} {V} .{Π (varKind K) L} {Λ {K} {L} A} σ-is-σ' = wd Λ (sub-wdA (Sub↑-wd σ-is-σ'))
 \end{code}
 
 \begin{lemma}
@@ -363,7 +368,7 @@ $M[\sigma \bullet_2 \rho] \equiv M \langle \rho \rangle [ \sigma ]$
     sub-comp₁A : ∀ {U} {V} {W} {K} {A : Expression' U -Abstraction K} {ρ : Rep V W} {σ : Sub U V} →
       A ⟦ ρ •₁ σ ⟧A ≡ A ⟦ σ ⟧A 〈 ρ 〉A
     sub-comp₁A {A = out E} = wd out (sub-comp₁ {E = E})
-    sub-comp₁A {U} {V} {W} .{(Π K L)} {Λ {K} {_} {L} A} = wd Λ (trans (sub-wdA Sub↑-comp₁) sub-comp₁A)
+    sub-comp₁A {U} {V} {W} .{(Π (varKind K) L)} {Λ {K} {L} A} = wd Λ (trans (sub-wdA Sub↑-comp₁) sub-comp₁A)
 
   mutual
     sub-comp₂ : ∀ {U} {V} {W} {K} {E : Expression'' U K} {σ : Sub V W} {ρ : Rep U V} → E ⟦ σ •₂ ρ ⟧ ≡ E 〈 ρ 〉 ⟦ σ ⟧
@@ -377,7 +382,7 @@ $M[\sigma \bullet_2 \rho] \equiv M \langle \rho \rangle [ \sigma ]$
 
     sub-comp₂A : ∀ {U} {V} {W} {K} {A : Expression' U -Abstraction K} {σ : Sub V W} {ρ : Rep U V} → A ⟦ σ •₂ ρ ⟧A ≡ A 〈 ρ 〉A ⟦ σ ⟧A
     sub-comp₂A {A = out E} = wd out (sub-comp₂ {E = E})
-    sub-comp₂A {U} {V} {W} .{Π K L} {Λ {K} {_} {L} A} = wd Λ (trans (sub-wdA Sub↑-comp₂) sub-comp₂A)
+    sub-comp₂A {U} {V} {W} .{Π (varKind K) L} {Λ {K} {L} A} = wd Λ (trans (sub-wdA Sub↑-comp₂) sub-comp₂A)
 \end{code}
 
 We define the composition of two substitutions, as follows.
@@ -397,11 +402,11 @@ We define the composition of two substitutions, as follows.
 \end{lemma}
 
 \begin{code}
-  Sub↑-comp : ∀ {U} {V} {W} {ρ : Sub U V} {σ : Sub V W} {K} {δ} →
-    Sub↑ {K = K} {δ} (σ • ρ) ∼ Sub↑ σ • Sub↑ ρ
-  Sub↑-comp _ x₀ = ref
-  Sub↑-comp {W = W} {ρ = ρ} {σ = σ} {K = K} {δ} L (↑ x) =
-    let open Equational-Reasoning (Expression'' (W , K [ δ ]) L) in 
+  Sub↑-comp : ∀ {U} {V} {W} {ρ : Sub U V} {σ : Sub V W} {K} →
+    Sub↑ {K = K} (σ • ρ) ∼ Sub↑ σ • Sub↑ ρ
+  Sub↑-comp {U} {V} {W} {ρ} {σ} {K} .(Taxonomy.varKind K) x₀ = ref
+  Sub↑-comp {W = W} {ρ = ρ} {σ = σ} {K = K} L (↑ x) =
+    let open Equational-Reasoning (Expression'' (W , K) L) in 
       ∵ lift ((ρ L x) ⟦ σ ⟧)
       ≡ ρ L x ⟦ (λ _ → ↑) •₁ σ ⟧  [[ sub-comp₁ {E = ρ L x} ]]
       ≡ (lift (ρ L x)) ⟦ Sub↑ σ ⟧ [ sub-comp₂ {E = ρ L x} ]
@@ -410,7 +415,7 @@ We define the composition of two substitutions, as follows.
     sub-compA : ∀ {U} {V} {W} {K} {A : Expression' U -Abstraction K} {σ : Sub V W} {ρ : Sub U V} →
       A ⟦ σ • ρ ⟧A ≡ A ⟦ ρ ⟧A ⟦ σ ⟧A
     sub-compA {A = out E} = wd out (sub-comp {E = E})
-    sub-compA {U} {V} {W} .{Π K L} {Λ {K} {δ} {L} A} {σ} {ρ} = wd Λ (let open Equational-Reasoning (Expression' (W , K [ δ ]) -Abstraction L) in 
+    sub-compA {U} {V} {W} .{Π (varKind K) L} {Λ {K} {L} A} {σ} {ρ} = wd Λ (let open Equational-Reasoning (Expression' (W , K) -Abstraction L) in 
       ∵ A ⟦ Sub↑ (σ • ρ) ⟧A
       ≡ A ⟦ Sub↑ σ • Sub↑ ρ ⟧A    [ sub-wdA Sub↑-comp ]
       ≡ A ⟦ Sub↑ ρ ⟧A ⟦ Sub↑ σ ⟧A [ sub-compA ])
@@ -453,9 +458,9 @@ $$ E \langle \rho \rangle \equiv E [ \rho ] $$
 \end{lemma}
 
 \begin{code}
-  Rep↑-is-Sub↑ : ∀ {U} {V} {ρ : Rep U V} {K} {δ} → (λ L x → var (Rep↑ {K = K} {δ} ρ L x)) ∼ Sub↑ {K = K} (λ L x → var (ρ L x))
-  Rep↑-is-Sub↑ _ x₀ = ref
-  Rep↑-is-Sub↑ _ (↑ _) = ref
+  Rep↑-is-Sub↑ : ∀ {U} {V} {ρ : Rep U V} {K} → (λ L x → var (Rep↑ {K = K} ρ L x)) ∼ Sub↑ {K = K} (λ L x → var (ρ L x))
+  Rep↑-is-Sub↑ {U} {V} {ρ} {K} .(Taxonomy.varKind K) x₀ = ref
+  Rep↑-is-Sub↑ K₁ (↑ x) = ref
 
   mutual
     rep-is-sub : ∀ {U} {V} {K} {E : Expression'' U K} {ρ : Rep U V} →
@@ -471,7 +476,7 @@ $$ E \langle \rho \rangle \equiv E [ \rho ] $$
     rep-is-subA : ∀ {U} {V} {K} {A : Expression' U -Abstraction K} {ρ : Rep U V} →
       A 〈 ρ 〉A ≡ A ⟦ (λ K x → var (ρ K x)) ⟧A
     rep-is-subA {A = out E} = wd out rep-is-sub
-    rep-is-subA {U} {V} .{Π K L} {Λ {K} {δ} {L} A} {ρ} = wd Λ (let open Equational-Reasoning (Expression' (V , K [ δ ]) -Abstraction L) in 
+    rep-is-subA {U} {V} .{Π (varKind K) L} {Λ {K} {L} A} {ρ} = wd Λ (let open Equational-Reasoning (Expression' (V , K) -Abstraction L) in 
       ∵ A 〈 Rep↑ ρ 〉A
       ≡ A ⟦ (λ M x → var (Rep↑ ρ M x)) ⟧A [ rep-is-subA ]
       ≡ A ⟦ Sub↑ (λ M x → var (ρ M x)) ⟧A [ sub-wdA Rep↑-is-Sub↑ ])
@@ -481,9 +486,9 @@ Let $E$ be an expression of kind $K$ over $V$.  Then we write $[x_0 := E]$ for t
 $(V , K) \Rightarrow V$:
 
 \begin{code}
-  x₀:= : ∀ {V} {K} {δ} → Expression'' V K → Sub (V , K [ δ ]) V
-  (x₀:= E) _ x₀ = E
-  (x₀:= _) _ (↑ x) = var x
+  x₀:= : ∀ {V} {K} → Expression'' V (varKind K) → Sub (V , K) V
+  x₀:= {V} {K} E .(Taxonomy.varKind K) x₀ = E
+  x₀:= E K₁ (↑ x) = var x
 \end{code}
 
 \begin{lemma}
@@ -496,13 +501,13 @@ $$ \sigma \bullet [x_0 := E] \sim [x_0 := E[\sigma]] \bullet (\sigma , K) $$
 \end{lemma}
 
 \begin{code}
-  comp₁-botsub : ∀ {U} {V} {K} {δ} {E : Expression'' U K} {ρ : Rep U V} →
-    ρ •₁ (x₀:= {δ = δ} E) ∼ (x₀:= (E 〈 ρ 〉)) •₂ Rep↑ ρ
-  comp₁-botsub _ x₀ = ref
+  comp₁-botsub : ∀ {U} {V} {K} {E : Expression'' U (varKind K)} {ρ : Rep U V} →
+    ρ •₁ (x₀:= E) ∼ (x₀:= (E 〈 ρ 〉)) •₂ Rep↑ ρ
+  comp₁-botsub ._ x₀ = ref
   comp₁-botsub _ (↑ _) = ref
 
-  comp-botsub : ∀ {U} {V} {K} {δ} {E : Expression'' U K} {σ : Sub U V} →
-    σ • (x₀:= {δ = δ} E) ∼ (x₀:= (E ⟦ σ ⟧)) • Sub↑ σ
-  comp-botsub _ x₀ = ref
+  comp-botsub : ∀ {U} {V} {K} {E : Expression'' U (varKind K)} {σ : Sub U V} →
+    σ • (x₀:= E) ∼ (x₀:= (E ⟦ σ ⟧)) • Sub↑ σ
+  comp-botsub ._ x₀ = ref
   comp-botsub {σ = σ} L (↑ x) = trans (sym subid) (sub-comp₂ {E = σ L x})
 \end{code}
