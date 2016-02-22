@@ -60,7 +60,7 @@ record Taxonomy : Set₁ where
     varKind : VarKind → ExpressionKind
     nonVarKind : NonVarKind → ExpressionKind
 
-record toGrammar (T : Taxonomy) : Set₁ where
+record ToGrammar (T : Taxonomy) : Set₁ where
   open Taxonomy T
   field
     Constructor    : ∀ {K : ExpressionKind} → ConstructorKind K → Set
@@ -84,12 +84,12 @@ to $\alpha$-conversion.
     ∅ : Alphabet
     _,_ : Alphabet → VarKind → Alphabet
 
-  data Var : Alphabet → ExpressionKind → Set where
-    x₀ : ∀ {V} {K} → Var (V , K) (varKind K)
+  data Var : Alphabet → VarKind → Set where
+    x₀ : ∀ {V} {K} → Var (V , K) K
     ↑ : ∀ {V} {K} {L} → Var V L → Var (V , K) L
 
   data Expression' (V : Alphabet) : ∀ C → Kind ExpressionKind C → Set where
-    var : ∀ {K} → Var V K → Expression' V -Expression (base K)
+    var : ∀ {K} → Var V K → Expression' V -Expression (base (varKind K))
     app : ∀ {K} {C : ConstructorKind K} → Constructor C → Expression' V (-Constructor K) C → Expression' V -Expression (base K)
     out : ∀ {K} → Expression' V -Expression (base K) → Expression' V -Abstraction (out K)
     Λ   : ∀ {K} {A} → Expression' (V , K) -Abstraction A → Expression' V -Abstraction (Π (varKind K) A)
@@ -135,7 +135,7 @@ Under this operation, the mapping $(- , K)$ becomes an endofunctor on the catego
 
 \begin{code}
   Rep↑ : ∀ {U} {V} {K} → Rep U V → Rep (U , K) (V , K)
-  Rep↑ ρ .(varKind _) x₀ = x₀
+  Rep↑ _ _ x₀ = x₀
   Rep↑ ρ K (↑ x) = ↑ (ρ K x)
 
   Rep↑-wd : ∀ {U} {V} {K} {ρ ρ' : Rep U V} → ρ ∼R ρ' → Rep↑ {K = K} ρ ∼R Rep↑ ρ'
@@ -224,7 +224,7 @@ the result of substituting $\sigma(x)$ for $x$ for each variable in $E$, avoidin
 
 \begin{code}
   Sub : Alphabet → Alphabet → Set
-  Sub U V = ∀ K → Var U K → Expression'' V K
+  Sub U V = ∀ K → Var U K → Expression'' V (varKind K)
 
   _∼_ : ∀ {U} {V} → Sub U V → Sub U V → Set
   σ ∼ τ = ∀ K x → σ K x ≡ τ K x
@@ -257,7 +257,7 @@ Given a substitution $\sigma : U \Rightarrow V$,  define a substitution $
 
 \begin{code}
   Sub↑ : ∀ {U} {V} {K} → Sub U V → Sub (U , K) (V , K)
-  Sub↑ _ .(varKind _) x₀ = var x₀
+  Sub↑ _ _ x₀ = var x₀
   Sub↑ σ K (↑ x) = lift (σ K x)
 
   Sub↑-wd : ∀ {U} {V} {K} {σ σ' : Sub U V} → σ ∼ σ' → Sub↑ {K = K} σ ∼ Sub↑ σ'
@@ -284,7 +284,7 @@ $(\sigma \bullet_2 \rho, K) = (\sigma , K) \bullet_2 (\rho , K)$
 
   Sub↑-comp₁ : ∀ {U} {V} {W} {K} {ρ : Rep V W} {σ : Sub U V} → Sub↑ (ρ •₁ σ) ∼ Rep↑ ρ •₁ Sub↑ σ
   Sub↑-comp₁ {K = K} ._ x₀ = ref
-  Sub↑-comp₁ {U} {V} {W} {K} {ρ} {σ} L (↑ x) = let open Equational-Reasoning (Expression'' (W , K) L) in 
+  Sub↑-comp₁ {U} {V} {W} {K} {ρ} {σ} L (↑ x) = let open Equational-Reasoning (Expression'' (W , K) (varKind L)) in 
     ∵ lift (σ L x 〈 ρ 〉)
     ≡ σ L x 〈 (λ _ x → ↑ (ρ _ x)) 〉 [[ rep-comp ]]
     ≡ (lift (σ L x)) 〈 Rep↑ ρ 〉     [ rep-comp ]
@@ -404,9 +404,9 @@ We define the composition of two substitutions, as follows.
 \begin{code}
   Sub↑-comp : ∀ {U} {V} {W} {ρ : Sub U V} {σ : Sub V W} {K} →
     Sub↑ {K = K} (σ • ρ) ∼ Sub↑ σ • Sub↑ ρ
-  Sub↑-comp {U} {V} {W} {ρ} {σ} {K} .(Taxonomy.varKind K) x₀ = ref
+  Sub↑-comp _ x₀ = ref
   Sub↑-comp {W = W} {ρ = ρ} {σ = σ} {K = K} L (↑ x) =
-    let open Equational-Reasoning (Expression'' (W , K) L) in 
+    let open Equational-Reasoning (Expression'' (W , K) (varKind L)) in 
       ∵ lift ((ρ L x) ⟦ σ ⟧)
       ≡ ρ L x ⟦ (λ _ → ↑) •₁ σ ⟧  [[ sub-comp₁ {E = ρ L x} ]]
       ≡ (lift (ρ L x)) ⟦ Sub↑ σ ⟧ [ sub-comp₂ {E = ρ L x} ]
@@ -459,7 +459,7 @@ $$ E \langle \rho \rangle \equiv E [ \rho ] $$
 
 \begin{code}
   Rep↑-is-Sub↑ : ∀ {U} {V} {ρ : Rep U V} {K} → (λ L x → var (Rep↑ {K = K} ρ L x)) ∼ Sub↑ {K = K} (λ L x → var (ρ L x))
-  Rep↑-is-Sub↑ {U} {V} {ρ} {K} .(Taxonomy.varKind K) x₀ = ref
+  Rep↑-is-Sub↑ K x₀ = ref
   Rep↑-is-Sub↑ K₁ (↑ x) = ref
 
   mutual
@@ -487,7 +487,7 @@ $(V , K) \Rightarrow V$:
 
 \begin{code}
   x₀:= : ∀ {V} {K} → Expression'' V (varKind K) → Sub (V , K) V
-  x₀:= {V} {K} E .(Taxonomy.varKind K) x₀ = E
+  x₀:= E _ x₀ = E
   x₀:= E K₁ (↑ x) = var x
 \end{code}
 
@@ -503,11 +503,18 @@ $$ \sigma \bullet [x_0 := E] \sim [x_0 := E[\sigma]] \bullet (\sigma , K) $$
 \begin{code}
   comp₁-botsub : ∀ {U} {V} {K} {E : Expression'' U (varKind K)} {ρ : Rep U V} →
     ρ •₁ (x₀:= E) ∼ (x₀:= (E 〈 ρ 〉)) •₂ Rep↑ ρ
-  comp₁-botsub ._ x₀ = ref
+  comp₁-botsub _ x₀ = ref
   comp₁-botsub _ (↑ _) = ref
 
   comp-botsub : ∀ {U} {V} {K} {E : Expression'' U (varKind K)} {σ : Sub U V} →
     σ • (x₀:= E) ∼ (x₀:= (E ⟦ σ ⟧)) • Sub↑ σ
-  comp-botsub ._ x₀ = ref
+  comp-botsub _ x₀ = ref
   comp-botsub {σ = σ} L (↑ x) = trans (sym subid) (sub-comp₂ {E = σ L x})
+
+record Grammar : Set₁ where
+  field
+    taxonomy : Taxonomy
+    toGrammar : ToGrammar taxonomy
+  open Taxonomy taxonomy public
+  open ToGrammar toGrammar public
 \end{code}

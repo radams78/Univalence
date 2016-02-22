@@ -27,6 +27,12 @@ data IsTrue : Bool → Set where
 \begin{code}
 data _∧_ {i} (P Q : Set i) : Set i where
   _,_ : P → Q → P ∧ Q
+
+π₁ : ∀ {i} {P Q : Set i} → P ∧ Q → P
+π₁ (x , _) = x
+
+π₂ : ∀ {i} {P Q : Set i} → P ∧ Q → Q
+π₂ (_ , y) = y
 \end{code}
 
 \subsection{Functions}

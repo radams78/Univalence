@@ -1,7 +1,7 @@
 \documentclass{easychair}
-\bibliographystyle{plain}
+%\bibliographystyle{plain}
 
-\title{A Strongly Normalizing Computation Rule for the Univalence Axiom in Higher-Order Propositional Logic}
+\title{A Strongly Normalizing Computation Rule for Univalence in Higher-Order Propositional Logic}
 \author{Robin Adams\inst{1} \and Marc Bezem\inst{1} \and Thierry Coquard\inst{2}}
 \institute{Universitetet i Bergen,
 Bergen, Norway \\
@@ -39,14 +39,24 @@ a normal form.  A computation becomes `stuck' when it reaches the point that it 
 that is an application of the univalence axiom.  We wish to find a way to compute with the univalence axiom.
 
 As a first step towards such a system, we present here a system of higher-order propositional logic,  with a universe $\Omega$ of propositions
-closed under implication and quantification over any simple type over $\Omega$.  We add a type $a =_A b$ for any terms $a$, $b$ of type $A$
+closed under implication and quantification over any simple type over $\Omega$.  We add a type $M =_A N$ for any terms $M$, $N$ of type $A$
 (this type is not a proposition in $\Omega$), and two ways to prove an equality: reflexivity, and the univalence axiom.  We present
 reduction relations for this system, and prove the reduction confluent and strongly normalizing.
+
+We have begun to formalize this proof in \textsc{Agda}, and intend to complete the formalization by the date of the workshop.
 
 \paragraph{Predicative higher-order propositional logic with equality.}
 
 We call the following type theory predicative higher-order propositional logic.  It contains a universe $\Omega$ of propositions that contains $\bot$ and
-is closed under $\rightarrow$.  The system also includes the higher-order types that can be built from $\Omega$ by $\rightarrow$.  Its rules of deduction are
+is closed under $\rightarrow$.  The system also includes the higher-order types that can be built from $\Omega$ by $\rightarrow$.  Its grammar is given by
+
+\[ \begin{array}{lrcl}
+\text{Proof} & \delta & ::= & p \mid \delta \delta \mid \lambda p : \phi . \delta \\
+\text{Term} & M, \phi & ::= & x \mid \bot \mid M M \mid \lambda x : A . M \mid \phi \supset \phi \\
+\text{Type} & A & ::= & \Omega \mid A \rightarrow A \\
+\end{array} \]
+
+and its rules of deduction are
 
 \begin{gather*}
 \infer{\langle \rangle \vald}{} \qquad
@@ -55,12 +65,12 @@ is closed under $\rightarrow$.  The system also includes the higher-order types 
 \infer[(x : A \in \Gamma)]{\Gamma \vdash x : A}{\Gamma \vald} \qquad
 \infer[(p : \phi \in \Gamma)]{\Gamma \vdash p : \phi}{\Gamma \vald} \\
 \infer{\Gamma \vdash \bot : \Omega}{\Gamma \vald} \qquad
-\infer{\Gamma \vdash \phi \rightarrow \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} \\
+\infer{\Gamma \vdash \phi \supset \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} \\
 \infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \qquad
-\infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \rightarrow \psi \quad \Gamma \vdash \epsilon : \phi} \\
+\infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \phi} \\
 \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \qquad
-\infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \rightarrow \psi}{\Gamma, p : \phi \vdash \delta : \psi} \qquad
-\infer[(\phi \simeq \phi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega}
+\infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \supset \psi}{\Gamma, p : \phi \vdash \delta : \psi} \qquad
+\infer[(\phi \simeq \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega}
 \end{gather*}
 
 \paragraph{Extensional equality.}
@@ -71,12 +81,12 @@ $\Gamma \vdash P : M =_A M$, to denote that $P$ is a proof of that $M$ and $N$ a
 \item
 For any $M : A$, a proof $\reff{M} : M =_A M$.
 \item
-\textbf{Univalence.}  Given proofs $\delta : \phi \rightarrow \psi$ and $\epsilon : \psi \rightarrow \phi$, a proof
+\textbf{Univalence.}  Given proofs $\delta : \phi \supset \psi$ and $\epsilon : \psi \supset \phi$, a proof
 $\univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi$.
 \item
-Given a proof $P : \phi =_\Omega \psi$, proofs $P^+ : \phi \rightarrow \psi$ and $P^- : \psi \rightarrow \phi$.
+Given a proof $P : \phi =_\Omega \psi$, proofs $P^+ : \phi \supset \psi$ and $P^- : \psi \supset \phi$.
 \item
-Given a proof $\Gamma, x : A, y : A, e : x =_A y \vdash P : Mx =_B Ny$, a proof \\ $\triplelambda e : x=_Ay . P : M =_{A \rightarrow B} N$.  (Here, $e$, $x$ and $y$ are bound within $P$.)
+Given a proof $\Gamma, x : A, y : A, e : x =_A y \vdash P : Mx =_B Ny$, a proof \\ $\Gamma \vdash \triplelambda e : x=_Ay . P : M =_{A \rightarrow B} N$.  (Here, $e$, $x$ and $y$ are bound within $P$.)
 \item
 Rules to ensure that the equality is a congruence for $\rightarrow$ and application.
 \end{itemize}
@@ -94,15 +104,15 @@ We define the following reduction relation on proofs and equality proofs.
 \qquad
 \univ{\phi}{\psi}{\delta}{\epsilon}^- \rightsquigarrow \epsilon
 \\ \\
-(\reff \phi \rightarrow \univ{\psi}{\chi}{\delta}{\epsilon}) \rightsquigarrow \univ{\phi \rightarrow \psi}{\phi \rightarrow \chi}{\lambda f : \phi \rightarrow \psi . \lambda x : \phi . \delta (f x)}{\lambda g : \phi \rightarrow \chi . \lambda x : \phi . \epsilon (g x)}
+(\reff \phi \supset \univ{\psi}{\chi}{\delta}{\epsilon}) \rightsquigarrow \univ{\phi \supset \psi}{\phi \supset \chi}{\lambda f : \phi \supset \psi . \lambda x : \phi . \delta (f x)}{\lambda g : \phi \supset \chi . \lambda x : \phi . \epsilon (g x)}
 \\
-(\univ{\phi}{\psi}{\delta}{\epsilon} \rightarrow \reff{\chi}) \rightsquigarrow \univ{\phi \rightarrow \chi}{\psi \rightarrow \chi}{\lambda f : \phi \rightarrow \chi. \lambda x : \psi . f (\epsilon x)}{\lambda g : \psi \rightarrow \chi . \lambda x : \phi . g (\delta x)}
+(\univ{\phi}{\psi}{\delta}{\epsilon} \rightarrow \reff{\chi}) \rightsquigarrow \univ{\phi \supset \chi}{\psi \rightarrow \chi}{\lambda f : \phi \supset \chi. \lambda x : \psi . f (\epsilon x)}{\lambda g : \psi \rightarrow \chi . \lambda x : \phi . g (\delta x)}
 \\
 (\univ{\phi}{\psi}{\delta}{\epsilon} \rightarrow \univ{\phi'}{\psi'}{\delta'}{\epsilon'} \hspace{8cm} \\
-\qquad \rightsquigarrow \univ{\phi \rightarrow \phi'}{\psi \rightarrow \psi'}
-{\lambda f : \phi \rightarrow \phi' . \lambda x : \psi . \delta' (f (\epsilon x))}{\lambda g : \psi \rightarrow \psi' . \lambda y : \phi . \epsilon' (g (\delta y))}
+\qquad \rightsquigarrow \univ{\phi \supset \phi'}{\psi \rightarrow \psi'}
+{\lambda f : \phi \supset \phi' . \lambda x : \psi . \delta' (f (\epsilon x))}{\lambda g : \psi \rightarrow \psi' . \lambda y : \phi . \epsilon' (g (\delta y))}
 \\ \\
-(\reff{\phi} \rightarrow \reff{\psi}) \rightsquigarrow \reff{\phi \rightarrow \psi}
+(\reff{\phi} \rightarrow \reff{\psi}) \rightsquigarrow \reff{\phi \supset \psi}
 \qquad
 \reff{M} \reff{N} \rightsquigarrow \reff{MN}
 \\
@@ -113,37 +123,26 @@ We define the following reduction relation on proofs and equality proofs.
 
 Here, $\{ P / x \}M$ is an operation called \emph{path substitution} defined such that, if $P : N =_A N'$ then $\{ P / x \} M : [N/x]M = [N'/x]M$.
 
-We can prove the following result about the canonical forms in this system:
-
-\begin{proposition}
-Every closed normal form of type $\phi =_\Omega \psi$ either has the form $\reff{\_}$ or $\mathsf{univ}(\_,\_)$.  Every closed normal form of the type $M =_{A \rightarrow B} N$ either has the form $\reff{\_}$ or is a $\triplelambda$-term.
-\end{proposition}
-
-Thus, once we have proved strong normalization, we know that a well-typed computation never gets `stuck' at an application of the univalence axiom.
-
-\paragraph{Proof of strong normalization.}
-
-The proof of strong normalization follows the method of Tait \cite{Tait1967}
-We define the set of \emph{computable} terms $E_\Gamma(A)$ for each type $A$,
-and computable proofs $E_\Gamma(M =_A N)$ for any terms $\Gamma \vdash M,N : A$
-
-Tait's proof relies on confluence, which does not hold for this reduction relation in general.  But we do have that the following, which turns out to be sufficient.
-
-\begin{proposition}
-Reduction is locally confluent.  All computable terms are strongly normalizing and confluent.  The computability predicates are closed under reduction and well-tiped expansion.
-\end{proposition}
+\paragraph{Main Theorem.}
 
 \begin{theorem}
-If $\Gamma \vdash M : A$ then $M \in E_\Gamma(A)$.  If $\Gamma \vdash P : M =_A N$ then $P \in E_\Gamma(M =_A N)$.
+In the system described above, all typable terms are confluent and strongly normalizing.  Every closed normal form of type $\phi =_\Omega \psi$ either has the form $\reff{\_}$ or $\mathsf{univ}(\_,\_)$.  Every closed normal form of the type $M =_{A \rightarrow B} N$ either has the form $\reff{\_}$ or is a $\triplelambda$-term.
 \end{theorem}
-It follows that this system is strongly normalizing.
 
-In the proof, we prove confluence `on-the-fly'.  That is, whenever we require a term to be confluent, the induction hypothesis provides us with the fact that that term is computable, and hence strongly normalizing and confluent.
+Thus, we know that a well-typed computation never gets `stuck' at an application of the univalence axiom.
+
+\paragraph{Proof.}
+
+The proof uses the method of Tait-style computability.
+We define the set of \emph{computable} terms $E_\Gamma(A)$ for each type $A$,
+and computable proofs $E_\Gamma(M =_A N)$ for any terms $\Gamma \vdash M,N : A$. We prove that reduction is locally confluent, and that the computability predicates are closed under reduction and well-typed expansion.  We can then prove that, if $\Gamma \vdash M : A$, then $M \in E_\Gamma(A)$; and if $\Gamma \vdash P : M =_A N$, then $P \in E_\Gamma(M =_A N)$. 
+
+\subparagraph{Remark.} Tait's proof relies on confluence, which does not hold for this reduction relation in general.  In the proof, we prove confluence `on-the-fly'.  That is, whenever we require a term to be confluent, the induction hypothesis provides us with the fact that that term is computable, and hence strongly normalizing and confluent.
 
 % In the future, we wish to extend this work in several directions.  We wish to add constructions $\mathsf{sym}(P)$ and $\mathsf{trans}(P,Q)$ that make our equality into an equivalence
 % relation, place the equations $M =_A N$ inside $
 % and provide reduction rules for each of these.  We wish to extend our logic by placing the equations $M =_A N$ inside $\Omega$, and allow quantification over any type in $A$ (including $\Omega$) in our logic.  This would move our system ever closer to homotopy type theory.  Our ultimate goal is to provide a strongly normalizing reduction relation for homotopy type theory, including the terms involving the univalence axiom, and we believe we have taken the first step.
 
-\bibliography{type}
+%\bibliography{type}
 
 \end{document}
