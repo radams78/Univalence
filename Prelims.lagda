@@ -14,6 +14,8 @@ postulate suc : Level → Level
 \subsection{Booleans}
 
 \begin{code}
+data False : Set where
+
 data Bool : Set where
   true : Bool
   false : Bool

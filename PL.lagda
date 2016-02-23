@@ -112,6 +112,11 @@ for every $x : \phi$ in $\Gamma$, we have $\rho(x) : \phi \in \Delta$.
 _∷_⇒R_ : ∀ {P} {Q} → Rep P Q → Context P → Context Q → Set
 ρ ∷ Γ ⇒R Δ = ∀ x → typeof (ρ -Proof x) Δ ≡ (typeof x Γ) 〈 ρ 〉
 
+↑-typed : ∀ {P} {Γ : Context P} {φ : Expression'' P (nonVarKind -Prp)} → 
+  (λ _ → ↑) ∷ Γ ⇒R (_,_ {P} { -Proof} Γ φ)
+↑-typed x₀ = ref
+↑-typed (↑ _) = ref
+
 Rep↑-typed : ∀ {P} {Q} {ρ} {Γ : Context P} {Δ : Context Q} {φ : Expression'' P (nonVarKind -Prp)} → ρ ∷ Γ ⇒R Δ → 
   Rep↑ ρ ∷ (_,_ {P} { -Proof} Γ φ) ⇒R (_,_ {Q} { -Proof} Δ (φ 〈 ρ 〉))
 Rep↑-typed {Q = Q} {ρ = ρ} {φ = φ} ρ∷Γ→Δ x₀ = let open Equational-Reasoning (Expression'' (Q , -Proof) (nonVarKind -Prp)) in 
@@ -153,10 +158,28 @@ Sub↑-typed {P} {Q} {σ} {Γ} {Δ} {φ} σ∷Γ→Δ x₀ = subst (λ p → (_,
   ≡ φ ⟦ (λ _ → ↑) •₁ σ ⟧      [[ sub-comp₁ {E = φ} ]]
   ≡ φ 〈 (λ _ → ↑) 〉 ⟦ Sub↑ σ ⟧ [ sub-comp₂ {E = φ} ]) 
   var
-Sub↑-typed {Q = Q} {σ = σ} {Δ = Δ} {φ = φ} σ∷Γ→Δ (↑ x) = subst
+Sub↑-typed {Q = Q} {σ = σ} {Γ = Γ} {Δ = Δ} {φ = φ} σ∷Γ→Δ (↑ x) = subst
   (λ P → _,_ {Q} { -Proof} Δ (φ ⟦ σ ⟧) ⊢ σ -Proof x 〈 (λ _ → ↑) 〉 ∷ P) 
-  {!!} 
-  (Weakening {!!} {!!})
+  (let open Equational-Reasoning (Expression'' (Q , -Proof) (nonVarKind -Prp)) in 
+  ∵ typeof x Γ ⟦ σ ⟧ 〈 (λ _ → ↑) 〉
+  ≡ typeof x Γ ⟦ (λ _ → ↑) •₁ σ ⟧      [[ sub-comp₁ {E = typeof x Γ} ]]
+  ≡ typeof x Γ 〈 (λ _ → ↑) 〉 ⟦ Sub↑ σ ⟧ [ sub-comp₂ {E = typeof x Γ} ]) 
+  (Weakening (σ∷Γ→Δ x) (↑-typed {φ = φ ⟦ σ ⟧}))
+
+botsub-typed : ∀ {P} {Γ : Context P} {φ : Expression'' P (nonVarKind -Prp)} {δ} →
+  Γ ⊢ δ ∷ φ → x₀:= δ ∷ (_,_ {P} { -Proof} Γ φ) ⇒ Γ
+botsub-typed {P} {Γ} {φ} {δ} Γ⊢δ∷φ x₀ = subst (λ P₁ → Γ ⊢ δ ∷ P₁) 
+  (let open Equational-Reasoning (Expression'' P (nonVarKind -Prp)) in 
+  ∵ φ
+  ≡ φ ⟦ idSub ⟧                   [[ subid ]]
+  ≡ φ 〈 (λ _ → ↑) 〉 ⟦ x₀:= δ ⟧     [ sub-comp₂ {E = φ} ]) 
+  Γ⊢δ∷φ
+botsub-typed {P} {Γ} {φ} {δ} _ (↑ x) = subst (λ P₁ → Γ ⊢ var x ∷ P₁) 
+  (let open Equational-Reasoning (Expression'' P (nonVarKind -Prp)) in 
+  ∵ typeof x Γ
+  ≡ typeof x Γ ⟦ idSub ⟧                [[ subid ]]
+  ≡ typeof x Γ 〈 (λ _ → ↑) 〉 ⟦ x₀:= δ ⟧ [ sub-comp₂ {E = typeof x Γ} ]) 
+  var
 \end{code}
 
 Substitution Lemma
@@ -170,17 +193,37 @@ Substitution {Q = Q} {Δ = Δ} {σ = σ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ�
   ∵ ψ 〈 (λ _ → ↑) 〉 ⟦ Sub↑ σ ⟧
   ≡ ψ ⟦ Sub↑ σ •₂ (λ _ → ↑) ⟧  [[ sub-comp₂ {E = ψ} ]]
   ≡ (ψ ⟦ σ ⟧) 〈 (λ _ → ↑) 〉    [ sub-comp₁ {E = ψ} ]) 
-  (Substitution Γ,φ⊢δ∷ψ {!!}))
+  (Substitution Γ,φ⊢δ∷ψ (Sub↑-typed σ∷Γ→Δ)))
 \end{code}
 
 Subject Reduction
 
 \begin{code}
+prop-triv-red : ∀ {P} {φ ψ : Expression'' P (nonVarKind -Prp)} → φ →〈 β 〉 ψ → False
+prop-triv-red {_} {app bot out₂} (redex ())
+prop-triv-red {P} {app bot out₂} (app ())
+prop-triv-red {P} {app imp (app₂ _ (app₂ _ out₂))} (redex ())
+prop-triv-red {P} {app imp (app₂ (out φ) (app₂ ψ out₂))} (app (appl (out φ→φ'))) = prop-triv-red φ→φ'
+prop-triv-red {P} {app imp (app₂ φ (app₂ (out ψ) out₂))} (app (appr (appl (out ψ→ψ')))) = prop-triv-red ψ→ψ'
+prop-triv-red {P} {app imp (app₂ _ (app₂ (out _) out₂))} (app (appr (appr ())))
+
 SR : ∀ {P} {Γ : Context P} {δ ε : Proof P} {φ} → Γ ⊢ δ ∷ φ → δ →〈 β 〉 ε → Γ ⊢ ε ∷ φ
 SR var ()
-SR (app (Λ Γ,φ⊢δ∷ψ) Γ⊢ε∷φ) (redex βI) = {!!}
-SR (app Γ⊢δ∷φ→ψ Γ⊢ε∷φ) (Reduction.app x) = {!!}
-SR (Λ Γ⊢δ∷φ) δ→ε = {!!}
+SR (app {ε = ε} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∷ψ) Γ⊢ε∷φ) (redex βI) = 
+  subst (λ P₁ → Γ ⊢ δ ⟦ x₀:= ε ⟧ ∷ P₁) 
+  (let open Equational-Reasoning (Expression'' P (nonVarKind -Prp)) in
+  ∵ ψ 〈 (λ _ → ↑) 〉 ⟦ x₀:= ε ⟧
+  ≡ ψ ⟦ idSub ⟧                 [[ sub-comp₂ {E = ψ} ]]
+  ≡ ψ                           [ subid ]) 
+  (Substitution Γ,φ⊢δ∷ψ (botsub-typed Γ⊢ε∷φ))
+SR (app Γ⊢δ∷φ→ψ Γ⊢ε∷φ) (app (appl (out δ→δ'))) = app (SR Γ⊢δ∷φ→ψ δ→δ') Γ⊢ε∷φ
+SR (app Γ⊢δ∷φ→ψ Γ⊢ε∷φ) (app (appr (appl (out ε→ε')))) = app Γ⊢δ∷φ→ψ (SR Γ⊢ε∷φ ε→ε')
+SR (app Γ⊢δ∷φ→ψ Γ⊢ε∷φ) (app (appr (appr ())))
+SR (Λ Γ⊢δ∷φ) (redex ())
+SR (Λ Γ⊢δ∷φ) (app (appl (out φ→φ'))) with prop-triv-red φ→φ'
+... | ()
+SR (Λ Γ⊢δ∷φ) (app (appr (appl (Λ (out δ→δ'))))) = Λ (SR Γ⊢δ∷φ δ→δ')
+SR (Λ Γ⊢δ∷φ) (app (appr (appr ())))
 \end{code}
 We define the sets of \emph{computable} proofs $C_\Gamma(\phi)$ for each context $\Gamma$ and proposition $\phi$ as follows:
 
