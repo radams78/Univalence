@@ -2,6 +2,7 @@
 module PHOPL where
 open import Prelims hiding (⊥)
 open import Grammar
+open import Reduction
 \end{code}
 
 \section{Predicative Higher-Order Propositional Logic}
@@ -27,49 +28,59 @@ and the variable $x$ is bound within $M$ in the term $\lambda x : A . M$.  We id
 In the implementation, we write $\Term{V}$ for the set of all terms with free variables a subset of $V$, where $V : \FinSet$.
 
 \begin{code}
-data PHOPLkind : Set where
-  -Proof : PHOPLkind
-  -Term  : PHOPLkind
-  -Type  : PHOPLkind
+data PHOPLVarKind : Set where
+  -Proof : PHOPLVarKind
+  -Term : PHOPLVarKind
 
-data PHOPLcon : ∀ {K : PHOPLkind} → ConstructorKind K → Set where
-  -appProof : PHOPLcon (Π₂ (out -Proof) (Π₂ (out -Proof) (out₂ {K = -Proof})))
-  -lamProof : PHOPLcon (Π₂ (out -Term) (Π₂ (Π -Proof (out -Proof)) (out₂ {K = -Proof})))
-  -bot : PHOPLcon (out₂ {K = -Term})
-  -imp : PHOPLcon (Π₂ (out -Term) (Π₂ (out -Term) (out₂ {K = -Term})))
-  -appTerm : PHOPLcon (Π₂ (out -Term) (Π₂ (out -Term) (out₂ {K = -Term})))
-  -lamTerm : PHOPLcon (Π₂ (out -Type) (Π₂ (Π -Term (out -Term)) (out₂ {K = -Term})))
-  -Omega : PHOPLcon (out₂ {K = -Type})
-  -func  : PHOPLcon (Π₂ (out -Type) (Π₂ (out -Type) (out₂ {K = -Type})))
+data PHOPLNonVarKind : Set where
+  -Type : PHOPLNonVarKind
 
-data PHOPLparent : PHOPLkind → PHOPLkind → Set where
-  ProofTerm : PHOPLparent -Proof -Term
-  TermType  : PHOPLparent -Term -Type
+PHOPLTaxonomy : Taxonomy
+PHOPLTaxonomy = record { 
+  VarKind = PHOPLVarKind; 
+  NonVarKind = PHOPLNonVarKind }
 
-PHOPL : Grammar
-PHOPL = record { 
-  ExpressionKind = PHOPLkind; 
-  Constructor = PHOPLcon; 
-  parent = PHOPLparent }
+module PHOPLGrammar where
+  open Taxonomy PHOPLTaxonomy
+
+  data PHOPLcon : ∀ {K : ExpressionKind} → ConstructorKind K → Set where
+    -appProof : PHOPLcon (Π₂ (out (varKind -Proof)) (Π₂ (out (varKind -Proof)) (out₂ {K = varKind -Proof})))
+    -lamProof : PHOPLcon (Π₂ (out (varKind -Term)) (Π₂ (Π (varKind -Proof) (out (varKind -Proof))) (out₂ {K = varKind -Proof})))
+    -bot : PHOPLcon (out₂ {K = varKind -Term})
+    -imp : PHOPLcon (Π₂ (out (varKind -Term)) (Π₂ (out (varKind -Term)) (out₂ {K = varKind -Term})))
+    -appTerm : PHOPLcon (Π₂ (out (varKind -Term)) (Π₂ (out (varKind -Term)) (out₂ {K = varKind -Term})))
+    -lamTerm : PHOPLcon (Π₂ (out (nonVarKind -Type)) (Π₂ (Π (varKind -Term) (out (varKind -Term))) (out₂ {K = varKind -Term})))
+    -Omega : PHOPLcon (out₂ {K = nonVarKind -Type})
+    -func  : PHOPLcon (Π₂ (out (nonVarKind -Type)) (Π₂ (out (nonVarKind -Type)) (out₂ {K = nonVarKind -Type})))
+
+  PHOPLparent : PHOPLVarKind → ExpressionKind
+  PHOPLparent -Proof = varKind -Term
+  PHOPLparent -Term = nonVarKind -Type
+
+  PHOPL : Grammar
+  PHOPL = record { 
+    taxonomy = PHOPLTaxonomy;
+    toGrammar = record { 
+      Constructor = PHOPLcon; 
+      parent = PHOPLparent } }
 
 module PHOPL where
-  open Grammar.Grammar PHOPL
-  open import Reduction PHOPL
+  open PHOPLGrammar using (PHOPLcon;-appProof;-lamProof;-bot;-imp;-appTerm;-lamTerm;-Omega;-func)
+  open Grammar.Grammar PHOPLGrammar.PHOPL
 
   Type : Set
-  Type = Expression ∅ -Type
+  Type = Expression'' ∅ (nonVarKind -Type)
 
-  liftType : ∀ {V} → Type → Expression'' V -Type
-  liftType (var ())
-  liftType (app -Omega out) = app -Omega out₂
-  liftType (app -func (app (out A) (app (out B) out))) = app -func (app₂ (out (liftType A)) (app₂ (out (liftType B)) out₂)) 
+  liftType : ∀ {V} → Type → Expression'' V (nonVarKind -Type)
+  liftType (app -Omega out₂) = app -Omega out₂
+  liftType (app -func (app₂ (out A) (app₂ (out B) out₂))) = app -func (app₂ (out (liftType A)) (app₂ (out (liftType B)) out₂)) 
 
   Ω : Type
-  Ω = app -Omega out
+  Ω = app -Omega out₂
 
   infix 75 _⇒_
   _⇒_ : Type → Type → Type
-  φ ⇒ ψ = app -func (app (out φ) (app (out ψ) out))
+  φ ⇒ ψ = app -func (app₂ (out φ) (app₂ (out ψ) out₂))
 
   VAlphabet : FinSet → Alphabet
   VAlphabet ∅ = ∅
@@ -79,11 +90,9 @@ module PHOPL where
   inVar Prelims.⊥ = x₀
   inVar (↑ x) = ↑ (inVar x)
 
-  lowerType : ∀ {V} → Expression (VAlphabet V) -Type → Type
-  lowerType {∅} (var ())
-  lowerType {Lift V} (var (↑ x)) = lowerType {V} (var x)
-  lowerType (app -Omega out) = Ω
-  lowerType (app -func (app (out φ) (app (out ψ) out))) = lowerType φ ⇒ lowerType ψ
+  lowerType : ∀ {V} → Expression'' (VAlphabet V) (nonVarKind -Type) → Type
+  lowerType (app -Omega out₂) = Ω
+  lowerType (app -func (app₂ (out φ) (app₂ (out ψ) out₂))) = lowerType φ ⇒ lowerType ψ
 
   infix 80 _,_
   data TContext : FinSet → Set where
@@ -91,7 +100,7 @@ module PHOPL where
     _,_ : ∀ {V} → TContext V → Type → TContext (Lift V)
 
   Term : FinSet → Set
-  Term V = Expression'' (VAlphabet V) -Term
+  Term V = Expression'' (VAlphabet V) (varKind -Term)
 
   ⊥ : ∀ {V} → Term V
   ⊥ = app -bot out₂
@@ -125,16 +134,16 @@ module PHOPL where
     _,_ : ∀ {P} → PContext' V P → Term V → PContext' V (Lift P)
 
   PContext : FinSet → FinSet → Set
-  PContext V P = Context (VAlphabet V) → Context (PAlphabet P (VAlphabet V))
+  PContext V P = Context PHOPLGrammar.PHOPL (VAlphabet V) → Context PHOPLGrammar.PHOPL (PAlphabet P (VAlphabet V))
 
   P〈〉 : ∀ {V} → PContext V ∅
   P〈〉 Γ = Γ
 
   _P,_ : ∀ {V} {P} → PContext V P → Term V → PContext V (Lift P)
-  _P,_ {V} {P} Δ φ Γ = _,_ {PAlphabet P (VAlphabet V)} { -Proof} { -Term} {ProofTerm} (Δ Γ) (liftExp P φ)
+  _P,_ {V} {P} Δ φ Γ = _,_ {K = -Proof} (Δ Γ) (liftExp P φ)
 
   Proof : FinSet → FinSet → Set
-  Proof V P = Expression'' (PAlphabet P (VAlphabet V)) -Proof
+  Proof V P = Expression'' (PAlphabet P (VAlphabet V)) (varKind -Proof)
 
   varP : ∀ {V} {P} → El P → Proof V P
   varP {P = P} x = var (liftVar' P x)
@@ -153,7 +162,7 @@ module PHOPL where
   propof Prelims.⊥ (_ , φ) = φ
   propof (↑ x) (Γ , _) = propof x Γ
 
-  data β : Reduction where
+  data β : Reduction PHOPLGrammar.PHOPL where
     βI : ∀ {V} A (M : Term (Lift V)) N → β -appTerm (app₂ (out (ΛTerm A M)) (app₂ (out N) out₂)) (M ⟦ x₀:= N ⟧)
 \end{code}
 
@@ -200,5 +209,5 @@ The rules of deduction of the system are as follows.
     var : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {p} → Pvalid Γ Δ → Γ ,, Δ ⊢ varP p ∶∶ propof p Δ -- TODO Make inVar and varP naming consistent
     app : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {δ} {ε} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ ⊃ ψ → Γ ,, Δ ⊢ ε ∶∶ φ → Γ ,, Δ ⊢ appP {V} {P} δ ε ∶∶ ψ
     Λ : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {φ} {δ} {ψ} → Γ ,, Δ , φ ⊢ δ ∶∶ ψ → Γ ,, Δ ⊢ ΛP {V} {P} φ δ ∶∶ φ ⊃ ψ
-    convR : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {δ} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ → Γ ⊢ ψ ∶ Ω → φ ≃〈 β 〉 ψ → Γ ,, Δ ⊢ δ ∶∶ ψ
+    convR : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {δ} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ → Γ ⊢ ψ ∶ Ω → _≃〈_〉_ PHOPLGrammar.PHOPL φ β ψ → Γ ,, Δ ⊢ δ ∶∶ ψ
 \end{code}
