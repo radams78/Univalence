@@ -88,6 +88,10 @@ to $\alpha$-conversion.
     x₀ : ∀ {V} {K} → Var (V , K) K
     ↑ : ∀ {V} {K} {L} → Var V L → Var (V , K) L
 
+  Extend : Alphabet → VarKind → FinSet → Alphabet
+  Extend A K ∅ = A
+  Extend A K (Lift F) = Extend A K F , K
+
   data Expression' (V : Alphabet) : ∀ C → Kind ExpressionKind C → Set where
     var : ∀ {K} → Var V K → Expression' V -Expression (base (varKind K))
     app : ∀ {K} {C : ConstructorKind K} → Constructor C → Expression' V (-Constructor K) C → Expression' V -Expression (base K)
@@ -531,13 +535,21 @@ A \emph{context} has the form $x_1 : A_1, \ldots, x_n : A_n$ where, for each $i$
 The \emph{domain} of this context is the alphabet $\{ x_1, \ldots, x_n \}$.
 
 \begin{code}
-  data Context : Alphabet → Set where
-    〈〉 : Context ∅
-    _,_ : ∀ {V} {K} → Context V → Expression'' V (parent K) → Context (V , K)
+  data Context (K : VarKind) : Alphabet → Set where
+    〈〉 : Context K ∅
+    _,_ : ∀ {V} → Context K V → Expression'' V (parent K) → Context K (V , K)
 
-  typeof : ∀ {V} {K} (x : Var V K) (Γ : Context V) → Expression'' V (parent K)
+  typeof : ∀ {V} {K} (x : Var V K) (Γ : Context K V) → Expression'' V (parent K)
   typeof x₀ (_ , A) = lift A
   typeof (↑ x) (Γ , _) = lift (typeof x Γ)
+
+  data Context' (A : Alphabet) (K : VarKind) : FinSet → Set where
+    〈〉 : Context' A K ∅
+    _,_ : ∀ {F} → Context' A K F → Expression'' (Extend A K F) (parent K) → Context' A K (Lift F)
+
+  typeof' : ∀ {A} {K} {F} → El F → Context' A K F → Expression'' (Extend A K F) (parent K)
+  typeof' ⊥ (_ , A) = lift A
+  typeof' (↑ x) (Γ , _) = lift (typeof' x Γ)
 
 record Grammar : Set₁ where
   field
