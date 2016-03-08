@@ -3,7 +3,7 @@
 \begin{code}
 module Grammar where
 
-open import Prelims hiding (Rep;_∼_;lift)
+open import Prelims hiding (_∼_)
 \end{code}
 
 Before we begin investigating the several theories we wish to consider, we present a general theory of syntax and

@@ -1,7 +1,7 @@
 \begin{code}
 module PL where
 
-open import Prelims hiding (Rep;lift)
+open import Prelims
 open import Grammar
 import Reduction
 \end{code}

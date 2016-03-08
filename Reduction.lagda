@@ -1,5 +1,5 @@
 \begin{code}
-open import Prelims hiding (Rep;lift)
+open import Prelims
 open import Grammar
 module Reduction (G : Grammar) where
   open Grammar.Grammar G 
