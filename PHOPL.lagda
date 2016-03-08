@@ -82,14 +82,6 @@ module PHOPL where
   _⇒_ : Type → Type → Type
   φ ⇒ ψ = app -func (app₂ (out φ) (app₂ (out ψ) out₂))
 
-  VAlphabet : FinSet → Alphabet
-  VAlphabet ∅ = ∅
-  VAlphabet (Lift X) = VAlphabet X , -Term
-
-  inVar : ∀ {V} → El V → Var (VAlphabet V) -Term
-  inVar Prelims.⊥ = x₀
-  inVar (↑ x) = ↑ (inVar x)
-
   lowerType : ∀ {V} → Expression'' V (nonVarKind -Type) → Type
   lowerType (app -Omega out₂) = Ω
   lowerType (app -func (app₂ (out φ) (app₂ (out ψ) out₂))) = lowerType φ ⇒ lowerType ψ
@@ -201,7 +193,7 @@ The rules of deduction of the system are as follows.
 
   infix 10 _,,_⊢_∶∶_
   data _,,_⊢_∶∶_ : ∀ {V} {P} → TContext V → PContext' V P → Proof V P → Term V → Set₁ where
-    var : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {p} → Pvalid Γ Δ → Γ ,, Δ ⊢ varP p ∶∶ propof p Δ -- TODO Make inVar and varP naming consistent
+    var : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {p} → Pvalid Γ Δ → Γ ,, Δ ⊢ varP p ∶∶ propof p Δ 
     app : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {δ} {ε} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ ⊃ ψ → Γ ,, Δ ⊢ ε ∶∶ φ → Γ ,, Δ ⊢ appP {V} {P} δ ε ∶∶ ψ
     Λ : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {φ} {δ} {ψ} → Γ ,, Δ , φ ⊢ δ ∶∶ ψ → Γ ,, Δ ⊢ ΛP {V} {P} φ δ ∶∶ φ ⊃ ψ
     convR : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {δ} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ → Γ ⊢ ψ ∶ Ω → _≃〈_〉_ PHOPLGrammar.PHOPL φ β ψ → Γ ,, Δ ⊢ δ ∶∶ ψ
