@@ -1,5 +1,5 @@
-all: Grammar.agdai Reduction.agdai Prelims.agdai PL.agdai PHOPL.agdai
+all: Grammar.agdai Reduction.agdai Prelims.agdai PL.agdai PHOPL.agdai main.pdf
 %.agdai: %.lagda
 	agda $< 
-%.pdf: %.tex
+main.pdf: main.lagda
 	latexmk -pdf -g $<

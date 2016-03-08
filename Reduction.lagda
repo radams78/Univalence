@@ -314,23 +314,3 @@ If $E$ is strongly normalizable and $E \twoheadrightarrow_R F$ then $F$ is stron
   SNrep' : ∀ {U} {V} {K} {ρ : Rep U V} {E : Expression'' U K} {R : Reduction} → respect-rep R → SN R (rep E ρ) → SN R E
   SNrep' {U} {V} {K} {ρ} {E} hyp (SNI .(rep E ρ) SNEρ) = SNI E (λ F E→F → SNrep' hyp (SNEρ (rep F ρ) (reposr hyp E→F)))
 \end{code}
-
-\section{Contexts}
-
-A \emph{context} has the form $x_1 : A_1, \ldots, x_n : A_n$ where, for each $i$:
-\begin{itemize}
-\item $x_i$ is a variable of kind $K_i$ distinct from $x_1$, \ldots, $x_{i-1}$;
-\item $A_i$ is an expression of some kind $L_i$;
-\item $L_i$ is a parent of $K_i$.
-\end{itemize}
-The \emph{domain} of this context is the alphabet $\{ x_1, \ldots, x_n \}$.
-
-\begin{code}
-  data Context : Alphabet → Set where
-    〈〉 : Context ∅
-    _,_ : ∀ {V} {K} → Context V → Expression'' V (parent K) → Context (V , K)
-
-  typeof : ∀ {V} {K} (x : Var V K) (Γ : Context V) → Expression'' V (parent K)
-  typeof x₀ (_ , A) = lift A
-  typeof (↑ x) (Γ , _) = lift (typeof x Γ)
-\end{code}

@@ -518,6 +518,26 @@ $$ \sigma \bullet [x_0 := E] \sim [x_0 := E[\sigma]] \bullet (\sigma , K) $$
     σ • (x₀:= E) ∼ (x₀:= (E ⟦ σ ⟧)) • Sub↑ σ
   comp-botsub _ x₀ = ref
   comp-botsub {σ = σ} L (↑ x) = trans (sym subid) (sub-comp₂ {E = σ L x})
+\end{code}
+
+\section{Contexts}
+
+A \emph{context} has the form $x_1 : A_1, \ldots, x_n : A_n$ where, for each $i$:
+\begin{itemize}
+\item $x_i$ is a variable of kind $K_i$ distinct from $x_1$, \ldots, $x_{i-1}$;
+\item $A_i$ is an expression of some kind $L_i$;
+\item $L_i$ is a parent of $K_i$.
+\end{itemize}
+The \emph{domain} of this context is the alphabet $\{ x_1, \ldots, x_n \}$.
+
+\begin{code}
+  data Context : Alphabet → Set where
+    〈〉 : Context ∅
+    _,_ : ∀ {V} {K} → Context V → Expression'' V (parent K) → Context (V , K)
+
+  typeof : ∀ {V} {K} (x : Var V K) (Γ : Context V) → Expression'' V (parent K)
+  typeof x₀ (_ , A) = lift A
+  typeof (↑ x) (Γ , _) = lift (typeof x Γ)
 
 record Grammar : Set₁ where
   field

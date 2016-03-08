@@ -134,7 +134,7 @@ module PHOPL where
     _,_ : ∀ {P} → PContext' V P → Term V → PContext' V (Lift P)
 
   PContext : FinSet → FinSet → Set
-  PContext V P = Context PHOPLGrammar.PHOPL (VAlphabet V) → Context PHOPLGrammar.PHOPL (PAlphabet P (VAlphabet V))
+  PContext V P = Context (VAlphabet V) → Context (PAlphabet P (VAlphabet V))
 
   P〈〉 : ∀ {V} → PContext V ∅
   P〈〉 Γ = Γ
