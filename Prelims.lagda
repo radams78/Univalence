@@ -11,17 +11,10 @@ postulate suc : Level → Level
 {-# BUILTIN LEVELSUC suc #-}
 \end{code}
 
-\subsection{Booleans}
+\subsection{The Empty Type}
 
 \begin{code}
 data False : Set where
-
-data Bool : Set where
-  true : Bool
-  false : Bool
-
-data IsTrue : Bool → Set where
-  isTrue : IsTrue true
 \end{code}
 
 \subsection{Conjunction}
@@ -154,8 +147,4 @@ liftid (↑ _) = ref
 liftcomp : ∀ {U} {V} {W} {g : Rep V W} {f : Rep U V} → lift (g ∘ f) ∼ lift g ∘ lift f
 liftcomp ⊥ = ref
 liftcomp (↑ _) = ref
-
-data List (A : Set) : Set where
-  〈〉 : List A
-  _∷_ : List A → A → List A
 \end{code}
