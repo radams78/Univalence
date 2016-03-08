@@ -187,21 +187,16 @@ The rules of deduction of the system are as follows.
 \[ \infer[(\phi \simeq \phi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
 
 \begin{code}
-  mutual
-    data Tvalid : ∀ {V} → TContext V → Set₁ where
-      〈〉 : Tvalid 〈〉
-      _,_ : ∀ {V} {Γ : TContext V} → Tvalid Γ → ∀ A → Tvalid (Γ , A)
-
-    infix 10 _⊢_∶_
-    data _⊢_∶_ : ∀ {V} → TContext V → Term V → Type → Set₁ where
-      var : ∀ {V} {Γ : TContext V} {x} → Tvalid Γ → Γ ⊢ var (inVar x) ∶ typeof' x Γ
-      ⊥R : ∀ {V} {Γ : TContext V} → Tvalid Γ → Γ ⊢ ⊥ ∶ Ω
-      imp : ∀ {V} {Γ : TContext V} {φ} {ψ} → Γ ⊢ φ ∶ Ω → Γ ⊢ ψ ∶ Ω → Γ ⊢ φ ⊃ ψ ∶ Ω
-      app : ∀ {V} {Γ : TContext V} {M} {N} {A} {B} → Γ ⊢ M ∶ A ⇒ B → Γ ⊢ N ∶ A → Γ ⊢ appTerm M N ∶ B
-      Λ : ∀ {V} {Γ : TContext V} {A} {M} {B} → Γ , A ⊢ M ∶ B → Γ ⊢ ΛTerm A M ∶ A ⇒ B
+  infix 10 _⊢_∶_
+  data _⊢_∶_ : ∀ {V} → TContext V → Term V → Type → Set₁ where
+    var : ∀ {V} {Γ : TContext V} {x} → Γ ⊢ var (inVar x) ∶ typeof' x Γ
+    ⊥R : ∀ {V} {Γ : TContext V} → Γ ⊢ ⊥ ∶ Ω
+    imp : ∀ {V} {Γ : TContext V} {φ} {ψ} → Γ ⊢ φ ∶ Ω → Γ ⊢ ψ ∶ Ω → Γ ⊢ φ ⊃ ψ ∶ Ω
+    app : ∀ {V} {Γ : TContext V} {M} {N} {A} {B} → Γ ⊢ M ∶ A ⇒ B → Γ ⊢ N ∶ A → Γ ⊢ appTerm M N ∶ B
+    Λ : ∀ {V} {Γ : TContext V} {A} {M} {B} → Γ , A ⊢ M ∶ B → Γ ⊢ ΛTerm A M ∶ A ⇒ B
 
   data Pvalid : ∀ {V} {P} → TContext V → PContext' V P → Set₁ where
-    〈〉 : ∀ {V} {Γ : TContext V} → Tvalid Γ → Pvalid Γ 〈〉
+    〈〉 : ∀ {V} {Γ : TContext V} → Pvalid Γ 〈〉
     _,_ : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {φ : Term V} → Pvalid Γ Δ → Γ ⊢ φ ∶ Ω → Pvalid Γ (Δ , φ)
 
   infix 10 _,,_⊢_∶∶_
