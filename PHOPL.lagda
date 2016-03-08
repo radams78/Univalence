@@ -90,17 +90,17 @@ module PHOPL where
   inVar Prelims.⊥ = x₀
   inVar (↑ x) = ↑ (inVar x)
 
-  lowerType : ∀ {V} → Expression'' (VAlphabet V) (nonVarKind -Type) → Type
+  lowerType : ∀ {V} → Expression'' V (nonVarKind -Type) → Type
   lowerType (app -Omega out₂) = Ω
   lowerType (app -func (app₂ (out φ) (app₂ (out ψ) out₂))) = lowerType φ ⇒ lowerType ψ
 
   infix 80 _,_
-  data TContext : FinSet → Set where
+  data TContext : Alphabet → Set where
     〈〉 : TContext ∅
-    _,_ : ∀ {V} → TContext V → Type → TContext (Lift V)
+    _,_ : ∀ {V} → TContext V → Type → TContext (V , -Term)
 
-  Term : FinSet → Set
-  Term V = Expression'' (VAlphabet V) (varKind -Term)
+  Term : Alphabet → Set
+  Term V = Expression'' V (varKind -Term)
 
   ⊥ : ∀ {V} → Term V
   ⊥ = app -bot out₂
@@ -108,7 +108,7 @@ module PHOPL where
   appTerm : ∀ {V} → Term V → Term V → Term V
   appTerm M N = app -appTerm (app₂ (out M) (app₂ (out N) out₂))
 
-  ΛTerm : ∀ {V} → Type → Term (Lift V) → Term V
+  ΛTerm : ∀ {V} → Type → Term (V , -Term) → Term V
   ΛTerm A M = app -lamTerm (app₂ (out (liftType A)) (app₂ (Λ (out M)) out₂))
 
   _⊃_ : ∀ {V} → Term V → Term V → Term V
@@ -126,15 +126,15 @@ module PHOPL where
   liftVar' (Lift P) Prelims.⊥ = x₀
   liftVar' (Lift P) (↑ x) = ↑ (liftVar' P x)
 
-  liftExp : ∀ {V} {K} P → Expression'' (VAlphabet V) K → Expression'' (PAlphabet P (VAlphabet V)) K
+  liftExp : ∀ {V} {K} P → Expression'' V K → Expression'' (PAlphabet P V) K
   liftExp P E = E 〈 (λ _ → liftVar P) 〉
 
-  data PContext' (V : FinSet) : FinSet → Set where
+  data PContext' (V : Alphabet) : FinSet → Set where
     〈〉 : PContext' V ∅
     _,_ : ∀ {P} → PContext' V P → Term V → PContext' V (Lift P)
 
-  PContext : FinSet → FinSet → Set
-  PContext V P = Context (VAlphabet V) → Context (PAlphabet P (VAlphabet V))
+  PContext : Alphabet → FinSet → Set
+  PContext V P = Context V → Context (PAlphabet P V)
 
   P〈〉 : ∀ {V} → PContext V ∅
   P〈〉 Γ = Γ
@@ -142,8 +142,8 @@ module PHOPL where
   _P,_ : ∀ {V} {P} → PContext V P → Term V → PContext V (Lift P)
   _P,_ {V} {P} Δ φ Γ = _,_ {K = -Proof} (Δ Γ) (liftExp P φ)
 
-  Proof : FinSet → FinSet → Set
-  Proof V P = Expression'' (PAlphabet P (VAlphabet V)) (varKind -Proof)
+  Proof : Alphabet → FinSet → Set
+  Proof V P = Expression'' (PAlphabet P V) (varKind -Proof)
 
   varP : ∀ {V} {P} → El P → Proof V P
   varP {P = P} x = var (liftVar' P x)
@@ -154,8 +154,8 @@ module PHOPL where
   ΛP : ∀ {V} {P} → Term V → Proof V (Lift P) → Proof V P
   ΛP {P = P} φ δ = app -lamProof (app₂ (out (liftExp P φ)) (app₂ (Λ (out δ)) out₂))
 
-  typeof' : ∀ {V} → El V → TContext V → Type
-  typeof' Prelims.⊥ (_ , A) = A
+  typeof' : ∀ {V} → Var V -Term → TContext V → Type
+  typeof' x₀ (_ , A) = A
   typeof' (↑ x) (Γ , _) = typeof' x Γ
 
   propof : ∀ {V} {P} → El P → PContext' V P → Term V
@@ -163,7 +163,7 @@ module PHOPL where
   propof (↑ x) (Γ , _) = propof x Γ
 
   data β : Reduction PHOPLGrammar.PHOPL where
-    βI : ∀ {V} A (M : Term (Lift V)) N → β -appTerm (app₂ (out (ΛTerm A M)) (app₂ (out N) out₂)) (M ⟦ x₀:= N ⟧)
+    βI : ∀ {V} A (M : Term (V , -Term)) N → β -appTerm (app₂ (out (ΛTerm A M)) (app₂ (out N) out₂)) (M ⟦ x₀:= N ⟧)
 \end{code}
 
 The rules of deduction of the system are as follows.
@@ -189,7 +189,7 @@ The rules of deduction of the system are as follows.
 \begin{code}
   infix 10 _⊢_∶_
   data _⊢_∶_ : ∀ {V} → TContext V → Term V → Type → Set₁ where
-    var : ∀ {V} {Γ : TContext V} {x} → Γ ⊢ var (inVar x) ∶ typeof' x Γ
+    var : ∀ {V} {Γ : TContext V} {x} → Γ ⊢ var x ∶ typeof' x Γ
     ⊥R : ∀ {V} {Γ : TContext V} → Γ ⊢ ⊥ ∶ Ω
     imp : ∀ {V} {Γ : TContext V} {φ} {ψ} → Γ ⊢ φ ∶ Ω → Γ ⊢ ψ ∶ Ω → Γ ⊢ φ ⊃ ψ ∶ Ω
     app : ∀ {V} {Γ : TContext V} {M} {N} {A} {B} → Γ ⊢ M ∶ A ⇒ B → Γ ⊢ N ∶ A → Γ ⊢ appTerm M N ∶ B
