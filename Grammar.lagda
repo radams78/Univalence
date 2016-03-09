@@ -88,9 +88,13 @@ to $\alpha$-conversion.
     x₀ : ∀ {V} {K} → Var (V , K) K
     ↑ : ∀ {V} {K} {L} → Var V L → Var (V , K) L
 
-  Extend : Alphabet → VarKind → FinSet → Alphabet
-  Extend A K ∅ = A
-  Extend A K (Lift F) = Extend A K F , K
+  extend : Alphabet → VarKind → FinSet → Alphabet
+  extend A K ∅ = A
+  extend A K (Lift F) = extend A K F , K
+
+  embed : ∀ {A} {K} {F} → El F → Var (extend A K F) K
+  embed ⊥ = x₀
+  embed (↑ x) = ↑ (embed x)
 
   data Expression' (V : Alphabet) : ∀ C → Kind ExpressionKind C → Set where
     var : ∀ {K} → Var V K → Expression' V -Expression (base (varKind K))
@@ -226,8 +230,8 @@ alphabets and replacements to the category of sets.
 
 This provides us with the canonical mapping from an expression over $V$ to an expression over $(V , K)$:
 \begin{code}
-  lift : ∀ {V} {K} {L} → Expression'' V L → Expression'' (V , K) L
-  lift E = rep E (λ _ → ↑)
+  liftE : ∀ {V} {K} {L} → Expression'' V L → Expression'' (V , K) L
+  liftE E = rep E (λ _ → ↑)
 \end{code}
 
 A \emph{substitution} $\sigma$ from alphabet $U$ to alphabet $V$, $\sigma : U \Rightarrow V$, is a function $\sigma$ that maps every variable $x$ of kind $K$ in $U$ to an
@@ -270,11 +274,11 @@ Given a substitution $\sigma : U \Rightarrow V$,  define a substitution $
 \begin{code}
   Sub↑ : ∀ {U} {V} {K} → Sub U V → Sub (U , K) (V , K)
   Sub↑ _ _ x₀ = var x₀
-  Sub↑ σ K (↑ x) = lift (σ K x)
+  Sub↑ σ K (↑ x) = liftE (σ K x)
 
   Sub↑-wd : ∀ {U} {V} {K} {σ σ' : Sub U V} → σ ∼ σ' → Sub↑ {K = K} σ ∼ Sub↑ σ'
   Sub↑-wd {K = K} σ-is-σ' ._ x₀ = ref
-  Sub↑-wd σ-is-σ' L (↑ x) = wd lift (σ-is-σ' L x)
+  Sub↑-wd σ-is-σ' L (↑ x) = wd liftE (σ-is-σ' L x)
 \end{code}
 
 \begin{lemma}
@@ -297,9 +301,9 @@ $(\sigma \bullet_2 \rho, K) = (\sigma , K) \bullet_2 (\rho , K)$
   Sub↑-comp₁ : ∀ {U} {V} {W} {K} {ρ : Rep V W} {σ : Sub U V} → Sub↑ (ρ •₁ σ) ∼ Rep↑ ρ •₁ Sub↑ σ
   Sub↑-comp₁ {K = K} ._ x₀ = ref
   Sub↑-comp₁ {U} {V} {W} {K} {ρ} {σ} L (↑ x) = let open Equational-Reasoning (Expression'' (W , K) (varKind L)) in 
-    ∵ lift (rep (σ L x) ρ)
+    ∵ liftE (rep (σ L x) ρ)
     ≡ rep (σ L x) (λ _ x → ↑ (ρ _ x)) [[ rep-comp {E = σ L x} ]]
-    ≡ rep (lift (σ L x)) (Rep↑ ρ)     [ rep-comp ]
+    ≡ rep (liftE (σ L x)) (Rep↑ ρ)     [ rep-comp ]
 
   Sub↑-comp₂ : ∀ {U} {V} {W} {K} {σ : Sub V W} {ρ : Rep U V} → Sub↑ {K = K} (σ •₂ ρ) ∼ Sub↑ σ •₂ Rep↑ ρ
   Sub↑-comp₂ {K = K} ._ x₀ = ref
@@ -419,9 +423,9 @@ We define the composition of two substitutions, as follows.
   Sub↑-comp _ x₀ = ref
   Sub↑-comp {W = W} {ρ = ρ} {σ = σ} {K = K} L (↑ x) =
     let open Equational-Reasoning (Expression'' (W , K) (varKind L)) in 
-      ∵ lift ((ρ L x) ⟦ σ ⟧)
+      ∵ liftE ((ρ L x) ⟦ σ ⟧)
       ≡ ρ L x ⟦ (λ _ → ↑) •₁ σ ⟧  [[ sub-comp₁ {E = ρ L x} ]]
-      ≡ (lift (ρ L x)) ⟦ Sub↑ σ ⟧ [ sub-comp₂ {E = ρ L x} ]
+      ≡ (liftE (ρ L x)) ⟦ Sub↑ σ ⟧ [ sub-comp₂ {E = ρ L x} ]
 
   mutual
     sub-compA : ∀ {U} {V} {W} {K} {A : Expression' U -Abstraction K} {σ : Sub V W} {ρ : Sub U V} →
@@ -540,16 +544,16 @@ The \emph{domain} of this context is the alphabet $\{ x_1, \ldots, x_n \}$.
     _,_ : ∀ {V} → Context K V → Expression'' V (parent K) → Context K (V , K)
 
   typeof : ∀ {V} {K} (x : Var V K) (Γ : Context K V) → Expression'' V (parent K)
-  typeof x₀ (_ , A) = lift A
-  typeof (↑ x) (Γ , _) = lift (typeof x Γ)
+  typeof x₀ (_ , A) = liftE A
+  typeof (↑ x) (Γ , _) = liftE (typeof x Γ)
 
   data Context' (A : Alphabet) (K : VarKind) : FinSet → Set where
     〈〉 : Context' A K ∅
-    _,_ : ∀ {F} → Context' A K F → Expression'' (Extend A K F) (parent K) → Context' A K (Lift F)
+    _,_ : ∀ {F} → Context' A K F → Expression'' (extend A K F) (parent K) → Context' A K (Lift F)
 
-  typeof' : ∀ {A} {K} {F} → El F → Context' A K F → Expression'' (Extend A K F) (parent K)
-  typeof' ⊥ (_ , A) = lift A
-  typeof' (↑ x) (Γ , _) = lift (typeof' x Γ)
+  typeof' : ∀ {A} {K} {F} → El F → Context' A K F → Expression'' (extend A K F) (parent K)
+  typeof' ⊥ (_ , A) = liftE A
+  typeof' (↑ x) (Γ , _) = liftE (typeof' x Γ)
 
 record Grammar : Set₁ where
   field

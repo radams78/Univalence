@@ -108,4 +108,8 @@ data FinSet : Set where
 data El : FinSet → Set where
   ⊥ : ∀ {V} → El (Lift V)
   ↑ : ∀ {V} → El V → El (Lift V)
+
+lift : ∀ {A} {B} → (El A → El B) → El (Lift A) → El (Lift B)
+lift _ ⊥ = ⊥
+lift f (↑ x) = ↑ (f x)
 \end{code}
