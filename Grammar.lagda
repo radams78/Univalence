@@ -99,9 +99,6 @@ record ToGrammar (T : Taxonomy) : Set₁ where
 
   Expression : Alphabet → ExpressionKind → Set
   Expression V K = Subexpression V -Expression (base K)
-
-  Abstraction' : Alphabet → Kind -Abstraction → Set
-  Abstraction' V K = Subexpression V -Abstraction K
 \end{code}
 
 Given alphabets $U$, $V$, and a function $\rho$ that maps every variable in $U$ of kind $K$ to a variable in $V$ of kind $K$,
