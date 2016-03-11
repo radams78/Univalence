@@ -97,8 +97,8 @@ record ToGrammar (T : Taxonomy) : Set₁ where
     out₂ : ∀ {K} → Subexpression V (-Constructor K) out₂
     app₂ : ∀ {K} {A} {C} → Subexpression V -Abstraction A → Subexpression V (-Constructor K) C → Subexpression V (-Constructor K) (Π₂ A C)
 
-  Subexpression' : Alphabet → ExpressionKind → Set
-  Subexpression' V K = Subexpression V -Expression (base K)
+  Expression : Alphabet → ExpressionKind → Set
+  Expression V K = Subexpression V -Expression (base K)
 
   Body' : Alphabet → ∀ K → Kind (-Constructor K) → Set
   Body' V K C = Subexpression V (-Constructor K) C
@@ -171,7 +171,7 @@ alphabets and replacements to the category of sets.
 
   mutual
     infix 60 _〈_〉
-    _〈_〉 : ∀ {U} {V} {K} → Subexpression' U K → Rep U V → Subexpression' V K
+    _〈_〉 : ∀ {U} {V} {K} → Expression U K → Rep U V → Expression V K
     var x 〈 ρ 〉 = var (ρ _ x)
     (app c EE) 〈 ρ 〉 = app c (EE 〈 ρ 〉B)
   
@@ -186,7 +186,7 @@ alphabets and replacements to the category of sets.
     Λ A 〈 ρ 〉A = Λ (A 〈 Rep↑ ρ 〉A)
 
   mutual
-    rep-wd : ∀ {U} {V} {K} {E : Subexpression' U K} {ρ : Rep U V} {ρ'} → ρ ∼R ρ' → rep E ρ ≡ rep E ρ'
+    rep-wd : ∀ {U} {V} {K} {E : Expression U K} {ρ : Rep U V} {ρ'} → ρ ∼R ρ' → rep E ρ ≡ rep E ρ'
     rep-wd {E = var x} ρ-is-ρ' = wd var (ρ-is-ρ' x)
     rep-wd {E = app c EE} ρ-is-ρ' = wd (app c) (rep-wdB ρ-is-ρ')
 
@@ -199,7 +199,7 @@ alphabets and replacements to the category of sets.
     rep-wdA {U} {V} .{Π _ _} {Λ E} ρ-is-ρ' = wd Λ (rep-wdA (Rep↑-wd ρ-is-ρ'))
 
   mutual
-    rep-id : ∀ {V} {K} {E : Subexpression' V K} → rep E (idRep V) ≡ E
+    rep-id : ∀ {V} {K} {E : Expression V K} → rep E (idRep V) ≡ E
     rep-id {E = var _} = ref
     rep-id {E = app c _} = wd (app c) rep-idB
 
@@ -212,7 +212,7 @@ alphabets and replacements to the category of sets.
     rep-idA {A = Λ _} = wd Λ (trans (rep-wdA Rep↑-id) rep-idA)
 
   mutual
-    rep-comp : ∀ {U} {V} {W} {K} {ρ : Rep U V} {ρ' : Rep V W} {E : Subexpression' U K} → rep E (ρ' •R ρ) ≡ rep (rep E ρ) ρ'
+    rep-comp : ∀ {U} {V} {W} {K} {ρ : Rep U V} {ρ' : Rep V W} {E : Expression U K} → rep E (ρ' •R ρ) ≡ rep (rep E ρ) ρ'
     rep-comp {E = var _} = ref
     rep-comp {E = app c _} = wd (app c) rep-compB
 
@@ -227,7 +227,7 @@ alphabets and replacements to the category of sets.
 
 This provides us with the canonical mapping from an expression over $V$ to an expression over $(V , K)$:
 \begin{code}
-  liftE : ∀ {V} {K} {L} → Subexpression' V L → Subexpression' (V , K) L
+  liftE : ∀ {V} {K} {L} → Expression V L → Expression (V , K) L
   liftE E = rep E (λ _ → ↑)
 \end{code}
 
@@ -237,7 +237,7 @@ the result of substituting $\sigma(x)$ for $x$ for each variable in $E$, avoidin
 
 \begin{code}
   Sub : Alphabet → Alphabet → Set
-  Sub U V = ∀ K → Var U K → Subexpression' V (varKind K)
+  Sub U V = ∀ K → Var U K → Expression V (varKind K)
 
   _∼_ : ∀ {U} {V} → Sub U V → Sub U V → Set
   σ ∼ τ = ∀ K x → σ K x ≡ τ K x
@@ -298,7 +298,7 @@ $(\sigma \bullet_2 \rho, K) = (\sigma , K) \bullet_2 (\rho , K)$
 
   Sub↑-comp₁ : ∀ {U} {V} {W} {K} {ρ : Rep V W} {σ : Sub U V} → Sub↑ (ρ •₁ σ) ∼ Rep↑ ρ •₁ Sub↑ σ
   Sub↑-comp₁ {K = K} ._ x₀ = ref
-  Sub↑-comp₁ {U} {V} {W} {K} {ρ} {σ} L (↑ x) = let open Equational-Reasoning (Subexpression' (W , K) (varKind L)) in 
+  Sub↑-comp₁ {U} {V} {W} {K} {ρ} {σ} L (↑ x) = let open Equational-Reasoning (Expression (W , K) (varKind L)) in 
     ∵ liftE (rep (σ L x) ρ)
     ≡ rep (σ L x) (λ _ x → ↑ (ρ _ x)) [[ rep-comp {E = σ L x} ]]
     ≡ rep (liftE (σ L x)) (Rep↑ ρ)     [ rep-comp ]
@@ -314,7 +314,7 @@ which we denote $E [ \sigma ]$.
 \begin{code}
   mutual
     infix 60 _⟦_⟧
-    _⟦_⟧ : ∀ {U} {V} {K} → Subexpression' U K → Sub U V → Subexpression' V K
+    _⟦_⟧ : ∀ {U} {V} {K} → Expression U K → Sub U V → Expression V K
     (var x) ⟦ σ ⟧ = σ _ x
     (app c EE) ⟦ σ ⟧ = app c (EE ⟦ σ ⟧B)
 
@@ -329,7 +329,7 @@ which we denote $E [ \sigma ]$.
     (Λ A) ⟦ σ ⟧A = Λ (A ⟦ Sub↑ σ ⟧A)
 
   mutual
-    sub-wd : ∀ {U} {V} {K} {E : Subexpression' U K} {σ σ' : Sub U V} → σ ∼ σ' → E ⟦ σ ⟧ ≡ E ⟦ σ' ⟧
+    sub-wd : ∀ {U} {V} {K} {E : Expression U K} {σ σ' : Sub U V} → σ ∼ σ' → E ⟦ σ ⟧ ≡ E ⟦ σ' ⟧
     sub-wd {E = var x} σ-is-σ' = σ-is-σ' _ x
     sub-wd {U} {V} {K} {app c EE} σ-is-σ' = wd (app c) (sub-wdB σ-is-σ')
 
@@ -356,7 +356,7 @@ $M[\sigma \bullet_2 \rho] \equiv M \langle \rho \rangle [ \sigma ]$
 
 \begin{code}
   mutual
-    subid : ∀ {V} {K} {E : Subexpression' V K} → E ⟦ idSub ⟧ ≡ E
+    subid : ∀ {V} {K} {E : Expression V K} → E ⟦ idSub ⟧ ≡ E
     subid {E = var _} = ref
     subid {V} {K} {app c _} = wd (app c) subidB
 
@@ -369,7 +369,7 @@ $M[\sigma \bullet_2 \rho] \equiv M \langle \rho \rangle [ \sigma ]$
     subidA {A = Λ _} = wd Λ (trans (sub-wdA Sub↑-id) subidA)
 
   mutual
-    sub-comp₁ : ∀ {U} {V} {W} {K} {E : Subexpression' U K} {ρ : Rep V W} {σ : Sub U V} →
+    sub-comp₁ : ∀ {U} {V} {W} {K} {E : Expression U K} {ρ : Rep V W} {σ : Sub U V} →
       E ⟦ ρ •₁ σ ⟧ ≡ rep (E ⟦ σ ⟧) ρ
     sub-comp₁ {E = var _} = ref
     sub-comp₁ {E = app c _} = wd (app c) sub-comp₁B
@@ -385,7 +385,7 @@ $M[\sigma \bullet_2 \rho] \equiv M \langle \rho \rangle [ \sigma ]$
     sub-comp₁A {U} {V} {W} .{(Π K L)} {Λ {K} {L} A} = wd Λ (trans (sub-wdA Sub↑-comp₁) sub-comp₁A)
 
   mutual
-    sub-comp₂ : ∀ {U} {V} {W} {K} {E : Subexpression' U K} {σ : Sub V W} {ρ : Rep U V} → E ⟦ σ •₂ ρ ⟧ ≡ (rep E ρ) ⟦ σ ⟧
+    sub-comp₂ : ∀ {U} {V} {W} {K} {E : Expression U K} {σ : Sub V W} {ρ : Rep U V} → E ⟦ σ •₂ ρ ⟧ ≡ (rep E ρ) ⟦ σ ⟧
     sub-comp₂ {E = var _} = ref
     sub-comp₂ {U} {V} {W} {K} {app c EE} = wd (app c) sub-comp₂B
 
@@ -420,7 +420,7 @@ We define the composition of two substitutions, as follows.
     Sub↑ {K = K} (σ • ρ) ∼ Sub↑ σ • Sub↑ ρ
   Sub↑-comp _ x₀ = ref
   Sub↑-comp {W = W} {ρ = ρ} {σ = σ} {K = K} L (↑ x) =
-    let open Equational-Reasoning (Subexpression' (W , K) (varKind L)) in 
+    let open Equational-Reasoning (Expression (W , K) (varKind L)) in 
       ∵ liftE ((ρ L x) ⟦ σ ⟧)
       ≡ ρ L x ⟦ (λ _ → ↑) •₁ σ ⟧  [[ sub-comp₁ {E = ρ L x} ]]
       ≡ (liftE (ρ L x)) ⟦ Sub↑ σ ⟧ [ sub-comp₂ {E = ρ L x} ]
@@ -439,7 +439,7 @@ We define the composition of two substitutions, as follows.
     sub-compB {EE = out₂} = ref
     sub-compB {U} {V} {W} {K} {(Π₂ L C)} {app₂ A EE} = wd2 app₂ sub-compA sub-compB
 
-    sub-comp : ∀ {U} {V} {W} {K} {E : Subexpression' U K} {σ : Sub V W} {ρ : Sub U V} →
+    sub-comp : ∀ {U} {V} {W} {K} {E : Expression U K} {σ : Sub V W} {ρ : Sub U V} →
       E ⟦ σ • ρ ⟧ ≡ E ⟦ ρ ⟧ ⟦ σ ⟧
     sub-comp {E = var _} = ref
     sub-comp {U} {V} {W} {K} {app c EE} = wd (app c) sub-compB
@@ -477,7 +477,7 @@ $$ E \langle \rho \rangle \equiv E [ \rho ] $$
   Rep↑-is-Sub↑ K₁ (↑ x) = ref
 
   mutual
-    rep-is-sub : ∀ {U} {V} {K} {E : Subexpression' U K} {ρ : Rep U V} →
+    rep-is-sub : ∀ {U} {V} {K} {E : Expression U K} {ρ : Rep U V} →
              E 〈 ρ 〉 ≡ E ⟦ (λ K x → var (ρ K x)) ⟧
     rep-is-sub {E = var _} = ref
     rep-is-sub {U} {V} {K} {app c EE} = wd (app c) rep-is-subB
@@ -500,7 +500,7 @@ Let $E$ be an expression of kind $K$ over $V$.  Then we write $[x_0 := E]$ for t
 $(V , K) \Rightarrow V$:
 
 \begin{code}
-  x₀:= : ∀ {V} {K} → Subexpression' V (varKind K) → Sub (V , K) V
+  x₀:= : ∀ {V} {K} → Expression V (varKind K) → Sub (V , K) V
   x₀:= E _ x₀ = E
   x₀:= E K₁ (↑ x) = var x
 \end{code}
@@ -515,12 +515,12 @@ $$ \sigma \bullet [x_0 := E] \sim [x_0 := E[\sigma]] \bullet (\sigma , K) $$
 \end{lemma}
 
 \begin{code}
-  comp₁-botsub : ∀ {U} {V} {K} {E : Subexpression' U (varKind K)} {ρ : Rep U V} →
+  comp₁-botsub : ∀ {U} {V} {K} {E : Expression U (varKind K)} {ρ : Rep U V} →
     ρ •₁ (x₀:= E) ∼ (x₀:= (rep E ρ)) •₂ Rep↑ ρ
   comp₁-botsub _ x₀ = ref
   comp₁-botsub _ (↑ _) = ref
 
-  comp-botsub : ∀ {U} {V} {K} {E : Subexpression' U (varKind K)} {σ : Sub U V} →
+  comp-botsub : ∀ {U} {V} {K} {E : Expression U (varKind K)} {σ : Sub U V} →
     σ • (x₀:= E) ∼ (x₀:= (E ⟦ σ ⟧)) • Sub↑ σ
   comp-botsub _ x₀ = ref
   comp-botsub {σ = σ} L (↑ x) = trans (sym subid) (sub-comp₂ {E = σ L x})
@@ -539,17 +539,17 @@ The \emph{domain} of this context is the alphabet $\{ x_1, \ldots, x_n \}$.
 \begin{code}
   data Context (K : VarKind) : Alphabet → Set where
     〈〉 : Context K ∅
-    _,_ : ∀ {V} → Context K V → Subexpression' V (parent K) → Context K (V , K)
+    _,_ : ∀ {V} → Context K V → Expression V (parent K) → Context K (V , K)
 
-  typeof : ∀ {V} {K} (x : Var V K) (Γ : Context K V) → Subexpression' V (parent K)
+  typeof : ∀ {V} {K} (x : Var V K) (Γ : Context K V) → Expression V (parent K)
   typeof x₀ (_ , A) = liftE A
   typeof (↑ x) (Γ , _) = liftE (typeof x Γ)
 
   data Context' (A : Alphabet) (K : VarKind) : FinSet → Set where
     〈〉 : Context' A K ∅
-    _,_ : ∀ {F} → Context' A K F → Subexpression' (extend A K F) (parent K) → Context' A K (Lift F)
+    _,_ : ∀ {F} → Context' A K F → Expression (extend A K F) (parent K) → Context' A K (Lift F)
 
-  typeof' : ∀ {A} {K} {F} → El F → Context' A K F → Subexpression' (extend A K F) (parent K)
+  typeof' : ∀ {A} {K} {F} → El F → Context' A K F → Expression (extend A K F) (parent K)
   typeof' ⊥ (_ , A) = liftE A
   typeof' (↑ x) (Γ , _) = liftE (typeof' x Γ)
 

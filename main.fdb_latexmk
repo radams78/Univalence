@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1457695352 "main.lagda" "main.pdf" "main" 1457695353
+["pdflatex"] 1457695690 "main.lagda" "main.pdf" "main" 1457695690
   "/etc/texmf/web2c/texmf.cnf" 1451915225 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
@@ -98,13 +98,13 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1392645748 31083 1dfd8bf685ce0009c40532fedf8a7c53 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1453282123 1043118 e5f694c73465b1932df10e6845fb7f54 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1452867214 809542 966216d598c1a54c6abbe158512e1513 ""
-  "Grammar.lagda" 1457695314 24077 b34e2061a7a42abac9c8aa88f5d0a771 ""
-  "PHOPL.lagda" 1457695168 9465 83417e078e6e92dc963b685adea9f953 ""
-  "PL.lagda" 1457695090 27090 efa1bc99c40a72bc9ebd8a9f58d7e5a2 ""
+  "Grammar.lagda" 1457695650 23969 ae4afc180fca4e1b3b10f4eefd00093f ""
+  "PHOPL.lagda" 1457695629 9433 3750d1bb1ae0e9805da4f0ddc7b1cae9 ""
+  "PL.lagda" 1457695597 26946 19e1d9db30486f0af7142d05ff933e1d ""
   "Prelims.lagda" 1457692151 2521 a7e6dfad639f9643931e77ee9f52fd68 ""
-  "main.aux" 1457695353 1015 da94f104c4815c81f468e6f223ec1955 ""
+  "main.aux" 1457695690 1015 da94f104c4815c81f468e6f223ec1955 ""
   "main.lagda" 1453755644 1776 baf642bf362ab647c2380107e34f77b7 ""
   (generated)
+  "main.log"
   "main.aux"
   "main.pdf"
-  "main.log"

@@ -69,9 +69,9 @@ module PHOPL where
   open Grammar.Grammar PHOPLGrammar.PHOPL
 
   Type : Set
-  Type = Subexpression' ∅ (nonVarKind -Type)
+  Type = Expression ∅ (nonVarKind -Type)
 
-  liftType : ∀ {V} → Type → Subexpression' V (nonVarKind -Type)
+  liftType : ∀ {V} → Type → Expression V (nonVarKind -Type)
   liftType (app -Omega out₂) = app -Omega out₂
   liftType (app -func (app₂ (out A) (app₂ (out B) out₂))) = app -func (app₂ (out (liftType A)) (app₂ (out (liftType B)) out₂)) 
 
@@ -82,7 +82,7 @@ module PHOPL where
   _⇒_ : Type → Type → Type
   φ ⇒ ψ = app -func (app₂ (out φ) (app₂ (out ψ) out₂))
 
-  lowerType : ∀ {V} → Subexpression' V (nonVarKind -Type) → Type
+  lowerType : ∀ {V} → Expression V (nonVarKind -Type) → Type
   lowerType (app -Omega out₂) = Ω
   lowerType (app -func (app₂ (out φ) (app₂ (out ψ) out₂))) = lowerType φ ⇒ lowerType ψ
 
@@ -95,7 +95,7 @@ module PHOPL where
   TContext = Context -Term
 
   Term : Alphabet → Set
-  Term V = Subexpression' V (varKind -Term)
+  Term V = Expression V (varKind -Term)
 
   ⊥ : ∀ {V} → Term V
   ⊥ = app -bot out₂
@@ -121,7 +121,7 @@ module PHOPL where
   liftVar' (Lift P) Prelims.⊥ = x₀
   liftVar' (Lift P) (↑ x) = ↑ (liftVar' P x)
 
-  liftExp : ∀ {V} {K} P → Subexpression' V K → Subexpression' (PAlphabet P V) K
+  liftExp : ∀ {V} {K} P → Expression V K → Expression (PAlphabet P V) K
   liftExp P E = E 〈 (λ _ → liftVar P) 〉
 
   data PContext' (V : Alphabet) : FinSet → Set where
@@ -138,7 +138,7 @@ module PHOPL where
   _P,_ {V} {P} Δ φ = Δ , rep φ (embedl {V} { -Proof} {P})
 
   Proof : Alphabet → FinSet → Set
-  Proof V P = Subexpression' (PAlphabet P V) (varKind -Proof)
+  Proof V P = Expression (PAlphabet P V) (varKind -Proof)
 
   varP : ∀ {V} {P} → El P → Proof V P
   varP {P = P} x = var (liftVar' P x)
@@ -183,7 +183,7 @@ The rules of deduction of the system are as follows.
 
 \begin{code}
   infix 10 _⊢_∶_
-  data _⊢_∶_ : ∀ {V} → TContext V → Term V → Subexpression' V (nonVarKind -Type) → Set₁ where
+  data _⊢_∶_ : ∀ {V} → TContext V → Term V → Expression V (nonVarKind -Type) → Set₁ where
     var : ∀ {V} {Γ : TContext V} {x} → Γ ⊢ var x ∶ typeof x Γ
     ⊥R : ∀ {V} {Γ : TContext V} → Γ ⊢ ⊥ ∶ rep Ω (λ _ ())
     imp : ∀ {V} {Γ : TContext V} {φ} {ψ} → Γ ⊢ φ ∶ rep Ω (λ _ ()) → Γ ⊢ ψ ∶ rep Ω (λ _ ()) → Γ ⊢ φ ⊃ ψ ∶ rep Ω (λ _ ())
