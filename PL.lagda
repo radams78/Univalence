@@ -59,21 +59,21 @@ open Grammar.Grammar Propositional-Logic
 open Reduction Propositional-Logic
 
 Prp : Set
-Prp = Expression'' ∅ (nonVarKind -Prp)
+Prp = Subexpression' ∅ (nonVarKind -Prp)
 
 ⊥P : Prp
 ⊥P = app bot out₂
 
-_⇒_ : ∀ {P} → Expression'' P (nonVarKind -Prp) → Expression'' P (nonVarKind -Prp) → Expression'' P (nonVarKind -Prp)
+_⇒_ : ∀ {P} → Subexpression' P (nonVarKind -Prp) → Subexpression' P (nonVarKind -Prp) → Subexpression' P (nonVarKind -Prp)
 φ ⇒ ψ = app imp (app₂ (out φ) (app₂ (out ψ) out₂))
 
 Proof : Alphabet → Set
-Proof P = Expression'' P (varKind -Proof)
+Proof P = Subexpression' P (varKind -Proof)
 
-appP : ∀ {P} → Expression'' P (varKind -Proof) → Expression'' P (varKind -Proof) → Expression'' P (varKind -Proof)
+appP : ∀ {P} → Subexpression' P (varKind -Proof) → Subexpression' P (varKind -Proof) → Subexpression' P (varKind -Proof)
 appP δ ε = app app (app₂ (out δ) (app₂ (out ε) out₂))
 
-ΛP : ∀ {P} → Expression'' P (nonVarKind -Prp) → Expression'' (P , -Proof) (varKind -Proof) → Expression'' P (varKind -Proof)
+ΛP : ∀ {P} → Subexpression' P (nonVarKind -Prp) → Subexpression' (P , -Proof) (varKind -Proof) → Subexpression' P (varKind -Proof)
 ΛP φ δ = app lam (app₂ (out φ) (app₂ (Λ (out δ)) out₂))
 
 data β : Reduction where
@@ -81,7 +81,7 @@ data β : Reduction where
 
 β-respects-rep : respect-rep β
 β-respects-rep {U} {V} {ρ = ρ} (βI .{U} {φ} {δ} {ε}) = subst (β app _) 
-  (let open Equational-Reasoning (Expression'' V (varKind -Proof)) in
+  (let open Equational-Reasoning (Subexpression' V (varKind -Proof)) in
   ∵ (rep δ (Rep↑ ρ)) ⟦ x₀:= (rep ε ρ) ⟧
    ≡ δ ⟦ x₀:= (rep ε ρ) •₂ Rep↑ ρ ⟧ [[ sub-comp₂ {E = δ} ]]
    ≡ δ ⟦ ρ •₁ x₀:= ε ⟧ [[ sub-wd {E = δ} comp₁-botsub ]]
@@ -93,24 +93,24 @@ data β : Reduction where
   created = created;
   red-created = red-created; 
   rep-created = rep-created } where
-  created : ∀ {U V : Alphabet} {K} {C} {c : PLCon C} {EE : Expression' U (-Constructor K) C} {F} {ρ} → β {V} c (rep EE ρ) F → Expression'' U K
+  created : ∀ {U V : Alphabet} {K} {C} {c : PLCon C} {EE : Subexpression U (-Constructor K) C} {F} {ρ} → β {V} c (rep EE ρ) F → Subexpression' U K
   created {c = app} {EE = app₂ (out (var _)) _} ()
   created {c = app} {EE = app₂ (out (app app _)) _} ()
   created {c = app} {EE = app₂ (out (app lam (app₂ (out φ) (app₂ (Λ (out δ)) out₂)))) (app₂ (out ε) out₂)} βI = δ ⟦ x₀:= ε ⟧
   created {c = lam} ()
   created {c = bot} ()
   created {c = imp} ()
-  red-created : ∀ {U} {V} {K} {C} {c : PLCon C} {EE : Expression' U (-Constructor K) C} {F} {ρ : Rep U V} (δ : β c (rep EE ρ) F) → β {U} c EE (created {U} {V} {K} {C} δ)
+  red-created : ∀ {U} {V} {K} {C} {c : PLCon C} {EE : Subexpression U (-Constructor K) C} {F} {ρ : Rep U V} (δ : β c (rep EE ρ) F) → β {U} c EE (created {U} {V} {K} {C} δ)
   red-created {c = app} {EE = app₂ (out (var _)) _} ()
   red-created {c = app} {EE = app₂ (out (app app _)) _} ()
   red-created {c = app} {EE = app₂ (out (app lam (app₂ (out φ) (app₂ (Λ (out δ)) out₂)))) (app₂ (out ε) out₂)} βI = βI
   red-created {c = lam} ()
   red-created {c = bot} ()
   red-created {c = imp} ()
-  rep-created : ∀ {U} {V} {K} {C} {c : PLCon C} {EE : Expression' U (-Constructor K) C} {F} {ρ} δ → rep (created {U} {V} {K} {C} {c} {EE} {F} {ρ} δ) ρ ≡ F
+  rep-created : ∀ {U} {V} {K} {C} {c : PLCon C} {EE : Subexpression U (-Constructor K) C} {F} {ρ} δ → rep (created {U} {V} {K} {C} {c} {EE} {F} {ρ} δ) ρ ≡ F
   rep-created {c = app} {EE = app₂ (out (var _)) _} ()
   rep-created {c = app} {EE = app₂ (out (app app _)) _} ()
-  rep-created {c = app} {EE = app₂ (out (app lam (app₂ (out φ) (app₂ (Λ (out δ)) out₂)))) (app₂ (out ε) out₂)} {ρ = ρ} βI = let open Equational-Reasoning (Expression'' _ (varKind -Proof)) in 
+  rep-created {c = app} {EE = app₂ (out (app lam (app₂ (out φ) (app₂ (Λ (out δ)) out₂)))) (app₂ (out ε) out₂)} {ρ = ρ} βI = let open Equational-Reasoning (Subexpression' _ (varKind -Proof)) in 
     ∵ rep (δ ⟦ x₀:= ε ⟧) ρ
     ≡ δ ⟦ ρ •₁ x₀:= ε ⟧                 [[ sub-comp₁ {E = δ} ]]
     ≡ δ ⟦ x₀:= (rep ε ρ) •₂ Rep↑ ρ ⟧    [ sub-wd {E = δ} comp₁-botsub ]
@@ -141,7 +141,7 @@ Palphabet-faithful {Lift _} ρ-is-σ x₀ = ρ-is-σ ⊥
 Palphabet-faithful {Lift _} {Q} {ρ} {σ} ρ-is-σ (↑ x) = Palphabet-faithful {Q = Q} {ρ = ρ •R (λ _ → ↑)} {σ = σ •R (λ _ → ↑)} (λ y → ρ-is-σ (↑ y)) x
 
 infix 10 _⊢_∷_
-data _⊢_∷_ : ∀ {P} → PContext P → Proof (Palphabet P) → Expression'' (Palphabet P) (nonVarKind -Prp) → Set where
+data _⊢_∷_ : ∀ {P} → PContext P → Proof (Palphabet P) → Subexpression' (Palphabet P) (nonVarKind -Prp) → Set where
   var : ∀ {P} {Γ : PContext P} {p : El P} → Γ ⊢ var (embed p) ∷ typeof' p Γ
   app : ∀ {P} {Γ : PContext P} {δ} {ε} {φ} {ψ} → Γ ⊢ δ ∷ φ ⇒ ψ → Γ ⊢ ε ∷ φ → Γ ⊢ appP δ ε ∷ ψ
   Λ : ∀ {P} {Γ : PContext P} {φ} {δ} {ψ} → (_,_ {K = -Proof} Γ φ) ⊢ δ ∷ liftE ψ → Γ ⊢ ΛP φ δ ∷ φ ⇒ ψ
@@ -153,8 +153,8 @@ for every $x : \phi$ in $\Gamma$, we have $\rho(x) : \phi \in \Delta$.
 \begin{code}
 toRep : ∀ {P} {Q} → (El P → El Q) → Rep (Palphabet P) (Palphabet Q)
 toRep {∅} f K ()
-toRep {Lift P} f .-Proof ToGrammar.x₀ = embed (f ⊥)
-toRep {Lift P} {Q} f K (ToGrammar.↑ x) = toRep {P} {Q} (f ∘ ↑) K x
+toRep {Lift P} f .-Proof x₀ = embed (f ⊥)
+toRep {Lift P} {Q} f K (↑ x) = toRep {P} {Q} (f ∘ ↑) K x
 
 toRep-embed : ∀ {P} {Q} {f : El P → El Q} {x : El P} → toRep f -Proof (embed x) ≡ embed (f x)
 toRep-embed {∅} {_} {_} {()}
@@ -177,23 +177,23 @@ toRep-lift : ∀ {P} {Q} {f : El P → El Q} → toRep (lift f) ∼R Rep↑ (toR
 toRep-lift x₀ = ref
 toRep-lift {∅} (↑ ())
 toRep-lift {Lift _} (↑ x₀) = ref
-toRep-lift {Lift P} {Q} {f} (ToGrammar.↑ (ToGrammar.↑ x)) = trans 
+toRep-lift {Lift P} {Q} {f} (↑ (↑ x)) = trans 
   (sym (toRep-comp {g = ↑} {f = f ∘ ↑} x))
   (toRep-↑ {Q} (toRep (f ∘ ↑) _ x))
 
-↑-typed : ∀ {P} {Γ : PContext P} {φ : Expression'' (Palphabet P) (nonVarKind -Prp)} → 
+↑-typed : ∀ {P} {Γ : PContext P} {φ : Subexpression' (Palphabet P) (nonVarKind -Prp)} → 
   ↑ ∷ Γ ⇒R (Γ , φ)
 ↑-typed {Lift P} ⊥ = rep-wd (λ x → sym (toRep-↑ {Lift P} x))
 ↑-typed {Lift P} (↑ _) = rep-wd (λ x → sym (toRep-↑ {Lift P} x))
 
-Rep↑-typed : ∀ {P} {Q} {ρ} {Γ : PContext P} {Δ : PContext Q} {φ : Expression'' (Palphabet P) (nonVarKind -Prp)} → ρ ∷ Γ ⇒R Δ → 
+Rep↑-typed : ∀ {P} {Q} {ρ} {Γ : PContext P} {Δ : PContext Q} {φ : Subexpression' (Palphabet P) (nonVarKind -Prp)} → ρ ∷ Γ ⇒R Δ → 
   lift ρ ∷ (Γ , φ) ⇒R (Δ , rep φ (toRep ρ))
-Rep↑-typed {P} {Q = Q} {ρ = ρ} {φ = φ} ρ∷Γ→Δ ⊥ = let open Equational-Reasoning (Expression'' (Palphabet Q , -Proof) (nonVarKind -Prp)) in 
+Rep↑-typed {P} {Q = Q} {ρ = ρ} {φ = φ} ρ∷Γ→Δ ⊥ = let open Equational-Reasoning (Subexpression' (Palphabet Q , -Proof) (nonVarKind -Prp)) in 
   ∵ rep (rep φ (toRep ρ)) (λ _ → ↑)
   ≡ rep φ (λ K x → ↑ (toRep ρ _ x))      [[ rep-comp {E = φ} ]]
   ≡ rep φ (toRep (lift ρ) •R (λ _ → ↑))  [ rep-wd (λ x → trans (sym (toRep-↑ {Q} (toRep ρ _ x) )) (toRep-comp {g = ↑} {f = ρ} x)) ]
   ≡ rep (rep φ (λ _ → ↑)) (toRep (lift ρ)) [ rep-comp {E = φ} ]
-Rep↑-typed {Q = Q} {ρ = ρ} {Γ = Γ} {Δ = Δ} ρ∷Γ→Δ (↑ x) = let open Equational-Reasoning (Expression'' (Palphabet Q , -Proof) (nonVarKind -Prp)) in 
+Rep↑-typed {Q = Q} {ρ = ρ} {Γ = Γ} {Δ = Δ} ρ∷Γ→Δ (↑ x) = let open Equational-Reasoning (Subexpression' (Palphabet Q , -Proof) (nonVarKind -Prp)) in 
   ∵ liftE (typeof' (ρ x) Δ)
   ≡ liftE (rep (typeof' x Γ) (toRep ρ))        [ wd liftE (ρ∷Γ→Δ x) ]
   ≡ rep (typeof' x Γ) (λ K x → ↑ (toRep ρ K x)) [[ rep-comp {E = typeof' x Γ} ]]
@@ -207,7 +207,7 @@ The replacements between contexts are closed under composition.
 \begin{code}
 •R-typed : ∀ {P} {Q} {R} {σ : El Q → El R} {ρ : El P → El Q} {Γ} {Δ} {Θ} → ρ ∷ Γ ⇒R Δ → σ ∷ Δ ⇒R Θ →
   σ ∘ ρ ∷ Γ ⇒R Θ
-•R-typed {R = R} {σ} {ρ} {Γ} {Δ} {Θ} ρ∷Γ→Δ σ∷Δ→Θ x = let open Equational-Reasoning (Expression'' (Palphabet R) (nonVarKind -Prp)) in 
+•R-typed {R = R} {σ} {ρ} {Γ} {Δ} {Θ} ρ∷Γ→Δ σ∷Δ→Θ x = let open Equational-Reasoning (Subexpression' (Palphabet R) (nonVarKind -Prp)) in 
   ∵ typeof' (σ (ρ x)) Θ
   ≡ rep (typeof' (ρ x) Δ) (toRep σ)     [ σ∷Δ→Θ (ρ x) ]
   ≡ rep (rep (typeof' x Γ) (toRep ρ)) (toRep σ)        [ wd (λ x₁ → rep x₁ (toRep σ)) (ρ∷Γ→Δ x) ]
@@ -226,7 +226,7 @@ Weakening {P} {Q} {Γ} {Δ} {ρ} (var {p = p}) ρ∷Γ→Δ = subst2 (λ x y →
 Weakening (app Γ⊢δ∷φ→ψ Γ⊢ε∷φ) ρ∷Γ→Δ = app (Weakening Γ⊢δ∷φ→ψ ρ∷Γ→Δ) (Weakening Γ⊢ε∷φ ρ∷Γ→Δ)
 Weakening .{P} {Q} .{Γ} {Δ} {ρ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∷ψ) ρ∷Γ→Δ = Λ 
   (subst (λ P → (Δ , rep φ (toRep ρ)) ⊢ rep δ (Rep↑ (toRep ρ)) ∷ P) 
-  (let open Equational-Reasoning (Expression'' (Palphabet Q , -Proof) (nonVarKind -Prp)) in
+  (let open Equational-Reasoning (Subexpression' (Palphabet Q , -Proof) (nonVarKind -Prp)) in
   ∵ rep (rep ψ (λ _ → ↑)) (Rep↑ (toRep ρ))
   ≡ rep ψ (λ _ x → ↑ (toRep ρ _ x))      [[ rep-comp {E = ψ} ]] 
   ≡ rep (rep ψ (toRep ρ)) (λ _ → ↑)          [ rep-comp {E = ψ} ] ) 
@@ -237,12 +237,12 @@ Weakening .{P} {Q} .{Γ} {Δ} {ρ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∷ψ) 
       Γ,φ⊢δ∷ψ 
       claim))) where
   claim : ∀ (x : El (Lift P)) → typeof' (lift ρ x) (Δ , rep φ (toRep ρ)) ≡ rep (typeof' x (Γ , φ)) (toRep (lift ρ))
-  claim ⊥ = let open Equational-Reasoning (Expression'' (Palphabet (Lift Q)) (nonVarKind -Prp)) in
+  claim ⊥ = let open Equational-Reasoning (Subexpression' (Palphabet (Lift Q)) (nonVarKind -Prp)) in
     ∵ liftE (rep φ (toRep ρ))
     ≡ rep φ ((λ _ → ↑) •R toRep ρ)        [[ rep-comp ]]
     ≡ rep (liftE φ) (Rep↑ (toRep ρ))      [ rep-comp ]
     ≡ rep (liftE φ) (toRep (lift ρ))      [[ rep-wd (toRep-lift {f = ρ}) ]]
-  claim (↑ x) = let open Equational-Reasoning (Expression'' (Palphabet (Lift Q)) (nonVarKind -Prp)) in 
+  claim (↑ x) = let open Equational-Reasoning (Subexpression' (Palphabet (Lift Q)) (nonVarKind -Prp)) in 
     ∵ liftE (typeof' (ρ x) Δ)
     ≡ liftE (rep (typeof' x Γ) (toRep ρ))        [ wd liftE (ρ∷Γ→Δ x) ]
     ≡ rep (typeof' x Γ) ((λ _ → ↑) •R toRep ρ)   [[ rep-comp ]]
@@ -256,9 +256,9 @@ for every $x : \phi$ in $\Gamma$, we have $\Delta \vdash \sigma(x) : \phi$.
 _∷_⇒_ : ∀ {P} {Q} → Sub (Palphabet P) (Palphabet Q) → PContext P → PContext Q → Set
 σ ∷ Γ ⇒ Δ = ∀ x → Δ ⊢ σ _ (embed x) ∷ typeof' x Γ ⟦ σ ⟧
 
-Sub↑-typed : ∀ {P} {Q} {σ} {Γ : PContext P} {Δ : PContext Q} {φ : Expression'' (Palphabet P) (nonVarKind -Prp)} → σ ∷ Γ ⇒ Δ → Sub↑ σ ∷ (Γ , φ) ⇒ (Δ , φ ⟦ σ ⟧)
+Sub↑-typed : ∀ {P} {Q} {σ} {Γ : PContext P} {Δ : PContext Q} {φ : Subexpression' (Palphabet P) (nonVarKind -Prp)} → σ ∷ Γ ⇒ Δ → Sub↑ σ ∷ (Γ , φ) ⇒ (Δ , φ ⟦ σ ⟧)
 Sub↑-typed {P} {Q} {σ} {Γ} {Δ} {φ} σ∷Γ→Δ ⊥ = subst (λ p → (Δ , φ ⟦ σ ⟧) ⊢ var x₀ ∷ p) 
-  (let open Equational-Reasoning (Expression'' (Palphabet Q , -Proof) (nonVarKind -Prp)) in
+  (let open Equational-Reasoning (Subexpression' (Palphabet Q , -Proof) (nonVarKind -Prp)) in
   ∵ rep (φ ⟦ σ ⟧) (λ _ → ↑)
   ≡ φ ⟦ (λ _ → ↑) •₁ σ ⟧      [[ sub-comp₁ {E = φ} ]]
   ≡ rep φ (λ _ → ↑) ⟦ Sub↑ σ ⟧ [ sub-comp₂ {E = φ} ]) 
@@ -266,7 +266,7 @@ Sub↑-typed {P} {Q} {σ} {Γ} {Δ} {φ} σ∷Γ→Δ ⊥ = subst (λ p → (Δ 
 Sub↑-typed {Q = Q} {σ = σ} {Γ = Γ} {Δ = Δ} {φ = φ} σ∷Γ→Δ (↑ x) = 
   subst
   (λ P → Δ , φ ⟦ σ ⟧ ⊢ Sub↑ σ -Proof (↑ (embed x)) ∷ P)
-  (let open Equational-Reasoning (Expression'' (Palphabet Q , -Proof) (nonVarKind -Prp)) in 
+  (let open Equational-Reasoning (Subexpression' (Palphabet Q , -Proof) (nonVarKind -Prp)) in 
   ∵ rep (typeof' x Γ ⟦ σ ⟧) (λ _ → ↑)
   ≡ typeof' x Γ ⟦ (λ _ → ↑) •₁ σ ⟧      [[ sub-comp₁ {E = typeof' x Γ} ]]
   ≡ rep (typeof' x Γ) (λ _ → ↑) ⟦ Sub↑ σ ⟧ [ sub-comp₂ {E = typeof' x Γ} ])
@@ -275,16 +275,16 @@ Sub↑-typed {Q = Q} {σ = σ} {Γ = Γ} {Δ = Δ} {φ = φ} σ∷Γ→Δ (↑ x
     (rep-wd (toRep-↑ {Q})) 
     (Weakening (σ∷Γ→Δ x) (↑-typed {φ = φ ⟦ σ ⟧})))
 
-botsub-typed : ∀ {P} {Γ : PContext P} {φ : Expression'' (Palphabet P) (nonVarKind -Prp)} {δ} →
+botsub-typed : ∀ {P} {Γ : PContext P} {φ : Subexpression' (Palphabet P) (nonVarKind -Prp)} {δ} →
   Γ ⊢ δ ∷ φ → x₀:= δ ∷ (Γ , φ) ⇒ Γ
 botsub-typed {P} {Γ} {φ} {δ} Γ⊢δ∷φ ⊥ = subst (λ P₁ → Γ ⊢ δ ∷ P₁) 
-  (let open Equational-Reasoning (Expression'' (Palphabet P) (nonVarKind -Prp)) in 
+  (let open Equational-Reasoning (Subexpression' (Palphabet P) (nonVarKind -Prp)) in 
   ∵ φ
   ≡ φ ⟦ idSub ⟧                   [[ subid ]]
   ≡ rep φ (λ _ → ↑) ⟦ x₀:= δ ⟧     [ sub-comp₂ {E = φ} ]) 
   Γ⊢δ∷φ
 botsub-typed {P} {Γ} {φ} {δ} _ (↑ x) = subst (λ P₁ → Γ ⊢ var (embed x) ∷ P₁) 
-  (let open Equational-Reasoning (Expression'' (Palphabet P) (nonVarKind -Prp)) in 
+  (let open Equational-Reasoning (Subexpression' (Palphabet P) (nonVarKind -Prp)) in 
   ∵ typeof' x Γ
   ≡ typeof' x Γ ⟦ idSub ⟧                [[ subid ]]
   ≡ rep (typeof' x Γ) (λ _ → ↑) ⟦ x₀:= δ ⟧ [ sub-comp₂ {E = typeof' x Γ} ]) 
@@ -299,7 +299,7 @@ Substitution var σ∷Γ→Δ = σ∷Γ→Δ _
 Substitution (app Γ⊢δ∷φ→ψ Γ⊢ε∷φ) σ∷Γ→Δ = app (Substitution Γ⊢δ∷φ→ψ σ∷Γ→Δ) (Substitution Γ⊢ε∷φ σ∷Γ→Δ)
 Substitution {Q = Q} {Δ = Δ} {σ = σ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∷ψ) σ∷Γ→Δ = Λ 
   (subst (λ p → Δ , φ ⟦ σ ⟧ ⊢ δ ⟦ Sub↑ σ ⟧ ∷ p) 
-  (let open Equational-Reasoning (Expression'' (Palphabet Q , -Proof) (nonVarKind -Prp)) in
+  (let open Equational-Reasoning (Subexpression' (Palphabet Q , -Proof) (nonVarKind -Prp)) in
   ∵ rep ψ (λ _ → ↑) ⟦ Sub↑ σ ⟧
   ≡ ψ ⟦ Sub↑ σ •₂ (λ _ → ↑) ⟧  [[ sub-comp₂ {E = ψ} ]]
   ≡ rep (ψ ⟦ σ ⟧) (λ _ → ↑)    [ sub-comp₁ {E = ψ} ])
@@ -309,7 +309,7 @@ Substitution {Q = Q} {Δ = Δ} {σ = σ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ�
 Subject Reduction
 
 \begin{code}
-prop-triv-red : ∀ {P} {φ ψ : Expression'' (Palphabet P) (nonVarKind -Prp)} → φ →〈 β 〉 ψ → False
+prop-triv-red : ∀ {P} {φ ψ : Subexpression' (Palphabet P) (nonVarKind -Prp)} → φ →〈 β 〉 ψ → False
 prop-triv-red {_} {app bot out₂} (redex ())
 prop-triv-red {P} {app bot out₂} (app ())
 prop-triv-red {P} {app imp (app₂ _ (app₂ _ out₂))} (redex ())
@@ -321,7 +321,7 @@ SR : ∀ {P} {Γ : PContext P} {δ ε : Proof (Palphabet P)} {φ} → Γ ⊢ δ 
 SR var ()
 SR (app {ε = ε} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∷ψ) Γ⊢ε∷φ) (redex βI) = 
   subst (λ P₁ → Γ ⊢ δ ⟦ x₀:= ε ⟧ ∷ P₁) 
-  (let open Equational-Reasoning (Expression'' (Palphabet P) (nonVarKind -Prp)) in
+  (let open Equational-Reasoning (Subexpression' (Palphabet P) (nonVarKind -Prp)) in
   ∵ rep ψ (λ _ → ↑) ⟦ x₀:= ε ⟧
   ≡ ψ ⟦ idSub ⟧                 [[ sub-comp₂ {E = ψ} ]]
   ≡ ψ                           [ subid ]) 
@@ -357,7 +357,7 @@ C-typed {Γ = Γ} {φ = app imp (app₂ (out φ) (app₂ (out ψ) out₂))} {δ 
 C-rep : ∀ {P} {Q} {Γ : PContext P} {Δ : PContext Q} {φ} {δ} {ρ} → C Γ φ δ → ρ ∷ Γ ⇒R Δ → C Δ φ (rep δ (toRep ρ))
 C-rep {φ = app bot out₂} (Γ⊢δ∷⊥ , SNδ) ρ∷Γ→Δ = (Weakening Γ⊢δ∷⊥ ρ∷Γ→Δ) , SNrep β-creates-rep SNδ
 C-rep {P} {Q} {Γ} {Δ} {app imp (app₂ (out φ) (app₂ (out ψ) out₂))} {δ} {ρ} (Γ⊢δ∷φ⇒ψ , Cδ) ρ∷Γ→Δ = subst (λ x → Δ ⊢ rep δ (toRep ρ) ∷ x) (wd2 _⇒_ 
-  (let open Equational-Reasoning (Expression'' (Palphabet Q) (nonVarKind -Prp)) in 
+  (let open Equational-Reasoning (Subexpression' (Palphabet Q) (nonVarKind -Prp)) in 
     ∵ rep (rep φ _) (toRep ρ)
     ≡ rep φ _            [[ rep-comp ]]
     ≡ rep φ _            [ rep-wd (λ ()) ]) 
@@ -427,11 +427,11 @@ mutual
     claim {Q} {Δ} {ρ} ε (SNI .ε SNε) ρ∷Γ→Δ ε∈Cφ = NeutralC {Q} {Δ} {appP (rep δ (toRep ρ)) ε} {ψ} 
       (app (subst (λ P₁ → Δ ⊢ rep δ (toRep ρ) ∷ P₁) 
       (wd2 _⇒_ 
-      (let open Equational-Reasoning (Expression'' (Palphabet Q) (nonVarKind -Prp)) in 
+      (let open Equational-Reasoning (Subexpression' (Palphabet Q) (nonVarKind -Prp)) in 
         ∵ rep (rep φ _) (toRep ρ)
         ≡ rep φ _       [[ rep-comp ]]
         ≡ rep φ _       [[ rep-wd (λ ()) ]]) 
-      (  (let open Equational-Reasoning (Expression'' (Palphabet Q) (nonVarKind -Prp)) in 
+      (  (let open Equational-Reasoning (Subexpression' (Palphabet Q) (nonVarKind -Prp)) in 
         ∵ rep (rep ψ _) (toRep ρ)
         ≡ rep ψ _       [[ rep-comp ]]
         ≡ rep ψ _       [[ rep-wd (λ ()) ]]) 
@@ -461,9 +461,9 @@ mutual
 
 \begin{code}
   CsubSN : ∀ {P} {Γ : PContext P} {φ} {δ} → C Γ φ δ → SN β δ
-  CsubSN {P} {Γ} {ToGrammar.app bot ToGrammar.out₂} P₁ = π₂ P₁
+  CsubSN {P} {Γ} {app bot out₂} P₁ = π₂ P₁
   CsubSN {P} {Γ} {app imp (app₂ (out φ) (app₂ (out ψ) out₂))} {δ} P₁ = 
-    let φ' : Expression'' (Palphabet P) (nonVarKind -Prp)
+    let φ' : Subexpression' (Palphabet P) (nonVarKind -Prp)
         φ' = rep φ (λ _ ()) in
     let Γ' : PContext (Lift P)
         Γ' = Γ , φ' in
