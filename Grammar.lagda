@@ -3,7 +3,7 @@
 \begin{code}
 module Grammar where
 
-open import Prelims hiding (_∼_)
+open import Prelims
 \end{code}
 
 Before we begin investigating the several theories we wish to consider, we present a general theory of syntax and
@@ -250,6 +250,7 @@ the result of substituting $\sigma(x)$ for $x$ for each variable in $E$, avoidin
   σ ∼ τ = ∀ K x → σ K x ≡ τ K x
 \end{code}
 
+\newcommand{\id}[1]{\mathsf{id}_{#1}}
 The \emph{identity} substitution $\id{V} : V \rightarrow V$ is defined as follows.
 
 \begin{code}

@@ -32,13 +32,7 @@ data _∧_ {i} (P Q : Set i) : Set i where
 
 \subsection{Functions}
 
-\newcommand{\id}[1]{\mathrm{id}_{#1}}
-We write $\id{A}$ for the identity function on the type $A$, and $g \circ f$ for the composition of functions $g$ and $f$.
-
 \begin{code}
---id : ∀ (A : Set) → A → A
---id A x = x
-
 infix 75 _∘_
 _∘_ : ∀ {A B C : Set} → (B → C) → (A → B) → A → C
 (g ∘ f) x = g (f x)
@@ -83,14 +77,6 @@ module Equational-Reasoning (A : Set) where
   infix 1 _≡_[[_]]
   _≡_[[_]] : ∀ {a b : A} → a ≡ b → ∀ c → c ≡ b → a ≡ c
   δ ≡ c [[ δ' ]] = trans δ (sym δ')
-\end{code}
-
-We also write $f \sim g$ iff the functions $f$ and $g$ are extensionally equal, that is, $f(x) = g(x)$ for all $x$.
-
-\begin{code}
-infix 50 _∼_
-_∼_ : ∀ {A B : Set} → (A → B) → (A → B) → Set
-f ∼ g = ∀ x → f x ≡ g x
 \end{code}
 
 \section{Datatypes}
