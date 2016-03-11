@@ -100,9 +100,6 @@ record ToGrammar (T : Taxonomy) : Set₁ where
   Expression : Alphabet → ExpressionKind → Set
   Expression V K = Subexpression V -Expression (base K)
 
-  Body' : Alphabet → ∀ K → Kind (-Constructor K) → Set
-  Body' V K C = Subexpression V (-Constructor K) C
-
   Abstraction' : Alphabet → Kind -Abstraction → Set
   Abstraction' V K = Subexpression V -Abstraction K
 \end{code}
