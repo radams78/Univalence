@@ -53,16 +53,10 @@ record Taxonomy : Set₁ where
     out₂ : ∀ {K} → Kind (-Constructor K)
     Π₂   : ∀ {K} → Kind -Abstraction → Kind (-Constructor K) → Kind (-Constructor K)
 
-  AbstractionKind : Set
-  AbstractionKind = Kind -Abstraction
-
-  ConstructorKind : ExpressionKind → Set
-  ConstructorKind K = Kind (-Constructor K)
-
 record ToGrammar (T : Taxonomy) : Set₁ where
   open Taxonomy T
   field
-    Constructor    : ∀ {K : ExpressionKind} → ConstructorKind K → Set
+    Constructor    : ∀ {K : ExpressionKind} → Kind (-Constructor K) → Set
     parent         : VarKind → ExpressionKind
 \end{code}
 
@@ -97,7 +91,7 @@ to $\alpha$-conversion.
 
   data Expression' (V : Alphabet) : ∀ C → Kind C → Set where
     var : ∀ {K} → Var V K → Expression' V -Expression (base (varKind K))
-    app : ∀ {K} {C : ConstructorKind K} → Constructor C → Expression' V (-Constructor K) C → Expression' V -Expression (base K)
+    app : ∀ {K} {C : Kind (-Constructor K)} → Constructor C → Expression' V (-Constructor K) C → Expression' V -Expression (base K)
     out : ∀ {K} → Expression' V -Expression (base K) → Expression' V -Abstraction (out K)
     Λ   : ∀ {K} {A} → Expression' (V , K) -Abstraction A → Expression' V -Abstraction (Π K A)
     out₂ : ∀ {K} → Expression' V (-Constructor K) out₂
@@ -106,10 +100,10 @@ to $\alpha$-conversion.
   Expression'' : Alphabet → ExpressionKind → Set
   Expression'' V K = Expression' V -Expression (base K)
 
-  Body' : Alphabet → ∀ K → ConstructorKind K → Set
+  Body' : Alphabet → ∀ K → Kind (-Constructor K) → Set
   Body' V K C = Expression' V (-Constructor K) C
 
-  Abstraction' : Alphabet → AbstractionKind → Set
+  Abstraction' : Alphabet → Kind -Abstraction → Set
   Abstraction' V K = Expression' V -Abstraction K
 \end{code}
 
@@ -182,7 +176,7 @@ alphabets and replacements to the category of sets.
     (app c EE) 〈 ρ 〉 = app c (EE 〈 ρ 〉B)
   
     infix 60 _〈_〉B
-    _〈_〉B : ∀ {U} {V} {K} {C : ConstructorKind K} → Expression' U (-Constructor K) C → Rep U V → Expression' V (-Constructor K) C
+    _〈_〉B : ∀ {U} {V} {K} {C : Kind (-Constructor K)} → Expression' U (-Constructor K) C → Rep U V → Expression' V (-Constructor K) C
     out₂ 〈 ρ 〉B = out₂
     (app₂ A EE) 〈 ρ 〉B = app₂ (A 〈 ρ 〉A) (EE 〈 ρ 〉B)
 
@@ -196,7 +190,7 @@ alphabets and replacements to the category of sets.
     rep-wd {E = var x} ρ-is-ρ' = wd var (ρ-is-ρ' x)
     rep-wd {E = app c EE} ρ-is-ρ' = wd (app c) (rep-wdB ρ-is-ρ')
 
-    rep-wdB : ∀ {U} {V} {K} {C : ConstructorKind K} {EE : Expression' U (-Constructor K) C} {ρ ρ' : Rep U V} → ρ ∼R ρ' → rep EE ρ ≡ rep EE ρ'
+    rep-wdB : ∀ {U} {V} {K} {C : Kind (-Constructor K)} {EE : Expression' U (-Constructor K) C} {ρ ρ' : Rep U V} → ρ ∼R ρ' → rep EE ρ ≡ rep EE ρ'
     rep-wdB {U} {V} .{K} {out₂ {K}} {out₂} ρ-is-ρ' = ref
     rep-wdB {U} {V} {K} {Π₂ A C} {app₂ A' EE} ρ-is-ρ' = wd2 app₂ (rep-wdA ρ-is-ρ') (rep-wdB ρ-is-ρ')
 
@@ -209,7 +203,7 @@ alphabets and replacements to the category of sets.
     rep-id {E = var _} = ref
     rep-id {E = app c _} = wd (app c) rep-idB
 
-    rep-idB : ∀ {V} {K} {C : ConstructorKind K} {EE : Expression' V (-Constructor K) C} → rep EE (idRep V) ≡ EE
+    rep-idB : ∀ {V} {K} {C : Kind (-Constructor K)} {EE : Expression' V (-Constructor K) C} → rep EE (idRep V) ≡ EE
     rep-idB {EE = out₂} = ref
     rep-idB {EE = app₂ _ _} = wd2 app₂ rep-idA rep-idB
 
@@ -222,7 +216,7 @@ alphabets and replacements to the category of sets.
     rep-comp {E = var _} = ref
     rep-comp {E = app c _} = wd (app c) rep-compB
 
-    rep-compB : ∀ {U} {V} {W} {K} {C : ConstructorKind K} {ρ : Rep U V} {ρ' : Rep V W} {EE : Expression' U (-Constructor K) C} → rep EE (ρ' •R ρ) ≡ rep (rep EE ρ) ρ'
+    rep-compB : ∀ {U} {V} {W} {K} {C : Kind (-Constructor K)} {ρ : Rep U V} {ρ' : Rep V W} {EE : Expression' U (-Constructor K) C} → rep EE (ρ' •R ρ) ≡ rep (rep EE ρ) ρ'
     rep-compB {EE = out₂} = ref
     rep-compB {U} {V} {W} {K} {Π₂ L C} {ρ} {ρ'} {app₂ A EE} = wd2 app₂ rep-compA rep-compB
 
@@ -325,7 +319,7 @@ which we denote $E [ \sigma ]$.
     (app c EE) ⟦ σ ⟧ = app c (EE ⟦ σ ⟧B)
 
     infix 60 _⟦_⟧B
-    _⟦_⟧B : ∀ {U} {V} {K} {C : ConstructorKind K} → Expression' U (-Constructor K) C → Sub U V → Expression' V (-Constructor K) C
+    _⟦_⟧B : ∀ {U} {V} {K} {C : Kind (-Constructor K)} → Expression' U (-Constructor K) C → Sub U V → Expression' V (-Constructor K) C
     out₂ ⟦ σ ⟧B = out₂
     (app₂ A EE) ⟦ σ ⟧B = app₂ (A ⟦ σ ⟧A) (EE ⟦ σ ⟧B)
 
@@ -339,7 +333,7 @@ which we denote $E [ \sigma ]$.
     sub-wd {E = var x} σ-is-σ' = σ-is-σ' _ x
     sub-wd {U} {V} {K} {app c EE} σ-is-σ' = wd (app c) (sub-wdB σ-is-σ')
 
-    sub-wdB : ∀ {U} {V} {K} {C : ConstructorKind K} {EE : Expression' U (-Constructor K) C} {σ σ' : Sub U V} → σ ∼ σ' → EE ⟦ σ ⟧B ≡ EE ⟦ σ' ⟧B
+    sub-wdB : ∀ {U} {V} {K} {C : Kind (-Constructor K)} {EE : Expression' U (-Constructor K) C} {σ σ' : Sub U V} → σ ∼ σ' → EE ⟦ σ ⟧B ≡ EE ⟦ σ' ⟧B
     sub-wdB {EE = out₂} σ-is-σ' = ref
     sub-wdB {EE = app₂ A EE} σ-is-σ' = wd2 app₂ (sub-wdA σ-is-σ') (sub-wdB σ-is-σ')
 
@@ -366,7 +360,7 @@ $M[\sigma \bullet_2 \rho] \equiv M \langle \rho \rangle [ \sigma ]$
     subid {E = var _} = ref
     subid {V} {K} {app c _} = wd (app c) subidB
 
-    subidB : ∀ {V} {K} {C : ConstructorKind K} {EE : Expression' V (-Constructor K) C} → EE ⟦ idSub ⟧B ≡ EE
+    subidB : ∀ {V} {K} {C : Kind (-Constructor K)} {EE : Expression' V (-Constructor K) C} → EE ⟦ idSub ⟧B ≡ EE
     subidB {EE = out₂} = ref
     subidB {EE = app₂ _ _} = wd2 app₂ subidA subidB
 
@@ -380,7 +374,7 @@ $M[\sigma \bullet_2 \rho] \equiv M \langle \rho \rangle [ \sigma ]$
     sub-comp₁ {E = var _} = ref
     sub-comp₁ {E = app c _} = wd (app c) sub-comp₁B
 
-    sub-comp₁B : ∀ {U} {V} {W} {K} {C : ConstructorKind K} {EE : Expression' U (-Constructor K) C} {ρ : Rep V W} {σ : Sub U V} →
+    sub-comp₁B : ∀ {U} {V} {W} {K} {C : Kind (-Constructor K)} {EE : Expression' U (-Constructor K) C} {ρ : Rep V W} {σ : Sub U V} →
       EE ⟦ ρ •₁ σ ⟧B ≡ rep (EE ⟦ σ ⟧B) ρ
     sub-comp₁B {EE = out₂} = ref
     sub-comp₁B {U} {V} {W} {K} {(Π₂ L C)} {app₂ A EE} = wd2 app₂ sub-comp₁A sub-comp₁B
@@ -395,7 +389,7 @@ $M[\sigma \bullet_2 \rho] \equiv M \langle \rho \rangle [ \sigma ]$
     sub-comp₂ {E = var _} = ref
     sub-comp₂ {U} {V} {W} {K} {app c EE} = wd (app c) sub-comp₂B
 
-    sub-comp₂B : ∀ {U} {V} {W} {K} {C : ConstructorKind K} {EE : Expression' U (-Constructor K) C}
+    sub-comp₂B : ∀ {U} {V} {W} {K} {C : Kind (-Constructor K)} {EE : Expression' U (-Constructor K) C}
       {σ : Sub V W} {ρ : Rep U V} → EE ⟦ σ •₂ ρ ⟧B ≡ (rep EE ρ) ⟦ σ ⟧B
     sub-comp₂B {EE = out₂} = ref
     sub-comp₂B {U} {V} {W} {K} {Π₂ L C} {app₂ A EE} = wd2 app₂ sub-comp₂A sub-comp₂B
@@ -440,7 +434,7 @@ We define the composition of two substitutions, as follows.
       ≡ A ⟦ Sub↑ σ • Sub↑ ρ ⟧A    [ sub-wdA Sub↑-comp ]
       ≡ A ⟦ Sub↑ ρ ⟧A ⟦ Sub↑ σ ⟧A [ sub-compA ])
 
-    sub-compB : ∀ {U} {V} {W} {K} {C : ConstructorKind K} {EE : Expression' U (-Constructor K) C} {σ : Sub V W} {ρ : Sub U V} →
+    sub-compB : ∀ {U} {V} {W} {K} {C : Kind (-Constructor K)} {EE : Expression' U (-Constructor K) C} {σ : Sub V W} {ρ : Sub U V} →
       EE ⟦ σ • ρ ⟧B ≡ EE ⟦ ρ ⟧B ⟦ σ ⟧B
     sub-compB {EE = out₂} = ref
     sub-compB {U} {V} {W} {K} {(Π₂ L C)} {app₂ A EE} = wd2 app₂ sub-compA sub-compB
@@ -488,7 +482,7 @@ $$ E \langle \rho \rangle \equiv E [ \rho ] $$
     rep-is-sub {E = var _} = ref
     rep-is-sub {U} {V} {K} {app c EE} = wd (app c) rep-is-subB
 
-    rep-is-subB : ∀ {U} {V} {K} {C : ConstructorKind K} {EE : Expression' U (-Constructor K) C} {ρ : Rep U V} →
+    rep-is-subB : ∀ {U} {V} {K} {C : Kind (-Constructor K)} {EE : Expression' U (-Constructor K) C} {ρ : Rep U V} →
       EE 〈 ρ 〉B ≡ EE ⟦ (λ K x → var (ρ K x)) ⟧B
     rep-is-subB {EE = out₂} = ref
     rep-is-subB {EE = app₂ _ _} = wd2 app₂ rep-is-subA rep-is-subB

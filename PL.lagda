@@ -37,7 +37,7 @@ PLtaxonomy = record {
 module PLgrammar where
   open Grammar.Taxonomy PLtaxonomy
 
-  data PLCon : ∀ {K : ExpressionKind} → ConstructorKind K → Set where
+  data PLCon : ∀ {K : ExpressionKind} → Kind (-Constructor K) → Set where
     app : PLCon (Π₂ (out (varKind -Proof)) (Π₂ (out (varKind -Proof)) (out₂ {K = varKind -Proof})))
     lam : PLCon (Π₂ (out (nonVarKind -Prp)) (Π₂ (Π -Proof (out (varKind -Proof))) (out₂ {K = varKind -Proof})))
     bot : PLCon (out₂ {K = nonVarKind -Prp})
