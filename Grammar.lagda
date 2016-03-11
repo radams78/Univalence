@@ -32,25 +32,6 @@ c([x_{11}, \ldots, x_{1r_1}]E_1, \ldots, [x_{m1}, \ldots, x_{mr_m}]E_m) \enspace
 The subexpressions of the form $[x_{i1}, \ldots, x_{ir_i}]E_i$ shall be called \emph{abstractions}, and the pieces of syntax of the form $(A_{i1}, \ldots, A_{ij})B_i$ that occur in constructor kinds shall be called \emph{abstraction kinds}.
 
 \begin{code}
-mutual
-  data KindClass (ExpressionKind : Set) : Set where
-    -Expression  : KindClass ExpressionKind
-    -Abstraction : KindClass ExpressionKind
-    -Constructor : ExpressionKind → KindClass ExpressionKind
-
-  data Kind (ExpressionKind : Set) : KindClass ExpressionKind → Set where
-    base : ExpressionKind → Kind ExpressionKind -Expression
-    out  : ExpressionKind → Kind ExpressionKind -Abstraction
-    Π    : ExpressionKind → Kind ExpressionKind -Abstraction → Kind ExpressionKind -Abstraction
-    out₂ : ∀ {K} → Kind ExpressionKind (-Constructor K)
-    Π₂   : ∀ {K} → Kind ExpressionKind -Abstraction → Kind ExpressionKind (-Constructor K) → Kind ExpressionKind (-Constructor K)
-
-AbstractionKind : Set → Set
-AbstractionKind ExpressionKind = Kind ExpressionKind -Abstraction
-
-ConstructorKind : ∀ {ExpressionKind} → ExpressionKind → Set
-ConstructorKind {ExpressionKind} K = Kind ExpressionKind (-Constructor K)
-
 record Taxonomy : Set₁ where
   field
     VarKind : Set
@@ -59,6 +40,24 @@ record Taxonomy : Set₁ where
   data ExpressionKind : Set where
     varKind : VarKind → ExpressionKind
     nonVarKind : NonVarKind → ExpressionKind
+
+  data KindClass : Set where
+    -Expression  : KindClass
+    -Abstraction : KindClass
+    -Constructor : ExpressionKind → KindClass
+
+  data Kind : KindClass → Set where
+    base : ExpressionKind → Kind -Expression
+    out  : ExpressionKind → Kind -Abstraction
+    Π    : VarKind → Kind -Abstraction → Kind -Abstraction
+    out₂ : ∀ {K} → Kind (-Constructor K)
+    Π₂   : ∀ {K} → Kind -Abstraction → Kind (-Constructor K) → Kind (-Constructor K)
+
+  AbstractionKind : Set
+  AbstractionKind = Kind -Abstraction
+
+  ConstructorKind : ExpressionKind → Set
+  ConstructorKind K = Kind (-Constructor K)
 
 record ToGrammar (T : Taxonomy) : Set₁ where
   open Taxonomy T
@@ -96,11 +95,11 @@ to $\alpha$-conversion.
   embed ⊥ = x₀
   embed (↑ x) = ↑ (embed x)
 
-  data Expression' (V : Alphabet) : ∀ C → Kind ExpressionKind C → Set where
+  data Expression' (V : Alphabet) : ∀ C → Kind C → Set where
     var : ∀ {K} → Var V K → Expression' V -Expression (base (varKind K))
     app : ∀ {K} {C : ConstructorKind K} → Constructor C → Expression' V (-Constructor K) C → Expression' V -Expression (base K)
     out : ∀ {K} → Expression' V -Expression (base K) → Expression' V -Abstraction (out K)
-    Λ   : ∀ {K} {A} → Expression' (V , K) -Abstraction A → Expression' V -Abstraction (Π (varKind K) A)
+    Λ   : ∀ {K} {A} → Expression' (V , K) -Abstraction A → Expression' V -Abstraction (Π K A)
     out₂ : ∀ {K} → Expression' V (-Constructor K) out₂
     app₂ : ∀ {K} {A} {C} → Expression' V -Abstraction A → Expression' V (-Constructor K) C → Expression' V (-Constructor K) (Π₂ A C)
 
@@ -110,7 +109,7 @@ to $\alpha$-conversion.
   Body' : Alphabet → ∀ K → ConstructorKind K → Set
   Body' V K C = Expression' V (-Constructor K) C
 
-  Abstraction' : Alphabet → AbstractionKind ExpressionKind → Set
+  Abstraction' : Alphabet → AbstractionKind → Set
   Abstraction' V K = Expression' V -Abstraction K
 \end{code}
 
@@ -203,7 +202,7 @@ alphabets and replacements to the category of sets.
 
     rep-wdA : ∀ {U} {V} {A} {E : Expression' U -Abstraction A} {ρ ρ' : Rep U V} → ρ ∼R ρ' → rep E ρ ≡ rep E ρ'
     rep-wdA {U} {V} {out K} {out E} ρ-is-ρ' = wd out (rep-wd ρ-is-ρ')
-    rep-wdA {U} {V} .{Π (varKind _) _} {Λ E} ρ-is-ρ' = wd Λ (rep-wdA (Rep↑-wd ρ-is-ρ'))
+    rep-wdA {U} {V} .{Π _ _} {Λ E} ρ-is-ρ' = wd Λ (rep-wdA (Rep↑-wd ρ-is-ρ'))
 
   mutual
     rep-id : ∀ {V} {K} {E : Expression'' V K} → rep E (idRep V) ≡ E
@@ -229,7 +228,7 @@ alphabets and replacements to the category of sets.
 
     rep-compA : ∀ {U} {V} {W} {K} {ρ : Rep U V} {ρ' : Rep V W} {A : Expression' U -Abstraction K} → rep A (ρ' •R ρ) ≡ rep (rep A ρ) ρ'
     rep-compA {A = out _} = wd out rep-comp
-    rep-compA {U} {V} {W} .{Π (varKind K) L} {ρ} {ρ'} {Λ {K} {L} A} = wd Λ (trans (rep-wdA Rep↑-comp) rep-compA)
+    rep-compA {U} {V} {W} .{Π K L} {ρ} {ρ'} {Λ {K} {L} A} = wd Λ (trans (rep-wdA Rep↑-comp) rep-compA)
 \end{code}
 
 This provides us with the canonical mapping from an expression over $V$ to an expression over $(V , K)$:
@@ -346,7 +345,7 @@ which we denote $E [ \sigma ]$.
 
     sub-wdA : ∀ {U} {V} {K} {A : Expression' U -Abstraction K} {σ σ' : Sub U V} → σ ∼ σ' → A ⟦ σ ⟧A ≡ A ⟦ σ' ⟧A
     sub-wdA {A = out E} σ-is-σ' = wd out (sub-wd {E = E} σ-is-σ')
-    sub-wdA {U} {V} .{Π (varKind K) L} {Λ {K} {L} A} σ-is-σ' = wd Λ (sub-wdA (Sub↑-wd σ-is-σ'))
+    sub-wdA {U} {V} .{Π K L} {Λ {K} {L} A} σ-is-σ' = wd Λ (sub-wdA (Sub↑-wd σ-is-σ'))
 \end{code}
 
 \begin{lemma}
@@ -389,7 +388,7 @@ $M[\sigma \bullet_2 \rho] \equiv M \langle \rho \rangle [ \sigma ]$
     sub-comp₁A : ∀ {U} {V} {W} {K} {A : Expression' U -Abstraction K} {ρ : Rep V W} {σ : Sub U V} →
       A ⟦ ρ •₁ σ ⟧A ≡ rep (A ⟦ σ ⟧A) ρ
     sub-comp₁A {A = out E} = wd out (sub-comp₁ {E = E})
-    sub-comp₁A {U} {V} {W} .{(Π (varKind K) L)} {Λ {K} {L} A} = wd Λ (trans (sub-wdA Sub↑-comp₁) sub-comp₁A)
+    sub-comp₁A {U} {V} {W} .{(Π K L)} {Λ {K} {L} A} = wd Λ (trans (sub-wdA Sub↑-comp₁) sub-comp₁A)
 
   mutual
     sub-comp₂ : ∀ {U} {V} {W} {K} {E : Expression'' U K} {σ : Sub V W} {ρ : Rep U V} → E ⟦ σ •₂ ρ ⟧ ≡ (rep E ρ) ⟦ σ ⟧
@@ -403,7 +402,7 @@ $M[\sigma \bullet_2 \rho] \equiv M \langle \rho \rangle [ \sigma ]$
 
     sub-comp₂A : ∀ {U} {V} {W} {K} {A : Expression' U -Abstraction K} {σ : Sub V W} {ρ : Rep U V} → A ⟦ σ •₂ ρ ⟧A ≡ (rep A ρ) ⟦ σ ⟧A
     sub-comp₂A {A = out E} = wd out (sub-comp₂ {E = E})
-    sub-comp₂A {U} {V} {W} .{Π (varKind K) L} {Λ {K} {L} A} = wd Λ (trans (sub-wdA Sub↑-comp₂) sub-comp₂A)
+    sub-comp₂A {U} {V} {W} .{Π K L} {Λ {K} {L} A} = wd Λ (trans (sub-wdA Sub↑-comp₂) sub-comp₂A)
 \end{code}
 
 We define the composition of two substitutions, as follows.
@@ -436,7 +435,7 @@ We define the composition of two substitutions, as follows.
     sub-compA : ∀ {U} {V} {W} {K} {A : Expression' U -Abstraction K} {σ : Sub V W} {ρ : Sub U V} →
       A ⟦ σ • ρ ⟧A ≡ A ⟦ ρ ⟧A ⟦ σ ⟧A
     sub-compA {A = out E} = wd out (sub-comp {E = E})
-    sub-compA {U} {V} {W} .{Π (varKind K) L} {Λ {K} {L} A} {σ} {ρ} = wd Λ (let open Equational-Reasoning (Expression' (W , K) -Abstraction L) in 
+    sub-compA {U} {V} {W} .{Π K L} {Λ {K} {L} A} {σ} {ρ} = wd Λ (let open Equational-Reasoning (Expression' (W , K) -Abstraction L) in 
       ∵ A ⟦ Sub↑ (σ • ρ) ⟧A
       ≡ A ⟦ Sub↑ σ • Sub↑ ρ ⟧A    [ sub-wdA Sub↑-comp ]
       ≡ A ⟦ Sub↑ ρ ⟧A ⟦ Sub↑ σ ⟧A [ sub-compA ])
@@ -497,7 +496,7 @@ $$ E \langle \rho \rangle \equiv E [ \rho ] $$
     rep-is-subA : ∀ {U} {V} {K} {A : Expression' U -Abstraction K} {ρ : Rep U V} →
       A 〈 ρ 〉A ≡ A ⟦ (λ K x → var (ρ K x)) ⟧A
     rep-is-subA {A = out E} = wd out rep-is-sub
-    rep-is-subA {U} {V} .{Π (varKind K) L} {Λ {K} {L} A} {ρ} = wd Λ (let open Equational-Reasoning (Expression' (V , K) -Abstraction L) in 
+    rep-is-subA {U} {V} .{Π K L} {Λ {K} {L} A} {ρ} = wd Λ (let open Equational-Reasoning (Expression' (V , K) -Abstraction L) in 
       ∵ A 〈 Rep↑ ρ 〉A
       ≡ A ⟦ (λ M x → var (Rep↑ ρ M x)) ⟧A [ rep-is-subA ]
       ≡ A ⟦ Sub↑ (λ M x → var (ρ M x)) ⟧A [ sub-wdA Rep↑-is-Sub↑ ])

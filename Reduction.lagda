@@ -241,7 +241,7 @@ If $R$ respects replacement and $\sigma \twoheadrightarrow_R \tau$ then $E[\sigm
       respect-rep R →
       ρ ↠〈 R 〉s σ → redA R (A ⟦ ρ ⟧A) (A ⟦ σ ⟧A)
     subredrA {A = out E} hyp ρ↠σ = redout (subredr {E = E} hyp ρ↠σ)
-    subredrA {U} {V} .{(Π (varKind K) C)} {ρ} {σ} {R} {Λ {K} {C} A} hyp ρ↠σ = redΛ (subredrA hyp (liftSub-red hyp ρ↠σ))
+    subredrA {U} {V} .{(Π K C)} {ρ} {σ} {R} {Λ {K} {C} A} hyp ρ↠σ = redΛ (subredrA hyp (liftSub-red hyp ρ↠σ))
 \end{code}
 
 \subsection{Strong Normalization}

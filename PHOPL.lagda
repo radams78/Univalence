@@ -45,11 +45,11 @@ module PHOPLGrammar where
 
   data PHOPLcon : ∀ {K : ExpressionKind} → ConstructorKind K → Set where
     -appProof : PHOPLcon (Π₂ (out (varKind -Proof)) (Π₂ (out (varKind -Proof)) (out₂ {K = varKind -Proof})))
-    -lamProof : PHOPLcon (Π₂ (out (varKind -Term)) (Π₂ (Π (varKind -Proof) (out (varKind -Proof))) (out₂ {K = varKind -Proof})))
+    -lamProof : PHOPLcon (Π₂ (out (varKind -Term)) (Π₂ (Π -Proof (out (varKind -Proof))) (out₂ {K = varKind -Proof})))
     -bot : PHOPLcon (out₂ {K = varKind -Term})
     -imp : PHOPLcon (Π₂ (out (varKind -Term)) (Π₂ (out (varKind -Term)) (out₂ {K = varKind -Term})))
     -appTerm : PHOPLcon (Π₂ (out (varKind -Term)) (Π₂ (out (varKind -Term)) (out₂ {K = varKind -Term})))
-    -lamTerm : PHOPLcon (Π₂ (out (nonVarKind -Type)) (Π₂ (Π (varKind -Term) (out (varKind -Term))) (out₂ {K = varKind -Term})))
+    -lamTerm : PHOPLcon (Π₂ (out (nonVarKind -Type)) (Π₂ (Π -Term (out (varKind -Term))) (out₂ {K = varKind -Term})))
     -Omega : PHOPLcon (out₂ {K = nonVarKind -Type})
     -func  : PHOPLcon (Π₂ (out (nonVarKind -Type)) (Π₂ (out (nonVarKind -Type)) (out₂ {K = nonVarKind -Type})))
 
