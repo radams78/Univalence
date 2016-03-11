@@ -36,8 +36,8 @@ data _∧_ {i} (P Q : Set i) : Set i where
 We write $\id{A}$ for the identity function on the type $A$, and $g \circ f$ for the composition of functions $g$ and $f$.
 
 \begin{code}
-id : ∀ (A : Set) → A → A
-id A x = x
+--id : ∀ (A : Set) → A → A
+--id A x = x
 
 infix 75 _∘_
 _∘_ : ∀ {A B C : Set} → (B → C) → (A → B) → A → C

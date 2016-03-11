@@ -123,6 +123,10 @@ we denote by $E \{ \rho \}$ the result of \emph{replacing} every variable $x$ in
 
   _∼R_ : ∀ {U} {V} → Rep U V → Rep U V → Set
   ρ ∼R ρ' = ∀ {K} x → ρ K x ≡ ρ' K x
+
+  embedl : ∀ {A} {K} {F} → Rep A (extend A K F)
+  embedl {F = ∅} _ x = x
+  embedl {F = Lift F} K x = ↑ (embedl {F = F} K x)
 \end{code}
 
 The alphabets and replacements form a category.
