@@ -28,6 +28,8 @@
 
 \DefineVerbatimEnvironment{code}{Verbatim}{}
 
+\newif\g
+
 \newtheorem{lemma}{Lemma}
 
 \newcommand{\Set}{\mathbf{Set}}

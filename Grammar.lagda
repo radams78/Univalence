@@ -12,13 +12,14 @@ capture-avoiding substitution.
 A \emph{grammar} consists of:
 \begin{itemize}
 \item a set of \emph{expression kinds};
+\item a subset of expression kinds, the \emph{variable kinds};
 \item a set of \emph{constructors}, each with an associated \emph{constructor kind} of the form
 \begin{equation}
 \label{eq:conkind}
  ((A_{11}, \ldots, A_{1r_1}) B_1, \ldots, (A_{m1}, \ldots, A_{mr_m}) B_m) C
 \end{equation}
-where each $A_{ij}$, $B_i$ and $C$ is an expression kind.
-\item a binary relation of \emph{parenthood} on the set of expression kinds.
+where each $A_{ij}$ is a variable kind, and each $B_i$ and $C$ is an expression kind.
+\item a function assigning, to each variable kind $K$, an expression kind, the \emph{parent} of $K$.
 \end{itemize}
 
 A constructor $c$ of kind (\ref{eq:conkind}) is a constructor that takes $m$ arguments of kind $B_1$, \ldots, $B_m$, and binds $r_i$ variables in its $i$th argument of kind $A_{ij}$,
@@ -54,7 +55,7 @@ record Taxonomy : Set₁ where
     Π₂   : ∀ {K} → Kind -Abstraction → Kind (-Constructor K) → Kind (-Constructor K)
 \end{code}
 
-An \emph{alphabet} $V = \{ V_E \}_E$ consists of a set $V_E$ of \emph{variables} of kind $E$ for each expression kind $E$..  The \emph{expressions}
+An \emph{alphabet} $V = \{ V_E \}_E$ consists of a set $V_E$ of \emph{variables} of kind $E$ for each expression kind $E$.  The \emph{expressions}
 of kind $E$ over the alphabet $V$ are defined inductively by:
 \begin{itemize}
 \item
@@ -155,74 +156,51 @@ Under this operation, the mapping $\mathsf{Expression}\ -\ K$ becomes a functor 
 alphabets and replacements to the category of sets.
 
 \begin{code}
-  rep : ∀ {U} {V} {C} {K} → Subexpression U C K → Rep U V → Subexpression V C K
-  rep (var x) ρ = var (ρ _ x)
-  rep (app c EE) ρ = app c (rep EE ρ)
-  rep (out E) ρ = out (rep E ρ)
-  rep (Λ E) ρ = Λ (rep E (Rep↑ ρ))
-  rep out₂ _ = out₂
-  rep (app₂ E F) ρ = app₂ (rep E ρ) (rep F ρ)
+  infix 60 _〈_〉
+  _〈_〉 : ∀ {U} {V} {C} {K} → Subexpression U C K → Rep U V → Subexpression V C K
+  (var x) 〈 ρ 〉 = var (ρ _ x)
+  (app c EE) 〈 ρ 〉 = app c (EE 〈 ρ 〉)
+  (out E) 〈 ρ 〉 = out (E 〈 ρ 〉)
+  (Λ E) 〈 ρ 〉 = Λ (E 〈 Rep↑ ρ 〉)
+  out₂ 〈 _ 〉 = out₂
+  (app₂ E F) 〈 ρ 〉 = app₂ (E 〈 ρ 〉) (F 〈 ρ 〉)
 
-  mutual
-    infix 60 _〈_〉
-    _〈_〉 : ∀ {U} {V} {K} → Expression U K → Rep U V → Expression V K
-    var x 〈 ρ 〉 = var (ρ _ x)
-    (app c EE) 〈 ρ 〉 = app c (EE 〈 ρ 〉B)
-  
-    infix 60 _〈_〉B
-    _〈_〉B : ∀ {U} {V} {K} {C : Kind (-Constructor K)} → Subexpression U (-Constructor K) C → Rep U V → Subexpression V (-Constructor K) C
-    out₂ 〈 ρ 〉B = out₂
-    (app₂ A EE) 〈 ρ 〉B = app₂ (A 〈 ρ 〉A) (EE 〈 ρ 〉B)
+  rep-wd : ∀ {U} {V} {C} {K} {E : Subexpression U C K} {ρ ρ' : Rep U V} → ρ ∼R ρ' → E 〈 ρ 〉 ≡ E 〈 ρ' 〉
+  rep-wd {E = var x} ρ-is-ρ' = wd var (ρ-is-ρ' x)
+  rep-wd {E = app c EE} ρ-is-ρ' = wd (app c) (rep-wd ρ-is-ρ')
+  rep-wd {E = out E} ρ-is-ρ' = wd out (rep-wd ρ-is-ρ')
+  rep-wd {E = Λ E} ρ-is-ρ' = wd Λ (rep-wd (Rep↑-wd ρ-is-ρ'))
+  rep-wd {E = out₂} _ = ref
+  rep-wd {E = app₂ E EE} ρ-is-ρ' = wd2 app₂ (rep-wd ρ-is-ρ') (rep-wd ρ-is-ρ')
 
-    infix 60 _〈_〉A
-    _〈_〉A : ∀ {U} {V} {A} → Subexpression U -Abstraction A → Rep U V → Subexpression V -Abstraction A
-    out E 〈 ρ 〉A = out (E 〈 ρ 〉)
-    Λ A 〈 ρ 〉A = Λ (A 〈 Rep↑ ρ 〉A)
+  rep-id : ∀ {V} {C} {K} {E : Subexpression V C K} → E 〈 idRep V 〉 ≡ E
+  rep-id {E = var _} = ref
+  rep-id {E = app c EE} = wd (app c) rep-id
+  rep-id {E = out E} = wd out rep-id
+  rep-id {V} {E = Λ {K} {A} E} = wd Λ (let open Equational-Reasoning (Subexpression (V , K) -Abstraction A) in 
+    ∵ E 〈 Rep↑ (idRep V) 〉
+    ≡ E 〈 idRep (V , K) 〉        [ rep-wd Rep↑-id ]
+    ≡ E                          [ rep-id ])
+  rep-id {E = out₂} = ref
+  rep-id {E = app₂ E EE} = wd2 app₂ rep-id rep-id  
 
-  mutual
-    rep-wd : ∀ {U} {V} {K} {E : Expression U K} {ρ : Rep U V} {ρ'} → ρ ∼R ρ' → rep E ρ ≡ rep E ρ'
-    rep-wd {E = var x} ρ-is-ρ' = wd var (ρ-is-ρ' x)
-    rep-wd {E = app c EE} ρ-is-ρ' = wd (app c) (rep-wdB ρ-is-ρ')
-
-    rep-wdB : ∀ {U} {V} {K} {C : Kind (-Constructor K)} {EE : Subexpression U (-Constructor K) C} {ρ ρ' : Rep U V} → ρ ∼R ρ' → rep EE ρ ≡ rep EE ρ'
-    rep-wdB {U} {V} .{K} {out₂ {K}} {out₂} ρ-is-ρ' = ref
-    rep-wdB {U} {V} {K} {Π₂ A C} {app₂ A' EE} ρ-is-ρ' = wd2 app₂ (rep-wdA ρ-is-ρ') (rep-wdB ρ-is-ρ')
-
-    rep-wdA : ∀ {U} {V} {A} {E : Subexpression U -Abstraction A} {ρ ρ' : Rep U V} → ρ ∼R ρ' → rep E ρ ≡ rep E ρ'
-    rep-wdA {U} {V} {out K} {out E} ρ-is-ρ' = wd out (rep-wd ρ-is-ρ')
-    rep-wdA {U} {V} .{Π _ _} {Λ E} ρ-is-ρ' = wd Λ (rep-wdA (Rep↑-wd ρ-is-ρ'))
-
-  mutual
-    rep-id : ∀ {V} {K} {E : Expression V K} → rep E (idRep V) ≡ E
-    rep-id {E = var _} = ref
-    rep-id {E = app c _} = wd (app c) rep-idB
-
-    rep-idB : ∀ {V} {K} {C : Kind (-Constructor K)} {EE : Subexpression V (-Constructor K) C} → rep EE (idRep V) ≡ EE
-    rep-idB {EE = out₂} = ref
-    rep-idB {EE = app₂ _ _} = wd2 app₂ rep-idA rep-idB
-
-    rep-idA : ∀ {V} {K} {A : Subexpression V -Abstraction K} → rep A (idRep V) ≡ A
-    rep-idA {A = out _} = wd out rep-id
-    rep-idA {A = Λ _} = wd Λ (trans (rep-wdA Rep↑-id) rep-idA)
-
-  mutual
-    rep-comp : ∀ {U} {V} {W} {K} {ρ : Rep U V} {ρ' : Rep V W} {E : Expression U K} → rep E (ρ' •R ρ) ≡ rep (rep E ρ) ρ'
-    rep-comp {E = var _} = ref
-    rep-comp {E = app c _} = wd (app c) rep-compB
-
-    rep-compB : ∀ {U} {V} {W} {K} {C : Kind (-Constructor K)} {ρ : Rep U V} {ρ' : Rep V W} {EE : Subexpression U (-Constructor K) C} → rep EE (ρ' •R ρ) ≡ rep (rep EE ρ) ρ'
-    rep-compB {EE = out₂} = ref
-    rep-compB {U} {V} {W} {K} {Π₂ L C} {ρ} {ρ'} {app₂ A EE} = wd2 app₂ rep-compA rep-compB
-
-    rep-compA : ∀ {U} {V} {W} {K} {ρ : Rep U V} {ρ' : Rep V W} {A : Subexpression U -Abstraction K} → rep A (ρ' •R ρ) ≡ rep (rep A ρ) ρ'
-    rep-compA {A = out _} = wd out rep-comp
-    rep-compA {U} {V} {W} .{Π K L} {ρ} {ρ'} {Λ {K} {L} A} = wd Λ (trans (rep-wdA Rep↑-comp) rep-compA)
+  rep-comp : ∀ {U} {V} {W} {C} {K} {E : Subexpression U C K} {ρ : Rep U V} {σ : Rep V W} →
+    E 〈 σ •R ρ 〉 ≡ E 〈 ρ 〉 〈 σ 〉
+  rep-comp {E = var _} = ref
+  rep-comp {E = app c _} = wd (app c) rep-comp
+  rep-comp {E = out _} = wd out rep-comp
+  rep-comp {E = Λ E} {ρ} {σ} = wd Λ (let open Equational-Reasoning _ in 
+    ∵ E 〈 Rep↑ (σ •R ρ) 〉
+    ≡ E 〈 Rep↑ σ •R Rep↑ ρ 〉 [ rep-wd Rep↑-comp ]
+    ≡ E 〈 Rep↑ ρ 〉 〈 Rep↑ σ 〉 [ rep-comp ])
+  rep-comp {E = out₂} = ref
+  rep-comp {E = app₂ E EE} = wd2 app₂ rep-comp rep-comp
 \end{code}
 
 This provides us with the canonical mapping from an expression over $V$ to an expression over $(V , K)$:
 \begin{code}
   liftE : ∀ {V} {K} {L} → Expression V L → Expression (V , K) L
-  liftE E = rep E (λ _ → ↑)
+  liftE E = E 〈 (λ _ → ↑) 〉
 \end{code}
 
 A \emph{substitution} $\sigma$ from alphabet $U$ to alphabet $V$, $\sigma : U \Rightarrow V$, is a function $\sigma$ that maps every variable $x$ of kind $K$ in $U$ to an
@@ -253,7 +231,7 @@ We can define the composition of a substitution and a replacement as follows
 \begin{code}
   infix 75 _•₁_
   _•₁_ : ∀ {U} {V} {W} → Rep V W → Sub U V → Sub U W
-  (ρ •₁ σ) K x = rep (σ K x) ρ
+  (ρ •₁ σ) K x = (σ K x) 〈 ρ 〉
 
   infix 75 _•₂_
   _•₂_ : ∀ {U} {V} {W} → Sub V W → Rep U V → Sub U W
@@ -293,9 +271,9 @@ $(\sigma \bullet_2 \rho, K) = (\sigma , K) \bullet_2 (\rho , K)$
   Sub↑-comp₁ : ∀ {U} {V} {W} {K} {ρ : Rep V W} {σ : Sub U V} → Sub↑ (ρ •₁ σ) ∼ Rep↑ ρ •₁ Sub↑ σ
   Sub↑-comp₁ {K = K} ._ x₀ = ref
   Sub↑-comp₁ {U} {V} {W} {K} {ρ} {σ} L (↑ x) = let open Equational-Reasoning (Expression (W , K) (varKind L)) in 
-    ∵ liftE (rep (σ L x) ρ)
-    ≡ rep (σ L x) (λ _ x → ↑ (ρ _ x)) [[ rep-comp {E = σ L x} ]]
-    ≡ rep (liftE (σ L x)) (Rep↑ ρ)     [ rep-comp ]
+    ∵ liftE ((σ L x) 〈 ρ 〉)
+    ≡ (σ L x) 〈 (λ _ x → ↑ (ρ _ x)) 〉 [[ rep-comp {E = σ L x} ]]
+    ≡ (liftE (σ L x)) 〈 Rep↑ ρ 〉     [ rep-comp ]
 
   Sub↑-comp₂ : ∀ {U} {V} {W} {K} {σ : Sub V W} {ρ : Rep U V} → Sub↑ {K = K} (σ •₂ ρ) ∼ Sub↑ σ •₂ Rep↑ ρ
   Sub↑-comp₂ {K = K} ._ x₀ = ref
@@ -364,31 +342,31 @@ $M[\sigma \bullet_2 \rho] \equiv M \langle \rho \rangle [ \sigma ]$
 
   mutual
     sub-comp₁ : ∀ {U} {V} {W} {K} {E : Expression U K} {ρ : Rep V W} {σ : Sub U V} →
-      E ⟦ ρ •₁ σ ⟧ ≡ rep (E ⟦ σ ⟧) ρ
+      E ⟦ ρ •₁ σ ⟧ ≡ E ⟦ σ ⟧ 〈 ρ 〉
     sub-comp₁ {E = var _} = ref
     sub-comp₁ {E = app c _} = wd (app c) sub-comp₁B
 
     sub-comp₁B : ∀ {U} {V} {W} {K} {C : Kind (-Constructor K)} {EE : Subexpression U (-Constructor K) C} {ρ : Rep V W} {σ : Sub U V} →
-      EE ⟦ ρ •₁ σ ⟧B ≡ rep (EE ⟦ σ ⟧B) ρ
+      EE ⟦ ρ •₁ σ ⟧B ≡ EE ⟦ σ ⟧B 〈 ρ 〉
     sub-comp₁B {EE = out₂} = ref
     sub-comp₁B {U} {V} {W} {K} {(Π₂ L C)} {app₂ A EE} = wd2 app₂ sub-comp₁A sub-comp₁B
 
     sub-comp₁A : ∀ {U} {V} {W} {K} {A : Subexpression U -Abstraction K} {ρ : Rep V W} {σ : Sub U V} →
-      A ⟦ ρ •₁ σ ⟧A ≡ rep (A ⟦ σ ⟧A) ρ
+      A ⟦ ρ •₁ σ ⟧A ≡ A ⟦ σ ⟧A 〈 ρ 〉
     sub-comp₁A {A = out E} = wd out (sub-comp₁ {E = E})
     sub-comp₁A {U} {V} {W} .{(Π K L)} {Λ {K} {L} A} = wd Λ (trans (sub-wdA Sub↑-comp₁) sub-comp₁A)
 
   mutual
-    sub-comp₂ : ∀ {U} {V} {W} {K} {E : Expression U K} {σ : Sub V W} {ρ : Rep U V} → E ⟦ σ •₂ ρ ⟧ ≡ (rep E ρ) ⟦ σ ⟧
+    sub-comp₂ : ∀ {U} {V} {W} {K} {E : Expression U K} {σ : Sub V W} {ρ : Rep U V} → E ⟦ σ •₂ ρ ⟧ ≡ E 〈 ρ 〉 ⟦ σ ⟧
     sub-comp₂ {E = var _} = ref
     sub-comp₂ {U} {V} {W} {K} {app c EE} = wd (app c) sub-comp₂B
 
     sub-comp₂B : ∀ {U} {V} {W} {K} {C : Kind (-Constructor K)} {EE : Subexpression U (-Constructor K) C}
-      {σ : Sub V W} {ρ : Rep U V} → EE ⟦ σ •₂ ρ ⟧B ≡ (rep EE ρ) ⟦ σ ⟧B
+      {σ : Sub V W} {ρ : Rep U V} → EE ⟦ σ •₂ ρ ⟧B ≡ EE 〈 ρ 〉 ⟦ σ ⟧B
     sub-comp₂B {EE = out₂} = ref
     sub-comp₂B {U} {V} {W} {K} {Π₂ L C} {app₂ A EE} = wd2 app₂ sub-comp₂A sub-comp₂B
 
-    sub-comp₂A : ∀ {U} {V} {W} {K} {A : Subexpression U -Abstraction K} {σ : Sub V W} {ρ : Rep U V} → A ⟦ σ •₂ ρ ⟧A ≡ (rep A ρ) ⟦ σ ⟧A
+    sub-comp₂A : ∀ {U} {V} {W} {K} {A : Subexpression U -Abstraction K} {σ : Sub V W} {ρ : Rep U V} → A ⟦ σ •₂ ρ ⟧A ≡ A 〈 ρ 〉 ⟦ σ ⟧A
     sub-comp₂A {A = out E} = wd out (sub-comp₂ {E = E})
     sub-comp₂A {U} {V} {W} .{Π K L} {Λ {K} {L} A} = wd Λ (trans (sub-wdA Sub↑-comp₂) sub-comp₂A)
 \end{code}
@@ -477,15 +455,15 @@ $$ E \langle \rho \rangle \equiv E [ \rho ] $$
     rep-is-sub {U} {V} {K} {app c EE} = wd (app c) rep-is-subB
 
     rep-is-subB : ∀ {U} {V} {K} {C : Kind (-Constructor K)} {EE : Subexpression U (-Constructor K) C} {ρ : Rep U V} →
-      EE 〈 ρ 〉B ≡ EE ⟦ (λ K x → var (ρ K x)) ⟧B
+      EE 〈 ρ 〉 ≡ EE ⟦ (λ K x → var (ρ K x)) ⟧B
     rep-is-subB {EE = out₂} = ref
     rep-is-subB {EE = app₂ _ _} = wd2 app₂ rep-is-subA rep-is-subB
 
     rep-is-subA : ∀ {U} {V} {K} {A : Subexpression U -Abstraction K} {ρ : Rep U V} →
-      A 〈 ρ 〉A ≡ A ⟦ (λ K x → var (ρ K x)) ⟧A
+      A 〈 ρ 〉 ≡ A ⟦ (λ K x → var (ρ K x)) ⟧A
     rep-is-subA {A = out E} = wd out rep-is-sub
     rep-is-subA {U} {V} .{Π K L} {Λ {K} {L} A} {ρ} = wd Λ (let open Equational-Reasoning (Subexpression (V , K) -Abstraction L) in 
-      ∵ A 〈 Rep↑ ρ 〉A
+      ∵ A 〈 Rep↑ ρ 〉
       ≡ A ⟦ (λ M x → var (Rep↑ ρ M x)) ⟧A [ rep-is-subA ]
       ≡ A ⟦ Sub↑ (λ M x → var (ρ M x)) ⟧A [ sub-wdA Rep↑-is-Sub↑ ])
 \end{code}
@@ -510,7 +488,7 @@ $$ \sigma \bullet [x_0 := E] \sim [x_0 := E[\sigma]] \bullet (\sigma , K) $$
 
 \begin{code}
   comp₁-botsub : ∀ {U} {V} {K} {E : Expression U (varKind K)} {ρ : Rep U V} →
-    ρ •₁ (x₀:= E) ∼ (x₀:= (rep E ρ)) •₂ Rep↑ ρ
+    ρ •₁ (x₀:= E) ∼ (x₀:= (E ‌〈 ρ 〉)) •₂ Rep↑ ρ
   comp₁-botsub _ x₀ = ref
   comp₁-botsub _ (↑ _) = ref
 
