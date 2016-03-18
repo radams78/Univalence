@@ -220,7 +220,7 @@ The \emph{identity} substitution $\id{V} : V \rightarrow V$ is defined as follow
 
 \begin{code}
   idSub : ∀ {V} → Sub V V
-  idSub _ x = var x
+  idSub _ = var
 \end{code}
 
 Given $\sigma : U \rightarrow V$ and an expression $E$ over $U$, we want to define the expression $E[\sigma]$ over $V$,
@@ -284,34 +284,22 @@ We can now define the result of applying a substitution $\sigma$ to an expressio
 which we denote $E [ \sigma ]$.
 
 \begin{code}
-  mutual
-    infix 60 _⟦_⟧
-    _⟦_⟧ : ∀ {U} {V} {K} → Expression U K → Sub U V → Expression V K
-    (var x) ⟦ σ ⟧ = σ _ x
-    (app c EE) ⟦ σ ⟧ = app c (EE ⟦ σ ⟧B)
+  infix 60 _⟦_⟧
+  _⟦_⟧ : ∀ {U} {V} {C} {K} → Subexpression U C K → Sub U V → Subexpression V C K
+  var x ⟦ σ ⟧ = σ _ x
+  app c EE ⟦ σ ⟧ = app c (EE ⟦ σ ⟧)
+  out E ⟦ σ ⟧ = out (E ⟦ σ ⟧)
+  Λ E ⟦ σ ⟧ = Λ (E ⟦ Sub↑ σ ⟧)
+  out₂ ⟦ _ ⟧ = out₂
+  app₂ E EE ⟦ σ ⟧ = app₂ (E ⟦ σ ⟧) (EE ⟦ σ ⟧)
 
-    infix 60 _⟦_⟧B
-    _⟦_⟧B : ∀ {U} {V} {K} {C : Kind (-Constructor K)} → Subexpression U (-Constructor K) C → Sub U V → Subexpression V (-Constructor K) C
-    out₂ ⟦ σ ⟧B = out₂
-    (app₂ A EE) ⟦ σ ⟧B = app₂ (A ⟦ σ ⟧A) (EE ⟦ σ ⟧B)
-
-    infix 60 _⟦_⟧A
-    _⟦_⟧A : ∀ {U} {V} {A} → Subexpression U -Abstraction A → Sub U V → Subexpression V -Abstraction A
-    (out E) ⟦ σ ⟧A = out (E ⟦ σ ⟧)
-    (Λ A) ⟦ σ ⟧A = Λ (A ⟦ Sub↑ σ ⟧A)
-
-  mutual
-    sub-wd : ∀ {U} {V} {K} {E : Expression U K} {σ σ' : Sub U V} → σ ∼ σ' → E ⟦ σ ⟧ ≡ E ⟦ σ' ⟧
-    sub-wd {E = var x} σ-is-σ' = σ-is-σ' _ x
-    sub-wd {U} {V} {K} {app c EE} σ-is-σ' = wd (app c) (sub-wdB σ-is-σ')
-
-    sub-wdB : ∀ {U} {V} {K} {C : Kind (-Constructor K)} {EE : Subexpression U (-Constructor K) C} {σ σ' : Sub U V} → σ ∼ σ' → EE ⟦ σ ⟧B ≡ EE ⟦ σ' ⟧B
-    sub-wdB {EE = out₂} σ-is-σ' = ref
-    sub-wdB {EE = app₂ A EE} σ-is-σ' = wd2 app₂ (sub-wdA σ-is-σ') (sub-wdB σ-is-σ')
-
-    sub-wdA : ∀ {U} {V} {K} {A : Subexpression U -Abstraction K} {σ σ' : Sub U V} → σ ∼ σ' → A ⟦ σ ⟧A ≡ A ⟦ σ' ⟧A
-    sub-wdA {A = out E} σ-is-σ' = wd out (sub-wd {E = E} σ-is-σ')
-    sub-wdA {U} {V} .{Π K L} {Λ {K} {L} A} σ-is-σ' = wd Λ (sub-wdA (Sub↑-wd σ-is-σ'))
+  sub-wd : ∀ {U} {V} {C} {K} {E : Subexpression U C K} {σ σ' : Sub U V} → σ ∼ σ' → E ⟦ σ ⟧ ≡ E ⟦ σ' ⟧
+  sub-wd {E = var x} σ-is-σ' = σ-is-σ' _ x
+  sub-wd {E = app c EE} σ-is-σ' = wd (app c) (sub-wd {E = EE} σ-is-σ')
+  sub-wd {E = out E} σ-is-σ' = wd out (sub-wd {E = E} σ-is-σ')
+  sub-wd {E = Λ E} σ-is-σ' = wd Λ (sub-wd {E = E} (Sub↑-wd σ-is-σ'))
+  sub-wd {E = out₂} _ = ref
+  sub-wd {E = app₂ E EE} σ-is-σ' = wd2 app₂ (sub-wd {E = E} σ-is-σ') (sub-wd {E = EE} σ-is-σ')
 \end{code}
 
 \begin{lemma}
@@ -327,48 +315,40 @@ $M[\sigma \bullet_2 \rho] \equiv M \langle \rho \rangle [ \sigma ]$
 \end{lemma}
 
 \begin{code}
-  mutual
-    subid : ∀ {V} {K} {E : Expression V K} → E ⟦ idSub ⟧ ≡ E
-    subid {E = var _} = ref
-    subid {V} {K} {app c _} = wd (app c) subidB
+  sub-id : ∀ {V} {C} {K} {E : Subexpression V C K} → E ⟦ idSub ⟧ ≡ E
+  sub-id {E = var _} = ref
+  sub-id {E = app c EE} = wd (app c) sub-id
+  sub-id {E = out E} = wd out sub-id
+  sub-id {E = Λ E} = wd Λ (let open Equational-Reasoning _ in 
+    ∵ E ⟦ Sub↑ idSub ⟧
+    ≡ E ⟦ idSub ⟧         [ sub-wd {E = E} Sub↑-id ]
+    ≡ E                   [ sub-id ])
+  sub-id {E = out₂} = ref
+  sub-id {E = app₂ E EE} = wd2 app₂ sub-id sub-id
 
-    subidB : ∀ {V} {K} {C : Kind (-Constructor K)} {EE : Subexpression V (-Constructor K) C} → EE ⟦ idSub ⟧B ≡ EE
-    subidB {EE = out₂} = ref
-    subidB {EE = app₂ _ _} = wd2 app₂ subidA subidB
-
-    subidA : ∀ {V} {K} {A : Subexpression V -Abstraction K} → A ⟦ idSub ⟧A ≡ A
-    subidA {A = out _} = wd out subid
-    subidA {A = Λ _} = wd Λ (trans (sub-wdA Sub↑-id) subidA)
-
-  mutual
-    sub-comp₁ : ∀ {U} {V} {W} {K} {E : Expression U K} {ρ : Rep V W} {σ : Sub U V} →
+  sub-comp₁ : ∀ {U} {V} {W} {C} {K} {E : Subexpression U C K} {ρ : Rep V W} {σ : Sub U V} →
       E ⟦ ρ •₁ σ ⟧ ≡ E ⟦ σ ⟧ 〈 ρ 〉
-    sub-comp₁ {E = var _} = ref
-    sub-comp₁ {E = app c _} = wd (app c) sub-comp₁B
+  sub-comp₁ {E = var _} = ref
+  sub-comp₁ {E = app c EE} = wd (app c) (sub-comp₁ {E = EE})
+  sub-comp₁ {E = out₂} = ref
+  sub-comp₁ {E = app₂ A EE} = wd2 app₂ (sub-comp₁ {E = A}) (sub-comp₁ {E = EE})
+  sub-comp₁ {E = out E} = wd out (sub-comp₁ {E = E})
+  sub-comp₁ {E = Λ A} {ρ} {σ} = 
+    wd Λ (let open Equational-Reasoning _ in 
+    ∵ A ⟦ Sub↑ (ρ •₁ σ) ⟧
+    ≡ A ⟦ Rep↑ ρ •₁ Sub↑ σ ⟧   [ sub-wd {E = A} Sub↑-comp₁ ]
+    ≡ A ⟦ Sub↑ σ ⟧ 〈 Rep↑ ρ 〉  [ sub-comp₁ {E = A} ])
 
-    sub-comp₁B : ∀ {U} {V} {W} {K} {C : Kind (-Constructor K)} {EE : Subexpression U (-Constructor K) C} {ρ : Rep V W} {σ : Sub U V} →
-      EE ⟦ ρ •₁ σ ⟧B ≡ EE ⟦ σ ⟧B 〈 ρ 〉
-    sub-comp₁B {EE = out₂} = ref
-    sub-comp₁B {U} {V} {W} {K} {(Π₂ L C)} {app₂ A EE} = wd2 app₂ sub-comp₁A sub-comp₁B
-
-    sub-comp₁A : ∀ {U} {V} {W} {K} {A : Subexpression U -Abstraction K} {ρ : Rep V W} {σ : Sub U V} →
-      A ⟦ ρ •₁ σ ⟧A ≡ A ⟦ σ ⟧A 〈 ρ 〉
-    sub-comp₁A {A = out E} = wd out (sub-comp₁ {E = E})
-    sub-comp₁A {U} {V} {W} .{(Π K L)} {Λ {K} {L} A} = wd Λ (trans (sub-wdA Sub↑-comp₁) sub-comp₁A)
-
-  mutual
-    sub-comp₂ : ∀ {U} {V} {W} {K} {E : Expression U K} {σ : Sub V W} {ρ : Rep U V} → E ⟦ σ •₂ ρ ⟧ ≡ E 〈 ρ 〉 ⟦ σ ⟧
-    sub-comp₂ {E = var _} = ref
-    sub-comp₂ {U} {V} {W} {K} {app c EE} = wd (app c) sub-comp₂B
-
-    sub-comp₂B : ∀ {U} {V} {W} {K} {C : Kind (-Constructor K)} {EE : Subexpression U (-Constructor K) C}
-      {σ : Sub V W} {ρ : Rep U V} → EE ⟦ σ •₂ ρ ⟧B ≡ EE 〈 ρ 〉 ⟦ σ ⟧B
-    sub-comp₂B {EE = out₂} = ref
-    sub-comp₂B {U} {V} {W} {K} {Π₂ L C} {app₂ A EE} = wd2 app₂ sub-comp₂A sub-comp₂B
-
-    sub-comp₂A : ∀ {U} {V} {W} {K} {A : Subexpression U -Abstraction K} {σ : Sub V W} {ρ : Rep U V} → A ⟦ σ •₂ ρ ⟧A ≡ A 〈 ρ 〉 ⟦ σ ⟧A
-    sub-comp₂A {A = out E} = wd out (sub-comp₂ {E = E})
-    sub-comp₂A {U} {V} {W} .{Π K L} {Λ {K} {L} A} = wd Λ (trans (sub-wdA Sub↑-comp₂) sub-comp₂A)
+  sub-comp₂ : ∀ {U} {V} {W} {C} {K} {E : Subexpression U C K} {σ : Sub V W} {ρ : Rep U V} → E ⟦ σ •₂ ρ ⟧ ≡ E 〈 ρ 〉 ⟦ σ ⟧
+  sub-comp₂ {E = var _} = ref
+  sub-comp₂ {E = app c EE} = wd (app c) (sub-comp₂ {E = EE})
+  sub-comp₂ {E = out₂} = ref
+  sub-comp₂ {E = app₂ A EE} = wd2 app₂ (sub-comp₂ {E = A}) (sub-comp₂ {E = EE})
+  sub-comp₂ {E = out E} = wd out (sub-comp₂ {E = E})
+  sub-comp₂ {E = Λ A} {σ} {ρ} = wd Λ (let open Equational-Reasoning _ in 
+    ∵ A ⟦ Sub↑ (σ •₂ ρ) ⟧
+    ≡ A ⟦ Sub↑ σ •₂ Rep↑ ρ ⟧ [ sub-wd {E = A} Sub↑-comp₂ ]
+    ≡ A 〈 Rep↑ ρ 〉 ⟦ Sub↑ σ ⟧ [ sub-comp₂ {E = A} ])
 \end{code}
 
 We define the composition of two substitutions, as follows.
@@ -399,15 +379,15 @@ We define the composition of two substitutions, as follows.
 
   mutual
     sub-compA : ∀ {U} {V} {W} {K} {A : Subexpression U -Abstraction K} {σ : Sub V W} {ρ : Sub U V} →
-      A ⟦ σ • ρ ⟧A ≡ A ⟦ ρ ⟧A ⟦ σ ⟧A
+      A ⟦ σ • ρ ⟧ ≡ A ⟦ ρ ⟧ ⟦ σ ⟧
     sub-compA {A = out E} = wd out (sub-comp {E = E})
     sub-compA {U} {V} {W} .{Π K L} {Λ {K} {L} A} {σ} {ρ} = wd Λ (let open Equational-Reasoning (Subexpression (W , K) -Abstraction L) in 
-      ∵ A ⟦ Sub↑ (σ • ρ) ⟧A
-      ≡ A ⟦ Sub↑ σ • Sub↑ ρ ⟧A    [ sub-wdA Sub↑-comp ]
-      ≡ A ⟦ Sub↑ ρ ⟧A ⟦ Sub↑ σ ⟧A [ sub-compA ])
+      ∵ A ⟦ Sub↑ (σ • ρ) ⟧
+      ≡ A ⟦ Sub↑ σ • Sub↑ ρ ⟧    [ sub-wd Sub↑-comp ]
+      ≡ A ⟦ Sub↑ ρ ⟧ ⟦ Sub↑ σ ⟧ [ sub-compA ])
 
     sub-compB : ∀ {U} {V} {W} {K} {C : Kind (-Constructor K)} {EE : Subexpression U (-Constructor K) C} {σ : Sub V W} {ρ : Sub U V} →
-      EE ⟦ σ • ρ ⟧B ≡ EE ⟦ ρ ⟧B ⟦ σ ⟧B
+      EE ⟦ σ • ρ ⟧ ≡ EE ⟦ ρ ⟧ ⟦ σ ⟧
     sub-compB {EE = out₂} = ref
     sub-compB {U} {V} {W} {K} {(Π₂ L C)} {app₂ A EE} = wd2 app₂ sub-compA sub-compB
 
@@ -426,7 +406,7 @@ The alphabets and substitutions form a category under this composition.
   assoc {τ = τ} K x = sym (sub-comp {E = τ K x})
 
   sub-unitl : ∀ {U} {V} {σ : Sub U V} → idSub • σ ∼ σ
-  sub-unitl _ _ = subid
+  sub-unitl _ _ = sub-id
 
   sub-unitr : ∀ {U} {V} {σ : Sub U V} → σ • idSub ∼ σ
   sub-unitr _ _ = ref
@@ -455,17 +435,17 @@ $$ E \langle \rho \rangle \equiv E [ \rho ] $$
     rep-is-sub {U} {V} {K} {app c EE} = wd (app c) rep-is-subB
 
     rep-is-subB : ∀ {U} {V} {K} {C : Kind (-Constructor K)} {EE : Subexpression U (-Constructor K) C} {ρ : Rep U V} →
-      EE 〈 ρ 〉 ≡ EE ⟦ (λ K x → var (ρ K x)) ⟧B
+      EE 〈 ρ 〉 ≡ EE ⟦ (λ K x → var (ρ K x)) ⟧
     rep-is-subB {EE = out₂} = ref
     rep-is-subB {EE = app₂ _ _} = wd2 app₂ rep-is-subA rep-is-subB
 
     rep-is-subA : ∀ {U} {V} {K} {A : Subexpression U -Abstraction K} {ρ : Rep U V} →
-      A 〈 ρ 〉 ≡ A ⟦ (λ K x → var (ρ K x)) ⟧A
+      A 〈 ρ 〉 ≡ A ⟦ (λ K x → var (ρ K x)) ⟧
     rep-is-subA {A = out E} = wd out rep-is-sub
     rep-is-subA {U} {V} .{Π K L} {Λ {K} {L} A} {ρ} = wd Λ (let open Equational-Reasoning (Subexpression (V , K) -Abstraction L) in 
       ∵ A 〈 Rep↑ ρ 〉
-      ≡ A ⟦ (λ M x → var (Rep↑ ρ M x)) ⟧A [ rep-is-subA ]
-      ≡ A ⟦ Sub↑ (λ M x → var (ρ M x)) ⟧A [ sub-wdA Rep↑-is-Sub↑ ])
+      ≡ A ⟦ (λ M x → var (Rep↑ ρ M x)) ⟧ [ rep-is-subA ]
+      ≡ A ⟦ Sub↑ (λ M x → var (ρ M x)) ⟧ [ sub-wd Rep↑-is-Sub↑ ])
 \end{code}
 
 Let $E$ be an expression of kind $K$ over $V$.  Then we write $[x_0 := E]$ for the following substitution
@@ -495,7 +475,7 @@ $$ \sigma \bullet [x_0 := E] \sim [x_0 := E[\sigma]] \bullet (\sigma , K) $$
   comp-botsub : ∀ {U} {V} {K} {E : Expression U (varKind K)} {σ : Sub U V} →
     σ • (x₀:= E) ∼ (x₀:= (E ⟦ σ ⟧)) • Sub↑ σ
   comp-botsub _ x₀ = ref
-  comp-botsub {σ = σ} L (↑ x) = trans (sym subid) (sub-comp₂ {E = σ L x})
+  comp-botsub {σ = σ} L (↑ x) = trans (sym sub-id) (sub-comp₂ {E = σ L x})
 \end{code}
 
 \section{Contexts}
