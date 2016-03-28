@@ -105,11 +105,11 @@ If $R$ reflects replacement, then so does each of these relations.
   record create-rep (R : Reduction) : Set where
     field
       created : ∀ {U} {V} {K} {C} {c} {EE : Subexpression U (-Constructor K) C} {F : Expression V K} {ρ : Rep U V} → R {V} {K} {C} c (EE 〈 ρ 〉) F → Expression U K
-      red-created : ∀ {U} {V} {K} {C} {c} {EE} {F : Expression V K} {ρ : Rep U V} (δ : R {V} {K} {C} c (EE 〈 ρ 〉) F) → R c EE (created δ)
-      rep-created : ∀ {U} {V} {K} {C} {c} {EE} {F : Expression V K} {ρ : Rep U V} (δ : R {V} {K} {C} c (EE 〈 ρ 〉) F) → (created δ) 〈 ρ 〉 ≡ F
+      red-created : ∀ {U} {V} {K} {C} {c} {EE} {F : Expression V K} {ρ : Rep U V} (δ : R {V} {K} {C} c (EE 〈 ρ 〉) F) → R c EE (created {EE = EE} δ)
+      rep-created : ∀ {U} {V} {K} {C} {c} {EE} {F : Expression V K} {ρ : Rep U V} (δ : R {V} {K} {C} c (EE 〈 ρ 〉) F) → (created {EE = EE} δ) 〈 ρ 〉 ≡ F
 
   respect-sub : Reduction → Set
-  respect-sub R = ∀ {U} {V} {K} {C} {c} {EE} {F : Expression U K} {ρ : Sub U V} → R {U} {K} {C} c EE F → R c (EE ⟦ ρ ⟧B) (F ⟦ ρ ⟧)
+  respect-sub R = ∀ {U} {V} {K} {C} {c} {EE} {F : Expression U K} {ρ : Sub U V} → R {U} {K} {C} c EE F → R c (EE ⟦ ρ ⟧) (F ⟦ ρ ⟧)
 
   mutual
     reposr : ∀ {R : Reduction} → respect-rep R →
@@ -144,14 +144,14 @@ If $R$ reflects replacement, then so does each of these relations.
     create-reposr : ∀ {R : Reduction} → create-rep R → ∀ {U} {V} {C} {K} {M : Subexpression U C K} {N} {ρ : Rep U V} → osr' R (M 〈 ρ 〉) N → Subexpression U C K
     create-reposr hyp {M = var _} ()
     create-reposr hyp {U} {V} {.-Expression} {.(base _)} {ToGrammar.app c EE} {N} {ρ} (redex δ) = create-rep.created hyp {U} {V} {_} {_} {c} {EE} δ
-    create-reposr hyp {M = app c EE} (app δ) = app c (create-reposr hyp δ)
-    create-reposr hyp {M = out M} (out δ) = out (create-reposr hyp δ)
-    create-reposr hyp {M = Λ M} (Λ δ) = Λ (create-reposr hyp δ)
+    create-reposr hyp {M = app c EE} (app δ) = app c (create-reposr hyp {M = EE} δ)
+    create-reposr hyp {M = out M} (out δ) = out (create-reposr hyp {M = M} δ)
+    create-reposr hyp {M = Λ M} (Λ δ) = Λ (create-reposr hyp {M = M} δ)
     create-reposr hyp {M = out₂} ()
-    create-reposr hyp {M = ToGrammar.app₂ M N} (appl δ) = app₂ (create-reposr hyp δ) N
-    create-reposr hyp {M = ToGrammar.app₂ M N} (appr δ) = app₂ M (create-reposr hyp δ)
+    create-reposr hyp {M = ToGrammar.app₂ M N} (appl δ) = app₂ (create-reposr hyp {M = M} δ) N
+    create-reposr hyp {M = ToGrammar.app₂ M N} (appr δ) = app₂ M (create-reposr hyp {M = N} δ)
 
-    red-create-reposr : ∀ {R : Reduction} (hyp : create-rep R) {U} {V} {C} {K} {M : Subexpression U C K} {N} {ρ : Rep U V} (δ : osr' R (M 〈 ρ 〉) N) → osr' R M (create-reposr hyp δ)
+    red-create-reposr : ∀ {R : Reduction} (hyp : create-rep R) {U} {V} {C} {K} {M : Subexpression U C K} {N} {ρ : Rep U V} (δ : osr' R (M 〈 ρ 〉) N) → osr' R M (create-reposr hyp {M = M} δ)
     red-create-reposr _ {M = var _} ()
     red-create-reposr hyp {M = app _ _} (redex δ) = redex (create-rep.red-created hyp δ)
     red-create-reposr hyp {M = app _ _} (app δ) = app (red-create-reposr hyp δ)
@@ -161,15 +161,15 @@ If $R$ reflects replacement, then so does each of these relations.
     red-create-reposr hyp {M = app₂ _ _} (appl δ) = appl (red-create-reposr hyp δ)
     red-create-reposr hyp {M = app₂ _ _} (appr δ) = appr (red-create-reposr hyp δ)
 
-    rep-create-reposr : ∀ {R : Reduction} (hyp : create-rep R) {U} {V} {C} {K} {M : Subexpression U C K} {N} {ρ : Rep U V} (δ : osr' R (M 〈 ρ 〉) N) → create-reposr hyp δ 〈 ρ 〉 ≡ N
+    rep-create-reposr : ∀ {R : Reduction} (hyp : create-rep R) {U} {V} {C} {K} {M : Subexpression U C K} {N} {ρ : Rep U V} (δ : osr' R (M 〈 ρ 〉) N) → create-reposr hyp {M = M} δ 〈 ρ 〉 ≡ N
     rep-create-reposr _ {M = ToGrammar.var x} ()
     rep-create-reposr hyp {M = app _ _} (redex δ) = create-rep.rep-created hyp δ
-    rep-create-reposr hyp {M = app c _} (app δ) = wd (app c) (rep-create-reposr hyp δ)
-    rep-create-reposr hyp {M = out _} (out δ) = wd out (rep-create-reposr hyp δ)
-    rep-create-reposr hyp {M = Λ _} (Λ δ) = wd Λ (rep-create-reposr hyp δ)
+    rep-create-reposr hyp {M = app c EE} (app δ) = wd (app c) (rep-create-reposr hyp {M = EE} δ)
+    rep-create-reposr hyp {M = out E} (out δ) = wd out (rep-create-reposr hyp {M = E} δ)
+    rep-create-reposr hyp {M = Λ E} (Λ δ) = wd Λ (rep-create-reposr hyp {M = E} δ)
     rep-create-reposr hyp {M = out₂} ()
-    rep-create-reposr hyp {M = app₂ _ N} {ρ = ρ} (appl δ) = wd (λ x → app₂ x (N 〈 ρ 〉)) (rep-create-reposr hyp δ)
-    rep-create-reposr hyp {M = app₂ M _} {ρ = ρ} (appr δ) = wd (app₂ (M 〈 ρ 〉)) (rep-create-reposr hyp δ)
+    rep-create-reposr hyp {M = app₂ M N} {ρ = ρ} (appl δ) = wd (λ x → app₂ x (N 〈 ρ 〉)) (rep-create-reposr hyp {M = M} δ)
+    rep-create-reposr hyp {M = app₂ M N} {ρ = ρ} (appr δ) = wd (app₂ (M 〈 ρ 〉)) (rep-create-reposr hyp {M = N} δ)
 
   mutual
     subosr : ∀ {R : Reduction} → respect-sub R →
@@ -178,12 +178,12 @@ If $R$ reflects replacement, then so does each of these relations.
     subosr hyp (app MM→NN) = app (subosrB hyp MM→NN)
 
     subosrB : ∀ {R : Reduction} → respect-sub R →
-      ∀ {U} {V} {K} {C : Kind (-Constructor K)} {M N : Subexpression U (-Constructor K) C} {ρ : Sub U V} → osr' R M N → osr' R (M ⟦ ρ ⟧B) (N ⟦ ρ ⟧B)
+      ∀ {U} {V} {K} {C : Kind (-Constructor K)} {M N : Subexpression U (-Constructor K) C} {ρ : Sub U V} → osr' R M N → osr' R (M ⟦ ρ ⟧) (N ⟦ ρ ⟧)
     subosrB hyp (appl M→N) = appl (subosrA hyp M→N)
     subosrB hyp (appr NN→PP) = appr (subosrB hyp NN→PP)
 
     subosrA : ∀ {R : Reduction} → respect-sub R →
-      ∀ {U} {V} {K} {A B : Subexpression U -Abstraction K} {ρ : Sub U V} → osr' R A B → osr' R (A ⟦ ρ ⟧A) (B ⟦ ρ ⟧A)
+      ∀ {U} {V} {K} {A B : Subexpression U -Abstraction K} {ρ : Sub U V} → osr' R A B → osr' R (A ⟦ ρ ⟧) (B ⟦ ρ ⟧)
     subosrA hyp (out M→N) = out (subosr hyp M→N)
     subosrA hyp (Λ M→N) = Λ (subosrA hyp M→N)
 
@@ -229,19 +229,19 @@ If $R$ respects replacement and $\sigma \twoheadrightarrow_R \tau$ then $E[\sigm
     subredr : ∀ {U} {V} {K} {ρ σ : Sub U V} {R : Reduction} {E : Expression U K} → respect-rep R →
       ρ ↠〈 R 〉s σ → E ⟦ ρ ⟧ ↠〈 R 〉 E ⟦ σ ⟧
     subredr {E = var x} _ ρ↠σ = ρ↠σ _ x
-    subredr {E = app c _} hyp ρ↠σ = redapp c (subredrB hyp ρ↠σ)
+    subredr {E = app c EE} hyp ρ↠σ = redapp c (subredrB {EE = EE} hyp ρ↠σ)
 
     subredrB : ∀ {U} {V} {K} {C : Kind (-Constructor K)} {ρ σ : Sub U V} {R : Reduction} {EE : Subexpression U (-Constructor K) C} →
       respect-rep R →
-      ρ ↠〈 R 〉s σ → redB R (EE ⟦ ρ ⟧B) (EE ⟦ σ ⟧B)
+      ρ ↠〈 R 〉s σ → redB R (EE ⟦ ρ ⟧) (EE ⟦ σ ⟧)
     subredrB {EE = out₂} _ _ = ref
-    subredrB {U} {V} {K} {Π₂ L C} {ρ} {σ} {R} {app₂ A EE} hyp ρ↠σ = trans-red (redappl (subredrA hyp ρ↠σ)) (redappr (subredrB hyp ρ↠σ))
+    subredrB {U} {V} {K} {Π₂ L C} {ρ} {σ} {R} {app₂ A EE} hyp ρ↠σ = trans-red (redappl (subredrA {A = A} hyp ρ↠σ)) (redappr (subredrB {EE = EE} hyp ρ↠σ))
 
     subredrA : ∀ {U} {V} {K} {ρ σ : Sub U V} {R : Reduction} {A : Subexpression U -Abstraction K} →
       respect-rep R →
-      ρ ↠〈 R 〉s σ → redA R (A ⟦ ρ ⟧A) (A ⟦ σ ⟧A)
+      ρ ↠〈 R 〉s σ → redA R (A ⟦ ρ ⟧) (A ⟦ σ ⟧)
     subredrA {A = out E} hyp ρ↠σ = redout (subredr {E = E} hyp ρ↠σ)
-    subredrA {U} {V} .{(Π K C)} {ρ} {σ} {R} {Λ {K} {C} A} hyp ρ↠σ = redΛ (subredrA hyp (liftSub-red hyp ρ↠σ))
+    subredrA {U} {V} .{(Π K C)} {ρ} {σ} {R} {Λ {K} {C} A} hyp ρ↠σ = redΛ (subredrA {A = A} hyp (liftSub-red hyp ρ↠σ))
 \end{code}
 
 \subsection{Strong Normalization}
@@ -304,11 +304,11 @@ If $E$ is strongly normalizable and $E \twoheadrightarrow_R F$ then $F$ is stron
   SNrep : ∀ {U} {V} {K} {ρ : Rep U V} {E : Expression U K} {R : Reduction} → create-rep R → SN R E → SN R (E 〈 ρ 〉)
   SNrep {U} {V} {K} {ρ} {E} {R} hyp (SNI .E SNE) = SNI (E 〈 ρ 〉) (λ F E〈ρ〉→F → 
     let E₀ : Expression U K
-        E₀ = create-reposr hyp E〈ρ〉→F
+        E₀ = create-reposr hyp {M = E} E〈ρ〉→F
     in let E→E₀ : E →〈 R 〉 E₀
            E→E₀ = red-create-reposr hyp E〈ρ〉→F
     in let E₀〈ρ〉≡F : E₀ 〈 ρ 〉 ≡ F
-           E₀〈ρ〉≡F = rep-create-reposr hyp E〈ρ〉→F
+           E₀〈ρ〉≡F = rep-create-reposr hyp {M = E} E〈ρ〉→F
     in subst (SN R) E₀〈ρ〉≡F (SNrep hyp (SNE E₀ E→E₀)))
 
   SNrep' : ∀ {U} {V} {K} {ρ : Rep U V} {E : Expression U K} {R : Reduction} → respect-rep R → SN R (E 〈 ρ 〉) → SN R E
