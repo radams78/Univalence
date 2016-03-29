@@ -344,28 +344,29 @@ C_\Gamma(\phi \rightarrow \psi) & = \{ \delta \mid \Gamma : \delta : \phi \right
 
 \begin{code}
 C : ∀ {P} → PContext P → Prp → Proof (Palphabet P) → Set
-C Γ (app bot out₂) δ = (Γ ⊢ δ ∷ rep ⊥P (λ _ ()) ) ∧ SN β δ
-C Γ (app imp (app₂ (out φ) (app₂ (out ψ) out₂))) δ = (Γ ⊢ δ ∷ rep (φ ⇒ ψ) (λ _ ())) ∧ 
-  (∀ Q {Δ : PContext Q} ρ ε → ρ ∷ Γ ⇒R Δ → C Δ φ ε → C Δ ψ (appP (rep δ (toRep ρ)) ε))
+C Γ (app bot out₂) δ = (Γ ⊢ δ ∷ ⊥P 〈 (λ _ ()) 〉 ) ∧ SN β δ
+C Γ (app imp (app₂ (out φ) (app₂ (out ψ) out₂))) δ = (Γ ⊢ δ ∷ (φ ⇒ ψ) 〈 (λ _ ()) 〉) ∧ 
+  (∀ Q {Δ : PContext Q} ρ ε → ρ ∷ Γ ⇒R Δ → C Δ φ ε → C Δ ψ (appP (δ 〈 toRep ρ 〉) ε))
 
-C-typed : ∀ {P} {Γ : PContext P} {φ} {δ} → C Γ φ δ → Γ ⊢ δ ∷ rep φ (λ _ ())
+C-typed : ∀ {P} {Γ : PContext P} {φ} {δ} → C Γ φ δ → Γ ⊢ δ ∷ φ 〈 (λ _ ()) 〉
 C-typed {φ = app bot out₂} = π₁
-C-typed {Γ = Γ} {φ = app imp (app₂ (out φ) (app₂ (out ψ) out₂))} {δ = δ} = λ x → subst (λ P → Γ ⊢ δ ∷ P) {a = rep φ _ ⇒ rep ψ _} {b = rep φ _ ⇒ rep ψ _} 
+C-typed {Γ = Γ} {φ = app imp (app₂ (out φ) (app₂ (out ψ) out₂))} {δ = δ} = λ x → subst (λ P → Γ ⊢ δ ∷ P) {a = φ 〈 _ 〉 ⇒ ψ 〈 _ 〉} {b = φ 〈 _ 〉 ⇒ ψ 〈 _ 〉} 
   (wd2 _⇒_ (rep-wd {E = φ} (λ ())) (rep-wd {E = ψ} (λ ())))
   (π₁ x)
 
-C-rep : ∀ {P} {Q} {Γ : PContext P} {Δ : PContext Q} {φ} {δ} {ρ} → C Γ φ δ → ρ ∷ Γ ⇒R Δ → C Δ φ (rep δ (toRep ρ))
+C-rep : ∀ {P} {Q} {Γ : PContext P} {Δ : PContext Q} {φ} {δ} {ρ} → C Γ φ δ → ρ ∷ Γ ⇒R Δ → C Δ φ (δ 〈 toRep ρ 〉)
 C-rep {φ = app bot out₂} (Γ⊢δ∷⊥ , SNδ) ρ∷Γ→Δ = (Weakening Γ⊢δ∷⊥ ρ∷Γ→Δ) , SNrep β-creates-rep SNδ
 C-rep {P} {Q} {Γ} {Δ} {app imp (app₂ (out φ) (app₂ (out ψ) out₂))} {δ} {ρ} (Γ⊢δ∷φ⇒ψ , Cδ) ρ∷Γ→Δ = (subst {i = zro} {A = Expression (Palphabet Q) (nonVarKind -Prp)} (λ x → Δ ⊢ δ 〈 toRep ρ 〉 ∷ x) {a = φ 〈 _ 〉 〈 toRep ρ 〉 ⇒ ψ 〈 _ 〉 〈 toRep ρ 〉} {b = (φ ⇒ ψ) 〈 _ 〉}
   (wd2 _⇒_ 
   (let open Equational-Reasoning (Expression (Palphabet Q) (nonVarKind -Prp)) in 
-    ∵ rep (rep φ _) (toRep ρ)
-    ≡ rep φ _            [[ rep-comp {E = φ} ]]
-    ≡ rep φ _            [ rep-wd {E = φ} (λ ()) ])
+    ∵ (φ 〈 _ 〉) 〈 toRep ρ 〉
+    ≡ φ 〈 _ 〉            [[ rep-comp {E = φ} ]]
+    ≡ φ 〈 _ 〉            [ rep-wd {E = φ} (λ ()) ])
+--TODO Refactor common pattern
   (let open Equational-Reasoning (Expression (Palphabet Q) (nonVarKind -Prp)) in 
-    ∵ rep (rep ψ _) (toRep ρ)
-    ≡ rep ψ _            [[ rep-comp {E = ψ} ]]
-    ≡ rep ψ _            [ rep-wd {E = ψ} (λ ()) ]))
+    ∵ ψ 〈 _ 〉 〈 toRep ρ 〉
+    ≡ ψ 〈 _ 〉            [[ rep-comp {E = ψ} ]]
+    ≡ ψ 〈 _ 〉            [ rep-wd {E = ψ} (λ ()) ]))
   (Weakening Γ⊢δ∷φ⇒ψ ρ∷Γ→Δ)) ,
   (λ R σ ε σ∷Δ→Θ ε∈Cφ → subst (C _ ψ) (wd (λ x → appP x ε) 
     (trans (sym (rep-wd {E = δ} (toRep-comp {g = σ} {f = ρ}))) (rep-comp {E = δ}))) 
@@ -399,9 +400,9 @@ neutral-red (appNeutral _ ε neutralδ) (app (appl (out δ→δ'))) = appNeutral
 neutral-red (appNeutral δ _ neutralδ) (app (appr (appl (out ε→ε')))) = appNeutral δ _ neutralδ
 neutral-red (appNeutral _ _ _) (app (appr (appr ())))
 
-neutral-rep : ∀ {P} {Q} {δ : Proof P} {ρ : Rep P Q} → Neutral δ → Neutral (rep δ ρ)
+neutral-rep : ∀ {P} {Q} {δ : Proof P} {ρ : Rep P Q} → Neutral δ → Neutral (δ 〈 ρ 〉)
 neutral-rep {ρ = ρ} (varNeutral x) = varNeutral (ρ -Proof x)
-neutral-rep {ρ = ρ} (appNeutral δ ε neutralδ) = appNeutral (rep δ ρ) (ε 〈 ρ 〉) (neutral-rep neutralδ)
+neutral-rep {ρ = ρ} (appNeutral δ ε neutralδ) = appNeutral (δ 〈 ρ 〉) (ε 〈 ρ 〉) (neutral-rep neutralδ)
 \end{code}
 
 \begin{lemma}
@@ -422,35 +423,35 @@ NeutralC-lm _ _ _ .(app app (app₂ (out _) (app₂ (out _) _))) (app (appr (app
 
 mutual
   NeutralC : ∀ {P} {Γ : PContext P} {δ : Proof (Palphabet P)} {φ : Prp} →
-    Γ ⊢ δ ∷ (rep φ (λ _ ())) → Neutral δ →
+    Γ ⊢ δ ∷ φ 〈 (λ _ ()) 〉 → Neutral δ →
     (∀ ε → δ →〈 β 〉 ε → C Γ φ ε) →
     C Γ φ δ
   NeutralC {P} {Γ} {δ} {app bot out₂} Γ⊢δ∷⊥ Neutralδ hyp = Γ⊢δ∷⊥ , SNI δ (λ ε δ→ε → π₂ (hyp ε δ→ε))
   NeutralC {P} {Γ} {δ} {app imp (app₂ (out φ) (app₂ (out ψ) out₂))} Γ⊢δ∷φ→ψ neutralδ hyp = (subst (λ P₁ → Γ ⊢ δ ∷ P₁) (rep-wd {E = φ ⇒ ψ} (λ ())) Γ⊢δ∷φ→ψ) , 
     (λ Q ρ ε ρ∷Γ→Δ ε∈Cφ → claim ε (CsubSN {φ = φ} {δ = ε} ε∈Cφ) ρ∷Γ→Δ ε∈Cφ) where
-    claim : ∀ {Q} {Δ} {ρ : El P → El Q} ε → SN β ε → ρ ∷ Γ ⇒R Δ → C Δ φ ε → C Δ ψ (appP (rep δ (toRep ρ)) ε)
-    claim {Q} {Δ} {ρ} ε (SNI .ε SNε) ρ∷Γ→Δ ε∈Cφ = NeutralC {Q} {Δ} {appP (rep δ (toRep ρ)) ε} {ψ} 
-      (app (subst (λ P₁ → Δ ⊢ rep δ (toRep ρ) ∷ P₁) 
+    claim : ∀ {Q} {Δ} {ρ : El P → El Q} ε → SN β ε → ρ ∷ Γ ⇒R Δ → C Δ φ ε → C Δ ψ (appP (δ 〈 toRep ρ 〉) ε)
+    claim {Q} {Δ} {ρ} ε (SNI .ε SNε) ρ∷Γ→Δ ε∈Cφ = NeutralC {Q} {Δ} {appP (δ 〈 toRep ρ 〉) ε} {ψ} 
+      (app (subst (λ P₁ → Δ ⊢ δ 〈 toRep ρ 〉 ∷ P₁) 
       (wd2 _⇒_ 
       (let open Equational-Reasoning (Expression (Palphabet Q) (nonVarKind -Prp)) in 
-        ∵ rep (rep φ _) (toRep ρ)
-        ≡ rep φ _       [[ rep-comp {E = φ} ]]
-        ≡ rep φ _       [[ rep-wd {E = φ} (λ ()) ]]) 
+        ∵ φ 〈 _ 〉 〈 toRep ρ 〉
+        ≡ φ 〈 _ 〉       [[ rep-comp {E = φ} ]]
+        ≡ φ 〈 _ 〉       [[ rep-wd {E = φ} (λ ()) ]]) 
       (  (let open Equational-Reasoning (Expression (Palphabet Q) (nonVarKind -Prp)) in 
-        ∵ rep (rep ψ _) (toRep ρ)
-        ≡ rep ψ _       [[ rep-comp {E = ψ} ]]
-        ≡ rep ψ _       [[ rep-wd {E = ψ} (λ ()) ]]) 
+        ∵ ψ 〈 _ 〉 〈 toRep ρ 〉
+        ≡ ψ 〈 _ 〉       [[ rep-comp {E = ψ} ]]
+        ≡ ψ 〈 _ 〉       [[ rep-wd {E = ψ} (λ ()) ]]) 
         ))
       (Weakening Γ⊢δ∷φ→ψ ρ∷Γ→Δ)) 
       (C-typed {Q} {Δ} {φ} {ε} ε∈Cφ)) 
-      (appNeutral (rep δ (toRep ρ)) ε (neutral-rep neutralδ))
+      (appNeutral (δ 〈 toRep ρ 〉) ε (neutral-rep neutralδ))
       (NeutralC-lm {X = C Δ ψ} (neutral-rep neutralδ) 
       (λ δ' δ〈ρ〉→δ' → 
       let δ₀ : Proof (Palphabet P)
           δ₀ = create-reposr β-creates-rep {M = δ} {N = δ'} {ρ = toRep ρ} δ〈ρ〉→δ'
       in let δ→δ₀ : δ →〈 β 〉 δ₀
              δ→δ₀ = red-create-reposr β-creates-rep δ〈ρ〉→δ'
-      in let δ₀〈ρ〉≡δ' : rep δ₀ (toRep ρ) ≡ δ'
+      in let δ₀〈ρ〉≡δ' : δ₀ 〈 toRep ρ 〉 ≡ δ'
              δ₀〈ρ〉≡δ' = rep-create-reposr β-creates-rep {M = δ} {N = δ'} {ρ = toRep ρ} δ〈ρ〉→δ'
       in let δ₀∈C[φ⇒ψ] : C Γ (φ ⇒ ψ) δ₀
              δ₀∈C[φ⇒ψ] = hyp δ₀ δ→δ₀
@@ -469,7 +470,7 @@ mutual
   CsubSN {P} {Γ} {app bot out₂} P₁ = π₂ P₁
   CsubSN {P} {Γ} {app imp (app₂ (out φ) (app₂ (out ψ) out₂))} {δ} P₁ = 
     let φ' : Expression (Palphabet P) (nonVarKind -Prp)
-        φ' = rep φ (λ _ ()) in
+        φ' = φ 〈 (λ _ ()) 〉 in
     let Γ' : PContext (Lift P)
         Γ' = Γ , φ' in
     SNrep' {Palphabet P} {Palphabet P , -Proof} { varKind -Proof} {λ _ → ↑} β-respects-rep (SNoutA 

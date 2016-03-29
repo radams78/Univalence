@@ -135,7 +135,7 @@ module PHOPL where
   P〈〉 = 〈〉
 
   _P,_ : ∀ {V} {P} → PContext V P → Term V → PContext V (Lift P)
-  _P,_ {V} {P} Δ φ = Δ , rep φ (embedl {V} { -Proof} {P})
+  _P,_ {V} {P} Δ φ = Δ , φ 〈 embedl {V} { -Proof} {P} 〉
 
   Proof : Alphabet → FinSet → Set
   Proof V P = Expression (PAlphabet P V) (varKind -Proof)
@@ -185,19 +185,19 @@ The rules of deduction of the system are as follows.
   infix 10 _⊢_∶_
   data _⊢_∶_ : ∀ {V} → TContext V → Term V → Expression V (nonVarKind -Type) → Set₁ where
     var : ∀ {V} {Γ : TContext V} {x} → Γ ⊢ var x ∶ typeof x Γ
-    ⊥R : ∀ {V} {Γ : TContext V} → Γ ⊢ ⊥ ∶ rep Ω (λ _ ())
-    imp : ∀ {V} {Γ : TContext V} {φ} {ψ} → Γ ⊢ φ ∶ rep Ω (λ _ ()) → Γ ⊢ ψ ∶ rep Ω (λ _ ()) → Γ ⊢ φ ⊃ ψ ∶ rep Ω (λ _ ())
+    ⊥R : ∀ {V} {Γ : TContext V} → Γ ⊢ ⊥ ∶ Ω 〈 (λ _ ()) 〉
+    imp : ∀ {V} {Γ : TContext V} {φ} {ψ} → Γ ⊢ φ ∶ Ω 〈 (λ _ ()) 〉 → Γ ⊢ ψ ∶ Ω 〈 (λ _ ()) 〉 → Γ ⊢ φ ⊃ ψ ∶ Ω 〈 (λ _ ()) 〉
     app : ∀ {V} {Γ : TContext V} {M} {N} {A} {B} → Γ ⊢ M ∶ app -func (app₂ (out A) (app₂ (out B) out₂)) → Γ ⊢ N ∶ A → Γ ⊢ appTerm M N ∶ B
     Λ : ∀ {V} {Γ : TContext V} {A} {M} {B} → Γ , A ⊢ M ∶ liftE B → Γ ⊢ app -lamTerm (app₂ (out A) (app₂ (Λ (out M)) out₂)) ∶ app -func (app₂ (out A) (app₂ (out B) out₂))
 
   data Pvalid : ∀ {V} {P} → TContext V → PContext' V P → Set₁ where
     〈〉 : ∀ {V} {Γ : TContext V} → Pvalid Γ 〈〉
-    _,_ : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {φ : Term V} → Pvalid Γ Δ → Γ ⊢ φ ∶ rep Ω (λ _ ()) → Pvalid Γ (Δ , φ)
+    _,_ : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {φ : Term V} → Pvalid Γ Δ → Γ ⊢ φ ∶ Ω 〈 (λ _ ()) 〉 → Pvalid Γ (Δ , φ)
 
   infix 10 _,,_⊢_∶∶_
   data _,,_⊢_∶∶_ : ∀ {V} {P} → TContext V → PContext' V P → Proof V P → Term V → Set₁ where
     var : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {p} → Pvalid Γ Δ → Γ ,, Δ ⊢ varP p ∶∶ propof p Δ 
     app : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {δ} {ε} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ ⊃ ψ → Γ ,, Δ ⊢ ε ∶∶ φ → Γ ,, Δ ⊢ appP {V} {P} δ ε ∶∶ ψ
     Λ : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {φ} {δ} {ψ} → Γ ,, Δ , φ ⊢ δ ∶∶ ψ → Γ ,, Δ ⊢ ΛP {V} {P} φ δ ∶∶ φ ⊃ ψ
-    convR : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {δ} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ → Γ ⊢ ψ ∶ rep Ω (λ _ ()) → _≃〈_〉_ PHOPLGrammar.PHOPL φ β ψ → Γ ,, Δ ⊢ δ ∶∶ ψ
+    convR : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {δ} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ → Γ ⊢ ψ ∶ Ω 〈 (λ _ ()) 〉 → _≃〈_〉_ PHOPLGrammar.PHOPL φ β ψ → Γ ,, Δ ⊢ δ ∶∶ ψ
 \end{code}
