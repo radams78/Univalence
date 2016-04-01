@@ -9,10 +9,14 @@ open import Prelims
 Before we begin investigating the several theories we wish to consider, we present a general theory of syntax and
 capture-avoiding substitution.
 
-A \emph{grammar} consists of:
+A \emph{taxononmy} consists of:
 \begin{itemize}
 \item a set of \emph{expression kinds};
-\item a subset of expression kinds, the \emph{variable kinds};
+\item a subset of expression kinds, called the \emph{variable kinds}.  We refer to the other expession kinds as \emph{non-variable kinds}.
+\end{itemize}
+
+A \emph{grammar} over a taxonomy consists of:
+\begin{itemize}
 \item a set of \emph{constructors}, each with an associated \emph{constructor kind} of the form
 \begin{equation}
 \label{eq:conkind}
@@ -31,6 +35,8 @@ c([x_{11}, \ldots, x_{1r_1}]E_1, \ldots, [x_{m1}, \ldots, x_{mr_m}]E_m) \enspace
 \end{equation}
 
 The subexpressions of the form $[x_{i1}, \ldots, x_{ir_i}]E_i$ shall be called \emph{abstractions}, and the pieces of syntax of the form $(A_{i1}, \ldots, A_{ij})B_i$ that occur in constructor kinds shall be called \emph{abstraction kinds}.
+
+We formalise this as follows.  First, we construct the sets of expression kinds, constructor kinds and abstraction kinds over a taxonomy:
 
 \begin{code}
 record Taxonomy : Set₁ where
@@ -55,7 +61,46 @@ record Taxonomy : Set₁ where
     Π₂   : ∀ {K} → Kind -Abstraction → Kind (-Constructor K) → Kind (-Constructor K)
 \end{code}
 
-An \emph{alphabet} $V = \{ V_E \}_E$ consists of a set $V_E$ of \emph{variables} of kind $E$ for each expression kind $E$.  The \emph{expressions}
+An \emph{alphabet} $A$ consists of a finite set of \emph{variables}, to each of which is assigned a variable kind $K$.
+Let $\emptyset$ be the empty alphabet, and $(A , K)$ be the result of extending the alphabet $A$ with one
+fresh variable $x₀$ of kind $K$.  We write $\mathsc{Var}\ A\ K$ for the set of all variables in $A$ of kind $K$.
+
+\begin{code}
+  data Alphabet : Set where
+    ∅ : Alphabet
+    _,_ : Alphabet → VarKind → Alphabet
+
+  data Var : Alphabet → VarKind → Set where
+    x₀ : ∀ {V} {K} → Var (V , K) K
+    ↑ : ∀ {V} {K} {L} → Var V L → Var (V , K) L
+\end{code}
+
+We give ourselves the following operations.  Given an alphabet $A$ and finite set $F$, let $\mathsc{extend}\ A\ K\ F$ be the
+alphabet $A \uplus F$, where each element of $F$ has kind $K$.  Let $\mathsc{embedr}$ be the canonical injection
+$F \rightarrow \mathsc{extend}\ A\ K\ F$; thus, for all $x \in F$, we have $\mathsc{embedr}\ x$ is a variable
+of $\mathsc{extend}\ A\ K\ F$ of kind $K$.
+
+\begin{code}
+  extend : Alphabet → VarKind → FinSet → Alphabet
+  extend A K ∅ = A
+  extend A K (Lift F) = extend A K F , K
+
+  embedr : ∀ {A} {K} {F} → El F → Var (extend A K F) K
+  embedr ⊥ = x₀
+  embedr (↑ x) = ↑ (embedr x)
+\end{code}
+
+We can now define a grammar over a taxonomy:
+
+\begin{code}
+record ToGrammar (T : Taxonomy) : Set₁ where
+  open Taxonomy T
+  field
+    Constructor    : ∀ {K : ExpressionKind} → Kind (-Constructor K) → Set
+    parent         : VarKind → ExpressionKind
+\end{code}
+
+The \emph{expressions}
 of kind $E$ over the alphabet $V$ are defined inductively by:
 \begin{itemize}
 \item
@@ -68,28 +113,6 @@ Each $x_{ij}$ is bound within $E_i$ in the expression (\ref{eq:expression}).  We
 to $\alpha$-conversion.
 
 \begin{code}
-  data Alphabet : Set where
-    ∅ : Alphabet
-    _,_ : Alphabet → VarKind → Alphabet
-
-  data Var : Alphabet → VarKind → Set where
-    x₀ : ∀ {V} {K} → Var (V , K) K
-    ↑ : ∀ {V} {K} {L} → Var V L → Var (V , K) L
-
-  extend : Alphabet → VarKind → FinSet → Alphabet
-  extend A K ∅ = A
-  extend A K (Lift F) = extend A K F , K
-
-  embed : ∀ {A} {K} {F} → El F → Var (extend A K F) K
-  embed ⊥ = x₀
-  embed (↑ x) = ↑ (embed x)
-
-record ToGrammar (T : Taxonomy) : Set₁ where
-  open Taxonomy T
-  field
-    Constructor    : ∀ {K : ExpressionKind} → Kind (-Constructor K) → Set
-    parent         : VarKind → ExpressionKind
-
   data Subexpression (V : Alphabet) : ∀ C → Kind C → Set where
     var : ∀ {K} → Var V K → Subexpression V -Expression (base (varKind K))
     app : ∀ {K} {C : Kind (-Constructor K)} → Constructor C → Subexpression V (-Constructor K) C → Subexpression V -Expression (base K)
@@ -103,12 +126,56 @@ record ToGrammar (T : Taxonomy) : Set₁ where
 
   Expression : Alphabet → ExpressionKind → Set
   Expression V K = Subexpression V -Expression (base K)
+--TODO Change this to Alphabet → VarKind → Set ?
 \end{code}
 
-Given alphabets $U$, $V$, and a function $\rho$ that maps every variable in $U$ of kind $K$ to a variable in $V$ of kind $K$,
-we denote by $E \{ \rho \}$ the result of \emph{replacing} every variable $x$ in $E$ with $\rho(x)$.
+We now wish to define the operations of \emph{replacement} (replacing one variable with another) and \emph{substitution}
+of expressions for variables.  To this end, we define the following.
+
+A \emph{family of operations} consists of the following data:
+\begin{itemize}
+\item
+Given alphabets $U$ and $V$, a set of \emph{operations} $\sigma : U \rightarrow V$.
+\item
+Given an operation $\sigma : U \rightarrow V$ and a variable $x$ in $U$ of kind $K$, an expression $\sigma(x)$ over $V$ of kind $K$, the result of \emph{applying} $\sigma$ to $x$.
+\item
+For every alphabet $V$, an operation $\id{V} : V \rightarrow V$, the \emph{identity} operation.
+\item
+For any operations $\rho : U \rightarrow V$ and $\sigma : V \rightarrow W$, an operation $\sigma \circ \rho : U \rightarrow W$, the \emph{composite} of
+$\sigma$ and $\rho$
+\item
+For every alphabet $V$ and variable kind $K$, an operation $\uparrow : V \rightarrow (V , K)$, the \emph{successor} operation.
+\item
+For every operation $\sigma : U \rightarrow V$, an operation $(\sigma , K) : (U , K) \rightarrow (V , K)$, the result of \emph{lifting} $\sigma$.
+We write $(\sigma , K_1 , K_2, \ldots , K_n)$ for $((\cdots( \sigma , K_1) , K_2) , \cdots) , K_n)$.
+\end{itemize}
+such that
+\begin{itemize}
+\item
+$\id{V}(x) \equiv x$
+\item
+$(\sigma \circ \rho)(x) \equiv \sigma [ \rho(x) ]$
+\item
+$\uparrow(x) \equiv x$
+\item
+Given $\sigma : U \rightarrow V$ and $x \in U$, we have $(\sigma , K)(x) \equiv \sigma(x)$
+\item
+$(\sigma , K)(x_0) \equiv x_0$
+\end{itemize}
+where, given an operation $\sigma : U \rightarrow V$ and expression $E$ over $U$, the expression $\sigma[E]$ over $V$ is defined by
+\begin{align*}
+\sigma[x] & \eqdef \sigma(x)
+\sigma[c([x_{11}, \ldots, x_{1r_1}] E_1, \ldots, [x_{n1}, \ldots, x_{nr_n}] E_n)] & \eqdef
+c([x_{11}, \ldots, x_{1r_1}] (\sigma, K_{11}, \ldots, K_{1r_1}) [E_1], \ldots, [x_{n1}, \ldots, x_{nr_n}] (\sigma , K_{n1}, \ldots, K_{nr_n})[E_n])
+\end{align*}
+where $K_{ij}$ is the kind of $x_{ij}$.
+
+We say two operations $\rho, \sigma : U \rightarrow V$ are \emph{equivalent}, $\rho \sim \sigma$, iff $\rho(x) \equiv \sigma(x)$
+for all $x$.  Note that this is equivalent to $\rho[E] \equiv \sigma[E]$ for all $E$, and that the alphabets and operations up to equivalence form
+a category.
 
 \begin{code}
+--TODO Make this more computational?
   record PreOpFamily : Set₂ where
     field
       Op : Alphabet → Alphabet → Set
@@ -162,6 +229,39 @@ we denote by $E \{ \rho \}$ the result of \emph{replacing} every variable $x$ in
         liftOp {K = K} (comp σ ρ) ∼op comp (liftOp σ) (liftOp ρ)
       liftOp-↑ : ∀ {U} {V} {K} {L} {σ : Op U V} (x : Var U L) →
         apV (liftOp {K = K} σ) (↑ x) ≡ ap up (apV σ x)
+\end{code}
+
+The following results about operationsare easy to prove.
+\begin{lemma}
+  \begin{enumerate}
+  \item $(\id{V} , K) \sim \id{V,K}$
+  \item $\id{V}[E] \equiv E$
+  \item $(\sigma \circ \rho)[E] \equiv \sigma[\rho[E]]$
+  \end{enumerate}
+\end{lemma}
+
+\begin{code}
+    liftOp-id : ∀ {V} {K} → liftOp (id V) ∼op id (V , K)
+    liftOp-id x₀ = trans liftOp-x₀ (sym (apV-id x₀))
+    liftOp-id {V} {K} {L} (↑ x) = let open Equational-Reasoning _ in 
+      ∵ apV (liftOp (id V)) (↑ x)
+      ≡ ap up (apV (id V) x)       [ liftOp-↑ x ]
+      ≡ ap up (var x)              [ wd (ap up) (apV-id x) ]
+      ≡ var (↑ x)                  [ apV-up ]
+      ≡ apV (id (V , K)) (↑ x)     [[ apV-id (↑ x) ]]
+--TODO Replace with apV (liftOp (id V)) x ≡ x or ap (liftOp (id V)) E ≡ E?
+--trans (liftOp-↑ x) (trans (wd (ap up) (apV-id x)) (trans apV-up (sym (apV-id (↑ x)))))
+
+    ap-id : ∀ {V} {C} {K} {E : Subexpression V C K} → ap (id V) E ≡ E
+    ap-id {E = var x} = apV-id x
+    ap-id {E = app c EE} = wd (app c) (ap-id {E = EE})
+    ap-id {E = out E} = wd out (ap-id {E = E})
+    ap-id {V} {K = Taxonomy.Π A _} {E = Λ E} = wd Λ (let open Equational-Reasoning _ in 
+      ∵ ap (liftOp (id V)) E
+      ≡ ap (id (V , A)) E      [ ap-wd {E = E} liftOp-id ]
+      ≡ E                      [ ap-id {E = E} ])
+    ap-id {E = out₂} = ref
+    ap-id {E = app₂ E F} = wd2 app₂ (ap-id {E = E}) (ap-id {E = F})
       
     ap-comp : ∀ {U} {V} {W} {C} {K} {E : Subexpression U C K} {F : Op V W} {G : Op U V} → ap (comp F G) E ≡ ap F (ap G E)
     ap-comp {E = var x} = apV-comp
@@ -174,17 +274,20 @@ we denote by $E \{ \rho \}$ the result of \emph{replacing} every variable $x$ in
     ap-comp {E = out₂} = ref
     ap-comp {E = app₂ E F} = wd2 app₂ (ap-comp {E = E}) (ap-comp {E = F})
 
-    liftOp-id : ∀ {V} {K} → liftOp (id V) ∼op id (V , K)
-    liftOp-id x₀ = trans liftOp-x₀ (sym (apV-id x₀))
-    liftOp-id {V} {K} {L} (↑ x) = trans (liftOp-↑ x) (trans (wd (ap up) (apV-id x)) (trans apV-up (sym (apV-id (↑ x)))))
-
   record OpFamily : Set₂ where
     field
       liftFamily : LiftFamily
       isOpFamily  : IsOpFamily liftFamily
     open LiftFamily liftFamily public
     open IsOpFamily isOpFamily public
+\end{code}
 
+The operation family of \emph{replacement} is defined as follows.  A replacement $\rho : U \rightarrow V$ is a function
+that maps every variable in $U$ to a variable in $V$ of the same kind.  Application, identity and composition are simply
+function application, the identity function and function composition.  The successor is the canonical injection $V \rightarrow (V, K)$,
+and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
+
+\begin{code}
   Rep : Alphabet → Alphabet → Set
   Rep U V = ∀ K → Var U K → Var V K
 
@@ -202,7 +305,7 @@ we denote by $E \{ \rho \}$ the result of \emph{replacing} every variable $x$ in
     up = λ _ → ↑; 
     apV-up = ref; 
     id = idRep; 
-    apV-id = λ _ → ref } 
+    apV-id = λ _ → ref }
 
   _∼R_ : ∀ {U} {V} → Rep U V → Rep U V → Set
   _∼R_ = PreOpFamily._∼op_ pre-replacement
@@ -248,29 +351,18 @@ we denote by $E \{ \rho \}$ the result of \emph{replacing} every variable $x$ in
     E 〈 σ •R ρ 〉 ≡ E 〈 ρ 〉 〈 σ 〉
   rep-comp {U} {V} {W} {C} {K} {E} {ρ} {σ} = OpFamily.ap-comp replacement {U} {V} {W} {C} {K} {E} {σ} {ρ}
 
+  Rep↑-id : ∀ {V} {K} → Rep↑ (idRep V) ∼R idRep (V , K)
+  Rep↑-id = OpFamily.liftOp-id replacement
+\end{code}
+
+Let $\mathsc{embedl}$ be the canonical injection $A \rightarrow \mathsc{extend}\ A\ K\ F$, which
+is a replacement.
+
+\begin{code}
   embedl : ∀ {A} {K} {F} → Rep A (extend A K F)
   embedl {F = ∅} _ x = x
   embedl {F = Lift F} K x = ↑ (embedl {F = F} K x)
 \end{code}
-
-The alphabets and replacements form a category.
-
-\begin{code}
-  --We choose not to prove the category axioms, as they hold up to judgemental equality.
-\end{code}
-
-Given a replacement $\rho : U \rightarrow V$, we can `lift´ this to a replacement $(\rho , K) : (U , K) \rightarrow (V , K)$.
-Under this operation, the mapping $(- , K)$ becomes an endofunctor on the category of alphabets and replacements.
-
-\begin{code}
-  Rep↑-id : ∀ {V} {K} → Rep↑ (idRep V) ∼R idRep (V , K)
-  Rep↑-id x₀ = ref
-  Rep↑-id (↑ _) = ref
-\end{code}
-
-Finally, we can define $E \langle \rho \rangle$, the result of replacing each variable $x$ in $E$ with $\rho(x)$.
-Under this operation, the mapping $\mathsf{Expression}\ -\ K$ becomes a functor from the category of
-alphabets and replacements to the category of sets.
 
 \begin{code}
   rep-id : ∀ {V} {C} {K} {E : Subexpression V C K} → E 〈 idRep V 〉 ≡ E
