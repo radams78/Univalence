@@ -2,13 +2,11 @@
 
 \begin{code}
 module Prelims where
+open import Level using ()
 
-postulate Level : Set
+{-postulate Level : Set
 postulate zro : Level
-postulate suc : Level → Level
-{-# BUILTIN LEVEL Level #-}
-{-# BUILTIN LEVELZERO zro #-}
-{-# BUILTIN LEVELSUC suc #-}
+postulate suc : Level → Level -}
 \end{code}
 
 \subsection{The Empty Type}
