@@ -172,7 +172,7 @@ where $K_{ij}$ is the kind of $x_{ij}$.
 
 We say two operations $\rho, \sigma : U \rightarrow V$ are \emph{equivalent}, $\rho \sim \sigma$, iff $\rho(x) \equiv \sigma(x)$
 for all $x$.  Note that this is equivalent to $\rho[E] \equiv \sigma[E]$ for all $E$, and that the alphabets and operations up to equivalence form
-a category.
+a category, which we denote $\Op$.
 
 \begin{code}
 --TODO Make this more computational?
@@ -240,6 +240,10 @@ The following results about operationsare easy to prove.
   \end{enumerate}
 \end{lemma}
 
+Note that this associates, with every operator family, a functor $\Op \rightarrow \Set$,
+which maps an alphabet $U$ to the set of expressions over $U$, and every operation $\sigma$ to the function $\sigma[-]$.
+This functor is faithful and injective on objects, and so $\Op$ can be seen as a subcategory of $\Set$.
+
 \begin{code}
     liftOp-id : ∀ {V} {K} → liftOp (id V) ∼op id (V , K)
     liftOp-id x₀ = trans liftOp-x₀ (sym (apV-id x₀))
@@ -274,6 +278,26 @@ The following results about operationsare easy to prove.
     ap-comp {E = out₂} = ref
     ap-comp {E = app₂ E F} = wd2 app₂ (ap-comp {E = E}) (ap-comp {E = F})
 
+    assoc : ∀ {U} {V} {W} {X} {τ : Op W X} {σ : Op V W} {ρ : Op U V} → comp τ (comp σ ρ) ∼op comp (comp τ σ) ρ
+    assoc {U} {V} {W} {X} {τ} {σ} {ρ} {K} x = let open Equational-Reasoning (Expression X (varKind K)) in 
+      ∵ apV (comp τ (comp σ ρ)) x
+      ≡ ap τ (apV (comp σ ρ) x)    [ apV-comp ]
+      ≡ ap τ (ap σ (apV ρ x))      [ wd (ap τ) apV-comp ]
+      ≡ ap (comp τ σ) (apV ρ x)    [[ ap-comp {E = apV ρ x} ]]
+      ≡ apV (comp (comp τ σ) ρ) x  [[ apV-comp ]]
+
+    unitl : ∀ {U} {V} {σ : Op U V} → comp (id V) σ ∼op σ
+    unitl {U} {V} {σ} {K} x = let open Equational-Reasoning (Expression V (varKind K)) in 
+      ∵ apV (comp (id V) σ) x
+      ≡ ap (id V) (apV σ x)       [ apV-comp ]
+      ≡ apV σ x                   [ ap-id ]
+
+    unitr : ∀ {U} {V} {σ : Op U V} → comp σ (id U) ∼op σ
+    unitr {U} {V} {σ} {K} x = let open Equational-Reasoning (Expression V (varKind K)) in
+      ∵ apV (comp σ (id U)) x
+      ≡ ap σ (apV (id U) x)      [ apV-comp ]
+      ≡ apV σ x                  [ wd (ap σ) (apV-id x) ]
+
   record OpFamily : Set₂ where
     field
       liftFamily : LiftFamily
@@ -295,6 +319,9 @@ and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
   Rep↑ _ _ x₀ = x₀
   Rep↑ ρ K (↑ x) = ↑ (ρ K x)
 
+  upRep : ∀ {V} {K} → Rep V (V , K)
+  upRep _ = ↑
+
   idRep : ∀ V → Rep V V
   idRep _ _ x = x
 
@@ -302,7 +329,7 @@ and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
   pre-replacement = record { 
     Op = Rep; 
     apV = λ ρ x → var (ρ _ x); 
-    up = λ _ → ↑; 
+    up = upRep; 
     apV-up = ref; 
     id = idRep; 
     apV-id = λ _ → ref }
@@ -322,6 +349,7 @@ and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
       liftOp-x₀ = ref; 
       liftOp-wd = Rep↑-wd }}
 
+--TODO Change notation?
   infix 60 _〈_〉
   _〈_〉 : ∀ {U} {V} {C} {K} → Subexpression U C K → Rep U V → Subexpression V C K
   E 〈 ρ 〉 = LiftFamily.ap proto-replacement ρ E
@@ -345,7 +373,10 @@ and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
     }
 
   rep-wd : ∀ {U} {V} {C} {K} {E : Subexpression U C K} {ρ ρ' : Rep U V} → ρ ∼R ρ' → E 〈 ρ 〉 ≡ E 〈 ρ' 〉
-  rep-wd {U} {V} {C} {K} {E} {ρ} {ρ'} ρ-is-ρ' = LiftFamily.ap-wd proto-replacement {U} {V} {C} {K} {ρ} {ρ'} {E} ρ-is-ρ'
+  rep-wd {U} {V} {C} {K} {E} {ρ} {ρ'} ρ-is-ρ' = OpFamily.ap-wd replacement {U} {V} {C} {K} {ρ} {ρ'} {E} ρ-is-ρ'
+
+  rep-id : ∀ {V} {C} {K} {E : Subexpression V C K} → E 〈 idRep V 〉 ≡ E
+  rep-id = OpFamily.ap-id replacement
 
   rep-comp : ∀ {U} {V} {W} {C} {K} {E : Subexpression U C K} {ρ : Rep U V} {σ : Rep V W} →
     E 〈 σ •R ρ 〉 ≡ E 〈 ρ 〉 〈 σ 〉
@@ -353,6 +384,7 @@ and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
 
   Rep↑-id : ∀ {V} {K} → Rep↑ (idRep V) ∼R idRep (V , K)
   Rep↑-id = OpFamily.liftOp-id replacement
+--TODO Inline many of these
 \end{code}
 
 Let $\mathsc{embedl}$ be the canonical injection $A \rightarrow \mathsc{extend}\ A\ K\ F$, which
@@ -365,22 +397,13 @@ is a replacement.
 \end{code}
 
 \begin{code}
-  rep-id : ∀ {V} {C} {K} {E : Subexpression V C K} → E 〈 idRep V 〉 ≡ E
-  rep-id {E = var _} = ref
-  rep-id {E = app c EE} = wd (app c) rep-id
-  rep-id {E = out E} = wd out rep-id
-  rep-id {V} {E = Λ {K} {A} E} = wd Λ (let open Equational-Reasoning (Subexpression (V , K) -Abstraction A) in 
-    ∵ E 〈 Rep↑ (idRep V) 〉
-    ≡ E 〈 idRep (V , K) 〉        [ rep-wd {E = E} Rep↑-id ]
-    ≡ E                          [ rep-id ])
-  rep-id {E = out₂} = ref
-  rep-id {E = app₂ E EE} = wd2 app₂ rep-id rep-id  
 \end{code}
 
 This provides us with the canonical mapping from an expression over $V$ to an expression over $(V , K)$:
 \begin{code}
   liftE : ∀ {V} {K} {L} → Expression V L → Expression (V , K) L
-  liftE E = E 〈 (λ _ → ↑) 〉
+  liftE E = E 〈 upRep 〉
+--TOOD Inline this
 \end{code}
 
 A \emph{substitution} $\sigma$ from alphabet $U$ to alphabet $V$, $\sigma : U \Rightarrow V$, is a function $\sigma$ that maps every variable $x$ of kind $K$ in $U$ to an
@@ -443,7 +466,7 @@ the result of substituting $\sigma(x)$ for $x$ for each variable in $E$, avoidin
   Sub↑-comp₁ {U} {V} {W} {K} {ρ} {σ} {L} (↑ x) = let open Equational-Reasoning (Expression (W , K) (varKind L)) in 
     ∵ liftE ((σ L x) 〈 ρ 〉)
     ≡ (σ L x) 〈 (λ _ x → ↑ (ρ _ x)) 〉 [[ rep-comp {E = σ L x} ]]
-    ≡ (liftE (σ L x)) 〈 Rep↑ ρ 〉     [ rep-comp {E = σ L x} ]
+    ≡ (liftE (σ L x)) 〈 Rep↑ ρ 〉      [ rep-comp {E = σ L x} ]
 
   sub-comp₁ : ∀ {U} {V} {W} {C} {K} {E : Subexpression U C K} {ρ : Rep V W} {σ : Sub U V} →
       E ⟦ ρ •₁ σ ⟧ ≡ E ⟦ σ ⟧ 〈 ρ 〉
@@ -490,24 +513,16 @@ the result of substituting $\sigma(x)$ for $x$ for each variable in $E$, avoidin
   Rep↑-is-Sub↑ x₀ = ref
   Rep↑-is-Sub↑ (↑ _) = ref
 
-  mutual
-    rep-is-sub : ∀ {U} {V} {K} {E : Expression U K} {ρ : Rep U V} →
-             E 〈 ρ 〉 ≡ E ⟦ (λ K x → var (ρ K x)) ⟧
-    rep-is-sub {E = var _} = ref
-    rep-is-sub {U} {V} {K} {app c EE} = wd (app c) (rep-is-subB {EE = EE})
-
-    rep-is-subB : ∀ {U} {V} {K} {C : Kind (-Constructor K)} {EE : Subexpression U (-Constructor K) C} {ρ : Rep U V} →
-      EE 〈 ρ 〉 ≡ EE ⟦ (λ K x → var (ρ K x)) ⟧
-    rep-is-subB {EE = out₂} = ref
-    rep-is-subB {EE = app₂ A EE} = wd2 app₂ (rep-is-subA {A = A}) (rep-is-subB {EE = EE})
-
-    rep-is-subA : ∀ {U} {V} {K} {A : Subexpression U -Abstraction K} {ρ : Rep U V} →
-      A 〈 ρ 〉 ≡ A ⟦ (λ K x → var (ρ K x)) ⟧
-    rep-is-subA {A = out E} = wd out (rep-is-sub {E = E})
-    rep-is-subA {U} {V} .{Π K L} {Λ {K} {L} A} {ρ} = wd Λ (let open Equational-Reasoning (Subexpression (V , K) -Abstraction L) in 
-      ∵ A 〈 Rep↑ ρ 〉
-      ≡ A ⟦ (λ M x → var (Rep↑ ρ M x)) ⟧ [ rep-is-subA {A = A} ]
-      ≡ A ⟦ Sub↑ (λ M x → var (ρ M x)) ⟧ [ sub-wd {E = A} Rep↑-is-Sub↑ ])
+  rep-is-sub : ∀ {U} {V} {K} {C} {E : Subexpression U K C} {ρ : Rep U V} → E 〈 ρ 〉 ≡ E ⟦ (λ K x → var (ρ K x)) ⟧
+  rep-is-sub {E = var _} = ref
+  rep-is-sub {E = app c E} = wd (app c) (rep-is-sub {E = E})
+  rep-is-sub {E = out E} = wd out (rep-is-sub {E = E})
+  rep-is-sub {U} {V} { -Abstraction} {Π K A} {Λ E} {ρ} = wd Λ (let open Equational-Reasoning (Subexpression (V , K) -Abstraction A) in 
+    ∵ E 〈 Rep↑ ρ 〉
+    ≡ E ⟦ (λ K x → var (Rep↑ ρ K x)) ⟧ [ rep-is-sub {E = E} ]
+    ≡ E ⟦ Sub↑ (λ K x → var (ρ K x)) ⟧ [ sub-wd {E = E} Rep↑-is-Sub↑ ])
+  rep-is-sub {E = out₂} = ref
+  rep-is-sub {E = app₂ E F} = wd2 app₂ (rep-is-sub {E = E}) (rep-is-sub {E = F})
 
   substitution : OpFamily
   substitution = record { 
@@ -555,47 +570,17 @@ $(\sigma \bullet_2 \rho, K) = (\sigma , K) \bullet_2 (\rho , K)$
 
 \begin{code}
   Sub↑-id : ∀ {V} {K} → Sub↑ {V} {V} {K} (idSub V) ∼ idSub (V , K)
-  Sub↑-id {K = K} x₀ = ref
-  Sub↑-id (↑ _) = ref
-\end{code}
+  Sub↑-id = OpFamily.liftOp-id substitution
 
-We can now define the result of applying a substitution $\sigma$ to an expression $E$,
-which we denote $E [ \sigma ]$.
-
-\begin{code}
-\end{code}
-
-\begin{lemma}
-$ $
-\begin{enumerate}
-\item
-$M[\id{V}] \equiv M$
-\item
-$M[\rho \bullet_1 \sigma] \equiv M [ \sigma ] \langle \rho \rangle$
-\item
-$M[\sigma \bullet_2 \rho] \equiv M \langle \rho \rangle [ \sigma ]$
-\end{enumerate}
-\end{lemma}
-
-\begin{code}
   sub-id : ∀ {V} {C} {K} {E : Subexpression V C K} → E ⟦ idSub V ⟧ ≡ E
-  sub-id {E = var _} = ref
-  sub-id {E = app c EE} = wd (app c) sub-id
-  sub-id {E = out E} = wd out sub-id
-  sub-id {E = Λ E} = wd Λ (let open Equational-Reasoning _ in 
-    ∵ E ⟦ Sub↑ (idSub _) ⟧
-    ≡ E ⟦ idSub _ ⟧         [ sub-wd {E = E} Sub↑-id ]
-    ≡ E                   [ sub-id ])
-  sub-id {E = out₂} = ref
-  sub-id {E = app₂ E EE} = wd2 app₂ sub-id sub-id
-
+  sub-id = OpFamily.ap-id substitution
 \end{code}
 
 We define the composition of two substitutions, as follows.
 
 \begin{code}
   subid : ∀ {V} → Sub V V
-  subid {V} K x = var x
+  subid {V} = OpFamily.id substitution V
 \end{code}
 
 \begin{lemma}
@@ -607,34 +592,9 @@ We define the composition of two substitutions, as follows.
 \end{lemma}
 
 \begin{code}
---TODO Remove this
-  sub-is-sub : ∀ {U} {V} {σ : Sub U V} {C} {K} {E : Subexpression U C K} →
-               E ⟦ σ ⟧ ≡ LiftFamily.ap proto-substitution σ E
-  sub-is-sub {E = var _} = ref
-  sub-is-sub {E = app c E} = wd (app c) (sub-is-sub {E = E})
-  sub-is-sub {E = out E} = wd out (sub-is-sub {E = E})
-  sub-is-sub {E = Λ E} = wd Λ (sub-is-sub {E = E})
-  sub-is-sub {E = out₂} = ref
-  sub-is-sub {E = app₂ E F} = wd2 app₂ (sub-is-sub {E = E}) (sub-is-sub {E = F})
-
-  mutual
-    sub-compA : ∀ {U} {V} {W} {K} {A : Subexpression U -Abstraction K} {σ : Sub V W} {ρ : Sub U V} →
-      A ⟦ σ • ρ ⟧ ≡ A ⟦ ρ ⟧ ⟦ σ ⟧
-    sub-compA {A = out E} = wd out (sub-comp {E = E})
-    sub-compA {U} {V} {W} .{Π K L} {Λ {K} {L} A} {σ} {ρ} = wd Λ (let open Equational-Reasoning (Subexpression (W , K) -Abstraction L) in 
-      ∵ A ⟦ Sub↑ (σ • ρ) ⟧
-      ≡ A ⟦ Sub↑ σ • Sub↑ ρ ⟧    [ sub-wd {E = A} Sub↑-comp ]
-      ≡ A ⟦ Sub↑ ρ ⟧ ⟦ Sub↑ σ ⟧  [ sub-compA {A = A} ])
-
-    sub-compB : ∀ {U} {V} {W} {K} {C : Kind (-Constructor K)} {EE : Subexpression U (-Constructor K) C} {σ : Sub V W} {ρ : Sub U V} →
-      EE ⟦ σ • ρ ⟧ ≡ EE ⟦ ρ ⟧ ⟦ σ ⟧
-    sub-compB {EE = out₂} = ref
-    sub-compB {U} {V} {W} {K} {(Π₂ L C)} {app₂ A EE} = wd2 app₂ (sub-compA {A = A}) (sub-compB {EE = EE})
-
-    sub-comp : ∀ {U} {V} {W} {K} {E : Expression U K} {σ : Sub V W} {ρ : Sub U V} →
-      E ⟦ σ • ρ ⟧ ≡ E ⟦ ρ ⟧ ⟦ σ ⟧
-    sub-comp {E = var _} = ref
-    sub-comp {U} {V} {W} {K} {app c EE} = wd (app c) (sub-compB {EE = EE})
+  sub-comp : ∀ {U} {V} {W} {C} {K} {E : Subexpression U C K} {σ : Sub V W} {ρ : Sub U V} →
+    E ⟦ σ • ρ ⟧ ≡ E ⟦ ρ ⟧ ⟦ σ ⟧
+  sub-comp {E = E} = OpFamily.ap-comp substitution {E = E}
 \end{code}
 
 \begin{lemma}
@@ -643,13 +603,13 @@ The alphabets and substitutions form a category under this composition.
 
 \begin{code}
   assoc : ∀ {U V W X} {ρ : Sub W X} {σ : Sub V W} {τ : Sub U V} → ρ • (σ • τ) ∼ (ρ • σ) • τ
-  assoc {τ = τ} {K} x = sym (sub-comp {E = τ K x})
+  assoc {τ = τ} = OpFamily.assoc substitution {ρ = τ}
 
   sub-unitl : ∀ {U} {V} {σ : Sub U V} → idSub V • σ ∼ σ
-  sub-unitl _ = sub-id
+  sub-unitl {σ = σ} = OpFamily.unitl substitution {σ = σ}
 
   sub-unitr : ∀ {U} {V} {σ : Sub U V} → σ • idSub U ∼ σ
-  sub-unitr _ = ref
+  sub-unitr {σ = σ} = OpFamily.unitr substitution {σ = σ}
 \end{code}
 
 Replacement is a special case of substitution:
