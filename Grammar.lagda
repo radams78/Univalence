@@ -83,7 +83,7 @@ We can now define a grammar over a taxonomy:
 record ToGrammar (T : Taxonomy) : Set₁ where
   open Taxonomy T
   field
-    Constructor    : ∀ {K : ExpressionKind} → Kind (-Constructor K) → Set
+    Constructor    : ∀ {K} → Kind (-Constructor K) → Set
     parent         : VarKind → ExpressionKind
 \end{code}
 
@@ -168,7 +168,7 @@ for all $x$.  Note that this is equivalent to $\rho[E] \equiv \sigma[E]$ for all
       Op : Alphabet → Alphabet → Set
       apV : ∀ {U} {V} {K} → Op U V → Var U K → Expression V (varKind K)
       up : ∀ {V} {K} → Op V (V , K)
-      apV-up : ∀ {V} {K} {L} {x : Var V K} → apV {V} {K = K} (up {K = L}) x ≡ var (↑ x)
+      apV-up : ∀ {V} {K} {L} {x : Var V K} → apV (up {K = L}) x ≡ var (↑ x)
       id : ∀ V → Op V V
       apV-id : ∀ {V} {K} (x : Var V K) → apV (id V) x ≡ var x
 
@@ -178,26 +178,26 @@ for all $x$.  Note that this is equivalent to $\rho[E] \equiv \sigma[E]$ for all
   record IsLiftFamily (opfamily : PreOpFamily) : Set₁ where
     open PreOpFamily opfamily
     field
-      liftOp : ∀ {U} {V} {K} → Op U V → Op (U , K) (V , K)
-      liftOp-x₀ : ∀ {U} {V} {K} {σ : Op U V} → apV (liftOp {K = K} σ) x₀ ≡ var x₀
-      liftOp-wd : ∀ {V} {W} {K} {ρ σ : Op V W} → ρ ∼op σ → liftOp {K = K} ρ ∼op liftOp σ
+      liftOp : ∀ {U} {V} K → Op U V → Op (U , K) (V , K)
+      liftOp-x₀ : ∀ {U} {V} {K} {σ : Op U V} → apV (liftOp K σ) x₀ ≡ var x₀
+      liftOp-wd : ∀ {V} {W} {K} {ρ σ : Op V W} → ρ ∼op σ → liftOp K ρ ∼op liftOp K σ
 
     ap : ∀ {U} {V} {C} {K} → Op U V → Subexpression U C K → Subexpression V C K
     ap ρ (var x) = apV ρ x
     ap ρ (app c EE) = app c (ap ρ EE)
     ap ρ (out E) = out (ap ρ E)
-    ap ρ (Λ E) = Λ (ap (liftOp ρ) E)
+    ap ρ (Λ E) = Λ (ap (liftOp _ ρ) E)
     ap _ out₂ = out₂
     ap ρ (app₂ E EE) = app₂ (ap ρ E) (ap ρ EE)
 
-    ap-wd : ∀ {U} {V} {C} {K} {ρ σ : Op U V} {E : Subexpression U C K} →
+    ap-wd : ∀ {U} {V} {C} {K} {ρ σ : Op U V} (E : Subexpression U C K) →
       ρ ∼op σ → ap ρ E ≡ ap σ E
-    ap-wd {E = var x} ρ-is-σ = ρ-is-σ x
-    ap-wd {E = app c EE} ρ-is-σ = wd (app c) (ap-wd {E = EE} ρ-is-σ)
-    ap-wd {E = out E} ρ-is-σ = wd out (ap-wd {E = E} ρ-is-σ)
-    ap-wd {E = Λ {K} E} ρ-is-σ = wd Λ (ap-wd {E = E} (liftOp-wd {K = K} ρ-is-σ))
-    ap-wd {E = out₂} _ = ref
-    ap-wd {E = app₂ E F} ρ-is-σ = wd2 app₂ (ap-wd {E = E} ρ-is-σ) (ap-wd {E = F} ρ-is-σ)
+    ap-wd (var x) ρ-is-σ = ρ-is-σ x
+    ap-wd (app c E) ρ-is-σ = wd (app c) (ap-wd E ρ-is-σ)
+    ap-wd (out E) ρ-is-σ = wd out (ap-wd E ρ-is-σ)
+    ap-wd (Λ {K} E) ρ-is-σ = wd Λ (ap-wd E (liftOp-wd {K = K} ρ-is-σ))
+    ap-wd out₂ _ = ref
+    ap-wd (app₂ E F) ρ-is-σ = wd2 app₂ (ap-wd E ρ-is-σ) (ap-wd F ρ-is-σ)
 
   record LiftFamily : Set₂ where
     field
@@ -213,9 +213,9 @@ for all $x$.  Note that this is equivalent to $\rho[E] \equiv \sigma[E]$ for all
       apV-comp : ∀ {U} {V} {W} {K} {σ : Op V W} {ρ : Op U V} {x : Var U K} →
         apV (comp σ ρ) x ≡ ap σ (apV ρ x)
       liftOp-comp : ∀ {U} {V} {W} {K} {σ : Op V W} {ρ : Op U V} →
-        liftOp {K = K} (comp σ ρ) ∼op comp (liftOp σ) (liftOp ρ)
+        liftOp K (comp σ ρ) ∼op comp (liftOp K σ) (liftOp K ρ)
       liftOp-↑ : ∀ {U} {V} {K} {L} {σ : Op U V} (x : Var U L) →
-        apV (liftOp {K = K} σ) (↑ x) ≡ ap up (apV σ x)
+        apV (liftOp K σ) (↑ x) ≡ ap up (apV σ x)
 \end{code}
 
 The following results about operationsare easy to prove.
@@ -229,18 +229,18 @@ The following results about operationsare easy to prove.
 \end{lemma}
 
 \begin{code}
-    liftOp-up : ∀ {U} {V} {K} {σ : Op U V} → comp (liftOp σ) up ∼op comp up σ
+    liftOp-up : ∀ {U} {V} {K} {σ : Op U V} → comp (liftOp K σ) up ∼op comp up σ
     liftOp-up {U} {V} {K} {σ} {L} x = let open Equational-Reasoning (Expression (V , K) (varKind L)) in 
-      ∵ apV (comp (liftOp σ) up) x
-      ≡ ap (liftOp σ) (apV up x)     [ apV-comp ]
-      ≡ apV (liftOp σ) (↑ x)         [ wd (ap (liftOp σ)) apV-up ]
-      ≡ ap up (apV σ x)              [ liftOp-↑ x ]
-      ≡ apV (comp up σ) x            [[ apV-comp ]]
+      ∵ apV (comp (liftOp K σ) up) x
+      ≡ ap (liftOp K σ) (apV up x)     [ apV-comp ]
+      ≡ apV (liftOp K σ) (↑ x)         [ wd (ap (liftOp K σ)) apV-up ]
+      ≡ ap up (apV σ x)                [ liftOp-↑ x ]
+      ≡ apV (comp up σ) x              [[ apV-comp ]]
 
-    liftOp-id : ∀ {V} {K} → liftOp (id V) ∼op id (V , K)
+    liftOp-id : ∀ {V} {K} → liftOp K (id V) ∼op id (V , K)
     liftOp-id x₀ = trans liftOp-x₀ (sym (apV-id x₀))
     liftOp-id {V} {K} {L} (↑ x) = let open Equational-Reasoning _ in 
-      ∵ apV (liftOp (id V)) (↑ x)
+      ∵ apV (liftOp K (id V)) (↑ x)
       ≡ ap up (apV (id V) x)       [ liftOp-↑ x ]
       ≡ ap up (var x)              [ wd (ap up) (apV-id x) ]
       ≡ var (↑ x)                  [ apV-up ]
@@ -250,25 +250,25 @@ The following results about operationsare easy to prove.
 
     ap-id : ∀ {V} {C} {K} {E : Subexpression V C K} → ap (id V) E ≡ E
     ap-id {E = var x} = apV-id x
-    ap-id {E = app c EE} = wd (app c) (ap-id {E = EE})
-    ap-id {E = out E} = wd out (ap-id {E = E})
-    ap-id {V} {K = Taxonomy.Π A _} {E = Λ E} = wd Λ (let open Equational-Reasoning _ in 
-      ∵ ap (liftOp (id V)) E
-      ≡ ap (id (V , A)) E      [ ap-wd {E = E} liftOp-id ]
-      ≡ E                      [ ap-id {E = E} ])
+    ap-id {E = app c EE} = wd (app c) ap-id
+    ap-id {E = out E} = wd out ap-id
+    ap-id {V} {K = Taxonomy.Π K A} {E = Λ E} = wd Λ (let open Equational-Reasoning _ in 
+      ∵ ap (liftOp K (id V)) E
+      ≡ ap (id (V , K)) E      [ ap-wd E liftOp-id ]
+      ≡ E                      [ ap-id ])
     ap-id {E = out₂} = ref
-    ap-id {E = app₂ E F} = wd2 app₂ (ap-id {E = E}) (ap-id {E = F})
+    ap-id {E = app₂ E F} = wd2 app₂ ap-id ap-id
       
-    ap-comp : ∀ {U} {V} {W} {C} {K} {E : Subexpression U C K} {F : Op V W} {G : Op U V} → ap (comp F G) E ≡ ap F (ap G E)
-    ap-comp {E = var x} = apV-comp
-    ap-comp {E = app c EE} = wd (app c) (ap-comp {E = EE})
-    ap-comp {E = out E} = wd out (ap-comp {E = E})
-    ap-comp {U} {V} {W} {E = Λ E} {σ} {ρ} = wd Λ (let open Equational-Reasoning _ in 
-      ∵ ap (liftOp (comp σ ρ)) E
-      ≡ ap (comp (liftOp σ) (liftOp ρ)) E [ ap-wd {E = E} (liftOp-comp {σ = σ} {ρ = ρ}) ]
-      ≡ ap (liftOp σ) (ap (liftOp ρ) E)   [ ap-comp {E = E} ])
-    ap-comp {E = out₂} = ref
-    ap-comp {E = app₂ E F} = wd2 app₂ (ap-comp {E = E}) (ap-comp {E = F})
+    ap-comp : ∀ {U} {V} {W} {C} {K} (E : Subexpression U C K) {σ : Op V W} {ρ : Op U V} → ap (comp σ ρ) E ≡ ap σ (ap ρ E)
+    ap-comp (var x) = apV-comp
+    ap-comp (app c E) = wd (app c) (ap-comp E)
+    ap-comp (out E) = wd out (ap-comp E)
+    ap-comp (Λ E) {σ} {ρ} = wd Λ (let open Equational-Reasoning _ in 
+      ∵ ap (liftOp _ (comp σ ρ)) E
+      ≡ ap (comp (liftOp _ σ) (liftOp _ ρ)) E [ ap-wd E (liftOp-comp {σ = σ} {ρ = ρ}) ]
+      ≡ ap (liftOp _ σ) (ap (liftOp _ ρ) E)   [ ap-comp E ])
+    ap-comp out₂ = ref
+    ap-comp (app₂ E F) = wd2 app₂ (ap-comp E) (ap-comp F)
 \end{code}
 
 The alphabets and operations up to equivalence form
@@ -283,7 +283,7 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
       ∵ apV (comp τ (comp σ ρ)) x
       ≡ ap τ (apV (comp σ ρ) x)    [ apV-comp ]
       ≡ ap τ (ap σ (apV ρ x))      [ wd (ap τ) apV-comp ]
-      ≡ ap (comp τ σ) (apV ρ x)    [[ ap-comp {E = apV ρ x} ]]
+      ≡ ap (comp τ σ) (apV ρ x)    [[ ap-comp (apV ρ x) ]]
       ≡ apV (comp (comp τ σ) ρ) x  [[ apV-comp ]]
 
     unitl : ∀ {U} {V} {σ : Op U V} → comp (id V) σ ∼op σ
@@ -347,7 +347,7 @@ and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
   proto-replacement = record { 
     preOpFamily = pre-replacement; 
     isLiftFamily = record { 
-      liftOp = Rep↑; 
+      liftOp = λ _ → Rep↑; 
       liftOp-x₀ = ref; 
       liftOp-wd = Rep↑-wd }}
 
@@ -375,14 +375,14 @@ and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
     }
 
   rep-wd : ∀ {U} {V} {C} {K} {E : Subexpression U C K} {ρ ρ' : Rep U V} → ρ ∼R ρ' → E 〈 ρ 〉 ≡ E 〈 ρ' 〉
-  rep-wd {U} {V} {C} {K} {E} {ρ} {ρ'} ρ-is-ρ' = OpFamily.ap-wd replacement {U} {V} {C} {K} {ρ} {ρ'} {E} ρ-is-ρ'
+  rep-wd {U} {V} {C} {K} {E} {ρ} {ρ'} ρ-is-ρ' = OpFamily.ap-wd replacement E ρ-is-ρ'
 
   rep-id : ∀ {V} {C} {K} {E : Subexpression V C K} → E 〈 idRep V 〉 ≡ E
   rep-id = OpFamily.ap-id replacement
 
   rep-comp : ∀ {U} {V} {W} {C} {K} {E : Subexpression U C K} {ρ : Rep U V} {σ : Rep V W} →
     E 〈 σ •R ρ 〉 ≡ E 〈 ρ 〉 〈 σ 〉
-  rep-comp {U} {V} {W} {C} {K} {E} {ρ} {σ} = OpFamily.ap-comp replacement {U} {V} {W} {C} {K} {E} {σ} {ρ}
+  rep-comp {U} {V} {W} {C} {K} {E} {ρ} {σ} = OpFamily.ap-comp replacement E
 
   Rep↑-id : ∀ {V} {K} → Rep↑ (idRep V) ∼R idRep (V , K)
   Rep↑-id = OpFamily.liftOp-id replacement
@@ -436,7 +436,7 @@ The \emph{successor} substitution $V \rightarrow (V , K)$ maps a variable $x$ to
   proto-substitution = record { 
     preOpFamily = pre-substitution; 
     isLiftFamily = record { 
-      liftOp = Sub↑; 
+      liftOp = λ _ → Sub↑; 
       liftOp-x₀ = ref; 
       liftOp-wd = Sub↑-wd }
     }
@@ -458,7 +458,7 @@ Composition is defined by $(\sigma \circ \rho)(x) \equiv \rho(x) [ \sigma ]$.
   (σ • ρ) K x = ρ K x ⟦ σ ⟧
 
   sub-wd : ∀ {U} {V} {C} {K} {E : Subexpression U C K} {σ σ' : Sub U V} → σ ∼ σ' → E ⟦ σ ⟧ ≡ E ⟦ σ' ⟧
-  sub-wd {E = E} = LiftFamily.ap-wd proto-substitution {E = E}
+  sub-wd {E = E} = LiftFamily.ap-wd proto-substitution E
 \end{code}
 
 Most of the axioms of a family of operations are easy to verify.  
@@ -563,7 +563,7 @@ $$ E \langle \rho \rangle \equiv E [ \rho ] $$
 
   sub-comp : ∀ {U} {V} {W} {C} {K} {E : Subexpression U C K} {σ : Sub V W} {ρ : Sub U V} →
     E ⟦ σ • ρ ⟧ ≡ E ⟦ ρ ⟧ ⟦ σ ⟧
-  sub-comp {E = E} = OpFamily.ap-comp substitution {E = E}
+  sub-comp {E = E} = OpFamily.ap-comp substitution E
 
   assoc : ∀ {U V W X} {ρ : Sub W X} {σ : Sub V W} {τ : Sub U V} → ρ • (σ • τ) ∼ (ρ • σ) • τ
   assoc {τ = τ} = OpFamily.assoc substitution {ρ = τ}

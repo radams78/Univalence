@@ -1,0 +1,43 @@
+\message{ !name(short_abstract.tex)}\documentclass{easychair}
+%\bibliographystyle{plain}
+
+\title{A Strongly Normalizing Computation Rule for Univalence in Higher-Order Propositional Logic}
+\author{Robin Adams\inst{1} \and Marc Bezem\inst{1} \and Thierry Coquard\inst{2}}
+\institute{Universitetet i Bergen,
+Bergen, Norway \\
+\email{\{robin.adams,marc\}@uib.no}
+\and
+University of Gothenburg,
+Gothenburg, Sweden \\
+\email{coquand@chalmers.se}}
+\titlerunning{Strongly Normalizang Computation Rule for Univalence}
+\authorrunning{R. Adams, M. Bezem, T. Coquand}
+
+\usepackage{proof}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\newcommand{\vald}{\ \mathrm{valid}}
+\newcommand{\univ}[4]{\mathsf{univ}_{{#1},{#2}} \left( {#3} , {#4} \right)}
+\newcommand{\triplelambda}{\lambda \!\! \lambda \!\! \lambda}
+\newcommand{\reff}[1]{\mathsf{ref} \left( {#1} \right)}
+\newcommand{\eqdef}{\stackrel{\mathrm{def}}{=}}
+\newcommand{\SN}{\mathbf{SN}}
+\newcommand{\WN}{\mathbf{WN}}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}[lemma]{Theorem}
+\newtheorem{proposition}[lemma]{Proposition}
+
+\begin{document}
+
+\message{ !name(short_abstract.tex) !offset(43) }
+\[
+\begin{array}{lrcl}
+\text{Term} & M , \phi & ::= & \cdots \mid M =_A M \\
+\text{Proof} & \delta & ::= & \cdots \mid \reff{M} \mid \univ{\phi}{\phi}{\delta}{\delta} \mid \triplelambda x : x =_A x . \delta \mid \delta \supset \delta \mid \delta \delta \\
+ & & & \mid \delta^+ \mid \delta^-
+\end{array} \]
+\message{ !name(short_abstract.tex) !offset(109) }
+
+\end{document}

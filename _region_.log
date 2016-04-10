@@ -1,0 +1,240 @@
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=prv_short_abstract 2016.4.8)  8 APR 2016 20:43
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**&prv_short_abstract _region_.tex
+(./_region_.tex
+For bug reports, please contact <andrei@voronkov.com>
+CUSTOMISED FORMAT. Preloaded files:
+        .
+easychair.cls    2015/12/10 v3.4
+   color.sty    2005/11/14 v1.0j Standard LaTeX Color (DPC)
+   color.cfg    2007/01/18 v1.5 color configuration of teTeX/TeXLive
+   dvips.def    1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
+dvipsnam.def    1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
+ article.cls    2007/10/19 v1.4h Standard LaTeX document class
+  size10.clo    2007/10/19 v1.4h Standard LaTeX file (size option)
+footmisc.sty    2011/06/06 v5.5b a miscellany of footnote facilities
+hyperref.sty    2012/11/06 v6.83m Hypertext links for LaTeX
+hobsub-hyperref.sty    2012/05/28 v1.13 Bundle oberdiek, subset hyperref (HO)
+hobsub-generic.sty    2012/05/28 v1.13 Bundle oberdiek, subset generic (HO)
+  hobsub.sty    2012/05/28 v1.13 Construct package bundles (HO)
+infwarerr.sty    2010/04/08 v1.3 Providing info/warning/error messages (HO)
+ ltxcmds.sty    2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+ifluatex.sty    2010/03/01 v1.3 Provides the ifluatex switch (HO)
+  ifvtex.sty    2010/03/01 v1.5 Detect VTeX and its facilities (HO)
+ intcalc.sty    2007/09/27 v1.1 Expandable calculations with integers (HO)
+   ifpdf.sty    2011/01/30 v2.3 Provides the ifpdf switch (HO)
+etexcmds.sty    2011/02/16 v1.5 Avoid name clashes with e-TeX commands (HO)
+kvsetkeys.sty    2012/04/25 v1.16 Key value parser (HO)
+kvdefinekeys.sty    2011/04/07 v1.3 Define keys (HO)
+pdftexcmds.sty    2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO)
+pdfescape.sty    2011/11/25 v1.13 Implements pdfTeX's escape features (HO)
+bigintcalc.sty    2012/04/08 v1.3 Expandable calculations on big integers (HO)
+  bitset.sty    2011/01/30 v1.1 Handle bit-vector datatype (HO)
+uniquecounter.sty    2011/01/30 v1.2 Provide unlimited unique counter (HO)
+letltxmacro.sty    2010/09/02 v1.4 Let assignment for LaTeX macros (HO)
+ hopatch.sty    2012/05/28 v1.2 Wrapper for package hooks (HO)
+xcolor-patch.sty    2011/01/30 xcolor patch
+atveryend.sty    2011/06/30 v1.8 Hooks at the very end of document (HO)
+atbegshi.sty    2011/10/05 v1.16 At begin shipout hook (HO)
+refcount.sty    2011/10/16 v3.4 Data extraction from label references (HO)
+ hycolor.sty    2011/01/30 v1.7 Color options for hyperref/bookmark (HO)
+  keyval.sty    1999/03/16 v1.13 key=value parser (DPC)
+ ifxetex.sty    2010/09/12 v0.6 Provides ifxetex conditional
+ auxhook.sty    2011/03/04 v1.3 Hooks for auxiliary files (HO)
+kvoptions.sty    2011/06/30 v3.11 Key value format for package options (HO)
+  pd1enc.def    2012/11/06 v6.83m Hyperref: PDFDocEncoding definition (HO)
+hyperref.cfg    2002/06/06 v1.2 hyperref configuration of TeXLive
+     url.sty    2013/09/16  ver 3.4  Verb mode for urls, etc.
+  hdvips.def    2012/11/06 v6.83m Hyperref driver for dvips
+ pdfmark.def    2012/11/06 v6.83m Hyperref definitions for pdfmark specials
+rerunfilecheck.sty    2011/04/15 v1.7 Rerun checks for auxiliary files (HO)
+graphicx.sty    1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+graphics.sty    2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+    trig.sty    1999/03/16 v1.09 sin cos tan (DPC)
+graphics.cfg    2010/04/23 v1.9 graphics configuration of TeX Live
+listings.sty    2013/08/26 1.5b (Carsten Heinz)
+ lstmisc.sty    2013/08/26 1.5b (Carsten Heinz)
+listings.cfg    2013/08/26 1.5b listings configuration
+latexsym.sty    1998/08/17 v2.2e Standard LaTeX package (lasy symbols)
+  amsthm.sty    2004/08/06 v2.20
+  empheq.sty    2013/02/12 v2.13 Emphasizing equations
+ mhsetup.sty    2010/01/21 v1.2a programming setup (MH)
+mathtools.sty    2013/02/12 v1.13 mathematical typesetting tools
+    calc.sty    2007/08/22 v4.3 Infix arithmetic (KKT,FJ)
+ amsmath.sty    2013/01/14 v2.14 AMS math features
+ amstext.sty    2000/06/29 v2.01
+  amsgen.sty    1999/11/30 v2.0
+  amsbsy.sty    1999/11/29 v1.2d
+  amsopn.sty    1999/12/14 v2.01 operator names
+geometry.sty    2010/09/12 v5.6 Page Geometry
+lastpage.sty    2013/01/28 v1.2l Refers to last page's name (HMM; JPG)
+fancyhdr.sty    
+   proof.sty    
+ amssymb.sty    2013/01/14 v3.01 AMS font symbols
+amsfonts.sty    2013/01/14 v3.01 Basic AMSFonts support
+   ulasy.fd    1998/08/17 v2.2e LaTeX symbol font definitions
+    umsa.fd    2013/01/14 v3.01 AMS symbols A
+    umsb.fd    2013/01/14 v3.01 AMS symbols B
+        .
+No file _region_.aux.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+(/usr/share/texmf/tex/latex/preview/preview.sty
+Package: preview 2010/02/14 11.87 (AUCTeX/preview-latex)
+
+(/usr/share/texmf/tex/latex/preview/prtightpage.def
+\PreviewBorder=\dimen169
+)
+(/usr/share/texmf/tex/latex/preview/prauctex.def
+No auxiliary output files.
+
+
+\hbadness=\count134
+\hfuzz=\dimen170
+(/usr/share/texmf/tex/latex/preview/prauctex.cfg))
+(/usr/share/texmf/tex/latex/preview/prfootnotes.def)
+\pr@snippet=\count135
+\pr@box=\box37
+\pr@output=\toks32
+
+Preview: Fontsize 10pt
+)
+\AtBeginShipoutBox=\box38
+Package hyperref Info: Link coloring ON on input line 32.
+ (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
+Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
+)
+\c@section@level=\count136
+)
+LaTeX Info: Redefining \ref on input line 32.
+LaTeX Info: Redefining \pageref on input line 32.
+LaTeX Info: Redefining \nameref on input line 32.
+
+
+Package hyperref Warning: Rerun to get /PageLabels entry.
+
+\c@lstlisting=\count137
+*geometry* driver: auto-detecting
+*geometry* detected driver: dvips
+*geometry* verbose mode - [ preamble ] result:
+* driver: dvips
+* paper: custom
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* hratio: 1:1
+* vratio: 1:1
+* modes: includehead includefoot twoside 
+* h-part:(L,W,R)=(100.86502pt, 412.56496pt, 100.86502pt)
+* v-part:(T,H,B)=(78.81413pt, 637.34172pt, 78.81413pt)
+* \paperwidth=614.295pt
+* \paperheight=794.96999pt
+* \textwidth=412.56496pt
+* \textheight=583.34172pt
+* \oddsidemargin=28.59503pt
+* \evensidemargin=28.59503pt
+* \topmargin=6.54414pt
+* \headheight=12.0pt
+* \headsep=16.0pt
+* \topskip=10.0pt
+* \footskip=26.0pt
+* \marginparwidth=121.0pt
+* \marginparsep=11.0pt
+* \columnsep=10.0pt
+* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidetrue
+* \@mparswitchtrue
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+Package lastpage Info: Please have a look at the pageslts package at
+(lastpage)             http://www.ctan.org/tex-archive/ 
+(lastpage)             macros/latex/contrib/pageslts/ 
+(lastpage)             or
+(lastpage)             http://www.ctan.org/tex-archive/ 
+(lastpage)             install/macros/latex/contrib/pageslts.tds.zip
+(lastpage)             ! on input line 32.
+ !name(short_abstract.tex) !offset(43) 
+! Preview: Snippet 1 started.
+<-><->
+      
+l.35 \[
+       
+Not a real error.
+
+Preview: Tightpage -32891 -32891 32891 32891
+! Preview: Snippet 1 ended.(2359296+0x24415468).
+<-><->
+      
+l.40 \end{array} \]
+                   
+Not a real error.
+
+[1]  !name(short_abstract.tex) !offset(109) 
+
+Package lastpage Warning: Rerun to get the references right on input line 43.
+
+
+! Package lastpage Error: No auxiliary file allowed.
+
+See the lastpage package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.43 \end{document}
+                   
+The lastpage package was not allowed to write to an .aux file.
+This package does not work without access to an .aux file.
+Press Ctrl+Z to exit.
+
+
+
+! Package lastpage Error: No auxiliary file allowed.
+
+See the lastpage package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.43 \end{document}
+                   
+The lastpage package was not allowed to write to an .aux file.
+This package does not work without access to an .aux file.
+Press Ctrl+Z to exit.
+
+
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 43.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 43.
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 43.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 43.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 43.
+ ) 
+Here is how much of TeX's memory you used:
+ 312 strings out of 486480
+ 4573 string characters out of 6055369
+ 223208 words of memory out of 5000000
+ 11885 multiletter control sequences out of 15000+600000
+ 8340 words of font info for 34 fonts, out of 8000000 for 9000
+ 59 hyphenation exceptions out of 8191
+ 28i,9n,22p,229b,208s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+Output written on _region_.dvi (1 page, 2264 bytes).

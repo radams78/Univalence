@@ -1,6 +1,7 @@
 \begin{code}
 module PL where
 
+open import Level hiding (Lift;lift)
 open import Prelims
 open import Grammar
 import Reduction
@@ -135,14 +136,14 @@ PContext P = Context' ∅ -Proof P
 Palphabet : FinSet → Alphabet
 Palphabet P = extend ∅ -Proof P
 
-Palphabet-faithful : ∀ {P} {Q} {ρ σ : Rep (Palphabet P) (Palphabet Q)} → (∀ x → ρ -Proof (embed {∅} { -Proof} {P} x) ≡ σ -Proof (embed x)) → ρ ∼R σ
+Palphabet-faithful : ∀ {P} {Q} {ρ σ : Rep (Palphabet P) (Palphabet Q)} → (∀ x → ρ -Proof (embedr {∅} { -Proof} {P} x) ≡ σ -Proof (embedr x)) → ρ ∼R σ
 Palphabet-faithful {∅} _ ()
 Palphabet-faithful {Lift _} ρ-is-σ x₀ = wd var (ρ-is-σ ⊥)
 Palphabet-faithful {Lift _} {Q} {ρ} {σ} ρ-is-σ (↑ x) = Palphabet-faithful {Q = Q} {ρ = ρ •R (λ _ → ↑)} {σ = σ •R (λ _ → ↑)} (λ y → ρ-is-σ (↑ y)) x
 
 infix 10 _⊢_∷_
 data _⊢_∷_ : ∀ {P} → PContext P → Proof (Palphabet P) → Expression (Palphabet P) (nonVarKind -Prp) → Set where
-  var : ∀ {P} {Γ : PContext P} {p : El P} → Γ ⊢ var (embed p) ∷ typeof' p Γ
+  var : ∀ {P} {Γ : PContext P} {p : El P} → Γ ⊢ var (embedr p) ∷ typeof' p Γ
   app : ∀ {P} {Γ : PContext P} {δ} {ε} {φ} {ψ} → Γ ⊢ δ ∷ φ ⇒ ψ → Γ ⊢ ε ∷ φ → Γ ⊢ appP δ ε ∷ ψ
   Λ : ∀ {P} {Γ : PContext P} {φ} {δ} {ψ} → (_,_ {K = -Proof} Γ φ) ⊢ δ ∷ liftE ψ → Γ ⊢ ΛP φ δ ∷ φ ⇒ ψ
 \end{code}
@@ -153,17 +154,17 @@ for every $x : \phi$ in $\Gamma$, we have $\rho(x) : \phi \in \Delta$.
 \begin{code}
 toRep : ∀ {P} {Q} → (El P → El Q) → Rep (Palphabet P) (Palphabet Q)
 toRep {∅} f K ()
-toRep {Lift P} f .-Proof x₀ = embed (f ⊥)
+toRep {Lift P} f .-Proof x₀ = embedr (f ⊥)
 toRep {Lift P} {Q} f K (↑ x) = toRep {P} {Q} (f ∘ ↑) K x
 
-toRep-embed : ∀ {P} {Q} {f : El P → El Q} {x : El P} → toRep f -Proof (embed x) ≡ embed (f x)
-toRep-embed {∅} {_} {_} {()}
-toRep-embed {Lift _} {_} {_} {⊥} = ref
-toRep-embed {Lift P} {Q} {f} {↑ x} = toRep-embed {P} {Q} {f ∘ ↑} {x}
+toRep-embedr : ∀ {P} {Q} {f : El P → El Q} {x : El P} → toRep f -Proof (embedr x) ≡ embedr (f x)
+toRep-embedr {∅} {_} {_} {()}
+toRep-embedr {Lift _} {_} {_} {⊥} = ref
+toRep-embedr {Lift P} {Q} {f} {↑ x} = toRep-embedr {P} {Q} {f ∘ ↑} {x}
 
 toRep-comp : ∀ {P} {Q} {R} {g : El Q → El R} {f : El P → El Q} → toRep g •R toRep f ∼R toRep (g ∘ f)
 toRep-comp {∅} ()
-toRep-comp {Lift _} {g = g} x₀ = wd var (toRep-embed {f = g})
+toRep-comp {Lift _} {g = g} x₀ = wd var (toRep-embedr {f = g})
 toRep-comp {Lift _} {g = g} {f = f} (↑ x) = toRep-comp {g = g} {f = f ∘ ↑} x
 
 _∷_⇒R_ : ∀ {P} {Q} → (El P → El Q) → PContext P → PContext Q → Set
@@ -171,7 +172,7 @@ _∷_⇒R_ : ∀ {P} {Q} → (El P → El Q) → PContext P → PContext Q → S
 
 toRep-↑ : ∀ {P} → toRep {P} {Lift P} ↑ ∼R (λ _ → ↑)
 toRep-↑ {∅} = λ ()
-toRep-↑ {Lift P} = Palphabet-faithful {Lift P} {Lift (Lift P)} {toRep {Lift P} {Lift (Lift P)} ↑} {λ _ → ↑} (λ x → toRep-embed {f = ↑} {x = x})
+toRep-↑ {Lift P} = Palphabet-faithful {Lift P} {Lift (Lift P)} {toRep {Lift P} {Lift (Lift P)} ↑} {λ _ → ↑} (λ x → toRep-embedr {f = ↑} {x = x})
 
 toRep-lift : ∀ {P} {Q} {f : El P → El Q} → toRep (lift f) ∼R Rep↑ (toRep f)
 toRep-lift x₀ = ref
@@ -219,7 +220,7 @@ Weakening Lemma
 \begin{code}
 Weakening : ∀ {P} {Q} {Γ : PContext P} {Δ : PContext Q} {ρ} {δ} {φ} → Γ ⊢ δ ∷ φ → ρ ∷ Γ ⇒R Δ → Δ ⊢ δ 〈 toRep ρ 〉 ∷ φ 〈 toRep ρ 〉
 Weakening {P} {Q} {Γ} {Δ} {ρ} (var {p = p}) ρ∷Γ→Δ = subst2 (λ x y → Δ ⊢ var x ∷ y) 
-  (sym (toRep-embed {f = ρ} {x = p}))
+  (sym (toRep-embedr {f = ρ} {x = p}))
   (ρ∷Γ→Δ p) 
   (var {p = ρ p})
 Weakening (app Γ⊢δ∷φ→ψ Γ⊢ε∷φ) ρ∷Γ→Δ = app (Weakening Γ⊢δ∷φ→ψ ρ∷Γ→Δ) (Weakening Γ⊢ε∷φ ρ∷Γ→Δ)
@@ -254,7 +255,7 @@ for every $x : \phi$ in $\Gamma$, we have $\Delta \vdash \sigma(x) : \phi$.
 
 \begin{code}
 _∷_⇒_ : ∀ {P} {Q} → Sub (Palphabet P) (Palphabet Q) → PContext P → PContext Q → Set
-σ ∷ Γ ⇒ Δ = ∀ x → Δ ⊢ σ _ (embed x) ∷ typeof' x Γ ⟦ σ ⟧
+σ ∷ Γ ⇒ Δ = ∀ x → Δ ⊢ σ _ (embedr x) ∷ typeof' x Γ ⟦ σ ⟧
 
 Sub↑-typed : ∀ {P} {Q} {σ} {Γ : PContext P} {Δ : PContext Q} {φ : Expression (Palphabet P) (nonVarKind -Prp)} → σ ∷ Γ ⇒ Δ → Sub↑ σ ∷ (Γ , φ) ⇒ (Δ , φ ⟦ σ ⟧)
 Sub↑-typed {P} {Q} {σ} {Γ} {Δ} {φ} σ∷Γ→Δ ⊥ = subst (λ p → (Δ , φ ⟦ σ ⟧) ⊢ var x₀ ∷ p) 
@@ -265,13 +266,13 @@ Sub↑-typed {P} {Q} {σ} {Γ} {Δ} {φ} σ∷Γ→Δ ⊥ = subst (λ p → (Δ 
   var
 Sub↑-typed {Q = Q} {σ = σ} {Γ = Γ} {Δ = Δ} {φ = φ} σ∷Γ→Δ (↑ x) = 
   subst
-  (λ P → Δ , φ ⟦ σ ⟧ ⊢ Sub↑ σ -Proof (↑ (embed x)) ∷ P)
+  (λ P → Δ , φ ⟦ σ ⟧ ⊢ Sub↑ σ -Proof (↑ (embedr x)) ∷ P)
   (let open Equational-Reasoning (Expression (Palphabet Q , -Proof) (nonVarKind -Prp)) in 
   ∵ liftE (typeof' x Γ ⟦ σ ⟧)
   ≡ typeof' x Γ ⟦ (λ _ → ↑) •₁ σ ⟧      [[ sub-comp₁ {E = typeof' x Γ} ]]
   ≡ liftE (typeof' x Γ) ⟦ Sub↑ σ ⟧      [ sub-comp₂ {E = typeof' x Γ} ])
   (subst2 (λ x y → Δ , φ ⟦ σ ⟧ ⊢ x ∷ y) 
-    (rep-wd {E = σ -Proof (embed x)} (toRep-↑ {Q})) 
+    (rep-wd {E = σ -Proof (embedr x)} (toRep-↑ {Q})) 
     (rep-wd {E = typeof' x Γ ⟦ σ ⟧} (toRep-↑ {Q}))
     (Weakening (σ∷Γ→Δ x) (↑-typed {φ = φ ⟦ σ ⟧})))
 
@@ -283,7 +284,7 @@ botsub-typed {P} {Γ} {φ} {δ} Γ⊢δ∷φ ⊥ = subst (λ P₁ → Γ ⊢ δ 
   ≡ φ ⟦ idSub ⟧                   [[ sub-id ]]
   ≡ liftE φ ⟦ x₀:= δ ⟧            [ sub-comp₂ {E = φ} ]) 
   Γ⊢δ∷φ
-botsub-typed {P} {Γ} {φ} {δ} _ (↑ x) = subst (λ P₁ → Γ ⊢ var (embed x) ∷ P₁) 
+botsub-typed {P} {Γ} {φ} {δ} _ (↑ x) = subst (λ P₁ → Γ ⊢ var (embedr x) ∷ P₁) 
   (let open Equational-Reasoning (Expression (Palphabet P) (nonVarKind -Prp)) in 
   ∵ typeof' x Γ
   ≡ typeof' x Γ ⟦ idSub ⟧                [[ sub-id ]]
@@ -356,7 +357,7 @@ C-typed {Γ = Γ} {φ = app imp (app₂ (out φ) (app₂ (out ψ) out₂))} {δ 
 
 C-rep : ∀ {P} {Q} {Γ : PContext P} {Δ : PContext Q} {φ} {δ} {ρ} → C Γ φ δ → ρ ∷ Γ ⇒R Δ → C Δ φ (δ 〈 toRep ρ 〉)
 C-rep {φ = app bot out₂} (Γ⊢δ∷⊥ , SNδ) ρ∷Γ→Δ = (Weakening Γ⊢δ∷⊥ ρ∷Γ→Δ) , SNrep β-creates-rep SNδ
-C-rep {P} {Q} {Γ} {Δ} {app imp (app₂ (out φ) (app₂ (out ψ) out₂))} {δ} {ρ} (Γ⊢δ∷φ⇒ψ , Cδ) ρ∷Γ→Δ = (subst {i = zro} {A = Expression (Palphabet Q) (nonVarKind -Prp)} (λ x → Δ ⊢ δ 〈 toRep ρ 〉 ∷ x) {a = φ 〈 _ 〉 〈 toRep ρ 〉 ⇒ ψ 〈 _ 〉 〈 toRep ρ 〉} {b = (φ ⇒ ψ) 〈 _ 〉}
+C-rep {P} {Q} {Γ} {Δ} {app imp (app₂ (out φ) (app₂ (out ψ) out₂))} {δ} {ρ} (Γ⊢δ∷φ⇒ψ , Cδ) ρ∷Γ→Δ = (subst {i = zero} {A = Expression (Palphabet Q) (nonVarKind -Prp)} (λ x → Δ ⊢ δ 〈 toRep ρ 〉 ∷ x) {a = φ 〈 _ 〉 〈 toRep ρ 〉 ⇒ ψ 〈 _ 〉 〈 toRep ρ 〉} {b = (φ ⇒ ψ) 〈 _ 〉}
   (wd2 _⇒_ 
   (let open Equational-Reasoning (Expression (Palphabet Q) (nonVarKind -Prp)) in 
     ∵ (φ 〈 _ 〉) 〈 toRep ρ 〉

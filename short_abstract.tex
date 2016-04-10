@@ -51,7 +51,7 @@ We call the following type theory \emph{predicative higher-order propositional l
 is closed under implication $\supset$.  The system also includes the higher-order types that can be built from $\Omega$ by $\rightarrow$.  Its grammar and rules of deduction are as follows.
 
 \[ \begin{array}{lrcl}
-\text{Proof} & \delta & ::= & p \mid \delta \delta \mid \lambda p : \phi . \delta \\
+\text{Proof} & \delta & ::= & p \mid \delta \cdot \delta \mid \lambda p : \phi . \delta \\
 \text{Term} & M, \phi & ::= & x \mid \bot \mid M M \mid \lambda x : A . M \mid \phi \supset \phi \\
 \text{Type} & A & ::= & \Omega \mid A \rightarrow A \\
 \end{array} \]
@@ -65,7 +65,7 @@ is closed under implication $\supset$.  The system also includes the higher-orde
 \infer{\Gamma \vdash \bot : \Omega}{\Gamma \vald} \qquad
 \infer{\Gamma \vdash \phi \supset \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} \\
 \infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \qquad
-\infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \phi} \\
+\infer{\Gamma \vdash \delta \cdot \epsilon : \psi} {\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \phi} \\
 \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \qquad
 \infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \supset \psi}{\Gamma, p : \phi \vdash \delta : \psi} \qquad
 \infer[(\phi \simeq \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega}
@@ -73,13 +73,13 @@ is closed under implication $\supset$.  The system also includes the higher-orde
 
 \paragraph{Extensional equality.}
 
-On top of this system, we add an equality relation that satisfies univalence.  We add a new judgement form,
-$\Gamma \vdash P : M =_A M$, to denote that $P$ is an \emph{equality proof} that $M$ and $N$ are equal terms of type $A$.  
+On top of this system, we add an equality predicate that satisfies univalence.
 
 \[
 \begin{array}{lrcl}
-\text{Equality proof} & P & ::= & e \mid \reff{M} \mid \univ{\phi}{\phi}{\delta}{\delta} \mid \triplelambda e : x =_A x . P \mid P \supset P \mid PP \\
-\text{Proof} & \delta & ::= & \cdots \mid P^+ \mid P^-
+\text{Term} & M , \phi & ::= & \cdots \mid M =_A M \\
+\text{Proof} & \delta & ::= & \cdots \mid \reff{M} \mid \univ{\phi}{\phi}{\delta}{\delta} \mid \triplelambda x : x =_A x . \delta \mid \delta \supset \delta \mid \delta \delta \\
+ & & & \mid \delta^+ \mid \delta^-
 \end{array} \]
 
 \begin{itemize}
@@ -89,12 +89,12 @@ For any $M : A$, there is an equality proof $\reff{M} : M =_A M$.
 \textbf{Univalence.}  Given proofs $\delta : \phi \supset \psi$ and $\epsilon : \psi \supset \phi$, there is an equality proof
 $\univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi$.
 \item
-Given a proof $P : \phi =_\Omega \psi$, we have proofs $P^+ : \phi \supset \psi$ and $P^- : \psi \supset \phi$.
+Given a proof $\delta : \phi =_\Omega \psi$, we have proofs $\delta^+ : \phi \supset \psi$ and $\delta^- : \psi \supset \phi$.
 \item
-Given an equality proof $\Gamma, x : A, y : A, e : x =_A y \vdash P : Mx =_B Ny$, there is an equality proof $\Gamma \vdash \triplelambda e : x=_Ay . P : M =_{A \rightarrow B} N$.  (Here, $e$, $x$ and $y$ are bound within $P$.)
+Given an equality proof $\Gamma, x : A, y : A, e : x =_A y \vdash \delta : Mx =_B Ny$, there is an equality proof $\Gamma \vdash \triplelambda e : x=_Ay . \delta : M =_{A \rightarrow B} N$.  (Here, $e$, $x$ and $y$ are bound within $\delta$.)
 \item
 \textbf{Congruence.}
-If $P : \phi =_\Omega \phi'$ and $Q : \psi =_\Omega \psi'$ then $P \supset Q : \phi \supset \psi =_\Omega \phi' \supset \psi'$.  If $P : M =_{A \rightarrow B} M'$ and $Q : N =_A N'$ then $PQ : MN =_B M'N'$.
+If $\delta : \phi =_\Omega \phi'$ and $\epsilon : \psi =_\Omega \psi'$ then $\delta \supset \epsilon : \phi \supset \psi =_\Omega \phi' \supset \psi'$.  If $\delta : M =_{A \rightarrow B} M'$ and $\epsilon : N =_A N'$ then $\delta \epsilon : MN =_B M'N'$.
 \end{itemize}
 
 \paragraph{The reduction relation.}
@@ -121,11 +121,11 @@ We define the following reduction relation on proofs and equality proofs.
 \qquad
 \reff{M} \reff{N} \rightsquigarrow \reff{MN}
 \\
-(\reff{\lambda x:A.M})P \rightsquigarrow \{ P / x \} M \qquad (P \text{ a normal form not of the form } \reff{\_})
+(\reff{\lambda x:A.M})\delta \rightsquigarrow \{ \delta / x \} M \qquad (\delta \text{ a normal form not of the form } \reff{\_})
 \\
-(\triplelambda e : x =_A y.P)Q \rightsquigarrow [M/x, N/y, Q/e]P \qquad (Q : M =_A N)
+(\triplelambda e : x =_A y.\delta)\epsilon \rightsquigarrow [M/x, N/y, \epsilon/e]\delta \qquad (\epsilon : M =_A N)
 \end{gather*}
-Here, $\{ P / x \}M$ is an operation called \emph{path substitution} defined such that, if $P : N =_A N'$, then $\{ P / x \} M : [N/x]M = [N'/x]M$.
+Here, $\{ \delta / x \}M$ is an operation called \emph{path substitution} defined such that, if $\delta : N =_A N'$, then $\{ \delta / x \} M : [N/x]M = [N'/x]M$.
 
 \paragraph{Main Theorem.}
 
@@ -135,15 +135,13 @@ In the system described above, all typable terms, proofs and equality proofs are
 
 Thus, we know that a well-typed computation never gets `stuck' at an application of the univalence axiom.
 
-\paragraph{Proof.}
-
-The proof uses the method of Tait-style computability.
+\paragraph{Proof.} The proof uses the method of Tait-style computability.
 We define the set of \emph{computable} terms $E_\Gamma(A)$ for each type $A$,
-and computable proofs $E_\Gamma(M =_A N)$ for any terms $\Gamma \vdash M,N : A$. We prove that reduction is locally confluent, and that the computability predicates are closed under reduction and well-typed expansion.  We can then prove that, if $\Gamma \vdash M : A$, then $M \in E_\Gamma(A)$; and if $\Gamma \vdash P : M =_A N$, then $P \in E_\Gamma(M =_A N)$. 
+and computable proofs $E_\Gamma(M =_A N)$ for any terms $\Gamma \vdash M,N : A$. We prove that reduction is locally confluent, and that the computability predicates are closed under reduction and well-typed expansion.  We can then prove that, if $\Gamma \vdash M : A$, then $M \in E_\Gamma(A)$; and if $\Gamma \vdash \delta : M =_A N$, then $\delta \in E_\Gamma(M =_A N)$. 
 
-\subparagraph{Remark.} Tait's proof relies on confluence, which does not hold for this reduction relation in general.  In the proof, we prove confluence `on-the-fly'.  That is, whenever we require a term to be confluent, the induction hypothesis provides us with the fact that that term is computable, and hence strongly normalizing and confluent.
+\paragraph{Remark.} Tait's proof relies on confluence, which does not hold for this reduction relation in general.  In the proof, we prove confluence `on-the-fly'.  That is, whenever we require a term to be confluent, the induction hypothesis provides us with the fact that that term is computable, and hence strongly normalizing and confluent.
 
-% In the future, we wish to extend this work in several directions.  We wish to add constructions $\mathsf{sym}(P)$ and $\mathsf{trans}(P,Q)$ that make our equality into an equivalence
+% In the future, we wish to extend this work in several directions.  We wish to add constructions $\mathsf{sym}(\delta)$ and $\mathsf{trans}(\delta,\epsilon)$ that make our equality into an equivalence
 % relation, place the equations $M =_A N$ inside $
 % and provide reduction rules for each of these.  We wish to extend our logic by placing the equations $M =_A N$ inside $\Omega$, and allow quantification over any type in $A$ (including $\Omega$) in our logic.  This would move our system ever closer to homotopy type theory.  Our ultimate goal is to provide a strongly normalizing reduction relation for homotopy type theory, including the terms involving the univalence axiom, and we believe we have taken the first step.
 
