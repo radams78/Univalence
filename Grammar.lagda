@@ -99,20 +99,32 @@ Each $x_{ij}$ is bound within $E_i$ in the expression (\ref{eq:expression}).  We
 to $\alpha$-conversion.
 
 \begin{code}
-  data Subexpression (V : Alphabet) : ∀ C → Kind C → Set where
-    var : ∀ {K} → Var V K → Subexpression V -Expression (base (varKind K))
-    app : ∀ {K} {C : Kind (-Constructor K)} → Constructor C → Subexpression V (-Constructor K) C → Subexpression V -Expression (base K)
-    out : ∀ {K} → Subexpression V -Expression (base K) → Subexpression V -Abstraction (out K)
-    Λ   : ∀ {K} {A} → Subexpression (V , K) -Abstraction A → Subexpression V -Abstraction (Π K A)
-    out₂ : ∀ {K} → Subexpression V (-Constructor K) out₂
-    app₂ : ∀ {K} {A} {C} → Subexpression V -Abstraction A → Subexpression V (-Constructor K) C → Subexpression V (-Constructor K) (Π₂ A C)
+  data Subexpression : Alphabet → ∀ C → Kind C → Set
+  Expression : Alphabet → ExpressionKind → Set
+  Body : Alphabet → ∀ {K} → Kind (-Constructor K) → Set
+  Abstraction : Alphabet → Kind -Abstraction → Set
+
+  Expression V K = Subexpression V -Expression (base K)
+  Body V {K} C = Subexpression V (-Constructor K) C
+  alpha : Alphabet → Kind -Abstraction → Alphabet
+  alpha V (out _) = V
+  alpha V (Π K A) = alpha (V , K) A
+
+  beta : Kind -Abstraction → ExpressionKind
+  beta (out K) = K
+  beta (Π _ A) = beta A
+
+  Abstraction V A = Expression (alpha V A) (beta A)
+--Make Abstraction recursively defined?
+
+  data Subexpression where
+    var : ∀ {V} {K} → Var V K → Expression V (varKind K)
+    app : ∀ {V} {K} {C} → Constructor C → Body V {K} C → Expression V K
+    out₂ : ∀ {V} {K} → Body V {K} out₂
+    app₂ : ∀ {V} {K} {A} {C} → Abstraction V A → Body V {K} C → Body V (Π₂ A C)
 
   var-inj : ∀ {V} {K} {x y : Var V K} → var x ≡ var y → x ≡ y
   var-inj ref = ref
-
-  Expression : Alphabet → ExpressionKind → Set
-  Expression V K = Subexpression V -Expression (base K)
---TODO Change this to Alphabet → VarKind → Set ?
 \end{code}
 
 \subsection{Families of Operations}
@@ -175,6 +187,15 @@ for all $x$.  Note that this is equivalent to $\rho[E] \equiv \sigma[E]$ for all
     _∼op_ : ∀ {U} {V} → Op U V → Op U V → Set
     _∼op_ {U} {V} ρ σ = ∀ {K} (x : Var U K) → apV ρ x ≡ apV σ x
 
+    ∼-ref : ∀ {U} {V} {σ : Op U V} → σ ∼op σ
+    ∼-ref _ = ref
+
+    ∼-sym : ∀ {U} {V} {σ τ : Op U V} → σ ∼op τ → τ ∼op σ
+    ∼-sym σ-is-τ x = sym (σ-is-τ x)
+
+    ∼-trans : ∀ {U} {V} {ρ σ τ : Op U V} → ρ ∼op σ → σ ∼op τ → ρ ∼op τ
+    ∼-trans ρ-is-σ σ-is-τ x = trans (ρ-is-σ x) (σ-is-τ x)
+
   record IsLiftFamily (opfamily : PreOpFamily) : Set₁ where
     open PreOpFamily opfamily
     field
@@ -182,22 +203,26 @@ for all $x$.  Note that this is equivalent to $\rho[E] \equiv \sigma[E]$ for all
       liftOp-x₀ : ∀ {U} {V} {K} {σ : Op U V} → apV (liftOp K σ) x₀ ≡ var x₀
       liftOp-wd : ∀ {V} {W} {K} {ρ σ : Op V W} → ρ ∼op σ → liftOp K ρ ∼op liftOp K σ
 
+    liftOp' : ∀ {U} {V} A → Op U V → Op (alpha U A) (alpha V A)
+    liftOp' (out _) σ = σ
+    liftOp' (Π K A) σ = liftOp' A (liftOp K σ)
+
+    liftOp'-wd : ∀ {U} {V} A {ρ σ : Op U V} → ρ ∼op σ → liftOp' A ρ ∼op liftOp' A σ
+    liftOp'-wd (out _) ρ-is-σ = ρ-is-σ
+    liftOp'-wd (Π _ A) ρ-is-σ = liftOp'-wd A (liftOp-wd ρ-is-σ)
+
     ap : ∀ {U} {V} {C} {K} → Op U V → Subexpression U C K → Subexpression V C K
     ap ρ (var x) = apV ρ x
     ap ρ (app c EE) = app c (ap ρ EE)
-    ap ρ (out E) = out (ap ρ E)
-    ap ρ (Λ E) = Λ (ap (liftOp _ ρ) E)
     ap _ out₂ = out₂
-    ap ρ (app₂ E EE) = app₂ (ap ρ E) (ap ρ EE)
+    ap ρ (app₂ {A = A} E EE) = app₂ (ap (liftOp' A ρ) E) (ap ρ EE)
 
     ap-wd : ∀ {U} {V} {C} {K} {ρ σ : Op U V} (E : Subexpression U C K) →
       ρ ∼op σ → ap ρ E ≡ ap σ E
     ap-wd (var x) ρ-is-σ = ρ-is-σ x
     ap-wd (app c E) ρ-is-σ = wd (app c) (ap-wd E ρ-is-σ)
-    ap-wd (out E) ρ-is-σ = wd out (ap-wd E ρ-is-σ)
-    ap-wd (Λ {K} E) ρ-is-σ = wd Λ (ap-wd E (liftOp-wd {K = K} ρ-is-σ))
     ap-wd out₂ _ = ref
-    ap-wd (app₂ E F) ρ-is-σ = wd2 app₂ (ap-wd E ρ-is-σ) (ap-wd F ρ-is-σ)
+    ap-wd (app₂ {A = A} E F) ρ-is-σ = wd2 app₂ (ap-wd E (liftOp'-wd A ρ-is-σ)) (ap-wd F ρ-is-σ)
 
   record LiftFamily : Set₂ where
     field
@@ -248,27 +273,26 @@ The following results about operationsare easy to prove.
 --TODO Replace with apV (liftOp (id V)) x ≡ x or ap (liftOp (id V)) E ≡ E?
 --trans (liftOp-↑ x) (trans (wd (ap up) (apV-id x)) (trans apV-up (sym (apV-id (↑ x)))))
 
+    liftOp'-id : ∀ {V} A → liftOp' A (id V) ∼op id (alpha V A)
+    liftOp'-id (out _) = ∼-ref
+    liftOp'-id {V} (Π K A) = ∼-trans (liftOp'-wd A liftOp-id) (liftOp'-id A)
+
     ap-id : ∀ {V} {C} {K} {E : Subexpression V C K} → ap (id V) E ≡ E
     ap-id {E = var x} = apV-id x
     ap-id {E = app c EE} = wd (app c) ap-id
-    ap-id {E = out E} = wd out ap-id
-    ap-id {V} {K = Taxonomy.Π K A} {E = Λ E} = wd Λ (let open Equational-Reasoning _ in 
-      ∵ ap (liftOp K (id V)) E
-      ≡ ap (id (V , K)) E      [ ap-wd E liftOp-id ]
-      ≡ E                      [ ap-id ])
     ap-id {E = out₂} = ref
-    ap-id {E = app₂ E F} = wd2 app₂ ap-id ap-id
+    ap-id {E = app₂ {A = A} E F} = wd2 app₂ (trans (ap-wd E (liftOp'-id A)) ap-id) ap-id
       
+    liftOp'-comp : ∀ {U} {V} {W} A {σ : Op U V} {τ : Op V W} → liftOp' A (comp τ σ) ∼op comp (liftOp' A τ) (liftOp' A σ)
+    liftOp'-comp (Taxonomy.out x) = ∼-ref
+    liftOp'-comp (Taxonomy.Π x A) = ∼-trans (liftOp'-wd A liftOp-comp) (liftOp'-comp A)
+--TODO Extract common pattern
+
     ap-comp : ∀ {U} {V} {W} {C} {K} (E : Subexpression U C K) {σ : Op V W} {ρ : Op U V} → ap (comp σ ρ) E ≡ ap σ (ap ρ E)
     ap-comp (var x) = apV-comp
     ap-comp (app c E) = wd (app c) (ap-comp E)
-    ap-comp (out E) = wd out (ap-comp E)
-    ap-comp (Λ E) {σ} {ρ} = wd Λ (let open Equational-Reasoning _ in 
-      ∵ ap (liftOp _ (comp σ ρ)) E
-      ≡ ap (comp (liftOp _ σ) (liftOp _ ρ)) E [ ap-wd E (liftOp-comp {σ = σ} {ρ = ρ}) ]
-      ≡ ap (liftOp _ σ) (ap (liftOp _ ρ) E)   [ ap-comp E ])
     ap-comp out₂ = ref
-    ap-comp (app₂ E F) = wd2 app₂ (ap-comp E) (ap-comp F)
+    ap-comp (app₂ {A = A} E F) = wd2 app₂ (trans (ap-wd E (liftOp'-comp A)) (ap-comp E)) (ap-comp F)
 \end{code}
 
 The alphabets and operations up to equivalence form
@@ -475,18 +499,27 @@ Most of the axioms of a family of operations are easy to verify.
     ≡ (σ L x) 〈 (λ _ x → ↑ (ρ _ x)) 〉 [[ rep-comp {E = σ L x} ]]
     ≡ (liftE (σ L x)) 〈 Rep↑ ρ 〉      [ rep-comp {E = σ L x} ]
 
+  liftOp'-comp₁ : ∀ {U} {V} {W} {A} {ρ : Rep V W} {σ : Sub U V} →
+    LiftFamily.liftOp' proto-substitution A (ρ •₁ σ) ∼ OpFamily.liftOp' replacement A ρ •₁ LiftFamily.liftOp' proto-substitution A σ
+  liftOp'-comp₁ {A = out _} {ρ} {σ} = LiftFamily.∼-ref proto-substitution {σ = ρ •₁ σ}
+  liftOp'-comp₁ {U} {V} {W} {Π K A} {ρ} {σ} = 
+    LiftFamily.∼-trans proto-substitution 
+      (LiftFamily.liftOp'-wd proto-substitution A 
+        (Sub↑-comp₁ {ρ = ρ} {σ = σ})) 
+        (liftOp'-comp₁ {A = A})
+
   sub-comp₁ : ∀ {U} {V} {W} {C} {K} {E : Subexpression U C K} {ρ : Rep V W} {σ : Sub U V} →
       E ⟦ ρ •₁ σ ⟧ ≡ E ⟦ σ ⟧ 〈 ρ 〉
   sub-comp₁ {E = var _} = ref
   sub-comp₁ {E = app c EE} = wd (app c) (sub-comp₁ {E = EE})
   sub-comp₁ {E = out₂} = ref
-  sub-comp₁ {E = app₂ A EE} = wd2 app₂ (sub-comp₁ {E = A}) (sub-comp₁ {E = EE})
-  sub-comp₁ {E = out E} = wd out (sub-comp₁ {E = E})
-  sub-comp₁ {E = Λ A} {ρ} {σ} = 
-    wd Λ (let open Equational-Reasoning _ in 
-    ∵ A ⟦ Sub↑ (ρ •₁ σ) ⟧
-    ≡ A ⟦ Rep↑ ρ •₁ Sub↑ σ ⟧   [ sub-wd {E = A} Sub↑-comp₁ ]
-    ≡ A ⟦ Sub↑ σ ⟧ 〈 Rep↑ ρ 〉  [ sub-comp₁ {E = A} ])
+  sub-comp₁ {E = app₂ {A = A} E F} {ρ} {σ} = wd2 app₂ 
+    (let open Equational-Reasoning (Expression (alpha _ A) (beta A)) in
+    ∵ E ⟦ LiftFamily.liftOp' proto-substitution A (ρ •₁ σ) ⟧
+    ≡ E ⟦ OpFamily.liftOp' replacement A ρ •₁ LiftFamily.liftOp' proto-substitution A σ ⟧ [ LiftFamily.ap-wd proto-substitution E (liftOp'-comp₁ {A = A}) ]
+    ≡ E ⟦ LiftFamily.liftOp' proto-substitution A σ ⟧ 〈 OpFamily.liftOp' replacement A ρ 〉 [ sub-comp₁ {E = E} ])
+    (sub-comp₁ {E = F})
+--TODO Equational Reasoning for setoids
 
   infix 75 _•₂_
   _•₂_ : ∀ {U} {V} {W} → Sub V W → Rep U V → Sub U W
@@ -496,16 +529,20 @@ Most of the axioms of a family of operations are easy to verify.
   Sub↑-comp₂ {K = K} x₀ = ref
   Sub↑-comp₂ (↑ x) = ref
 
+  liftOp'-comp₂ : ∀ {U} {V} {W} {A} {σ : Sub V W} {ρ : Rep U V} → LiftFamily.liftOp' proto-substitution A (σ •₂ ρ) ∼ LiftFamily.liftOp' proto-substitution A σ •₂ OpFamily.liftOp' replacement A ρ
+  liftOp'-comp₂ {A = out _} {σ} {ρ} = LiftFamily.∼-ref proto-substitution {σ = σ •₂ ρ}
+  liftOp'-comp₂ {A = Π _ A} = LiftFamily.∼-trans proto-substitution (LiftFamily.liftOp'-wd proto-substitution A Sub↑-comp₂) (liftOp'-comp₂ {A = A})
+
   sub-comp₂ : ∀ {U} {V} {W} {C} {K} {E : Subexpression U C K} {σ : Sub V W} {ρ : Rep U V} → E ⟦ σ •₂ ρ ⟧ ≡ E 〈 ρ 〉 ⟦ σ ⟧
   sub-comp₂ {E = var _} = ref
   sub-comp₂ {E = app c EE} = wd (app c) (sub-comp₂ {E = EE})
   sub-comp₂ {E = out₂} = ref
-  sub-comp₂ {E = app₂ A EE} = wd2 app₂ (sub-comp₂ {E = A}) (sub-comp₂ {E = EE})
-  sub-comp₂ {E = out E} = wd out (sub-comp₂ {E = E})
-  sub-comp₂ {E = Λ A} {σ} {ρ} = wd Λ (let open Equational-Reasoning _ in 
-    ∵ A ⟦ Sub↑ (σ •₂ ρ) ⟧
-    ≡ A ⟦ Sub↑ σ •₂ Rep↑ ρ ⟧ [ sub-wd {E = A} Sub↑-comp₂ ]
-    ≡ A 〈 Rep↑ ρ 〉 ⟦ Sub↑ σ ⟧ [ sub-comp₂ {E = A} ])
+  sub-comp₂ {E = app₂ {A = A} E F} {σ} {ρ} = wd2 app₂ 
+    (let open Equational-Reasoning (Expression (alpha _ A) (beta A)) in
+    ∵ E ⟦ LiftFamily.liftOp' proto-substitution A (σ •₂ ρ) ⟧
+    ≡ E ⟦ LiftFamily.liftOp' proto-substitution A σ •₂ OpFamily.liftOp' replacement A ρ ⟧ [ LiftFamily.ap-wd proto-substitution E (liftOp'-comp₂ {A = A}) ]
+    ≡ E 〈 OpFamily.liftOp' replacement A ρ 〉 ⟦ LiftFamily.liftOp' proto-substitution A σ ⟧ [ sub-comp₂ {E = E} ])
+    (sub-comp₂ {E = F})
 
   Sub↑-comp : ∀ {U} {V} {W} {ρ : Sub U V} {σ : Sub V W} {K} →
     Sub↑ {K = K} (σ • ρ) ∼ Sub↑ σ • Sub↑ ρ
@@ -533,16 +570,22 @@ $$ E \langle \rho \rangle \equiv E [ \rho ] $$
   Rep↑-is-Sub↑ x₀ = ref
   Rep↑-is-Sub↑ (↑ _) = ref
 
+  liftOp'-is-liftOp' : ∀ {U} {V} {ρ : Rep U V} {A} → (λ K x → var (OpFamily.liftOp' replacement A ρ K x)) ∼ LiftFamily.liftOp' proto-substitution A (λ K x → var (ρ K x))
+  liftOp'-is-liftOp' {ρ = ρ} {A = out _} = LiftFamily.∼-ref proto-substitution {σ = λ K x → var (ρ K x)}
+  liftOp'-is-liftOp' {U} {V} {ρ} {Taxonomy.Π K A} = LiftFamily.∼-trans proto-substitution 
+    (liftOp'-is-liftOp' {ρ = Rep↑ ρ} {A = A})
+    (LiftFamily.liftOp'-wd proto-substitution A (Rep↑-is-Sub↑ {ρ = ρ} {K = K}) )
+
   rep-is-sub : ∀ {U} {V} {K} {C} {E : Subexpression U K C} {ρ : Rep U V} → E 〈 ρ 〉 ≡ E ⟦ (λ K x → var (ρ K x)) ⟧
   rep-is-sub {E = var _} = ref
   rep-is-sub {E = app c E} = wd (app c) (rep-is-sub {E = E})
-  rep-is-sub {E = out E} = wd out (rep-is-sub {E = E})
-  rep-is-sub {U} {V} { -Abstraction} {Π K A} {Λ E} {ρ} = wd Λ (let open Equational-Reasoning (Subexpression (V , K) -Abstraction A) in 
-    ∵ E 〈 Rep↑ ρ 〉
-    ≡ E ⟦ (λ K x → var (Rep↑ ρ K x)) ⟧ [ rep-is-sub {E = E} ]
-    ≡ E ⟦ Sub↑ (λ K x → var (ρ K x)) ⟧ [ sub-wd {E = E} Rep↑-is-Sub↑ ])
   rep-is-sub {E = out₂} = ref
-  rep-is-sub {E = app₂ E F} = wd2 app₂ (rep-is-sub {E = E}) (rep-is-sub {E = F})
+  rep-is-sub {E = app₂ {A = A} E F} {ρ} = wd2 app₂ 
+    (let open Equational-Reasoning (Expression (alpha _ A) (beta A)) in
+    ∵ E 〈 OpFamily.liftOp' replacement A ρ 〉
+    ≡ E ⟦ (λ K x → var (OpFamily.liftOp' replacement A ρ K x)) ⟧ [ rep-is-sub {E = E} ]
+    ≡ E ⟦ LiftFamily.liftOp' proto-substitution A (λ K x → var (ρ K x)) ⟧ [ LiftFamily.ap-wd proto-substitution E (liftOp'-is-liftOp' {A = A}) ]) 
+    (rep-is-sub {E = F})
 
   substitution : OpFamily
   substitution = record { 
@@ -603,6 +646,29 @@ $$ \sigma \bullet [x_0 := E] \sim [x_0 := E[\sigma]] \bullet (\sigma , K) $$
     σ • (x₀:= E) ∼ (x₀:= (E ⟦ σ ⟧)) • Sub↑ σ
   comp-botsub x₀ = ref
   comp-botsub {σ = σ} {L} (↑ x) = trans (sym sub-id) (sub-comp₂ {E = σ L x})
+\end{code}
+
+\subsection{Congruences}
+
+A \emph{congruence} is a relation $R$ on expressions such that:
+\begin{enumerate}
+\item
+if $M R N$, then $M$ and $N$ have the same kind;
+\item
+if $M_i R N_i$ for all $i$, then $c[[\vec{x_1}]M_1, \ldots, [\vec{x_n}]M_n] R c[[\vec{x_1}]N_1, \ldots, [\vec{x_n}]N_n]$.
+\end{enumerate}
+
+\begin{code}
+  Relation : Set₁
+  Relation = ∀ {V} {C} {K} → Subexpression V C K → Subexpression V C K → Set
+
+--TODO Abbreviations for Subexpression V (-Constructor... and Subexpression V -Abstraction
+  record IsCongruence (R : Relation) : Set where
+    field
+      ICapp : ∀ {V} {K} {C} {c} {MM NN : Subexpression V (-Constructor K) C} → R MM NN → R (app c MM) (app c NN)
+      ICout₂ : ∀ {V} {K} → R {V} { -Constructor K} {out₂} out₂ out₂
+      ICappl : ∀ {V} {K} {A} {C} {M N : Abstraction V A} {PP : Body V {K} C} → R M N → R (app₂ {A = A} M PP) (app₂ N PP)
+      ICappr : ∀ {V} {K} {A} {C} {M : Abstraction V A} {NN PP : Body V {K} C} → R NN PP → R (app₂ {A = A} M NN) (app₂ M PP)
 \end{code}
 
 \subsection{Contexts}
