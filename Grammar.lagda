@@ -99,23 +99,24 @@ Each $x_{ij}$ is bound within $E_i$ in the expression (\ref{eq:expression}).  We
 to $\alpha$-conversion.
 
 \begin{code}
-  data Subexpression : Alphabet → ∀ C → Kind C → Set
   Expression : Alphabet → ExpressionKind → Set
   Body : Alphabet → ∀ {K} → Kind (-Constructor K) → Set
+  alpha : Alphabet → Kind -Abstraction → Alphabet
+  beta : Kind -Abstraction → ExpressionKind
   Abstraction : Alphabet → Kind -Abstraction → Set
+  data Subexpression : Alphabet → ∀ C → Kind C → Set
 
   Expression V K = Subexpression V -Expression (base K)
+
   Body V {K} C = Subexpression V (-Constructor K) C
-  alpha : Alphabet → Kind -Abstraction → Alphabet
+
   alpha V (out _) = V
   alpha V (Π K A) = alpha (V , K) A
 
-  beta : Kind -Abstraction → ExpressionKind
   beta (out K) = K
   beta (Π _ A) = beta A
 
   Abstraction V A = Expression (alpha V A) (beta A)
---Make Abstraction recursively defined?
 
   data Subexpression where
     var : ∀ {V} {K} → Var V K → Expression V (varKind K)
@@ -177,12 +178,43 @@ for all $x$.  Note that this is equivalent to $\rho[E] \equiv \sigma[E]$ for all
 --TODO Make this more computational?
   record PreOpFamily : Set₂ where
     field
-      Op : Alphabet → Alphabet → Set
-      apV : ∀ {U} {V} {K} → Op U V → Var U K → Expression V (varKind K)
+      Atom : Alphabet → Alphabet → Set
+      ap-atom : ∀ {U} {V} {K} → Atom U V → Var U K → Expression V (varKind K)
+
+    data Op : Alphabet → Alphabet → Set where
+      atom : ∀ {U} {V} → Atom U V → Op U V
       up : ∀ {V} {K} → Op V (V , K)
-      apV-up : ∀ {V} {K} {L} {x : Var V K} → apV (up {K = L}) x ≡ var (↑ x)
       id : ∀ V → Op V V
-      apV-id : ∀ {V} {K} (x : Var V K) → apV (id V) x ≡ var x
+      liftOp : ∀ {U} {V} K → Op U V → Op (U , K) (V , K)
+
+    liftOp' : ∀ {U} {V} A → Op U V → Op (alpha U A) (alpha V A)
+    liftOp' (out _) σ = σ
+    liftOp' (Π K A) σ = liftOp' A (liftOp K σ)
+
+    data apV↓ : ∀ {U} {V} {K} → Op U V → Var U K → Set
+    apV : ∀ {U} {V} {K} (σ : Op U V) (x : Var U K) → apV↓ σ x → Expression V (varKind K)
+    data ap↓ : ∀ {U} {V} {C} {K} → Op U V → Subexpression U C K → Set
+    ap : ∀ {U} {V} {C} {K} (σ : Op U V) (E : Subexpression U C K) → ap↓ σ E → Subexpression V C K
+
+    data apV↓ where
+      apV-atom : ∀ {σ} {x} → apV↓ (atom σ) x
+
+    apV (atom σ) x apV-atom = ap-atom σ x
+
+    data ap↓ where
+
+    ap σ E ()
+
+{-    apV (atom σ) x = ap-atom σ x
+    apV up x = var (↑ x)
+    apV (id _) x = var x
+    apV (liftOp K σ) x₀ = var x₀
+    apV (liftOp K σ) (↑ x) = ap up (apV σ x)
+
+    ap σ (var x) = apV σ x
+    ap σ (app c EE) = app c (ap σ EE)
+    ap _ out₂ = out₂
+    ap σ (app₂ {A = A} E F) = app₂ (ap (liftOp' A σ) E) (ap σ F)
 
     _∼op_ : ∀ {U} {V} → Op U V → Op U V → Set
     _∼op_ {U} {V} ρ σ = ∀ {K} (x : Var U K) → apV ρ x ≡ apV σ x
@@ -203,19 +235,9 @@ for all $x$.  Note that this is equivalent to $\rho[E] \equiv \sigma[E]$ for all
       liftOp-x₀ : ∀ {U} {V} {K} {σ : Op U V} → apV (liftOp K σ) x₀ ≡ var x₀
       liftOp-wd : ∀ {V} {W} {K} {ρ σ : Op V W} → ρ ∼op σ → liftOp K ρ ∼op liftOp K σ
 
-    liftOp' : ∀ {U} {V} A → Op U V → Op (alpha U A) (alpha V A)
-    liftOp' (out _) σ = σ
-    liftOp' (Π K A) σ = liftOp' A (liftOp K σ)
-
     liftOp'-wd : ∀ {U} {V} A {ρ σ : Op U V} → ρ ∼op σ → liftOp' A ρ ∼op liftOp' A σ
     liftOp'-wd (out _) ρ-is-σ = ρ-is-σ
     liftOp'-wd (Π _ A) ρ-is-σ = liftOp'-wd A (liftOp-wd ρ-is-σ)
-
-    ap : ∀ {U} {V} {C} {K} → Op U V → Subexpression U C K → Subexpression V C K
-    ap ρ (var x) = apV ρ x
-    ap ρ (app c EE) = app c (ap ρ EE)
-    ap _ out₂ = out₂
-    ap ρ (app₂ {A = A} E EE) = app₂ (ap (liftOp' A ρ) E) (ap ρ EE)
 
     ap-wd : ∀ {U} {V} {C} {K} {ρ σ : Op U V} (E : Subexpression U C K) →
       ρ ∼op σ → ap ρ E ≡ ap σ E
@@ -727,5 +749,5 @@ record Grammar : Set₁ where
     taxonomy : Taxonomy
     toGrammar : ToGrammar taxonomy
   open Taxonomy taxonomy public
-  open ToGrammar toGrammar public
+  open ToGrammar toGrammar public -}
 \end{code}
