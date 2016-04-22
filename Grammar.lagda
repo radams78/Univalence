@@ -111,6 +111,7 @@ to $\alpha$-conversion.
 
   Expression V K = Subexpression V -Expression (base K)
   Body V {K} C = Subexpression V (-Constructor K) C
+
   alpha : Alphabet → Kind -Abstraction → Alphabet
   alpha V (out _) = V
   alpha V (Π K A) = alpha (V , K) A
@@ -120,7 +121,6 @@ to $\alpha$-conversion.
   beta (Π _ A) = beta A
 
   Abstraction V A = Expression (alpha V A) (beta A)
---Make Abstraction recursively defined?
 
   data Subexpression where
     var : ∀ {V} {K} → Var V K → Expression V (varKind K)
@@ -179,7 +179,6 @@ We say two operations $\rho, \sigma : U \rightarrow V$ are \emph{equivalent}, $\
 for all $x$.  Note that this is equivalent to $\rho[E] \equiv \sigma[E]$ for all $E$. 
 
 \begin{code}
---TODO Make this more computational?
   record PreOpFamily : Set₂ where
     field
       Op : Alphabet → Alphabet → Set
