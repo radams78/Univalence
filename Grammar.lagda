@@ -228,6 +228,18 @@ for all $x$.  Note that this is equivalent to $\rho[E] \equiv \sigma[E]$ for all
     ap-cong out₂ _ = refl
     ap-cong (app₂ {A = A} E F) ρ-is-σ = cong₂ app₂ (ap-cong E (liftOp'-cong A ρ-is-σ)) (ap-cong F ρ-is-σ)
 
+    ap-cong' : ∀ {U} {V} {C} {K} {ρ σ : Op U V} {M N : Subexpression U C K} →
+      ρ ∼op σ → M ≡ N → ap ρ M ≡ ap σ N
+    ap-cong' {ρ = ρ} {σ} {M} {N} ρ∼σ M≡N = let open ≡-Reasoning in 
+      begin
+        ap ρ M
+      ≡⟨ ap-cong M ρ∼σ ⟩
+        ap σ M
+      ≡⟨ cong (ap σ) M≡N ⟩
+        ap σ N
+      ∎
+--TODO Rename
+
   record LiftFamily : Set₂ where
     field
       preOpFamily : PreOpFamily
@@ -310,6 +322,18 @@ The following results about operationsare easy to prove.
     ap-comp (app c E) = cong (app c) (ap-comp E)
     ap-comp out₂ = refl
     ap-comp (app₂ {A = A} E F) = cong₂ app₂ (trans (ap-cong E (liftOp'-comp A)) (ap-comp E)) (ap-comp F)
+
+    comp-cong : ∀ {U} {V} {W} {σ σ' : Op V W} {ρ ρ' : Op U V} → σ ∼op σ' → ρ ∼op ρ' → comp σ ρ ∼op comp σ' ρ'
+    comp-cong {σ = σ} {σ'} {ρ} {ρ'} σ∼σ' ρ∼ρ' x = let open ≡-Reasoning in 
+      begin
+        apV (comp σ ρ) x
+      ≡⟨ apV-comp ⟩
+        ap σ (apV ρ x)
+      ≡⟨ ap-cong' σ∼σ' (ρ∼ρ' x) ⟩
+        ap σ' (apV ρ' x)
+      ≡⟨⟨ apV-comp ⟩⟩
+        apV (comp σ' ρ') x
+      ∎
 \end{code}
 
 The alphabets and operations up to equivalence form
