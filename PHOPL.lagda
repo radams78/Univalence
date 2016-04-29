@@ -26,6 +26,7 @@ where $p$ ranges over proof variables and $x$ ranges over term variables.  The v
 and the variable $x$ is bound within $M$ in the term $\lambda x : A . M$.  We identify proofs and terms up to $\alpha$-conversion.
 
 \newcommand{\Term}[1]{\mathbf{Term} \left( #1 \right)}
+\newcommand{\FinSet}{\mathbf{FinSet}}
 In the implementation, we write $\Term{V}$ for the set of all terms with free variables a subset of $V$, where $V : \FinSet$.
 
 \begin{code}

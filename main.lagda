@@ -15,6 +15,8 @@
 \usepackage{proof}
 \usepackage{stmaryrd}
 
+\DeclareUnicodeCharacter{8667}{\ensuremath{\Rrightarrow}}
+\DeclareUnicodeCharacter{8718}{\ensuremath{\qed}}
 \DeclareUnicodeCharacter{8759}{\ensuremath{::}}
 \DeclareUnicodeCharacter{8988}{\ensuremath{\ulcorner}}
 \DeclareUnicodeCharacter{8989}{\ensuremath{\urcorner}}
@@ -31,6 +33,7 @@
 \newtheorem{lemma}{Lemma}
 
 \newcommand{\Set}{\mathbf{Set}}
+\newcommand{\eqdef}{\ensuremath{\stackrel{=}{\mathrm{def}}}}
 
 \begin{document}
 

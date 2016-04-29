@@ -70,7 +70,7 @@ record Taxonomy : Set₁ where
 
 An \emph{alphabet} $A$ consists of a finite set of \emph{variables}, to each of which is assigned a variable kind $K$.
 Let $\emptyset$ be the empty alphabet, and $(A , K)$ be the result of extending the alphabet $A$ with one
-fresh variable $x₀$ of kind $K$.  We write $\mathsc{Var}\ A\ K$ for the set of all variables in $A$ of kind $K$.
+fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of all variables in $A$ of kind $K$.
 
 \begin{code}
   data Alphabet : Set where
@@ -221,19 +221,19 @@ for all $x$.  Note that this is equivalent to $\rho[E] \equiv \sigma[E]$ for all
     ap _ out₂ = out₂
     ap ρ (app₂ {A = A} E EE) = app₂ (ap (liftOp' A ρ) E) (ap ρ EE)
 
-    ap-cong : ∀ {U} {V} {C} {K} {ρ σ : Op U V} (E : Subexpression U C K) →
+    ap-congl : ∀ {U} {V} {C} {K} {ρ σ : Op U V} (E : Subexpression U C K) →
       ρ ∼op σ → ap ρ E ≡ ap σ E
-    ap-cong (var x) ρ-is-σ = ρ-is-σ x
-    ap-cong (app c E) ρ-is-σ = cong (app c) (ap-cong E ρ-is-σ)
-    ap-cong out₂ _ = refl
-    ap-cong (app₂ {A = A} E F) ρ-is-σ = cong₂ app₂ (ap-cong E (liftOp'-cong A ρ-is-σ)) (ap-cong F ρ-is-σ)
+    ap-congl (var x) ρ-is-σ = ρ-is-σ x
+    ap-congl (app c E) ρ-is-σ = cong (app c) (ap-congl E ρ-is-σ)
+    ap-congl out₂ _ = refl
+    ap-congl (app₂ {A = A} E F) ρ-is-σ = cong₂ app₂ (ap-congl E (liftOp'-cong A ρ-is-σ)) (ap-congl F ρ-is-σ)
 
     ap-cong' : ∀ {U} {V} {C} {K} {ρ σ : Op U V} {M N : Subexpression U C K} →
       ρ ∼op σ → M ≡ N → ap ρ M ≡ ap σ N
     ap-cong' {ρ = ρ} {σ} {M} {N} ρ∼σ M≡N = let open ≡-Reasoning in 
       begin
         ap ρ M
-      ≡⟨ ap-cong M ρ∼σ ⟩
+      ≡⟨ ap-congl M ρ∼σ ⟩
         ap σ M
       ≡⟨ cong (ap σ) M≡N ⟩
         ap σ N
@@ -263,8 +263,8 @@ The following results about operationsare easy to prove.
 \begin{lemma}
   \begin{enumerate}
   \item $(\sigma , K) \circ \uparrow \sim \uparrow \circ \sigma$
-  \item $(\idOp{V} , K) \sim \idOp{V,K}$
-  \item $\idOp{V}[E] \equiv E$
+  \item $(\id{V} , K) \sim \id{V,K}$
+  \item $\id{V}[E] \equiv E$
   \item $(\sigma \circ \rho)[E] \equiv \sigma[\rho[E]]$
   \end{enumerate}
 \end{lemma}
@@ -310,7 +310,7 @@ The following results about operationsare easy to prove.
     ap-idOp {E = var x} = apV-idOp x
     ap-idOp {E = app c EE} = cong (app c) ap-idOp
     ap-idOp {E = out₂} = refl
-    ap-idOp {E = app₂ {A = A} E F} = cong₂ app₂ (trans (ap-cong E (liftOp'-idOp A)) ap-idOp) ap-idOp
+    ap-idOp {E = app₂ {A = A} E F} = cong₂ app₂ (trans (ap-congl E (liftOp'-idOp A)) ap-idOp) ap-idOp
       
     liftOp'-comp : ∀ {U} {V} {W} A {σ : Op U V} {τ : Op V W} → liftOp' A (comp τ σ) ∼op comp (liftOp' A τ) (liftOp' A σ)
     liftOp'-comp (Taxonomy.out x) = ∼-refl
@@ -321,7 +321,7 @@ The following results about operationsare easy to prove.
     ap-comp (var x) = apV-comp
     ap-comp (app c E) = cong (app c) (ap-comp E)
     ap-comp out₂ = refl
-    ap-comp (app₂ {A = A} E F) = cong₂ app₂ (trans (ap-cong E (liftOp'-comp A)) (ap-comp E)) (ap-comp F)
+    ap-comp (app₂ {A = A} E F) = cong₂ app₂ (trans (ap-congl E (liftOp'-comp A)) (ap-comp E)) (ap-comp F)
 
     comp-cong : ∀ {U} {V} {W} {σ σ' : Op V W} {ρ ρ' : Op U V} → σ ∼op σ' → ρ ∼op ρ' → comp σ ρ ∼op comp σ' ρ'
     comp-cong {σ = σ} {σ'} {ρ} {ρ'} σ∼σ' ρ∼ρ' x = let open ≡-Reasoning in 
@@ -335,6 +335,8 @@ The following results about operationsare easy to prove.
         apV (comp σ' ρ') x
       ∎
 \end{code}
+
+\newcommand{\Op}{\ensuremath{\mathbf{Op}}}
 
 The alphabets and operations up to equivalence form
 a category, which we denote $\Op$.
@@ -454,7 +456,7 @@ and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
     }
 
   rep-cong : ∀ {U} {V} {C} {K} {E : Subexpression U C K} {ρ ρ' : Rep U V} → ρ ∼R ρ' → E 〈 ρ 〉 ≡ E 〈 ρ' 〉
-  rep-cong {U} {V} {C} {K} {E} {ρ} {ρ'} ρ-is-ρ' = OpFamily.ap-cong replacement E ρ-is-ρ'
+  rep-cong {U} {V} {C} {K} {E} {ρ} {ρ'} ρ-is-ρ' = OpFamily.ap-congl replacement E ρ-is-ρ'
 
   rep-idOp : ∀ {V} {C} {K} {E : Subexpression V C K} → E 〈 idOpRep V 〉 ≡ E
   rep-idOp = OpFamily.ap-idOp replacement
@@ -537,7 +539,7 @@ Composition is defined by $(\sigma \circ \rho)(x) \equiv \rho(x) [ \sigma ]$.
   (σ • ρ) K x = ρ K x ⟦ σ ⟧
 
   sub-cong : ∀ {U} {V} {C} {K} {E : Subexpression U C K} {σ σ' : Sub U V} → σ ∼ σ' → E ⟦ σ ⟧ ≡ E ⟦ σ' ⟧
-  sub-cong {E = E} = LiftFamily.ap-cong proto-substitution E
+  sub-cong {E = E} = LiftFamily.ap-congl proto-substitution E
 \end{code}
 
 Most of the axioms of a family of operations are easy to verify.  
@@ -576,7 +578,7 @@ Most of the axioms of a family of operations are easy to verify.
     (let open ≡-Reasoning {A = Expression (alpha _ A) (beta A)} in
     begin 
       E ⟦ LiftFamily.liftOp' proto-substitution A (ρ •₁ σ) ⟧
-    ≡⟨ LiftFamily.ap-cong proto-substitution E (liftOp'-comp₁ {A = A}) ⟩
+    ≡⟨ LiftFamily.ap-congl proto-substitution E (liftOp'-comp₁ {A = A}) ⟩
       E ⟦ OpFamily.liftOp' replacement A ρ •₁ LiftFamily.liftOp' proto-substitution A σ ⟧ 
     ≡⟨ sub-comp₁ {E = E} ⟩
       E ⟦ LiftFamily.liftOp' proto-substitution A σ ⟧ 〈 OpFamily.liftOp' replacement A ρ 〉
@@ -604,7 +606,7 @@ Most of the axioms of a family of operations are easy to verify.
     (let open ≡-Reasoning {A = Expression (alpha _ A) (beta A)} in
     begin
       E ⟦ LiftFamily.liftOp' proto-substitution A (σ •₂ ρ) ⟧
-    ≡⟨ LiftFamily.ap-cong proto-substitution E (liftOp'-comp₂ {A = A}) ⟩
+    ≡⟨ LiftFamily.ap-congl proto-substitution E (liftOp'-comp₂ {A = A}) ⟩
       E ⟦ LiftFamily.liftOp' proto-substitution A σ •₂ OpFamily.liftOp' replacement A ρ ⟧
     ≡⟨ sub-comp₂ {E = E} ⟩
       E 〈 OpFamily.liftOp' replacement A ρ 〉 ⟦ LiftFamily.liftOp' proto-substitution A σ ⟧
@@ -657,7 +659,7 @@ $$ E \langle \rho \rangle \equiv E [ \rho ] $$
       E 〈 OpFamily.liftOp' replacement A ρ 〉
     ≡⟨ rep-is-sub {E = E} ⟩
       E ⟦ (λ K x → var (OpFamily.liftOp' replacement A ρ K x)) ⟧ 
-    ≡⟨ LiftFamily.ap-cong proto-substitution E (liftOp'-is-liftOp' {A = A}) ⟩
+    ≡⟨ LiftFamily.ap-congl proto-substitution E (liftOp'-is-liftOp' {A = A}) ⟩
       E ⟦ LiftFamily.liftOp' proto-substitution A (λ K x → var (ρ K x)) ⟧
     ∎)
     (rep-is-sub {E = F})
@@ -756,10 +758,10 @@ A \emph{context} has the form $x_1 : A_1, \ldots, x_n : A_n$ where, for each $i$
 \end{itemize}
 The \emph{domain} of this context is the alphabet $\{ x_1, \ldots, x_n \}$.
 
-We give ourselves the following operations.  Given an alphabet $A$ and finite set $F$, let $\mathsc{extend}\ A\ K\ F$ be the
-alphabet $A \uplus F$, where each element of $F$ has kind $K$.  Let $\mathsc{embedr}$ be the canonical injection
-$F \rightarrow \mathsc{extend}\ A\ K\ F$; thus, for all $x \in F$, we have $\mathsc{embedr}\ x$ is a variable
-of $\mathsc{extend}\ A\ K\ F$ of kind $K$.
+We give ourselves the following operations.  Given an alphabet $A$ and finite set $F$, let $\mathsf{extend}\ A\ K\ F$ be the
+alphabet $A \uplus F$, where each element of $F$ has kind $K$.  Let $\mathsf{embedr}$ be the canonical injection
+$F \rightarrow \mathsf{extend}\ A\ K\ F$; thus, for all $x \in F$, we have $\mathsf{embedr}\ x$ is a variable
+of $\mathsf{extend}\ A\ K\ F$ of kind $K$.
 
 \begin{code}
   extend : Alphabet → VarKind → ℕ → Alphabet
@@ -771,7 +773,7 @@ of $\mathsc{extend}\ A\ K\ F$ of kind $K$.
   embedr (suc x) = ↑ (embedr x)
 \end{code}
 
-Let $\mathsc{embedl}$ be the canonical injection $A \rightarrow \mathsc{extend}\ A\ K\ F$, which
+Let $\mathsf{embedl}$ be the canonical injection $A \rightarrow \mathsf{extend}\ A\ K\ F$, which
 is a replacement.
 
 \begin{code}
