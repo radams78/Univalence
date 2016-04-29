@@ -1,8 +1,9 @@
 \begin{code}
 module PHOPL where
-open import Prelims hiding (⊥)
+
+open import Prelims
 open import Grammar
-open import Reduction
+import Reduction
 \end{code}
 
 \section{Predicative Higher-Order Propositional Logic}
@@ -73,18 +74,18 @@ module PHOPL where
 
   liftType : ∀ {V} → Type → Expression V (nonVarKind -Type)
   liftType (app -Omega out₂) = app -Omega out₂
-  liftType (app -func (app₂ (out A) (app₂ (out B) out₂))) = app -func (app₂ (out (liftType A)) (app₂ (out (liftType B)) out₂)) 
+  liftType (app -func (app₂ A (app₂ B out₂))) = app -func (app₂ (liftType A) (app₂ (liftType B) out₂)) 
 
   Ω : Type
   Ω = app -Omega out₂
 
-  infix 75 _⇒_
-  _⇒_ : Type → Type → Type
-  φ ⇒ ψ = app -func (app₂ (out φ) (app₂ (out ψ) out₂))
+  infix 75 _⇛_
+  _⇛_ : Type → Type → Type
+  φ ⇛ ψ = app -func (app₂ φ (app₂ ψ out₂))
 
   lowerType : ∀ {V} → Expression V (nonVarKind -Type) → Type
   lowerType (app -Omega out₂) = Ω
-  lowerType (app -func (app₂ (out φ) (app₂ (out ψ) out₂))) = lowerType φ ⇒ lowerType ψ
+  lowerType (app -func (app₂ φ (app₂ ψ out₂))) = lowerType φ ⇛ lowerType ψ
 
 {-  infix 80 _,_
   data TContext : Alphabet → Set where
@@ -101,64 +102,65 @@ module PHOPL where
   ⊥ = app -bot out₂
 
   appTerm : ∀ {V} → Term V → Term V → Term V
-  appTerm M N = app -appTerm (app₂ (out M) (app₂ (out N) out₂))
+  appTerm M N = app -appTerm (app₂ M (app₂ N out₂))
 
   ΛTerm : ∀ {V} → Type → Term (V , -Term) → Term V
-  ΛTerm A M = app -lamTerm (app₂ (out (liftType A)) (app₂ (Λ (out M)) out₂))
+  ΛTerm A M = app -lamTerm (app₂ (liftType A) (app₂ M out₂))
 
   _⊃_ : ∀ {V} → Term V → Term V → Term V
-  φ ⊃ ψ = app -imp (app₂ (out φ) (app₂ (out ψ) out₂))
+  φ ⊃ ψ = app -imp (app₂ φ (app₂ ψ out₂))
 
-  PAlphabet : FinSet → Alphabet → Alphabet
-  PAlphabet ∅ A = A
-  PAlphabet (Lift P) A = PAlphabet P A , -Proof
+  PAlphabet : ℕ → Alphabet → Alphabet
+  PAlphabet zero A = A
+  PAlphabet (suc P) A = PAlphabet P A , -Proof
 
   liftVar : ∀ {A} {K} P → Var A K → Var (PAlphabet P A) K
-  liftVar ∅ x = x
-  liftVar (Lift P) x = ↑ (liftVar P x)
+  liftVar zero x = x
+  liftVar (suc P) x = ↑ (liftVar P x)
 
-  liftVar' : ∀ {A} P → El P → Var (PAlphabet P A) -Proof
-  liftVar' (Lift P) Prelims.⊥ = x₀
-  liftVar' (Lift P) (↑ x) = ↑ (liftVar' P x)
+  liftVar' : ∀ {A} P → Fin P → Var (PAlphabet P A) -Proof
+  liftVar' (suc P) zero = x₀
+  liftVar' (suc P) (suc x) = ↑ (liftVar' P x)
 
   liftExp : ∀ {V} {K} P → Expression V K → Expression (PAlphabet P V) K
   liftExp P E = E 〈 (λ _ → liftVar P) 〉
 
-  data PContext' (V : Alphabet) : FinSet → Set where
-    〈〉 : PContext' V ∅
-    _,_ : ∀ {P} → PContext' V P → Term V → PContext' V (Lift P)
+  data PContext' (V : Alphabet) : ℕ → Set where
+    〈〉 : PContext' V zero
+    _,_ : ∀ {P} → PContext' V P → Term V → PContext' V (suc P)
 
-  PContext : Alphabet → FinSet → Set
+  PContext : Alphabet → ℕ → Set
   PContext V = Context' V -Proof
 
-  P〈〉 : ∀ {V} → PContext V ∅
+  P〈〉 : ∀ {V} → PContext V zero
   P〈〉 = 〈〉
 
-  _P,_ : ∀ {V} {P} → PContext V P → Term V → PContext V (Lift P)
+  _P,_ : ∀ {V} {P} → PContext V P → Term V → PContext V (suc P)
   _P,_ {V} {P} Δ φ = Δ , φ 〈 embedl {V} { -Proof} {P} 〉
 
-  Proof : Alphabet → FinSet → Set
+  Proof : Alphabet → ℕ → Set
   Proof V P = Expression (PAlphabet P V) (varKind -Proof)
 
-  varP : ∀ {V} {P} → El P → Proof V P
+  varP : ∀ {V} {P} → Fin P → Proof V P
   varP {P = P} x = var (liftVar' P x)
 
   appP : ∀ {V} {P} → Proof V P → Proof V P → Proof V P
-  appP δ ε = app -appProof (app₂ (out δ) (app₂ (out ε) out₂))
+  appP δ ε = app -appProof (app₂ δ (app₂ ε out₂))
 
-  ΛP : ∀ {V} {P} → Term V → Proof V (Lift P) → Proof V P
-  ΛP {P = P} φ δ = app -lamProof (app₂ (out (liftExp P φ)) (app₂ (Λ (out δ)) out₂))
+  ΛP : ∀ {V} {P} → Term V → Proof V (suc P) → Proof V P
+  ΛP {P = P} φ δ = app -lamProof (app₂ (liftExp P φ) (app₂ δ out₂))
 
 --  typeof' : ∀ {V} → Var V -Term → TContext V → Type
 --  typeof' x₀ (_ , A) = A
 --  typeof' (↑ x) (Γ , _) = typeof' x Γ
 
-  propof : ∀ {V} {P} → El P → PContext' V P → Term V
-  propof Prelims.⊥ (_ , φ) = φ
-  propof (↑ x) (Γ , _) = propof x Γ
+  propof : ∀ {V} {P} → Fin P → PContext' V P → Term V
+  propof zero (_ , φ) = φ
+  propof (suc x) (Γ , _) = propof x Γ
 
-  data β : Reduction PHOPLGrammar.PHOPL where
-    βI : ∀ {V} A (M : Term (V , -Term)) N → β -appTerm (app₂ (out (ΛTerm A M)) (app₂ (out N) out₂)) (M ⟦ x₀:= N ⟧)
+  data β : ∀ {V} {K} {C} → Constructor C → Subexpression V (-Constructor K) C → Expression V K → Set where
+    βI : ∀ {V} A (M : Term (V , -Term)) N → β -appTerm (app₂ (ΛTerm A M) (app₂ N out₂)) (M ⟦ x₀:= N ⟧)
+  open Reduction PHOPLGrammar.PHOPL β
 \end{code}
 
 The rules of deduction of the system are as follows.
@@ -187,8 +189,8 @@ The rules of deduction of the system are as follows.
     var : ∀ {V} {Γ : TContext V} {x} → Γ ⊢ var x ∶ typeof x Γ
     ⊥R : ∀ {V} {Γ : TContext V} → Γ ⊢ ⊥ ∶ Ω 〈 (λ _ ()) 〉
     imp : ∀ {V} {Γ : TContext V} {φ} {ψ} → Γ ⊢ φ ∶ Ω 〈 (λ _ ()) 〉 → Γ ⊢ ψ ∶ Ω 〈 (λ _ ()) 〉 → Γ ⊢ φ ⊃ ψ ∶ Ω 〈 (λ _ ()) 〉
-    app : ∀ {V} {Γ : TContext V} {M} {N} {A} {B} → Γ ⊢ M ∶ app -func (app₂ (out A) (app₂ (out B) out₂)) → Γ ⊢ N ∶ A → Γ ⊢ appTerm M N ∶ B
-    Λ : ∀ {V} {Γ : TContext V} {A} {M} {B} → Γ , A ⊢ M ∶ liftE B → Γ ⊢ app -lamTerm (app₂ (out A) (app₂ (Λ (out M)) out₂)) ∶ app -func (app₂ (out A) (app₂ (out B) out₂))
+    app : ∀ {V} {Γ : TContext V} {M} {N} {A} {B} → Γ ⊢ M ∶ app -func (app₂ A (app₂ B out₂)) → Γ ⊢ N ∶ A → Γ ⊢ appTerm M N ∶ B
+    Λ : ∀ {V} {Γ : TContext V} {A} {M} {B} → Γ , A ⊢ M ∶ liftE B → Γ ⊢ app -lamTerm (app₂ A (app₂ M out₂)) ∶ app -func (app₂ A (app₂ B out₂))
 
   data Pvalid : ∀ {V} {P} → TContext V → PContext' V P → Set₁ where
     〈〉 : ∀ {V} {Γ : TContext V} → Pvalid Γ 〈〉
@@ -199,5 +201,5 @@ The rules of deduction of the system are as follows.
     var : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {p} → Pvalid Γ Δ → Γ ,, Δ ⊢ varP p ∶∶ propof p Δ 
     app : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {δ} {ε} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ ⊃ ψ → Γ ,, Δ ⊢ ε ∶∶ φ → Γ ,, Δ ⊢ appP {V} {P} δ ε ∶∶ ψ
     Λ : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {φ} {δ} {ψ} → Γ ,, Δ , φ ⊢ δ ∶∶ ψ → Γ ,, Δ ⊢ ΛP {V} {P} φ δ ∶∶ φ ⊃ ψ
-    convR : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {δ} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ → Γ ⊢ ψ ∶ Ω 〈 (λ _ ()) 〉 → _≃〈_〉_ PHOPLGrammar.PHOPL φ β ψ → Γ ,, Δ ⊢ δ ∶∶ ψ
+    convR : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {δ} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ → Γ ⊢ ψ ∶ Ω 〈 (λ _ ()) 〉 → φ ≃ ψ → Γ ,, Δ ⊢ δ ∶∶ ψ
 \end{code}

@@ -8,8 +8,8 @@ module Grammar where
 open import Function
 open import Data.Empty
 open import Data.Product
-open import Data.Nat
-open import Data.Fin
+open import Data.Nat public
+open import Data.Fin public using (Fin;zero;suc)
 open import Prelims
 \end{code}
 
