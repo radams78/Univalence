@@ -212,10 +212,16 @@ for all $x$.  Note that this is equivalent to $\rho[E] \equiv \sigma[E]$ for all
         field
           liftOp : ∀ {U} {V} K → Op U V → Op (U , K) (V , K)
           liftOp-cong : ∀ {V} {W} {K} {ρ σ : Op V W} → ρ ∼op σ → liftOp K ρ ∼op liftOp K σ
+\end{code}
 
+Given an operation $\sigma : U \rightarrow V$ and an abstraction kind $(x_1 : A_1 , \ldots , x_n : A_n) B$, define
+the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \cdots ) , A_n)$.
+
+\begin{code}
         liftOp' : ∀ {U} {V} A → Op U V → Op (alpha U A) (alpha V A)
         liftOp' (out _) σ = σ
         liftOp' (Π K A) σ = liftOp' A (liftOp K σ)
+--TODO Refactor to deal with sequences of kinds instead of abstraction kinds?
 
         liftOp'-cong : ∀ {U} {V} A {ρ σ : Op U V} → ρ ∼op σ → liftOp' A ρ ∼op liftOp' A σ
         liftOp'-cong (out _) ρ-is-σ = ρ-is-σ
@@ -251,9 +257,33 @@ for all $x$.  Note that this is equivalent to $\rho[E] \equiv \sigma[E]$ for all
         isLiftFamily : PreOpFamily.IsLiftFamily preOpFamily
       open PreOpFamily preOpFamily public
       open IsLiftFamily isLiftFamily public
+\end{code}
 
-      record IsOpFamily : Set₂ where
-        field
+Let $F$, $G$ and $H$ be three families of operations.  For all $U$, $V$, $W$, let $\circ$ be a function
+\[ \circ : F V W \times G U V \rightarrow H U W \]
+
+\begin{lemma}
+If $\circ$ respects lifting, then it respects repeated lifting.
+\end{lemma}
+
+\begin{code}
+    liftOp-liftOp' : ∀ F G H
+      (circ : ∀ {U} {V} {W} → LiftFamily.Op F V W → LiftFamily.Op G U V → LiftFamily.Op H U W) →
+      (∀ {U V W K σ ρ} → LiftFamily._∼op_ H (LiftFamily.liftOp H K (circ {U} {V} {W} σ ρ)) (circ (LiftFamily.liftOp F K σ) (LiftFamily.liftOp G K ρ))) →
+      ∀ {U V W} A {σ ρ} → LiftFamily._∼op_ H (LiftFamily.liftOp' H A (circ {U} {V} {W} σ ρ)) (circ (LiftFamily.liftOp' F A σ) (LiftFamily.liftOp' G A ρ))
+    liftOp-liftOp' _ _ H circ hyp (out _) = LiftFamily.∼-refl H
+    liftOp-liftOp' F G H circ hyp {U} {V} {W} (Π K A) {σ} {ρ} = let open EqReasoning (LiftFamily.OP H _ _) in 
+      begin
+        LiftFamily.liftOp' H A (LiftFamily.liftOp H K (circ σ ρ))
+      ≈⟨ LiftFamily.liftOp'-cong H A hyp ⟩
+        LiftFamily.liftOp' H A (circ (LiftFamily.liftOp F K σ) (LiftFamily.liftOp G K ρ))
+      ≈⟨ liftOp-liftOp' F G H circ hyp A ⟩
+        circ (LiftFamily.liftOp' F A (LiftFamily.liftOp F K σ)) (LiftFamily.liftOp' G A (LiftFamily.liftOp G K ρ))
+      ∎
+
+    record IsOpFamily (F : LiftFamily) : Set₂ where
+      open LiftFamily F public
+      field
           liftOp-x₀ : ∀ {U} {V} {K} {σ : Op U V} → apV (liftOp K σ) x₀ ≡ var x₀
           liftOp-↑ : ∀ {U} {V} {K} {L} {σ : Op U V} (x : Var U L) →
             apV (liftOp K σ) (↑ x) ≡ ap up (apV σ x)
@@ -275,8 +305,8 @@ The following results about operationsare easy to prove.
 \end{lemma}
 
 \begin{code}
-        liftOp-up : ∀ {U} {V} {K} {σ : Op U V} → comp (liftOp K σ) up ∼op comp up σ
-        liftOp-up {U} {V} {K} {σ} {L} x = 
+      liftOp-up : ∀ {U} {V} {K} {σ : Op U V} → comp (liftOp K σ) up ∼op comp up σ
+      liftOp-up {U} {V} {K} {σ} {L} x = 
           let open ≡-Reasoning {A = Expression (V , K) (varKind L)} in 
             begin
               apV (comp (liftOp K σ) up) x
@@ -290,8 +320,8 @@ The following results about operationsare easy to prove.
               apV (comp up σ) x
             ∎
 
-        liftOp-idOp : ∀ {V} {K} → liftOp K (idOp V) ∼op idOp (V , K)
-        liftOp-idOp {V} {K} x₀ = let open ≡-Reasoning in
+      liftOp-idOp : ∀ {V} {K} → liftOp K (idOp V) ∼op idOp (V , K)
+      liftOp-idOp {V} {K} x₀ = let open ≡-Reasoning in
           begin
             apV (liftOp K (idOp V)) x₀
           ≡⟨ liftOp-x₀ ⟩
@@ -299,7 +329,7 @@ The following results about operationsare easy to prove.
           ≡⟨⟨ apV-idOp x₀ ⟩⟩
             apV (idOp (V , K)) x₀
           ∎
-        liftOp-idOp {V} {K} {L} (↑ x) = let open ≡-Reasoning in 
+      liftOp-idOp {V} {K} {L} (↑ x) = let open ≡-Reasoning in 
           begin 
             apV (liftOp K (idOp V)) (↑ x)
           ≡⟨ liftOp-↑ x ⟩
@@ -312,9 +342,9 @@ The following results about operationsare easy to prove.
             (apV (idOp (V , K)) (↑ x)
           ∎)
 
-        liftOp'-idOp : ∀ {V} A → liftOp' A (idOp V) ∼op idOp (alpha V A)
-        liftOp'-idOp (out _) = ∼-refl
-        liftOp'-idOp {V} (Π K A) = let open EqReasoning (OP (alpha (V , K) A) (alpha (V , K) A)) in 
+      liftOp'-idOp : ∀ {V} A → liftOp' A (idOp V) ∼op idOp (alpha V A)
+      liftOp'-idOp (out _) = ∼-refl
+      liftOp'-idOp {V} (Π K A) = let open EqReasoning (OP (alpha (V , K) A) (alpha (V , K) A)) in 
           begin
             liftOp' A (liftOp K (idOp V))
           ≈⟨ liftOp'-cong A liftOp-idOp ⟩
@@ -323,31 +353,23 @@ The following results about operationsare easy to prove.
             idOp (alpha (V , K) A)
           ∎
 
-        ap-idOp : ∀ {V} {C} {K} {E : Subexpression V C K} → ap (idOp V) E ≡ E
-        ap-idOp {E = var x} = apV-idOp x
-        ap-idOp {E = app c EE} = cong (app c) ap-idOp
-        ap-idOp {E = out₂} = refl
-        ap-idOp {E = app₂ {A = A} E F} = cong₂ app₂ (trans (ap-congl E (liftOp'-idOp A)) ap-idOp) ap-idOp
-      
-        liftOp'-comp : ∀ {U} {V} {W} A {σ : Op U V} {τ : Op V W} → liftOp' A (comp τ σ) ∼op comp (liftOp' A τ) (liftOp' A σ)
-        liftOp'-comp (out x) = ∼-refl
-        liftOp'-comp {U} {V} {W} (Π K A) {σ} {τ} = let open EqReasoning (OP (alpha (U , K) A) (alpha (W , K) A)) in 
-          begin
-            liftOp' A (liftOp K (comp τ σ))
-          ≈⟨ liftOp'-cong A liftOp-comp ⟩
-            liftOp' A (comp (liftOp K τ) (liftOp K σ))
-          ≈⟨ liftOp'-comp A ⟩
-            comp (liftOp' A (liftOp K τ)) (liftOp' A (liftOp K σ))
-          ∎
+      ap-idOp : ∀ {V} {C} {K} {E : Subexpression V C K} → ap (idOp V) E ≡ E
+      ap-idOp {E = var x} = apV-idOp x
+      ap-idOp {E = app c EE} = cong (app c) ap-idOp
+      ap-idOp {E = out₂} = refl
+      ap-idOp {E = app₂ {A = A} E F} = cong₂ app₂ (trans (ap-congl E (liftOp'-idOp A)) ap-idOp) ap-idOp
 
-        ap-comp : ∀ {U} {V} {W} {C} {K} (E : Subexpression U C K) {σ : Op V W} {ρ : Op U V} → ap (comp σ ρ) E ≡ ap σ (ap ρ E)
-        ap-comp (var x) = apV-comp
-        ap-comp (app c E) = cong (app c) (ap-comp E)
-        ap-comp out₂ = refl
-        ap-comp (app₂ {A = A} E F) = cong₂ app₂ (trans (ap-congl E (liftOp'-comp A)) (ap-comp E)) (ap-comp F)
+      liftOp'-comp : ∀ {U} {V} {W} A {σ : Op U V} {τ : Op V W} → liftOp' A (comp τ σ) ∼op comp (liftOp' A τ) (liftOp' A σ)
+      liftOp'-comp A = liftOp-liftOp' F F F comp liftOp-comp A
 
-        comp-cong : ∀ {U} {V} {W} {σ σ' : Op V W} {ρ ρ' : Op U V} → σ ∼op σ' → ρ ∼op ρ' → comp σ ρ ∼op comp σ' ρ'
-        comp-cong {σ = σ} {σ'} {ρ} {ρ'} σ∼σ' ρ∼ρ' x = let open ≡-Reasoning in 
+      ap-comp : ∀ {U} {V} {W} {C} {K} (E : Subexpression U C K) {σ : Op V W} {ρ : Op U V} → ap (comp σ ρ) E ≡ ap σ (ap ρ E)
+      ap-comp (var x) = apV-comp
+      ap-comp (app c E) = cong (app c) (ap-comp E)
+      ap-comp out₂ = refl
+      ap-comp (app₂ {A = A} E F) = cong₂ app₂ (trans (ap-congl E (liftOp'-comp A)) (ap-comp E)) (ap-comp F)
+
+      comp-cong : ∀ {U} {V} {W} {σ σ' : Op V W} {ρ ρ' : Op U V} → σ ∼op σ' → ρ ∼op ρ' → comp σ ρ ∼op comp σ' ρ'
+      comp-cong {σ = σ} {σ'} {ρ} {ρ'} σ∼σ' ρ∼ρ' x = let open ≡-Reasoning in 
           begin
             apV (comp σ ρ) x
           ≡⟨ apV-comp ⟩
@@ -368,8 +390,8 @@ which maps an alphabet $U$ to the set of expressions over $U$, and every operati
 This functor is faithful and injective on objects, and so $\Op$ can be seen as a subcategory of $\Set$.
 
 \begin{code}
-        assoc : ∀ {U} {V} {W} {X} {τ : Op W X} {σ : Op V W} {ρ : Op U V} → comp τ (comp σ ρ) ∼op comp (comp τ σ) ρ
-        assoc {U} {V} {W} {X} {τ} {σ} {ρ} {K} x = let open ≡-Reasoning {A = Expression X (varKind K)} in 
+      assoc : ∀ {U} {V} {W} {X} {τ : Op W X} {σ : Op V W} {ρ : Op U V} → comp τ (comp σ ρ) ∼op comp (comp τ σ) ρ
+      assoc {U} {V} {W} {X} {τ} {σ} {ρ} {K} x = let open ≡-Reasoning {A = Expression X (varKind K)} in 
           begin 
             apV (comp τ (comp σ ρ)) x
           ≡⟨ apV-comp ⟩
@@ -382,8 +404,8 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
             apV (comp (comp τ σ) ρ) x
           ∎
 
-        unitl : ∀ {U} {V} {σ : Op U V} → comp (idOp V) σ ∼op σ
-        unitl {U} {V} {σ} {K} x = let open ≡-Reasoning {A = Expression V (varKind K)} in 
+      unitl : ∀ {U} {V} {σ : Op U V} → comp (idOp V) σ ∼op σ
+      unitl {U} {V} {σ} {K} x = let open ≡-Reasoning {A = Expression V (varKind K)} in 
           begin 
             apV (comp (idOp V) σ) x
           ≡⟨ apV-comp ⟩
@@ -392,8 +414,8 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
             apV σ x
           ∎
 
-        unitr : ∀ {U} {V} {σ : Op U V} → comp σ (idOp U) ∼op σ
-        unitr {U} {V} {σ} {K} x = let open ≡-Reasoning {A = Expression V (varKind K)} in
+      unitr : ∀ {U} {V} {σ : Op U V} → comp σ (idOp U) ∼op σ
+      unitr {U} {V} {σ} {K} x = let open ≡-Reasoning {A = Expression V (varKind K)} in
           begin 
             apV (comp σ (idOp U)) x
           ≡⟨ apV-comp ⟩
@@ -405,8 +427,7 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
     record OpFamily : Set₂ where
       field
         liftFamily : LiftFamily
-        isOpFamily  : LiftFamily.IsOpFamily liftFamily
-      open LiftFamily liftFamily public
+        isOpFamily  : IsOpFamily liftFamily
       open IsOpFamily isOpFamily public
 \end{code}
 
@@ -577,18 +598,15 @@ Most of the axioms of a family of operations are easy to verify.
         (σ L x) 〈 ρ 〉 〈 upRep 〉
       ≡⟨⟨ rep-comp {E = σ L x} ⟩⟩
         (σ L x) 〈 upRep •R ρ 〉
+      ≡⟨⟩
+        (σ L x) 〈 Rep↑ ρ •R upRep 〉
       ≡⟨ rep-comp {E = σ L x} ⟩
         (σ L x) 〈 upRep 〉 〈 Rep↑ ρ 〉
       ∎
 
-    liftOp'-comp₁ : ∀ {U} {V} {W} {A} {ρ : Rep V W} {σ : Sub U V} →
+    liftOp'-comp₁ : ∀ {U} {V} {W} A {ρ : Rep V W} {σ : Sub U V} →
       LiftFamily.liftOp' proto-substitution A (ρ •₁ σ) ∼ OpFamily.liftOp' replacement A ρ •₁ LiftFamily.liftOp' proto-substitution A σ
-    liftOp'-comp₁ {A = out _} {ρ} {σ} = LiftFamily.∼-refl proto-substitution {σ = ρ •₁ σ}
-    liftOp'-comp₁ {U} {V} {W} {Π K A} {ρ} {σ} = 
-      LiftFamily.∼-trans proto-substitution 
-        (LiftFamily.liftOp'-cong proto-substitution A 
-          (Sub↑-comp₁ {ρ = ρ} {σ = σ})) 
-          (liftOp'-comp₁ {A = A})
+    liftOp'-comp₁ = liftOp-liftOp' proto-replacement proto-substitution proto-substitution _•₁_ Sub↑-comp₁
 
     sub-comp₁ : ∀ {U} {V} {W} {C} {K} {E : Subexpression U C K} {ρ : Rep V W} {σ : Sub U V} →
       E ⟦ ρ •₁ σ ⟧ ≡ E ⟦ σ ⟧ 〈 ρ 〉
@@ -599,13 +617,12 @@ Most of the axioms of a family of operations are easy to verify.
       (let open ≡-Reasoning {A = Expression (alpha _ A) (beta A)} in
       begin 
         E ⟦ LiftFamily.liftOp' proto-substitution A (ρ •₁ σ) ⟧
-      ≡⟨ LiftFamily.ap-congl proto-substitution E (liftOp'-comp₁ {A = A}) ⟩
+      ≡⟨ LiftFamily.ap-congl proto-substitution E (liftOp'-comp₁ A) ⟩
         E ⟦ OpFamily.liftOp' replacement A ρ •₁ LiftFamily.liftOp' proto-substitution A σ ⟧ 
       ≡⟨ sub-comp₁ {E = E} ⟩
         E ⟦ LiftFamily.liftOp' proto-substitution A σ ⟧ 〈 OpFamily.liftOp' replacement A ρ 〉
       ∎)
       (sub-comp₁ {E = F})
---TODO Equational Reasoning for setoidOps
 
     infix 75 _•₂_
     _•₂_ : ∀ {U} {V} {W} → Sub V W → Rep U V → Sub U W
@@ -615,9 +632,8 @@ Most of the axioms of a family of operations are easy to verify.
     Sub↑-comp₂ {K = K} x₀ = refl
     Sub↑-comp₂ (↑ x) = refl
 
-    liftOp'-comp₂ : ∀ {U} {V} {W} {A} {σ : Sub V W} {ρ : Rep U V} → LiftFamily.liftOp' proto-substitution A (σ •₂ ρ) ∼ LiftFamily.liftOp' proto-substitution A σ •₂ OpFamily.liftOp' replacement A ρ
-    liftOp'-comp₂ {A = out _} {σ} {ρ} = LiftFamily.∼-refl proto-substitution {σ = σ •₂ ρ}
-    liftOp'-comp₂ {A = Π _ A} = LiftFamily.∼-trans proto-substitution (LiftFamily.liftOp'-cong proto-substitution A Sub↑-comp₂) (liftOp'-comp₂ {A = A})
+    liftOp'-comp₂ : ∀ {U} {V} {W} A {σ : Sub V W} {ρ : Rep U V} → LiftFamily.liftOp' proto-substitution A (σ •₂ ρ) ∼ LiftFamily.liftOp' proto-substitution A σ •₂ OpFamily.liftOp' replacement A ρ
+    liftOp'-comp₂ = liftOp-liftOp' proto-substitution proto-replacement proto-substitution _•₂_ Sub↑-comp₂
 
     sub-comp₂ : ∀ {U} {V} {W} {C} {K} {E : Subexpression U C K} {σ : Sub V W} {ρ : Rep U V} → E ⟦ σ •₂ ρ ⟧ ≡ E 〈 ρ 〉 ⟦ σ ⟧
     sub-comp₂ {E = var _} = refl
@@ -627,12 +643,13 @@ Most of the axioms of a family of operations are easy to verify.
       (let open ≡-Reasoning {A = Expression (alpha _ A) (beta A)} in
       begin
         E ⟦ LiftFamily.liftOp' proto-substitution A (σ •₂ ρ) ⟧
-      ≡⟨ LiftFamily.ap-congl proto-substitution E (liftOp'-comp₂ {A = A}) ⟩
+      ≡⟨ LiftFamily.ap-congl proto-substitution E (liftOp'-comp₂ A) ⟩
         E ⟦ LiftFamily.liftOp' proto-substitution A σ •₂ OpFamily.liftOp' replacement A ρ ⟧
       ≡⟨ sub-comp₂ {E = E} ⟩
         E 〈 OpFamily.liftOp' replacement A ρ 〉 ⟦ LiftFamily.liftOp' proto-substitution A σ ⟧
       ∎)
       (sub-comp₂ {E = F})
+--TODO Common pattern with sub-comp₁
 
     Sub↑-comp : ∀ {U} {V} {W} {ρ : Sub U V} {σ : Sub V W} {K} →
       Sub↑ {K = K} (σ • ρ) ∼ Sub↑ σ • Sub↑ ρ

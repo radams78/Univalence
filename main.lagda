@@ -24,7 +24,10 @@
 \DeclareUnicodeCharacter{9001}{\ensuremath{\langle}}
 \DeclareUnicodeCharacter{9002}{\ensuremath{\rangle}}
 \DeclareUnicodeCharacter{9655}{\ensuremath{\rhd}}
+\DeclareUnicodeCharacter{10214}{\ensuremath{[}}
+\DeclareUnicodeCharacter{10215}{\ensuremath{]}}
 \DeclareUnicodeCharacter{10219}{\ensuremath{\rangle\rangle}}
+
 
 \usepackage{textalpha}
 
