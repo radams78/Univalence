@@ -199,62 +199,60 @@ for all $x$.  Note that this is equivalent to $\rho[E] \equiv \sigma[E]$ for all
       ∼-trans : ∀ {U} {V} {ρ σ τ : Op U V} → ρ ∼op σ → σ ∼op τ → ρ ∼op τ
       ∼-trans ρ-is-σ σ-is-τ x = trans (ρ-is-σ x) (σ-is-τ x)
 
-    record IsLiftFamily (opfamily : PreOpFamily) : Set₁ where
-      open PreOpFamily opfamily
-      field
-        liftOp : ∀ {U} {V} K → Op U V → Op (U , K) (V , K)
-        liftOp-x₀ : ∀ {U} {V} {K} {σ : Op U V} → apV (liftOp K σ) x₀ ≡ var x₀
-        liftOp-cong : ∀ {V} {W} {K} {ρ σ : Op V W} → ρ ∼op σ → liftOp K ρ ∼op liftOp K σ
+      record IsLiftFamily : Set₁ where
+        field
+          liftOp : ∀ {U} {V} K → Op U V → Op (U , K) (V , K)
+          liftOp-cong : ∀ {V} {W} {K} {ρ σ : Op V W} → ρ ∼op σ → liftOp K ρ ∼op liftOp K σ
 
-      liftOp' : ∀ {U} {V} A → Op U V → Op (alpha U A) (alpha V A)
-      liftOp' (out _) σ = σ
-      liftOp' (Π K A) σ = liftOp' A (liftOp K σ)
+        liftOp' : ∀ {U} {V} A → Op U V → Op (alpha U A) (alpha V A)
+        liftOp' (out _) σ = σ
+        liftOp' (Π K A) σ = liftOp' A (liftOp K σ)
 
-      liftOp'-cong : ∀ {U} {V} A {ρ σ : Op U V} → ρ ∼op σ → liftOp' A ρ ∼op liftOp' A σ
-      liftOp'-cong (out _) ρ-is-σ = ρ-is-σ
-      liftOp'-cong (Π _ A) ρ-is-σ = liftOp'-cong A (liftOp-cong ρ-is-σ)
+        liftOp'-cong : ∀ {U} {V} A {ρ σ : Op U V} → ρ ∼op σ → liftOp' A ρ ∼op liftOp' A σ
+        liftOp'-cong (out _) ρ-is-σ = ρ-is-σ
+        liftOp'-cong (Π _ A) ρ-is-σ = liftOp'-cong A (liftOp-cong ρ-is-σ)
 
-      ap : ∀ {U} {V} {C} {K} → Op U V → Subexpression U C K → Subexpression V C K
-      ap ρ (var x) = apV ρ x
-      ap ρ (app c EE) = app c (ap ρ EE)
-      ap _ out₂ = out₂
-      ap ρ (app₂ {A = A} E EE) = app₂ (ap (liftOp' A ρ) E) (ap ρ EE)
+        ap : ∀ {U} {V} {C} {K} → Op U V → Subexpression U C K → Subexpression V C K
+        ap ρ (var x) = apV ρ x
+        ap ρ (app c EE) = app c (ap ρ EE)
+        ap _ out₂ = out₂
+        ap ρ (app₂ {A = A} E EE) = app₂ (ap (liftOp' A ρ) E) (ap ρ EE)
 
-      ap-congl : ∀ {U} {V} {C} {K} {ρ σ : Op U V} (E : Subexpression U C K) →
-        ρ ∼op σ → ap ρ E ≡ ap σ E
-      ap-congl (var x) ρ-is-σ = ρ-is-σ x
-      ap-congl (app c E) ρ-is-σ = cong (app c) (ap-congl E ρ-is-σ)
-      ap-congl out₂ _ = refl
-      ap-congl (app₂ {A = A} E F) ρ-is-σ = cong₂ app₂ (ap-congl E (liftOp'-cong A ρ-is-σ)) (ap-congl F ρ-is-σ)
+        ap-congl : ∀ {U} {V} {C} {K} {ρ σ : Op U V} (E : Subexpression U C K) →
+          ρ ∼op σ → ap ρ E ≡ ap σ E
+        ap-congl (var x) ρ-is-σ = ρ-is-σ x
+        ap-congl (app c E) ρ-is-σ = cong (app c) (ap-congl E ρ-is-σ)
+        ap-congl out₂ _ = refl
+        ap-congl (app₂ {A = A} E F) ρ-is-σ = cong₂ app₂ (ap-congl E (liftOp'-cong A ρ-is-σ)) (ap-congl F ρ-is-σ)
 
-      ap-cong : ∀ {U} {V} {C} {K} {ρ σ : Op U V} {M N : Subexpression U C K} →
-        ρ ∼op σ → M ≡ N → ap ρ M ≡ ap σ N
-      ap-cong {ρ = ρ} {σ} {M} {N} ρ∼σ M≡N = let open ≡-Reasoning in 
-        begin
-          ap ρ M
-        ≡⟨ ap-congl M ρ∼σ ⟩
-          ap σ M
-        ≡⟨ cong (ap σ) M≡N ⟩
-          ap σ N
-        ∎
+        ap-cong : ∀ {U} {V} {C} {K} {ρ σ : Op U V} {M N : Subexpression U C K} →
+          ρ ∼op σ → M ≡ N → ap ρ M ≡ ap σ N
+        ap-cong {ρ = ρ} {σ} {M} {N} ρ∼σ M≡N = let open ≡-Reasoning in 
+          begin
+            ap ρ M
+          ≡⟨ ap-congl M ρ∼σ ⟩
+            ap σ M
+          ≡⟨ cong (ap σ) M≡N ⟩
+            ap σ N
+          ∎
 
     record LiftFamily : Set₂ where
       field
         preOpFamily : PreOpFamily
-        isLiftFamily : IsLiftFamily preOpFamily
+        isLiftFamily : PreOpFamily.IsLiftFamily preOpFamily
       open PreOpFamily preOpFamily public
       open IsLiftFamily isLiftFamily public
 
-    record IsOpFamily (liftfamily : LiftFamily) : Set₂ where
-      open LiftFamily liftfamily
-      field
-        comp : ∀ {U} {V} {W} → Op V W → Op U V → Op U W
-        apV-comp : ∀ {U} {V} {W} {K} {σ : Op V W} {ρ : Op U V} {x : Var U K} →
-          apV (comp σ ρ) x ≡ ap σ (apV ρ x)
-        liftOp-comp : ∀ {U} {V} {W} {K} {σ : Op V W} {ρ : Op U V} →
-          liftOp K (comp σ ρ) ∼op comp (liftOp K σ) (liftOp K ρ)
-        liftOp-↑ : ∀ {U} {V} {K} {L} {σ : Op U V} (x : Var U L) →
-          apV (liftOp K σ) (↑ x) ≡ ap up (apV σ x)
+      record IsOpFamily : Set₂ where
+        field
+          liftOp-x₀ : ∀ {U} {V} {K} {σ : Op U V} → apV (liftOp K σ) x₀ ≡ var x₀
+          liftOp-↑ : ∀ {U} {V} {K} {L} {σ : Op U V} (x : Var U L) →
+            apV (liftOp K σ) (↑ x) ≡ ap up (apV σ x)
+          comp : ∀ {U} {V} {W} → Op V W → Op U V → Op U W
+          apV-comp : ∀ {U} {V} {W} {K} {σ : Op V W} {ρ : Op U V} {x : Var U K} →
+            apV (comp σ ρ) x ≡ ap σ (apV ρ x)
+          liftOp-comp : ∀ {U} {V} {W} {K} {σ : Op V W} {ρ : Op U V} →
+            liftOp K (comp σ ρ) ∼op comp (liftOp K σ) (liftOp K ρ)
 \end{code}
 
 The following results about operationsare easy to prove.
@@ -268,70 +266,68 @@ The following results about operationsare easy to prove.
 \end{lemma}
 
 \begin{code}
-      liftOp-up : ∀ {U} {V} {K} {σ : Op U V} → comp (liftOp K σ) up ∼op comp up σ
-      liftOp-up {U} {V} {K} {σ} {L} x = 
-        let open ≡-Reasoning {A = Expression (V , K) (varKind L)} in 
-          begin
-            apV (comp (liftOp K σ) up) x
-          ≡⟨ apV-comp ⟩
-            ap (liftOp K σ) (apV up x)
-          ≡⟨ cong (ap (liftOp K σ)) apV-up ⟩
-            apV (liftOp K σ) (↑ x)         
+        liftOp-up : ∀ {U} {V} {K} {σ : Op U V} → comp (liftOp K σ) up ∼op comp up σ
+        liftOp-up {U} {V} {K} {σ} {L} x = 
+          let open ≡-Reasoning {A = Expression (V , K) (varKind L)} in 
+            begin
+              apV (comp (liftOp K σ) up) x
+            ≡⟨ apV-comp ⟩
+              ap (liftOp K σ) (apV up x)
+            ≡⟨ cong (ap (liftOp K σ)) apV-up ⟩
+              apV (liftOp K σ) (↑ x)         
+            ≡⟨ liftOp-↑ x ⟩
+              ap up (apV σ x)
+            ≡⟨⟨ apV-comp ⟩⟩
+              apV (comp up σ) x
+            ∎
+
+        liftOp-idOp : ∀ {V} {K} → liftOp K (idOp V) ∼op idOp (V , K)
+        liftOp-idOp x₀ = trans liftOp-x₀ (sym (apV-idOp x₀))
+        liftOp-idOp {V} {K} {L} (↑ x) = let open ≡-Reasoning in 
+          begin 
+            apV (liftOp K (idOp V)) (↑ x)
           ≡⟨ liftOp-↑ x ⟩
-            ap up (apV σ x)
-          ≡⟨ sym apV-comp ⟩
-            apV (comp up σ) x
-          ∎
+            ap up (apV (idOp V) x)
+          ≡⟨ cong (ap up) (apV-idOp x) ⟩
+            ap up (var x)              
+          ≡⟨ apV-up ⟩
+            var (↑ x)
+          ≡⟨⟨ apV-idOp (↑ x) ⟩⟩
+            (apV (idOp (V , K)) (↑ x)
+          ∎)
 
-      liftOp-idOp : ∀ {V} {K} → liftOp K (idOp V) ∼op idOp (V , K)
-      liftOp-idOp x₀ = trans liftOp-x₀ (sym (apV-idOp x₀))
-      liftOp-idOp {V} {K} {L} (↑ x) = let open ≡-Reasoning in 
-        begin 
-          apV (liftOp K (idOp V)) (↑ x)
-        ≡⟨ liftOp-↑ x ⟩
-          ap up (apV (idOp V) x)
-        ≡⟨ cong (ap up) (apV-idOp x) ⟩
-          ap up (var x)              
-        ≡⟨ apV-up ⟩
-          var (↑ x)
-        ≡⟨⟨ apV-idOp (↑ x) ⟩⟩
-          (apV (idOp (V , K)) (↑ x)
-            ∎)
---TODO Replace with apV (liftOp (idOp V)) x ≡ x or ap (liftOp (idOp V)) E ≡ E?
---trans (liftOp-↑ x) (trans (cong (ap up) (apV-idOp x)) (trans apV-up (sym (apV-idOp (↑ x)))))
+        liftOp'-idOp : ∀ {V} A → liftOp' A (idOp V) ∼op idOp (alpha V A)
+        liftOp'-idOp (out _) = ∼-refl
+        liftOp'-idOp {V} (Π K A) = ∼-trans (liftOp'-cong A liftOp-idOp) (liftOp'-idOp A)
 
-      liftOp'-idOp : ∀ {V} A → liftOp' A (idOp V) ∼op idOp (alpha V A)
-      liftOp'-idOp (out _) = ∼-refl
-      liftOp'-idOp {V} (Π K A) = ∼-trans (liftOp'-cong A liftOp-idOp) (liftOp'-idOp A)
-
-      ap-idOp : ∀ {V} {C} {K} {E : Subexpression V C K} → ap (idOp V) E ≡ E
-      ap-idOp {E = var x} = apV-idOp x
-      ap-idOp {E = app c EE} = cong (app c) ap-idOp
-      ap-idOp {E = out₂} = refl
-      ap-idOp {E = app₂ {A = A} E F} = cong₂ app₂ (trans (ap-congl E (liftOp'-idOp A)) ap-idOp) ap-idOp
+        ap-idOp : ∀ {V} {C} {K} {E : Subexpression V C K} → ap (idOp V) E ≡ E
+        ap-idOp {E = var x} = apV-idOp x
+        ap-idOp {E = app c EE} = cong (app c) ap-idOp
+        ap-idOp {E = out₂} = refl
+        ap-idOp {E = app₂ {A = A} E F} = cong₂ app₂ (trans (ap-congl E (liftOp'-idOp A)) ap-idOp) ap-idOp
       
-      liftOp'-comp : ∀ {U} {V} {W} A {σ : Op U V} {τ : Op V W} → liftOp' A (comp τ σ) ∼op comp (liftOp' A τ) (liftOp' A σ)
-      liftOp'-comp (out x) = ∼-refl
-      liftOp'-comp (Π x A) = ∼-trans (liftOp'-cong A liftOp-comp) (liftOp'-comp A)
+        liftOp'-comp : ∀ {U} {V} {W} A {σ : Op U V} {τ : Op V W} → liftOp' A (comp τ σ) ∼op comp (liftOp' A τ) (liftOp' A σ)
+        liftOp'-comp (out x) = ∼-refl
+        liftOp'-comp (Π x A) = ∼-trans (liftOp'-cong A liftOp-comp) (liftOp'-comp A)
 --TODO Extract common pattern
 
-      ap-comp : ∀ {U} {V} {W} {C} {K} (E : Subexpression U C K) {σ : Op V W} {ρ : Op U V} → ap (comp σ ρ) E ≡ ap σ (ap ρ E)
-      ap-comp (var x) = apV-comp
-      ap-comp (app c E) = cong (app c) (ap-comp E)
-      ap-comp out₂ = refl
-      ap-comp (app₂ {A = A} E F) = cong₂ app₂ (trans (ap-congl E (liftOp'-comp A)) (ap-comp E)) (ap-comp F)
+        ap-comp : ∀ {U} {V} {W} {C} {K} (E : Subexpression U C K) {σ : Op V W} {ρ : Op U V} → ap (comp σ ρ) E ≡ ap σ (ap ρ E)
+        ap-comp (var x) = apV-comp
+        ap-comp (app c E) = cong (app c) (ap-comp E)
+        ap-comp out₂ = refl
+        ap-comp (app₂ {A = A} E F) = cong₂ app₂ (trans (ap-congl E (liftOp'-comp A)) (ap-comp E)) (ap-comp F)
 
-      comp-cong : ∀ {U} {V} {W} {σ σ' : Op V W} {ρ ρ' : Op U V} → σ ∼op σ' → ρ ∼op ρ' → comp σ ρ ∼op comp σ' ρ'
-      comp-cong {σ = σ} {σ'} {ρ} {ρ'} σ∼σ' ρ∼ρ' x = let open ≡-Reasoning in 
-         begin
-           apV (comp σ ρ) x
-         ≡⟨ apV-comp ⟩
-           ap σ (apV ρ x)
-         ≡⟨ ap-cong σ∼σ' (ρ∼ρ' x) ⟩
-           ap σ' (apV ρ' x)
-         ≡⟨⟨ apV-comp ⟩⟩
-           apV (comp σ' ρ') x
-         ∎
+        comp-cong : ∀ {U} {V} {W} {σ σ' : Op V W} {ρ ρ' : Op U V} → σ ∼op σ' → ρ ∼op ρ' → comp σ ρ ∼op comp σ' ρ'
+        comp-cong {σ = σ} {σ'} {ρ} {ρ'} σ∼σ' ρ∼ρ' x = let open ≡-Reasoning in 
+          begin
+            apV (comp σ ρ) x
+          ≡⟨ apV-comp ⟩
+            ap σ (apV ρ x)
+          ≡⟨ ap-cong σ∼σ' (ρ∼ρ' x) ⟩
+            ap σ' (apV ρ' x)
+          ≡⟨⟨ apV-comp ⟩⟩
+            apV (comp σ' ρ') x
+          ∎
 \end{code}
 
 \newcommand{\Op}{\ensuremath{\mathbf{Op}}}
@@ -343,44 +339,44 @@ which maps an alphabet $U$ to the set of expressions over $U$, and every operati
 This functor is faithful and injective on objects, and so $\Op$ can be seen as a subcategory of $\Set$.
 
 \begin{code}
-      assoc : ∀ {U} {V} {W} {X} {τ : Op W X} {σ : Op V W} {ρ : Op U V} → comp τ (comp σ ρ) ∼op comp (comp τ σ) ρ
-      assoc {U} {V} {W} {X} {τ} {σ} {ρ} {K} x = let open ≡-Reasoning {A = Expression X (varKind K)} in 
-        begin 
-          apV (comp τ (comp σ ρ)) x
-        ≡⟨ apV-comp ⟩
-          ap τ (apV (comp σ ρ) x)
-        ≡⟨ cong (ap τ) apV-comp ⟩
-          ap τ (ap σ (apV ρ x))
-        ≡⟨⟨ ap-comp (apV ρ x) ⟩⟩
-          ap (comp τ σ) (apV ρ x)
-        ≡⟨⟨ apV-comp ⟩⟩
-          apV (comp (comp τ σ) ρ) x
-        ∎
+        assoc : ∀ {U} {V} {W} {X} {τ : Op W X} {σ : Op V W} {ρ : Op U V} → comp τ (comp σ ρ) ∼op comp (comp τ σ) ρ
+        assoc {U} {V} {W} {X} {τ} {σ} {ρ} {K} x = let open ≡-Reasoning {A = Expression X (varKind K)} in 
+          begin 
+            apV (comp τ (comp σ ρ)) x
+          ≡⟨ apV-comp ⟩
+            ap τ (apV (comp σ ρ) x)
+          ≡⟨ cong (ap τ) apV-comp ⟩
+            ap τ (ap σ (apV ρ x))
+          ≡⟨⟨ ap-comp (apV ρ x) ⟩⟩
+            ap (comp τ σ) (apV ρ x)
+          ≡⟨⟨ apV-comp ⟩⟩
+            apV (comp (comp τ σ) ρ) x
+          ∎
 
-      unitl : ∀ {U} {V} {σ : Op U V} → comp (idOp V) σ ∼op σ
-      unitl {U} {V} {σ} {K} x = let open ≡-Reasoning {A = Expression V (varKind K)} in 
-        begin 
-          apV (comp (idOp V) σ) x
-        ≡⟨ apV-comp ⟩
-          ap (idOp V) (apV σ x)
-        ≡⟨ ap-idOp ⟩
-          apV σ x
-        ∎
+        unitl : ∀ {U} {V} {σ : Op U V} → comp (idOp V) σ ∼op σ
+        unitl {U} {V} {σ} {K} x = let open ≡-Reasoning {A = Expression V (varKind K)} in 
+          begin 
+            apV (comp (idOp V) σ) x
+          ≡⟨ apV-comp ⟩
+            ap (idOp V) (apV σ x)
+          ≡⟨ ap-idOp ⟩
+            apV σ x
+          ∎
 
-      unitr : ∀ {U} {V} {σ : Op U V} → comp σ (idOp U) ∼op σ
-      unitr {U} {V} {σ} {K} x = let open ≡-Reasoning {A = Expression V (varKind K)} in
-        begin 
-          apV (comp σ (idOp U)) x
-        ≡⟨ apV-comp ⟩
-          ap σ (apV (idOp U) x)
-        ≡⟨ cong (ap σ) (apV-idOp x) ⟩
-          apV σ x
-        ∎
+        unitr : ∀ {U} {V} {σ : Op U V} → comp σ (idOp U) ∼op σ
+        unitr {U} {V} {σ} {K} x = let open ≡-Reasoning {A = Expression V (varKind K)} in
+          begin 
+            apV (comp σ (idOp U)) x
+          ≡⟨ apV-comp ⟩
+            ap σ (apV (idOp U) x)
+          ≡⟨ cong (ap σ) (apV-idOp x) ⟩
+            apV σ x
+          ∎
 
     record OpFamily : Set₂ where
       field
         liftFamily : LiftFamily
-        isOpFamily  : IsOpFamily liftFamily
+        isOpFamily  : LiftFamily.IsOpFamily liftFamily
       open LiftFamily liftFamily public
       open IsOpFamily isOpFamily public
 \end{code}
@@ -427,7 +423,6 @@ and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
       preOpFamily = pre-replacement; 
       isLiftFamily = record { 
         liftOp = λ _ → Rep↑; 
-        liftOp-x₀ = refl; 
         liftOp-cong = Rep↑-cong }}
 
 --TODO Change notation?
@@ -447,6 +442,7 @@ and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
     replacement = record { 
       liftFamily = proto-replacement; 
       isOpFamily = record { 
+        liftOp-x₀ = refl; 
         comp = _•R_; 
         apV-comp = refl; 
         liftOp-comp = Rep↑-comp; 
@@ -516,7 +512,6 @@ The \emph{successor} substitution $V \rightarrow (V , K)$ maps a variable $x$ to
       preOpFamily = pre-substitution; 
       isLiftFamily = record { 
         liftOp = λ _ → Sub↑; 
-        liftOp-x₀ = refl; 
         liftOp-cong = Sub↑-cong }
       }
 \end{code}
@@ -666,6 +661,7 @@ $$ E \langle \rho \rangle \equiv E [ \rho ] $$
     substitution = record { 
       liftFamily = proto-substitution; 
       isOpFamily = record { 
+        liftOp-x₀ = refl; 
         comp = _•_; 
         apV-comp = refl; 
         liftOp-comp = Sub↑-comp; 
