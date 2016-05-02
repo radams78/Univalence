@@ -3,7 +3,7 @@
 \begin{code}
 module Prelims where
 
-open import Relation.Binary
+open import Relation.Binary public
 import Relation.Binary.EqReasoning
 open import Relation.Binary.PropositionalEquality public using (_≡_;refl;sym;trans;cong;cong₂;subst;subst₂)
 
