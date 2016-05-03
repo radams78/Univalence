@@ -1,6 +1,9 @@
 \begin{code}
 open import Prelims
 open import Grammar
+
+--TODO Make use of IsCongruence
+
 \end{code}
 
 \section{Reduction}

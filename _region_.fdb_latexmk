@@ -1,13 +1,5 @@
 # Fdb version 3
-["bibtex abstract"] 1462269582 "abstract.aux" "abstract.bbl" "abstract" 1462269583
-  "/usr/share/texmf/bibtex/bst/base/plain.bst" 1136766823 19253 2333da366b5c8f6cd632b85558783a79 ""
-  "abstract.aux" 1462269547 1080 1286230d52bbe71ff61efcc0ce8cf5fe ""
-  "abstract.bcf" 0 -1 0 ""
-  "type.bib" 1461061669 254729 8240cb249bf958ca0b493269485870f6 ""
-  (generated)
-  "abstract.bbl"
-  "abstract.blg"
-["pdflatex"] 1462269582 "abstract.tex" "abstract.pdf" "abstract" 1462269583
+["pdflatex"] 1462269581 "_region_.tex" "_region_.pdf" "_region_" 1462269582
   "/usr/share/texmf/tex/latex/amscls/amsthm.sty" 1156703123 13294 f63af559496acbb4ffecc2de353745eb ""
   "/usr/share/texmf/tex/latex/amsfonts/amsfonts.sty" 1137109881 7992 7a12630bc841f1c895895a7b9763b259 ""
   "/usr/share/texmf/tex/latex/amsfonts/amssymb.sty" 1137109881 15232 61d310e2ae0d1f986ef8fd404165882d ""
@@ -50,14 +42,14 @@
   "/usr/share/texmf/tex/latex/oberdiek/refcount.sty" 1156718334 3430 d7b1208496d0d9ef4ea4ae677a6b95ef ""
   "/usr/share/texmf/tex/latex/pdftex-def/pdftex.def" 1168306486 30724 58dbba8517ed26c9a85e9b6276394761 ""
   "/usr/share/texmf/tex/latex/tools/calc.sty" 1156702393 9965 c62601cdcf5235653f33f146be81b7a1 ""
-  "abstract.aux" 1462269547 1080 1286230d52bbe71ff61efcc0ce8cf5fe ""
-  "abstract.bbl" 1462269547 215 6c08ea98348f7b77e08343c6d3a762a7 "bibtex abstract"
-  "abstract.out" 1462269547 334 81c894aa5ee6a7a7398e79e407dfa373 ""
-  "abstract.tex" 1461061669 12612 d4946db47836927b8991d7453093710e ""
+  "_region_.aux" 1462269546 430 a84621dad2f5f17fcad12c337dcae852 ""
+  "_region_.out" 1462269546 0 d41d8cd98f00b204e9800998ecf8427e ""
+  "_region_.tex" 1461061669 1508 0629d9e4f49429e3040dba1ab2de77fb ""
   "easychair.cls" 1461061669 25284 eae1864a3bf30056e2f16c64b1f6bbcb ""
   "proof.sty" 1461061669 7239 5298517cd8c2fb2070e3c760cf0b8bf7 ""
+  "short_abstract.tex" 1461061669 9212 2474920620776160b2213bacfd8c802c ""
   (generated)
-  "abstract.pdf"
-  "abstract.aux"
-  "abstract.out"
-  "abstract.log"
+  "_region_.out"
+  "_region_.log"
+  "_region_.aux"
+  "_region_.pdf"

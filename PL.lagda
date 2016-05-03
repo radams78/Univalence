@@ -89,10 +89,10 @@ open Reduction Propositional-Logic β
 β-respects-rep {U} {V} {σ = ρ} (βI .{U} {φ} {δ} {ε}) = subst (β app _) 
   (let open ≡-Reasoning {A = Expression V (varKind -Proof)} in
   begin 
-    δ 〈 Rep↑ ρ 〉 ⟦ x₀:= (ε 〈 ρ 〉) ⟧
+    δ 〈 Rep↑ -Proof ρ 〉 ⟦ x₀:= (ε 〈 ρ 〉) ⟧
   ≡⟨⟨ sub-comp₂ {E = δ} ⟩⟩
-    δ ⟦ x₀:= (ε 〈 ρ 〉) •₂ Rep↑ ρ ⟧ 
-  ≡⟨⟨ sub-cong {E = δ} comp₁-botsub ⟩⟩ 
+    δ ⟦ x₀:= (ε 〈 ρ 〉) •₂ Rep↑ -Proof ρ ⟧ 
+  ≡⟨⟨ sub-cong δ comp₁-botsub ⟩⟩ 
     δ ⟦ ρ •₁ x₀:= ε ⟧ 
   ≡⟨ sub-comp₁ {E = δ} ⟩
     δ ⟦ x₀:= ε ⟧ 〈 ρ 〉 
@@ -110,14 +110,15 @@ open Reduction Propositional-Logic β
       δ ⟦ x₀:= ε ⟧ 〈 σ 〉
     ≡⟨⟨ sub-comp₁ {E = δ} ⟩⟩
       δ ⟦ σ •₁ x₀:= ε ⟧                 
-    ≡⟨ sub-cong {E = δ} comp₁-botsub ⟩
-      δ ⟦ x₀:= (ε 〈 σ 〉) •₂ Rep↑ σ ⟧    
+    ≡⟨ sub-cong δ comp₁-botsub ⟩
+      δ ⟦ x₀:= (ε 〈 σ 〉) •₂ Rep↑ -Proof σ ⟧    
     ≡⟨ sub-comp₂ {E = δ} ⟩
-      δ 〈 Rep↑ σ 〉 ⟦ x₀:= (ε 〈 σ 〉) ⟧ 
+      δ 〈 Rep↑ -Proof σ 〉 ⟦ x₀:= (ε 〈 σ 〉) ⟧ 
     ∎ }
 β-creates-rep {c = lam} _ ()
 β-creates-rep {c = bot} _ ()
 β-creates-rep {c = imp} _ ()
+--TODO Refactor common pattern
 \end{code}
 
 The rules of deduction of the system are as follows.
@@ -173,7 +174,7 @@ toRep-↑ : ∀ {P} → toRep {P} {suc P} suc ∼R (λ _ → ↑)
 toRep-↑ {zero} = λ ()
 toRep-↑ {suc P} = Palphabet-faithful {suc P} {suc (suc P)} {toRep {suc P} {suc (suc P)} suc} {λ _ → ↑} (λ x → toRep-embedr {f = suc} {x = x})
 
-toRep-lift : ∀ {P} {Q} {f : Fin P → Fin Q} → toRep (lift (suc zero) f) ∼R Rep↑ (toRep f)
+toRep-lift : ∀ {P} {Q} {f : Fin P → Fin Q} → toRep (lift (suc zero) f) ∼R Rep↑ -Proof (toRep f)
 toRep-lift x₀ = refl
 toRep-lift {zero} (↑ ())
 toRep-lift {suc _} (↑ x₀) = refl
@@ -194,7 +195,7 @@ Rep↑-typed {P} {Q = Q} {ρ = ρ} {φ = φ} ρ∷Γ→Δ zero =
   ≡⟨⟨ rep-comp {E = φ} ⟩⟩
     φ 〈 upRep •R toRep ρ 〉
   ≡⟨⟨ rep-cong {E = φ} (OpFamily.liftOp-up replacement {σ = toRep ρ}) ⟩⟩
-    φ 〈 Rep↑ (toRep ρ) •R upRep 〉
+    φ 〈 Rep↑ -Proof (toRep ρ) •R upRep 〉
   ≡⟨⟨ rep-cong {E = φ} (OpFamily.comp-cong replacement {σ = toRep (lift 1 ρ)} toRep-lift (OpFamily.∼-refl replacement {σ = upRep})) ⟩⟩
     φ 〈 toRep (lift 1 ρ) •R upRep 〉
   ≡⟨ rep-comp {E = φ} ⟩
@@ -245,10 +246,10 @@ Weakening {P} {Q} {Γ} {Δ} {ρ} (var {p = p}) ρ∷Γ→Δ = subst₂ (λ x y �
   (var {p = ρ p})
 Weakening (app Γ⊢δ∷φ→ψ Γ⊢ε∷φ) ρ∷Γ→Δ = app (Weakening Γ⊢δ∷φ→ψ ρ∷Γ→Δ) (Weakening Γ⊢ε∷φ ρ∷Γ→Δ)
 Weakening .{P} {Q} .{Γ} {Δ} {ρ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∷ψ) ρ∷Γ→Δ = Λ 
-  (subst (λ P → (Δ , φ 〈 toRep ρ 〉) ⊢ δ 〈 Rep↑ (toRep ρ) 〉 ∷ P) 
+  (subst (λ P → (Δ , φ 〈 toRep ρ 〉) ⊢ δ 〈 Rep↑ -Proof (toRep ρ) 〉 ∷ P) 
   (let open ≡-Reasoning {A = Expression (Palphabet Q , -Proof) (nonVarKind -Prp)} in
   begin 
-    liftE ψ 〈 Rep↑ (toRep ρ) 〉
+    liftE ψ 〈 Rep↑ -Proof (toRep ρ) 〉
   ≡⟨⟨ rep-comp {E = ψ} ⟩⟩
     ψ 〈 (λ _ x → ↑ (toRep ρ _ x)) 〉
   ≡⟨ rep-comp {E = ψ} ⟩
@@ -267,7 +268,7 @@ Weakening .{P} {Q} .{Γ} {Δ} {ρ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∷ψ) 
     ≡⟨⟨ rep-comp {E = φ} ⟩⟩
       φ 〈 (λ _ → ↑) •R toRep ρ 〉
     ≡⟨ rep-comp {E = φ} ⟩
-      liftE φ 〈 Rep↑ (toRep ρ) 〉
+      liftE φ 〈 Rep↑ -Proof (toRep ρ) 〉
     ≡⟨⟨ rep-cong {E = liftE φ} (toRep-lift {f = ρ}) ⟩⟩
       liftE φ 〈 toRep (lift 1 ρ) 〉
     ∎
@@ -279,7 +280,7 @@ Weakening .{P} {Q} .{Γ} {Δ} {ρ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∷ψ) 
     ≡⟨⟨ rep-comp {E = typeof' x Γ} ⟩⟩
       typeof' x Γ 〈 (λ _ → ↑) •R toRep ρ 〉       
     ≡⟨ rep-comp {E = typeof' x Γ} ⟩
-      liftE (typeof' x Γ) 〈 Rep↑ (toRep ρ) 〉     
+      liftE (typeof' x Γ) 〈 Rep↑ -Proof (toRep ρ) 〉     
     ≡⟨⟨ rep-cong {E = liftE (typeof' x Γ)} (toRep-lift {f = ρ}) ⟩⟩
       liftE (typeof' x Γ) 〈 toRep (lift 1 ρ) 〉     
     ∎
@@ -292,7 +293,7 @@ for every $x : \phi$ in $\Gamma$, we have $\Delta \vdash \sigma(x) : \phi$.
 _∷_⇒_ : ∀ {P} {Q} → Sub (Palphabet P) (Palphabet Q) → PContext P → PContext Q → Set
 σ ∷ Γ ⇒ Δ = ∀ x → Δ ⊢ σ _ (embedr x) ∷ typeof' x Γ ⟦ σ ⟧
 
-Sub↑-typed : ∀ {P} {Q} {σ} {Γ : PContext P} {Δ : PContext Q} {φ : Expression (Palphabet P) (nonVarKind -Prp)} → σ ∷ Γ ⇒ Δ → Sub↑ σ ∷ (Γ , φ) ⇒ (Δ , φ ⟦ σ ⟧)
+Sub↑-typed : ∀ {P} {Q} {σ} {Γ : PContext P} {Δ : PContext Q} {φ : Expression (Palphabet P) (nonVarKind -Prp)} → σ ∷ Γ ⇒ Δ → Sub↑ -Proof σ ∷ (Γ , φ) ⇒ (Δ , φ ⟦ σ ⟧)
 Sub↑-typed {P} {Q} {σ} {Γ} {Δ} {φ} σ∷Γ→Δ zero = subst (λ p → (Δ , φ ⟦ σ ⟧) ⊢ var x₀ ∷ p) 
   (let open ≡-Reasoning {A = Expression (Palphabet Q , -Proof) (nonVarKind -Prp)} in
   begin 
@@ -300,19 +301,19 @@ Sub↑-typed {P} {Q} {σ} {Γ} {Δ} {φ} σ∷Γ→Δ zero = subst (λ p → (Δ
   ≡⟨⟨ sub-comp₁ {E = φ} ⟩⟩
     φ ⟦ (λ _ → ↑) •₁ σ ⟧      
   ≡⟨ sub-comp₂ {E = φ} ⟩
-    liftE φ ⟦ Sub↑ σ ⟧        
+    liftE φ ⟦ Sub↑ -Proof σ ⟧        
   ∎) 
   (var {p = zero})
 Sub↑-typed {Q = Q} {σ = σ} {Γ = Γ} {Δ = Δ} {φ = φ} σ∷Γ→Δ (suc x) = 
   subst
-  (λ P → (Δ , φ ⟦ σ ⟧) ⊢ Sub↑ σ -Proof (↑ (embedr x)) ∷ P)
+  (λ P → (Δ , φ ⟦ σ ⟧) ⊢ Sub↑ -Proof σ -Proof (↑ (embedr x)) ∷ P)
   (let open ≡-Reasoning {A = Expression (Palphabet Q , -Proof) (nonVarKind -Prp)} in 
   begin 
     liftE (typeof' x Γ ⟦ σ ⟧)
   ≡⟨⟨ sub-comp₁ {E = typeof' x Γ} ⟩⟩
     typeof' x Γ ⟦ (λ _ → ↑) •₁ σ ⟧
   ≡⟨ sub-comp₂ {E = typeof' x Γ} ⟩
-    liftE (typeof' x Γ) ⟦ Sub↑ σ ⟧
+    liftE (typeof' x Γ) ⟦ Sub↑ -Proof σ ⟧
   ∎)
   (subst₂ (λ x y → (Δ , φ ⟦ σ ⟧) ⊢ x ∷ y) 
     (rep-cong {E = σ -Proof (embedr x)} (toRep-↑ {Q})) 
@@ -350,12 +351,12 @@ Substitution : ∀ {P} {Q} {Γ : PContext P} {Δ : PContext Q} {δ} {φ} {σ} �
 Substitution var σ∷Γ→Δ = σ∷Γ→Δ _
 Substitution (app Γ⊢δ∷φ→ψ Γ⊢ε∷φ) σ∷Γ→Δ = app (Substitution Γ⊢δ∷φ→ψ σ∷Γ→Δ) (Substitution Γ⊢ε∷φ σ∷Γ→Δ)
 Substitution {Q = Q} {Δ = Δ} {σ = σ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∷ψ) σ∷Γ→Δ = Λ 
-  (subst (λ p → (Δ , φ ⟦ σ ⟧) ⊢ δ ⟦ Sub↑ σ ⟧ ∷ p) 
+  (subst (λ p → (Δ , φ ⟦ σ ⟧) ⊢ δ ⟦ Sub↑ -Proof σ ⟧ ∷ p) 
   (let open ≡-Reasoning {A = Expression (Palphabet Q , -Proof) (nonVarKind -Prp)} in
   begin 
-    liftE ψ ⟦ Sub↑ σ ⟧
+    liftE ψ ⟦ Sub↑ -Proof σ ⟧
   ≡⟨⟨ sub-comp₂ {E = ψ} ⟩⟩
-    ψ ⟦ Sub↑ σ •₂ (λ _ → ↑) ⟧  
+    ψ ⟦ Sub↑ -Proof σ •₂ (λ _ → ↑) ⟧  
   ≡⟨ sub-comp₁ {E = ψ} ⟩
     liftE (ψ ⟦ σ ⟧)            
   ∎)
