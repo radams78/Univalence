@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1462197943 "main.lagda" "main.pdf" "main" 1462197943
+["pdflatex"] 1462263943 "main.lagda" "main.pdf" "main" 1462263944
   "/Home/ii/robina/texmf/tex/latex/greek-fontenc/greek-fontenc.def" 1441356734 17606 2c9e881ec389ea7ece780755d29aa6bb ""
   "/Home/ii/robina/texmf/tex/latex/greek-fontenc/lgrenc.def" 1454708514 39948 146f19f82b62c4fbacd851f213d16f29 ""
   "/Home/ii/robina/texmf/tex/latex/greek-fontenc/textalpha.sty" 1454708514 21492 53d19871fbb90c93d1a195e8584b2c7c ""
@@ -40,12 +40,12 @@
   "/usr/share/texmf/tex/latex/ucs/ucs.sty" 1137111012 27968 5e8fc919b9923f61a3141cff009f81f4 ""
   "/usr/share/texmf/tex/latex/ucs/ucsencs.def" 1137111012 22431 0ad1c3cefc1f93af409a7ceca0d8d3e1 ""
   "/usr/share/texmf/tex/latex/ucs/utf8x.def" 1137111012 8049 2bb302a046ab244c85dc4d176aff8531 ""
-  "Grammar.lagda" 1462197153 35806 7cc15ab03156c0ab4c85f083adc04354 ""
+  "Grammar.lagda" 1462202653 37876 e563d860c1b5b39185bfbbe8e2ed0e37 ""
   "PHOPL.lagda" 1462181261 9362 98809739693a0ebb0491a7f8ac46b29b ""
   "PL.lagda" 1462181774 27298 6cf9d036a176a89e1852fb37e1c894f5 ""
   "Prelims.lagda" 1462181788 913 0b556c1c5b8263c384f69290b4c1fb5b ""
   "fancyvrb.cfg" 0 -1 0 ""
-  "main.aux" 1462197909 966 c662294430bbb805e0726e33d01800ef ""
+  "main.aux" 1462263908 966 47491c131f1c0c1eb0c7876d878e1ae1 ""
   "main.lagda" 1462197903 1322 d4e463a96d13badc1a18e27b9090e559 ""
   "proof.sty" 1461061669 7239 5298517cd8c2fb2070e3c760cf0b8bf7 ""
   (generated)

@@ -208,7 +208,7 @@ for all $x$.  Note that this is equivalent to $\rho[E] \equiv \sigma[E]$ for all
           sym = ∼-sym ; 
           trans = ∼-trans } }
 
-      record IsLiftFamily : Set₁ where
+      record Lifting : Set₁ where
         field
           liftOp : ∀ {U} {V} K → Op U V → Op (U , K) (V , K)
           liftOp-cong : ∀ {V} {W} {K} {ρ σ : Op V W} → ρ ∼op σ → liftOp K ρ ∼op liftOp K σ
@@ -251,11 +251,20 @@ the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \c
             ap σ N
           ∎
 
+        record IsLiftFamily : Set₁ where
+          field
+            liftOp-x₀ : ∀ {U} {V} {K} {σ : Op U V} → apV (liftOp K σ) x₀ ≡ var x₀
+            liftOp-↑ : ∀ {U} {V} {K} {L} {σ : Op U V} (x : Var U L) →
+              apV (liftOp K σ) (↑ x) ≡ ap up (apV σ x)
+          
+
     record LiftFamily : Set₂ where
       field
         preOpFamily : PreOpFamily
-        isLiftFamily : PreOpFamily.IsLiftFamily preOpFamily
+        lifting : PreOpFamily.Lifting preOpFamily
+        isLiftFamily : PreOpFamily.Lifting.IsLiftFamily lifting
       open PreOpFamily preOpFamily public
+      open Lifting lifting public
       open IsLiftFamily isLiftFamily public
 \end{code}
 
@@ -304,9 +313,6 @@ If $\circ$ respects lifting, then it respects repeated lifting.
     record IsOpFamily (F : LiftFamily) : Set₂ where
       open LiftFamily F public
       field
-          liftOp-x₀ : ∀ {U} {V} {K} {σ : Op U V} → apV (liftOp K σ) x₀ ≡ var x₀
-          liftOp-↑ : ∀ {U} {V} {K} {L} {σ : Op U V} (x : Var U L) →
-            apV (liftOp K σ) (↑ x) ≡ ap up (apV σ x)
           comp : ∀ {U} {V} {W} → Op V W → Op U V → Op U W
           apV-comp : ∀ {U} {V} {W} {K} {σ : Op V W} {ρ : Op U V} {x : Var U K} →
             apV (comp σ ρ) x ≡ ap σ (apV ρ x)
@@ -385,7 +391,7 @@ The following results about operationsare easy to prove.
       ap-comp : ∀ {U} {V} {W} {C} {K} (E : Subexpression U C K) {σ : Op V W} {ρ : Op U V} → ap (comp σ ρ) E ≡ ap σ (ap ρ E)
       ap-comp = ap-circ F F F comp apV-comp liftOp-comp
 
-      comp-cong : ∀ {U} {V} {W} {σ σ' : Op V W} {ρ ρ' : Op U V} → σ ∼op σ' → ρ ∼op ρ' → comp σ ρ ∼op comp σ' ρ'
+      comp-cong : ∀ {U V W} {σ σ' : Op V W} {ρ ρ' : Op U V} → σ ∼op σ' → ρ ∼op ρ' → comp σ ρ ∼op comp σ' ρ'
       comp-cong {σ = σ} {σ'} {ρ} {ρ'} σ∼σ' ρ∼ρ' x = let open ≡-Reasoning in 
           begin
             apV (comp σ ρ) x
@@ -396,6 +402,7 @@ The following results about operationsare easy to prove.
           ≡⟨⟨ apV-comp ⟩⟩
             apV (comp σ' ρ') x
           ∎
+--TODO Refactor common pattern
 \end{code}
 
 \newcommand{\Op}{\ensuremath{\mathbf{Op}}}
@@ -449,32 +456,33 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
 
     liftOp-circ : ∀ F G H
       (circ : ∀ {U} {V} {W} → OpFamily.Op F V W → OpFamily.Op G U V → OpFamily.Op H U W) →
-      (∀ {U} {V} {W} {C} {K} {σ} {ρ} {E : Subexpression U C K} → OpFamily.ap H (circ {U} {V} {W} σ ρ) E ≡ OpFamily.ap F σ (OpFamily.ap G ρ E)) →
+      (∀ {U} {V} {W} {K} {σ} {ρ} {x : Var U K} → OpFamily.apV H (circ {U} {V} {W} σ ρ) x ≡ OpFamily.ap F σ (OpFamily.apV G ρ x)) →
       (∀ {U} {V} {K} {C} {L} {σ : OpFamily.Op F U V} {E : Subexpression U C L} → OpFamily.ap H (OpFamily.up H) (OpFamily.ap F σ E) ≡ OpFamily.ap F (OpFamily.liftOp F K σ) (OpFamily.ap G (OpFamily.up G) E)) →
       ∀ {U V W K σ ρ} → OpFamily._∼op_ H (OpFamily.liftOp H K (circ {U} {V} {W} σ ρ)) (circ (OpFamily.liftOp F K σ) (OpFamily.liftOp G K ρ))
     liftOp-circ F G H circ hyp hyp₂ {U} {V} {W} {K} {σ} {ρ} x₀ = let open ≡-Reasoning in 
-      {!begin
+      begin
         OpFamily.apV H (OpFamily.liftOp H K (circ σ ρ)) x₀
-      ≡⟨ ? ⟩
+      ≡⟨ OpFamily.liftOp-x₀ H ⟩
         var x₀
-      ≡⟨⟨ ? ⟩⟩
+      ≡⟨⟨ OpFamily.liftOp-x₀ F ⟩⟩
         OpFamily.apV F (OpFamily.liftOp F K σ) x₀
-      ≡⟨⟨ ? ⟩⟩
+      ≡⟨⟨ cong (OpFamily.ap F (OpFamily.liftOp F K σ)) (OpFamily.liftOp-x₀ G) ⟩⟩
         OpFamily.ap F (OpFamily.liftOp F K σ) (OpFamily.apV G (OpFamily.liftOp G K ρ) x₀)
-      ≡⟨⟨ ? ⟩⟩
-        OpFamily.apV (circ (OpFamily.liftOp F K σ) (OpFamily.liftOp G K ρ)) x₀!}
+      ≡⟨⟨ hyp ⟩⟩
+        OpFamily.apV H (circ (OpFamily.liftOp F K σ) (OpFamily.liftOp G K ρ)) x₀
+      ∎
     liftOp-circ F G H circ hyp hyp₂ {U} {V} {W} {K} {σ} {ρ} (↑ x) = let open ≡-Reasoning in 
       begin
         OpFamily.apV H (OpFamily.liftOp H K (circ σ ρ)) (↑ x)
       ≡⟨ OpFamily.liftOp-↑ H x ⟩
         OpFamily.ap H (OpFamily.up H) (OpFamily.apV H (circ σ ρ) x)
-      ≡⟨ cong (OpFamily.ap H (OpFamily.up H)) (hyp {E = var x}) ⟩
+      ≡⟨ cong (OpFamily.ap H (OpFamily.up H)) hyp ⟩
         OpFamily.ap H (OpFamily.up H) (OpFamily.ap F σ (OpFamily.apV G ρ x))
       ≡⟨ hyp₂ {E = OpFamily.apV G ρ x} ⟩
         OpFamily.ap F (OpFamily.liftOp F K σ) (OpFamily.ap G (OpFamily.up G) (OpFamily.apV G ρ x))
       ≡⟨⟨ cong (OpFamily.ap F (OpFamily.liftOp F K σ)) (OpFamily.liftOp-↑ G x) ⟩⟩
         OpFamily.ap F (OpFamily.liftOp F K σ) (OpFamily.apV G (OpFamily.liftOp G K ρ) (↑ x))
-      ≡⟨⟨ hyp {E = var (↑ x)} ⟩⟩
+      ≡⟨⟨ hyp ⟩⟩
         OpFamily.apV H (circ (OpFamily.liftOp F K σ) (OpFamily.liftOp G K ρ)) (↑ x)
       ∎
 \end{code}
@@ -490,9 +498,9 @@ and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
     Rep : Alphabet → Alphabet → Set
     Rep U V = ∀ K → Var U K → Var V K
 
-    Rep↑ : ∀ {U} {V} {K} → Rep U V → Rep (U , K) (V , K)
-    Rep↑ _ _ x₀ = x₀
-    Rep↑ ρ K (↑ x) = ↑ (ρ K x)
+    Rep↑ : ∀ {U} {V} K → Rep U V → Rep (U , K) (V , K)
+    Rep↑ _ _ _ x₀ = x₀
+    Rep↑ _ ρ K (↑ x) = ↑ (ρ K x)
 
     upRep : ∀ {V} {K} → Rep V (V , K)
     upRep _ = ↑
@@ -512,16 +520,19 @@ and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
     _∼R_ : ∀ {U} {V} → Rep U V → Rep U V → Set
     _∼R_ = PreOpFamily._∼op_ pre-replacement
 
-    Rep↑-cong : ∀ {U} {V} {K} {ρ ρ' : Rep U V} → ρ ∼R ρ' → Rep↑ {K = K} ρ ∼R Rep↑ ρ'
+    Rep↑-cong : ∀ {U} {V} {K} {ρ ρ' : Rep U V} → ρ ∼R ρ' → Rep↑ K ρ ∼R Rep↑ K ρ'
     Rep↑-cong ρ-is-ρ' x₀ = refl
     Rep↑-cong ρ-is-ρ' (↑ x) = cong (var ∘ ↑) (var-inj (ρ-is-ρ' x))
 
     proto-replacement : LiftFamily
     proto-replacement = record { 
-      preOpFamily = pre-replacement; 
+      preOpFamily = pre-replacement ; 
+      lifting = record { 
+        liftOp = Rep↑ ; 
+        liftOp-cong = Rep↑-cong } ; 
       isLiftFamily = record { 
-        liftOp = λ _ → Rep↑; 
-        liftOp-cong = Rep↑-cong }}
+        liftOp-x₀ = refl ; 
+        liftOp-↑ = λ _ → refl } }
 
     infix 60 _〈_〉
     _〈_〉 : ∀ {U} {V} {C} {K} → Subexpression U C K → Rep U V → Subexpression V C K
@@ -531,20 +542,17 @@ and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
     _•R_ : ∀ {U} {V} {W} → Rep V W → Rep U V → Rep U W
     (ρ' •R ρ) K x = ρ' K (ρ K x)
 
-    Rep↑-comp : ∀ {U} {V} {W} {K} {ρ' : Rep V W} {ρ : Rep U V} → Rep↑ {K = K} (ρ' •R ρ) ∼R Rep↑ ρ' •R Rep↑ ρ
+    Rep↑-comp : ∀ {U} {V} {W} {K} {ρ' : Rep V W} {ρ : Rep U V} → Rep↑ K (ρ' •R ρ) ∼R Rep↑ K ρ' •R Rep↑ K ρ
     Rep↑-comp x₀ = refl
     Rep↑-comp (↑ _) = refl
 
     replacement : OpFamily
     replacement = record { 
-      liftFamily = proto-replacement; 
+      liftFamily = proto-replacement ; 
       isOpFamily = record { 
-        liftOp-x₀ = refl; 
-        comp = _•R_; 
-        apV-comp = refl; 
-        liftOp-comp = Rep↑-comp; 
-        liftOp-↑ = λ _ → refl }
-      }
+        comp = _•R_ ; 
+        apV-comp = refl ; 
+        liftOp-comp = Rep↑-comp } }
 
     rep-cong : ∀ {U} {V} {C} {K} {E : Subexpression U C K} {ρ ρ' : Rep U V} → ρ ∼R ρ' → E 〈 ρ 〉 ≡ E 〈 ρ' 〉
     rep-cong {U} {V} {C} {K} {E} {ρ} {ρ'} ρ-is-ρ' = OpFamily.ap-congl replacement E ρ-is-ρ'
@@ -556,7 +564,7 @@ and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
       E 〈 σ •R ρ 〉 ≡ E 〈 ρ 〉 〈 σ 〉
     rep-comp {U} {V} {W} {C} {K} {E} {ρ} {σ} = OpFamily.ap-comp replacement E
 
-    Rep↑-idOp : ∀ {V} {K} → Rep↑ (idOpRep V) ∼R idOpRep (V , K)
+    Rep↑-idOp : ∀ {V} {K} → Rep↑ K (idOpRep V) ∼R idOpRep (V , K)
     Rep↑-idOp = OpFamily.liftOp-idOp replacement
 --TODO Inline many of these
 \end{code}
@@ -577,17 +585,6 @@ A \emph{substitution} $\sigma$ from alphabet $U$ to alphabet $V$, $\sigma : U \R
     Sub : Alphabet → Alphabet → Set
     Sub U V = ∀ K → Var U K → Expression V (varKind K)
 
-    idOpSub : ∀ V → Sub V V
-    idOpSub _ _ = var
-\end{code}
-
-The \emph{successor} substitution $V \rightarrow (V , K)$ maps a variable $x$ to itself.
-
-\begin{code}
-    Sub↑ : ∀ {U} {V} {K} → Sub U V → Sub (U , K) (V , K)
-    Sub↑ _ _ x₀ = var x₀
-    Sub↑ σ K (↑ x) = (σ K x) 〈 upRep 〉
-
     pre-substitution : PreOpFamily
     pre-substitution = record { 
       Op = Sub; 
@@ -597,28 +594,71 @@ The \emph{successor} substitution $V \rightarrow (V , K)$ maps a variable $x$ to
       idOp = λ _ _ → var; 
       apV-idOp = λ _ → refl }
 
-    _∼_ : ∀ {U} {V} → Sub U V → Sub U V → Set
-    _∼_ = PreOpFamily._∼op_ pre-substitution
+    open PreOpFamily pre-substitution using () renaming (_∼op_ to _∼_;idOp to idOpSub)
 
-    Sub↑-cong : ∀ {U} {V} {K} {σ σ' : Sub U V} → σ ∼ σ' → Sub↑ {K = K} σ ∼ Sub↑ σ'
+    Sub↑ : ∀ {U} {V} K → Sub U V → Sub (U , K) (V , K)
+    Sub↑ _ _ _ x₀ = var x₀
+    Sub↑ _ σ K (↑ x) = (σ K x) 〈 upRep 〉
+
+    Sub↑-cong : ∀ {U} {V} {K} {σ σ' : Sub U V} → σ ∼ σ' → Sub↑ K σ ∼ Sub↑ K σ'
     Sub↑-cong {K = K} σ-is-σ' x₀ = refl
     Sub↑-cong σ-is-σ' (↑ x) = cong (λ E → E 〈 upRep 〉) (σ-is-σ' x)
 
-    proto-substitution : LiftFamily
-    proto-substitution = record { 
-      preOpFamily = pre-substitution; 
-      isLiftFamily = record { 
-        liftOp = λ _ → Sub↑; 
-        liftOp-cong = Sub↑-cong }
-      }
+    SUB↑ : PreOpFamily.Lifting pre-substitution
+    SUB↑ = record { liftOp = Sub↑ ; liftOp-cong = Sub↑-cong }
 \end{code}
-
+    
 Then, given an expression $E$ of kind $K$ over $U$, we write $E[\sigma]$ for the application of $\sigma$ to $E$, which is the result of substituting $\sigma(x)$ for $x$ for each variable in $E$, avoidOping capture.
 
-\begin{code}
+\begin{code}    
     infix 60 _⟦_⟧
     _⟦_⟧ : ∀ {U} {V} {C} {K} → Subexpression U C K → Sub U V → Subexpression V C K
-    E ⟦ σ ⟧ = LiftFamily.ap proto-substitution σ E
+    E ⟦ σ ⟧ = PreOpFamily.Lifting.ap SUB↑ σ E
+
+    rep2sub : ∀ {U} {V} → Rep U V → Sub U V
+    rep2sub ρ K x = var (ρ K x)
+
+    Rep↑-is-Sub↑ : ∀ {U} {V} {ρ : Rep U V} {K} → rep2sub (Rep↑ K ρ) ∼ Sub↑ K (rep2sub ρ)
+    Rep↑-is-Sub↑ x₀ = refl
+    Rep↑-is-Sub↑ (↑ _) = refl
+
+    module Substitution where
+      open PreOpFamily pre-substitution
+      open Lifting SUB↑
+
+      liftOp'-is-liftOp' : ∀ {U} {V} {ρ : Rep U V} {A} → rep2sub (OpFamily.liftOp' replacement A ρ) ∼ liftOp' A (rep2sub ρ)
+      liftOp'-is-liftOp' {ρ = ρ} {A = out _} = ∼-refl {σ = rep2sub ρ}
+      liftOp'-is-liftOp' {U} {V} {ρ} {Π K A} = let open EqReasoning (OP _ _) in 
+        begin
+          rep2sub (OpFamily.liftOp' replacement A (Rep↑ K ρ))
+        ≈⟨ liftOp'-is-liftOp' {A = A} ⟩
+          liftOp' A (rep2sub (Rep↑ K ρ))
+        ≈⟨ liftOp'-cong A Rep↑-is-Sub↑ ⟩
+          liftOp' A (Sub↑ K (rep2sub ρ))
+        ∎
+
+    open Substitution public
+
+    rep-is-sub : ∀ {U} {V} {K} {C} (E : Subexpression U K C) {ρ : Rep U V} → E 〈 ρ 〉 ≡ E ⟦ (λ K x → var (ρ K x)) ⟧
+    rep-is-sub (var _) = refl
+    rep-is-sub (app c E) = cong (app c) (rep-is-sub E)
+    rep-is-sub out₂ = refl
+    rep-is-sub (app₂ {A = A} E F) {ρ} = cong₂ app₂ 
+      (let open ≡-Reasoning {A = Expression (alpha _ A) (beta A)} in
+      begin 
+        E 〈 OpFamily.liftOp' replacement A ρ 〉
+      ≡⟨ rep-is-sub E ⟩
+        E ⟦ (λ K x → var (OpFamily.liftOp' replacement A ρ K x)) ⟧ 
+      ≡⟨ PreOpFamily.Lifting.ap-congl SUB↑ E (liftOp'-is-liftOp' {A = A}) ⟩
+        E ⟦ PreOpFamily.Lifting.liftOp' SUB↑ A (λ K x → var (ρ K x)) ⟧
+      ∎)
+      (rep-is-sub F)
+
+    proto-substitution : LiftFamily
+    proto-substitution = record { 
+      preOpFamily = pre-substitution ; 
+      lifting = SUB↑ ; 
+      isLiftFamily = record { liftOp-x₀ = refl ; liftOp-↑ = λ {_} {_} {_} {_} {σ} x → rep-is-sub (σ _ x) } }
 \end{code}
 
 Composition is defined by $(\sigma \circ \rho)(x) \equiv \rho(x) [ \sigma ]$.
@@ -627,9 +667,6 @@ Composition is defined by $(\sigma \circ \rho)(x) \equiv \rho(x) [ \sigma ]$.
     infix 75 _•_
     _•_ : ∀ {U} {V} {W} → Sub V W → Sub U V → Sub U W
     (σ • ρ) K x = ρ K x ⟦ σ ⟧
-
-    sub-cong : ∀ {U} {V} {C} {K} {E : Subexpression U C K} {σ σ' : Sub U V} → σ ∼ σ' → E ⟦ σ ⟧ ≡ E ⟦ σ' ⟧
-    sub-cong {E = E} = LiftFamily.ap-congl proto-substitution E
 \end{code}
 
 Most of the axioms of a family of operations are easy to verify.  
@@ -639,7 +676,7 @@ Most of the axioms of a family of operations are easy to verify.
     _•₁_ : ∀ {U} {V} {W} → Rep V W → Sub U V → Sub U W
     (ρ •₁ σ) K x = (σ K x) 〈 ρ 〉
 
-    Sub↑-comp₁ : ∀ {U} {V} {W} {K} {ρ : Rep V W} {σ : Sub U V} → Sub↑ (ρ •₁ σ) ∼ Rep↑ ρ •₁ Sub↑ σ
+    Sub↑-comp₁ : ∀ {U} {V} {W} {K} {ρ : Rep V W} {σ : Sub U V} → Sub↑ K (ρ •₁ σ) ∼ Rep↑ K ρ •₁ Sub↑ K σ
     Sub↑-comp₁ {K = K} x₀ = refl
     Sub↑-comp₁ {U} {V} {W} {K} {ρ} {σ} {L} (↑ x) = let open ≡-Reasoning {A = Expression (W , K) (varKind L)} in 
       begin 
@@ -647,14 +684,10 @@ Most of the axioms of a family of operations are easy to verify.
       ≡⟨⟨ rep-comp {E = σ L x} ⟩⟩
         (σ L x) 〈 upRep •R ρ 〉
       ≡⟨⟩
-        (σ L x) 〈 Rep↑ ρ •R upRep 〉
+        (σ L x) 〈 Rep↑ K ρ •R upRep 〉
       ≡⟨ rep-comp {E = σ L x} ⟩
-        (σ L x) 〈 upRep 〉 〈 Rep↑ ρ 〉
+        (σ L x) 〈 upRep 〉 〈 Rep↑ K ρ 〉
       ∎
-
-    liftOp'-comp₁ : ∀ {U} {V} {W} A {ρ : Rep V W} {σ : Sub U V} →
-      LiftFamily.liftOp' proto-substitution A (ρ •₁ σ) ∼ OpFamily.liftOp' replacement A ρ •₁ LiftFamily.liftOp' proto-substitution A σ
-    liftOp'-comp₁ = liftOp-liftOp' proto-replacement proto-substitution proto-substitution _•₁_ Sub↑-comp₁
 
     sub-comp₁ : ∀ {U} {V} {W} {C} {K} {E : Subexpression U C K} {ρ : Rep V W} {σ : Sub U V} →
       E ⟦ ρ •₁ σ ⟧ ≡ E ⟦ σ ⟧ 〈 ρ 〉
@@ -665,19 +698,15 @@ Most of the axioms of a family of operations are easy to verify.
     _•₂_ : ∀ {U} {V} {W} → Sub V W → Rep U V → Sub U W
     (σ •₂ ρ) K x = σ K (ρ K x)
 
-    Sub↑-comp₂ : ∀ {U} {V} {W} {K} {σ : Sub V W} {ρ : Rep U V} → Sub↑ {K = K} (σ •₂ ρ) ∼ Sub↑ σ •₂ Rep↑ ρ
+    Sub↑-comp₂ : ∀ {U} {V} {W} {K} {σ : Sub V W} {ρ : Rep U V} → Sub↑ K (σ •₂ ρ) ∼ Sub↑ K σ •₂ Rep↑ K ρ
     Sub↑-comp₂ {K = K} x₀ = refl
     Sub↑-comp₂ (↑ x) = refl
-
-    liftOp'-comp₂ : ∀ {U} {V} {W} A {σ : Sub V W} {ρ : Rep U V} → LiftFamily.liftOp' proto-substitution A (σ •₂ ρ) ∼ LiftFamily.liftOp' proto-substitution A σ •₂ OpFamily.liftOp' replacement A ρ
-    liftOp'-comp₂ = liftOp-liftOp' proto-substitution proto-replacement proto-substitution _•₂_ Sub↑-comp₂
 
     sub-comp₂ : ∀ {U} {V} {W} {C} {K} {E : Subexpression U C K} {σ : Sub V W} {ρ : Rep U V} → E ⟦ σ •₂ ρ ⟧ ≡ E 〈 ρ 〉 ⟦ σ ⟧
     sub-comp₂ {E = E} = ap-circ proto-substitution proto-replacement proto-substitution
                   _•₂_ refl Sub↑-comp₂ E
 
-    Sub↑-comp : ∀ {U} {V} {W} {ρ : Sub U V} {σ : Sub V W} {K} →
-      Sub↑ {K = K} (σ • ρ) ∼ Sub↑ σ • Sub↑ ρ
+    Sub↑-comp : ∀ {U} {V} {W} {ρ : Sub U V} {σ : Sub V W} {K} → Sub↑ K (σ • ρ) ∼ Sub↑ K σ • Sub↑ K ρ
     Sub↑-comp x₀ = refl
     Sub↑-comp {W = W} {ρ = ρ} {σ = σ} {K = K} {L} (↑ x) =
       let open ≡-Reasoning {A = Expression (W , K) (varKind L)} in 
@@ -686,8 +715,16 @@ Most of the axioms of a family of operations are easy to verify.
       ≡⟨⟨ sub-comp₁ {E = ρ L x} ⟩⟩
         ρ L x ⟦ upRep •₁ σ ⟧  
       ≡⟨ sub-comp₂ {E = ρ L x} ⟩
-        (ρ L x) 〈 upRep 〉 ⟦ Sub↑ σ ⟧ 
+        (ρ L x) 〈 upRep 〉 ⟦ Sub↑ K σ ⟧ 
       ∎
+
+    substitution : OpFamily
+    substitution = record { 
+      liftFamily = proto-substitution ; 
+      isOpFamily = record { 
+        comp = _•_ ; 
+        apV-comp = refl ; 
+        liftOp-comp = Sub↑-comp } }
 \end{code}
 
 Replacement is a special case of substitution:
@@ -702,44 +739,7 @@ $$ E \langle \rho \rangle \equiv E [ \rho ] $$
 \end{lemma}
 
 \begin{code}
-    Rep↑-is-Sub↑ : ∀ {U} {V} {ρ : Rep U V} {K} → (λ L x → var (Rep↑ {K = K} ρ L x)) ∼ Sub↑ {K = K} (λ L x → var (ρ L x))
-    Rep↑-is-Sub↑ x₀ = refl
-    Rep↑-is-Sub↑ (↑ _) = refl
-
-    liftOp'-is-liftOp' : ∀ {U} {V} {ρ : Rep U V} {A} → (λ K x → var (OpFamily.liftOp' replacement A ρ K x)) ∼ LiftFamily.liftOp' proto-substitution A (λ K x → var (ρ K x))
-    liftOp'-is-liftOp' {ρ = ρ} {A = out _} = LiftFamily.∼-refl proto-substitution {σ = λ K x → var (ρ K x)}
-    liftOp'-is-liftOp' {U} {V} {ρ} {Π K A} = LiftFamily.∼-trans proto-substitution 
-      (liftOp'-is-liftOp' {ρ = Rep↑ ρ} {A = A})
-      (LiftFamily.liftOp'-cong proto-substitution A (Rep↑-is-Sub↑ {ρ = ρ} {K = K}) )
-
-    rep-is-sub : ∀ {U} {V} {K} {C} {E : Subexpression U K C} {ρ : Rep U V} → E 〈 ρ 〉 ≡ E ⟦ (λ K x → var (ρ K x)) ⟧
-    rep-is-sub {E = var _} = refl
-    rep-is-sub {E = app c E} = cong (app c) (rep-is-sub {E = E})
-    rep-is-sub {E = out₂} = refl
-    rep-is-sub {E = app₂ {A = A} E F} {ρ} = cong₂ app₂ 
-      (let open ≡-Reasoning {A = Expression (alpha _ A) (beta A)} in
-      begin 
-        E 〈 OpFamily.liftOp' replacement A ρ 〉
-      ≡⟨ rep-is-sub {E = E} ⟩
-        E ⟦ (λ K x → var (OpFamily.liftOp' replacement A ρ K x)) ⟧ 
-      ≡⟨ LiftFamily.ap-congl proto-substitution E (liftOp'-is-liftOp' {A = A}) ⟩
-        E ⟦ LiftFamily.liftOp' proto-substitution A (λ K x → var (ρ K x)) ⟧
-      ∎)
-      (rep-is-sub {E = F})
-    
-    substitution : OpFamily
-    substitution = record { 
-      liftFamily = proto-substitution; 
-      isOpFamily = record { 
-        liftOp-x₀ = refl; 
-        comp = _•_; 
-        apV-comp = refl; 
-        liftOp-comp = Sub↑-comp; 
-        liftOp-↑ = λ {_} {_} {_} {_} {σ} x → rep-is-sub {E = σ _ x}
-        }
-      }
-
-    Sub↑-idOp : ∀ {V} {K} → Sub↑ {V} {V} {K} (idOpSub V) ∼ idOpSub (V , K)
+    Sub↑-idOp : ∀ {V} {K} → Sub↑ K (idOpSub V) ∼ idOpSub (V , K)
     Sub↑-idOp = OpFamily.liftOp-idOp substitution
 
     sub-idOp : ∀ {V} {C} {K} {E : Subexpression V C K} → E ⟦ idOpSub V ⟧ ≡ E
@@ -749,6 +749,9 @@ $$ E \langle \rho \rangle \equiv E [ \rho ] $$
       E ⟦ σ • ρ ⟧ ≡ E ⟦ ρ ⟧ ⟦ σ ⟧
     sub-comp {E = E} = OpFamily.ap-comp substitution E
   
+    sub-cong : ∀ {U} {V} {C} {K} {E : Subexpression U C K} {σ σ' : Sub U V} → σ ∼ σ' → E ⟦ σ ⟧ ≡ E ⟦ σ' ⟧
+    sub-cong {E = E} = OpFamily.ap-congl substitution E
+
     assoc : ∀ {U V W X} {ρ : Sub W X} {σ : Sub V W} {τ : Sub U V} → ρ • (σ • τ) ∼ (ρ • σ) • τ
     assoc {τ = τ} = OpFamily.assoc substitution {ρ = τ}
 
@@ -779,12 +782,12 @@ $$ \sigma \bullet [x_0 := E] \sim [x_0 := E[\sigma]] \bullet (\sigma , K) $$
 
 \begin{code}
     comp₁-botsub : ∀ {U} {V} {K} {E : Expression U (varKind K)} {ρ : Rep U V} →
-      ρ •₁ (x₀:= E) ∼ (x₀:= (E 〈 ρ 〉)) •₂ Rep↑ ρ
+      ρ •₁ (x₀:= E) ∼ (x₀:= (E 〈 ρ 〉)) •₂ Rep↑ K ρ
     comp₁-botsub x₀ = refl
     comp₁-botsub (↑ _) = refl
 
     comp-botsub : ∀ {U} {V} {K} {E : Expression U (varKind K)} {σ : Sub U V} →
-      σ • (x₀:= E) ∼ (x₀:= (E ⟦ σ ⟧)) • Sub↑ σ
+      σ • (x₀:= E) ∼ (x₀:= (E ⟦ σ ⟧)) • Sub↑ K σ
     comp-botsub x₀ = refl
     comp-botsub {σ = σ} {L} (↑ x) = trans (sym sub-idOp) (sub-comp₂ {E = σ L x})
 \end{code}
