@@ -5,9 +5,10 @@ open import Data.List
 open import Data.Nat
 open import Data.Fin
 open import Prelims
-open import Grammar using (Taxonomy)
-open import Grammar.Grammar2
-import Reduction2
+open import Taxonomy
+open import Grammar
+import Grammar.Context
+import Reduction
 \end{code}
 
 \section{Predicative Higher-Order Propositional Logic}
@@ -47,7 +48,7 @@ PHOPLTaxonomy = record {
   NonVarKind = PHOPLNonVarKind }
 
 module PHOPLGrammar where
-  open Taxonomy PHOPLTaxonomy
+  open Taxonomy.Taxonomy PHOPLTaxonomy
 
   data PHOPLcon : ∀ {K : ExpressionKind} → Kind' (-Constructor K) → Set where
     -appProof : PHOPLcon (Π [] (varKind -Proof) (Π [] (varKind -Proof) (out {K = varKind -Proof})))
@@ -73,6 +74,7 @@ module PHOPLGrammar where
 module PHOPL where
   open PHOPLGrammar using (PHOPLcon;-appProof;-lamProof;-bot;-imp;-appTerm;-lamTerm;-Omega;-func)
   open Grammar' PHOPLGrammar.PHOPL
+  open Grammar.Context PHOPLGrammar.PHOPL
 
   Type : Set
   Type = Expression ∅ (nonVarKind -Type)
@@ -165,7 +167,7 @@ module PHOPL where
 
   data β : ∀ {V} {K} {C} → Constructor C → Subexpression V (-Constructor K) C → Expression V K → Set where
     βI : ∀ {V} A (M : Term (V , -Term)) N → β -appTerm (ΛTerm A M ,, N ,, out) (M ⟦ x₀:= N ⟧)
-  open Reduction2 PHOPLGrammar.PHOPL β
+  open Reduction PHOPLGrammar.PHOPL β
 \end{code}
 
 The rules of deduction of the system are as follows.

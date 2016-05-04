@@ -6,7 +6,7 @@ open import Data.List
 open import Prelims
 open import Taxonomy
 
-record ToGrammar' (T : Taxonomy) : Set₁ where
+record ToGrammar (T : Taxonomy) : Set₁ where
   open Taxonomy.Taxonomy T
   field
     Constructor    : ∀ {K} → Kind' (-Constructor K) → Set
@@ -434,7 +434,20 @@ Then, given an expression $E$ of kind $K$ over $U$, we write $E[\sigma]$ for the
   Rep↑-is-Sub↑ : ∀ {U} {V} {ρ : Rep U V} {K} → rep2sub (Rep↑ K ρ) ∼ Sub↑ K (rep2sub ρ)
   Rep↑-is-Sub↑ x₀ = refl
   Rep↑-is-Sub↑ (↑ _) = refl
+\end{code}
 
+Replacement is a special case of substitution:
+\begin{lemma}
+Let $\rho$ be a replacement $U \rightarrow V$.
+\begin{enumerate}
+\item
+The replacement $(\rho , K)$ and the substitution $(\rho , K)$ are equal.
+\item
+$$ E \langle \rho \rangle \equiv E [ \rho ] $$
+\end{enumerate}
+\end{lemma}
+
+\begin{code}
   module Substitution where
       open PreOpFamily pre-substitution
       open Lifting SUB↑
@@ -530,122 +543,13 @@ Most of the axioms of a family of operations are easy to verify.
       ≡⟨ sub-comp₂ {E = ρ L x} ⟩
         (ρ L x) 〈 upRep 〉 ⟦ Sub↑ K σ ⟧ 
       ∎
-
-  substitution : OpFamily
-  substitution = record { 
-      liftFamily = proto-substitution ; 
-      isOpFamily = record { 
-        comp = _•_ ; 
-        apV-comp = refl ; 
-        liftOp-comp = Sub↑-comp } }
-\end{code}
-
-Replacement is a special case of substitution:
-\begin{lemma}
-Let $\rho$ be a replacement $U \rightarrow V$.
-\begin{enumerate}
-\item
-The replacement $(\rho , K)$ and the substitution $(\rho , K)$ are equal.
-\item
-$$ E \langle \rho \rangle \equiv E [ \rho ] $$
-\end{enumerate}
-\end{lemma}
-
-\begin{code}
-  open OpFamily substitution using (assoc) renaming (liftOp-idOp to Sub↑-idOp;ap-idOp to sub-idOp;ap-comp to sub-comp;ap-congl to sub-cong;unitl to sub-unitl;unitr to sub-unitr) public
-\end{code}
-
-Let $E$ be an expression of kind $K$ over $V$.  Then we write $[x_0 := E]$ for the following substitution
-$(V , K) \Rightarrow V$:
-
-\begin{code}
-  x₀:= : ∀ {V} {K} → Expression V (varKind K) → Sub (V , K) V
-  x₀:= E _ x₀ = E
-  x₀:= E K₁ (↑ x) = var x
-\end{code}
-
-\begin{lemma}
-\begin{enumerate}
-\item
-$$ \rho \bullet_1 [x_0 := E] \sim [x_0 := E \langle \rho \rangle] \bullet_2 (\rho , K) $$
-\item
-$$ \sigma \bullet [x_0 := E] \sim [x_0 := E[\sigma]] \bullet (\sigma , K) $$
-\end{enumerate}
-\end{lemma}
-
-\begin{code}
-  comp₁-botsub : ∀ {U} {V} {K} {E : Expression U (varKind K)} {ρ : Rep U V} →
-      ρ •₁ (x₀:= E) ∼ (x₀:= (E 〈 ρ 〉)) •₂ Rep↑ K ρ
-  comp₁-botsub x₀ = refl
-  comp₁-botsub (↑ _) = refl
-
-  comp-botsub : ∀ {U} {V} {K} {E : Expression U (varKind K)} {σ : Sub U V} →
-      σ • (x₀:= E) ∼ (x₀:= (E ⟦ σ ⟧)) • Sub↑ K σ
-  comp-botsub x₀ = refl
-  comp-botsub {σ = σ} {L} (↑ x) = trans (sym sub-idOp) (sub-comp₂ {E = σ L x})
-\end{code}
-
-\subsection{Congruences}
-
-A \emph{congruence} is a relation $R$ on expressions such that:
-\begin{enumerate}
-\item
-if $M R N$, then $M$ and $N$ have the same kind;
-\item
-if $M_i R N_i$ for all $i$, then $c[[\vec{x_1}]M_1, \ldots, [\vec{x_n}]M_n] R c[[\vec{x_1}]N_1, \ldots, [\vec{x_n}]N_n]$.
-\end{enumerate}
-
-\begin{code}
-  Relation : Set₁
-  Relation = ∀ {V} {C} {K} → Subexpression V C K → Subexpression V C K → Set
-
-  record IsCongruence (R : Relation) : Set where
-    field
-        ICapp : ∀ {V} {K} {C} {c} {MM NN : Body V {K} C} → R MM NN → R (app c MM) (app c NN)
-        ICout : ∀ {V} {K} → R {V} { -Constructor K} {out} out out
-        ICappl : ∀ {V} {K} {A} {L} {C} {M N : Expression (extend' V A) L} {PP : Body V {K} C} → R M N → R (_,,_ {A = A} M PP) (N ,, PP)
-        ICappr : ∀ {V} {K} {A} {L} {C} {M : Expression (extend' V A) L} {NN PP : Body V {K} C} → R NN PP → R (_,,_ {A = A} M NN) (M ,, PP)
-\end{code}
-
-\subsection{Contexts}
-
-A \emph{context} has the form $x_1 : A_1, \ldots, x_n : A_n$ where, for each $i$:
-\begin{itemize}
-\item $x_i$ is a variable of kind $K_i$ distinct from $x_1$, \ldots, $x_{i-1}$;
-\item $A_i$ is an expression of some kind $L_i$;
-\item $L_i$ is a parent of $K_i$.
-\end{itemize}
-The \emph{domain} of this context is the extend'bet $\{ x_1, \ldots, x_n \}$.
-
-We give ourselves the following operations.  Given an extend'bet $A$ and finite set $F$, let $\mathsf{extend}\ A\ K\ F$ be the
-extend'bet $A \uplus F$, where each element of $F$ has kind $K$.  Let $\mathsf{embedr}$ be the canonical injection
-$F \rightarrow \mathsf{extend}\ A\ K\ F$; thus, for all $x \in F$, we have $\mathsf{embedr}\ x$ is a variable
-of $\mathsf{extend}\ A\ K\ F$ of kind $K$.
-
-\begin{code}
-  extend : Alphabet → VarKind → ℕ → Alphabet
-  extend A K zero = A
-  extend A K (suc F) = extend A K F , K
-
-  embedr : ∀ {A} {K} {F} → Fin F → Var (extend A K F) K
-  embedr zero = x₀
-  embedr (suc x) = ↑ (embedr x)
-\end{code}
-
-Let $\mathsf{embedl}$ be the canonical injection $A \rightarrow \mathsf{extend}\ A\ K\ F$, which
-is a replacement.
-
-\begin{code}
-  embedl : ∀ {A} {K} {F} → Rep A (extend A K F)
-  embedl {F = zero} _ x = x
-  embedl {F = suc F} K x = ↑ (embedl {F = F} K x)
 \end{code}
 
 \begin{code}
-record Grammar' : Set₁ where
+record Grammar : Set₁ where
   field
     taxonomy : Taxonomy
-    toGrammar : ToGrammar' taxonomy
+    toGrammar : ToGrammar taxonomy
   open Taxonomy.Taxonomy taxonomy public
-  open ToGrammar' toGrammar public
+  open ToGrammar toGrammar public
 \end{code}

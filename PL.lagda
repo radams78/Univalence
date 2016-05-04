@@ -8,9 +8,10 @@ open import Data.Nat
 open import Data.Fin
 open import Data.List
 open import Prelims
-open import Grammar using (Taxonomy)
-open import Grammar.Grammar2
-import Reduction2
+open import Taxonomy
+open import Grammar
+import Grammar.Context
+import Reduction
 \end{code}
 
 \section{Propositional Logic}
@@ -42,7 +43,7 @@ PLtaxonomy = record {
   NonVarKind = PLNonVarKind }
 
 module PLgrammar where
-  open Grammar.Taxonomy PLtaxonomy
+  open Taxonomy.Taxonomy PLtaxonomy
 
   data PLCon : ∀ {K : ExpressionKind} → Kind' (-Constructor K) → Set where
     app : PLCon (Π [] (varKind -Proof) (Π [] (varKind -Proof) (out {K = varKind -Proof})))
@@ -63,6 +64,7 @@ Propositional-Logic = record {
     parent = PLparent } }
 
 open Grammar' Propositional-Logic
+open Grammar.Context Propositional-Logic
 
 Prp : Set
 Prp = Expression ∅ (nonVarKind -Prp)
@@ -85,7 +87,7 @@ appP δ ε = app app (δ ,, ε ,, out)
 data β : ∀ {V} {K} {C : Kind' (-Constructor K)} → Constructor C → Subexpression V (-Constructor K) C → Expression V K → Set where
   βI : ∀ {V} {φ} {δ} {ε} → β {V} app (ΛP φ δ ,, ε ,, out) (δ ⟦ x₀:= ε ⟧)
 
-open Reduction2 Propositional-Logic β
+open Reduction Propositional-Logic β
 
 β-respects-rep : Respects-Creates.respects' replacement
 β-respects-rep {U} {V} {σ = ρ} (βI .{U} {φ} {δ} {ε}) = subst (β app _) 

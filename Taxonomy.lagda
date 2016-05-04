@@ -98,3 +98,18 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
     x₀ : ∀ {V} {K} → Var (V , K) K
     ↑ : ∀ {V} {K} {L} → Var V L → Var (V , K) L
 \end{code}
+
+We give ourselves the following operations.  Given an extend'bet $A$ and finite set $F$, let $\mathsf{extend}\ A\ K\ F$ be the
+extend'bet $A \uplus F$, where each element of $F$ has kind $K$.  Let $\mathsf{embedr}$ be the canonical injection
+$F \rightarrow \mathsf{extend}\ A\ K\ F$; thus, for all $x \in F$, we have $\mathsf{embedr}\ x$ is a variable
+of $\mathsf{extend}\ A\ K\ F$ of kind $K$.
+
+\begin{code}
+  extend : Alphabet → VarKind → ℕ → Alphabet
+  extend A K zero = A
+  extend A K (suc F) = extend A K F , K
+
+  embedr : ∀ {A} {K} {F} → Fin F → Var (extend A K F) K
+  embedr zero = x₀
+  embedr (suc x) = ↑ (embedr x)
+\end{code}
