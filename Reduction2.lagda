@@ -1,7 +1,7 @@
 \begin{code}
 open import Prelims
 open import Data.List
-open import Grammar.Grammar2
+open import Grammar
 
 --TODO Make use of IsCongruence
 
