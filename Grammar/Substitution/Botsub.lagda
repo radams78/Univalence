@@ -4,6 +4,8 @@ open import Grammar
 
 module Grammar.Substitution.Botsub (G : Grammar) where
   open Grammar.Grammar G
+  open import Grammar.Replacement G
+  open import Grammar.Substitution G
 \end{code}
 
 Let $E$ be an expression of kind $K$ over $V$.  Then we write $[x_0 := E]$ for the following substitution

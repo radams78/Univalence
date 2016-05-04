@@ -64,7 +64,7 @@ module PHOPLGrammar where
   PHOPLparent -Proof = varKind -Term
   PHOPLparent -Term = nonVarKind -Type
 
-  PHOPL : Grammar'
+  PHOPL : Grammar
   PHOPL = record { 
     taxonomy = PHOPLTaxonomy;
     toGrammar = record { 
@@ -73,8 +73,11 @@ module PHOPLGrammar where
 
 module PHOPL where
   open PHOPLGrammar using (PHOPLcon;-appProof;-lamProof;-bot;-imp;-appTerm;-lamTerm;-Omega;-func)
-  open Grammar' PHOPLGrammar.PHOPL
+  open Grammar.Grammar PHOPLGrammar.PHOPL
   open Grammar.Context PHOPLGrammar.PHOPL
+  open import Grammar.Replacement PHOPLGrammar.PHOPL
+  open import Grammar.Substitution PHOPLGrammar.PHOPL
+  open import Grammar.Substitution.Botsub PHOPLGrammar.PHOPL
 
   Type : Set
   Type = Expression ∅ (nonVarKind -Type)

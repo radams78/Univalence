@@ -11,6 +11,8 @@ open import Prelims
 open import Taxonomy
 open import Grammar
 import Grammar.Context
+import Grammar.Substitution
+import Grammar.Substitution.Botsub
 import Reduction
 \end{code}
 
@@ -56,15 +58,19 @@ module PLgrammar where
 
 open PLgrammar
 
-Propositional-Logic : Grammar'
+Propositional-Logic : Grammar
 Propositional-Logic = record { 
   taxonomy = PLtaxonomy; 
   toGrammar = record { 
     Constructor = PLCon; 
     parent = PLparent } }
 
-open Grammar' Propositional-Logic
+open Grammar.Grammar Propositional-Logic
 open Grammar.Context Propositional-Logic
+open import Grammar.OpFamily Propositional-Logic
+open import Grammar.Replacement Propositional-Logic
+open Grammar.Substitution Propositional-Logic
+open Grammar.Substitution.Botsub Propositional-Logic
 
 Prp : Set
 Prp = Expression ∅ (nonVarKind -Prp)

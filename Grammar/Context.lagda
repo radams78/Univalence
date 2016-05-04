@@ -12,9 +12,11 @@ The \emph{domain} of this context is the extend'bet $\{ x_1, \ldots, x_n \}$.
 open import Data.Nat
 open import Data.Fin
 open import Grammar
+import Grammar.Replacement
 
-module Grammar.Context (G : Grammar') where
-open Grammar' G
+module Grammar.Context (G : Grammar) where
+open Grammar.Grammar G
+open Grammar.Replacement G
 
 data Context (K : VarKind) : Alphabet → Set where
   〈〉 : Context K ∅

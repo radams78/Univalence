@@ -3,6 +3,9 @@ open import Prelims
 open import Data.List
 open import Taxonomy
 open import Grammar
+import Grammar.Congruence
+import Grammar.OpFamily
+import Grammar.Replacement
 
 --TODO Make use of IsCongruence
 
@@ -14,9 +17,12 @@ A \emph{reduction relation} is a relation $R$ between expressions such that, whe
 and $M$ is not a variable.
 
 \begin{code}
-module Reduction (G : Grammar') 
-  (R : ∀ {V} {K} {C : Grammar'.Kind' G (Grammar'.-Constructor {G} K)} → Grammar'.Constructor G C → Grammar'.Subexpression G V (Grammar'.-Constructor {G} K) C → Grammar'.Expression G V K → Set) where
-  open Grammar' G 
+module Reduction (G : Grammar) 
+  (R : ∀ {V} {K} {C : Grammar.Kind' G (Grammar.-Constructor {G} K)} → Grammar.Constructor G C → Grammar.Subexpression G V (Grammar.-Constructor {G} K) C → Grammar.Expression G V K → Set) where
+  open Grammar.Grammar G 
+  open Grammar.Congruence G
+  open Grammar.OpFamily G
+  open Grammar.Replacement G
 \end{code}
 
 We define $\rightarrow_R$ to be the
@@ -187,7 +193,7 @@ If $R$ creates replacements, then so do $\rightarrow_R$, $\twoheadrightarrow_R$ 
       red-created = appl red-created; 
       ap-created = cong (λ x → _,,_ x (F 〈 σ 〉)) ap-created
       }
-  create-osr hyp (ToGrammar'._,,_ {A = A} E F) {σ = σ} (appr {PP = F'} σF⇒F') =     
+  create-osr hyp (ToGrammar._,,_ {A = A} E F) {σ = σ} (appr {PP = F'} σF⇒F') =     
     let open Respects-Creates.creation {Ops = replacement} (create-osr hyp F σF⇒F') in 
     record { 
       created = _,,_ E created; 
