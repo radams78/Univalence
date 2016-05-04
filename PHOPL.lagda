@@ -1,9 +1,13 @@
 \begin{code}
 module PHOPL where
 
+open import Data.List
+open import Data.Nat
+open import Data.Fin
 open import Prelims
-open import Grammar
-import Reduction
+open import Grammar using (Taxonomy)
+open import Grammar.Grammar2
+import Reduction2
 \end{code}
 
 \section{Predicative Higher-Order Propositional Logic}
@@ -45,21 +49,21 @@ PHOPLTaxonomy = record {
 module PHOPLGrammar where
   open Taxonomy PHOPLTaxonomy
 
-  data PHOPLcon : ∀ {K : ExpressionKind} → Kind (-Constructor K) → Set where
-    -appProof : PHOPLcon (Π₂ (out (varKind -Proof)) (Π₂ (out (varKind -Proof)) (out₂ {K = varKind -Proof})))
-    -lamProof : PHOPLcon (Π₂ (out (varKind -Term)) (Π₂ (Π -Proof (out (varKind -Proof))) (out₂ {K = varKind -Proof})))
-    -bot : PHOPLcon (out₂ {K = varKind -Term})
-    -imp : PHOPLcon (Π₂ (out (varKind -Term)) (Π₂ (out (varKind -Term)) (out₂ {K = varKind -Term})))
-    -appTerm : PHOPLcon (Π₂ (out (varKind -Term)) (Π₂ (out (varKind -Term)) (out₂ {K = varKind -Term})))
-    -lamTerm : PHOPLcon (Π₂ (out (nonVarKind -Type)) (Π₂ (Π -Term (out (varKind -Term))) (out₂ {K = varKind -Term})))
-    -Omega : PHOPLcon (out₂ {K = nonVarKind -Type})
-    -func  : PHOPLcon (Π₂ (out (nonVarKind -Type)) (Π₂ (out (nonVarKind -Type)) (out₂ {K = nonVarKind -Type})))
+  data PHOPLcon : ∀ {K : ExpressionKind} → Kind' (-Constructor K) → Set where
+    -appProof : PHOPLcon (Π [] (varKind -Proof) (Π [] (varKind -Proof) (out {K = varKind -Proof})))
+    -lamProof : PHOPLcon (Π [] (varKind -Term) (Π [ -Proof ] (varKind -Proof) (out {K = varKind -Proof})))
+    -bot : PHOPLcon (out {K = varKind -Term})
+    -imp : PHOPLcon (Π [] (varKind -Term) (Π [] (varKind -Term) (out {K = varKind -Term})))
+    -appTerm : PHOPLcon (Π [] (varKind -Term) (Π [] (varKind -Term) (out {K = varKind -Term})))
+    -lamTerm : PHOPLcon (Π [] (nonVarKind -Type) (Π [ -Term ] (varKind -Term) (out {K = varKind -Term})))
+    -Omega : PHOPLcon (out {K = nonVarKind -Type})
+    -func  : PHOPLcon (Π [] (nonVarKind -Type) (Π [] (nonVarKind -Type) (out {K = nonVarKind -Type})))
 
   PHOPLparent : PHOPLVarKind → ExpressionKind
   PHOPLparent -Proof = varKind -Term
   PHOPLparent -Term = nonVarKind -Type
 
-  PHOPL : Grammar
+  PHOPL : Grammar'
   PHOPL = record { 
     taxonomy = PHOPLTaxonomy;
     toGrammar = record { 
@@ -68,25 +72,25 @@ module PHOPLGrammar where
 
 module PHOPL where
   open PHOPLGrammar using (PHOPLcon;-appProof;-lamProof;-bot;-imp;-appTerm;-lamTerm;-Omega;-func)
-  open Grammar.Grammar PHOPLGrammar.PHOPL
+  open Grammar' PHOPLGrammar.PHOPL
 
   Type : Set
   Type = Expression ∅ (nonVarKind -Type)
 
   liftType : ∀ {V} → Type → Expression V (nonVarKind -Type)
-  liftType (app -Omega out₂) = app -Omega out₂
-  liftType (app -func (app₂ A (app₂ B out₂))) = app -func (app₂ (liftType A) (app₂ (liftType B) out₂)) 
+  liftType (app -Omega out) = app -Omega out
+  liftType (app -func (A ,, B ,, out)) = app -func (liftType A ,, liftType B ,, out) 
 
   Ω : Type
-  Ω = app -Omega out₂
+  Ω = app -Omega out
 
   infix 75 _⇛_
   _⇛_ : Type → Type → Type
-  φ ⇛ ψ = app -func (app₂ φ (app₂ ψ out₂))
+  φ ⇛ ψ = app -func (φ ,,  ψ ,, out)
 
   lowerType : ∀ {V} → Expression V (nonVarKind -Type) → Type
-  lowerType (app -Omega out₂) = Ω
-  lowerType (app -func (app₂ φ (app₂ ψ out₂))) = lowerType φ ⇛ lowerType ψ
+  lowerType (app -Omega ou) = Ω
+  lowerType (app -func (φ ,, ψ ,, out)) = lowerType φ ⇛ lowerType ψ
 
 {-  infix 80 _,_
   data TContext : Alphabet → Set where
@@ -100,16 +104,16 @@ module PHOPL where
   Term V = Expression V (varKind -Term)
 
   ⊥ : ∀ {V} → Term V
-  ⊥ = app -bot out₂
+  ⊥ = app -bot out
 
   appTerm : ∀ {V} → Term V → Term V → Term V
-  appTerm M N = app -appTerm (app₂ M (app₂ N out₂))
+  appTerm M N = app -appTerm (M ,, N ,, out)
 
   ΛTerm : ∀ {V} → Type → Term (V , -Term) → Term V
-  ΛTerm A M = app -lamTerm (app₂ (liftType A) (app₂ M out₂))
+  ΛTerm A M = app -lamTerm (liftType A ,,  M ,, out)
 
   _⊃_ : ∀ {V} → Term V → Term V → Term V
-  φ ⊃ ψ = app -imp (app₂ φ (app₂ ψ out₂))
+  φ ⊃ ψ = app -imp (φ ,, ψ ,, out)
 
   PAlphabet : ℕ → Alphabet → Alphabet
   PAlphabet zero A = A
@@ -146,10 +150,10 @@ module PHOPL where
   varP {P = P} x = var (liftVar' P x)
 
   appP : ∀ {V} {P} → Proof V P → Proof V P → Proof V P
-  appP δ ε = app -appProof (app₂ δ (app₂ ε out₂))
+  appP δ ε = app -appProof (δ ,, ε ,, out)
 
   ΛP : ∀ {V} {P} → Term V → Proof V (suc P) → Proof V P
-  ΛP {P = P} φ δ = app -lamProof (app₂ (liftExp P φ) (app₂ δ out₂))
+  ΛP {P = P} φ δ = app -lamProof (liftExp P φ ,, δ ,, out)
 
 --  typeof' : ∀ {V} → Var V -Term → TContext V → Type
 --  typeof' x₀ (_ , A) = A
@@ -160,8 +164,8 @@ module PHOPL where
   propof (suc x) (Γ , _) = propof x Γ
 
   data β : ∀ {V} {K} {C} → Constructor C → Subexpression V (-Constructor K) C → Expression V K → Set where
-    βI : ∀ {V} A (M : Term (V , -Term)) N → β -appTerm (app₂ (ΛTerm A M) (app₂ N out₂)) (M ⟦ x₀:= N ⟧)
-  open Reduction PHOPLGrammar.PHOPL β
+    βI : ∀ {V} A (M : Term (V , -Term)) N → β -appTerm (ΛTerm A M ,, N ,, out) (M ⟦ x₀:= N ⟧)
+  open Reduction2 PHOPLGrammar.PHOPL β
 \end{code}
 
 The rules of deduction of the system are as follows.
@@ -190,8 +194,8 @@ The rules of deduction of the system are as follows.
     var : ∀ {V} {Γ : TContext V} {x} → Γ ⊢ var x ∶ typeof x Γ
     ⊥R : ∀ {V} {Γ : TContext V} → Γ ⊢ ⊥ ∶ Ω 〈 (λ _ ()) 〉
     imp : ∀ {V} {Γ : TContext V} {φ} {ψ} → Γ ⊢ φ ∶ Ω 〈 (λ _ ()) 〉 → Γ ⊢ ψ ∶ Ω 〈 (λ _ ()) 〉 → Γ ⊢ φ ⊃ ψ ∶ Ω 〈 (λ _ ()) 〉
-    app : ∀ {V} {Γ : TContext V} {M} {N} {A} {B} → Γ ⊢ M ∶ app -func (app₂ A (app₂ B out₂)) → Γ ⊢ N ∶ A → Γ ⊢ appTerm M N ∶ B
-    Λ : ∀ {V} {Γ : TContext V} {A} {M} {B} → Γ , A ⊢ M ∶ liftE B → Γ ⊢ app -lamTerm (app₂ A (app₂ M out₂)) ∶ app -func (app₂ A (app₂ B out₂))
+    app : ∀ {V} {Γ : TContext V} {M} {N} {A} {B} → Γ ⊢ M ∶ app -func (A ,, B ,, out) → Γ ⊢ N ∶ A → Γ ⊢ appTerm M N ∶ B
+    Λ : ∀ {V} {Γ : TContext V} {A} {M} {B} → Γ , A ⊢ M ∶ liftE B → Γ ⊢ app -lamTerm (A ,, M ,, out) ∶ app -func (A ,, B ,, out)
 
   data Pvalid : ∀ {V} {P} → TContext V → PContext' V P → Set₁ where
     〈〉 : ∀ {V} {Γ : TContext V} → Pvalid Γ 〈〉

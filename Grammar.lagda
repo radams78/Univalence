@@ -10,6 +10,7 @@ open import Data.Empty
 open import Data.Product
 open import Data.Nat public
 open import Data.Fin public using (Fin;zero;suc)
+open import Data.List
 open import Prelims
 \end{code}
 
@@ -21,6 +22,17 @@ A \emph{taxononmy} consists of:
 \item a set of \emph{expression kinds};
 \item a subset of expression kinds, called the \emph{variable kinds}.  We refer to the other expession kinds as \emph{non-variable kinds}.
 \end{itemize}
+
+\begin{code}
+record Taxonomy : Set₁ where
+  field
+    VarKind : Set
+    NonVarKind : Set
+
+  data ExpressionKind : Set where
+    varKind : VarKind → ExpressionKind
+    nonVarKind : NonVarKind → ExpressionKind
+\end{code}
 
 A \emph{grammar} over a taxonomy consists of:
 \begin{itemize}
@@ -46,15 +58,6 @@ The subexpressions of the form $[x_{i1}, \ldots, x_{ir_i}]E_i$ shall be called \
 We formalise this as follows.  First, we construct the sets of expression kinds, constructor kinds and abstraction kinds over a taxonomy:
 
 \begin{code}
-record Taxonomy : Set₁ where
-  field
-    VarKind : Set
-    NonVarKind : Set
-
-  data ExpressionKind : Set where
-    varKind : VarKind → ExpressionKind
-    nonVarKind : NonVarKind → ExpressionKind
-
   data KindClass : Set where
     -Expression  : KindClass
     -Abstraction : KindClass
@@ -66,6 +69,15 @@ record Taxonomy : Set₁ where
     Π    : VarKind → Kind -Abstraction → Kind -Abstraction
     out₂ : ∀ {K} → Kind (-Constructor K)
     Π₂   : ∀ {K} → Kind -Abstraction → Kind (-Constructor K) → Kind (-Constructor K)
+
+  data KindClass' : Set where
+    -Expression : KindClass'
+    -Constructor : ExpressionKind → KindClass'
+
+  data Kind' : KindClass' → Set where
+    base : ExpressionKind → Kind' -Expression
+    out  : ∀ {K} → Kind' (-Constructor K)
+    Π    : ∀ {K} → List VarKind → ExpressionKind → Kind' (-Constructor K) → Kind' (-Constructor K)
 \end{code}
 
 An \emph{alphabet} $A$ consists of a finite set of \emph{variables}, to each of which is assigned a variable kind $K$.
@@ -76,6 +88,11 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
   data Alphabet : Set where
     ∅ : Alphabet
     _,_ : Alphabet → VarKind → Alphabet
+
+  extend' : Alphabet → List VarKind → Alphabet
+  extend' A [] = A
+  extend' A (K ∷ KK) = extend' (A , K) KK
+--TODO Replace extend
 
   data Var : Alphabet → VarKind → Set where
     x₀ : ∀ {V} {K} → Var (V , K) K
