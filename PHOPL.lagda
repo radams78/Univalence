@@ -5,8 +5,8 @@ open import Data.List
 open import Data.Nat
 open import Data.Fin
 open import Prelims
-open import Taxonomy
-open import Grammar
+open import Grammar.Taxonomy
+open import Grammar.Base
 import Grammar.Context
 import Reduction
 \end{code}
@@ -48,9 +48,9 @@ PHOPLTaxonomy = record {
   NonVarKind = PHOPLNonVarKind }
 
 module PHOPLGrammar where
-  open Taxonomy.Taxonomy PHOPLTaxonomy
+  open Taxonomy PHOPLTaxonomy
 
-  data PHOPLcon : ∀ {K : ExpressionKind} → Kind' (-Constructor K) → Set where
+  data PHOPLcon : ∀ {K : ExpressionKind} → Kind (-Constructor K) → Set where
     -appProof : PHOPLcon (Π [] (varKind -Proof) (Π [] (varKind -Proof) (out {K = varKind -Proof})))
     -lamProof : PHOPLcon (Π [] (varKind -Term) (Π [ -Proof ] (varKind -Proof) (out {K = varKind -Proof})))
     -bot : PHOPLcon (out {K = varKind -Term})
@@ -73,7 +73,7 @@ module PHOPLGrammar where
 
 module PHOPL where
   open PHOPLGrammar using (PHOPLcon;-appProof;-lamProof;-bot;-imp;-appTerm;-lamTerm;-Omega;-func)
-  open Grammar.Grammar PHOPLGrammar.PHOPL
+  open Grammar PHOPLGrammar.PHOPL
   open Grammar.Context PHOPLGrammar.PHOPL
   open import Grammar.Replacement PHOPLGrammar.PHOPL
   open import Grammar.Substitution PHOPLGrammar.PHOPL
@@ -96,11 +96,6 @@ module PHOPL where
   lowerType : ∀ {V} → Expression V (nonVarKind -Type) → Type
   lowerType (app -Omega ou) = Ω
   lowerType (app -func (φ ,, ψ ,, out)) = lowerType φ ⇛ lowerType ψ
-
-{-  infix 80 _,_
-  data TContext : Alphabet → Set where
-    〈〉 : TContext ∅
-    _,_ : ∀ {V} → TContext V → Type → TContext (V , -Term) -}
 
   TContext : Alphabet → Set
   TContext = Context -Term
@@ -138,15 +133,6 @@ module PHOPL where
   data PContext' (V : Alphabet) : ℕ → Set where
     〈〉 : PContext' V zero
     _,_ : ∀ {P} → PContext' V P → Term V → PContext' V (suc P)
-
-  PContext : Alphabet → ℕ → Set
-  PContext V = Context' V -Proof
-
-  P〈〉 : ∀ {V} → PContext V zero
-  P〈〉 = 〈〉
-
-  _P,_ : ∀ {V} {P} → PContext V P → Term V → PContext V (suc P)
-  _P,_ {V} {P} Δ φ = Δ , φ 〈 embedl {V} { -Proof} {P} 〉
 
   Proof : Alphabet → ℕ → Set
   Proof V P = Expression (PAlphabet P V) (varKind -Proof)

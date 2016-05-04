@@ -1,16 +1,17 @@
 \begin{code}
 open import Data.List
 open import Prelims
-open import Grammar
+open import Grammar.Base
 import Grammar.Replacement
 import Grammar.OpFamily
 import Grammar.OpFamily.Composition
 
 module Grammar.Substitution (G : Grammar) where
-  open Grammar.Grammar G
+  open Grammar G
   open Grammar.Replacement G
   open Grammar.OpFamily G
   open Grammar.OpFamily.Composition G
+  open import Grammar.OpFamily.LiftFamily G
 \end{code}
 
 \subsection{Substitution}
@@ -22,11 +23,14 @@ A \emph{substitution} $\sigma$ from extend'bet $U$ to extend'bet $V$, $\sigma : 
   Sub : Alphabet → Alphabet → Set
   Sub U V = ∀ K → Var U K → Expression V (varKind K)
 
+  upSub : ∀ {V} {K} → Sub V (V , K)
+  upSub _ x = var (↑ x)
+
   pre-substitution : PreOpFamily
   pre-substitution = record { 
       Op = Sub; 
       apV = λ σ x → σ _ x; 
-      up = λ _ x → var (↑ x); 
+      up = upSub;
       apV-up = refl; 
       idOp = λ _ _ → var; 
       apV-idOp = λ _ → refl }
@@ -58,6 +62,9 @@ Then, given an expression $E$ of kind $K$ over $U$, we write $E[\sigma]$ for the
   Rep↑-is-Sub↑ : ∀ {U} {V} {ρ : Rep U V} {K} → rep2sub (Rep↑ K ρ) ∼ Sub↑ K (rep2sub ρ)
   Rep↑-is-Sub↑ x₀ = refl
   Rep↑-is-Sub↑ (↑ _) = refl
+
+  up-is-up : ∀ {V} {K} → rep2sub (upRep {V} {K}) ∼ upSub
+  up-is-up _ = refl
 \end{code}
 
 Replacement is a special case of substitution:
@@ -87,7 +94,7 @@ $$ E \langle \rho \rangle \equiv E [ \rho ] $$
           liftOp' A (Sub↑ K (rep2sub ρ))
         ∎
 
-      rep-is-sub : ∀ {U} {V} {K} {C} (E : Subexpression U K C) {ρ : Rep U V} → E 〈 ρ 〉 ≡ E ⟦ (λ K x → var (ρ K x)) ⟧
+      rep-is-sub : ∀ {U} {V} {K} {C} (E : Subexpression U K C) {ρ : Rep U V} → E 〈 ρ 〉 ≡ E ⟦ rep2sub ρ ⟧
       rep-is-sub (var _) = refl
       rep-is-sub (app c E) = cong (app c) (rep-is-sub E)
       rep-is-sub out = refl
@@ -101,6 +108,9 @@ $$ E \langle \rho \rangle \equiv E [ \rho ] $$
           E ⟦ liftOp' A (λ K x → var (ρ K x)) ⟧
         ∎)
         (rep-is-sub F)
+
+      up-is-up' : ∀ {V} {C} {K} {L} {E : Subexpression V C K} → E 〈 upRep {K = L} 〉 ≡ E ⟦ upSub ⟧
+      up-is-up' {E = E} = rep-is-sub E
 
   open Substitution public
 
@@ -119,11 +129,11 @@ $$ E \langle \rho \rangle \equiv E [ \rho ] $$
   Sub↑-comp₁ {U} {V} {W} {K} {ρ} {σ} {L} (↑ x) = let open ≡-Reasoning {A = Expression (W , K) (varKind L)} in 
       begin 
         (σ L x) 〈 ρ 〉 〈 upRep 〉
-      ≡⟨⟨ rep-comp {E = σ L x} ⟩⟩
+      ≡⟨⟨ rep-comp (σ L x) ⟩⟩
         (σ L x) 〈 upRep •R ρ 〉
       ≡⟨⟩
         (σ L x) 〈 Rep↑ K ρ •R upRep 〉
-      ≡⟨ rep-comp {E = σ L x} ⟩
+      ≡⟨ rep-comp (σ L x) ⟩
         (σ L x) 〈 upRep 〉 〈 Rep↑ K ρ 〉
       ∎
 
@@ -133,9 +143,9 @@ $$ E \langle \rho \rangle \equiv E [ \rho ] $$
     liftOp-circ = Sub↑-comp₁ ; 
     apV-circ = refl }
 
-  sub-comp₁ : ∀ {U} {V} {W} {C} {K} {E : Subexpression U C K} {ρ : Rep V W} {σ : Sub U V} →
+  sub-comp₁ : ∀ {U} {V} {W} {C} {K} (E : Subexpression U C K) {ρ : Rep V W} {σ : Sub U V} →
       E ⟦ ρ •₁ σ ⟧ ≡ E ⟦ σ ⟧ 〈 ρ 〉
-  sub-comp₁ {E = E} = Composition.ap-circ COMP₁ E
+  sub-comp₁ E = Composition.ap-circ COMP₁ E
 
   infix 75 _•₂_
   _•₂_ : ∀ {U} {V} {W} → Sub V W → Rep U V → Sub U W
@@ -151,8 +161,8 @@ $$ E \langle \rho \rangle \equiv E [ \rho ] $$
     liftOp-circ = Sub↑-comp₂ ; 
     apV-circ = refl }
 
-  sub-comp₂ : ∀ {U} {V} {W} {C} {K} {E : Subexpression U C K} {σ : Sub V W} {ρ : Rep U V} → E ⟦ σ •₂ ρ ⟧ ≡ E 〈 ρ 〉 ⟦ σ ⟧
-  sub-comp₂ {E = E} = Composition.ap-circ COMP₂ E
+  sub-comp₂ : ∀ {U} {V} {W} {C} {K} (E : Subexpression U C K) {σ : Sub V W} {ρ : Rep U V} → E ⟦ σ •₂ ρ ⟧ ≡ E 〈 ρ 〉 ⟦ σ ⟧
+  sub-comp₂ E = Composition.ap-circ COMP₂ E
 \end{code}
 
 Composition is defined by $(\sigma \circ \rho)(x) \equiv \rho(x) [ \sigma ]$.
@@ -168,11 +178,11 @@ Composition is defined by $(\sigma \circ \rho)(x) \equiv \rho(x) [ \sigma ]$.
     let open ≡-Reasoning in 
     begin 
       ρ L x ⟦ σ ⟧ 〈 upRep 〉
-    ≡⟨⟨ sub-comp₁ {E = ρ L x} ⟩⟩
+    ≡⟨⟨ sub-comp₁ (ρ L x) ⟩⟩
       ρ L x ⟦ upRep •₁ σ ⟧
     ≡⟨⟩
       ρ L x ⟦ Sub↑ K σ •₂ upRep ⟧
-    ≡⟨ sub-comp₂ {E = ρ L x} ⟩
+    ≡⟨ sub-comp₂ (ρ L x) ⟩
       ρ L x 〈 upRep 〉 ⟦ Sub↑ K σ ⟧ 
     ∎
 
@@ -180,14 +190,15 @@ Composition is defined by $(\sigma \circ \rho)(x) \equiv \rho(x) [ \sigma ]$.
   substitution = record { 
     liftFamily = proto-substitution ; 
     isOpFamily = record { 
-      comp = _•_ ; 
-      apV-comp = refl ; 
-      liftOp-comp = Sub↑-comp } }
+      _∘_ = _•_ ; 
+      liftOp-comp = Sub↑-comp ; 
+      apV-comp = refl } 
+    }
 
   open OpFamily substitution using (assoc) 
     renaming (liftOp-idOp to Sub↑-idOp;
              ap-idOp to sub-idOp;
-             ap-comp to sub-comp;
+             ap-circ to sub-comp;
              ap-congl to sub-cong;
              unitl to sub-unitl;
              unitr to sub-unitr)

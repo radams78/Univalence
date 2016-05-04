@@ -9,10 +9,10 @@ if $M_i R N_i$ for all $i$, then $c[[\vec{x_1}]M_1, \ldots, [\vec{x_n}]M_n] R c[
 \end{enumerate}
 
 \begin{code}
-open import Grammar
+open import Grammar.Base
 
 module Grammar.Congruence (G : Grammar) where
-  open Grammar.Grammar G
+  open Grammar G
 
   Relation : Set₁
   Relation = ∀ {V} {C} {K} → Subexpression V C K → Subexpression V C K → Set

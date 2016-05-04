@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.1.15)  4 MAY 2016 14:58
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.1.15)  4 MAY 2016 23:02
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -332,66 +332,30 @@ File: uni-32.def 2013/05/13 UCS: Unicode data U+2000..U+20FF
 )
 (/usr/share/texlive/texmf-dist/tex/latex/ucs/data/uni-39.def
 File: uni-39.def 2013/05/13 UCS: Unicode data U+2700..U+27FF
-)) (./Grammar.lagda [1
+))
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-(/usr/share/texlive/texmf-dist/tex/latex/ucs/data/uni-3.def
-File: uni-3.def 2013/05/13 UCS: Unicode data U+0300..U+03FF
-)
-LaTeX Font Info:    Try loading font information for LGR+cmtt on input line 27.
+! LaTeX Error: File `Grammar.lagda' not found.
 
+Type X to quit or <RETURN> to proceed,
+or enter new name. (Default extension: lagda)
 
-(/usr/share/texlive/texmf-dist/tex/latex/cbfonts-fd/lgrcmtt.fd
-File: lgrcmtt.fd 2013/09/01 v1.0 Greek European Computer Typewriter
-) [2] [3]
-[4]) (./PL.lagda
+Enter file name: X
 
-LaTeX Warning: Command \textphi invalid in math mode on input line 28.
-
-[5] [6]
-LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 104
-.
-LaTeX Font Info:    No file OMScmtt.fd. on input line 104.
-
-
-LaTeX Font Warning: Font shape `OMS/cmtt/m/n' undefined
-(Font)              using `OMS/cmsy/m/n' instead
-(Font)              for symbol `textbullet' on input line 104.
-
-[7] [8] [9] [10] [11] [12]
-(/usr/share/texlive/texmf-dist/tex/latex/ucs/data/uni-0.def
-File: uni-0.def 2013/05/13 UCS: Unicode data U+0000..U+00FF
-) [13] [14] [15])
-(./PHOPL.lagda [16] [17] [18] [19] [20]) [21] (./main.aux)
-
-LaTeX Font Warning: Some font shapes were not available, defaults substituted.
-
- ) 
+ )
+(\end occurred when \ifx on line 46 was incomplete)
+(\end occurred when \ifx on line 46 was incomplete) 
 Here is how much of TeX's memory you used:
- 5657 strings out of 494952
- 77811 string characters out of 6179835
- 109623 words of memory out of 5000000
- 8791 multiletter control sequences out of 15000+600000
- 14716 words of font info for 56 fonts, out of 8000000 for 9000
+ 4745 strings out of 494952
+ 67845 string characters out of 6179835
+ 103570 words of memory out of 5000000
+ 7908 multiletter control sequences out of 15000+600000
+ 12280 words of font info for 50 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
- 32i,8n,28p,571b,661s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texl
-ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/
-type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
-sfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
-/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-tt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/cbfonts/gttn1000.pfb
-></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on main.pdf (21 pages, 198499 bytes).
+ 32i,6n,28p,461b,650s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+No pages of output.
 PDF statistics:
- 128 PDF objects out of 1000 (max. 8388607)
- 90 compressed objects within 1 object stream
+ 0 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
