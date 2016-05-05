@@ -37,10 +37,11 @@ We can now define the set of expressions over a grammar:
   infixr 50 _,,_
   data Subexpression where
     var : ∀ {V} {K} → Var V K → Expression V (varKind K)
-    app : ∀ {V} {K} {C} → Constructor C → Body V {K} C → Expression V K
+    app : ∀ {V} {K} {C} → Constructor C → Body V {K} C → 
+      Expression V K
     out : ∀ {V} {K} → Body V {K} out
-    _,,_ : ∀ {V} {K} {A} {L} {C} → Expression (extend V A) L → Body V {K} C → 
-           Body V (Π A L C)
+    _,,_ : ∀ {V} {K} {A} {L} {C} → Expression (extend V A) L → 
+      Body V {K} C → Body V (Π A L C)
 
   var-inj : ∀ {V} {K} {x y : Var V K} → var x ≡ var y → x ≡ y
   var-inj refl = refl

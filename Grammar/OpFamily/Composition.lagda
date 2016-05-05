@@ -12,10 +12,10 @@ open LiftFamily
 \end{code}
 }
 
-\subsection{Compositions}
+\subsubsection{Compositions}
 
-Let $F$, $G$ and $H$ be three families of operations.  A \emph{composition} $\circ : F;G \rightarrow H$ is a family of functions
-\[ \circ_{UVW} : F V W \times G U V \rightarrow H U W \]
+Let $F$, $G$ and $H$ be three pre-families with lifting.  A \emph{composition} $\circ : F;G \rightarrow H$ is a family of functions
+\[ \circ_{UVW} : F[V,W] \times G[U,V] \rightarrow H[U,W] \]
 for all alphabets $U$, $V$ and $W$ such that:
 \begin{itemize}
 \item
@@ -28,8 +28,11 @@ $x [ \sigma \circ \rho ] = x [ \rho ] [ \sigma ]$
 record Composition (F G H : LiftFamily) : Set where
   field
     circ : ∀ {U} {V} {W} → Op F V W → Op G U V → Op H U W
-    liftOp-circ : ∀ {U V W K σ ρ} → _∼op_ H (liftOp H K (circ {U} {V} {W} σ ρ)) (circ (liftOp F K σ) (liftOp G K ρ))
-    apV-circ : ∀ {U} {V} {W} {K} {σ} {ρ} {x : Var U K} → apV H (circ {U} {V} {W} σ ρ) x ≡ ap F σ (apV G ρ x)
+    liftOp-circ : ∀ {U V W K σ ρ} → 
+      _∼op_ H (liftOp H K (circ {U} {V} {W} σ ρ)) 
+        (circ (liftOp F K σ) (liftOp G K ρ))
+    apV-circ : ∀ {U} {V} {W} {K} {σ} {ρ} {x : Var U K} → 
+      apV H (circ {U} {V} {W} σ ρ) x ≡ ap F σ (apV G ρ x)
 \end{code}
 
 \begin{lemma}
@@ -45,7 +48,13 @@ If $\sigma \sim \sigma'$ and $\rho \sim \rho'$ then $\sigma \circ \rho \sim \sig
 \end{lemma}
 
 \begin{code}
-  liftOp'-circ : ∀ {U V W} A {σ ρ} → _∼op_ H (liftOp' H A (circ {U} {V} {W} σ ρ)) (circ (liftOp' F A σ) (liftOp' G A ρ))
+  liftOp'-circ : ∀ {U V W} A {σ ρ} → 
+    _∼op_ H (liftOp' H A (circ {U} {V} {W} σ ρ)) 
+      (circ (liftOp' F A σ) (liftOp' G A ρ))
+\end{code}
+
+\AgdaHide{
+\begin{code}
   liftOp'-circ [] = ∼-refl H
   liftOp'-circ {U} {V} {W} (K ∷ A) {σ} {ρ} = let open EqReasoning (OP H _ _) in 
     begin
@@ -55,8 +64,16 @@ If $\sigma \sim \sigma'$ and $\rho \sim \rho'$ then $\sigma \circ \rho \sim \sig
     ≈⟨ liftOp'-circ A ⟩
       circ (liftOp' F A (liftOp F K σ)) (liftOp' G A (liftOp G K ρ))
     ∎
+\end{code}
+}
 
-  ap-circ : ∀ {U V W C K} (E : Subexpression U C K) {σ ρ} → ap H (circ {U} {V} {W} σ ρ) E ≡ ap F σ (ap G ρ E)
+\begin{code}
+  ap-circ : ∀ {U V W C K} (E : Subexpression U C K) {σ ρ} → 
+    ap H (circ {U} {V} {W} σ ρ) E ≡ ap F σ (ap G ρ E)
+\end{code}
+
+\AgdaHide{
+\begin{code}
   ap-circ (var _) = apV-circ
   ap-circ (app c E) = cong (app c) (ap-circ E)
   ap-circ out = refl
@@ -70,8 +87,16 @@ If $\sigma \sim \sigma'$ and $\rho \sim \rho'$ then $\sigma \circ \rho \sim \sig
       ap F (liftOp' F A σ) (ap G (liftOp' G A ρ) E)
     ∎) 
     (ap-circ E')
+\end{code}
+}
 
-  circ-cong : ∀ {U V W} {σ σ' : Op F V W} {ρ ρ' : Op G U V} → _∼op_ F σ σ' → _∼op_ G ρ ρ' → _∼op_ H (circ σ ρ) (circ σ' ρ')
+\begin{code}
+  circ-cong : ∀ {U V W} {σ σ' : Op F V W} {ρ ρ' : Op G U V} → 
+    _∼op_ F σ σ' → _∼op_ G ρ ρ' → _∼op_ H (circ σ ρ) (circ σ' ρ')
+\end{code}
+
+\AgdaHide{
+\begin{code}
   circ-cong {U} {V} {W} {σ} {σ'} {ρ} {ρ'} σ∼σ' ρ∼ρ' x = let open ≡-Reasoning in 
     begin
       apV H (circ σ ρ) x
@@ -82,11 +107,7 @@ If $\sigma \sim \sigma'$ and $\rho \sim \rho'$ then $\sigma \circ \rho \sim \sig
     ≡⟨⟨ apV-circ ⟩⟩
       apV H (circ σ' ρ') x
     ∎
-\end{code}
 
-A lemma to quickly deduce $E [ σ ] [ ρ ] ≡ E [ σ' ] [ ρ' ]$ from $ρ ∘ σ ∼ ρ' ∘ σ'$.
-
-\begin{code}
 ap-circ-sim : ∀ {F F' G G' H} (circ₁ : Composition F G H) (circ₂ : Composition F' G' H) {U} {V} {V'} {W}
   {σ : Op F V W} {ρ : Op G U V} {σ' : Op F' V' W} {ρ' : Op G' U V'} →
   _∼op_ H (Composition.circ circ₁ σ ρ) (Composition.circ circ₂ σ' ρ') →
@@ -130,3 +151,4 @@ liftOp-up-mixed' : ∀ {F} {G} {H} {F'} (circ₁ : Composition F G H) (circ₂ :
   ∀ {E : Subexpression U C K} → ap F (liftOp F L σ) (ap G (up G) E) ≡ ap F' (up F') (ap F σ E)
 liftOp-up-mixed' circ₁ circ₂ hyp {E = E} = ap-circ-sim circ₁ circ₂ (liftOp-up-mixed circ₁ circ₂ (λ {_} {_} {_} {_} {E} → hyp {E = E})) E
 \end{code}
+}

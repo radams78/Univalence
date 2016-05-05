@@ -15,7 +15,7 @@ Our aim now is to define the operations of \emph{replacement} and \emph{substitu
 A \emph{family of operations} over a grammar $G$ consists of:
 \begin{enumerate}
 \item
-for any alphabets $U$ and $V$, a set of \emph{operations} $\sigma$ from $U$ to $V$, $\sigma : U \rightarrow V$;
+for any alphabets $U$ and $V$, a set $F[U,V]$ of \emph{operations} $\sigma$ from $U$ to $V$, $\sigma : U \rightarrow V$;
 \item
 for any operation $\sigma : U \rightarrow V$ and variable $x \in U$ of kind $K$, an expression $\sigma(x)$ over $V$ of kind $K$;
 \item
@@ -47,23 +47,27 @@ $(\sigma \circ \rho)(x) \equiv \rho(x) [ \sigma ]$
 \end{itemize}
 where for $\sigma, \rho : U \rightarrow V$ we write $\sigma \sim \rho$ iff $\sigma(x) \equiv \rho(x)$ for all $x \in U$; and, given $\sigma : U \rightarrow V$ and $E$ an expression over $U$, we define $E[\sigma]$, the result of \emph{applying} the operation $\sigma$ to $E$, as follows:
 
-\begin{eqnarray*}
+\begin{align*}
 x[\sigma] & \eqdef \sigma(x) \\
-c([\vec{x_1}] E_1, \ldots, [\vec{x_n}] E_n) [\sigma] & \eqdef
+\lefteqn{c([\vec{x_1}] E_1, \ldots, [\vec{x_n}] E_n) [\sigma]} \\
+ & \eqdef
 c([\vec{x_1}] E_1 [(\sigma , K_{11}, \ldots, K_{1r_1})], \ldots,
 [\vec{x_n}] E_n [(\sigma, K_{n1}, \ldots, K_{nr_n})])
-\end{eqnarray*}
+\end{align*}
 for $c$ a constructor of type (\ref{eq:conkind}).
 
+\subsubsection{Pre-Families}
 We formalize this definition in stages.  First, we define a \emph{pre-family of operations} to be a family with items of data 1--4 above that satisfies the first two axioms:
 
 \begin{code}
 record PreOpFamily : Set₂ where
   field
     Op : Alphabet → Alphabet → Set
-    apV : ∀ {U} {V} {K} → Op U V → Var U K → Expression V (varKind K)
+    apV : ∀ {U} {V} {K} → Op U V → Var U K → 
+      Expression V (varKind K)
     up : ∀ {V} {K} → Op V (V , K)
-    apV-up : ∀ {V} {K} {L} {x : Var V K} → apV (up {K = L}) x ≡ var (↑ x)
+    apV-up : ∀ {V} {K} {L} {x : Var V K} → 
+      apV (up {K = L}) x ≡ var (↑ x)
     idOp : ∀ V → Op V V
     apV-idOp : ∀ {V} {K} (x : Var V K) → apV (idOp V) x ≡ var x
 \end{code}

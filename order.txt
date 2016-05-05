@@ -7,9 +7,9 @@ Grammar/OpFamily/LiftFamily
 Grammar/OpFamily/Composition
 Grammar/OpFamily/OpFamily
 Grammar/Replacement
-Grammar/Context
 Grammar/Substitution
 Grammar/Substitution/Botsub
+Grammar/Context
 Reduction
 Reduction/SN
 PL

@@ -180,7 +180,7 @@ Weakening (app Γ⊢δ∶φ→ψ Γ⊢ε∶φ) ρ∶Γ→Δ = app (Weakening Γ�
 Weakening .{P} {Q} .{Γ} {Δ} {ρ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∶ψ) ρ∶Γ→Δ = Λ 
   (subst (λ P → (Δ , φ 〈 ρ 〉) ⊢ δ 〈 Rep↑ -Proof ρ 〉 ∶ P) 
   (Rep↑-upRep ψ)
-  (Weakening {P , -Proof} {Q , -Proof} {Γ , φ} {Δ , φ 〈  ρ 〉} {Rep↑ -Proof ρ} {δ} {liftE ψ} 
+  (Weakening {P , -Proof} {Q , -Proof} {Γ , φ} {Δ , φ 〈  ρ 〉} {Rep↑ -Proof ρ} {δ} {ψ 〈 upRep 〉} 
     Γ,φ⊢δ∶ψ 
     claim)) where
   claim : ∀ (x : Var (P , -Proof) -Proof) → typeof (Rep↑ -Proof ρ -Proof x) (Δ , φ 〈 ρ 〉) ≡ typeof x (Γ , φ) 〈 Rep↑ -Proof ρ 〉
@@ -188,7 +188,7 @@ Weakening .{P} {Q} .{Γ} {Δ} {ρ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∶ψ) 
   claim (↑ x) = let open ≡-Reasoning in 
     begin 
       typeof (ρ -Proof x) Δ 〈 upRep 〉
-    ≡⟨ cong liftE (ρ∶Γ→Δ x) ⟩
+    ≡⟨ cong (λ x → x 〈 upRep 〉) (ρ∶Γ→Δ x) ⟩
       typeof x Γ 〈 ρ 〉 〈 upRep 〉
     ≡⟨⟨ Rep↑-upRep (typeof x Γ) ⟩⟩
       typeof x Γ 〈 upRep 〉 〈 Rep↑ -Proof ρ 〉     
@@ -230,11 +230,11 @@ Substitution {Q = Q} {Δ = Δ} {σ = σ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ�
   (subst (λ p → (Δ , φ ⟦ σ ⟧) ⊢ δ ⟦ Sub↑ -Proof σ ⟧ ∶ p) 
   (let open ≡-Reasoning {A = Expression ( Q , -Proof) (nonVarKind -Prp)} in
   begin 
-    liftE ψ ⟦ Sub↑ -Proof σ ⟧
+    ψ 〈 upRep 〉 ⟦ Sub↑ -Proof σ ⟧
   ≡⟨⟨ sub-comp₂ ψ ⟩⟩
     ψ ⟦ Sub↑ -Proof σ •₂ (λ _ → ↑) ⟧  
   ≡⟨ sub-comp₁ ψ ⟩
-    liftE (ψ ⟦ σ ⟧)            
+    ψ ⟦ σ ⟧ 〈 upRep 〉
   ∎)
   (Substitution Γ,φ⊢δ∶ψ (Sub↑-typed σ∶Γ→Δ)))
 \end{code}

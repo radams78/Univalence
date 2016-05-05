@@ -16,8 +16,8 @@ open import Grammar.OpFamily.OpFamily G
 \subsection{Replacement}
 
 The operation family of \emph{replacement} is defined as follows.  A replacement $\rho : U \rightarrow V$ is a function
-that maps every variable in $U$ to a variable in $V$ of the same kind.  Application, idOpentity and composition are simply
-function application, the idOpentity function and function composition.  The successor is the canonical injection $V \rightarrow (V, K)$,
+that maps every variable in $U$ to a variable in $V$ of the same kind.  Application, identity and composition are simply
+function application, the identity function and function composition.  The successor is the canonical injection $V \rightarrow (V, K)$,
 and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
 
 \begin{code}
@@ -46,10 +46,18 @@ pre-replacement = record {
 _∼R_ : ∀ {U} {V} → Rep U V → Rep U V → Set
 _∼R_ = PreOpFamily._∼op_ pre-replacement
 
-Rep↑-cong : ∀ {U} {V} {K} {ρ ρ' : Rep U V} → ρ ∼R ρ' → Rep↑ K ρ ∼R Rep↑ K ρ'
+Rep↑-cong : ∀ {U} {V} {K} {ρ ρ' : Rep U V} → 
+  ρ ∼R ρ' → Rep↑ K ρ ∼R Rep↑ K ρ'
+\end{code}
+
+\AgdaHide{
+\begin{code}
 Rep↑-cong ρ-is-ρ' x₀ = refl
 Rep↑-cong ρ-is-ρ' (↑ x) = cong (var ∘ ↑) (var-inj (ρ-is-ρ' x))
+\end{code}
+}
 
+\begin{code}
 proto-replacement : LiftFamily
 proto-replacement = record { 
   preOpFamily = pre-replacement ; 
@@ -61,17 +69,26 @@ proto-replacement = record {
     liftOp-↑ = λ _ → refl } }
 
 infix 60 _〈_〉
-_〈_〉 : ∀ {U} {V} {C} {K} → Subexpression U C K → Rep U V → Subexpression V C K
+_〈_〉 : ∀ {U} {V} {C} {K} → 
+  Subexpression U C K → Rep U V → Subexpression V C K
 E 〈 ρ 〉 = LiftFamily.ap proto-replacement ρ E
 
 infixl 75 _•R_
 _•R_ : ∀ {U} {V} {W} → Rep V W → Rep U V → Rep U W
 (ρ' •R ρ) K x = ρ' K (ρ K x)
 
-Rep↑-comp : ∀ {U} {V} {W} {K} {ρ' : Rep V W} {ρ : Rep U V} → Rep↑ K (ρ' •R ρ) ∼R Rep↑ K ρ' •R Rep↑ K ρ
+Rep↑-comp : ∀ {U} {V} {W} {K} {ρ' : Rep V W} {ρ : Rep U V} → 
+  Rep↑ K (ρ' •R ρ) ∼R Rep↑ K ρ' •R Rep↑ K ρ
+\end{code}
+
+\AgdaHide{
+\begin{code}
 Rep↑-comp x₀ = refl
 Rep↑-comp (↑ _) = refl
+\end{code}
+}
 
+\begin{code}
 replacement : OpFamily
 replacement = record { 
   liftFamily = proto-replacement ; 
@@ -79,7 +96,10 @@ replacement = record {
     _∘_ = _•R_ ; 
     apV-comp = refl ; 
     liftOp-comp = Rep↑-comp } }
+\end{code}
 
+\AgdaHide{
+\begin{code}
 open OpFamily replacement public using () 
   renaming (ap-congl to rep-cong;
            ap-idOp to rep-idOp;
@@ -87,26 +107,31 @@ open OpFamily replacement public using ()
            liftOp-idOp to Rep↑-idOp;
            liftOp-up' to Rep↑-upRep)
 \end{code}
+}
 
-This provides us with the canonical mapping from an expression over $V$ to an expression over $(V , K)$:
-
-\begin{code}
-liftE : ∀ {V} {K} {L} → Expression V L → Expression (V , K) L
-liftE E = E 〈 upRep 〉
---TOOD Inline this
-\end{code}
-
-The unique replacement $\emptyset \rightarrow V$ for any V:
+We define the unique replacement $\emptyset \rightarrow V$ for any V, and prove it unique:
 
 \begin{code}
 magic : ∀ {V} → Rep ∅ V
 magic _ ()
 
 magic-unique : ∀ {V} {ρ : Rep ∅ V} → ρ ∼R magic
-magic-unique {V} {ρ} ()
+\end{code}
 
-magic-unique' : ∀ {U} {V} {C} {K} (E : Subexpression ∅ C K) {ρ : Rep U V} → 
+\AgdaHide{
+\begin{code}
+magic-unique {V} {ρ} ()
+\end{code}
+}
+
+\begin{code}
+magic-unique' : ∀ {U} {V} {C} {K}
+  (E : Subexpression ∅ C K) {ρ : Rep U V} → 
   E 〈 magic 〉 〈 ρ 〉 ≡ E 〈 magic 〉
+\end{code}
+
+\AgdaHide{
+\begin{code}
 magic-unique' E {ρ} = let open ≡-Reasoning in
   begin
     E 〈 magic 〉 〈 ρ 〉
@@ -116,3 +141,4 @@ magic-unique' E {ρ} = let open ≡-Reasoning in
     E 〈 magic 〉
   ∎
 \end{code}
+}

@@ -186,7 +186,7 @@ The rules of deduction of the system are as follows.
     ⊥R : ∀ {V} {Γ : TContext V} → Γ ⊢ ⊥ ∶ Ω 〈 (λ _ ()) 〉
     imp : ∀ {V} {Γ : TContext V} {φ} {ψ} → Γ ⊢ φ ∶ Ω 〈 (λ _ ()) 〉 → Γ ⊢ ψ ∶ Ω 〈 (λ _ ()) 〉 → Γ ⊢ φ ⊃ ψ ∶ Ω 〈 (λ _ ()) 〉
     app : ∀ {V} {Γ : TContext V} {M} {N} {A} {B} → Γ ⊢ M ∶ app -func (A ,, B ,, out) → Γ ⊢ N ∶ A → Γ ⊢ appTerm M N ∶ B
-    Λ : ∀ {V} {Γ : TContext V} {A} {M} {B} → Γ , A ⊢ M ∶ liftE B → Γ ⊢ app -lamTerm (A ,, M ,, out) ∶ app -func (A ,, B ,, out)
+    Λ : ∀ {V} {Γ : TContext V} {A} {M} {B} → Γ , A ⊢ M ∶ B 〈 upRep 〉 → Γ ⊢ app -lamTerm (A ,, M ,, out) ∶ app -func (A ,, B ,, out)
 
   data Pvalid : ∀ {V} {P} → TContext V → PContext' V P → Set₁ where
     〈〉 : ∀ {V} {Γ : TContext V} → Pvalid Γ 〈〉

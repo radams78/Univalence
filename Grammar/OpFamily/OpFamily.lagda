@@ -11,7 +11,9 @@ open import Grammar.OpFamily.Composition G
 \end{code}
 }
 
-A \emph{family of operations} is a pre-family with lift $F$ together with a composition $\circ : F;F \rightarrow F$.
+\subsubsection{Family of Operations}
+
+Finally. we can define: a \emph{family of operations} is a pre-family with lift $F$ together with a composition $\circ : F;F \rightarrow F$.
 
 \begin{code}
 record IsOpFamily (F : LiftFamily) : Set₂ where
@@ -24,7 +26,13 @@ record IsOpFamily (F : LiftFamily) : Set₂ where
     apV-comp : ∀ {U} {V} {W} {K} {σ : Op V W} {ρ : Op U V} {x : Var U K} →
       apV (σ ∘ ρ) x ≡ ap σ (apV ρ x)
 
-  COMP : Composition F F F
+record OpFamily : Set₂ where
+  field
+    liftFamily : LiftFamily
+    isOpFamily  : IsOpFamily liftFamily
+  open IsOpFamily isOpFamily public
+
+  COMP : Composition liftFamily liftFamily liftFamily
   COMP = record { 
     circ = _∘_ ; 
     liftOp-circ = liftOp-comp ; 
@@ -33,8 +41,8 @@ record IsOpFamily (F : LiftFamily) : Set₂ where
   open Composition COMP public
 \end{code}
 
-The following results about operationsare easy to prove.
-\begin{lemma}
+The following results about operations are easy to prove.
+\begin{lemma}$ $
   \begin{enumerate}
   \item $(\sigma , K) \circ \uparrow \sim \uparrow \circ \sigma$
   \item $(\id{V} , K) \sim \id{V,K}$
@@ -44,25 +52,16 @@ The following results about operationsare easy to prove.
 \end{lemma}
 
 \begin{code}
-{-  liftOp-up : ∀ {U} {V} {K} {σ : Op U V} → liftOp K σ ∘ up ∼op up ∘ σ
-  liftOp-up {U} {V} {K} {σ} {L} x = 
-    let open ≡-Reasoning {A = Expression (V , K) (varKind L)} in 
-      begin
-        apV (liftOp K σ ∘ up) x
-      ≡⟨ apV-comp ⟩
-        ap (liftOp K σ) (apV up x)
-      ≡⟨ cong (ap (liftOp K σ)) apV-up ⟩
-        apV (liftOp K σ) (↑ x)         
-      ≡⟨ liftOp-↑ x ⟩
-        ap up (apV σ x)
-      ≡⟨⟨ apV-comp ⟩⟩
-        apV (up ∘ σ) x
-      ∎ -}
-
-  liftOp-up' : ∀ {U} {V} {C} {K} {L} {σ : Op U V} (E : Subexpression U C K) →
+  liftOp-up' : ∀ {U} {V} {C} {K} {L}
+    {σ : Op U V} (E : Subexpression U C K) →
     ap (liftOp L σ) (ap up E) ≡ ap up (ap σ E)
+\end{code}
+
+\AgdaHide{
+\begin{code}
   liftOp-up' E = liftOp-up-mixed' COMP COMP refl {E = E}
 \end{code}
+}
 
 \newcommand{\Op}{\ensuremath{\mathbf{Op}}}
 
@@ -73,7 +72,12 @@ which maps an extend'bet $U$ to the set of expressions over $U$, and every opera
 This functor is faithful and injective on objects, and so $\Op$ can be seen as a subcategory of $\Set$.
 
 \begin{code}
-  assoc : ∀ {U} {V} {W} {X} {τ : Op W X} {σ : Op V W} {ρ : Op U V} → τ ∘ (σ ∘ ρ) ∼op (τ ∘ σ) ∘ ρ
+  assoc : ∀ {U} {V} {W} {X} {τ : Op W X} {σ : Op V W} {ρ : Op U V} → 
+    τ ∘ (σ ∘ ρ) ∼op (τ ∘ σ) ∘ ρ
+\end{code}
+
+\AgdaHide{
+\begin{code}
   assoc {U} {V} {W} {X} {τ} {σ} {ρ} {K} x = let open ≡-Reasoning {A = Expression X (varKind K)} in 
     begin 
       apV (τ ∘ (σ ∘ ρ)) x
@@ -86,8 +90,15 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
     ≡⟨⟨ apV-comp ⟩⟩
       apV ((τ ∘ σ) ∘ ρ) x
     ∎
+\end{code}
+}
 
+\begin{code}
   unitl : ∀ {U} {V} {σ : Op U V} → idOp V ∘ σ ∼op σ
+\end{code}
+
+\AgdaHide{
+\begin{code}
   unitl {U} {V} {σ} {K} x = let open ≡-Reasoning {A = Expression V (varKind K)} in 
     begin 
       apV (idOp V ∘ σ) x
@@ -96,8 +107,15 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
     ≡⟨ ap-idOp ⟩
       apV σ x
     ∎
+\end{code}
+}
 
+\begin{code}
   unitr : ∀ {U} {V} {σ : Op U V} → σ ∘ idOp U ∼op σ
+\end{code}
+
+\AgdaHide{
+\begin{code}
   unitr {U} {V} {σ} {K} x = let open ≡-Reasoning {A = Expression V (varKind K)} in
     begin 
       apV (σ ∘ idOp U) x
@@ -106,10 +124,5 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
     ≡⟨ cong (ap σ) (apV-idOp x) ⟩
       apV σ x
     ∎
-
-record OpFamily : Set₂ where
-  field
-    liftFamily : LiftFamily
-    isOpFamily  : IsOpFamily liftFamily
-  open IsOpFamily isOpFamily public
 \end{code}
+}

@@ -14,7 +14,7 @@ open import Grammar.Replacement G
 \subsection{Substitution}
 
 A \emph{substitution} $\sigma$ from alphabet $U$ to alphabet $V$, $\sigma : U \Rightarrow V$, is a function $\sigma$ that maps every variable $x$ of kind $K$ in $U$ to an
-\emph{expression} $\sigma(x)$ of kind $K$ over $V$.  We now aim to prov that the substitutions form a family of operations, with application and idOpentity being simply function application and idOpentity.
+\emph{expression} $\sigma(x)$ of kind $K$ over $V$.  We now aim to prov that the substitutions form a family of operations, with application and identity being simply function application and identity.
 
 \begin{code}
 Sub : Alphabet → Alphabet → Set
@@ -31,17 +31,30 @@ pre-substitution = record {
   apV-up = refl; 
   idOp = λ _ _ → var; 
   apV-idOp = λ _ → refl }
+\end{code}
 
+\AgdaHide{
+\begin{code}
 open PreOpFamily pre-substitution using () renaming (_∼op_ to _∼_;idOp to idOpSub) public
+\end{code}
+}
 
+\begin{code}
 Sub↑ : ∀ {U} {V} K → Sub U V → Sub (U , K) (V , K)
 Sub↑ _ _ _ x₀ = var x₀
 Sub↑ _ σ K (↑ x) = (σ K x) 〈 upRep 〉
 
 Sub↑-cong : ∀ {U} {V} {K} {σ σ' : Sub U V} → σ ∼ σ' → Sub↑ K σ ∼ Sub↑ K σ'
+\end{code}
+
+\AgdaHide{
+\begin{code}
 Sub↑-cong {K = K} σ-is-σ' x₀ = refl
 Sub↑-cong σ-is-σ' (↑ x) = cong (λ E → E 〈 upRep 〉) (σ-is-σ' x)
+\end{code}
+}
 
+\begin{code}
 SUB↑ : Lifting pre-substitution
 SUB↑ = record { liftOp = Sub↑ ; liftOp-cong = Sub↑-cong }
 \end{code}

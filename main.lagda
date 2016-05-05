@@ -38,7 +38,7 @@
 \newtheorem{definition}[lemma]{Definition}
 
 \newcommand{\Set}{\mathbf{Set}}
-\newcommand{\eqdef}{\ensuremath{\stackrel{=}{\mathrm{def}}}}
+\newcommand{\eqdef}{\mathrel{\smash{\stackrel{\text{def}}{=}}}}
 \newcommand{\AgdaHide}[1]{}
 
 \begin{document}
