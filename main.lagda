@@ -43,7 +43,7 @@
 \maketitle
 
 \input{Prelims.lagda}
-\input{Grammar.lagda}
+\input{Grammar/Base.lagda}
 \input{PL.lagda}
 \input{PHOPL.lagda}
 
