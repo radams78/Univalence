@@ -1,7 +1,6 @@
 Prelims
 Grammar/Taxonomy
 Grammar/Base
-Grammar/Congruence
 Grammar/OpFamily/PreOpFamily
 Grammar/OpFamily/Lifting
 Grammar/OpFamily/LiftFamily
