@@ -6,8 +6,6 @@ module Grammar.Substitution (G : Grammar) where
 open import Data.List
 open import Prelims
 open Grammar G
-open import Grammar.OpFamily.LiftFamily G
-open import Grammar.OpFamily.Composition G
 open import Grammar.OpFamily G
 open import Grammar.Replacement G
 \end{code}
@@ -44,7 +42,7 @@ Sub↑-cong : ∀ {U} {V} {K} {σ σ' : Sub U V} → σ ∼ σ' → Sub↑ K σ 
 Sub↑-cong {K = K} σ-is-σ' x₀ = refl
 Sub↑-cong σ-is-σ' (↑ x) = cong (λ E → E 〈 upRep 〉) (σ-is-σ' x)
 
-SUB↑ : PreOpFamily.Lifting pre-substitution
+SUB↑ : Lifting pre-substitution
 SUB↑ = record { liftOp = Sub↑ ; liftOp-cong = Sub↑-cong }
 \end{code}
     
@@ -53,7 +51,7 @@ Then, given an expression $E$ of kind $K$ over $U$, we write $E[\sigma]$ for the
 \begin{code}    
 infix 60 _⟦_⟧
 _⟦_⟧ : ∀ {U} {V} {C} {K} → Subexpression U C K → Sub U V → Subexpression V C K
-E ⟦ σ ⟧ = PreOpFamily.Lifting.ap SUB↑ σ E
+E ⟦ σ ⟧ = Lifting.ap SUB↑ σ E
 
 rep2sub : ∀ {U} {V} → Rep U V → Sub U V
 rep2sub ρ K x = var (ρ K x)

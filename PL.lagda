@@ -64,7 +64,6 @@ Propositional-Logic = record {
     parent = PLparent } }
 
 open Grammar Propositional-Logic
-open import Grammar.OpFamily.Composition Propositional-Logic
 open import Grammar.OpFamily Propositional-Logic
 open import Grammar.Replacement Propositional-Logic
 open import Grammar.Context Propositional-Logic

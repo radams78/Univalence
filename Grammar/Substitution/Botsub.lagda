@@ -5,7 +5,6 @@ open import Grammar.Base
 module Grammar.Substitution.Botsub (G : Grammar) where
 open import Prelims
 open Grammar G
-open import Grammar.OpFamily.Composition G
 open import Grammar.OpFamily G
 open import Grammar.Replacement G
 open import Grammar.Substitution G

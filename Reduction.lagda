@@ -151,7 +151,6 @@ If $R$ respects $Ops$ and $\sigma \twoheadrightarrow_R \tau$ then $E[\sigma] \tw
   liftOp'-red : ∀ {U V A} {ρ σ : Op U V} → respects' → ρ ↠s σ → liftOp' A ρ ↠s liftOp' A σ
   liftOp'-red {A = []} _ ρ↠σ = ρ↠σ
   liftOp'-red {A = (K ∷ A)} hyp ρ↠σ = liftOp'-red {A = A} hyp (liftOp-red hyp ρ↠σ)
---TODO Extract common pattern
 
   apredl : ∀ {U V C K} {ρ σ : Op U V} {E : Subexpression U C K} → respects' → ρ ↠s σ → ap ρ E ↠ ap σ E
   apredl {E = var x} hyp ρ↠σ = ρ↠σ _ x
@@ -189,7 +188,7 @@ create-osr hyp (_,,_ E F) {σ = σ} (appl σE⇒E') =
     red-created = appl red-created; 
     ap-created = cong (λ x → _,,_ x (F 〈 σ 〉)) ap-created
     }
-create-osr hyp (ToGrammar._,,_ {A = A} E F) {σ = σ} (appr {PP = F'} σF⇒F') =     
+create-osr hyp (_,,_ {A = A} E F) {σ = σ} (appr {PP = F'} σF⇒F') =     
   let open Respects-Creates.creation {Ops = replacement} (create-osr hyp F σF⇒F') in 
   record { 
     created = _,,_ E created; 

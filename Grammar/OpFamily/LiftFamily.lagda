@@ -6,11 +6,13 @@ module Grammar.OpFamily.LiftFamily (G : Grammar) where
 open import Data.List
 open import Prelims
 open Grammar G
+open import Grammar.OpFamily.PreOpFamily G
+open import Grammar.OpFamily.Lifting G
 \end{code}
 }
 
 \begin{code}
-record IsLiftFamily (F : PreOpFamily) (L : PreOpFamily.Lifting F) : Set₁ where
+record IsLiftFamily (F : PreOpFamily) (L : Lifting F) : Set₁ where
   open PreOpFamily F
   open Lifting L
   field
@@ -60,7 +62,7 @@ record IsLiftFamily (F : PreOpFamily) (L : PreOpFamily.Lifting F) : Set₁ where
 record LiftFamily : Set₂ where
   field
     preOpFamily : PreOpFamily
-    lifting : PreOpFamily.Lifting preOpFamily
+    lifting : Lifting preOpFamily
     isLiftFamily : IsLiftFamily preOpFamily lifting
   open PreOpFamily preOpFamily public
   open Lifting lifting public

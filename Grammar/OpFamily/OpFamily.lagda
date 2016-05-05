@@ -2,7 +2,7 @@
 \begin{code}
 open import Grammar.Base
 
-module Grammar.OpFamily (G : Grammar) where
+module Grammar.OpFamily.OpFamily (G : Grammar) where
 
 open import Prelims
 open Grammar G

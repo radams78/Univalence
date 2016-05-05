@@ -7,8 +7,9 @@ module Grammar.Replacement (G : Grammar) where
 open import Function
 open import Prelims
 open Grammar G
-open import Grammar.OpFamily G
+open import Grammar.OpFamily.PreOpFamily G
 open import Grammar.OpFamily.LiftFamily G
+open import Grammar.OpFamily.OpFamily G
 \end{code}
 }
 
