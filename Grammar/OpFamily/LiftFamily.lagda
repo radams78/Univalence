@@ -1,11 +1,15 @@
+\AgdaHide{
 \begin{code}
-open import Data.List
-open import Prelims
 open import Grammar.Base
 
 module Grammar.OpFamily.LiftFamily (G : Grammar) where
+open import Data.List
+open import Prelims
 open Grammar G
+\end{code}
+}
 
+\begin{code}
 record IsLiftFamily (F : PreOpFamily) (L : PreOpFamily.Lifting F) : Set₁ where
   open PreOpFamily F
   open Lifting L
@@ -36,15 +40,15 @@ record IsLiftFamily (F : PreOpFamily) (L : PreOpFamily.Lifting F) : Set₁ where
       (apV (idOp (V , K)) (↑ x)
     ∎)
        
-  liftOp'-idOp : ∀ {V} A → liftOp' A (idOp V) ∼op idOp (extend' V A)
+  liftOp'-idOp : ∀ {V} A → liftOp' A (idOp V) ∼op idOp (extend V A)
   liftOp'-idOp [] = ∼-refl
-  liftOp'-idOp {V} (K ∷ A) = let open EqReasoning (OP (extend' (V , K) A) (extend' (V , K) A)) in 
+  liftOp'-idOp {V} (K ∷ A) = let open EqReasoning (OP (extend (V , K) A) (extend (V , K) A)) in 
     begin
       liftOp' A (liftOp K (idOp V))
     ≈⟨ liftOp'-cong A liftOp-idOp ⟩
       liftOp' A (idOp (V , K))
     ≈⟨ liftOp'-idOp A ⟩
-      idOp (extend' (V , K) A)
+      idOp (extend (V , K) A)
     ∎
 
   ap-idOp : ∀ {V} {C} {K} {E : Subexpression V C K} → ap (idOp V) E ≡ E

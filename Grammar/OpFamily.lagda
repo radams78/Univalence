@@ -1,3 +1,4 @@
+\AgdaHide{
 \begin{code}
 open import Grammar.Base
 
@@ -8,11 +9,11 @@ open Grammar G
 open import Grammar.OpFamily.LiftFamily G
 open import Grammar.OpFamily.Composition G
 \end{code}
+}
 
 A \emph{family of operations} is a pre-family with lift $F$ together with a composition $\circ : F;F \rightarrow F$.
 
 \begin{code}
---TODO Notation for comp
 record IsOpFamily (F : LiftFamily) : Set₂ where
   open LiftFamily F public
   infix 50 _∘_
@@ -32,7 +33,6 @@ record IsOpFamily (F : LiftFamily) : Set₂ where
   open Composition COMP public
 \end{code}
 
-\newcommand{\id}[1]{\ensuremath{\mathrm{id}_{#1}}}
 The following results about operationsare easy to prove.
 \begin{lemma}
   \begin{enumerate}

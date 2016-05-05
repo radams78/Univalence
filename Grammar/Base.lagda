@@ -1,3 +1,4 @@
+\AgdaHide{
 \begin{code}
 open import Function
 open import Data.List
@@ -5,7 +6,10 @@ open import Prelims
 open import Grammar.Taxonomy
 
 module Grammar.Base where
+\end{code}
+}
 
+\begin{code}
 record ToGrammar (T : Taxonomy) : Set₁ where
   open Taxonomy T
   field
@@ -24,7 +28,7 @@ record ToGrammar (T : Taxonomy) : Set₁ where
     var : ∀ {V} {K} → Var V K → Expression V (varKind K)
     app : ∀ {V} {K} {C} → Constructor C → Body V {K} C → Expression V K
     out : ∀ {V} {K} → Body V {K} out
-    _,,_ : ∀ {V} {K} {A} {L} {C} → Expression (extend' V A) L → Body V {K} C → Body V (Π A L C)
+    _,,_ : ∀ {V} {K} {A} {L} {C} → Expression (extend V A) L → Body V {K} C → Body V (Π A L C)
 
   var-inj : ∀ {V} {K} {x y : Var V K} → var x ≡ var y → x ≡ y
   var-inj refl = refl
@@ -69,7 +73,7 @@ Given an operation $\sigma : U \rightarrow V$ and an abstraction kind $(x_1 : A_
 the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \cdots ) , A_n)$.
 
 \begin{code}
-      liftOp' : ∀ {U} {V} A → Op U V → Op (extend' U A) (extend' V A)
+      liftOp' : ∀ {U} {V} A → Op U V → Op (extend U A) (extend V A)
       liftOp' [] σ = σ
       liftOp' (K ∷ A) σ = liftOp' A (liftOp K σ)
 

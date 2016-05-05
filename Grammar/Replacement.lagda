@@ -1,15 +1,16 @@
+\AgdaHide{
 \begin{code}
 open import Grammar.Base
 
 module Grammar.Replacement (G : Grammar) where
 
-open Grammar G
 open import Function
-open import Data.Nat
 open import Prelims
+open Grammar G
 open import Grammar.OpFamily G
 open import Grammar.OpFamily.LiftFamily G
 \end{code}
+}
 
 \subsection{Replacement}
 
@@ -92,15 +93,6 @@ This provides us with the canonical mapping from an expression over $V$ to an ex
 liftE : ∀ {V} {K} {L} → Expression V L → Expression (V , K) L
 liftE E = E 〈 upRep 〉
 --TOOD Inline this
-\end{code}
-
-Let $\mathsf{embedl}$ be the canonical injection $A \rightarrow \mathsf{extend}\ A\ K\ F$, which
-is a replacement.
-
-\begin{code}
-embedl : ∀ {A} {K} {F} → Rep A (extend A K F)
-embedl {F = zero} _ x = x
-embedl {F = suc F} K x = ↑ (embedl {F = F} K x)
 \end{code}
 
 The unique replacement $\emptyset \rightarrow V$ for any V:

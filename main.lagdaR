@@ -33,9 +33,7 @@
 
 \DefineVerbatimEnvironment{code}{Verbatim}{}
 
-\newtheorem{lemma}{Lemma}[section]
-\theoremstyle{definition}
-\newtheorem{definition}[lemma]{Definition}
+\newtheorem{lemma}{Lemma}
 
 \newcommand{\Set}{\mathbf{Set}}
 \newcommand{\eqdef}{\ensuremath{\stackrel{=}{\mathrm{def}}}}
@@ -45,6 +43,12 @@
 
 \maketitle
 
-\input{index.tex}
+\input{Prelims.lagda}
+\input{Grammar/Taxonomy.lagda}
+\input{Grammar/Base.lagda}
+\input{Grammar/Congruence.lagda}
+\input{Grammar/OpFamily/LiftFamily.lagda}
+\input{PL.lagda}
+\input{PHOPL.lagda}
 
 \end{document}

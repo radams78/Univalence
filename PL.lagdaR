@@ -1,4 +1,3 @@
-\AgdaHide{
 \begin{code}
 module PL where
 
@@ -11,8 +10,11 @@ open import Data.List
 open import Prelims
 open import Grammar.Taxonomy
 open import Grammar.Base
+import Grammar.Context
+import Grammar.Substitution
+import Grammar.Substitution.Botsub
+import Reduction
 \end{code}
-}
 
 \section{Propositional Logic}
 
@@ -64,12 +66,12 @@ Propositional-Logic = record {
     parent = PLparent } }
 
 open Grammar Propositional-Logic
-open import Grammar.OpFamily.Composition Propositional-Logic
+open Grammar.Context Propositional-Logic
 open import Grammar.OpFamily Propositional-Logic
 open import Grammar.Replacement Propositional-Logic
-open import Grammar.Context Propositional-Logic
-open import Grammar.Substitution Propositional-Logic
-open import Grammar.Substitution.Botsub Propositional-Logic
+open Grammar.Substitution Propositional-Logic
+open Grammar.Substitution.Botsub Propositional-Logic
+open import Grammar.OpFamily.Composition Propositional-Logic
 
 Prp : Alphabet → Set
 Prp P = Expression P (nonVarKind -Prp)
@@ -92,7 +94,7 @@ appP δ ε = app app (δ ,, ε ,, out)
 data β : ∀ {V} {K} {C : Kind (-Constructor K)} → Constructor C → Subexpression V (-Constructor K) C → Expression V K → Set where
   βI : ∀ {V} {φ} {δ} {ε} → β {V} app (ΛP φ δ ,, ε ,, out) (δ ⟦ x₀:= ε ⟧)
 
-open import Reduction Propositional-Logic β
+open Reduction Propositional-Logic β
 open import Reduction.SN Propositional-Logic β
 
 β-respects-rep : Respects-Creates.respects' replacement

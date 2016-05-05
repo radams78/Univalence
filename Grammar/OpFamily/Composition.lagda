@@ -1,13 +1,16 @@
+\AgdaHide{
 \begin{code}
-open import Data.List
-open import Prelims
 open import Grammar.Base
 
 module Grammar.OpFamily.Composition (A : Grammar) where
+open import Data.List
+open import Prelims
 open Grammar A
 open import Grammar.OpFamily.LiftFamily A
+
 open LiftFamily
 \end{code}
+}
 
 \subsection{Compositions}
 

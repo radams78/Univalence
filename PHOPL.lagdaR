@@ -1,4 +1,3 @@
-\AgdaHide{
 \begin{code}
 module PHOPL where
 
@@ -8,8 +7,9 @@ open import Data.Fin
 open import Prelims
 open import Grammar.Taxonomy
 open import Grammar.Base
+import Grammar.Context
+import Reduction
 \end{code}
-}
 
 \section{Predicative Higher-Order Propositional Logic}
 
@@ -74,7 +74,7 @@ module PHOPLGrammar where
 module PHOPL where
   open PHOPLGrammar using (PHOPLcon;-appProof;-lamProof;-bot;-imp;-appTerm;-lamTerm;-Omega;-func)
   open Grammar PHOPLGrammar.PHOPL
-  open import Grammar.Context PHOPLGrammar.PHOPL
+  open Grammar.Context PHOPLGrammar.PHOPL
   open import Grammar.Replacement PHOPLGrammar.PHOPL
   open import Grammar.Substitution PHOPLGrammar.PHOPL
   open import Grammar.Substitution.Botsub PHOPLGrammar.PHOPL
@@ -156,7 +156,7 @@ module PHOPL where
 
   data β : ∀ {V} {K} {C} → Constructor C → Subexpression V (-Constructor K) C → Expression V K → Set where
     βI : ∀ {V} A (M : Term (V , -Term)) N → β -appTerm (ΛTerm A M ,, N ,, out) (M ⟦ x₀:= N ⟧)
-  open import Reduction PHOPLGrammar.PHOPL β
+  open Reduction PHOPLGrammar.PHOPL β
 \end{code}
 
 The rules of deduction of the system are as follows.

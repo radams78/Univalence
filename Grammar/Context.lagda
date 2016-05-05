@@ -1,3 +1,4 @@
+\AgdaHide{
 \begin{code}
 open import Grammar.Base
 
@@ -8,6 +9,7 @@ open import Data.Fin
 open Grammar G
 open import Grammar.Replacement G
 \end{code}
+}
 
 \subsection{Contexts}
 

@@ -2,6 +2,7 @@
 
 \section{Grammars}
 
+\AgdaHide{
 \begin{code}
 module Grammar.Taxonomy where
 
@@ -9,6 +10,7 @@ open import Data.Nat public
 open import Data.Fin public using (Fin;zero;suc)
 open import Data.List public
 \end{code}
+}
 
 Before we begin investigating the several theories we wish to consider, we present a general theory of syntax and
 capture-avoiding substitution.
@@ -39,29 +41,13 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
     ∅ : Alphabet
     _,_ : Alphabet → VarKind → Alphabet
 
-  extend' : Alphabet → List VarKind → Alphabet
-  extend' A [] = A
-  extend' A (K ∷ KK) = extend' (A , K) KK
---TODO Replace extend
+  extend : Alphabet → List VarKind → Alphabet
+  extend A [] = A
+  extend A (K ∷ KK) = extend (A , K) KK
 
   data Var : Alphabet → VarKind → Set where
     x₀ : ∀ {V} {K} → Var (V , K) K
     ↑ : ∀ {V} {K} {L} → Var V L → Var (V , K) L
-\end{code}
-
-We give ourselves the following operations.  Given an extend'bet $A$ and finite set $F$, let $\mathsf{extend}\ A\ K\ F$ be the
-extend'bet $A \uplus F$, where each element of $F$ has kind $K$.  Let $\mathsf{embedr}$ be the canonical injection
-$F \rightarrow \mathsf{extend}\ A\ K\ F$; thus, for all $x \in F$, we have $\mathsf{embedr}\ x$ is a variable
-of $\mathsf{extend}\ A\ K\ F$ of kind $K$.
-
-\begin{code}
-  extend : Alphabet → VarKind → ℕ → Alphabet
-  extend A K zero = A
-  extend A K (suc F) = extend A K F , K
-
-  embedr : ∀ {A} {K} {F} → Fin F → Var (extend A K F) K
-  embedr zero = x₀
-  embedr (suc x) = ↑ (embedr x)
 \end{code}
 
 A \emph{grammar} over a taxonomy consists of:
@@ -95,5 +81,6 @@ We formalise this as follows.  First, we construct the sets of expression kinds,
   data Kind : KindClass → Set where
     base : ExpressionKind → Kind -Expression
     out  : ∀ {K} → Kind (-Constructor K)
-    Π    : ∀ {K} → List VarKind → ExpressionKind → Kind (-Constructor K) → Kind (-Constructor K)
+    Π    : ∀ {K} → List VarKind → ExpressionKind → 
+           Kind (-Constructor K) → Kind (-Constructor K)
 \end{code}

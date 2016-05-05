@@ -1,3 +1,4 @@
+\AgdaHide{
 \begin{code}
 open import Grammar.Base
 
@@ -12,6 +13,7 @@ open import Grammar.OpFamily G
 open import Grammar.Replacement G
 open import Reduction G R
 \end{code}
+}
 
 \subsection{Strong Normalization}
 
