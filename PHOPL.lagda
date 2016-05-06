@@ -93,9 +93,6 @@ module PHOPL where
   lowerType (app -Omega ou) = Ω
   lowerType (app -func (φ ,, ψ ,, out)) = lowerType φ ⇛ lowerType ψ
 
-  TContext : Alphabet → Set
-  TContext = Context -Term
-
   Term : Alphabet → Set
   Term V = Expression V (varKind -Term)
 
@@ -142,7 +139,7 @@ module PHOPL where
   ΛP : ∀ {V} {P} → Term V → Proof V (suc P) → Proof V P
   ΛP {P = P} φ δ = app -lamProof (liftExp P φ ,, δ ,, out)
 
---  typeof' : ∀ {V} → Var V -Term → TContext V → Type
+--  typeof' : ∀ {V} → Var V -Term → Context V → Type
 --  typeof' x₀ (_ , A) = A
 --  typeof' (↑ x) (Γ , _) = typeof' x Γ
 
@@ -177,21 +174,21 @@ The rules of deduction of the system are as follows.
 
 \begin{code}
   infix 10 _⊢_∶_
-  data _⊢_∶_ : ∀ {V} → TContext V → Term V → Expression V (nonVarKind -Type) → Set₁ where
-    var : ∀ {V} {Γ : TContext V} {x} → Γ ⊢ var x ∶ typeof x Γ
-    ⊥R : ∀ {V} {Γ : TContext V} → Γ ⊢ ⊥ ∶ Ω 〈 (λ _ ()) 〉
-    imp : ∀ {V} {Γ : TContext V} {φ} {ψ} → Γ ⊢ φ ∶ Ω 〈 (λ _ ()) 〉 → Γ ⊢ ψ ∶ Ω 〈 (λ _ ()) 〉 → Γ ⊢ φ ⊃ ψ ∶ Ω 〈 (λ _ ()) 〉
-    app : ∀ {V} {Γ : TContext V} {M} {N} {A} {B} → Γ ⊢ M ∶ app -func (A ,, B ,, out) → Γ ⊢ N ∶ A → Γ ⊢ appTerm M N ∶ B
-    Λ : ∀ {V} {Γ : TContext V} {A} {M} {B} → Γ , A ⊢ M ∶ B 〈 upRep 〉 → Γ ⊢ app -lamTerm (A ,, M ,, out) ∶ app -func (A ,, B ,, out)
+  data _⊢_∶_ : ∀ {V} → Context V → Term V → Expression V (nonVarKind -Type) → Set₁ where
+    var : ∀ {V} {Γ : Context V} {x} → Γ ⊢ var x ∶ typeof x Γ
+    ⊥R : ∀ {V} {Γ : Context V} → Γ ⊢ ⊥ ∶ Ω 〈 (λ _ ()) 〉
+    imp : ∀ {V} {Γ : Context V} {φ} {ψ} → Γ ⊢ φ ∶ Ω 〈 (λ _ ()) 〉 → Γ ⊢ ψ ∶ Ω 〈 (λ _ ()) 〉 → Γ ⊢ φ ⊃ ψ ∶ Ω 〈 (λ _ ()) 〉
+    app : ∀ {V} {Γ : Context V} {M} {N} {A} {B} → Γ ⊢ M ∶ app -func (A ,, B ,, out) → Γ ⊢ N ∶ A → Γ ⊢ appTerm M N ∶ B
+    Λ : ∀ {V} {Γ : Context V} {A} {M} {B} → Γ , A ⊢ M ∶ B 〈 upRep 〉 → Γ ⊢ app -lamTerm (A ,, M ,, out) ∶ app -func (A ,, B ,, out)
 
-  data Pvalid : ∀ {V} {P} → TContext V → PContext' V P → Set₁ where
-    〈〉 : ∀ {V} {Γ : TContext V} → Pvalid Γ 〈〉
-    _,_ : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {φ : Term V} → Pvalid Γ Δ → Γ ⊢ φ ∶ Ω 〈 (λ _ ()) 〉 → Pvalid Γ (Δ , φ)
+  data Pvalid : ∀ {V} {P} → Context V → PContext' V P → Set₁ where
+    〈〉 : ∀ {V} {Γ : Context V} → Pvalid Γ 〈〉
+    _,_ : ∀ {V} {P} {Γ : Context V} {Δ : PContext' V P} {φ : Term V} → Pvalid Γ Δ → Γ ⊢ φ ∶ Ω 〈 (λ _ ()) 〉 → Pvalid Γ (Δ , φ)
 
   infix 10 _,,_⊢_∶∶_
-  data _,,_⊢_∶∶_ : ∀ {V} {P} → TContext V → PContext' V P → Proof V P → Term V → Set₁ where
-    var : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {p} → Pvalid Γ Δ → Γ ,, Δ ⊢ varP p ∶∶ propof p Δ 
-    app : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {δ} {ε} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ ⊃ ψ → Γ ,, Δ ⊢ ε ∶∶ φ → Γ ,, Δ ⊢ appP {V} {P} δ ε ∶∶ ψ
-    Λ : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {φ} {δ} {ψ} → Γ ,, Δ , φ ⊢ δ ∶∶ ψ → Γ ,, Δ ⊢ ΛP {V} {P} φ δ ∶∶ φ ⊃ ψ
-    convR : ∀ {V} {P} {Γ : TContext V} {Δ : PContext' V P} {δ} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ → Γ ⊢ ψ ∶ Ω 〈 (λ _ ()) 〉 → φ ≃ ψ → Γ ,, Δ ⊢ δ ∶∶ ψ
+  data _,,_⊢_∶∶_ : ∀ {V} {P} → Context V → PContext' V P → Proof V P → Term V → Set₁ where
+    var : ∀ {V} {P} {Γ : Context V} {Δ : PContext' V P} {p} → Pvalid Γ Δ → Γ ,, Δ ⊢ varP p ∶∶ propof p Δ 
+    app : ∀ {V} {P} {Γ : Context V} {Δ : PContext' V P} {δ} {ε} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ ⊃ ψ → Γ ,, Δ ⊢ ε ∶∶ φ → Γ ,, Δ ⊢ appP {V} {P} δ ε ∶∶ ψ
+    Λ : ∀ {V} {P} {Γ : Context V} {Δ : PContext' V P} {φ} {δ} {ψ} → Γ ,, Δ , φ ⊢ δ ∶∶ ψ → Γ ,, Δ ⊢ ΛP {V} {P} φ δ ∶∶ φ ⊃ ψ
+    convR : ∀ {V} {P} {Γ : Context V} {Δ : PContext' V P} {δ} {φ} {ψ} → Γ ,, Δ ⊢ δ ∶∶ φ → Γ ⊢ ψ ∶ Ω 〈 (λ _ ()) 〉 → φ ≃ ψ → Γ ,, Δ ⊢ δ ∶∶ ψ
 \end{code}
