@@ -28,7 +28,10 @@ record IsLiftFamily (F : PreOpFamily) (L : Lifting F) : Set₁ where
       apV (liftOp K σ) x₀ ≡ var x₀
     liftOp-↑ : ∀ {U} {V} {K} {L} {σ : Op U V} (x : Var U L) →
       apV (liftOp K σ) (↑ x) ≡ ap up (apV σ x)
+\end{code}
 
+\AgdaHide{
+\begin{code}
 record LiftFamily : Set₂ where
   field
     preOpFamily : PreOpFamily
@@ -38,6 +41,7 @@ record LiftFamily : Set₂ where
   open Lifting lifting public
   open IsLiftFamily isLiftFamily public
 \end{code}
+}
 
 \begin{lemma}
 In any pre-family with lifting:

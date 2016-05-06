@@ -15,6 +15,7 @@
 \usepackage{proof}
 \usepackage{stmaryrd}
 
+\DeclareUnicodeCharacter{8608}{\ensuremath{\twoheadrightarrow}}
 \DeclareUnicodeCharacter{8667}{\ensuremath{\Rrightarrow}}
 \DeclareUnicodeCharacter{8718}{\ensuremath{\qed}}
 \DeclareUnicodeCharacter{8759}{\ensuremath{::}}

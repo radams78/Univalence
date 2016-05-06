@@ -10,19 +10,23 @@ module Grammar.Base where
 }
 
 \begin{code}
-record ToGrammar (T : Taxonomy) : Set₁ where
+record IsGrammar (T : Taxonomy) : Set₁ where
   open Taxonomy T
   field
     Constructor    : ∀ {K} → Kind (-Constructor K) → Set
     parent         : VarKind → ExpressionKind
+\end{code}
 
+\AgdaHide{
+\begin{code}
 record Grammar : Set₁ where
   field
     taxonomy : Taxonomy
-    toGrammar : ToGrammar taxonomy
+    isGrammar : IsGrammar taxonomy
   open Taxonomy taxonomy public
-  open ToGrammar toGrammar public
+  open IsGrammar isGrammar public
 \end{code}
+}
 
 We can now define the set of expressions over a grammar:
 

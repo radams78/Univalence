@@ -25,13 +25,19 @@ record IsOpFamily (F : LiftFamily) : Set₂ where
       liftOp K (σ ∘ ρ) ∼op liftOp K σ ∘ liftOp K ρ
     apV-comp : ∀ {U} {V} {W} {K} {σ : Op V W} {ρ : Op U V} {x : Var U K} →
       apV (σ ∘ ρ) x ≡ ap σ (apV ρ x)
+\end{code}
 
+\AgdaHide{
+\begin{code}
 record OpFamily : Set₂ where
   field
     liftFamily : LiftFamily
     isOpFamily  : IsOpFamily liftFamily
   open IsOpFamily isOpFamily public
+\end{code}
+}
 
+\begin{code}
   COMP : Composition liftFamily liftFamily liftFamily
   COMP = record { 
     circ = _∘_ ; 
@@ -65,14 +71,15 @@ The following results about operations are easy to prove.
 
 \newcommand{\Op}{\ensuremath{\mathbf{Op}}}
 
-The extend'bets and operations up to equivalence form
+The alphabets and operations up to equivalence form
 a category, which we denote $\Op$.
 The action of application associates, with every operator family, a functor $\Op \rightarrow \Set$,
-which maps an extend'bet $U$ to the set of expressions over $U$, and every operation $\sigma$ to the function $\sigma[-]$.
+which maps an alphabet $U$ to the set of expressions over $U$, and every operation $\sigma$ to the function $\sigma[-]$.
 This functor is faithful and injective on objects, and so $\Op$ can be seen as a subcategory of $\Set$.
 
 \begin{code}
-  assoc : ∀ {U} {V} {W} {X} {τ : Op W X} {σ : Op V W} {ρ : Op U V} → 
+  assoc : ∀ {U} {V} {W} {X} 
+    {τ : Op W X} {σ : Op V W} {ρ : Op U V} → 
     τ ∘ (σ ∘ ρ) ∼op (τ ∘ σ) ∘ ρ
 \end{code}
 

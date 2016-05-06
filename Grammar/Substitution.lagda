@@ -59,77 +59,130 @@ SUB↑ : Lifting pre-substitution
 SUB↑ = record { liftOp = Sub↑ ; liftOp-cong = Sub↑-cong }
 \end{code}
     
-Then, given an expression $E$ of kind $K$ over $U$, we write $E[\sigma]$ for the application of $\sigma$ to $E$, which is the result of substituting $\sigma(x)$ for $x$ for each variable in $E$, avoidOping capture.
+Then, given an expression $E$ of kind $K$ over $U$, we write $E[\sigma]$ for the application of $\sigma$ to $E$, which is the result of substituting $\sigma(x)$ for $x$ for each variable in $E$, avoiding capture.
 
 \begin{code}    
 infix 60 _⟦_⟧
-_⟦_⟧ : ∀ {U} {V} {C} {K} → Subexpression U C K → Sub U V → Subexpression V C K
+_⟦_⟧ : ∀ {U} {V} {C} {K} → 
+  Subexpression U C K → Sub U V → Subexpression V C K
 E ⟦ σ ⟧ = Lifting.ap SUB↑ σ E
-
-rep2sub : ∀ {U} {V} → Rep U V → Sub U V
-rep2sub ρ K x = var (ρ K x)
-
-Rep↑-is-Sub↑ : ∀ {U} {V} {ρ : Rep U V} {K} → rep2sub (Rep↑ K ρ) ∼ Sub↑ K (rep2sub ρ)
-Rep↑-is-Sub↑ x₀ = refl
-Rep↑-is-Sub↑ (↑ _) = refl
-
-up-is-up : ∀ {V} {K} → rep2sub (upRep {V} {K}) ∼ upSub
-up-is-up _ = refl
 \end{code}
 
-Replacement is a special case of substitution:
+We can consider replacement to be a special case of substitution.  That is,
+we can identify every replacement $\rho : U \rightarrow V$ with the substitution
+that maps $x$ to $\rho(x)$.  
 \begin{lemma}
 Let $\rho$ be a replacement $U \rightarrow V$.
 \begin{enumerate}
 \item
 The replacement $(\rho , K)$ and the substitution $(\rho , K)$ are equal.
 \item
-$$ E \langle \rho \rangle \equiv E [ \rho ] $$
+The replacement $\uparrow$ and the substitution $\uparrow$ are equal.
+\item
+The replacement $\rho^A$ and the substitution $\rho^A$ are equal.
+\item
+$ E \langle \rho \rangle \equiv E [ \rho ] $
+\item
+Hence $ E \langle \uparrow \rangle \equiv E [ \uparrow ]$.
+\item
+Substitution is a pre-family with lifting.
 \end{enumerate}
 \end{lemma}
 
 \begin{code}
 module Substitution where
+  open OpFamily replacement using () renaming (liftOp' to liftOp'R)
   open PreOpFamily pre-substitution
   open Lifting SUB↑
 
-  liftOp'-is-liftOp' : ∀ {U} {V} {ρ : Rep U V} {A} → rep2sub (OpFamily.liftOp' replacement A ρ) ∼ liftOp' A (rep2sub ρ)
+  rep2sub : ∀ {U} {V} → Rep U V → Sub U V
+  rep2sub ρ K x = var (ρ K x)
+
+  Rep↑-is-Sub↑ : ∀ {U} {V} {ρ : Rep U V} {K} → 
+    rep2sub (Rep↑ K ρ) ∼ Sub↑ K (rep2sub ρ)
+\end{code}
+
+\AgdaHide{
+\begin{code}
+  Rep↑-is-Sub↑ x₀ = refl
+  Rep↑-is-Sub↑ (↑ _) = refl
+\end{code}
+}
+
+\begin{code}
+  up-is-up : ∀ {V} {K} → rep2sub (upRep {V} {K}) ∼ upSub
+\end{code}
+
+\AgdaHide{
+\begin{code}
+  up-is-up _ = refl
+\end{code}
+}
+
+\begin{code}
+  liftOp'-is-liftOp' : ∀ {U} {V} {ρ : Rep U V} {A} → 
+    rep2sub (liftOp'R  A ρ) ∼ liftOp' A (rep2sub ρ)
+\end{code}
+
+\AgdaHide{
+\begin{code}
   liftOp'-is-liftOp' {ρ = ρ} {A = []} = ∼-refl {σ = rep2sub ρ}
   liftOp'-is-liftOp' {U} {V} {ρ} {K ∷ A} = let open EqReasoning (OP _ _) in 
     begin
-      rep2sub (OpFamily.liftOp' replacement A (Rep↑ K ρ))
+      rep2sub (liftOp'R A (Rep↑ K ρ))
     ≈⟨ liftOp'-is-liftOp' {A = A} ⟩
       liftOp' A (rep2sub (Rep↑ K ρ))
     ≈⟨ liftOp'-cong A Rep↑-is-Sub↑ ⟩
       liftOp' A (Sub↑ K (rep2sub ρ))
     ∎
+\end{code}
+}
 
-  rep-is-sub : ∀ {U} {V} {K} {C} (E : Subexpression U K C) {ρ : Rep U V} → E 〈 ρ 〉 ≡ E ⟦ rep2sub ρ ⟧
+\begin{code}
+  rep-is-sub : ∀ {U} {V} {K} {C} (E : Subexpression U K C) {ρ : Rep U V} → 
+    E 〈 ρ 〉 ≡ E ⟦ rep2sub ρ ⟧
+\end{code}
+
+\AgdaHide{
+\begin{code}
   rep-is-sub (var _) = refl
   rep-is-sub (app c E) = cong (app c) (rep-is-sub E)
   rep-is-sub out = refl
   rep-is-sub {U} {V} (_,,_ {A = A} {L = L} E F) {ρ} = cong₂ _,,_ 
     (let open ≡-Reasoning {A = Expression (extend V A) L} in
     begin 
-      E 〈 OpFamily.liftOp' replacement A ρ 〉
+      E 〈 liftOp'R A ρ 〉
     ≡⟨ rep-is-sub E ⟩
-      E ⟦ (λ K x → var (OpFamily.liftOp' replacement A ρ K x)) ⟧ 
+      E ⟦ (λ K x → var (liftOp'R A ρ K x)) ⟧ 
     ≡⟨ ap-congl E (liftOp'-is-liftOp' {A = A}) ⟩
       E ⟦ liftOp' A (λ K x → var (ρ K x)) ⟧
     ∎)
     (rep-is-sub F)
+\end{code}
+}
 
-  up-is-up' : ∀ {V} {C} {K} {L} {E : Subexpression V C K} → E 〈 upRep {K = L} 〉 ≡ E ⟦ upSub ⟧
+\begin{code}
+  up-is-up' : ∀ {V} {C} {K} {L} {E : Subexpression V C K} → 
+    E 〈 upRep {K = L} 〉 ≡ E ⟦ upSub ⟧
+\end{code}
+
+\AgdaHide{
+\begin{code}
   up-is-up' {E = E} = rep-is-sub E
 
 open Substitution public
+\end{code}
+}
 
+\begin{code}
 proto-substitution : LiftFamily
 proto-substitution = record { 
   preOpFamily = pre-substitution ; 
   lifting = SUB↑ ; 
   isLiftFamily = record { liftOp-x₀ = refl ; liftOp-↑ = λ {_} {_} {_} {_} {σ} x → rep-is-sub (σ _ x) } }
+\end{code}
 
+\begin{code}
 infix 75 _•₁_
 _•₁_ : ∀ {U} {V} {W} → Rep V W → Sub U V → Sub U W
 (ρ •₁ σ) K x = (σ K x) 〈 ρ 〉

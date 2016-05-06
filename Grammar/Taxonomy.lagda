@@ -2,6 +2,8 @@
 
 \section{Grammars}
 
+\subsection{Taxonomy}
+
 \AgdaHide{
 \begin{code}
 module Grammar.Taxonomy where
