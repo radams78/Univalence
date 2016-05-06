@@ -82,7 +82,9 @@ comp-botsub' F = ap-circ-sim (OpFamily.COMP substitution) (OpFamily.COMP substit
 }
 
 \begin{code}
-botsub-upRep : ∀ {U} {C} {K} {L} {E : Subexpression U C K} {F : Expression U (varKind L)} → E 〈 upRep 〉 ⟦ x₀:= F ⟧ ≡ E
+botsub-upRep : ∀ {U} {C} {K} {L}
+  {E : Subexpression U C K} {F : Expression U (varKind L)} → 
+  E 〈 upRep 〉 ⟦ x₀:= F ⟧ ≡ E
 \end{code}
 
 \AgdaHide{
