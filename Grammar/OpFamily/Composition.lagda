@@ -21,7 +21,7 @@ for all alphabets $U$, $V$ and $W$ such that:
 \item
 $(\sigma \circ \rho , K) \sim (\sigma , K) \circ (\rho , K)$
 \item
-$x [ \sigma \circ \rho ] = x [ \rho ] [ \sigma ]$
+$(\sigma \circ \rho)(x) \equiv \rho(x) [ \sigma ]$
 \end{itemize}
 
 \begin{code}

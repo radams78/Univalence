@@ -7,9 +7,13 @@ open import Prelims
 open Grammar G
 open import Grammar.OpFamily G
 open import Grammar.Replacement G
-open import Grammar.Substitution G
+open import Grammar.Substitution.PreOpFamily G
+open import Grammar.Substitution.Lifting G
+open import Grammar.Substitution.OpFamily G
 \end{code}
 }
+
+\subsubsection{Substitution for an Individual Variable}
 
 Let $E$ be an expression of kind $K$ over $V$.  Then we write $[x_0 := E]$ for the following substitution
 $(V , K) \Rightarrow V$:
@@ -20,27 +24,40 @@ x₀:= E _ x₀ = E
 x₀:= E K₁ (↑ x) = var x
 \end{code}
 
-\begin{lemma}
+\begin{lemma}$ $
 \begin{enumerate}
 \item
-$$ \rho \bullet_1 [x_0 := E] \sim [x_0 := E \langle \rho \rangle] \bullet_2 (\rho , K) $$
+$ \rho \bullet_1 [x_0 := E] \sim [x_0 := E \langle \rho \rangle] \bullet_2 (\rho , K) $
 \item
-$$ \sigma \bullet [x_0 := E] \sim [x_0 := E[\sigma]] \bullet (\sigma , K) $$
+$ \sigma \bullet [x_0 := E] \sim [x_0 := E[\sigma]] \bullet (\sigma , K) $
+\item
+$ E [ \uparrow ] [ x_0 := F ] \equiv E$
 \end{enumerate}
 \end{lemma}
 
 \begin{code}
 comp₁-botsub : ∀ {U} {V} {K} {E : Expression U (varKind K)} {ρ : Rep U V} →
   ρ •₁ (x₀:= E) ∼ (x₀:= (E 〈 ρ 〉)) •₂ Rep↑ K ρ
+\end{code}
+
+\AgdaHide{
+\begin{code}
 comp₁-botsub x₀ = refl
 comp₁-botsub (↑ _) = refl
 
 comp₁-botsub' : ∀ {U} {V} {C} {K} {L} (E : Subexpression (U , K) C L) {F : Expression U (varKind K)} {ρ : Rep U V} →
   E ⟦ x₀:= F ⟧ 〈 ρ 〉 ≡ E 〈 Rep↑ K ρ 〉 ⟦ x₀:= (F 〈 ρ 〉) ⟧
 comp₁-botsub' E = ap-circ-sim COMP₁ COMP₂ comp₁-botsub E
+\end{code}
+}
 
+\begin{code}
 comp-botsub : ∀ {U} {V} {K} {E : Expression U (varKind K)} {σ : Sub U V} →
   σ • (x₀:= E) ∼ (x₀:= (E ⟦ σ ⟧)) • Sub↑ K σ
+\end{code}
+
+\AgdaHide{
+\begin{code}
 comp-botsub x₀ = refl
 comp-botsub {U} {V} {K} {E} {σ} {L} (↑ x) = let open ≡-Reasoning in 
   begin
@@ -61,8 +78,15 @@ comp-botsub' : ∀ {U} {V} {C} {K} {L}
   {E : Expression U (varKind K)} {σ : Sub U V} (F : Subexpression (U , K) C L) →
   F ⟦ x₀:= E ⟧ ⟦ σ ⟧ ≡ F ⟦ Sub↑ K σ ⟧ ⟦ x₀:= (E ⟦ σ ⟧) ⟧
 comp-botsub' F = ap-circ-sim (OpFamily.COMP substitution) (OpFamily.COMP substitution) comp-botsub F
+\end{code}
+}
 
+\begin{code}
 botsub-upRep : ∀ {U} {C} {K} {L} {E : Subexpression U C K} {F : Expression U (varKind L)} → E 〈 upRep 〉 ⟦ x₀:= F ⟧ ≡ E
+\end{code}
+
+\AgdaHide{
+\begin{code}
 botsub-upRep {U} {C} {K} {L} {E} {F} = let open ≡-Reasoning in 
   begin
     E 〈 upRep 〉 ⟦ x₀:= F ⟧
@@ -72,3 +96,4 @@ botsub-upRep {U} {C} {K} {L} {E} {F} = let open ≡-Reasoning in
      E
   ∎
 \end{code}
+}

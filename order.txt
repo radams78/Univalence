@@ -7,7 +7,11 @@ Grammar/OpFamily/LiftFamily
 Grammar/OpFamily/Composition
 Grammar/OpFamily/OpFamily
 Grammar/Replacement
-Grammar/Substitution
+Grammar/Substitution/PreOpFamily
+Grammar/Substitution/Lifting
+Grammar/Substitution/RepSub
+Grammar/Substitution/LiftFamily
+Grammar/Substitution/OpFamily
 Grammar/Substitution/Botsub
 Grammar/Context
 Reduction

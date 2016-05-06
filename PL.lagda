@@ -59,16 +59,11 @@ open PLgrammar
 Propositional-Logic : Grammar
 Propositional-Logic = record { 
   taxonomy = PLtaxonomy; 
-  toGrammar = record { 
+  isGrammar = record { 
     Constructor = PLCon; 
     parent = PLparent } }
 
-open Grammar Propositional-Logic
-open import Grammar.OpFamily Propositional-Logic
-open import Grammar.Replacement Propositional-Logic
-open import Grammar.Context Propositional-Logic
-open import Grammar.Substitution Propositional-Logic
-open import Grammar.Substitution.Botsub Propositional-Logic
+open import Grammar Propositional-Logic
 
 Prp : Alphabet → Set
 Prp P = Expression P (nonVarKind -Prp)

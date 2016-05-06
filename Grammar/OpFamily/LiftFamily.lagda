@@ -16,7 +16,7 @@ open import Grammar.OpFamily.Lifting G
 A \emph{pre-family with lifting} is a pre-family with a lifting operation that satisfies, for every operation $\sigma : U \rightarrow V$:
 \begin{align*}
 (\sigma , K) (x_0) & \equiv x_0 \\
-(\sigma , K) (x) & \equiv \sigma(x) & (x \in U)
+(\sigma , K) (x) & \equiv \sigma(x)[ \uparrow ] & (x \in U)
 \end{align*}
 
 \begin{code}

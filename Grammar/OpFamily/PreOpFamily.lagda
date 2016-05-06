@@ -10,7 +10,7 @@ open Grammar G
 
 \subsection{Families of Operations}
 
-Our aim now is to define the operations of \emph{replacement} and \emph{substitution}.  In order to organise this work, we introduce the following definitions.
+Our aim here is to define the operations of \emph{replacement} and \emph{substitution}.  In order to organise this work, we introduce the following definitions.
 
 A \emph{family of operations} over a grammar $G$ consists of:
 \begin{enumerate}

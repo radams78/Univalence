@@ -67,17 +67,13 @@ module PHOPLGrammar where
   PHOPL : Grammar
   PHOPL = record { 
     taxonomy = PHOPLTaxonomy;
-    toGrammar = record { 
+    isGrammar = record { 
       Constructor = PHOPLcon; 
       parent = PHOPLparent } }
 
 module PHOPL where
   open PHOPLGrammar using (PHOPLcon;-appProof;-lamProof;-bot;-imp;-appTerm;-lamTerm;-Omega;-func)
-  open Grammar PHOPLGrammar.PHOPL
-  open import Grammar.Context PHOPLGrammar.PHOPL
-  open import Grammar.Replacement PHOPLGrammar.PHOPL
-  open import Grammar.Substitution PHOPLGrammar.PHOPL
-  open import Grammar.Substitution.Botsub PHOPLGrammar.PHOPL
+  open import Grammar PHOPLGrammar.PHOPL
 
   Type : Set
   Type = Expression ∅ (nonVarKind -Type)

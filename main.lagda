@@ -32,7 +32,7 @@
 
 \usepackage{textalpha}
 
-\DefineVerbatimEnvironment{code}{Verbatim}{}
+\DefineVerbatimEnvironment{code}{Verbatim}{fontsize=\small}
 
 \newtheorem{lemma}{Lemma}[section]
 \theoremstyle{definition}
@@ -46,6 +46,35 @@
 
 \maketitle
 
-\input{index.tex}
+\input{Prelims.lagda}
+\input{Grammar/Taxonomy.lagda}
+\input{Grammar/Base.lagda}
+
+We define the operations of replacement and substitution on
+expressions.  The details are given in Appendix \ref{appendix:repsub}.
+
+\input{Grammar/Context.lagda}
+\input{Reduction.lagda}
+\input{Reduction/SN.lagda}
+\input{PL.lagda}
+\input{PHOPL.lagda}
+
+\appendix
+
+\section{Replacement and Substitution}
+\label{appendix:repsub}
+
+\input{Grammar/OpFamily/PreOpFamily.lagda}
+\input{Grammar/OpFamily/Lifting.lagda}
+\input{Grammar/OpFamily/LiftFamily.lagda}
+\input{Grammar/OpFamily/Composition.lagda}
+\input{Grammar/OpFamily/OpFamily.lagda}
+\input{Grammar/Replacement.lagda}
+\input{Grammar/Substitution/PreOpFamily.lagda}
+\input{Grammar/Substitution/Lifting.lagda}
+\input{Grammar/Substitution/RepSub.lagda}
+\input{Grammar/Substitution/LiftFamily.lagda}
+\input{Grammar/Substitution/OpFamily.lagda}
+\input{Grammar/Substitution/Botsub.lagda}
 
 \end{document}
