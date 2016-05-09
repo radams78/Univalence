@@ -55,10 +55,15 @@ data _↠_ {V C K} (M : Subexpression V C K) :
 \end{code}
 
 \begin{definition}
-Let $\rhd$ be a relation between expressions such that, whenever $M \rhd N$, then $M$ and $N$ have the same kind.  Let $f$ be a function that maps expressions of kind $K$ over $U$ to expressions of kind $K$ over $V$.
+Let $\rhd$ be a relation between expressions such that, whenever $M \rhd N$, then $M$ and $N$ have the same kind.  Let $f$ be a function that maps expressions of kind $K$ over $U$ to expressions of kind $L$ over $V$.
 
 We say $\rhd$ \emph{respects} $f$ iff, whenever $M \rhd N$, then $f(M) \rhd f(N)$.
 \end{definition}
+
+\begin{code}
+respects'' : Relation → ∀ {U} {V} {K} {C} {L} {D} → (Subexpression U K C → Subexpression V L D) → Set
+respects'' R f = ∀ {M N} → R M N → R (f M) (f N)
+\end{code}
 
 We define $\simeq_R$ to be the reflexive, symmetric, transitive closure of $\rightarrow_R$.  We say $M$ and $N$ are \emph{$R$-convertible} iff $M \simeq_R N$.
 
@@ -75,37 +80,32 @@ If $\rightarrow_R$ respects $f$, then so do $\twoheadrightarrow_R$ and $\simeq_R
 \end{lemma}
 
 \begin{code}
-respects'' : Relation → ∀ {U} {V} {K} {C} → (Subexpression U K C → Subexpression V K C) → Set
-respects'' R f = ∀ {M N} → R M N → R (f M) (f N)
-
-respects''-red : ∀ {U} {V} {K} {C} {f} → respects'' _⇒_ {U} {V} {K} {C} f → respects'' _↠_ f
+respects''-red : ∀ {U} {V} {K} {C} {L} {D} {f} → 
+  respects'' _⇒_ {U} {V} {K} {C} {L} {D} f → respects'' _↠_ f
 respects''-red hyp (osr-red E→F) = osr-red (hyp E→F)
 respects''-red hyp ref = ref
 respects''-red hyp (trans-red E↠F F↠G) = 
   trans-red (respects''-red hyp E↠F) (respects''-red hyp F↠G)
 
-respects''-conv : ∀ {U} {V} {K} {C} {f} → respects'' _⇒_ {U} {V} {K} {C} f →
-  respects'' _≃_ f
+respects''-conv : ∀ {U} {V} {K} {C} {L} {D} {f} → 
+  respects'' _⇒_ {U} {V} {K} {C} {L} {D} f → respects'' _≃_ f
 respects''-conv hyp (osr-conv E→F) = osr-conv (hyp E→F)
 respects''-conv hyp ref = ref
 respects''-conv hyp (sym-conv E≃F) = sym-conv (respects''-conv hyp E≃F)
 respects''-conv hyp (trans-conv E≃F F≃G) = trans-conv (respects''-conv hyp E≃F) (respects''-conv hyp F≃G)
 
+--TODO Inline the below
 redapp : ∀ {V K} {C : Kind (-Constructor K)} (c : Constructor C) 
   {E F : Subexpression V (-Constructor K) C} →
   E ↠ F → app c E ↠ app c F
-redapp {V} {K} {C} {c} {E} {F} E↠F = respects''-red {f = app c} ? E↠F
+redapp _ = respects''-red app
 
 --TODO Make lettering consistent for subexpressions
-redappl : ∀ {V K A L C M N PP} → M ↠ N → _,,_ {V} {K} {A} {L} {C} M PP ↠ _,,_ N PP
-redappl (osr-red A→B) = osr-red (appl A→B)
-redappl ref = ref
-redappl (trans-red A↠B B↠C) = trans-red (redappl A↠B) (redappl B↠C)
+redappl : ∀ {V K A L C E F G} → E ↠ F → _,,_ {V} {K} {A} {L} {C} E G ↠ F ,, G
+redappl = respects''-red appl
 
-redappr : ∀ {V K A L C M NN PP} → NN ↠ PP → _,,_ {V} {K} {A} {L} {C} M NN ↠ _,,_ M PP
-redappr (osr-red EE→FF) = osr-red (appr EE→FF)
-redappr ref = ref
-redappr (trans-red EE↠FF FF↠GG) = trans-red (redappr EE↠FF) (redappr FF↠GG)
+redappr : ∀ {V K A L C E F G} → F ↠ G → _,,_ {V} {K} {A} {L} {C} E F ↠ E ,, G
+redappr = respects''-red appr
 \end{code}
 
 \begin{definition}
@@ -123,7 +123,8 @@ module Respects-Creates (Ops : OpFamily) where
   open OpFamily Ops
 
   respects : Relation → Set
-  respects _▷_ = ∀ {U V C K} {M N : Subexpression U C K} {σ : Op U V} → M ▷ N → ap σ M ▷ ap σ N
+  respects _▷_ = ∀ {U} {V} {C} {K} {σ : Op U V} → 
+    respects'' _▷_ (ap {C = C} {K = K} σ)
 
   respects' : Set
   respects' = ∀ {U V C K c M N σ} → R {U} {C} {K} c M N → R {V} c (ap σ M) (ap σ N)
