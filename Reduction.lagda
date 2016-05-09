@@ -111,9 +111,7 @@ respects-conv hyp (trans-conv E≃F F≃G) = trans-conv (respects-conv hyp E≃F
 Let $\rhd$ be a relation between expressions such that, whenever $M \rhd N$, then $M$ and $N$ have the same kind.  Let $Op$ be a family of operators.
 \begin{enumerate}
 \item
-We say $\rhd$  \emph{respects} $Op$ iff, for all $\sigma \in Op$, whenever $M \rhd N$, then $\sigma[M] \rhd \sigma[N]$.
-\item
-We say $\rhd$  \emph{creates} $Op$ iff, whenever $\rho[M] \rhd N$, then there exists $P$ such that $M \rhd P$ and $\sigma[P] \equiv N$.
+We say $\rhd$  \emph{creates} $Op$s iff, whenever $M [ \sigma ] \rhd N$, then there exists $P$ such that $M \rhd P$ and $P [ \sigma ] \equiv N$.
 \end{enumerate}
 \end{definition}
 
@@ -122,25 +120,31 @@ module Respects-Creates (Ops : OpFamily) where
   open OpFamily Ops
 
   respects' : Set
-  respects' = ∀ {U V C K c M N σ} → R {U} {C} {K} c M N → R {V} c (ap σ M) (ap σ N)
+  respects' = ∀ {U V C K c M N σ} → 
+    R {U} {C} {K} c M N → R {V} c (ap σ M) (ap σ N)
 
-  record creation (_▷_ : Relation) {U V C K} (M : Subexpression U C K) {N} {σ : Op U V} (δ : ap σ M ▷ N) : Set where
+  record creation (_▷_ : Relation) {U V C K} 
+    (M : Subexpression U C K) {N} 
+    {σ : Op U V} (δ : ap σ M ▷ N) : Set where
     field
       created : Subexpression U C K
       red-created : M ▷ created
       ap-created : ap σ created ≡ N
 
   creates : Relation → Set
-  creates ▷ = ∀ {U V C K} M {N σ} δ → creation ▷ {U} {V} {C} {K} M {N} {σ} δ
+  creates ▷ = ∀ {U V C K} M {N σ} δ → 
+    creation ▷ {U} {V} {C} {K} M {N} {σ} δ
 
-  record creation' {U V C K c} M {N} {σ : Op U V} (δ : R {V} {C} {K} c (ap σ M) N) : Set where
+  record creation' {U V C K c} M {N} 
+    {σ : Op U V} (δ : R {V} {C} {K} c (ap σ M) N) : Set where
     field
       created : Expression U C
       red-created : R c M created
       ap-created : ap σ created ≡ N
 
   creates' : Set
-  creates' = ∀ {U V C K c} M {N σ} δ → creation' {U} {V} {C} {K} {c} M {N} {σ} δ
+  creates' = ∀ {U V C K c} M {N σ} δ → 
+    creation' {U} {V} {C} {K} {c} M {N} {σ} δ
 \end{code}
 
 \begin{lemma}
@@ -150,20 +154,16 @@ If $R$ respects $Op$, then so do $\rightarrow_R$, $\twoheadrightarrow_R$ and $\s
 \begin{code}
   respects-osr : ∀ {U} {V} {C} {K} {σ : Op U V} → 
     respects' → respects _⇒_ (ap {C = C} {K = K} σ)
+\end{code}
+
+\AgdaHide{
+\begin{code}
   respects-osr hyp (redex M▷N) = redex (hyp M▷N)
   respects-osr hyp (app MM→NN) = app (respects-osr hyp MM→NN)
   respects-osr hyp (appl M→N) = appl (respects-osr hyp M→N)
   respects-osr hyp (appr NN→PP) = appr (respects-osr hyp NN→PP)
-
---TODO Inline the below
-  respects'-red : ∀ {U} {V} {C} {K} {σ : Op U V} → 
-    respects' → respects _↠_ (ap {C = C} {K = K} σ)
-  respects'-red hyp = respects-red (respects-osr hyp)
-
-  respects'-conv : ∀ {U} {V} {C} {K} {σ : Op U V} → 
-    respects' → respects _≃_ (ap {C = C} {K = K} σ)
-  respects'-conv hyp = respects-conv (respects-osr hyp)
 \end{code}
+}
 
 Let $\sigma, \tau : U \Rightarrow V$.  We say that $\sigma$ \emph{reduces} to $\tau$, $\sigma \twoheadrightarrow_R \tau$,
 iff $\sigma(x) \twoheadrightarrow_R \tau(x)$ for all $x$.
@@ -173,7 +173,7 @@ iff $\sigma(x) \twoheadrightarrow_R \tau(x)$ for all $x$.
   _↠s_ {U} {V} σ τ = ∀ K (x : Var U K) → apV σ x ↠ apV τ x
 \end{code}
 
-\begin{lemma}
+\begin{lemma}$ $
 \begin{enumerate}
 \item
 If $R$ respects $Ops$ and $\sigma \twoheadrightarrow_R \tau$ then $(\sigma , K) \twoheadrightarrow_R (\tau , K)$.
@@ -183,27 +183,54 @@ If $R$ respects $Ops$ and $\sigma \twoheadrightarrow_R \tau$ then $E[\sigma] \tw
 \end{lemma}
 
 \begin{code}
-  liftOp-red : ∀ {U V K} {ρ σ : Op U V} → respects' → ρ ↠s σ → liftOp K ρ ↠s liftOp K σ
-  liftOp-red _ _ _ x₀ = subst₂ _↠_ (sym liftOp-x₀) (sym liftOp-x₀) ref
-  liftOp-red hyp ρ↠σ K (↑ x) = subst₂ _↠_ (sym (liftOp-↑ x)) (sym (liftOp-↑ x)) (respects'-red hyp (ρ↠σ K x))
+  liftOp-red : ∀ {U V K} {ρ σ : Op U V} → respects' → 
+    ρ ↠s σ → liftOp K ρ ↠s liftOp K σ
+\end{code}
 
-  liftOp'-red : ∀ {U V A} {ρ σ : Op U V} → respects' → ρ ↠s σ → liftOp' A ρ ↠s liftOp' A σ
+\AgdaHide{
+\begin{code}
+  liftOp-red _ _ _ x₀ = subst₂ _↠_ (sym liftOp-x₀) (sym liftOp-x₀) ref
+  liftOp-red hyp ρ↠σ K (↑ x) = subst₂ _↠_ (sym (liftOp-↑ x)) (sym (liftOp-↑ x)) (respects-red (respects-osr hyp) (ρ↠σ K x))
+\end{code}
+}
+
+\begin{code}
+  liftOp'-red : ∀ {U V A} {ρ σ : Op U V} → respects' → 
+    ρ ↠s σ → liftOp' A ρ ↠s liftOp' A σ
+\end{code}
+
+\AgdaHide{
+\begin{code}
   liftOp'-red {A = []} _ ρ↠σ = ρ↠σ
   liftOp'-red {A = (K ∷ A)} hyp ρ↠σ = liftOp'-red {A = A} hyp (liftOp-red hyp ρ↠σ)
+\end{code}
+}
 
-  apredl : ∀ {U V C K} {ρ σ : Op U V} {E : Subexpression U C K} → respects' → ρ ↠s σ → ap ρ E ↠ ap σ E
+\begin{code}
+  apredl : ∀ {U V C K} {ρ σ : Op U V} {E : Subexpression U C K} → 
+    respects' → ρ ↠s σ → ap ρ E ↠ ap σ E
+\end{code}
+
+\AgdaHide{
+\begin{code}
   apredl {E = var x} hyp ρ↠σ = ρ↠σ _ x
   apredl {E = app _ E} hyp ρ↠σ = respects-red app (apredl {E = E} hyp ρ↠σ)
   apredl {E = out} _ _ = ref
   apredl {E = _,,_ {A = A} E F} hyp ρ↠σ = trans-red (respects-red appl (apredl {E = E} hyp (liftOp'-red {A = A} hyp ρ↠σ))) (respects-red appr (apredl {E = F} hyp ρ↠σ))
 \end{code}
+}
 
 \begin{lemma}
 If $R$ creates replacements, then so do $\rightarrow_R$, $\twoheadrightarrow_R$ and $\simeq_R$.
 \end{lemma}
 
 \begin{code}
-create-osr : Respects-Creates.creates' replacement → Respects-Creates.creates replacement _⇒_
+create-osr : Respects-Creates.creates' replacement → 
+  Respects-Creates.creates replacement _⇒_
+\end{code}
+
+\AgdaHide{
+\begin{code}
 create-osr _ (var _) ()
 create-osr hyp (app c E) (redex cσE⇒F) =
   let open Respects-Creates.creation' (hyp E cσE⇒F) in
@@ -235,3 +262,4 @@ create-osr hyp (_,,_ {A = A} E F) {σ = σ} (appr {F' = F'} σF⇒F') =
     ap-created = cong (_,,_ (E 〈 OpFamily.liftOp' replacement A σ 〉)) ap-created
     }
 \end{code}
+}
