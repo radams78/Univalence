@@ -80,13 +80,24 @@ If $\rightarrow_R$ respects $f$, then so do $\twoheadrightarrow_R$ and $\simeq_R
 \begin{code}
 respects-red : ∀ {U} {V} {K} {C} {L} {D} {f} → 
   respects _⇒_ {U} {V} {K} {C} {L} {D} f → respects _↠_ f
+\end{code}
+
+\AgdaHide{
+\begin{code}
 respects-red hyp (osr-red E→F) = osr-red (hyp E→F)
 respects-red hyp ref = ref
 respects-red hyp (trans-red E↠F F↠G) = 
   trans-red (respects-red hyp E↠F) (respects-red hyp F↠G)
+\end{code}
+}
 
+\begin{code}
 respects-conv : ∀ {U} {V} {K} {C} {L} {D} {f} → 
   respects _⇒_ {U} {V} {K} {C} {L} {D} f → respects _≃_ f
+\end{code}
+
+\AgdaHide{
+\begin{code}
 respects-conv hyp (osr-conv E→F) = osr-conv (hyp E→F)
 respects-conv hyp ref = ref
 respects-conv hyp (sym-conv E≃F) = sym-conv (respects-conv hyp E≃F)
@@ -94,6 +105,7 @@ respects-conv hyp (trans-conv E≃F F≃G) = trans-conv (respects-conv hyp E≃F
 
 --TODO Make lettering consistent for subexpressions
 \end{code}
+}
 
 \begin{definition}
 Let $\rhd$ be a relation between expressions such that, whenever $M \rhd N$, then $M$ and $N$ have the same kind.  Let $Op$ be a family of operators.
