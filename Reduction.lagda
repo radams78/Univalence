@@ -122,10 +122,6 @@ We say $\rhd$  \emph{creates} $Op$ iff, whenever $\rho[M] \rhd N$, then there ex
 module Respects-Creates (Ops : OpFamily) where
   open OpFamily Ops
 
-  respects : Relation → Set
-  respects _▷_ = ∀ {U} {V} {C} {K} {σ : Op U V} → 
-    respects'' _▷_ (ap {C = C} {K = K} σ)
-
   respects' : Set
   respects' = ∀ {U V C K c M N σ} → R {U} {C} {K} c M N → R {V} c (ap σ M) (ap σ N)
 
@@ -153,18 +149,22 @@ If $R$ respects $Op$, then so do $\rightarrow_R$, $\twoheadrightarrow_R$ and $\s
 \end{lemma}
 
 \begin{code}
-  respects-osr : respects' → respects _⇒_
+  respects-osr : ∀ {U} {V} {C} {K} {σ : Op U V} → 
+    respects' → respects'' _⇒_ (ap {C = C} {K = K} σ)
   respects-osr hyp (redex M▷N) = redex (hyp M▷N)
   respects-osr hyp (app MM→NN) = app (respects-osr hyp MM→NN)
   respects-osr hyp (appl M→N) = appl (respects-osr hyp M→N)
   respects-osr hyp (appr NN→PP) = appr (respects-osr hyp NN→PP)
 
-  respects-red : respects' → respects _↠_
+--TODO Replace with application of respects''-red
+  respects-red : ∀ {U} {V} {C} {K} {σ : Op U V} → 
+    respects' → respects'' _↠_ (ap {C = C} {K = K} σ)
   respects-red hyp (osr-red M→N) = osr-red (respects-osr hyp M→N)
   respects-red _ ref = ref
   respects-red hyp (trans-red M↠N N↠P) = trans-red (respects-red hyp M↠N) (respects-red hyp N↠P)
 
-  respects-conv : respects' → respects _≃_
+  respects-conv : ∀ {U} {V} {C} {K} {σ : Op U V} → 
+    respects' → respects'' _≃_ (ap {C = C} {K = K} σ)
   respects-conv hyp (osr-conv M→N) = osr-conv (respects-osr hyp M→N)
   respects-conv _ ref = ref
   respects-conv hyp (sym-conv M≃N) = sym-conv (respects-conv hyp M≃N)
