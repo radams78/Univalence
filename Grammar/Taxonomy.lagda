@@ -82,7 +82,7 @@ We formalise this as follows.  First, we construct the sets of expression kinds 
 
   data Kind : KindClass → Set where
     base : ExpressionKind → Kind -Expression
-    out  : ∀ {K} → Kind (-Constructor K)
+    out  : ∀ K → Kind (-Constructor K)
     Π    : ∀ {K} → List VarKind → ExpressionKind → 
            Kind (-Constructor K) → Kind (-Constructor K)
 \end{code}

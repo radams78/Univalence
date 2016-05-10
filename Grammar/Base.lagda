@@ -43,7 +43,7 @@ We can now define the set of expressions over a grammar:
     var : ∀ {V} {K} → Var V K → Expression V (varKind K)
     app : ∀ {V} {K} {C} → Constructor C → Body V {K} C → 
       Expression V K
-    out : ∀ {V} {K} → Body V {K} out
+    out : ∀ {V} {K} → Body V (out K)
     _,,_ : ∀ {V} {K} {A} {L} {C} → Expression (extend V A) L → 
       Body V {K} C → Body V (Π A L C)
 

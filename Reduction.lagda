@@ -217,6 +217,8 @@ If $R$ respects $Ops$ and $\sigma \twoheadrightarrow_R \tau$ then $E[\sigma] \tw
   apredl {E = app _ E} hyp ρ↠σ = respects-red app (apredl {E = E} hyp ρ↠σ)
   apredl {E = out} _ _ = ref
   apredl {E = _,,_ {A = A} E F} hyp ρ↠σ = trans-red (respects-red appl (apredl {E = E} hyp (liftOp'-red {A = A} hyp ρ↠σ))) (respects-red appr (apredl {E = F} hyp ρ↠σ))
+
+open Respects-Creates public
 \end{code}
 }
 
@@ -225,22 +227,21 @@ If $R$ creates replacements, then so do $\rightarrow_R$, $\twoheadrightarrow_R$ 
 \end{lemma}
 
 \begin{code}
-create-osr : Respects-Creates.creates' replacement → 
-  Respects-Creates.creates replacement _⇒_
+create-osr : creates' replacement → creates replacement _⇒_
 \end{code}
 
 \AgdaHide{
 \begin{code}
 create-osr _ (var _) ()
 create-osr hyp (app c E) (redex cσE⇒F) =
-  let open Respects-Creates.creation' (hyp E cσE⇒F) in
+  let open creation' (hyp E cσE⇒F) in
   record { 
     created = created;
     red-created = redex red-created;
     ap-created = ap-created 
     }
 create-osr hyp (app c E) (app σE⇒F) =     
-  let open Respects-Creates.creation (create-osr hyp E σE⇒F) in 
+  let open creation (create-osr hyp E σE⇒F) in 
   record { 
     created = app c created; 
     red-created = app red-created; 
@@ -248,14 +249,14 @@ create-osr hyp (app c E) (app σE⇒F) =
     }
 create-osr _ out ()
 create-osr hyp (_,,_ E F) {σ = σ} (appl σE⇒E') =     
-  let open Respects-Creates.creation (create-osr hyp E σE⇒E') in 
+  let open creation (create-osr hyp E σE⇒E') in 
   record { 
     created = _,,_ created F; 
     red-created = appl red-created; 
     ap-created = cong (λ x → _,,_ x (F 〈 σ 〉)) ap-created
     }
 create-osr hyp (_,,_ {A = A} E F) {σ = σ} (appr {F' = F'} σF⇒F') =     
-  let open Respects-Creates.creation {Ops = replacement} (create-osr hyp F σF⇒F') in 
+  let open creation {Ops = replacement} (create-osr hyp F σF⇒F') in 
   record { 
     created = _,,_ E created; 
     red-created = appr red-created; 

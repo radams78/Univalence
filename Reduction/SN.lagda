@@ -24,7 +24,7 @@ data SN {V C K} : Subexpression V C K → Set where
   SNI : ∀ E → (∀ F → E ⇒ F → SN F) → SN E
 \end{code}
 
-\begin{lemma}
+\begin{lemma}$ $
 \begin{enumerate}
 \item
 If $c([\vec{x_1}]E_1, \ldots, [\vec{x_n}]E_n)$ is strongly normalizable, then each $E_i$ is strongly normalizable.
@@ -39,29 +39,75 @@ If $E$ is strongly normalizable and $E \twoheadrightarrow_R F$ then $F$ is stron
 \end{lemma}
 
 \begin{code}
-SNsubexp : ∀ {V K} {C : Kind (-Constructor K)} {c : Constructor C} {EE : Subexpression V (-Constructor K) C} → SN (app c EE) → SN EE
-SNsubexp {c = c} {EE = EE} (SNI .(app c EE) SNcEE) = SNI EE (λ FF EE→FF → SNsubexp (SNcEE (app c FF) (app EE→FF)))
+SNsubexp : ∀ {V K} {C : Kind (-Constructor K)}
+  {c : Constructor C} {E : Subexpression V (-Constructor K) C} → 
+  SN (app c E) → SN E
+\end{code}
 
-SNsubbodyl : ∀ {V K A L C M N} → SN (_,,_ {V} {K} {A} {L} {C} M N) → SN M
+\AgdaHide{
+\begin{code}
+SNsubexp {c = c} {E = E} (SNI .(app c E) SNcE) = 
+  SNI E (λ F E→F → SNsubexp (SNcE (app c F) (app E→F)))
+\end{code}
+}
+
+\begin{code}
+SNsubbodyl : ∀ {V K A L C M N} → 
+  SN (_,,_ {V} {K} {A} {L} {C} M N) → SN M
+\end{code}
+
+\AgdaHide{
+\begin{code}
 SNsubbodyl {V} {K} {A} {L} {C} {M} {N} (SNI .(_,,_ M N) SNM) = SNI M (λ M' M⇒M' → SNsubbodyl (SNM (_,,_ M' N) (appl M⇒M')))
+\end{code}
+}
 
-SNsubbodyr : ∀ {V K A L C M N} → SN (_,,_ {V} {K} {A} {L} {C} M N) → SN N
+\begin{code}
+SNsubbodyr : ∀ {V K A L C M N} → 
+  SN (_,,_ {V} {K} {A} {L} {C} M N) → SN N
+\end{code}
+
+\AgdaHide{
+\begin{code}
 SNsubbodyr {V} {K} {A} {L} {C} {M} {N} (SNI .(_,,_ M N) SNN) = SNI N (λ N' N⇒N' → SNsubbodyr (SNN (_,,_ M N') (appr N⇒N')))
+\end{code}
+}
 
-SNap' : ∀ {Ops : OpFamily} {U V C K} {E : Subexpression U C K} {σ : OpFamily.Op Ops U V} →
-  Respects-Creates.respects' Ops → SN (OpFamily.ap Ops σ E) → SN E
+\begin{code}
+SNap' : ∀ {Ops : OpFamily} {U V C K} 
+  {E : Subexpression U C K} {σ : OpFamily.Op Ops U V} →
+  respects' Ops → SN (OpFamily.ap Ops σ E) → SN E
+\end{code}
+
+\AgdaHide{
+\begin{code}
 SNap' {Ops} {E = E} {σ = σ} hyp (SNI .(OpFamily.ap Ops σ E) SNσE) = SNI E (λ F E→F → SNap' {Ops} hyp (SNσE (OpFamily.ap Ops σ F) 
-  (Respects-Creates.respects-osr Ops hyp E→F)))
+  (respects-osr Ops hyp E→F)))
+\end{code}
+}
 
+\begin{code}
 SNap : ∀ {U V C K} {E : Subexpression U C K} {σ : Rep U V} →
-  Respects-Creates.creates' replacement → SN E → SN (E 〈 σ 〉)
+  creates' replacement → SN E → SN (E 〈 σ 〉)
+\end{code}
+
+\AgdaHide{
+\begin{code}
 SNap {U} {V} {C} {K} {E} {σ} hyp (SNI .E SNE) = SNI (E 〈 σ 〉) (λ F σE→F → 
   let E₀ = create-osr hyp E σE→F in
-  let open Respects-Creates.creation {Ops = replacement} E₀ in
+  let open creation {Ops = replacement} E₀ in
   subst SN ap-created (SNap hyp (SNE created red-created)))
+\end{code}
+}
 
+\begin{code}
 SNred : ∀ {V K} {E F : Expression V K} → SN E → E ↠ F → SN F
+\end{code}
+
+\AgdaHide{
+\begin{code}
 SNred {V} {K} {E} {F} (SNI .E SNE) (osr-red E→F) = SNE F E→F
 SNred SNE ref = SNE
 SNred SNE (trans-red E↠F F↠G) = SNred (SNred SNE E↠F) F↠G
 \end{code}
+}
