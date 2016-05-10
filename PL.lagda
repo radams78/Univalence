@@ -243,15 +243,33 @@ Weakening .{P} {Q} .{Γ} {Δ} {ρ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∶ψ) 
     ∎
 \end{code}
 }
-
-A \emph{substitution} $\sigma$ from a context $\Gamma$ to a context $\Delta$, $\sigma : \Gamma \rightarrow \Delta$,  is a substitution $\sigma$ on the syntax such that,
+A \emph{substitution} $\sigma$ from a context $\Gamma$ to a context $\Delta$, $\sigma : \Gamma \rightarrow \Delta$,  is a substitution $\sigma$ such that
 for every $x : \phi$ in $\Gamma$, we have $\Delta \vdash \sigma(x) : \phi$.
 
 \begin{code}
 _∶_⇒_ : ∀ {P} {Q} → Sub P Q → Context P → Context Q → Set
 σ ∶ Γ ⇒ Δ = ∀ x → Δ ⊢ σ _ x ∶ typeof x Γ ⟦ σ ⟧
+\end{code}
 
+\begin{lemma}$ $
+\begin{enumerate}
+\item
+If $\sigma : \Gamma \rightarrow \Delta$ then $(\sigma , \mathrm{Proof}) : (\Gamma , p : \phi) \rightarrow (\Delta , p : \phi [ \sigma ])$.
+\item
+If $\Gamma \vdash \delta : \phi$ then $(p := \delta) : (\Gamma, p : \phi) \rightarrow \Gamma$.
+\item
+(\textbf{Substitution Lemma})
+
+If $\Gamma \vdash \delta : \phi$ and $\sigma : \Gamma \rightarrow \Delta$ then $\Delta \vdash \delta [ \sigma ] : \phi [ \sigma ]$.
+\end{enumerate}
+\end{lemma}
+
+\begin{code}
 Sub↑-typed : ∀ {P} {Q} {σ} {Γ : Context P} {Δ : Context Q} {φ : Prp P} → σ ∶ Γ ⇒ Δ → Sub↑ -proof σ ∶ (Γ ,P φ) ⇒ (Δ ,P φ ⟦ σ ⟧)
+\end{code}
+
+\AgdaHide{
+\begin{code}
 Sub↑-typed {P} {Q} {σ} {Γ} {Δ} {φ} σ∶Γ→Δ x₀ = subst (λ T → (Δ ,P φ ⟦ σ ⟧) ⊢ var x₀ ∶ T) 
   (sym (liftOp-up-mixed' COMP₂ COMP₁ (λ {_} {_} {_} {_} {E} → sym (up-is-up' {E = E})) {E = φ})) 
   (var {p = x₀})
@@ -260,19 +278,31 @@ Sub↑-typed {Q = Q} {σ = σ} {Γ = Γ} {Δ = Δ} {φ = φ} σ∶Γ→Δ (↑ x
   (λ P → (Δ ,P φ ⟦ σ ⟧) ⊢ Sub↑ -proof σ -proof (↑ x) ∶ P)
   (sym (liftOp-up-mixed' COMP₂ COMP₁ (λ {_} {_} {_} {_} {E} → sym (up-is-up' {E = E})) {E = typeof x Γ}))
   (Weakening (σ∶Γ→Δ x) (↑-typed {φ = φ ⟦ σ ⟧}))
+\end{code}
+}
 
+\begin{code}
 botsub-typed : ∀ {P} {Γ : Context P} {φ : Expression ( P) prp} {δ} →
   Γ ⊢ δ ∶ φ → x₀:= δ ∶ (Γ ,P φ) ⇒ Γ
+\end{code}
+
+\AgdaHide{
+\begin{code}
 botsub-typed {P} {Γ} {φ} {δ} Γ⊢δ∶φ x₀ = subst (λ P₁ → Γ ⊢ δ ∶ P₁) 
   (sym botsub-upRep) Γ⊢δ∶φ
 botsub-typed {P} {Γ} {φ} {δ} _ (↑ x) = subst (λ P₁ → Γ ⊢ var x ∶ P₁) 
   (sym botsub-upRep) var
 \end{code}
+}
 
 Substitution Lemma
 
 \begin{code}
 Substitution : ∀ {P} {Q} {Γ : Context P} {Δ : Context Q} {δ} {φ} {σ} → Γ ⊢ δ ∶ φ → σ ∶ Γ ⇒ Δ → Δ ⊢ δ ⟦ σ ⟧ ∶ φ ⟦ σ ⟧
+\end{code}
+
+\AgdaHide{
+\begin{code}
 Substitution var σ∶Γ→Δ = σ∶Γ→Δ _
 Substitution (app Γ⊢δ∶φ→ψ Γ⊢ε∶φ) σ∶Γ→Δ = app (Substitution Γ⊢δ∶φ→ψ σ∶Γ→Δ) (Substitution Γ⊢ε∶φ σ∶Γ→Δ)
 Substitution {Q = Q} {Δ = Δ} {σ = σ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∶ψ) σ∶Γ→Δ = Λ 
@@ -287,6 +317,7 @@ Substitution {Q = Q} {Δ = Δ} {σ = σ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ�
   ∎)
   (Substitution Γ,φ⊢δ∶ψ (Sub↑-typed σ∶Γ→Δ)))
 \end{code}
+}
 
 Subject Reduction
 
