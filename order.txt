@@ -16,5 +16,7 @@ Grammar/Substitution/Botsub
 Grammar/Context
 Reduction/Base
 Reduction/SN
-PL
+PL/Grammar
+PL/Rules
+PL/Computable
 PHOPL

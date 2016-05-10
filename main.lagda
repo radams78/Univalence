@@ -56,7 +56,9 @@ expressions.  The details are given in Appendix \ref{appendix:repsub}.
 \input{Grammar/Context.lagda}
 \input{Reduction/Base.lagda}
 \input{Reduction/SN.lagda}
-\input{PL.lagda}
+\input{PL/Grammar.lagda}
+\input{PL/Rules.lagda}
+\input{PL/Computable.lagda}
 \input{PHOPL.lagda}
 
 \appendix
