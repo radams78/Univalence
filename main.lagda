@@ -54,7 +54,7 @@ We define the operations of replacement and substitution on
 expressions.  The details are given in Appendix \ref{appendix:repsub}.
 
 \input{Grammar/Context.lagda}
-\input{Reduction.lagda}
+\input{Reduction/Base.lagda}
 \input{Reduction/SN.lagda}
 \input{PL.lagda}
 \input{PHOPL.lagda}

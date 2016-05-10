@@ -97,18 +97,19 @@ The relation of \emph{$\beta$-reduction} is defined by: $(\lambda x \delta) \eps
 data β {V} : ∀ {K} {C : Kind (-Constructor K)} → 
   Constructor C → Subexpression V (-Constructor K) C → 
   Expression V K → Set where
-  βI : ∀ {φ} {δ} {ε} → β {V} -app (ΛP φ δ ,, ε ,, out) (δ ⟦ x₀:= ε ⟧)
+  βI : ∀ {φ} {δ} {ε} → β -app (ΛP φ δ ,, ε ,, out) (δ ⟦ x₀:= ε ⟧)
 
 open import Reduction Propositional-Logic β
-open import Reduction.SN Propositional-Logic β
 
-β-respects-rep : Respects-Creates.respects' replacement
-β-respects-rep {U} {V} {σ = ρ} (βI {φ} {δ} {ε}) = subst (β -app _) (sym (comp₁-botsub' δ)) βI
+β-respects-rep : respects' replacement
+β-respects-rep (βI {δ = δ}) = 
+  subst (β -app _) (sym (comp₁-botsub' δ)) βI
 
-β-creates-rep : Respects-Creates.creates' replacement
+β-creates-rep : creates' replacement
 β-creates-rep {c = -app} (var _ ,, _) ()
 β-creates-rep {c = -app} (app -app _ ,, _) ()
-β-creates-rep {c = -app} (app -lam (A ,, δ ,, out) ,, (ε ,, out)) {σ = σ} βI = record { 
+β-creates-rep {c = -app} 
+  (app -lam (_ ,, δ ,, out) ,, (ε ,, out)) βI = record { 
   created = δ ⟦ x₀:= ε ⟧ ; 
   red-created = βI ; 
   ap-created = comp₁-botsub' δ }
@@ -128,18 +129,53 @@ The rules of deduction of the system are as follows.
 \begin{code}
 infix 10 _⊢_∶_
 data _⊢_∶_ : ∀ {P} → Context P → Proof P → Prp P → Set where
-  var : ∀ {P} {Γ : Context P} {p : Var P -proof} → Γ ⊢ var p ∶ typeof p Γ
-  app : ∀ {P} {Γ : Context P} {δ} {ε} {φ} {ψ} → Γ ⊢ δ ∶ φ ⇛ ψ → Γ ⊢ ε ∶ φ → Γ ⊢ appP δ ε ∶ ψ
-  Λ : ∀ {P} {Γ : Context P} {φ} {δ} {ψ} → (_,_ {K = -proof} Γ φ) ⊢ δ ∶ ψ 〈 upRep 〉 → Γ ⊢ ΛP φ δ ∶ φ ⇛ ψ
+  var : ∀ {P} {Γ : Context P} {p : Var P -proof} → 
+    Γ ⊢ var p ∶ typeof p Γ
+  app : ∀ {P} {Γ : Context P} {δ} {ε} {φ} {ψ} → 
+    Γ ⊢ δ ∶ φ ⇛ ψ → Γ ⊢ ε ∶ φ → Γ ⊢ appP δ ε ∶ ψ
+  Λ : ∀ {P} {Γ : Context P} {φ} {δ} {ψ} → 
+    Γ ,P φ ⊢ δ ∶ ψ 〈 upRep 〉 → Γ ⊢ ΛP φ δ ∶ φ ⇛ ψ
+\end{code}
 
+Let $\rho$ be a replacement.  We say $\rho$ is a replacement from $\Gamma$ to $\Delta$, $\rho : \Gamma \rightarrow \Delta$,
+iff for all $x : \phi \in \Gamma$ we have $\rho(x) : \phi \in \Delta$.
+
+\begin{code}
 _∶_⇒R_ : ∀ {P} {Q} → Rep P Q → Context P → Context Q → Set
 ρ ∶ Γ ⇒R Δ = ∀ x → typeof {K = -proof} (ρ _ x) Δ ≡ typeof x Γ 〈 ρ 〉
+\end{code}
 
+\begin{lemma}$ $
+\begin{enumerate}
+\item
+$\uparrow$ is a replacement $\Gamma \rightarrow \Gamma , \phi$.
+\item
+If $\rho : \Gamma \rightarrow \Delta$ then $(\rho , \mathrm{Proof}) : (\Gamma , x : \phi) \rightarrow (\Delta , x : \phi)$.
+\item
+If $\rho : \Gamma \rightarrow \Delta$ and $\sigma : \Delta \rightarrow \Theta$ then $\sigma \circ \rho : \Gamma \rightarrow \Delta$.
+\item
+(\textbf{Weakening})
+If $\rho : \Gamma \rightarrow \Delta$ and $\Gamma \vdash \delta : \phi$ then $\Delta \vdash \delta \langle \rho \rangle : \phi$.
+\end{enumerate}
+\end{lemma}
+
+\begin{code}
 ↑-typed : ∀ {P} {Γ : Context P} {φ : Prp P} → upRep ∶ Γ ⇒R (Γ ,P φ)
-↑-typed {P} {Γ} {φ} x = refl
+\end{code}
 
-Rep↑-typed : ∀ {P} {Q} {ρ} {Γ : Context P} {Δ : Context Q} {φ : Prp P} → ρ ∶ Γ ⇒R Δ → 
-  Rep↑ -proof ρ ∶ (Γ ,P φ) ⇒R (Δ ,P φ 〈 ρ 〉)
+\AgdaHide{
+\begin{code}
+↑-typed {P} {Γ} {φ} x = refl
+\end{code}
+}
+
+\begin{code}
+Rep↑-typed : ∀ {P} {Q} {ρ} {Γ : Context P} {Δ : Context Q} {φ : Prp P} → 
+  ρ ∶ Γ ⇒R Δ → Rep↑ -proof ρ ∶ (Γ ,P φ) ⇒R (Δ ,P φ 〈 ρ 〉)
+\end{code}
+
+\AgdaHide{
+\begin{code}
 Rep↑-typed {P} {Q = Q} {ρ = ρ} {Γ} {Δ = Δ} {φ = φ} ρ∶Γ→Δ x₀ = sym (Rep↑-upRep φ)
 Rep↑-typed {Q = Q} {ρ = ρ} {Γ = Γ} {Δ = Δ} {φ} ρ∶Γ→Δ (↑ x) = let open ≡-Reasoning in 
   begin
@@ -156,11 +192,15 @@ Rep↑-typed {Q = Q} {ρ = ρ} {Γ = Γ} {Δ = Δ} {φ} ρ∶Γ→Δ (↑ x) = l
     typeof (↑ x) (Γ ,P φ) 〈 Rep↑ -proof ρ 〉
   ∎
 \end{code}
-
-The replacements between contexts are closed under composition.
+}
 
 \begin{code}
-•R-typed : ∀ {P} {Q} {R} {σ : Rep Q R} {ρ : Rep P Q} {Γ} {Δ} {Θ} → ρ ∶ Γ ⇒R Δ → σ ∶ Δ ⇒R Θ → (σ •R ρ) ∶ Γ ⇒R Θ
+•R-typed : ∀ {P} {Q} {R} {σ : Rep Q R} {ρ : Rep P Q} {Γ} {Δ} {Θ} → 
+  ρ ∶ Γ ⇒R Δ → σ ∶ Δ ⇒R Θ → (σ •R ρ) ∶ Γ ⇒R Θ
+\end{code}
+
+\AgdaHide{
+\begin{code}
 •R-typed {R = R} {σ} {ρ} {Γ} {Δ} {Θ} ρ∶Γ→Δ σ∶Δ→Θ x = let open ≡-Reasoning {A = Expression R prp} in 
   begin 
     typeof (σ -proof (ρ -proof x)) Θ
@@ -172,12 +212,15 @@ The replacements between contexts are closed under composition.
     typeof x Γ 〈  σ •R  ρ 〉    
   ∎
 \end{code}
-
-Weakening Lemma
+}
 
 \begin{code}
 Weakening : ∀ {P} {Q} {Γ : Context P} {Δ : Context Q} {ρ} {δ} {φ} → 
   Γ ⊢ δ ∶ φ → ρ ∶ Γ ⇒R Δ → Δ ⊢ δ 〈 ρ 〉 ∶ φ 〈 ρ 〉
+\end{code}
+
+\AgdaHide{
+\begin{code}
 Weakening {P} {Q} {Γ} {Δ} {ρ} (var {p = p}) ρ∶Γ→Δ = subst (λ x → Δ ⊢ var (ρ -proof p) ∶ x) 
   (ρ∶Γ→Δ p) 
   var
@@ -199,6 +242,7 @@ Weakening .{P} {Q} .{Γ} {Δ} {ρ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∶ψ) 
       typeof x Γ 〈 upRep 〉 〈 Rep↑ -proof ρ 〉     
     ∎
 \end{code}
+}
 
 A \emph{substitution} $\sigma$ from a context $\Gamma$ to a context $\Delta$, $\sigma : \Gamma \rightarrow \Delta$,  is a substitution $\sigma$ on the syntax such that,
 for every $x : \phi$ in $\Gamma$, we have $\Delta \vdash \sigma(x) : \phi$.

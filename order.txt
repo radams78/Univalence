@@ -14,7 +14,7 @@ Grammar/Substitution/LiftFamily
 Grammar/Substitution/OpFamily
 Grammar/Substitution/Botsub
 Grammar/Context
-Reduction
+Reduction/Base
 Reduction/SN
 PL
 PHOPL

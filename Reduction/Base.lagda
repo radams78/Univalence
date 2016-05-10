@@ -10,7 +10,7 @@ A \emph{reduction relation} is a relation $R$ between expressions such that, whe
 and $M$ is not a variable.
 
 \begin{code}
-module Reduction (G : Grammar) 
+module Reduction.Base (G : Grammar) 
   (R : ∀ {V} {K} {C : Grammar.Kind G (Grammar.-Constructor {G} K)} → 
     Grammar.Constructor G C → 
     Grammar.Subexpression G V (Grammar.-Constructor {G} K) C → 

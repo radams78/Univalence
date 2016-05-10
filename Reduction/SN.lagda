@@ -11,7 +11,7 @@ open import Prelims
 open Grammar G
 open import Grammar.OpFamily G
 open import Grammar.Replacement G
-open import Reduction G R
+open import Reduction.Base G R
 \end{code}
 }
 
