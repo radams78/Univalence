@@ -219,6 +219,10 @@ If $R$ respects $Ops$ and $\sigma \twoheadrightarrow_R \tau$ then $E[\sigma] \tw
   apredl {E = _,,_ {A = A} E F} hyp ρ↠σ = trans-red (respects-red appl (apredl {E = E} hyp (liftOp'-red {A = A} hyp ρ↠σ))) (respects-red appr (apredl {E = F} hyp ρ↠σ))
 
 open Respects-Creates public
+
+botsub-red : ∀ {V} {K} {E F : Expression V (varKind K)} → E ⇒ F → _↠s_ substitution (x₀:= E) (x₀:= F)
+botsub-red E⇒F _ x₀ = osr-red E⇒F
+botsub-red _ _ (↑ _) = ref
 \end{code}
 }
 

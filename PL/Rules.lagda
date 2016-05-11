@@ -29,6 +29,10 @@ data _⊢_∶_ : ∀ {P} → Context P → Proof P → Prp P → Set where
     Γ ⊢ δ ∶ φ ⇛ ψ → Γ ⊢ ε ∶ φ → Γ ⊢ appP δ ε ∶ ψ
   Λ : ∀ {P} {Γ : Context P} {φ} {δ} {ψ} → 
     Γ ,P φ ⊢ δ ∶ ψ 〈 upRep 〉 → Γ ⊢ ΛP φ δ ∶ φ ⇛ ψ
+
+change-type : ∀ {P} {Γ : Context P} {δ φ ψ} →
+  φ ≡ ψ → Γ ⊢ δ ∶ φ → Γ ⊢ δ ∶ ψ
+change-type = subst (λ A → _ ⊢ _ ∶ A)
 \end{code}
 
 Let $\rho$ be a replacement.  We say $\rho$ is a replacement from $\Gamma$ to $\Delta$, $\rho : \Gamma \rightarrow \Delta$,
@@ -128,13 +132,10 @@ Weakening : ∀ {P} {Q} {Γ : Context P} {Δ : Context Q} {ρ} {δ} {φ} →
 
 \AgdaHide{
 \begin{code}
-Weakening {P} {Q} {Γ} {Δ} {ρ} (var {p = p}) ρ∶Γ→Δ = subst (λ x → Δ ⊢ var (ρ -proof p) ∶ x) 
-  (ρ∶Γ→Δ p) 
-  var
+Weakening {P} {Q} {Γ} {Δ} {ρ} (var {p = p}) ρ∶Γ→Δ = change-type (ρ∶Γ→Δ p) var
 Weakening (app Γ⊢δ∶φ→ψ Γ⊢ε∶φ) ρ∶Γ→Δ = app (Weakening Γ⊢δ∶φ→ψ ρ∶Γ→Δ) (Weakening Γ⊢ε∶φ ρ∶Γ→Δ)
 Weakening .{P} {Q} .{Γ} {Δ} {ρ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∶ψ) ρ∶Γ→Δ = Λ 
-  (subst (λ P → (Δ ,P φ 〈 ρ 〉) ⊢ δ 〈 Rep↑ -proof ρ 〉 ∶ P) 
-  (Rep↑-upRep ψ)
+  (change-type (Rep↑-upRep ψ)
   (Weakening {P , -proof} {Q , -proof} {Γ ,P φ} {Δ ,P φ 〈  ρ 〉} {Rep↑ -proof ρ} {δ} {ψ 〈 upRep 〉} 
     Γ,φ⊢δ∶ψ 
     claim)) where
@@ -179,14 +180,14 @@ Sub↑-typed : ∀ {P} {Q} {σ}
 
 \AgdaHide{
 \begin{code}
-Sub↑-typed {P} {Q} {σ} {Γ} {Δ} {φ} σ∶Γ→Δ x₀ = subst (λ T → (Δ ,P φ ⟦ σ ⟧) ⊢ var x₀ ∶ T) 
+Sub↑-typed {P} {Q} {σ} {Γ} {Δ} {φ} σ∶Γ→Δ x₀ = change-type
   (sym (liftOp-up-mixed' COMP₂ COMP₁ (λ {_} {_} {_} {_} {E} → sym (up-is-up' {E = E})) {E = φ})) 
   (var {p = x₀})
 Sub↑-typed {Q = Q} {σ = σ} {Γ = Γ} {Δ = Δ} {φ = φ} σ∶Γ→Δ (↑ x) = 
-  subst
-  (λ P → (Δ ,P φ ⟦ σ ⟧) ⊢ Sub↑ -proof σ -proof (↑ x) ∶ P)
+  change-type
   (sym (liftOp-up-mixed' COMP₂ COMP₁ (λ {_} {_} {_} {_} {E} → sym (up-is-up' {E = E})) {E = typeof x Γ}))
   (Weakening (σ∶Γ→Δ x) (↑-typed {φ = φ ⟦ σ ⟧}))
+--REFACTOR Common pattern
 \end{code}
 }
 
@@ -197,10 +198,9 @@ botsub-typed : ∀ {P} {Γ : Context P} {φ : Prp P} {δ} →
 
 \AgdaHide{
 \begin{code}
-botsub-typed {P} {Γ} {φ} {δ} Γ⊢δ∶φ x₀ = subst (λ P₁ → Γ ⊢ δ ∶ P₁) 
-  (sym botsub-upRep) Γ⊢δ∶φ
-botsub-typed {P} {Γ} {φ} {δ} _ (↑ x) = subst (λ P₁ → Γ ⊢ var x ∶ P₁) 
-  (sym botsub-upRep) var
+botsub-typed {P} {Γ} {φ} {δ} Γ⊢δ∶φ x₀ = change-type (sym botsub-upRep) Γ⊢δ∶φ
+botsub-typed {P} {Γ} {φ} {δ} _ (↑ x) = change-type (sym botsub-upRep) var
+--REFACTOR Common pattern
 \end{code}
 }
 
@@ -215,7 +215,7 @@ Substitution : ∀ {P} {Q}
 Substitution var σ∶Γ→Δ = σ∶Γ→Δ _
 Substitution (app Γ⊢δ∶φ→ψ Γ⊢ε∶φ) σ∶Γ→Δ = app (Substitution Γ⊢δ∶φ→ψ σ∶Γ→Δ) (Substitution Γ⊢ε∶φ σ∶Γ→Δ)
 Substitution {Q = Q} {Δ = Δ} {σ = σ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∶ψ) σ∶Γ→Δ = Λ 
-  (subst (λ p → (Δ ,P φ ⟦ σ ⟧) ⊢ δ ⟦ Sub↑ -proof σ ⟧ ∶ p) 
+  (change-type
   (let open ≡-Reasoning {A = Expression ( Q , -proof) prp} in
   begin 
     ψ 〈 upRep 〉 ⟦ Sub↑ -proof σ ⟧
@@ -249,7 +249,7 @@ SR : ∀ {P} {Γ : Context P} {δ ε : Proof ( P)} {φ} →
 \begin{code}
 SR var ()
 SR (app {ε = ε} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∶ψ) Γ⊢ε∶φ) (redex βI) = 
-  subst (λ P₁ → Γ ⊢ δ ⟦ x₀:= ε ⟧ ∶ P₁) 
+  change-type 
   (let open ≡-Reasoning in
   begin 
     ψ 〈 upRep 〉 ⟦ x₀:= ε ⟧

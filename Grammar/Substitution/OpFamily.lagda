@@ -16,7 +16,7 @@ open import Grammar.Substitution.LiftFamily G
 We now define two compositions $\bullet_1 : \mathrm{replacement};\mathrm{substitution} \rightarrow \mathrm{substitution}$ and $\bullet_2 : \mathrm{substitution};\mathrm{replacement} \rightarrow \mathrm{substitution}$.
 
 \begin{code}
-infix 75 _•₁_
+infixl 75 _•₁_
 _•₁_ : ∀ {U} {V} {W} → Rep V W → Sub U V → Sub U W
 (ρ •₁ σ) K x = (σ K x) 〈 ρ 〉
 
@@ -51,7 +51,7 @@ sub-comp₁ : ∀ {U} {V} {W} {C} {K}
   E ⟦ ρ •₁ σ ⟧ ≡ E ⟦ σ ⟧ 〈 ρ 〉
 sub-comp₁ E = Composition.ap-circ COMP₁ E
 
-infix 75 _•₂_
+infixl 75 _•₂_
 _•₂_ : ∀ {U} {V} {W} → Sub V W → Rep U V → Sub U W
 (σ •₂ ρ) K x = σ K (ρ K x)
 
@@ -87,7 +87,7 @@ sub-comp₂ E = Composition.ap-circ COMP₂ E
 Composition is defined by $(\sigma \circ \rho)(x) \equiv \rho(x) [ \sigma ]$.
 
 \begin{code}
-infix 75 _•_
+infixl 75 _•_
 _•_ : ∀ {U} {V} {W} → Sub V W → Sub U V → Sub U W
 (σ • ρ) K x = ρ K x ⟦ σ ⟧
 \end{code}

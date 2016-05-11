@@ -1,6 +1,7 @@
 \AgdaHide{
 \begin{code}
 module PL.Grammar where
+open import Data.Empty
 open import Prelims
 open import Grammar.Taxonomy
 open import Grammar.Base
@@ -94,6 +95,20 @@ close-magic' {P} {Q} {φ} {σ} =
     (close φ) 〈 magic 〉
   ∎
 
+close-sub : ∀ {P} {Q} φ {σ : Sub P Q} → close (φ ⟦ σ ⟧) ≡ close φ
+close-sub (app -bot out) = refl
+close-sub (app -imp (φ ,, ψ ,, out)) = cong₂ _⇛_ (close-sub φ) (close-sub ψ)
+
+close-rep : ∀ {P} {Q} φ {ρ : Rep P Q} → close (φ 〈 ρ 〉) ≡ close φ
+close-rep φ {ρ} = let open ≡-Reasoning in
+  begin
+    close (φ 〈 ρ 〉)
+  ≡⟨ cong close (rep-is-sub φ) ⟩
+    close (φ ⟦ rep2sub ρ ⟧)
+  ≡⟨ close-sub φ ⟩
+    close φ
+  ∎
+
 _,P_ : ∀ {P} → Context P → Prp P → Context (P , -proof)
 _,P_ = _,_
 
@@ -135,6 +150,32 @@ open import Reduction Propositional-Logic β
 β-creates-rep {c = -lam} _ ()
 β-creates-rep {c = -bot} _ ()
 β-creates-rep {c = -imp} _ ()
+
+β-respects-sub : respects' substitution
+β-respects-sub {σ = σ} (βI {φ} {δ} {ε}) = subst
+  (β -app (ΛP (φ ⟦ σ ⟧) (δ ⟦ Sub↑ -proof σ ⟧) ,, ε ⟦ σ ⟧ ,, out)) 
+  (sym (comp-botsub' δ)) 
+  βI
+
+prop-not-reduce : ∀ {P} {φ ψ : Prp P} → φ ⇒ ψ → ⊥
+prop-not-reduce (redex ())
+prop-not-reduce (app {c = -imp} (appl φ⇒ψ)) = prop-not-reduce φ⇒ψ
+prop-not-reduce (app {c = -imp} (appr (appl φ⇒ψ))) = prop-not-reduce φ⇒ψ
+prop-not-reduce (app {c = -imp} (appr (appr ())))
+
+red-β-redex : ∀ {P} {φ} {δ} {ε} {χ} (S : Proof P → Set) → 
+    appP (ΛP φ δ) ε ⇒ χ →
+    S (δ ⟦ x₀:= ε ⟧) →
+    (∀ δ' → δ ⇒ δ' → S (appP (ΛP φ δ') ε)) →
+    (∀ ε' → ε ⇒ ε' → S (appP (ΛP φ δ) ε')) →
+    S χ
+red-β-redex _ (redex βI) δ[p∶=ε]∈CΓψ _ _ = δ[p∶=ε]∈CΓψ
+red-β-redex _ (app (appl (redex ()))) _ _ 
+red-β-redex _ (app (appl (app (appl φ⇒φ')))) _ _ = ⊥-elim (prop-not-reduce φ⇒φ')
+red-β-redex _ (app (appl (app (appr (appl δ⇒δ'))))) _ hyp1 _ = hyp1 _ δ⇒δ'
+red-β-redex _ (app (appl (app (appr (appr ()))))) _ _
+red-β-redex _ (app (appr (appl {E' = ε'} ε⇒ε'))) _ _ hyp2 = hyp2 _ ε⇒ε'
+red-β-redex _ (app (appr (appr ()))) _ _
 \end{code}
 
 \subsubsection{Neutral Terms}
