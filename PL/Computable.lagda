@@ -265,30 +265,44 @@ SNmainlemma {P} {Q} {Γ} {σ = σ} {Δ} (Λ {φ = φ} {δ} {ψ} Γ,φ⊢δ∶ψ)
          ≡⟨ sub-comp₂ (δ ⟦ Sub↑ -proof σ ⟧) ⟩
            δ ⟦ Sub↑ -proof σ ⟧ 〈 Rep↑ -proof ρ 〉 ⟦ x₀:= ε ⟧
          ∎)
-         (SNmainlemma {σ = x₀:= ε •₂ Rep↑ -proof ρ • Sub↑ -proof σ} Γ,φ⊢δ∶ψ (λ x → aux x ε∈CΘφ))) 
+         (SNmainlemma {σ = x₀:= ε •₂ Rep↑ -proof ρ • Sub↑ -proof σ} Γ,φ⊢δ∶ψ (λ x → aux x ε∈CΘφ ρ∶Δ→Θ))) 
        (CsubSN (close φ) ε∈CΘφ)) where
     aux : ∀ {R} {Θ : Context R} {ρ} {ε} x → 
       C Θ (close φ) ε →
+      ρ ∶ Δ ⇒R Θ → 
       C Θ (close (typeof {K = -proof} x (Γ ,P φ))) ((x₀:= ε •₂ Rep↑ -proof ρ • Sub↑ -proof σ) -proof x)
-    aux {Θ = Θ} {ε = ε} x₀ ε∈CΘφ = subst (λ P₁ → C Θ P₁ ε) 
+    aux {Θ = Θ} {ε = ε} x₀ ε∈CΘφ _ = subst (λ P₁ → C Θ P₁ ε) 
       (let open ≡-Reasoning in
       begin
         close φ
       ≡⟨⟨ close-rep φ ⟩⟩
         close (φ 〈 upRep 〉)
       ∎) ε∈CΘφ
-    aux {Θ = Θ} {ρ} {ε} (↑ x) _ = subst₂ (C Θ) 
+    aux {Θ = Θ} {ρ} {ε} (↑ x) _ ρ:Δ→Θ = subst₂ (C Θ) 
       (let open ≡-Reasoning in
       begin
-        {!!}
-      ≡⟨ {!!} ⟩
-        {!!}
+        close (typeof x Γ)
+      ≡⟨⟨ close-rep (typeof x Γ) ⟩⟩
+        close (typeof x Γ 〈 upRep 〉)
+      ≡⟨⟩
+        close (typeof (↑ x) (Γ ,P φ))
       ∎) 
       (let open ≡-Reasoning in
       begin
         σ -proof x 〈 ρ 〉
-      ≡⟨ {!!} ⟩
+      ≡⟨⟨ botsub-upRep ⟩⟩
+        σ -proof x 〈 ρ 〉 〈 upRep 〉 ⟦ x₀:= ε ⟧
+      ≡⟨⟨ cong (λ E → E ⟦ x₀:= ε ⟧) (Rep↑-upRep (σ -proof x)) ⟩⟩
         σ -proof x 〈 upRep 〉 〈 Rep↑ -proof ρ 〉 ⟦ x₀:= ε ⟧
+      ≡⟨⟨ sub-comp₂ (σ -proof x 〈 upRep 〉) ⟩⟩
+        (σ -proof x 〈 upRep 〉) ⟦ x₀:= ε •₂ Rep↑ -proof ρ ⟧
       ∎) 
-      {!!}
+      (C-rep {φ = close (typeof x Γ)} (hyp x) ρ:Δ→Θ)
+
+Strong-Normalization : ∀ {P} {Γ : Context P} {δ} {φ} → Γ ⊢ δ ∶ φ → SN δ
+Strong-Normalization {P} {Γ} {δ} {φ} Γ⊢δ:φ = subst SN 
+  sub-idOp 
+  (CsubSN (close φ) {δ ⟦ idOpSub P ⟧}
+  (SNmainlemma Γ⊢δ:φ (λ x → varC {x = x})))
+--TODO Change idOpSub to idSub everywhere
 \end{code}

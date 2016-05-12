@@ -35,6 +35,8 @@
 \DefineVerbatimEnvironment{code}{Verbatim}{fontsize=\small}
 
 \newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}[lemma]{Corollary}
+\newtheorem{prop}{Proposition}[section]
 \theoremstyle{definition}
 \newtheorem{definition}[lemma]{Definition}
 

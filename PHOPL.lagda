@@ -51,14 +51,14 @@ module PHOPLGrammar where
   open Taxonomy PHOPLTaxonomy
 
   data PHOPLcon : ∀ {K : ExpressionKind} → Kind (-Constructor K) → Set where
-    -appProof : PHOPLcon (Π [] (varKind -Proof) (Π [] (varKind -Proof) (out {K = varKind -Proof})))
-    -lamProof : PHOPLcon (Π [] (varKind -Term) (Π [ -Proof ] (varKind -Proof) (out {K = varKind -Proof})))
-    -bot : PHOPLcon (out {K = varKind -Term})
-    -imp : PHOPLcon (Π [] (varKind -Term) (Π [] (varKind -Term) (out {K = varKind -Term})))
-    -appTerm : PHOPLcon (Π [] (varKind -Term) (Π [] (varKind -Term) (out {K = varKind -Term})))
-    -lamTerm : PHOPLcon (Π [] (nonVarKind -Type) (Π [ -Term ] (varKind -Term) (out {K = varKind -Term})))
-    -Omega : PHOPLcon (out {K = nonVarKind -Type})
-    -func  : PHOPLcon (Π [] (nonVarKind -Type) (Π [] (nonVarKind -Type) (out {K = nonVarKind -Type})))
+    -appProof : PHOPLcon (Π [] (varKind -Proof) (Π [] (varKind -Proof) (out (varKind -Proof))))
+    -lamProof : PHOPLcon (Π [] (varKind -Term) (Π [ -Proof ] (varKind -Proof) (out (varKind -Proof))))
+    -bot : PHOPLcon (out (varKind -Term))
+    -imp : PHOPLcon (Π [] (varKind -Term) (Π [] (varKind -Term) (out (varKind -Term))))
+    -appTerm : PHOPLcon (Π [] (varKind -Term) (Π [] (varKind -Term) (out (varKind -Term))))
+    -lamTerm : PHOPLcon (Π [] (nonVarKind -Type) (Π [ -Term ] (varKind -Term) (out (varKind -Term))))
+    -Omega : PHOPLcon (out (nonVarKind -Type))
+    -func  : PHOPLcon (Π [] (nonVarKind -Type) (Π [] (nonVarKind -Type) (out (nonVarKind -Type))))
 
   PHOPLparent : PHOPLVarKind → ExpressionKind
   PHOPLparent -Proof = varKind -Term
