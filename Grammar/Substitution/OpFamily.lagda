@@ -10,6 +10,7 @@ open import Grammar.Replacement G
 open import Grammar.Substitution.PreOpFamily G
 open import Grammar.Substitution.Lifting G
 open import Grammar.Substitution.LiftFamily G
+open import Grammar.Substitution.RepSub G
 \end{code}
 }
 
@@ -110,6 +111,11 @@ Sub↑-comp {W = W} {ρ = ρ} {σ = σ} {K = K} {L} (↑ x) =
   ≡⟨ sub-comp₂ (ρ L x) ⟩
      ρ L x 〈 upRep 〉 ⟦ Sub↑ K σ ⟧ 
   ∎
+
+--TODO Document
+Sub↑-upRep : ∀ {U} {V} {C} {K} {L} {E : Subexpression U C K} {σ : Sub U V} →
+  E 〈 upRep 〉 ⟦ Sub↑ L σ ⟧ ≡ E ⟦ σ ⟧ 〈 upRep 〉
+Sub↑-upRep {E = E} = liftOp-up-mixed' COMP₂ COMP₁ (λ {_} {_} {_} {_} {E} → sym (up-is-up' {E = E})) {E}
 
 substitution : OpFamily
 substitution = record { 
