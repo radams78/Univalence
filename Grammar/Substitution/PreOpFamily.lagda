@@ -35,6 +35,6 @@ pre-substitution = record {
 
 \AgdaHide{
 \begin{code}
-open PreOpFamily pre-substitution using () renaming (_∼op_ to _∼_;idOp to idOpSub) public
+open PreOpFamily pre-substitution using () renaming (_∼op_ to _∼_;idOp to idSub) public
 \end{code}
 }

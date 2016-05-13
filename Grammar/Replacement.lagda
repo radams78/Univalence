@@ -31,8 +31,8 @@ Rep↑ _ ρ K (↑ x) = ↑ (ρ K x)
 upRep : ∀ {V} {K} → Rep V (V , K)
 upRep _ = ↑
 
-idOpRep : ∀ V → Rep V V
-idOpRep _ _ x = x
+idRep : ∀ V → Rep V V
+idRep _ _ x = x
 
 pre-replacement : PreOpFamily
 pre-replacement = record { 
@@ -40,7 +40,7 @@ pre-replacement = record {
   apV = λ ρ x → var (ρ _ x); 
   up = upRep; 
   apV-up = refl; 
-  idOp = idOpRep; 
+  idOp = idRep; 
   apV-idOp = λ _ → refl }
 
 _∼R_ : ∀ {U} {V} → Rep U V → Rep U V → Set
@@ -101,11 +101,15 @@ replacement = record {
 \AgdaHide{
 \begin{code}
 open OpFamily replacement public using () 
-  renaming (ap-congl to rep-cong;
+  renaming (ap-congl to rep-congr;
            ap-idOp to rep-idOp;
            ap-circ to rep-comp;
            liftOp-idOp to Rep↑-idOp;
            liftOp-up' to Rep↑-upRep)
+
+rep-congl : ∀ {U} {V} {C} {K} {ρ : Rep U V} {E F : Subexpression U C K} →
+  E ≡ F → E 〈 ρ 〉 ≡ F 〈 ρ 〉
+rep-congl {ρ = ρ} = cong (λ x → x 〈 ρ 〉)
 \end{code}
 }
 
@@ -137,7 +141,7 @@ magic-unique' E {ρ} = let open ≡-Reasoning in
     E 〈 magic 〉 〈 ρ 〉
   ≡⟨⟨ rep-comp E ⟩⟩
     E 〈 ρ •R magic 〉
-  ≡⟨ rep-cong E (magic-unique {ρ = ρ •R magic}) ⟩
+  ≡⟨ rep-congr E (magic-unique {ρ = ρ •R magic}) ⟩
     E 〈 magic 〉
   ∎
 \end{code}

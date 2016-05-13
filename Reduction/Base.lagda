@@ -102,8 +102,6 @@ respects-conv hyp (osr-conv E→F) = osr-conv (hyp E→F)
 respects-conv hyp ref = ref
 respects-conv hyp (sym-conv E≃F) = sym-conv (respects-conv hyp E≃F)
 respects-conv hyp (trans-conv E≃F F≃G) = trans-conv (respects-conv hyp E≃F) (respects-conv hyp F≃G)
-
---TODO Make lettering consistent for subexpressions
 \end{code}
 }
 

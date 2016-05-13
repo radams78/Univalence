@@ -85,6 +85,17 @@ sub-comp₂ E = Composition.ap-circ COMP₂ E
 \end{code}
 }
 
+\begin{code}
+Sub↑-upRep : ∀ {U} {V} {C} {K} {L} {E : Subexpression U C K} {σ : Sub U V} →
+  E 〈 upRep 〉 ⟦ Sub↑ L σ ⟧ ≡ E ⟦ σ ⟧ 〈 upRep 〉
+\end{code}
+
+\AgdaHide{
+\begin{code}
+Sub↑-upRep {E = E} = liftOp-up-mixed' COMP₂ COMP₁ (λ {_} {_} {_} {_} {E} → sym (up-is-up' {E = E})) {E}
+\end{code}
+}
+
 Composition is defined by $(\sigma \circ \rho)(x) \equiv \rho(x) [ \sigma ]$.
 
 \begin{code}
@@ -99,6 +110,10 @@ able to prove that this is a composition $\mathrm{substitution} ; \mathrm{substi
 \begin{code}
 Sub↑-comp : ∀ {U} {V} {W} {ρ : Sub U V} {σ : Sub V W} {K} → 
   Sub↑ K (σ • ρ) ∼ Sub↑ K σ • Sub↑ K ρ
+\end{code}
+
+\AgdaHide{
+\begin{code}
 Sub↑-comp x₀ = refl
 Sub↑-comp {W = W} {ρ = ρ} {σ = σ} {K = K} {L} (↑ x) = 
   let open ≡-Reasoning in 
@@ -111,12 +126,10 @@ Sub↑-comp {W = W} {ρ = ρ} {σ = σ} {K = K} {L} (↑ x) =
   ≡⟨ sub-comp₂ (ρ L x) ⟩
      ρ L x 〈 upRep 〉 ⟦ Sub↑ K σ ⟧ 
   ∎
+\end{code}
+}
 
---TODO Document
-Sub↑-upRep : ∀ {U} {V} {C} {K} {L} {E : Subexpression U C K} {σ : Sub U V} →
-  E 〈 upRep 〉 ⟦ Sub↑ L σ ⟧ ≡ E ⟦ σ ⟧ 〈 upRep 〉
-Sub↑-upRep {E = E} = liftOp-up-mixed' COMP₂ COMP₁ (λ {_} {_} {_} {_} {E} → sym (up-is-up' {E = E})) {E}
-
+\begin{code}
 substitution : OpFamily
 substitution = record { 
   liftFamily = proto-substitution ; 

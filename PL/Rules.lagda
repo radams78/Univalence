@@ -60,8 +60,7 @@ If $\rho : \Gamma \rightarrow \Delta$ and $\Gamma \vdash \delta : \phi$ then $\D
 \end{lemma}
 
 \begin{code}
---TODO Replace idOpRep with idRep
-idRep-typed : ∀ {P} {Γ : Context P} → idOpRep P ∶ Γ ⇒R Γ
+idRep-typed : ∀ {P} {Γ : Context P} → idRep P ∶ Γ ⇒R Γ
 \end{code}
 
 \AgdaHide{
@@ -180,14 +179,11 @@ Sub↑-typed : ∀ {P} {Q} {σ}
 
 \AgdaHide{
 \begin{code}
-Sub↑-typed {P} {Q} {σ} {Γ} {Δ} {φ} σ∶Γ→Δ x₀ = change-type
-  (sym (liftOp-up-mixed' COMP₂ COMP₁ (λ {_} {_} {_} {_} {E} → sym (up-is-up' {E = E})) {E = φ})) 
-  (var {p = x₀})
-Sub↑-typed {Q = Q} {σ = σ} {Γ = Γ} {Δ = Δ} {φ = φ} σ∶Γ→Δ (↑ x) = 
-  change-type
-  (sym (liftOp-up-mixed' COMP₂ COMP₁ (λ {_} {_} {_} {_} {E} → sym (up-is-up' {E = E})) {E = typeof x Γ}))
-  (Weakening (σ∶Γ→Δ x) (↑-typed {φ = φ ⟦ σ ⟧}))
---REFACTOR Common pattern
+Sub↑-typed {σ = σ} {Γ} {Δ} {φ} σ∶Γ⇒Δ x =
+  change-type (sym (Sub↑-upRep {E = pretypeof x (Γ ,P φ)})) (pre-Sub↑-typed x) where
+  pre-Sub↑-typed : ∀ x → Δ ,P φ ⟦ σ ⟧ ⊢ Sub↑ -proof σ -proof x ∶ pretypeof x (Γ ,P φ) ⟦ σ ⟧ 〈 upRep 〉
+  pre-Sub↑-typed x₀ = var
+  pre-Sub↑-typed (↑ x) = Weakening (σ∶Γ⇒Δ x) (↑-typed {φ = φ ⟦ σ ⟧})
 \end{code}
 }
 
@@ -254,7 +250,7 @@ SR (app {ε = ε} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∶ψ) Γ⊢ε∶φ) (re
   begin 
     ψ 〈 upRep 〉 ⟦ x₀:= ε ⟧
   ≡⟨⟨ sub-comp₂ ψ ⟩⟩
-    ψ ⟦ idOpSub P ⟧                 
+    ψ ⟦ idSub P ⟧                 
   ≡⟨ sub-idOp ⟩
     ψ                           
   ∎) 

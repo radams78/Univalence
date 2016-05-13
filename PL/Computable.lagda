@@ -161,7 +161,7 @@ WTEaux {Γ = Γ} {φ = φ} ψ Γ,p∶φ⊢δ∶ψ Γ⊢ε∶φ δ[p∶=ε]∈CΓ
     (let open ≡-Reasoning in 
     begin
       ψ 〈 magic 〉
-    ≡⟨ rep-cong ψ (λ ()) ⟩
+    ≡⟨ rep-congr ψ (λ ()) ⟩
       ψ 〈 upRep •R magic 〉
     ≡⟨ rep-comp ψ ⟩
       ψ 〈 magic 〉 〈 upRep 〉
@@ -202,7 +202,7 @@ SNmainlemma : ∀ {P} {Q} {Γ : Context P} {δ} {φ} {σ : Sub P Q} {Δ} →
 SNmainlemma (var {p = p}) hyp = hyp p
 SNmainlemma {P} {Q} {Γ} {σ = σ} {Δ} (app {δ = δ} {ε} {φ} {ψ} Γ⊢δ∶φ⇛ψ Γ⊢ε∶φ) hyp = 
   subst (C Δ (close ψ)) (cong (λ M → appP M (ε ⟦ σ ⟧)) rep-idOp) 
-    (proj₂ (SNmainlemma Γ⊢δ∶φ⇛ψ hyp) Q (idOpRep Q) (ε ⟦ σ ⟧) idRep-typed 
+    (proj₂ (SNmainlemma Γ⊢δ∶φ⇛ψ hyp) Q (idRep Q) (ε ⟦ σ ⟧) idRep-typed 
       (SNmainlemma Γ⊢ε∶φ hyp))
 SNmainlemma {P} {Q} {Γ} {σ = σ} {Δ} (Λ {φ = φ} {δ} {ψ} Γ,φ⊢δ∶ψ) hyp = 
   let σ∶Γ⇒Δ : σ ∶ Γ ⇒ Δ
@@ -241,13 +241,13 @@ SNmainlemma {P} {Q} {Γ} {σ = σ} {Δ} (Λ {φ = φ} {δ} {ψ} Γ,φ⊢δ∶ψ)
            close (ψ 〈 upRep 〉 ⟦ Sub↑ -proof σ ⟧ 〈 Rep↑ -proof ρ 〉) 〈 magic 〉
          ≡⟨ cong (λ E → E 〈 magic 〉) (trans (trans (close-rep (ψ 〈 upRep 〉 ⟦ Sub↑ -proof σ ⟧)) (close-sub (ψ 〈 upRep 〉))) (close-rep ψ)) ⟩
            close ψ 〈 magic 〉
-         ∎) --REFACTOR
+         ∎)
          (Weakening (Substitution Γ,φ⊢δ∶ψ (Sub↑-typed σ∶Γ⇒Δ)) (Rep↑-typed ρ∶Δ→Θ))) 
        (change-type 
          (let open ≡-Reasoning in 
          begin
            close φ 〈 magic 〉
-         ≡⟨⟨ cong (λ E → E 〈 magic 〉) (close-sub φ) ⟩⟩ -- TODO Lemma for cong-sub
+         ≡⟨⟨ rep-congl (close-sub φ) ⟩⟩
            close (φ ⟦ ρ •₁ σ ⟧) 〈 magic 〉
          ≡⟨ close-magic {φ = φ ⟦ ρ •₁ σ ⟧} ⟩ -- TODO Make argument explicit in close-magic'
            φ ⟦ ρ •₁ σ ⟧
@@ -302,7 +302,6 @@ SNmainlemma {P} {Q} {Γ} {σ = σ} {Δ} (Λ {φ = φ} {δ} {ψ} Γ,φ⊢δ∶ψ)
 Strong-Normalization : ∀ {P} {Γ : Context P} {δ} {φ} → Γ ⊢ δ ∶ φ → SN δ
 Strong-Normalization {P} {Γ} {δ} {φ} Γ⊢δ:φ = subst SN 
   sub-idOp 
-  (CsubSN (close φ) {δ ⟦ idOpSub P ⟧}
+  (CsubSN (close φ) {δ ⟦ idSub P ⟧}
   (SNmainlemma Γ⊢δ:φ (λ x → varC {x = x})))
---TODO Change idOpSub to idSub everywhere
 \end{code}

@@ -50,7 +50,6 @@ In any pre-family with lifting:
 $(\id{V} , K) \sim \id{(V , K)}$
 \item
 $\id{V}^{K_1, \ldots, K_n} \sim \id{(V , K_1 , \cdots , K_n)}$
-%TODO Better notation?
 \item
 $E[\id{V}] \equiv E$
 \end{enumerate}

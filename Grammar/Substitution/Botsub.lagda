@@ -65,7 +65,7 @@ comp-botsub {U} {V} {K} {E} {σ} {L} (↑ x) = let open ≡-Reasoning in
   ≡⟨⟩
     σ _ x
   ≡⟨⟨ sub-idOp ⟩⟩
-    σ _ x ⟦ idOpSub V ⟧
+    σ _ x ⟦ idSub V ⟧
   ≡⟨⟩
     σ _ x ⟦ x₀:= (E ⟦ σ ⟧) •₂ upRep ⟧
   ≡⟨ sub-comp₂ (σ L x) ⟩

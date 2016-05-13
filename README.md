@@ -4,6 +4,4 @@ This is a literate Agda formalization of a proof of strong normalization for sev
 
 ## TODO ##
 
-1. Split Reduction.lagda up into submodules.
-1. Split PL.lagda up into submodules.
 1. Splint PHOPL.lagda up into submodules.
