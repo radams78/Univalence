@@ -102,14 +102,11 @@ replacement = record {
 \begin{code}
 open OpFamily replacement public using () 
   renaming (ap-congl to rep-congr;
+           ap-congr to rep-congl;
            ap-idOp to rep-idOp;
            ap-circ to rep-comp;
            liftOp-idOp to Rep↑-idOp;
            liftOp-up' to Rep↑-upRep)
-
-rep-congl : ∀ {U} {V} {C} {K} {ρ : Rep U V} {E F : Subexpression U C K} →
-  E ≡ F → E 〈 ρ 〉 ≡ F 〈 ρ 〉
-rep-congl {ρ = ρ} = cong (λ x → x 〈 ρ 〉)
 \end{code}
 }
 

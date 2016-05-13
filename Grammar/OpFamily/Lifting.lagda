@@ -68,23 +68,21 @@ We prove that application respects $\sim$.
   ap-congl out _ = refl
   ap-congl (_,,_ {A = A} E F) ρ-is-σ = 
     cong₂ _,,_ (ap-congl E (liftOp'-cong A ρ-is-σ)) (ap-congl F ρ-is-σ)
-\end{code}
-}
 
-\begin{code}
+  ap-congr : ∀ {U} {V} {C} {K}
+    {σ : Op U V} {E F : Subexpression U C K} →
+    E ≡ F → ap σ E ≡ ap σ F
+  ap-congr {σ = σ} = cong (ap σ)
+
   ap-cong : ∀ {U} {V} {C} {K}
     {ρ σ : Op U V} {M N : Subexpression U C K} →
     ρ ∼op σ → M ≡ N → ap ρ M ≡ ap σ N
-\end{code}
-
-\AgdaHide{
-\begin{code}
   ap-cong {ρ = ρ} {σ} {M} {N} ρ∼σ M≡N = let open ≡-Reasoning in 
     begin
       ap ρ M
     ≡⟨ ap-congl M ρ∼σ ⟩
       ap σ M
-    ≡⟨ cong (ap σ) M≡N ⟩
+    ≡⟨ ap-congr M≡N ⟩
       ap σ N
     ∎
 \end{code}
