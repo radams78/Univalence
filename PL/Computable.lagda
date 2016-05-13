@@ -81,7 +81,7 @@ C-osr : ∀ {P} {Γ : Context P} φ {δ} {ε} → C Γ φ δ → δ ⇒ ε → C
 \begin{code}
 C-osr (app -bot out) (Γ⊢δ∶x₀ , SNδ) δ→ε = (SR Γ⊢δ∶x₀ δ→ε) , (SNred SNδ (osr-red δ→ε))
 C-osr {Γ = Γ} (app -imp (_,,_ φ (_,,_ ψ out))) {δ = δ} (Γ⊢δ∶φ⇒ψ , Cδ) δ→δ' = SR Γ⊢δ∶φ⇒ψ δ→δ' , 
-  (λ Q ρ ε ρ∶Γ→Δ ε∈Cφ → C-osr ψ (Cδ Q ρ ε ρ∶Γ→Δ ε∈Cφ) (app (appl (Respects-Creates.respects-osr replacement β-respects-rep δ→δ'))))
+  (λ Q ρ ε ρ∶Γ→Δ ε∈Cφ → C-osr ψ (Cδ Q ρ ε ρ∶Γ→Δ ε∈Cφ) (app (appl (respects-osr replacement β-respects-rep δ→δ'))))
 
 C-red : ∀ {P} {Γ : Context P} φ {δ} {ε} → C Γ φ δ → δ ↠ ε → C Γ φ ε
 C-red φ δ∈CΓφ (osr-red δ⇒ε) = C-osr φ δ∈CΓφ δ⇒ε
@@ -114,7 +114,7 @@ NeutralC {P} {Γ} {δ} {app -imp (_,,_ φ (_,,_ ψ out))} Γ⊢δ∶φ→ψ neut
       (NeutralC-lm {X = C Δ ψ} (neutral-rep neutralδ) 
       (λ δ' δ〈ρ〉→δ' → 
         let δ-creation = create-osr β-creates-rep δ δ〈ρ〉→δ' in 
-        let open Respects-Creates.creation δ-creation renaming (created to δ₀;red-created to δ⇒δ₀;ap-created to δ₀〈ρ〉≡δ') in
+        let open creation δ-creation renaming (created to δ₀;red-created to δ⇒δ₀;ap-created to δ₀〈ρ〉≡δ') in
         let δ₀∈C[φ⇒ψ] : C Γ (φ ⇛ ψ) δ₀
             δ₀∈C[φ⇒ψ] = hyp δ₀ δ⇒δ₀
         in let δ'∈C[φ⇒ψ] : C Δ (φ ⇛ ψ) δ'

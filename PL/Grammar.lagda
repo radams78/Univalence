@@ -18,11 +18,7 @@ The syntax of the system called \emph{propositional logic} is given by the follo
 \[ \begin{array}{lrcl}
 \text{Proof} & \delta & ::= & p \mid \delta \delta \mid \lambda p : \phi . \delta \\
 \text{Proposition} & φ & ::= & ⊥ \mid \phi \rightarrow \phi \\
-\text{Context} & \Gamma & ::= & \langle \rangle \mid \Gamma, p : \phi \\
-\text{Judgement} & \mathcal{J} & ::= & \Gamma \vdash \delta : \phi
 \end{array} \]
-where $p$ ranges over proof variables and $x$ ranges over term variables.  The variable $p$ is bound within $\delta$ in the proof $\lambda p : \phi . \delta$,
-and the variable $x$ is bound within $M$ in the term $\lambda x : A . M$.  We identify proofs and terms up to $\alpha$-conversion.
 
 \begin{code}
 data PLVarKind : Set where
@@ -70,7 +66,10 @@ Prp P = Expression P prp
 
 _⇛_ : ∀ {P} → Prp P → Prp P → Prp P
 φ ⇛ ψ = app -imp (φ ,, ψ ,, out)
+\end{code}
 
+\AgdaHide{
+\begin{code}
 close : ∀ {P} → Prp P → Prp ∅
 close (app -bot out) = ⊥P
 close (app -imp (φ ,, ψ ,, out)) = close φ ⇛ close ψ
@@ -108,7 +107,10 @@ close-rep φ {ρ} = let open ≡-Reasoning in
   ≡⟨ close-sub φ ⟩
     close φ
   ∎
+\end{code}
+}
 
+\begin{code}
 _,P_ : ∀ {P} → Context P → Prp P → Context (P , -proof)
 _,P_ = _,_
 
@@ -134,12 +136,27 @@ data β {V} : ∀ {K} {C : Kind (-Constructor K)} →
   βI : ∀ {φ} {δ} {ε} → β -app (ΛP φ δ ,, ε ,, out) (δ ⟦ x₀:= ε ⟧)
 
 open import Reduction Propositional-Logic β
+\end{code}
 
+It is easy to check that $\beta$-reduction respects and creates replacement, and respects substitution.
+
+\begin{code}
 β-respects-rep : respects' replacement
+\end{code}
+
+\AgdaHide{
+\begin{code}
 β-respects-rep (βI {δ = δ}) = 
   subst (β -app _) (sym (comp₁-botsub' δ)) βI
+\end{code}
+}
 
+\begin{code}
 β-creates-rep : creates' replacement
+\end{code}
+
+\AgdaHide{
+\begin{code}
 β-creates-rep {c = -app} (var _ ,, _) ()
 β-creates-rep {c = -app} (app -app _ ,, _) ()
 β-creates-rep {c = -app} 
@@ -150,12 +167,17 @@ open import Reduction Propositional-Logic β
 β-creates-rep {c = -lam} _ ()
 β-creates-rep {c = -bot} _ ()
 β-creates-rep {c = -imp} _ ()
+\end{code}
+}
 
+\begin{code}
 β-respects-sub : respects' substitution
+\end{code}
+
+\AgdaHide{
+\begin{code}
 β-respects-sub {σ = σ} (βI {φ} {δ} {ε}) = subst
-  (β -app (ΛP (φ ⟦ σ ⟧) (δ ⟦ Sub↑ -proof σ ⟧) ,, ε ⟦ σ ⟧ ,, out)) 
-  (sym (comp-botsub' δ)) 
-  βI
+  (β -app _) (sym (comp-botsub' δ)) βI
 
 prop-not-reduce : ∀ {P} {φ ψ : Prp P} → φ ⇒ ψ → ⊥
 prop-not-reduce (redex ())
@@ -177,6 +199,7 @@ red-β-redex _ (app (appl (app (appr (appr ()))))) _ _
 red-β-redex _ (app (appr (appl {E' = ε'} ε⇒ε'))) _ _ hyp2 = hyp2 _ ε⇒ε'
 red-β-redex _ (app (appr (appr ()))) _ _
 \end{code}
+}
 
 \subsubsection{Neutral Terms}
 

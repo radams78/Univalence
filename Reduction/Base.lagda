@@ -105,51 +105,18 @@ respects-conv hyp (trans-conv E≃F F≃G) = trans-conv (respects-conv hyp E≃F
 \end{code}
 }
 
-\begin{definition}
-Let $\rhd$ be a relation between expressions such that, whenever $M \rhd N$, then $M$ and $N$ have the same kind.  Let $Op$ be a family of operators.
-\begin{enumerate}
-\item
-We say $\rhd$  \emph{creates} $Op$s iff, whenever $M [ \sigma ] \rhd N$, then there exists $P$ such that $M \rhd P$ and $P [ \sigma ] \equiv N$.
-\end{enumerate}
-\end{definition}
+\begin{lemma}
+Let $Op$ be a family of operations.  If $R$ respects every operation in $Op$, then so does $\rightarrow_R$ (hence so do $\twoheadrightarrow_R$ and $\simeq_R$).
+\end{lemma}
 
 \begin{code}
-module Respects-Creates (Ops : OpFamily) where
+module OpFamilies (Ops : OpFamily) where
   open OpFamily Ops
 
   respects' : Set
   respects' = ∀ {U V C K c M N σ} → 
     R {U} {C} {K} c M N → R {V} c (ap σ M) (ap σ N)
 
-  record creation (_▷_ : Relation) {U V C K} 
-    (M : Subexpression U C K) {N} 
-    {σ : Op U V} (δ : ap σ M ▷ N) : Set where
-    field
-      created : Subexpression U C K
-      red-created : M ▷ created
-      ap-created : ap σ created ≡ N
-
-  creates : Relation → Set
-  creates ▷ = ∀ {U V C K} M {N σ} δ → 
-    creation ▷ {U} {V} {C} {K} M {N} {σ} δ
-
-  record creation' {U V C K c} M {N} 
-    {σ : Op U V} (δ : R {V} {C} {K} c (ap σ M) N) : Set where
-    field
-      created : Expression U C
-      red-created : R c M created
-      ap-created : ap σ created ≡ N
-
-  creates' : Set
-  creates' = ∀ {U V C K c} M {N σ} δ → 
-    creation' {U} {V} {C} {K} {c} M {N} {σ} δ
-\end{code}
-
-\begin{lemma}
-If $R$ respects $Op$, then so do $\rightarrow_R$, $\twoheadrightarrow_R$ and $\simeq_R$.
-\end{lemma}
-
-\begin{code}
   respects-osr : ∀ {U} {V} {C} {K} {σ : Op U V} → 
     respects' → respects _⇒_ (ap {C = C} {K = K} σ)
 \end{code}
@@ -172,12 +139,8 @@ iff $\sigma(x) \twoheadrightarrow_R \tau(x)$ for all $x$.
 \end{code}
 
 \begin{lemma}$ $
-\begin{enumerate}
-\item
-If $R$ respects $Ops$ and $\sigma \twoheadrightarrow_R \tau$ then $(\sigma , K) \twoheadrightarrow_R (\tau , K)$.
-\item
-If $R$ respects $Ops$ and $\sigma \twoheadrightarrow_R \tau$ then $E[\sigma] \twoheadrightarrow_R E[\tau]$.
-\end{enumerate}
+Suppose $R$ respects every operation $Op$ and $\rho \twoheadrightarrow_R \sigma$.  Then we have $(\rho , K) \twoheadrightarrow_R (\sigma , K)$, $\rho^A \twoheadrightarrow_R \sigma^A$, and
+$E[\rho] \twoheadrightarrow_R E[\sigma]$ for all $K$, $A$, $E$.
 \end{lemma}
 
 \begin{code}
@@ -215,17 +178,62 @@ If $R$ respects $Ops$ and $\sigma \twoheadrightarrow_R \tau$ then $E[\sigma] \tw
   apredl {E = app _ E} hyp ρ↠σ = respects-red app (apredl {E = E} hyp ρ↠σ)
   apredl {E = out} _ _ = ref
   apredl {E = _,,_ {A = A} E F} hyp ρ↠σ = trans-red (respects-red appl (apredl {E = E} hyp (liftOp'-red {A = A} hyp ρ↠σ))) (respects-red appr (apredl {E = F} hyp ρ↠σ))
+\end{code}
+}
 
-open Respects-Creates public
+\begin{definition}
+Let $\rhd$ be a relation between expressions such that, whenever $M \rhd N$, then $M$ and $N$ have the same kind.  Let $Op$ be a family of operators.
+\begin{enumerate}
+\item
+We say $\rhd$ \emph{creates} $Op$s iff, whenever $M [ \sigma ] \rhd N$, then there exists $P$ such that $M \rhd P$ and $P [ \sigma ] \equiv N$.
+\end{enumerate}
+\end{definition}
 
-botsub-red : ∀ {V} {K} {E F : Expression V (varKind K)} → E ⇒ F → _↠s_ substitution (x₀:= E) (x₀:= F)
+\begin{code}
+  record creation (_▷_ : Relation) {U V C K} 
+    (M : Subexpression U C K) {N} 
+    {σ : Op U V} (δ : ap σ M ▷ N) : Set where
+    field
+      created : Subexpression U C K
+      red-created : M ▷ created
+      ap-created : ap σ created ≡ N
+
+  creates : Relation → Set
+  creates ▷ = ∀ {U V C K} M {N σ} δ → 
+    creation ▷ {U} {V} {C} {K} M {N} {σ} δ
+
+  record creation' {U V C K c} M {N} 
+    {σ : Op U V} (δ : R {V} {C} {K} c (ap σ M) N) : Set where
+    field
+      created : Expression U C
+      red-created : R c M created
+      ap-created : ap σ created ≡ N
+
+  creates' : Set
+  creates' = ∀ {U V C K c} M {N σ} δ → 
+    creation' {U} {V} {C} {K} {c} M {N} {σ} δ
+
+open OpFamilies public
+\end{code}
+
+\begin{lemma}
+If $E \rightarrow_R F$ then $[x := E] \twoheadrightarrow_R [x := F]$.
+\end{lemma}
+
+\begin{code}
+botsub-red : ∀ {V} {K} {E F : Expression V (varKind K)} → 
+  E ⇒ F → _↠s_ substitution (x₀:= E) (x₀:= F)
+\end{code}
+
+\AgdaHide{
+\begin{code}
 botsub-red E⇒F _ x₀ = osr-red E⇒F
 botsub-red _ _ (↑ _) = ref
 \end{code}
 }
 
 \begin{lemma}
-If $R$ creates replacements, then so do $\rightarrow_R$, $\twoheadrightarrow_R$ and $\simeq_R$.
+If $R$ creates replacements, then so does $\rightarrow_R$.
 \end{lemma}
 
 \begin{code}

@@ -32,7 +32,7 @@ If $c([\vec{x_1}]E_1, \ldots, [\vec{x_n}]E_n)$ is strongly normalizable, then ea
 Let $F$ be a family of operations and $\sigma \in F$.
 If $E[\sigma]$ is strongly normalizable and $R$ respects $F$ then $E$ is strongly normalizable.
 \item
-If $E$ is strongly normalizable and $R$ creates replacement then $E \langle \rho \rangle$ is strongly normalizable.
+If $\rho$ is a replacement, $E$ is strongly normalizable and $R$ creates replacements then $E \langle \rho \rangle$ is strongly normalizable.
 \item
 If $E$ is strongly normalizable and $E \twoheadrightarrow_R F$ then $F$ is strongly normalizable.
 \end{enumerate}

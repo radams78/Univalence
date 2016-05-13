@@ -73,6 +73,8 @@ c([x_{11}, \ldots, x_{1r_1}]E_1, \ldots, [x_{m1}, \ldots, x_{mr_m}]E_m) \enspace
 
 The subexpressions of the form $[x_{i1}, \ldots, x_{ir_i}]E_i$ shall be called \emph{abstractions}.
 
+When giving a specific grammar, we shall feel free to use BNF notation.  
+
 We formalise this as follows.  First, we construct the sets of expression kinds and constructor kinds over a taxonomy:
 
 \begin{code}

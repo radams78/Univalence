@@ -9,6 +9,7 @@ open import Grammar.OpFamily G
 open import Grammar.Replacement G
 open import Grammar.Substitution.PreOpFamily G
 open import Grammar.Substitution.Lifting G
+open import Grammar.Substitution.LiftFamily G
 open import Grammar.Substitution.OpFamily G
 \end{code}
 }
@@ -36,14 +37,58 @@ $ E [ \uparrow ] [ x_0 := F ] \equiv E$
 \end{lemma}
 
 \begin{code}
+open LiftFamily
+
+botsub-upGEN : ∀ {F} {V} {K} {E : Expression V (varKind K)} (circ : Composition proto-substitution F proto-substitution) →
+  Composition.circ circ (x₀:= E) (up F) ∼ idSub V
+botsub-upGEN {F} {V} {K} {E} circ x = let open ≡-Reasoning in 
+  begin
+    (Composition.circ circ (x₀:= E) (up F)) _ x
+  ≡⟨ Composition.apV-circ circ ⟩
+    apV F (up F) x ⟦ x₀:= E ⟧
+  ≡⟨ sub-congl (apV-up F) ⟩
+    var x
+  ∎
+
+comp-botsubGEN : ∀ {F} {U} {V} {K} {E : Expression U (varKind K)} (circ₁ : Composition F proto-substitution proto-substitution) (circ₂ : Composition proto-substitution F proto-substitution)
+  {σ : Op F U V} →
+  Composition.circ circ₁ σ (x₀:= E) ∼ Composition.circ circ₂ (x₀:= (ap F σ E)) (liftOp F K σ)
+comp-botsubGEN {F} {U} {V} {K} {E} circ₁ circ₂ {σ} x₀ = let open ≡-Reasoning in 
+  begin
+    (Composition.circ circ₁ σ (x₀:= E)) _ x₀
+  ≡⟨ Composition.apV-circ circ₁ ⟩
+    ap F σ E
+  ≡⟨⟨ sub-congl (liftOp-x₀ F) ⟩⟩
+    (apV F (liftOp F K σ) x₀) ⟦ x₀:= (ap F σ E) ⟧
+  ≡⟨⟨ Composition.apV-circ circ₂ ⟩⟩
+    (Composition.circ circ₂ (x₀:= (ap F σ E)) (liftOp F K σ)) _ x₀
+  ∎
+comp-botsubGEN {F} {U} {V} {K} {E} circ₁ circ₂ {σ} (↑ x) = let open ≡-Reasoning in 
+  begin
+    (Composition.circ circ₁ σ (x₀:= E)) _ (↑ x)
+  ≡⟨ Composition.apV-circ circ₁ ⟩
+    apV F σ x
+  ≡⟨⟨ sub-idOp ⟩⟩
+    apV F σ x ⟦ idSub V ⟧
+  ≡⟨⟨ sub-congr (apV F σ x) (botsub-upGEN circ₂) ⟩⟩
+    apV F σ x ⟦ Composition.circ circ₂ (x₀:= (ap F σ E)) (up F) ⟧
+  ≡⟨ Composition.ap-circ circ₂ (apV F σ x) ⟩
+    ap F (up F) (apV F σ x) ⟦ x₀:= (ap F σ E) ⟧
+  ≡⟨⟨ sub-congl (liftOp-↑ F x) ⟩⟩
+    (apV F (liftOp F K σ) (↑ x)) ⟦ x₀:= (ap F σ E) ⟧
+  ≡⟨⟨ Composition.apV-circ circ₂ ⟩⟩
+    (Composition.circ circ₂ (x₀:= (ap F σ E)) (liftOp F K σ)) _ (↑ x)
+  ∎
+
 comp₁-botsub : ∀ {U} {V} {K} {E : Expression U (varKind K)} {ρ : Rep U V} →
   ρ •₁ (x₀:= E) ∼ (x₀:= (E 〈 ρ 〉)) •₂ Rep↑ K ρ
 \end{code}
 
 \AgdaHide{
 \begin{code}
-comp₁-botsub x₀ = refl
-comp₁-botsub (↑ _) = refl
+comp₁-botsub {U} {V} {K} {E} {ρ} = ?
+--comp₁-botsub x₀ = refl
+--comp₁-botsub (↑ _) = refl
 
 comp₁-botsub' : ∀ {U} {V} {C} {K} {L} (E : Subexpression (U , K) C L) {F : Expression U (varKind K)} {ρ : Rep U V} →
   E ⟦ x₀:= F ⟧ 〈 ρ 〉 ≡ E 〈 Rep↑ K ρ 〉 ⟦ x₀:= (F 〈 ρ 〉) ⟧
