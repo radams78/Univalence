@@ -77,7 +77,7 @@ close (app -imp (φ ,, ψ ,, out)) = close φ ⇛ close ψ
 
 close-magic : ∀ {P} {φ : Prp P} → close φ 〈 magic 〉 ≡ φ
 close-magic {φ = app -bot out} = refl
-close-magic {φ = app -imp (φ ,, ψ ,, out)} = cong₂ _⇛_ (close-magic {φ = φ}) (close-magic {φ = ψ})
+close-magic {φ = app -imp (φ ,, ψ ,, out)} = cong₂ _⇛_ close-magic close-magic
 
 close-magic' : ∀ {P} {Q} {φ : Prp P} {σ : Sub P Q} →
   φ ⟦ σ ⟧ ≡ close φ 〈 magic 〉
@@ -85,11 +85,11 @@ close-magic' {P} {Q} {φ} {σ} =
   let open ≡-Reasoning in 
   begin
     φ ⟦ σ ⟧
-  ≡⟨⟨ cong (λ M → M ⟦ σ ⟧) (close-magic {φ = φ}) ⟩⟩
+  ≡⟨⟨ sub-congl (close-magic {φ = φ}) ⟩⟩
     close φ 〈 magic 〉 ⟦ σ ⟧
   ≡⟨⟨ sub-comp₂ (close φ) ⟩⟩
     (close φ) ⟦ σ •₂ magic ⟧
-  ≡⟨ sub-cong (close φ) (λ ()) ⟩
+  ≡⟨ sub-congr (close φ) (λ ()) ⟩
     (close φ) ⟦ rep2sub magic ⟧
   ≡⟨⟨ rep-is-sub (close φ) ⟩⟩
     (close φ) 〈 magic 〉

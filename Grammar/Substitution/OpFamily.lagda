@@ -146,9 +146,13 @@ open OpFamily substitution using (assoc)
   renaming (liftOp-idOp to Sub↑-idOp;
            ap-idOp to sub-idOp;
            ap-circ to sub-comp;
-           ap-congl to sub-cong;
+           ap-congl to sub-congr;
            unitl to sub-unitl;
            unitr to sub-unitr)
   public
+
+sub-congl : ∀ {U} {V} {C} {K} {σ : Sub U V} {E F : Subexpression U C K} →
+  E ≡ F → E ⟦ σ ⟧ ≡ F ⟦ σ ⟧
+sub-congl {σ = σ} = cong (λ x → x ⟦ σ ⟧) -- TODO Refactor common pattern with rep-congr
 \end{code}
 }

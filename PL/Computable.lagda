@@ -249,7 +249,7 @@ SNmainlemma {P} {Q} {Γ} {σ = σ} {Δ} (Λ {φ = φ} {δ} {ψ} Γ,φ⊢δ∶ψ)
            close φ 〈 magic 〉
          ≡⟨⟨ rep-congl (close-sub φ) ⟩⟩
            close (φ ⟦ ρ •₁ σ ⟧) 〈 magic 〉
-         ≡⟨ close-magic {φ = φ ⟦ ρ •₁ σ ⟧} ⟩ -- TODO Make argument explicit in close-magic'
+         ≡⟨ close-magic ⟩ 
            φ ⟦ ρ •₁ σ ⟧
          ≡⟨ sub-comp₁ φ ⟩
            φ ⟦ σ ⟧ 〈 ρ 〉
