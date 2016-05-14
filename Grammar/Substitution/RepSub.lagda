@@ -113,4 +113,3 @@ up-is-up' : ∀ {V} {C} {K} {L} {E : Subexpression V C K} →
 up-is-up' {E = E} = rep-is-sub E
 \end{code}
 }
-

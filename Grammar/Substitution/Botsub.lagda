@@ -50,7 +50,9 @@ botsub-upGEN {F} {V} {K} {E} circ x = let open ≡-Reasoning in
     var x
   ∎
 
-comp-botsubGEN : ∀ {F} {U} {V} {K} {E : Expression U (varKind K)} (circ₁ : Composition F proto-substitution proto-substitution) (circ₂ : Composition proto-substitution F proto-substitution)
+comp-botsubGEN : ∀ {F} {U} {V} {K} {E : Expression U (varKind K)} 
+  (circ₁ : Composition F proto-substitution proto-substitution) 
+  (circ₂ : Composition proto-substitution F proto-substitution)
   {σ : Op F U V} →
   Composition.circ circ₁ σ (x₀:= E) ∼ Composition.circ circ₂ (x₀:= (ap F σ E)) (liftOp F K σ)
 comp-botsubGEN {F} {U} {V} {K} {E} circ₁ circ₂ {σ} x₀ = let open ≡-Reasoning in 
@@ -80,49 +82,32 @@ comp-botsubGEN {F} {U} {V} {K} {E} circ₁ circ₂ {σ} (↑ x) = let open ≡-R
     (Composition.circ circ₂ (x₀:= (ap F σ E)) (liftOp F K σ)) _ (↑ x)
   ∎
 
-comp₁-botsub : ∀ {U} {V} {K} {E : Expression U (varKind K)} {ρ : Rep U V} →
-  ρ •₁ (x₀:= E) ∼ (x₀:= (E 〈 ρ 〉)) •₂ Rep↑ K ρ
+comp-botsubGEN' : ∀ {F} {U} {V} {K} {C} {L} 
+  {E : Expression U (varKind K)} {E' : Subexpression (U , K) C L} {σ : Op F U V} →
+  Composition F proto-substitution proto-substitution →
+  Composition proto-substitution F proto-substitution →
+  ap F σ (E' ⟦ x₀:= E ⟧) ≡ (ap F (liftOp F K σ) E') ⟦ x₀:= (ap F σ E) ⟧
+comp-botsubGEN' {E' = E'} circ₁ circ₂ = ap-circ-sim circ₁ circ₂ (comp-botsubGEN circ₁ circ₂) E'
+
+comp₁-botsub' : ∀ {U} {V} {C} {K} {L} (E : Subexpression (U , K) C L) {F : Expression U (varKind K)} {ρ : Rep U V} →
+  E ⟦ x₀:= F ⟧ 〈 ρ 〉 ≡ E 〈 Rep↑ K ρ 〉 ⟦ x₀:= (F 〈 ρ 〉) ⟧
 \end{code}
 
 \AgdaHide{
 \begin{code}
-comp₁-botsub {U} {V} {K} {E} {ρ} = ?
---comp₁-botsub x₀ = refl
---comp₁-botsub (↑ _) = refl
-
-comp₁-botsub' : ∀ {U} {V} {C} {K} {L} (E : Subexpression (U , K) C L) {F : Expression U (varKind K)} {ρ : Rep U V} →
-  E ⟦ x₀:= F ⟧ 〈 ρ 〉 ≡ E 〈 Rep↑ K ρ 〉 ⟦ x₀:= (F 〈 ρ 〉) ⟧
-comp₁-botsub' E = ap-circ-sim COMP₁ COMP₂ comp₁-botsub E
+comp₁-botsub' E = comp-botsubGEN' {E' = E} COMP₁ COMP₂
 \end{code}
 }
 
 \begin{code}
-comp-botsub : ∀ {U} {V} {K} {E : Expression U (varKind K)} {σ : Sub U V} →
-  σ • (x₀:= E) ∼ (x₀:= (E ⟦ σ ⟧)) • Sub↑ K σ
+comp-botsub' : ∀ {U} {V} {C} {K} {L} 
+  {E : Expression U (varKind K)} {σ : Sub U V} (F : Subexpression (U , K) C L) →
+  F ⟦ x₀:= E ⟧ ⟦ σ ⟧ ≡ F ⟦ Sub↑ K σ ⟧ ⟦ x₀:= (E ⟦ σ ⟧) ⟧
 \end{code}
 
 \AgdaHide{
 \begin{code}
-comp-botsub x₀ = refl
-comp-botsub {U} {V} {K} {E} {σ} {L} (↑ x) = let open ≡-Reasoning in 
-  begin
-    (σ • x₀:= E) _ (↑ x)
-  ≡⟨⟩
-    σ _ x
-  ≡⟨⟨ sub-idOp ⟩⟩
-    σ _ x ⟦ idSub V ⟧
-  ≡⟨⟩
-    σ _ x ⟦ x₀:= (E ⟦ σ ⟧) •₂ upRep ⟧
-  ≡⟨ sub-comp₂ (σ L x) ⟩
-    (σ _ x) 〈 upRep 〉 ⟦ x₀:= (E ⟦ σ ⟧) ⟧
-  ≡⟨⟩
-    (x₀:= (E ⟦ σ ⟧) • Sub↑ K σ) _ (↑ x)
-  ∎
-
-comp-botsub' : ∀ {U} {V} {C} {K} {L} 
-  {E : Expression U (varKind K)} {σ : Sub U V} (F : Subexpression (U , K) C L) →
-  F ⟦ x₀:= E ⟧ ⟦ σ ⟧ ≡ F ⟦ Sub↑ K σ ⟧ ⟦ x₀:= (E ⟦ σ ⟧) ⟧
-comp-botsub' F = ap-circ-sim (OpFamily.COMP substitution) (OpFamily.COMP substitution) comp-botsub F
+comp-botsub' F = let COMP = OpFamily.COMP substitution in comp-botsubGEN' {E' = F} COMP COMP
 \end{code}
 }
 
