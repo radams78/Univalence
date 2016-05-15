@@ -112,6 +112,10 @@ appP δ ε = app -appProof (δ ,, ε ,, out)
 ΛP : ∀ {V} → Term V → Proof (V , -Proof) → Proof V
 ΛP φ δ = app -lamProof (φ ,, δ ,, out)
 
+infix 60 _≡〈_〉_
+_≡〈_〉_ : ∀ {V} → Term V → Type V → Term V → Expression V (nonVarKind -Equation)
+M ≡〈 A 〉 N = app -eq (M ,, N ,, A ,, out)
+
 _,P_ : ∀ {V} → Context V → Term V → Context (V , -Proof)
 _,P_ = _,_
 

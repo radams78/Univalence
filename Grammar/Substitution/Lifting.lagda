@@ -35,7 +35,7 @@ SUB↑ = record { liftOp = Sub↑ ; liftOp-cong = Sub↑-cong }
 Then, given an expression $E$ of kind $K$ over $U$, we write $E[\sigma]$ for the application of $\sigma$ to $E$, which is the result of substituting $\sigma(x)$ for $x$ for each variable in $E$, avoiding capture.
 
 \begin{code}    
-infix 60 _⟦_⟧
+infix 70 _⟦_⟧
 _⟦_⟧ : ∀ {U} {V} {C} {K} → 
   Subexpression U C K → Sub U V → Subexpression V C K
 E ⟦ σ ⟧ = Lifting.ap SUB↑ σ E

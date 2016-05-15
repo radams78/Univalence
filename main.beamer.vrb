@@ -25,5 +25,7 @@ The rules of deduction of the system
 \begin{code}
 infix 10 _⊢_∶_
 data valid : ∀ {V} → Context V → Set
-data _⊢_∶_ : ∀ {V} {K} → Context V → Expression V (varKind K) → Expression V (parent K) → Set
+data _⊢_∶_ : ∀ {V} {K} → Context V →
+  Expression V (varKind K) →
+  Expression V (parent K) → Set
 \end{code}

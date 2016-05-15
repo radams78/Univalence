@@ -68,7 +68,7 @@ proto-replacement = record {
     liftOp-x₀ = refl ; 
     liftOp-↑ = λ _ → refl } }
 
-infix 60 _〈_〉
+infix 70 _〈_〉
 _〈_〉 : ∀ {U} {V} {C} {K} → 
   Subexpression U C K → Rep U V → Subexpression V C K
 E 〈 ρ 〉 = LiftFamily.ap proto-replacement ρ E

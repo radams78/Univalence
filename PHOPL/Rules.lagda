@@ -33,7 +33,9 @@ The rules of deduction of the system
 \begin{code}
 infix 10 _⊢_∶_
 data valid : ∀ {V} → Context V → Set
-data _⊢_∶_ : ∀ {V} {K} → Context V → Expression V (varKind K) → Expression V (parent K) → Set
+data _⊢_∶_ : ∀ {V} {K} → Context V → 
+  Expression V (varKind K) → 
+  Expression V (parent K) → Set
 \end{code}
 \end{frame}
 
@@ -43,7 +45,7 @@ data valid where
   _,_ : ∀ {V} {Γ : Context V} {φ : Term V} → Γ ⊢ φ ∶ Ω → valid (_,_ {K = -Proof} Γ φ)
   _,,_ : ∀ {V} {Γ : Context V} {A : Type V} → valid Γ → valid (_,_ {K = -Term} Γ A)
   _,,,_ : ∀ {V} {Γ : Context V} {M N : Term V} {A : Type V} →
-    Γ ⊢ M ∶ A → Γ ⊢ N ∶ A → valid (_,_ {K = -Path} Γ (app -eq (M ,, N ,, A ,, out)))
+    Γ ⊢ M ∶ A → Γ ⊢ N ∶ A → valid (_,_ {K = -Path} Γ (M ≡〈 A 〉 N))
 
 data _⊢_∶_ where
   varR : ∀ {V} {K} {Γ : Context V} {x : Var V K} → valid Γ → Γ ⊢ var x ∶ typeof x Γ
@@ -61,6 +63,7 @@ data _⊢_∶_ where
 \end{code}
 
 \begin{frame}
+\frametitle{Extensional Equality}
 On top of this we add extensional equality:
 \[ \begin{array}{lrcl}
 \text{Path} & P & ::= & e \mid \reff{M} \mid P \supset P \mid \univ{\phi}{\phi}{\delta}{\delta} \mid \\
@@ -69,9 +72,9 @@ On top of this we add extensional equality:
 \end{array}
 \]
 
-\[ \infer{\Gamma, e : M =_A N \vald}{\Gamma \vdash M : A \quad \Gamma \vdash N : A}
+\mode<article>{\[ \infer{\Gamma, e : M =_A N \vald}{\Gamma \vdash M : A \quad \Gamma \vdash N : A}
 \qquad
-\infer[e : M =_A N \in \Gamma]{\Gamma \vdash e : M =_A N}{\Gamma \vald} \]
+\infer[e : M =_A N \in \Gamma]{\Gamma \vdash e : M =_A N}{\Gamma \vald} \]}
 
 \[ \infer{\Gamma \vdash \reff{M} : M =_A M}{\Gamma \vdash M : A}
 \qquad
@@ -92,26 +95,27 @@ On top of this we add extensional equality:
 \end{frame}
 
 \begin{code}
-  refR : ∀ {V} {Γ : Context V} {M : Term V} {A : Type V} → Γ ⊢ M ∶ A → Γ ⊢ app -ref (M ,, out) ∶ app -eq (M ,, M ,, A ,, out)
+  refR : ∀ {V} {Γ : Context V} {M : Term V} {A : Type V} → Γ ⊢ M ∶ A → Γ ⊢ app -ref (M ,, out) ∶ M ≡〈 A 〉 M
   imp*R : ∀ {V} {Γ : Context V} {P Q : Expression V (varKind -Path)} {φ φ' ψ ψ' : Term V} →
-    Γ ⊢ P ∶ app -eq (φ ,, φ' ,, Ω ,, out) → Γ ⊢ Q ∶ app -eq (ψ ,, ψ' ,, Ω ,, out) →
-    Γ ⊢ app -imp* (P ,, Q ,, out) ∶ app -eq ((φ ⊃ ψ) ,, (φ' ⊃ ψ') ,, Ω ,, out)
+    Γ ⊢ P ∶ φ ≡〈 Ω 〉 φ' → Γ ⊢ Q ∶ ψ ≡〈 Ω 〉 ψ' →
+    Γ ⊢ app -imp* (P ,, Q ,, out) ∶ (φ ⊃ ψ) ≡〈 Ω 〉 (φ' ⊃ ψ')
   univR : ∀ {V} {Γ : Context V} {δ ε : Proof V} {φ ψ : Term V} →
-    Γ ⊢ δ ∶ φ ⊃ ψ → Γ ⊢ ε ∶ ψ ⊃ φ → Γ ⊢ app -univ (φ ,, ψ ,, δ ,, ε ,, out) ∶ app -eq (φ ,, ψ ,, Ω ,, out)
+    Γ ⊢ δ ∶ φ ⊃ ψ → Γ ⊢ ε ∶ ψ ⊃ φ → Γ ⊢ app -univ (φ ,, ψ ,, δ ,, ε ,, out) ∶ φ ≡〈 Ω 〉 ψ
   plusR : ∀ {V} {Γ : Context V} {P : Expression V (varKind -Path)} {φ ψ : Term V} →
-    Γ ⊢ P ∶ app -eq (φ ,, ψ ,, Ω ,, out) → Γ ⊢ app -plus (P ,, out) ∶ φ ⊃ ψ
+    Γ ⊢ P ∶ φ ≡〈 Ω 〉 ψ → Γ ⊢ app -plus (P ,, out) ∶ φ ⊃ ψ
   minusR : ∀ {V} {Γ : Context V} {P : Expression V (varKind -Path)} {φ ψ : Term V} →
-    Γ ⊢ P ∶ app -eq (φ ,, ψ ,, Ω ,, out) → Γ ⊢ app -minus (P ,, out) ∶ ψ ⊃ φ
+    Γ ⊢ P ∶ φ ≡〈 Ω 〉 ψ → Γ ⊢ app -minus (P ,, out) ∶ ψ ⊃ φ
   lllR : ∀ {V} {Γ : Context V} {A B : Type V} {M N : Term V} 
     {P : Expression (V , -Term , -Term , -Path) (varKind -Path)} →
-    (((Γ , A) , A 〈 upRep 〉) , app -eq (var (↑ x₀) ,, var x₀ ,, A 〈 upRep •R upRep 〉 ,, out)) ⊢ P ∶ app -eq (appTerm (M 〈 upRep •R upRep •R upRep 〉) (var (↑ (↑ x₀))) ,, 
-      appTerm (N 〈 upRep •R upRep •R upRep 〉) (var (↑ x₀)) ,,
-      B 〈 upRep •R upRep •R upRep 〉 ,, out) → 
-      Γ ⊢ app -lll (A ,, P ,, out) ∶ app -eq (M ,, N ,, A ⇛ B ,, out)
+    Γ , A , A 〈 upRep 〉 , var (↑ x₀) ≡〈 A 〈 upRep •R upRep 〉 〉 var x₀
+    ⊢ P ∶ appTerm (M 〈 upRep •R upRep •R upRep 〉) (var (↑ (↑ x₀)))
+    ≡〈 B 〈 upRep •R upRep •R upRep 〉 〉
+    appTerm (N 〈 upRep •R upRep •R upRep 〉) (var (↑ x₀)) →
+    Γ ⊢ app -lll (A ,, P ,, out) ∶ M ≡〈 A ⇛ B 〉 N -- REFACTOR
   app*R : ∀ {V} {Γ : Context V} {P Q : Expression V (varKind -Path)} {M M' N N' : Term V} {A B : Type V} →
-    Γ ⊢ P ∶ app -eq (M ,, M' ,, A ⇛ B ,, out) → Γ ⊢ Q ∶ app -eq (N ,, N' ,, A ,, out) →
-    Γ ⊢ app -app* (P ,, Q ,, out) ∶ app -eq (appTerm M N ,, appTerm M' N' ,, B ,, out)
+    Γ ⊢ P ∶ M ≡〈 A ⇛ B 〉 M' → Γ ⊢ Q ∶ N ≡〈 A 〉 N' →
+    Γ ⊢ app -app* (P ,, Q ,, out) ∶ appTerm M N ≡〈 B 〉 appTerm M' N'
   convER : ∀ {V} {Γ : Context V} {P : Expression V (varKind -Path)} {M M' N N' : Term V} {A : Type V} →
-    Γ ⊢ P ∶ app -eq (M ,, N ,, A ,, out) → Γ ⊢ M' ∶ A → Γ ⊢ N' ∶ A →
-    M ≃ M' → N ≃ N' → Γ ⊢ P ∶ app -eq (M' ,, N' ,, A ,, out)
+    Γ ⊢ P ∶ M ≡〈 A 〉 N → Γ ⊢ M' ∶ A → Γ ⊢ N' ∶ A →
+    M ≃ M' → N ≃ N' → Γ ⊢ P ∶ M' ≡〈 A 〉 N'
 \end{code}
