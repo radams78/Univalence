@@ -74,8 +74,20 @@ module PHOPLgrammar where
 open PHOPLgrammar public
 open import Grammar PHOPL public
 
+Proof : Alphabet → Set
+Proof V = Expression V (varKind -Proof)
+
+Term : Alphabet → Set
+Term V = Expression V (varKind -Term)
+
+Path : Alphabet → Set
+Path V = Expression V (varKind -Path)
+
 Type : Alphabet → Set
 Type V = Expression V (nonVarKind -Type)
+
+Equation : Alphabet → Set
+Equation V = Expression V (nonVarKind -Equation)
 
 Ω : ∀ {V} → Type V
 Ω = app -Omega out
@@ -84,27 +96,17 @@ infix 75 _⇛_
 _⇛_ : ∀ {V} → Type V → Type V → Type V
 φ ⇛ ψ = app -func (φ ,,  ψ ,, out)
 
-lowerType : ∀ {V} → Type V → Type ∅
-lowerType (app -Omega ou) = Ω
-lowerType (app -func (φ ,, ψ ,, out)) = lowerType φ ⇛ lowerType ψ
-
-Term : Alphabet → Set
-Term V = Expression V (varKind -Term)
-
 ⊥ : ∀ {V} → Term V
 ⊥ = app -bot out
 
-appTerm : ∀ {V} → Term V → Term V → Term V
-appTerm M N = app -appTerm (M ,, N ,, out)
+appT : ∀ {V} → Term V → Term V → Term V
+appT M N = app -appTerm (M ,, N ,, out)
 
-ΛTerm : ∀ {V} → Type V → Term (V , -Term) → Term V
-ΛTerm A M = app -lamTerm (A ,,  M ,, out)
+ΛT : ∀ {V} → Type V → Term (V , -Term) → Term V
+ΛT A M = app -lamTerm (A ,,  M ,, out)
 
 _⊃_ : ∀ {V} → Term V → Term V → Term V
 φ ⊃ ψ = app -imp (φ ,, ψ ,, out)
-
-Proof : Alphabet → Set
-Proof V = Expression V (varKind -Proof)
 
 appP : ∀ {V} → Proof V → Proof V → Proof V
 appP δ ε = app -appProof (δ ,, ε ,, out)
@@ -113,14 +115,24 @@ appP δ ε = app -appProof (δ ,, ε ,, out)
 ΛP φ δ = app -lamProof (φ ,, δ ,, out)
 
 infix 60 _≡〈_〉_
-_≡〈_〉_ : ∀ {V} → Term V → Type V → Term V → Expression V (nonVarKind -Equation)
+_≡〈_〉_ : ∀ {V} → Term V → Type V → Term V → Equation V
 M ≡〈 A 〉 N = app -eq (M ,, N ,, A ,, out)
+
+λλλ : ∀ {V} → Type V → Path (V , -Term , -Term , -Path) → Path V
+λλλ A P = app -lll (A ,, P ,, out)
+
+--TODO Finish the list
+
+close : ∀ {V} → Type V → Type ∅
+close (app -Omega out) = Ω
+close (app -func (A ,, B ,, out)) = close A ⇛ close B
 
 _,P_ : ∀ {V} → Context V → Term V → Context (V , -Proof)
 _,P_ = _,_
 
-data β : ∀ {V} {K} {C} → Constructor C → Subexpression V (-Constructor K) C → Expression V K → Set where
-  βI : ∀ {V} A (M : Term (V , -Term)) N → β -appTerm (ΛTerm A M ,, N ,, out) (M ⟦ x₀:= N ⟧)
+data β {V} : ∀ {K} {C : Kind (-Constructor K)} → 
+  Constructor C → Body V C → Expression V K → Set where
+  βI : ∀ {A} {M} {N} → β -appTerm (ΛT A M ,, N ,, out) (M ⟦ x₀:= N ⟧)
 open import Reduction PHOPL β public
 \end{code}
 

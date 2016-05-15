@@ -10,11 +10,7 @@ A \emph{reduction relation} is a relation $R$ between expressions such that, whe
 and $M$ is not a variable.
 
 \begin{code}
-module Reduction.Base (G : Grammar) 
-  (R : ∀ {V} {K} {C : Grammar.Kind G (Grammar.-Constructor {G} K)} → 
-    Grammar.Constructor G C → 
-    Grammar.Subexpression G V (Grammar.-Constructor {G} K) C → 
-    Grammar.Expression G V K → Set) where
+module Reduction.Base (G : Grammar) (R : Grammar.Reduction G) where
 \end{code}
 
 \AgdaHide{
@@ -42,6 +38,7 @@ data _⇒_ {V} : ∀ {K} {C} →
     E ⇒ E' → _,,_ {V} {K} {A} {L} {C} E F ⇒ E' ,, F
   appr : ∀ {K A L C E F F'} → 
     F ⇒ F' → _,,_ {V} {K} {A} {L} {C} E F ⇒ E ,, F'
+--TODO Refactor
 
 data _↠_ {V C K} (M : Subexpression V C K) : 
   Subexpression V C K → Set where

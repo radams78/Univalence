@@ -39,6 +39,7 @@ Let $\emptyset$ be the empty alphabet, and $(A , K)$ be the result of extending 
 fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of all variables in $A$ of kind $K$.
 
 \begin{code}
+  infixl 55 _,_
   data Alphabet : Set where
     ∅ : Alphabet
     _,_ : Alphabet → VarKind → Alphabet
@@ -51,6 +52,17 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
     x₀ : ∀ {V} {K} → Var (V , K) K
     ↑ : ∀ {V} {K} {L} → Var V L → Var (V , K) L
 \end{code}
+
+\AgdaHide{
+\begin{code}
+  x₁ : ∀ {V} {K} {L} → Var (V , K , L) K
+  x₁ = ↑ x₀
+
+  x₂ : ∀ {V} {K} {L} {L'} → Var (V , K , L , L') K
+  x₂ = ↑ x₁
+--REFACTOR?
+\end{code}
+}
 
 A \emph{grammar} over a taxonomy consists of:
 \begin{itemize}

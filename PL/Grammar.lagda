@@ -130,8 +130,7 @@ The relation of \emph{$\beta$-reduction} is defined by: $(\lambda x \delta) \eps
 
 \begin{code}
 data β {V} : ∀ {K} {C : Kind (-Constructor K)} → 
-  Constructor C → Subexpression V (-Constructor K) C → 
-  Expression V K → Set where
+  Constructor C → Body V C → Expression V K → Set where
   βI : ∀ {φ} {δ} {ε} → β -app (ΛP φ δ ,, ε ,, out) (δ ⟦ x₀:= ε ⟧)
 
 open import Reduction Propositional-Logic β

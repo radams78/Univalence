@@ -46,7 +46,15 @@ We can now define the set of expressions over a grammar:
     out : ∀ {V} {K} → Body V (out K)
     _,,_ : ∀ {V} {K} {A} {L} {C} → Expression (extend V A) L → 
       Body V {K} C → Body V (Π A L C)
+\end{code}
 
+\AgdaHide{
+\begin{code}
   var-inj : ∀ {V} {K} {x y : Var V K} → var x ≡ var y → x ≡ y
   var-inj refl = refl
+
+  Reduction : Set₁
+  Reduction = ∀ {V} {K} {C : Kind (-Constructor K)} → 
+    Constructor C → Body V C → Expression V K → Set
 \end{code}
+}

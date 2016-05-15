@@ -1,0 +1,9 @@
+\begin{code}
+module PHOPL.MainProp where
+open import PHOPL
+
+Computable-Substitution : σ ∶ Γ ⇒ Δ → Γ ⊢ M ∶ A → E A (M ⟦ σ ⟧)
+
+Computable-Path-Substitution : τ ∶ σ ∼ σ' ∶ Γ ⇒ Δ → Γ ⊢ M : A → 
+  E (M ⟦ σ ⟧ ≡〈 A 〉 M ⟦ σ' ⟧) 
+\end{code}

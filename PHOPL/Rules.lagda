@@ -42,7 +42,12 @@ data _⊢_∶_ : ∀ {V} {K} → Context V →
 \begin{code}
 data valid where
   〈〉 : valid 〈〉
-  _,_ : ∀ {V} {Γ : Context V} {φ : Term V} → Γ ⊢ φ ∶ Ω → valid (_,_ {K = -Proof} Γ φ)
+  _,_ : ∀ {V} {Γ : Context V} {φ : Term V} → 
+
+                Γ ⊢ φ ∶ Ω → 
+    --------------------------------
+      valid (_,_ {K = -Proof} Γ φ)
+
   _,,_ : ∀ {V} {Γ : Context V} {A : Type V} → valid Γ → valid (_,_ {K = -Term} Γ A)
   _,,,_ : ∀ {V} {Γ : Context V} {M N : Term V} {A : Type V} →
     Γ ⊢ M ∶ A → Γ ⊢ N ∶ A → valid (_,_ {K = -Path} Γ (M ≡〈 A 〉 N))
@@ -51,9 +56,9 @@ data _⊢_∶_ where
   varR : ∀ {V} {K} {Γ : Context V} {x : Var V K} → valid Γ → Γ ⊢ var x ∶ typeof x Γ
   ⊥R : ∀ {V} {Γ : Context V} → Γ ⊢ ⊥ ∶ Ω
   impR : ∀ {V} {Γ : Context V} {φ ψ : Term V} → Γ ⊢ φ ∶ Ω → Γ ⊢ ψ ∶ Ω → Γ ⊢ φ ⊃ ψ ∶ Ω
-  appR : ∀ {V} {Γ : Context V} {M N : Term V} {A} {B} → Γ ⊢ M ∶ A ⇛ B → Γ ⊢ N ∶ A → Γ ⊢ appTerm M N ∶ B
+  appR : ∀ {V} {Γ : Context V} {M N : Term V} {A} {B} → Γ ⊢ M ∶ A ⇛ B → Γ ⊢ N ∶ A → Γ ⊢ appT M N ∶ B
   ΛR : ∀ {V} {Γ : Context V} {A} {M : Term (V , -Term)} {B} → 
-    Γ , A ⊢ M ∶ B 〈 upRep 〉 → Γ ⊢ ΛTerm A M ∶ A ⇛ B
+    Γ , A ⊢ M ∶ B 〈 upRep 〉 → Γ ⊢ ΛT A M ∶ A ⇛ B
   appPR : ∀ {V} {Γ : Context V} {δ ε : Proof V} {φ ψ : Term V} →
     Γ ⊢ δ ∶ φ ⊃ ψ → Γ ⊢ ε ∶ φ → Γ ⊢ appP δ ε ∶ ψ
   ΛPR : ∀ {V} {Γ : Context V} {δ : Proof (V , -Proof)} {φ ψ : Term V} → 
@@ -105,17 +110,23 @@ On top of this we add extensional equality:
     Γ ⊢ P ∶ φ ≡〈 Ω 〉 ψ → Γ ⊢ app -plus (P ,, out) ∶ φ ⊃ ψ
   minusR : ∀ {V} {Γ : Context V} {P : Expression V (varKind -Path)} {φ ψ : Term V} →
     Γ ⊢ P ∶ φ ≡〈 Ω 〉 ψ → Γ ⊢ app -minus (P ,, out) ∶ ψ ⊃ φ
+
   lllR : ∀ {V} {Γ : Context V} {A B : Type V} {M N : Term V} 
-    {P : Expression (V , -Term , -Term , -Path) (varKind -Path)} →
-    Γ , A , A 〈 upRep 〉 , var (↑ x₀) ≡〈 A 〈 upRep •R upRep 〉 〉 var x₀
-    ⊢ P ∶ appTerm (M 〈 upRep •R upRep •R upRep 〉) (var (↑ (↑ x₀)))
-    ≡〈 B 〈 upRep •R upRep •R upRep 〉 〉
-    appTerm (N 〈 upRep •R upRep •R upRep 〉) (var (↑ x₀)) →
-    Γ ⊢ app -lll (A ,, P ,, out) ∶ M ≡〈 A ⇛ B 〉 N -- REFACTOR
-  app*R : ∀ {V} {Γ : Context V} {P Q : Expression V (varKind -Path)} {M M' N N' : Term V} {A B : Type V} →
+    {P : Path (V , -Term , -Term , -Path)} →
+
+    Γ , A , A ⇑ , var x₁ ≡〈 A ⇑ ⇑ 〉 var x₀
+     ⊢ P ∶ appT (M ⇑ ⇑ ⇑ ) (var x₂) ≡〈 B ⇑ ⇑ ⇑ 〉 appT (N ⇑ ⇑ ⇑) (var x₁) →
+  ------------------------------------------------------------------------
+                       Γ ⊢ λλλ A P ∶ M ≡〈 A ⇛ B 〉 N
+
+  app*R : ∀ {V} {Γ : Context V} {P Q : Path V} {M M' N N' : Term V} {A B : Type V} →
     Γ ⊢ P ∶ M ≡〈 A ⇛ B 〉 M' → Γ ⊢ Q ∶ N ≡〈 A 〉 N' →
-    Γ ⊢ app -app* (P ,, Q ,, out) ∶ appTerm M N ≡〈 B 〉 appTerm M' N'
+    Γ ⊢ app -app* (P ,, Q ,, out) ∶ appT M N ≡〈 B 〉 appT M' N'
   convER : ∀ {V} {Γ : Context V} {P : Expression V (varKind -Path)} {M M' N N' : Term V} {A : Type V} →
     Γ ⊢ P ∶ M ≡〈 A 〉 N → Γ ⊢ M' ∶ A → Γ ⊢ N' ∶ A →
     M ≃ M' → N ≃ N' → Γ ⊢ P ∶ M' ≡〈 A 〉 N'
+
+_∶_⇒_ : ∀ {U} {V} → Sub U V → Context U → Context V → Set
+σ ∶ Γ ⇒ Δ = ∀ {K} (x : Var _ K) → Δ ⊢ σ _ x ∶ typeof x Γ ⟦ σ ⟧
+--TODO Eliminate all apps and varKinds
 \end{code}

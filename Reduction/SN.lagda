@@ -2,10 +2,7 @@
 \begin{code}
 open import Grammar.Base
 
-module Reduction.SN
-  (G : Grammar) 
-  (R : ∀ {V} {K} {C : Grammar.Kind G (Grammar.-Constructor {G} K)} → Grammar.Constructor G C → Grammar.Subexpression G V (Grammar.-Constructor {G} K) C → Grammar.Expression G V K → Set)
-  where
+module Reduction.SN (G : Grammar) (R : Grammar.Reduction G) where
 
 open import Prelims
 open Grammar G
