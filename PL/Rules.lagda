@@ -194,9 +194,10 @@ botsub-typed : ∀ {P} {Γ : Context P} {φ : Prp P} {δ} →
 
 \AgdaHide{
 \begin{code}
-botsub-typed {P} {Γ} {φ} {δ} Γ⊢δ∶φ x₀ = change-type (sym botsub-upRep) Γ⊢δ∶φ
-botsub-typed {P} {Γ} {φ} {δ} _ (↑ x) = change-type (sym botsub-upRep) var
---REFACTOR Common pattern
+botsub-typed {P} {Γ} {φ} {δ} Γ⊢δ:φ x = change-type (sym botsub-upRep) (pre-botsub-typed x) where
+  pre-botsub-typed : ∀ x → Γ ⊢ (x₀:= δ) -proof x ∶ pretypeof x (Γ ,P φ)
+  pre-botsub-typed x₀ = Γ⊢δ:φ
+  pre-botsub-typed (↑ x) = var
 \end{code}
 }
 
