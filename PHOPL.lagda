@@ -89,15 +89,17 @@ Type V = Expression V (nonVarKind -Type)
 Equation : Alphabet → Set
 Equation V = Expression V (nonVarKind -Equation)
 
-Ω : ∀ {V} → Type V
-Ω = app -Omega out
+appP : ∀ {V} → Proof V → Proof V → Proof V
+appP δ ε = app -appProof (δ ,, ε ,, out)
 
-infix 75 _⇛_
-_⇛_ : ∀ {V} → Type V → Type V → Type V
-φ ⇛ ψ = app -func (φ ,,  ψ ,, out)
+ΛP : ∀ {V} → Term V → Proof (V , -Proof) → Proof V
+ΛP φ δ = app -lamProof (φ ,, δ ,, out)
 
 ⊥ : ∀ {V} → Term V
 ⊥ = app -bot out
+
+_⊃_ : ∀ {V} → Term V → Term V → Term V
+φ ⊃ ψ = app -imp (φ ,, ψ ,, out)
 
 appT : ∀ {V} → Term V → Term V → Term V
 appT M N = app -appTerm (M ,, N ,, out)
@@ -105,30 +107,35 @@ appT M N = app -appTerm (M ,, N ,, out)
 ΛT : ∀ {V} → Type V → Term (V , -Term) → Term V
 ΛT A M = app -lamTerm (A ,,  M ,, out)
 
-_⊃_ : ∀ {V} → Term V → Term V → Term V
-φ ⊃ ψ = app -imp (φ ,, ψ ,, out)
+Ω : ∀ {V} → Type V
+Ω = app -Omega out
 
-appP : ∀ {V} → Proof V → Proof V → Proof V
-appP δ ε = app -appProof (δ ,, ε ,, out)
+infix 75 _⇛_
+_⇛_ : ∀ {V} → Type V → Type V → Type V
+φ ⇛ ψ = app -func (φ ,,  ψ ,, out)
 
-ΛP : ∀ {V} → Term V → Proof (V , -Proof) → Proof V
-ΛP φ δ = app -lamProof (φ ,, δ ,, out)
-
-infix 60 _≡〈_〉_
-_≡〈_〉_ : ∀ {V} → Term V → Type V → Term V → Equation V
-M ≡〈 A 〉 N = app -eq (M ,, N ,, A ,, out)
+reff : ∀ {V} → Term V → Path V
+reff M = app -ref (M ,, out)
 
 infix 15 _⊃*_
 _⊃*_ : ∀ {V} → Path V → Path V → Path V
 P ⊃* Q = app -imp* (P ,, Q ,, out)
 
-app* : ∀ {V} → Path V → Path V → Path V
-app* P Q = app -app* (P ,, Q ,, out)
+univ : ∀ {V} → Term V → Term V → Proof V → Proof V → Path V
+univ φ ψ P Q = app -univ (φ ,, ψ ,, P ,, Q ,, out)
 
 λλλ : ∀ {V} → Type V → Path (V , -Term , -Term , -Path) → Path V
 λλλ A P = app -lll (A ,, P ,, out)
 
---TODO Finish the list
+app* : ∀ {V} → Path V → Path V → Path V
+app* P Q = app -app* (P ,, Q ,, out)
+
+infix 60 _≡〈_〉_
+_≡〈_〉_ : ∀ {V} → Term V → Type V → Term V → Equation V
+M ≡〈 A 〉 N = app -eq (M ,, N ,, A ,, out)
+
+_,T_ : ∀ {V} → Context V → Type V → Context (V , -Term)
+_,T_ = _,_
 
 _,P_ : ∀ {V} → Context V → Term V → Context (V , -Proof)
 _,P_ = _,_
