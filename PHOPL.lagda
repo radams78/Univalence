@@ -53,7 +53,7 @@ module PHOPLgrammar where
     -imp* : PHOPLcon (Π [] (varKind -Path) (Π [] (varKind -Path) (out (varKind -Path))))
     -univ : PHOPLcon (Π [] (varKind -Term) (Π [] (varKind -Term) (Π [] (varKind -Proof) (Π [] (varKind -Proof) (out (varKind -Path))))))
     -lll : PHOPLcon (Π [] (nonVarKind -Type) (Π (-Term ∷ -Term ∷ [ -Path ]) (varKind -Path) (out (varKind -Path))))
-    -app* : PHOPLcon (Π [] (varKind -Path) (Π [] (varKind -Path) (out (varKind -Path))))
+    -app* : PHOPLcon (Π [] (varKind -Term) (Π [] (varKind -Term) (Π [] (varKind -Path) (Π [] (varKind -Path) (out (varKind -Path))))))
     -eq   : PHOPLcon (Π [] (varKind -Term) (Π [] (varKind -Term) (Π [] (nonVarKind -Type)
       (out (nonVarKind -Equation)))))
     -plus : PHOPLcon (Π [] (varKind -Path) (out (varKind -Proof)))
@@ -127,8 +127,8 @@ univ φ ψ P Q = app -univ (φ ,, ψ ,, P ,, Q ,, out)
 λλλ : ∀ {V} → Type V → Path (V , -Term , -Term , -Path) → Path V
 λλλ A P = app -lll (A ,, P ,, out)
 
-app* : ∀ {V} → Path V → Path V → Path V
-app* P Q = app -app* (P ,, Q ,, out)
+app* : ∀ {V} → Term V → Term V → Path V → Path V → Path V
+app* M N P Q = app -app* (M ,, N ,, P ,, Q ,, out)
 
 infix 60 _≡〈_〉_
 _≡〈_〉_ : ∀ {V} → Term V → Type V → Term V → Equation V

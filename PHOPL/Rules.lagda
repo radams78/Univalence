@@ -121,7 +121,7 @@ On top of this we add extensional equality:
 
   app*R : ∀ {V} {Γ : Context V} {P Q : Path V} {M M' N N' : Term V} {A B : Type V} →
     Γ ⊢ P ∶ M ≡〈 A ⇛ B 〉 M' → Γ ⊢ Q ∶ N ≡〈 A 〉 N' →
-    Γ ⊢ app -app* (P ,, Q ,, out) ∶ appT M N ≡〈 B 〉 appT M' N'
+    Γ ⊢ app -app* (N ,, N' ,, P ,, Q ,, out) ∶ appT M N ≡〈 B 〉 appT M' N'
   convER : ∀ {V} {Γ : Context V} {P : Expression V (varKind -Path)} {M M' N N' : Term V} {A : Type V} →
     Γ ⊢ P ∶ M ≡〈 A 〉 N → Γ ⊢ M' ∶ A → Γ ⊢ N' ∶ A →
     M ≃ M' → N ≃ N' → Γ ⊢ P ∶ M' ≡〈 A 〉 N'

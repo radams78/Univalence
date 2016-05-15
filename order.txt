@@ -21,3 +21,5 @@ PL/Rules
 PL/Computable
 PHOPL
 PHOPL/Rules
+PHOPL/PathSub
+PHOPL/MainProp

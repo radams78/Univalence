@@ -26,9 +26,6 @@ Given paths $P_1$, \ldots, $P_n$; term variales $x_1$, \ldots, $x_n$; and a term
 \end{align*}
 
 \begin{code}
-reff : ∀ {V} → Term V → Path V
-reff M = {!!}
-
 PathSub : Alphabet → Alphabet → Set
 PathSub U V = Var U -Term → Path V
 
@@ -41,16 +38,16 @@ sub↗ : ∀ {U} {V} → Sub U V → Sub (U , -Term) (V , -Term , -Term , -Path)
 sub↗ σ _ x₀ = var x₁
 sub↗ σ _ (↑ x) = σ _ x ⇑ ⇑ ⇑
 
-pathsub↑ : ∀ {U} {V} → (Var U -Term → Path V) → Var (U , -Term) -Term → Path (V , -Term , -Term , -Path)
+pathsub↑ : ∀ {U} {V} → PathSub U V → PathSub (U , -Term) (V , -Term , -Term , -Path)
 pathsub↑ τ x₀ = var x₀
 pathsub↑ τ (↑ x) = τ x ⇑ ⇑ ⇑
 
-_⟦⟦_⟧⟧ : ∀ {U} {V} → Term U → PathSub U V → Path V
-var x ⟦⟦ τ ⟧⟧ = τ x
-app -bot out ⟦⟦ τ ⟧⟧ = reff ⊥ -- REFACTOR
-app -imp (φ ,, ψ ,, out) ⟦⟦ τ ⟧⟧ = φ ⟦⟦ τ ⟧⟧ ⊃* ψ ⟦⟦ τ ⟧⟧
-app -appTerm (M ,, N ,, out) ⟦⟦ τ ⟧⟧ = app* (M ⟦⟦ τ ⟧⟧) (N ⟦⟦ τ ⟧⟧)
-app -lamTerm (A ,, M ,, out) ⟦⟦ τ ⟧⟧ = {!!}
+_⟦⟦_∶_⇒_⟧⟧ : ∀ {U} {V} → Term U → PathSub U V → Sub U V → Sub U V → Path V
+var x ⟦⟦ τ ∶ _ ⇒ _ ⟧⟧ = τ x
+app -bot out ⟦⟦ τ ∶ _ ⇒ _ ⟧⟧ = reff ⊥
+app -imp (φ ,, ψ ,, out) ⟦⟦ τ ∶ ρ ⇒ σ ⟧⟧ = φ ⟦⟦ τ ∶ ρ ⇒ σ ⟧⟧ ⊃* ψ ⟦⟦ τ ∶ ρ ⇒ σ ⟧⟧
+app -appTerm (M ,, N ,, out) ⟦⟦ τ ∶ ρ ⇒ σ ⟧⟧ = app* (N ⟦ ρ ⟧) (N ⟦ σ ⟧) (M ⟦⟦ τ ∶ ρ ⇒ σ ⟧⟧) (N ⟦⟦ τ ∶ ρ ⇒ σ ⟧⟧)
+app -lamTerm (A ,, M ,, out) ⟦⟦ τ ∶ ρ ⇒ σ ⟧⟧ = λλλ (A ⟦ ρ ⟧) (M ⟦⟦ pathsub↑ τ ∶ sub↖ ρ ⇒ sub↗ σ ⟧⟧)
 \end{code}
 }
 
