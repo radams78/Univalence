@@ -26,6 +26,12 @@ Given paths $P_1$, \ldots, $P_n$; term variales $x_1$, \ldots, $x_n$; and a term
 \end{align*}
 
 \begin{code}
+reff : ∀ {V} → Term V → Path V
+reff M = {!!}
+
+PathSub : Alphabet → Alphabet → Set
+PathSub U V = Var U -Term → Path V
+
 --REFACTOR
 sub↖ : ∀ {U} {V} → Sub U V → Sub (U , -Term) (V , -Term , -Term , -Path)
 sub↖ σ _ x₀ = var x₂
@@ -39,12 +45,12 @@ pathsub↑ : ∀ {U} {V} → (Var U -Term → Path V) → Var (U , -Term) -Term 
 pathsub↑ τ x₀ = var x₀
 pathsub↑ τ (↑ x) = τ x ⇑ ⇑ ⇑
 
-pathsub : ∀ {U} {V} → (Var U -Term → Path V) → Term U → Path V
-pathsub τ (var x) = τ x
-pathsub τ (app -bot out) = app -ref (⊥ ,, out) -- REFACTOR
-pathsub τ (app -imp (φ ,, ψ ,, out)) = app -imp* (pathsub τ φ ,, pathsub τ ψ ,, out)
-pathsub τ (app -appTerm (M ,, N ,, out)) = app -app* (pathsub τ M ,, pathsub τ N ,, out)
-pathsub τ (app -lamTerm (A ,, M ,, out)) = λλλ (close A 〈 magic 〉) (pathsub (pathsub↑ τ) M)
+_⟦⟦_⟧⟧ : ∀ {U} {V} → Term U → PathSub U V → Path V
+var x ⟦⟦ τ ⟧⟧ = τ x
+app -bot out ⟦⟦ τ ⟧⟧ = reff ⊥ -- REFACTOR
+app -imp (φ ,, ψ ,, out) ⟦⟦ τ ⟧⟧ = φ ⟦⟦ τ ⟧⟧ ⊃* ψ ⟦⟦ τ ⟧⟧
+app -appTerm (M ,, N ,, out) ⟦⟦ τ ⟧⟧ = app* (M ⟦⟦ τ ⟧⟧) (N ⟦⟦ τ ⟧⟧)
+app -lamTerm (A ,, M ,, out) ⟦⟦ τ ⟧⟧ = {!!}
 \end{code}
 }
 
@@ -54,7 +60,7 @@ $\Gamma \vdash \{ P / x \} N : [M / x] N =_B [M' / x] N$.
 \end{lemma}
 
 \begin{code}
-pathsub-wd : ∀ {U} {V} {ρ σ : Sub U V} {τ : Var U -Term → Path V}
+{-pathsub-wd : ∀ {U} {V} {ρ σ : Sub U V} {τ : Var U -Term → Path V}
   {Γ : Context U} {Δ : Context V} {M} {A} →
   ρ ∶ Γ ⇒ Δ → σ ∶ Γ ⇒ Δ →
   (∀ x → Δ ⊢ τ x ∶ ρ _ x ≡〈 close (typeof x Γ) 〈 magic 〉 〉 σ _ x) →
@@ -71,7 +77,7 @@ pathsub-wd {ρ = ρ} {σ} {τ = τ} .{M = ΛT A M} ρ∶Γ→Δ σ∶Γ→Δ τ�
      (appR (ΛR {!!}) {!!}) 
      {!!} 
      {!!} 
-     {!!})
+     {!!})-}
 --TODO Relabel variables
 \end{code}
 \end{frame}

@@ -118,14 +118,17 @@ infix 60 _≡〈_〉_
 _≡〈_〉_ : ∀ {V} → Term V → Type V → Term V → Equation V
 M ≡〈 A 〉 N = app -eq (M ,, N ,, A ,, out)
 
+infix 15 _⊃*_
+_⊃*_ : ∀ {V} → Path V → Path V → Path V
+P ⊃* Q = app -imp* (P ,, Q ,, out)
+
+app* : ∀ {V} → Path V → Path V → Path V
+app* P Q = app -app* (P ,, Q ,, out)
+
 λλλ : ∀ {V} → Type V → Path (V , -Term , -Term , -Path) → Path V
 λλλ A P = app -lll (A ,, P ,, out)
 
 --TODO Finish the list
-
-close : ∀ {V} → Type V → Type ∅
-close (app -Omega out) = Ω
-close (app -func (A ,, B ,, out)) = close A ⇛ close B
 
 _,P_ : ∀ {V} → Context V → Term V → Context (V , -Proof)
 _,P_ = _,_
