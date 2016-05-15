@@ -63,7 +63,7 @@ C-rep : ∀ {P} {Q} {Γ : Context P} {Δ : Context Q} {φ} {δ} {ρ} →
 
 \AgdaHide{
 \begin{code}
-C-rep {φ = app -bot out} (Γ⊢δ∶x₀ , SNδ) ρ∶Γ→Δ = (Weakening Γ⊢δ∶x₀ ρ∶Γ→Δ) , SNap β-creates-rep SNδ
+C-rep {φ = app -bot out} (Γ⊢δ∶x₀ , SNδ) ρ∶Γ→Δ = (Weakening Γ⊢δ∶x₀ ρ∶Γ→Δ) , SNrep β-creates-rep SNδ
 C-rep {P} {Q} {Γ} {Δ} {app -imp (φ ,, ψ ,, out)} {δ} {ρ} (Γ⊢δ∶φ⇒ψ , Cδ) ρ∶Γ→Δ = (subst 
   (λ x → Δ ⊢ δ 〈 ρ 〉 ∶ x) 
   (magic-unique' (φ ⇛ ψ))

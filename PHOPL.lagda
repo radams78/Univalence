@@ -98,6 +98,7 @@ appP δ ε = app -appProof (δ ,, ε ,, out)
 ⊥ : ∀ {V} → Term V
 ⊥ = app -bot out
 
+infix 75 _⊃_
 _⊃_ : ∀ {V} → Term V → Term V → Term V
 φ ⊃ ψ = app -imp (φ ,, ψ ,, out)
 
@@ -134,15 +135,24 @@ infix 60 _≡〈_〉_
 _≡〈_〉_ : ∀ {V} → Term V → Type V → Term V → Equation V
 M ≡〈 A 〉 N = app -eq (M ,, N ,, A ,, out)
 
+plus : ∀ {V} → Path V → Proof V
+plus P = app -plus (P ,, out)
+
+minus : ∀ {V} → Path V → Proof V
+minus P = app -minus (P ,, out)
+
 _,T_ : ∀ {V} → Context V → Type V → Context (V , -Term)
 _,T_ = _,_
 
 _,P_ : ∀ {V} → Context V → Term V → Context (V , -Proof)
 _,P_ = _,_
 
+_,E_ : ∀ {V} → Context V → Equation V → Context (V , -Path)
+_,E_ = _,_
+
 data β {V} : ∀ {K} {C : Kind (-Constructor K)} → 
   Constructor C → Body V C → Expression V K → Set where
   βI : ∀ {A} {M} {N} → β -appTerm (ΛT A M ,, N ,, out) (M ⟦ x₀:= N ⟧)
-open import Reduction PHOPL β public
+open import Reduction.Base PHOPL β public
 \end{code}
 

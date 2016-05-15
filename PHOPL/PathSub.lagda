@@ -42,12 +42,12 @@ pathsub↑ : ∀ {U} {V} → PathSub U V → PathSub (U , -Term) (V , -Term , -T
 pathsub↑ τ x₀ = var x₀
 pathsub↑ τ (↑ x) = τ x ⇑ ⇑ ⇑
 
-_⟦⟦_∶_⇒_⟧⟧ : ∀ {U} {V} → Term U → PathSub U V → Sub U V → Sub U V → Path V
-var x ⟦⟦ τ ∶ _ ⇒ _ ⟧⟧ = τ x
-app -bot out ⟦⟦ τ ∶ _ ⇒ _ ⟧⟧ = reff ⊥
-app -imp (φ ,, ψ ,, out) ⟦⟦ τ ∶ ρ ⇒ σ ⟧⟧ = φ ⟦⟦ τ ∶ ρ ⇒ σ ⟧⟧ ⊃* ψ ⟦⟦ τ ∶ ρ ⇒ σ ⟧⟧
-app -appTerm (M ,, N ,, out) ⟦⟦ τ ∶ ρ ⇒ σ ⟧⟧ = app* (N ⟦ ρ ⟧) (N ⟦ σ ⟧) (M ⟦⟦ τ ∶ ρ ⇒ σ ⟧⟧) (N ⟦⟦ τ ∶ ρ ⇒ σ ⟧⟧)
-app -lamTerm (A ,, M ,, out) ⟦⟦ τ ∶ ρ ⇒ σ ⟧⟧ = λλλ (A ⟦ ρ ⟧) (M ⟦⟦ pathsub↑ τ ∶ sub↖ ρ ⇒ sub↗ σ ⟧⟧)
+_⟦⟦_∶_∼_⟧⟧ : ∀ {U} {V} → Term U → PathSub U V → Sub U V → Sub U V → Path V
+var x ⟦⟦ τ ∶ _ ∼ _ ⟧⟧ = τ x
+app -bot out ⟦⟦ τ ∶ _ ∼ _ ⟧⟧ = reff ⊥
+app -imp (φ ,, ψ ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = φ ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ ⊃* ψ ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧
+app -appTerm (M ,, N ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = app* (N ⟦ ρ ⟧) (N ⟦ σ ⟧) (M ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧) (N ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧)
+app -lamTerm (A ,, M ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = λλλ (A ⟦ ρ ⟧) (M ⟦⟦ pathsub↑ τ ∶ sub↖ ρ ∼ sub↗ σ ⟧⟧)
 \end{code}
 }
 
