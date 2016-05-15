@@ -14,7 +14,6 @@ open import Grammar.Base
 
 The syntax of the system called \emph{propositional logic} is given by the following grammar.
 
-\newcommand{\vald}{\ensuremath{\ \mathrm{valid}}}
 \[ \begin{array}{lrcl}
 \text{Proof} & \delta & ::= & p \mid \delta \delta \mid \lambda p : \phi . \delta \\
 \text{Proposition} & φ & ::= & ⊥ \mid \phi \rightarrow \phi \\

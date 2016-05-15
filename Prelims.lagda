@@ -1,3 +1,7 @@
+\begin{frame}
+Test
+\end{frame}
+
 \AgdaHide{\section{Preliminaries}
 
 \begin{code}

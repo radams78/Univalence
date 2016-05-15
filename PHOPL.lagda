@@ -11,27 +11,26 @@ open import Grammar.Base
 \end{code}
 }
 
-\section{Predicative Higher-Order Propositional Logic}
-
-Fix sets of \emph{proof variables} and \emph{term variables}.
-
+\begin{frame}
+\frametitle{Syntax}
 The syntax of the system is given by the following grammar.
 
-%Changes from Marc and Thierry's system:
-%Taken out the proof c of \bot
 \[ \begin{array}{lrcl}
 \text{Proof} & \delta & ::= & p \mid \delta \delta \mid \lambda p : \phi . \delta \\
-\text{Term} & M, \phi & ::= & x \mid \bot \mid M M \mid \lambda x : A . M \mid \phi \rightarrow \phi \\
+\text{Term} & M, \phi & ::= & x \mid \bot \mid M M \mid \lambda x : A . M \mid \phi \supset \phi \\
 \text{Type} & A & ::= & \Omega \mid A \rightarrow A \\
 \end{array} \]
+\end{frame}
 
 \begin{code}
 data PHOPLVarKind : Set where
   -Proof : PHOPLVarKind
   -Term : PHOPLVarKind
+  -Path : PHOPLVarKind
 
 data PHOPLNonVarKind : Set where
   -Type : PHOPLNonVarKind
+  -Equation : PHOPLNonVarKind
 
 PHOPLTaxonomy : Taxonomy
 PHOPLTaxonomy = record { 
@@ -50,10 +49,20 @@ module PHOPLgrammar where
     -lamTerm : PHOPLcon (Π [] (nonVarKind -Type) (Π [ -Term ] (varKind -Term) (out (varKind -Term))))
     -Omega : PHOPLcon (out (nonVarKind -Type))
     -func  : PHOPLcon (Π [] (nonVarKind -Type) (Π [] (nonVarKind -Type) (out (nonVarKind -Type))))
+    -ref : PHOPLcon (Π [] (varKind -Term) (out (varKind -Path)))
+    -imp* : PHOPLcon (Π [] (varKind -Path) (Π [] (varKind -Path) (out (varKind -Path))))
+    -univ : PHOPLcon (Π [] (varKind -Term) (Π [] (varKind -Term) (Π [] (varKind -Proof) (Π [] (varKind -Proof) (out (varKind -Path))))))
+    -lll : PHOPLcon (Π [] (nonVarKind -Type) (Π (-Term ∷ -Term ∷ [ -Path ]) (varKind -Path) (out (varKind -Path))))
+    -app* : PHOPLcon (Π [] (varKind -Path) (Π [] (varKind -Path) (out (varKind -Path))))
+    -eq   : PHOPLcon (Π [] (varKind -Term) (Π [] (varKind -Term) (Π [] (nonVarKind -Type)
+      (out (nonVarKind -Equation)))))
+    -plus : PHOPLcon (Π [] (varKind -Path) (out (varKind -Proof)))
+    -minus : PHOPLcon (Π [] (varKind -Path) (out (varKind -Proof)))
 
   PHOPLparent : PHOPLVarKind → ExpressionKind
   PHOPLparent -Proof = varKind -Term
   PHOPLparent -Term = nonVarKind -Type
+  PHOPLparent -Poth = nonVarKind -Equation
 
   PHOPL : Grammar
   PHOPL = record { 
@@ -65,21 +74,17 @@ module PHOPLgrammar where
 open PHOPLgrammar public
 open import Grammar PHOPL public
 
-Type : Set
-Type = Expression ∅ (nonVarKind -Type)
+Type : Alphabet → Set
+Type V = Expression V (nonVarKind -Type)
 
-liftType : ∀ {V} → Type → Expression V (nonVarKind -Type)
-liftType (app -Omega out) = app -Omega out
-liftType (app -func (A ,, B ,, out)) = app -func (liftType A ,, liftType B ,, out) 
-
-Ω : Type
+Ω : ∀ {V} → Type V
 Ω = app -Omega out
 
-infix 75 _⊃_
-_⇛_ : Type → Type → Type
+infix 75 _⇛_
+_⇛_ : ∀ {V} → Type V → Type V → Type V
 φ ⇛ ψ = app -func (φ ,,  ψ ,, out)
 
-lowerType : ∀ {V} → Expression V (nonVarKind -Type) → Type
+lowerType : ∀ {V} → Type V → Type ∅
 lowerType (app -Omega ou) = Ω
 lowerType (app -func (φ ,, ψ ,, out)) = lowerType φ ⇛ lowerType ψ
 
@@ -92,48 +97,26 @@ Term V = Expression V (varKind -Term)
 appTerm : ∀ {V} → Term V → Term V → Term V
 appTerm M N = app -appTerm (M ,, N ,, out)
 
-ΛTerm : ∀ {V} → Type → Term (V , -Term) → Term V
-ΛTerm A M = app -lamTerm (liftType A ,,  M ,, out)
+ΛTerm : ∀ {V} → Type V → Term (V , -Term) → Term V
+ΛTerm A M = app -lamTerm (A ,,  M ,, out)
 
 _⊃_ : ∀ {V} → Term V → Term V → Term V
 φ ⊃ ψ = app -imp (φ ,, ψ ,, out)
 
-PAlphabet : ℕ → Alphabet → Alphabet
-PAlphabet zero A = A
-PAlphabet (suc P) A = PAlphabet P A , -Proof
+Proof : Alphabet → Set
+Proof V = Expression V (varKind -Proof)
 
-liftVar : ∀ {A} {K} P → Var A K → Var (PAlphabet P A) K
-liftVar zero x = x
-liftVar (suc P) x = ↑ (liftVar P x)
-
-liftVar' : ∀ {A} P → Fin P → Var (PAlphabet P A) -Proof
-liftVar' (suc P) zero = x₀
-liftVar' (suc P) (suc x) = ↑ (liftVar' P x)
-
-liftExp : ∀ {V} {K} P → Expression V K → Expression (PAlphabet P V) K
-liftExp P E = E 〈 (λ _ → liftVar P) 〉
-
-data PContext' (V : Alphabet) : ℕ → Set where
-  〈〉 : PContext' V zero
-  _,_ : ∀ {P} → PContext' V P → Term V → PContext' V (suc P)
-
-Proof : Alphabet → ℕ → Set
-Proof V P = Expression (PAlphabet P V) (varKind -Proof)
-
-varP : ∀ {V} {P} → Fin P → Proof V P
-varP {P = P} x = var (liftVar' P x)
-
-appP : ∀ {V} {P} → Proof V P → Proof V P → Proof V P
+appP : ∀ {V} → Proof V → Proof V → Proof V
 appP δ ε = app -appProof (δ ,, ε ,, out)
 
-ΛP : ∀ {V} {P} → Term V → Proof V (suc P) → Proof V P
-ΛP {P = P} φ δ = app -lamProof (liftExp P φ ,, δ ,, out)
+ΛP : ∀ {V} → Term V → Proof (V , -Proof) → Proof V
+ΛP φ δ = app -lamProof (φ ,, δ ,, out)
 
-propof : ∀ {V} {P} → Fin P → PContext' V P → Term V
-propof zero (_ , φ) = φ
-propof (suc x) (Γ , _) = propof x Γ
+_,P_ : ∀ {V} → Context V → Term V → Context (V , -Proof)
+_,P_ = _,_
 
 data β : ∀ {V} {K} {C} → Constructor C → Subexpression V (-Constructor K) C → Expression V K → Set where
   βI : ∀ {V} A (M : Term (V , -Term)) N → β -appTerm (ΛTerm A M ,, N ,, out) (M ⟦ x₀:= N ⟧)
 open import Reduction PHOPL β public
 \end{code}
+

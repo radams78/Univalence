@@ -21,6 +21,7 @@ A \emph{context} has the form $x_1 : A_1, \ldots, x_n : A_n$ where, for each $i$
 The \emph{domain} of this context is the alphabet $\{ x_1, \ldots, x_n \}$.
 
 \begin{code}
+infixl 55 _,_
 data Context : Alphabet → Set where
   〈〉 : Context ∅
   _,_ : ∀ {V} {K} → Context V → Expression V (parent K) → 

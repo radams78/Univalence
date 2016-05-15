@@ -42,6 +42,11 @@
 \newcommand{\Set}{\mathbf{Set}}
 \newcommand{\eqdef}{\mathrel{\smash{\stackrel{\text{def}}{=}}}}
 \newcommand{\AgdaHide}[1]{}
+\newcommand{\isotoid}{\ensuremath{isotoid}}
+\newcommand{\vald}{\ensuremath{\ \mathrm{valid}}}
+\newcommand{\reff}[1]{\ensuremath{\mathsf{ref} \left( {#1} \right)}}
+\newcommand{\univ}[4]{\ensuremath{\mathsf{univ}_{{#1} , {#2}} \left( {#3} , {#4} \right)}}
+\newcommand{\triplelambda}{\lambda \!\! \lambda \!\! \lambda}
 
 \begin{document}
 
@@ -57,9 +62,63 @@ This talk is a literate Agda file
 \end{small}
 }
 
+%TODO Full author and conference information
+
 \end{frame}
 
 \section{Introduction}
+
+\begin{frame}
+\frametitle{The problem}
+\begin{itemize}
+\item
+A type theory should enjoy three properties:
+\begin{description}
+\item[Canonicity] Every well-typed term of type $A$ reduces to a canonical form of $A$.
+\item[Confluence] Reduction is confluent.  (Therefore, the canonical form is unique.)
+\item[Strong Normalization] Every reduction strategy terminates.
+\end{description}
+\item 
+The \emph{univalence axiom} postulates a function
+\[ \isotoid : A \simeq B \rightarrow A = B \]
+that is an inverse to the obvious function $A = B \rightarrow A \simeq B$.
+\item
+This breaks canonicity.
+\end{itemize}
+\end{frame}
+%TODO Define canonical form
+
+\begin{frame}
+\frametitle{Possible Solutions}
+\begin{itemize}
+\item
+Give up.
+\item
+Redefine equality. %TODO Cite Polonsky
+\item
+Use a type theory in which $\isotoid$ is definable (e.g. Cubical Type Theory) %TODO Cite
+\item
+Introduce a reduction rule for $\isotoid$.
+\end{itemize}
+\end{frame}
+%TODO Look up other possible solutions.
+
+\begin{frame}
+\frametitle{Our Approach}
+We begin with a small type theory, and work our way up to the full HoTT.
+\begin{enumerate}
+\item \emph{Predicative Higher-Order Propositional Logic} A type theory with:
+  \begin{itemize}
+  \item a universe $\Omega$ of \emph{propositions} with $\bot$ and $\supset$
+  \item a universe $U$ of \emph{small types} with $\Omega$ and $\rightarrow$
+  \item for any two terms $M, N : A$, a (large) type $M =_A N$.
+  \end{itemize}
+\item \emph{PHOPL with Equality}
+Make $\delta =_\phi \epsilon$ a proposition.  (So we can form propositions like $M =_A N \epsilon \supset N =_A M$.)
+\item \emph{Predicative Higher-Order Predicate Logic} Close $\Omega$ under $\forall$.  (So we can form propositions like $\forall x : \phi. x =_A x$.)
+\end{enumerate}
+For the future: natural numbers, inductive types, path elimination, \ldots
+\end{frame}
 
 \input{Prelims.lagda}
 \input{Grammar/Taxonomy.lagda}
@@ -75,10 +134,12 @@ expressions.  The details are given in Appendix \ref{appendix:repsub}.
 \input{PL/Rules.lagda}
 \input{PL/Computable.lagda}
 
-\section{The First System}
+\section{Predicative Higher-Order Propositional Logic}
 
-\input{PHOPL.lagda}
-\input{PHOPL/Rules.lagda}
+\mode<beamer>{}
+
+\mode<all>{\input{PHOPL.lagda}}
+\mode<all>{\input{PHOPL/Rules.lagda}}
 
 \section{Systems Two and Three}
 
