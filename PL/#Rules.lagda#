@@ -29,15 +29,11 @@ data _⊢_∶_ : ∀ {P} → Context P → Proof P → Prp P → Set where
     Γ ⊢ δ ∶ φ ⇛ ψ → Γ ⊢ ε ∶ φ → Γ ⊢ appP δ ε ∶ ψ
   Λ : ∀ {P} {Γ : Context P} {φ} {δ} {ψ} → 
     Γ ,P φ ⊢ δ ∶ ψ 〈 upRep 〉 → Γ ⊢ ΛP φ δ ∶ φ ⇛ ψ
-\end{code}
 
-\AgdaHide{
-\begin{code}
 change-type : ∀ {P} {Γ : Context P} {δ φ ψ} →
   φ ≡ ψ → Γ ⊢ δ ∶ φ → Γ ⊢ δ ∶ ψ
 change-type = subst (λ A → _ ⊢ _ ∶ A)
 \end{code}
-}
 
 Let $\rho$ be a replacement.  We say $\rho$ is a replacement from $\Gamma$ to $\Delta$, $\rho : \Gamma \rightarrow \Delta$,
 iff for all $x : \phi \in \Gamma$ we have $\rho(x) : \phi \in \Delta$.
@@ -162,6 +158,17 @@ _∶_⇒_ : ∀ {P} {Q} → Sub P Q → Context P → Context Q → Set
 σ ∶ Γ ⇒ Δ = ∀ x → Δ ⊢ σ _ x ∶ typeof x Γ ⟦ σ ⟧
 \end{code}
 
+\AgdaHide{
+\begin{code}
+sub-typed-lemma : ∀ {P} {Q} {σ : Sub (P , -proof) Q} {Γ : Context P} {φ : Prp P} {Δ : Context Q}
+  (f : Var P -proof → Prp Q) →
+  (∀ x → Δ ⊢ σ _ x ∶ f x) →
+  (∀ x → pretypeof x (Γ ,P φ)
+  σ ∶ Γ ,P φ ⇒ Δ
+sub-typed-lemma {P} {Q} {σ} {Γ} {φ} {Δ} hyp x = change-type (sub-comp₂ (pretypeof x (Γ ,P φ))) (hyp x)
+\end{code}
+}
+
 \begin{lemma}$ $
 \begin{enumerate}
 \item
@@ -183,8 +190,9 @@ Sub↑-typed : ∀ {P} {Q} {σ}
 
 \AgdaHide{
 \begin{code}
-Sub↑-typed {σ = σ} {Γ} {Δ} {φ} σ∶Γ⇒Δ x =
-  change-type (sym (Sub↑-upRep {E = pretypeof x (Γ ,P φ)})) (pre-Sub↑-typed x) where
+Sub↑-typed {P} {Q} {σ} {Γ} {Δ} {φ} σ∶Γ⇒Δ = sub-typed-lemma (λ x → change-type (sym (sub-comp₁ (pretypeof x (Γ ,P φ)))) (pre-Sub↑-typed x)) where
+{-Sub↑-typed {σ = σ} {Γ} {Δ} {φ} σ∶Γ⇒Δ x =
+  change-type (sym (Sub↑-upRep {E = pretypeof x (Γ ,P φ)})) (pre-Sub↑-typed x) where -}
   pre-Sub↑-typed : ∀ x → Δ ,P φ ⟦ σ ⟧ ⊢ Sub↑ -proof σ -proof x ∶ pretypeof x (Γ ,P φ) ⟦ σ ⟧ 〈 upRep 〉
   pre-Sub↑-typed x₀ = var
   pre-Sub↑-typed (↑ x) = Weakening (σ∶Γ⇒Δ x) (↑-typed {φ = φ ⟦ σ ⟧})
@@ -198,9 +206,10 @@ botsub-typed : ∀ {P} {Γ : Context P} {φ : Prp P} {δ} →
 
 \AgdaHide{
 \begin{code}
-botsub-typed {P} {Γ} {φ} {δ} Γ⊢δ:φ x = change-type (sym botsub-upRep) (pre-botsub-typed x) where
+botsub-typed {P} {Γ} {φ} {δ} Γ⊢δ∶φ = sub-typed-lemma (λ x → change-type {!!} (pre-botsub-typed x)) where
+{-botsub-typed {P} {Γ} {φ} {δ} Γ⊢δ:φ x = change-type (sym botsub-upRep) (pre-botsub-typed x) where -}
   pre-botsub-typed : ∀ x → Γ ⊢ (x₀:= δ) -proof x ∶ pretypeof x (Γ ,P φ)
-  pre-botsub-typed x₀ = Γ⊢δ:φ
+  pre-botsub-typed x₀ = Γ⊢δ∶φ
   pre-botsub-typed (↑ x) = var
 \end{code}
 }

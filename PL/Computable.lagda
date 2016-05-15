@@ -17,8 +17,8 @@ open import PL.Rules
 We define the sets of \emph{computable} proofs $C_\Gamma(\phi)$ for each context $\Gamma$ and proposition $\phi$ as follows:
 
 \begin{align*}
-C_\Gamma(\bot) & = \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in SN \} \\
-C_\Gamma(\phi \rightarrow \psi) & = \{ \delta \mid \Gamma : \delta : \phi \rightarrow \psi, \forall \epsilon \in C_\Gamma(\phi). \delta \epsilon \in C_\Gamma(\psi) \}
+C_\Gamma(\bot) & = \{ \delta \mid \Gamma \vdash \delta : \bot \text{ and } \delta \in SN \} \\
+C_\Gamma(\phi \rightarrow \psi) & = \{ \delta \mid \Gamma : \delta : \phi \rightarrow \psi \text{ and } \forall \Delta ⊇ \Gamma . ∀ \epsilon \in C_\Delta(\phi). \delta \epsilon \in C_\Delta(\psi) \}
 \end{align*}
 
 \begin{code}
@@ -140,15 +140,22 @@ If $p : \phi \in \Gamma$ then $p \in C_\Gamma(\phi)$.
 \end{corollary}
 
 \begin{code}
-varC : ∀ {P} {Γ : Context P} {x : Var P -proof} → C Γ (close (typeof x Γ)) (var x)
+varC : ∀ {P} {Γ : Context P} {x : Var P -proof} → 
+  C Γ (close (typeof x Γ)) (var x)
+\end{code}
+
+\AgdaHide{
+\begin{code}
 varC {P} {Γ} {x} = NeutralC (close (typeof x Γ)) (change-type (sym close-magic) var) (varNeutral x) (λ ε ())
 \end{code}
+}
 
 \begin{lemma}[Computability is preserved under well-typed expansion]
 Suppose $\Gamma, p : \phi \vdash \delta : \psi$ and $\Gamma \vdash \epsilon : \phi$.  If
 $\delta[p:=\epsilon] \in C_\Gamma(\psi)$ and $\epsilon \in SN$, then $(\lambda p:\phi.\delta)\epsilon \in C_\Gamma(\psi)$.
 \end{lemma}
 
+\AgdaHide{
 \begin{code}
 WTEaux : ∀ {P} {Γ : Context P} {φ} {δ} ψ {ε} →
   Γ ,P φ ⊢ δ ∶ ψ 〈 magic 〉 →
@@ -179,16 +186,23 @@ WTEaux {Γ = Γ} {φ = φ} ψ Γ,p∶φ⊢δ∶ψ Γ⊢ε∶φ δ[p∶=ε]∈CΓ
     (SR Γ⊢ε∶φ ε⇒ε') 
     (C-red ψ {δ ⟦ x₀:= ε ⟧} {δ ⟦ x₀:= ε' ⟧} δ[p∶=ε]∈CΓψ (apredl substitution {E = δ} β-respects-sub (botsub-red ε⇒ε'))) 
     (SNI δ SNδ) (SNε _ ε⇒ε')))
+\end{code}
+}
 
+\begin{code}
 WTE : ∀ {P} {Γ : Context P} {φ} {δ} {ψ} {ε} →
   Γ ,P φ ⊢ δ ∶ ψ 〈 magic 〉 →
   Γ ⊢ ε ∶ φ →
   C Γ ψ (δ ⟦ x₀:= ε ⟧) →
   SN ε →
   C Γ ψ (appP (ΛP φ δ) ε)
+\end{code}
 
+\AgdaHide{
+\begin{code}
 WTE {ψ = ψ} Γ,p∶φ⊢δ∶ψ Γ⊢ε∶φ δ[p∶=ε]∈CΓψ = WTEaux ψ Γ,p∶φ⊢δ∶ψ Γ⊢ε∶φ δ[p∶=ε]∈CΓψ (SNap' {substitution} β-respects-sub (CsubSN ψ δ[p∶=ε]∈CΓψ))
 \end{code}
+}
 
 \begin{prop}
 If $\Gamma \vdash \delta : \phi$ and $\sigma : \Gamma \rightarrow \Delta$ then $\delta [ \sigma ] \in C_\Delta(\phi)$.
@@ -199,6 +213,11 @@ SNmainlemma : ∀ {P} {Q} {Γ : Context P} {δ} {φ} {σ : Sub P Q} {Δ} →
   Γ ⊢ δ ∶ φ →
   (∀ x → C Δ (close (typeof {K = -proof} x Γ)) (σ _ x)) →
   C Δ (close φ) (δ ⟦ σ ⟧)
+\end{code}
+
+\AgdaHide{
+\begin{code}
+--TODO Tidy up
 SNmainlemma (var {p = p}) hyp = hyp p
 SNmainlemma {P} {Q} {Γ} {σ = σ} {Δ} (app {δ = δ} {ε} {φ} {ψ} Γ⊢δ∶φ⇛ψ Γ⊢ε∶φ) hyp = 
   subst (C Δ (close ψ)) (cong (λ M → appP M (ε ⟦ σ ⟧)) rep-idOp) 
@@ -298,10 +317,22 @@ SNmainlemma {P} {Q} {Γ} {σ = σ} {Δ} (Λ {φ = φ} {δ} {ψ} Γ,φ⊢δ∶ψ)
         (σ -proof x 〈 upRep 〉) ⟦ x₀:= ε •₂ Rep↑ -proof ρ ⟧
       ∎) 
       (C-rep {φ = close (typeof x Γ)} (hyp x) ρ:Δ→Θ)
+\end{code}
+}
 
+\begin{theorem}
+Propositional Logic is strongly normalizing.
+\end{theorem}
+
+\begin{code}
 Strong-Normalization : ∀ {P} {Γ : Context P} {δ} {φ} → Γ ⊢ δ ∶ φ → SN δ
+\end{code}
+
+\AgdaHide{
+\begin{code}
 Strong-Normalization {P} {Γ} {δ} {φ} Γ⊢δ:φ = subst SN 
   sub-idOp 
   (CsubSN (close φ) {δ ⟦ idSub P ⟧}
   (SNmainlemma Γ⊢δ:φ (λ x → varC {x = x})))
 \end{code}
+}

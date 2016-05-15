@@ -212,53 +212,25 @@ data Neutral {P} : Proof P → Set where
   
 \end{code}
 
-\begin{lemma}$ $
-\begin{enumerate}
-\item
-If $\delta$ is neutral and $\delta \rightarrow_\beta \epsilon$  then $\epsilon$  is neutral.
-\item
+\begin{lemma}
 If $\delta$ is neutral then $\delta \langle \rho \rangle$ is neutral.
-\item
-If $\delta \epsilon$ is neutral and $\delta \epsilon \rightarrow_\beta \chi$, then either $\chi \equiv \delta' \epsilon$ where $\delta \rightarrow_\beta \delta'$,
-or $\chi \equiv \delta \epsilon'$ where $\epsilon \rightarrow_\beta \epsilon'$.
-\end{enumerate}
 \end{lemma}
 
 \begin{code}
---neutral-red : ∀ {P} {δ ε : Proof P} → Neutral δ → δ ⇒ ε → Neutral ε
-\end{code}
-
-\AgdaHide{
-\begin{code}
-{-neutral-red (varNeutral _) ()
-neutral-red (appNeutral .(app -lam (_,,_ _ (_,,_ _ out))) _) (redex βI)
-neutral-red (appNeutral _ ε neutralδ) (app (appl δ→δ')) = appNeutral _ ε (neutral-red neutralδ δ→δ')
-neutral-red (appNeutral δ _ neutralδ) (app (appr (appl ε→ε'))) = appNeutral δ _ neutralδ
-neutral-red (appNeutral _ _ _) (app (appr (appr ())))-}
-\end{code}
-}
-
-\begin{code}
-neutral-rep : ∀ {P} {Q} {δ : Proof P} {ρ : Rep P Q} → Neutral δ → Neutral (δ 〈 ρ 〉)
+neutral-rep : ∀ {P} {Q} {δ : Proof P} {ρ : Rep P Q} → 
+  Neutral δ → Neutral (δ 〈 ρ 〉)
 \end{code}
 
 \AgdaHide{
 \begin{code}
 neutral-rep {ρ = ρ} (varNeutral x) = varNeutral (ρ -proof x)
 neutral-rep {ρ = ρ} (appNeutral δ ε) = appNeutral (δ 〈 ρ 〉) (ε 〈 ρ 〉)
-\end{code}
-}
 
-\begin{code}
 NeutralC-lm : ∀ {P} {δ ε : Proof P} {X : Proof P → Set} →
   Neutral δ → 
   (∀ δ' → δ ⇒ δ' → X (appP δ' ε)) →
   (∀ ε' → ε ⇒ ε' → X (appP δ ε')) →
   ∀ χ → appP δ ε ⇒ χ → X χ
-\end{code}
-
-\AgdaHide{
-\begin{code}
 NeutralC-lm () _ _ ._ (redex βI)
 NeutralC-lm _ hyp1 _ .(app -app (_,,_ _ (_,,_ _ out))) (app (appl δ→δ')) = hyp1 _ δ→δ'
 NeutralC-lm _ _ hyp2 .(app -app (_,,_ _ (_,,_ _ out))) (app (appr (appl ε→ε'))) = hyp2 _ ε→ε'
