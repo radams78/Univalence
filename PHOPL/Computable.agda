@@ -83,6 +83,9 @@ postulate expand-EE : ∀ {V} {Γ : Context V} {A} {M N : Term V} {P Q} →
 postulate conv-EE : ∀ {V} {Γ : Context V} {E} {E'} {P} →
                   EE Γ E P → E ≃ E' → EE Γ E' P
 
+postulate rep-EE : ∀ {U} {V} {Γ} {Δ} {ρ : Rep U V} {E} {P} →
+                 EE Γ E P → ρ ∶ Γ ⇒R Δ → EE Δ (E 〈 ρ 〉) (P 〈 ρ 〉)
+
 postulate EE-typed : ∀ {V} {Γ : Context V} {A} {M N : Term V} {P} →
                    EE Γ (M ≡〈 A 〉 N) P → Γ ⊢ P ∶ M ≡〈 A 〉 N
 
