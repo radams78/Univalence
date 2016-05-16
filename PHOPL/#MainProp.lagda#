@@ -171,7 +171,7 @@ Computable-Path-Substitution U V τ σ σ' Γ Δ _ A τ∶σ∼σ' (appR Γ⊢M�
 Computable-Path-Substitution U V τ σ σ' Γ Δ _ _ τ∶σ∼σ' (ΛR Γ⊢M∶A) validΔ = 
   func-EE (λ W Θ N N' Q ρ ρ∶Δ⇒Θ validΘ N∈EΘA N'∈EΘA Q∈EΘN≡N' → 
     expand-EE 
-      (conv-EE ? ?) 
+      (conv-EE {!!} {!!}) 
       {!!} 
       (redexR βE) 
       {!!})

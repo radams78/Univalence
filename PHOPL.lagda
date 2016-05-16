@@ -141,12 +141,15 @@ plus P = app -plus (P ,, out)
 minus : ∀ {V} → Path V → Proof V
 minus P = app -minus (P ,, out)
 
+infixl 20 _,T_
 _,T_ : ∀ {V} → Context V → Type V → Context (V , -Term)
 _,T_ = _,_
 
+infixl 20 _,P_
 _,P_ : ∀ {V} → Context V → Term V → Context (V , -Proof)
 _,P_ = _,_
 
+infixl 20 _,E_
 _,E_ : ∀ {V} → Context V → Equation V → Context (V , -Path)
 _,E_ = _,_
 

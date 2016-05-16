@@ -181,7 +181,4 @@ On top of this we add extensional equality:
                              Γ ⊢ P ∶ M ≡〈 A 〉 N → Γ ⊢ M' ∶ A → Γ ⊢ N' ∶ A →
          M ≃ M' → N ≃ N' → -------------------------------------------------
                                     Γ ⊢ P ∶ M' ≡〈 A 〉 N'
-
-_∶_⇒_ : ∀ {U} {V} → Sub U V → Context U → Context V → Set
-σ ∶ Γ ⇒ Δ = ∀ {K} (x : Var _ K) → Δ ⊢ σ _ x ∶ typeof x Γ ⟦ σ ⟧
 \end{code}
