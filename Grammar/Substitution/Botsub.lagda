@@ -127,5 +127,7 @@ botsub-upRep {U} {C} {K} {L} {E} {F} = let open ≡-Reasoning in
   ≡⟨ sub-idOp ⟩
      E
   ∎
+
+postulate botsub-botsub : ∀ {V} {K} {L} {M} (E : Expression (V , K , L) M) F G → E ⟦ Sub↑ L (x₀:= F) ⟧ ⟦ x₀:= G ⟧ ≡ E ⟦ x₀:= (G ⇑) ⟧ ⟦ x₀:= F ⟧
 \end{code}
 }
