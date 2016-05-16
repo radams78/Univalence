@@ -13,40 +13,7 @@ open import PHOPL.Neutral
 open import PHOPL.Meta
 open import PHOPL.Computable
 open import PHOPL.SubC
-
-Computable-Substitution : ∀ U V (σ : Sub U V) Γ Δ M A → 
-  σ ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → E Δ (close A) (M ⟦ σ ⟧)
-Computable-Substitution _ _ _ _ _ _ _ σ∶Γ⇒Δ (varR x _) _ = proj₁ σ∶Γ⇒Δ x
-Computable-Substitution _ V _ _ Δ .⊥ .Ω _ (⊥R _) Δvalid = ⊥-E {V} {Δ} Δvalid
-Computable-Substitution U V σ Γ Δ .(φ ⊃ ψ) .Ω σ∶Γ⇒Δ (impR {φ = φ} {ψ} Γ⊢φ∶Ω Γ⊢ψ∶Ω) Δvalid = ⊃-E 
-  (Computable-Substitution U V σ Γ Δ φ Ω σ∶Γ⇒Δ Γ⊢φ∶Ω Δvalid) 
-  (Computable-Substitution U V σ Γ Δ ψ Ω σ∶Γ⇒Δ Γ⊢ψ∶Ω Δvalid)
-Computable-Substitution U V σ Γ Δ .(appT M N) .B σ∶Γ⇒Δ (appR {M = M} {N} {A} {B} Γ⊢M∶A⇒B Γ⊢N∶A) Δvalid = appT-E 
-  Δvalid
-  (Computable-Substitution U V σ Γ Δ M (A ⇛ B) σ∶Γ⇒Δ Γ⊢M∶A⇒B Δvalid) 
-  (Computable-Substitution U V σ Γ Δ N A σ∶Γ⇒Δ Γ⊢N∶A Δvalid)
-Computable-Substitution U V σ Γ Δ .(ΛT A M) .(A ⇛ B) σ∶Γ⇒Δ (ΛR {A = A} {M} {B} Γ,A⊢M∶B) Δvalid = func-E (λ W Θ ρ N Θvalid ρ∶Δ⇒RΘ N∈EΘA → 
-  expand-E (subst₂ (E Θ) (close-rep B) 
-  (let open ≡-Reasoning in 
-  begin
-    M ⟦ x₀:= N •₂ Rep↑ -Term ρ • Sub↑ -Term σ ⟧
-  ≡⟨ sub-comp M ⟩ 
-    M ⟦ Sub↑ -Term σ ⟧ ⟦ x₀:= N •₂ Rep↑ -Term ρ ⟧
-  ≡⟨ sub-comp₂ (M ⟦ Sub↑ -Term σ ⟧) ⟩
-    M ⟦ Sub↑ -Term σ ⟧ 〈 Rep↑ -Term ρ 〉 ⟦ x₀:= N ⟧
-  ∎) 
-  (Computable-Substitution (U , -Term) W 
-    (x₀:= N •₂ Rep↑ -Term ρ • Sub↑ -Term σ) (Γ ,T A) Θ M (B ⇑) 
-    (compC (comp₂C (botsubC (subst (λ T → E Θ T N) 
-      (let open ≡-Reasoning in 
-      begin
-        close A
-      ≡⟨⟨ close-sub A ⟩⟩
-        close (A ⟦ σ ⟧)
-      ≡⟨⟨ close-rep (A ⟦ σ ⟧) ⟩⟩
-        close (A ⟦ σ ⟧ 〈 ρ 〉)
-      ∎) 
-      N∈EΘA)) (Rep↑-typed ρ∶Δ⇒RΘ)) (Sub↑C σ∶Γ⇒Δ)) Γ,A⊢M∶B Θvalid)))
+open import PHOPL.MainPropFinal
 
 --TODO Rename
 Computable-Proof-Substitution : ∀ U V (σ : Sub U V) Γ Δ δ φ →
@@ -128,7 +95,7 @@ Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒Δ (univR Γ⊢δ∶�
   (Computable-Proof-Substitution U V σ Γ Δ _ _ σ∶Γ⇒Δ Γ⊢δ∶φ⊃ψ validΔ) 
   (Computable-Proof-Substitution U V σ Γ Δ _ _ σ∶Γ⇒Δ Γ⊢ε∶ψ⊃φ validΔ)
 Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒Δ (lllR .{U} .{Γ} {A} {B} {M} {M'} {P} Γ+⊢P∶Mx≡M'y) validΔ = 
-  func-EE (λ W Θ N N' Q ρ ρ∶Δ⇒Θ Θvalid N∈EΘA N'∈EΘA Q∈EΘN≡N' → 
+  func-EE (λ W Θ N N' Q ρ ρ∶Δ⇒Θ validΘ N∈EΘA N'∈EΘA Q∈EΘN≡N' → 
     expand-EE 
     (subst₂ (EE Θ) (cong₃ _≡〈_〉_ 
       (cong₂ appT 
@@ -237,23 +204,23 @@ Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒Δ (lllR .{U} .{Γ} {
         P ⟦ Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) •₁ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ ⟦ Sub↑ _ (Sub↑ _ (x₀:= N)) ⟧ ⟦ Sub↑ _ (x₀:= N') ⟧ ⟦ x₀:= Q ⟧
       ≡⟨ sub-congl (sub-congl (sub-congl (sub-comp₁ P))) ⟩
         P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉 ⟦ Sub↑ _ (Sub↑ _ (x₀:= N)) ⟧ ⟦ Sub↑ _ (x₀:= N') ⟧ ⟦ x₀:= Q ⟧
-      ≡⟨ {!!} ⟩
+      ≡⟨⟨ sub-congl (sub-comp (P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉)) ⟩⟩
         P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉 ⟦ Sub↑ _ (x₀:= N') • Sub↑ _ (Sub↑ _ (x₀:= N)) ⟧ ⟦ x₀:= Q ⟧
-      ≡⟨ {!!} ⟩
+      ≡⟨⟨ sub-congl (sub-congr (P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉) Sub↑-comp) ⟩⟩
         P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉 ⟦ Sub↑ _ (x₀:= N' • Sub↑ _ (x₀:= N)) ⟧ ⟦ x₀:= Q ⟧
-      ≡⟨ {!!} ⟩
+      ≡⟨ sub-congl (sub-congr (P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉) (Sub↑-cong (botsub-botsub' N N'))) ⟩
         P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉 ⟦ Sub↑ _ (x₀:= N • x₀:= (N' ⇑)) ⟧ ⟦ x₀:= Q ⟧
-      ≡⟨ {!!} ⟩
+      ≡⟨ sub-congl (sub-congr (P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉) Sub↑-comp) ⟩
         P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉 ⟦ Sub↑ _ (x₀:= N) • Sub↑ _ (x₀:= (N' ⇑)) ⟧ ⟦ x₀:= Q ⟧
-      ≡⟨ {!!} ⟩
+      ≡⟨ sub-congl (sub-comp (P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉)) ⟩
         P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉 ⟦ Sub↑ _ (x₀:= (N' ⇑)) ⟧ ⟦ Sub↑ _ (x₀:= N) ⟧ ⟦ x₀:= Q ⟧
-      ≡⟨ {!!} ⟩
+      ≡⟨ botsub-botsub (P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉 ⟦ Sub↑ _ (x₀:= (N' ⇑)) ⟧) N Q ⟩
         P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉 ⟦ Sub↑ _ (x₀:= (N' ⇑)) ⟧ ⟦ x₀:= (Q ⇑) ⟧ ⟦ x₀:= N ⟧
-      ≡⟨ {!!} ⟩
+      ≡⟨ sub-congl (botsub-botsub ( P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉) (N' ⇑) (Q ⇑)) ⟩
         P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉  ⟦ x₀:= (Q ⇑ ⇑) ⟧ ⟦ x₀:= (N' ⇑) ⟧ ⟦ x₀:= N ⟧
-      ≡⟨ {!!} ⟩
+      ≡⟨⟨ sub-comp (P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉  ⟦ x₀:= (Q ⇑ ⇑) ⟧ ) ⟩⟩
         P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉  ⟦ x₀:= (Q ⇑ ⇑) ⟧ ⟦ x₀:= N • x₀:= (N' ⇑) ⟧
-      ≡⟨ {!!} ⟩
+      ≡⟨⟨ sub-comp (P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉) ⟩⟩
         P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉  ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧
       ∎)
     (Computable-Path-Substitution₁ (U , -Term , -Term , -Path) W 
@@ -271,12 +238,43 @@ Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒Δ (lllR .{U} .{Γ} {
                  (change-cod 
                    (Sub↑C {σ = ρ •₁ σ}
                      (comp₁C ρ∶Δ⇒Θ σ∶Γ⇒Δ)) 
-                   {!!}))) 
-               {!!}))) 
-           {!!})) 
+                   (cong (λ x → Θ ,T x) (sub-comp₁ A)))))
+               (cong (λ x → Θ ,T x) (let open ≡-Reasoning in 
+                 begin
+                   A ⇑ ⟦ x₀:= N • Sub↑ -Term (ρ •₁ σ) ⟧
+                 ≡⟨ sub-comp (A ⇑) ⟩
+                   A ⇑ ⟦ Sub↑ -Term (ρ •₁ σ) ⟧ ⟦ x₀:= N ⟧
+                 ≡⟨ sub-congl (Sub↑-upRep {E = A}) ⟩
+                   A ⟦ ρ •₁ σ ⟧ ⇑ ⟦ x₀:= N ⟧
+                 ≡⟨ botsub-upRep ⟩
+                   A ⟦ ρ •₁ σ ⟧
+                 ≡⟨ sub-comp₁ A ⟩
+                   A ⟦ σ ⟧ 〈 ρ 〉
+                 ∎))))) 
+           (cong (λ x → Θ ,E x) (cong₃ _≡〈_〉_ 
+             botsub-upRep 
+             (let open ≡-Reasoning in 
+             begin
+               A ⇑ ⇑ ⟦ x₀:= N' • Sub↑ _ (x₀:= N • Sub↑ _ (ρ •₁ σ)) ⟧
+             ≡⟨ sub-comp (A ⇑ ⇑) ⟩
+               A ⇑ ⇑ ⟦ Sub↑ _ (x₀:= N • Sub↑ _ (ρ •₁ σ)) ⟧ ⟦ x₀:= N' ⟧
+             ≡⟨ sub-congl (Sub↑-upRep {E = A ⇑}) ⟩
+               A ⇑ ⟦ x₀:= N • Sub↑ _ (ρ •₁ σ) ⟧ ⇑ ⟦ x₀:= N' ⟧
+             ≡⟨ botsub-upRep ⟩
+               A ⇑ ⟦ x₀:= N • Sub↑ _ (ρ •₁ σ) ⟧
+             ≡⟨ sub-comp (A ⇑) ⟩
+               A ⇑ ⟦ Sub↑ _ (ρ •₁ σ) ⟧ ⟦ x₀:= N ⟧
+             ≡⟨ sub-congl (Sub↑-upRep {E = A}) ⟩
+               A ⟦ ρ •₁ σ ⟧ ⇑ ⟦ x₀:= N ⟧
+             ≡⟨ botsub-upRep ⟩
+               A ⟦ ρ •₁ σ ⟧
+             ≡⟨ sub-comp₁ A ⟩
+               A ⟦ σ ⟧ 〈 ρ 〉
+             ∎) 
+           refl))))-- TODO Replace cong2 --- refl with cong 
        Γ+⊢P∶Mx≡M'y
-       Θvalid) )
-    (app*R (lllR {!!}) (EE-typed Q∈EΘN≡N')) 
+       validΘ) )
+       {!!}
     (redexR βE) {!!})
 Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒Δ (app*R Γ⊢P∶M≡M' Γ⊢Q∶N≡N') validΔ = 
   app*-EE 
