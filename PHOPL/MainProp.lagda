@@ -13,8 +13,8 @@ open import PHOPL.Neutral
 
 postulate _∶_⇒R_ : ∀ {U} {V} → Rep U V → Context U → Context V → Set
 
-postulate Rep↑-typed : ∀ {U} {V} {ρ : Rep U V} {Γ} {Δ} {A} →
-                     ρ ∶ Γ ⇒R Δ → Rep↑ -Term ρ ∶ (Γ ,T A) ⇒R (Δ ,T A 〈 ρ 〉)
+postulate Rep↑-typed : ∀ {U} {V} {ρ : Rep U V} {K} {Γ} {Δ} {A} →
+                     ρ ∶ Γ ⇒R Δ → Rep↑ K ρ ∶ (Γ , A) ⇒R (Δ , A 〈 ρ 〉)
 
 postulate E : ∀ {V} → Context V → Type ∅ → Term V → Set
 
@@ -81,11 +81,14 @@ postulate compC : ∀ {U} {V} {W} {ρ : Sub V W} {σ : Sub U V} {Γ} {Δ} {Θ} �
 postulate compC₂ : ∀ {U} {V} {W} {σ : Sub V W} {ρ : Rep U V} {Γ} {Δ} {Θ} →
                  σ ∶ Δ ⇒C Θ → ρ ∶ Γ ⇒R Δ → σ •₂ ρ ∶ Γ ⇒C Θ
 
-postulate Sub↑C : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {A} →
-                    σ ∶ Γ ⇒C Δ → Sub↑ -Term σ ∶ (Γ ,T A) ⇒C (Δ ,T A ⟦ σ ⟧)
+postulate Sub↑C : ∀ {U} {V} {σ : Sub U V} {K} {Γ} {Δ} {A} →
+                    σ ∶ Γ ⇒C Δ → Sub↑ K σ ∶ (Γ , A) ⇒C (Δ , A ⟦ σ ⟧)
 
 postulate botsubC : ∀ {V} {Γ : Context V} {M} {A} →
                     E Γ (close A) M → x₀:= M ∶ (Γ ,T A) ⇒C Γ
+
+postulate botsubCP : ∀ {V} {Γ : Context V} {δ} {φ} →
+                     EP Γ φ δ → x₀:= δ ∶ (Γ ,P φ) ⇒C Γ
 
 _∶_∼_∶_⇒C_ : ∀ {U} {V} → PathSub U V → Sub U V → Sub U V → Context U → Context V → Set
 τ ∶ ρ ∼ σ ∶ Γ ⇒C Δ = ∀ x → EE Δ (ρ _ x ≡〈 typeof x Γ ⟦ ρ ⟧ 〉 σ _ x) (τ x)
@@ -153,8 +156,15 @@ Computable-Proof-Substitution U V σ Γ Δ _ _ σ∶Γ⇒Δ (ΛPR {δ = δ} {φ}
       ≡⟨ botsub-upRep ⟩
         ψ ⟦ σ ⟧ 〈 ρ 〉
       ∎) 
-    {!!} 
-    (Computable-Proof-Substitution (U , -Proof) W (x₀:= ε •₂ Rep↑ -Proof ρ • Sub↑ -Proof σ) (Γ ,P φ) Θ δ (ψ ⇑) {!!} Γ,φ⊢δ∶ψ validΘ))
+      (let open ≡-Reasoning in 
+      begin
+        δ ⟦ x₀:= ε •₂ Rep↑ -Proof ρ • Sub↑ -Proof σ ⟧
+      ≡⟨ sub-comp δ ⟩
+        δ ⟦ Sub↑ -Proof σ ⟧ ⟦ x₀:= ε •₂ Rep↑ -Proof ρ ⟧
+      ≡⟨ sub-comp₂ (δ ⟦ Sub↑ -Proof σ ⟧) ⟩
+        δ ⟦ Sub↑ -Proof σ ⟧ 〈 Rep↑ -Proof ρ 〉 ⟦ x₀:= ε ⟧
+      ∎) 
+    (Computable-Proof-Substitution (U , -Proof) W (x₀:= ε •₂ Rep↑ -Proof ρ • Sub↑ -Proof σ) (Γ ,P φ) Θ δ (ψ ⇑) (compC (compC₂ (botsubCP ε∈EΘφσρ) (Rep↑-typed ρ∶Δ⇒RΘ)) (Sub↑C σ∶Γ⇒Δ)) Γ,φ⊢δ∶ψ validΘ))
     (appPR (ΛPR {!!}) (EP-typed ε∈EΘφσρ)) 
     (redexR βR) 
     {!!}) -- TODO Common pattern with Computable-Substitution
