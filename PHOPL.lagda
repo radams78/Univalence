@@ -154,5 +154,9 @@ data β {V} : ∀ {K} {C : Kind (-Constructor K)} →
   Constructor C → Body V C → Expression V K → Set where
   βI : ∀ {A} {M} {N} → β -appTerm (ΛT A M ,, N ,, out) (M ⟦ x₀:= N ⟧)
 open import Reduction.Base PHOPL β public
+
+APP : ∀ {V} → Term V → List (Term V) → Term V
+APP M [] = M
+APP M (N ∷ NN) = APP (appT M N) NN
 \end{code}
 

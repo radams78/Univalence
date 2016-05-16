@@ -113,7 +113,7 @@ open OpFamily replacement public using ()
 We write $E \uparrow$ for $E \langle \uparrow \rangle$.
 
 \begin{code}
-infixl 60 _⇑
+infixl 70 _⇑
 _⇑ : ∀ {V} {K} {C} {L} → Subexpression V C L → Subexpression (V , K) C L
 E ⇑ = E 〈 upRep 〉
 \end{code}

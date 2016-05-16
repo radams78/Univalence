@@ -106,5 +106,8 @@ SNred : ∀ {V K} {E F : Expression V K} → SN E → E ↠ F → SN F
 SNred {V} {K} {E} {F} (SNI .E SNE) (osr-red E→F) = SNE F E→F
 SNred SNE ref = SNE
 SNred SNE (trans-red E↠F F↠G) = SNred (SNred SNE E↠F) F↠G
+
+SNvar : ∀ {V} {K} (x : Var V K) → SN (var x)
+SNvar x = SNI (var x) (λ _ ())
 \end{code}
 }
