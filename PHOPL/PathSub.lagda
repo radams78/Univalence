@@ -29,6 +29,11 @@ Given paths $P_1$, \ldots, $P_n$; term variales $x_1$, \ldots, $x_n$; and a term
 PathSub : Alphabet → Alphabet → Set
 PathSub U V = Var U -Term → Path V
 
+_∼∼_ : ∀ {U} {V} → PathSub U V → PathSub U V → Set
+τ ∼∼ τ' = ∀ x → τ x ≡ τ' x
+
+postulate ∼∼-refl : ∀ {U} {V} {τ : PathSub U V} → τ ∼∼ τ
+
 --REFACTOR
 sub↖ : ∀ {U} {V} → Sub U V → Sub (U , -Term) (V , -Term , -Term , -Path)
 sub↖ σ _ x₀ = var x₂
@@ -42,6 +47,7 @@ pathsub↑ : ∀ {U} {V} → PathSub U V → PathSub (U , -Term) (V , -Term , -T
 pathsub↑ τ x₀ = var x₀
 pathsub↑ τ (↑ x) = τ x ⇑ ⇑ ⇑
 
+infix 70 _⟦⟦_∶_∼_⟧⟧
 _⟦⟦_∶_∼_⟧⟧ : ∀ {U} {V} → Term U → PathSub U V → Sub U V → Sub U V → Path V
 var x ⟦⟦ τ ∶ _ ∼ _ ⟧⟧ = τ x
 app -bot out ⟦⟦ τ ∶ _ ∼ _ ⟧⟧ = reff ⊥
@@ -58,6 +64,25 @@ _•RP_ : ∀ {U} {V} {W} → Rep V W → PathSub U V → PathSub U W
 extendPS : ∀ {U} {V} → PathSub U V → Path V → PathSub (U , -Term) V
 extendPS τ P x₀ = P
 extendPS τ P (↑ x) = τ x
+
+postulate pathsub-extendPS : ∀ {U} {V} M {τ} {P : Path V} {N : Term V} {σ : Sub U V} {N' : Term V} {σ'} →
+                           M ⟦⟦ extendPS τ P ∶ x₀:= N • Sub↑ -Term σ ∼ x₀:= N' • Sub↑ -Term σ' ⟧⟧
+                           ≡ M ⟦⟦ pathsub↑ τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧ ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (P ⇑ ⇑) ⟧
+
+postulate pathsub-cong : ∀ {U} {V} M {τ τ' : PathSub U V} {ρ} {ρ'} {σ} {σ'} →
+                       τ ∼∼ τ' → ρ ∼ ρ' → σ ∼ σ' → M ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ ≡ M ⟦⟦ τ' ∶ ρ' ∼ σ' ⟧⟧
+
+postulate pathsub↑-compRP : ∀ {U} {V} {W} {ρ : Rep V W} {τ : PathSub U V} →
+                          pathsub↑ (ρ •RP τ) ∼∼ Rep↑ -Path (Rep↑ -Term (Rep↑ -Term ρ)) •RP pathsub↑ τ
+
+postulate sub↖-comp₁ : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} →
+                     sub↖ (ρ •₁ σ) ∼ Rep↑ -Path (Rep↑ -Term (Rep↑ -Term ρ)) •₁ sub↖ σ
+
+postulate sub↗-comp₁ : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} →
+                     sub↗ (ρ •₁ σ) ∼ Rep↑ -Path (Rep↑ -Term (Rep↑ -Term ρ)) •₁ sub↗ σ
+
+postulate Rep↑↑↑-pathsub : ∀ {U} {V} {W} M {ρ : Rep V W} {τ : PathSub U V} {σ σ' : Sub U V} →
+                         M ⟦⟦ ρ •RP τ ∶ ρ •₁ σ ∼ ρ •₁ σ' ⟧⟧ ≡ M ⟦⟦ τ ∶ σ ∼ σ' ⟧⟧ 〈 ρ 〉
 \end{code}
 }
 

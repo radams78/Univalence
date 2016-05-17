@@ -76,20 +76,40 @@ Computable-Path-Substitution U V τ σ σ' Γ Δ _ A τ∶σ∼σ' (appR Γ⊢M�
   (Computable-Path-Substitution U V τ σ σ' Γ Δ _ _ τ∶σ∼σ' Γ⊢N∶A validΔ)
 Computable-Path-Substitution .U V τ σ σ' .Γ Δ _ _ τ∶σ∼σ' (ΛR {U} {Γ} {A} {M} {B} Γ,A⊢M∶B) validΔ = 
   func-EE (λ W Θ N N' Q ρ ρ∶Δ⇒Θ validΘ N∈EΘA N'∈EΘA Q∈EΘN≡N' → 
+    let ρ' = Rep↑ -Path (Rep↑ -Term (Rep↑ -Term ρ)) in
+    let step1 : x₀:= N • Sub↑ -Term (ρ •₁ σ) ∼ x₀:= N •₂ Rep↑ -Term ρ • Sub↑ -Term σ 
+        step1 = sub-trans {ρ = x₀:= N • Sub↑ -Term (ρ •₁ σ)}
+                  {σ = x₀:= N • (Rep↑ -Term ρ •₁ Sub↑ -Term σ)}
+                  {τ = x₀:= N •₂ Rep↑ -Term ρ • Sub↑ -Term σ} (comp-congr Sub↑-comp₁) 
+                  (assoc₁₂ {ρ = x₀:= N} {σ = Rep↑ -Term ρ} {τ = Sub↑ -Term σ}) in
+    let step2 : x₀:= N' • Sub↑ -Term (ρ •₁ σ') ∼ x₀:= N' •₂ Rep↑ -Term ρ • Sub↑ -Term σ' 
+        step2 = sub-trans {ρ = x₀:= N' • Sub↑ -Term (ρ •₁ σ')}
+                  {σ = x₀:= N' • (Rep↑ -Term ρ •₁ Sub↑ -Term σ')}
+                  {τ = x₀:= N' •₂ Rep↑ -Term ρ • Sub↑ -Term σ'} (comp-congr Sub↑-comp₁) 
+                  (assoc₁₂ {ρ = x₀:= N'} {σ = Rep↑ -Term ρ} {τ = Sub↑ -Term σ'}) in
     let ih : EE Θ (M ⟦ x₀:= N •₂ Rep↑ -Term ρ • Sub↑ -Term σ ⟧ ≡〈 B ⇑ ⟦ x₀:= N •₂ Rep↑ -Term ρ • Sub↑ -Term σ ⟧ 〉 M ⟦ x₀:= N' •₂ Rep↑ -Term ρ • Sub↑ -Term σ' ⟧) 
                   (M ⟦⟦ extendPS (ρ •RP τ) Q ∶ x₀:= N •₂ Rep↑ -Term ρ • Sub↑ -Term σ ∼ x₀:= N' •₂ Rep↑ -Term ρ • Sub↑ -Term σ' ⟧⟧)
         ih = (Computable-Path-Substitution (U , -Term) W (extendPS (ρ •RP τ) Q) (x₀:= N •₂ Rep↑ -Term ρ • Sub↑ -Term σ) (x₀:= N' •₂ Rep↑ -Term ρ • Sub↑ -Term σ') (Γ ,T A) Θ _ _ 
              (change-ends {σ = x₀:= N' • Sub↑ -Term (ρ •₁ σ')} {σ' = x₀:= N' •₂ Rep↑ -Term ρ • Sub↑ -Term σ'} (extendPS-typed (compRP-typed {σ' = σ'} τ∶σ∼σ' ρ∶Δ⇒Θ)
                (subst (λ a → EE Θ (N ≡〈 a 〉 N') Q) (trans (sym (sub-comp₁ A)) (type-sub {A = A})) Q∈EΘN≡N')) 
-               (sub-trans {ρ = x₀:= N • Sub↑ -Term (ρ •₁ σ)}
-                  {σ = x₀:= N • (Rep↑ -Term ρ •₁ Sub↑ -Term σ)}
-                  {τ = x₀:= N •₂ Rep↑ -Term ρ • Sub↑ -Term σ} (comp-congr Sub↑-comp₁) 
-                  (assoc₁₂ {ρ = x₀:= N} {σ = Rep↑ -Term ρ} {τ = Sub↑ -Term σ})) 
-               (sub-trans (comp-congr Sub↑-comp₁) (assoc₁₂ {ρ = x₀:= N'} {σ = Rep↑ -Term ρ} {τ = Sub↑ -Term σ'}))) Γ,A⊢M∶B validΘ) in
+                 step1 step2) Γ,A⊢M∶B validΘ) in
     expand-EE 
       (conv-EE 
         (subst (EE Θ (M ⟦ x₀:= N •₂ Rep↑ -Term ρ • Sub↑ -Term σ ⟧ ≡〈 B ⇑ ⟦ x₀:= N •₂ Rep↑ -Term ρ • Sub↑ -Term σ ⟧ 〉 M ⟦ x₀:= N' •₂ Rep↑ -Term ρ • Sub↑ -Term σ' ⟧)) 
-          {!!} 
+          (let open ≡-Reasoning in
+          begin
+            M ⟦⟦ extendPS (ρ •RP τ) Q ∶ x₀:= N •₂ Rep↑ -Term ρ • Sub↑ -Term σ ∼
+                 x₀:= N' •₂ Rep↑ -Term ρ • Sub↑ -Term σ' ⟧⟧
+          ≡⟨⟨ pathsub-cong M ∼∼-refl step1 step2 ⟩⟩
+            M ⟦⟦ extendPS (ρ •RP τ) Q ∶ x₀:= N • Sub↑ -Term (ρ •₁ σ) ∼
+                 x₀:= N' • Sub↑ -Term (ρ •₁ σ') ⟧⟧
+          ≡⟨ pathsub-extendPS M ⟩
+            M ⟦⟦ pathsub↑ (ρ •RP τ) ∶ sub↖ (ρ •₁ σ) ∼ sub↗ (ρ •₁ σ') ⟧⟧ ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧
+          ≡⟨ sub-congl (pathsub-cong M pathsub↑-compRP sub↖-comp₁ sub↗-comp₁) ⟩
+            M ⟦⟦ ρ' •RP pathsub↑ τ ∶ ρ' •₁ sub↖ σ ∼ ρ' •₁ sub↗ σ' ⟧⟧ ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧
+          ≡⟨ sub-congl (Rep↑↑↑-pathsub M) ⟩
+            (M ⟦⟦ pathsub↑ τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧) 〈 ρ' 〉 ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧
+          ∎) 
           ih)
         {!!}) 
       {!!} 
