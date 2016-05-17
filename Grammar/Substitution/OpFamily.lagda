@@ -173,6 +173,7 @@ open OpFamily substitution using (comp-congl;comp-congr)
            ap-congr to sub-congl;
            unitl to sub-unitl;
            unitr to sub-unitr;
+           ∼-sym to sub-sym;
            ∼-trans to sub-trans;
            assoc to sub-assoc)
   public

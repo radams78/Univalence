@@ -30,6 +30,7 @@ PathSub : Alphabet → Alphabet → Set
 PathSub U V = Var U -Term → Path V
 
 _∼∼_ : ∀ {U} {V} → PathSub U V → PathSub U V → Set
+
 τ ∼∼ τ' = ∀ x → τ x ≡ τ' x
 
 postulate ∼∼-refl : ∀ {U} {V} {τ : PathSub U V} → τ ∼∼ τ

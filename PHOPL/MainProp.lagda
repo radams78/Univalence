@@ -285,7 +285,27 @@ Computable-Path-Substitution .U V τ σ σ' .Γ Δ _ _ τ∶σ∼σ' (ΛR {U} {�
                      step6)) 
       (EE-typed Q∈EΘN≡N'))
       (redexR βE) 
-      (βE-exp (E-SN _ N∈EΘA) (E-SN _ N'∈EΘA) (EE-SN _ Q∈EΘN≡N') (EE-SN {!!} {!ih!}))) where
+      (βE-exp (E-SN _ N∈EΘA) (E-SN _ N'∈EΘA) (EE-SN _ Q∈EΘN≡N') 
+      (subst SN (let open ≡-Reasoning in 
+      begin
+         M ⟦⟦ extendPS (ρ •RP τ) Q ∶
+      x₀:= N •₂ Rep↑ -Term ρ • Sub↑ -Term σ ∼
+      x₀:= N' •₂ Rep↑ -Term ρ • Sub↑ -Term σ' ⟧⟧
+      ≡⟨ pathsub-cong M ∼∼-refl (sub-sym step1) (sub-sym step2) ⟩
+         M ⟦⟦ extendPS (ρ •RP τ) Q ∶
+      x₀:= N • Sub↑ _ (ρ •₁ σ) ∼ x₀:= N' • Sub↑ _ (ρ •₁ σ') ⟧⟧
+      ≡⟨ pathsub-extendPS M ⟩
+        M ⟦⟦ pathsub↑ (ρ •RP τ) ∶ sub↖ (ρ •₁ σ) ∼ sub↗ (ρ •₁ σ') ⟧⟧
+        ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧
+      ≡⟨ sub-congl (pathsub-cong M pathsub↑-compRP sub↖-comp₁ sub↗-comp₁) ⟩
+        M ⟦⟦ ρ' •RP pathsub↑ τ ∶ ρ' •₁ sub↖ σ ∼ ρ' •₁ sub↗ σ' ⟧⟧
+        ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧
+      ≡⟨ sub-congl (Rep↑↑↑-pathsub M) ⟩
+        M ⟦⟦ pathsub↑ τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧ 
+        〈 ρ' 〉
+        ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧
+      ∎) 
+      (EE-SN _ ih)))) where
     aux : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} → 
         x₀:= (var x₂) •₂ Rep↑ _ upRep •₂ Rep↑ _ upRep •₂ Rep↑ _ upRep •₂ Rep↑ _ ρ • Sub↑ _ σ ∼ Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) •₁ sub↖ σ
     aux x₀ = refl
