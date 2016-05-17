@@ -15,7 +15,7 @@ var-E : ∀ {V} {Γ : Context V} {x : Var V -Term} →
   valid Γ → E Γ (close (typeof x Γ)) (var x)
 var-E {V} {Γ} {x} Γvalid = Neutral-E (var x) (varR x Γvalid)
 
-postulate E-SN : ∀ V (Γ : Context V) A M → E Γ A M → SN M
+postulate E-SN : ∀ {V} {Γ : Context V} A {M} → E Γ A M → SN M
 
 postulate ⊥-E : ∀ {V} {Γ : Context V} → valid Γ → E Γ Ω ⊥
 
@@ -88,6 +88,7 @@ postulate conv-EE : ∀ {V} {Γ : Context V} {E} {E'} {P} →
 postulate rep-EE : ∀ {U} {V} {Γ} {Δ} {ρ : Rep U V} {E} {P} →
                  EE Γ E P → ρ ∶ Γ ⇒R Δ → EE Δ (E 〈 ρ 〉) (P 〈 ρ 〉)
 
-postulate EE-typed : ∀ {V} {Γ : Context V} {A} {M N : Term V} {P} →
-                   EE Γ (M ≡〈 A 〉 N) P → Γ ⊢ P ∶ M ≡〈 A 〉 N
+postulate EE-typed : ∀ {V} {Γ : Context V} {E} {P} →
+                   EE Γ E P → Γ ⊢ P ∶ E
 
+postulate EE-SN : ∀ {V} {Γ : Context V} E {P} → EE Γ E P → SN P

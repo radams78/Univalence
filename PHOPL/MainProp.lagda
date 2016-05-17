@@ -13,6 +13,7 @@ open import PHOPL.Neutral
 open import PHOPL.Meta
 open import PHOPL.Computable
 open import PHOPL.SubC
+open import PHOPL.SN
 open import PHOPL.MainPropFinal
 
 --TODO Rename
@@ -180,7 +181,10 @@ Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒Δ (lllR .{U} .{Γ} {
        let target : Θ ⊢ app* N N' (λλλ (A ⟦ σ ⟧ 〈 ρ 〉) (P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉)) Q ∶ appT (M ⟦ σ ⟧ 〈 ρ 〉) N ≡〈 B ⟦ σ ⟧ 〈 ρ 〉 〉 appT (M' ⟦ σ ⟧ 〈 ρ 〉) N'
            target = app*R step1 (EE-typed Q∈EΘN≡N') in
        target)
-    (redexR βE) {!!})
+    (redexR βE) 
+    (βE-exp (E-SN (close (A ⟦ σ ⟧)) N∈EΘA) (E-SN (close (A ⟦ σ ⟧)) N'∈EΘA) 
+      (EE-SN (N ≡〈 A ⟦ σ ⟧ 〈 ρ 〉 〉 N') Q∈EΘN≡N') 
+      {!!}))
 Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒Δ (app*R Γ⊢P∶M≡M' Γ⊢Q∶N≡N') validΔ = 
   app*-EE 
   (Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒Δ Γ⊢P∶M≡M' validΔ) 
@@ -212,7 +216,7 @@ Computable-Path-Substitution .U V τ σ σ' .Γ Δ _ _ τ∶σ∼σ' (ΛR {U} {�
 
 Strong-Normalization : ∀ V K (Γ : Context V) (M : Expression V (varKind K)) A → Γ ⊢ M ∶ A → SN M
 Strong-Normalization V -Proof Γ δ φ Γ⊢δ∶φ = {!!}
-Strong-Normalization V -Term Γ M A Γ⊢M∶A = E-SN V Γ (close A) M 
+Strong-Normalization V -Term Γ M A Γ⊢M∶A = E-SN (close A)
   (subst (E Γ (close A)) sub-idOp 
   (Computable-Substitution V V (idSub V) Γ Γ M A {!!} Γ⊢M∶A {!!}))
 Strong-Normalization V -Path Γ P E Γ⊢P∶E = {!!}
