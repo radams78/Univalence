@@ -10,6 +10,9 @@ postulate Prop-Validity : ∀ {V} {Γ : Context V} {δ : Proof V} {φ : Term V} 
 
 postulate _∶_⇒R_ : ∀ {U} {V} → Rep U V → Context U → Context V → Set
 
+postulate change-codR : ∀ {U} {V} {ρ : Rep U V} {Γ : Context U} {Δ Δ' : Context V} →
+                      ρ ∶ Γ ⇒R Δ → Δ ≡ Δ' → ρ ∶ Γ ⇒R Δ'
+
 postulate upRep-typed : ∀ {V} {Γ : Context V} {K} {A} → upRep ∶ Γ ⇒R _,_ {K = K} Γ A
 
 postulate Rep↑-typed : ∀ {U} {V} {ρ : Rep U V} {K} {Γ} {Δ} {A} →

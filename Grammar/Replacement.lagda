@@ -149,5 +149,26 @@ magic-unique' E {ρ} = let open ≡-Reasoning in
   ≡⟨ rep-congr E (magic-unique {ρ = ρ •R magic}) ⟩
     E 〈 magic 〉
   ∎
+
+Rep↑-upRep₂ : ∀ {U} {V} {K} {L} {M} (E : Expression U M) {σ : Rep U V} → E ⇑ ⇑ 〈 Rep↑ K (Rep↑ L σ) 〉 ≡ E 〈 σ 〉 ⇑ ⇑
+Rep↑-upRep₂ {U} {V} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
+  begin
+    E ⇑ ⇑ 〈 Rep↑ K (Rep↑ L σ) 〉
+  ≡⟨ Rep↑-upRep (E ⇑) ⟩
+    E ⇑ 〈 Rep↑ L σ 〉 ⇑
+  ≡⟨ rep-congl (Rep↑-upRep E) ⟩
+    E 〈 σ 〉 ⇑ ⇑
+  ∎
+
+Rep↑-upRep₃ : ∀ {U} {V} {K} {L} {M} {N} (E : Expression U N) {σ : Rep U V} → 
+  E ⇑ ⇑ ⇑ 〈 Rep↑ K (Rep↑ L (Rep↑ M σ)) 〉 ≡ E 〈 σ 〉 ⇑ ⇑ ⇑
+Rep↑-upRep₃ {U} {V} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
+  begin
+    E ⇑ ⇑ ⇑ 〈 Rep↑ K (Rep↑ L (Rep↑ M σ)) 〉
+  ≡⟨ Rep↑-upRep₂ (E ⇑) ⟩
+    E ⇑ 〈 Rep↑ M σ 〉 ⇑ ⇑
+  ≡⟨ rep-congl (rep-congl (Rep↑-upRep E)) ⟩
+    E 〈 σ 〉 ⇑ ⇑ ⇑
+  ∎
 \end{code}
 }

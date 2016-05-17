@@ -98,7 +98,7 @@ appP δ ε = app -appProof (δ ,, ε ,, out)
 ⊥ : ∀ {V} → Term V
 ⊥ = app -bot out
 
-infix 75 _⊃_
+infix 65 _⊃_
 _⊃_ : ∀ {V} → Term V → Term V → Term V
 φ ⊃ ψ = app -imp (φ ,, ψ ,, out)
 

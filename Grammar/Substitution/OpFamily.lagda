@@ -126,6 +126,26 @@ Sub↑-comp {W = W} {ρ = ρ} {σ = σ} {K = K} {L} (↑ x) =
   ≡⟨ sub-comp₂ (ρ L x) ⟩
      ρ L x 〈 upRep 〉 ⟦ Sub↑ K σ ⟧ 
   ∎
+
+Sub↑-upRep₂ : ∀ {U} {V} {K} {L} {M} (E : Expression U M) {σ : Sub U V} → E ⇑ ⇑ ⟦ Sub↑ K (Sub↑ L σ) ⟧ ≡ E ⟦ σ ⟧ ⇑ ⇑
+Sub↑-upRep₂ {U} {V} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
+  begin
+    E ⇑ ⇑ ⟦ Sub↑ K (Sub↑ L σ) ⟧
+  ≡⟨ Sub↑-upRep (E ⇑) ⟩
+    E ⇑ ⟦ Sub↑ L σ ⟧ ⇑
+  ≡⟨ rep-congl (Sub↑-upRep E) ⟩
+    E ⟦ σ ⟧ ⇑ ⇑
+  ∎
+
+Sub↑-upRep₃ : ∀ {U} {V} {K} {L} {M} {N} (E : Expression U N) {σ : Sub U V} → E ⇑ ⇑ ⇑ ⟦ Sub↑ K (Sub↑ L (Sub↑ M σ)) ⟧ ≡ E ⟦ σ ⟧ ⇑ ⇑ ⇑
+Sub↑-upRep₃ {U} {V} {K} {L} {M} {N} E {σ} = let open ≡-Reasoning in 
+  begin
+    E ⇑ ⇑ ⇑ ⟦ Sub↑ K (Sub↑ L (Sub↑ M σ)) ⟧
+  ≡⟨ Sub↑-upRep₂ (E ⇑) ⟩
+    E ⇑ ⟦ Sub↑ M σ ⟧ ⇑ ⇑
+  ≡⟨ rep-congl (rep-congl (Sub↑-upRep E)) ⟩
+    E ⟦ σ ⟧ ⇑ ⇑ ⇑
+  ∎
 \end{code}
 }
 

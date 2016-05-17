@@ -72,26 +72,6 @@ botsub-comp-upRep {U} {V} {K} {L} {σ} E {M} = let open ≡-Reasoning in
     E ⟦ σ ⟧
   ∎
 
-Sub↑-upRep₂ : ∀ {U} {V} {K} {L} {M} (E : Expression U M) {σ : Sub U V} → E ⇑ ⇑ ⟦ Sub↑ K (Sub↑ L σ) ⟧ ≡ E ⟦ σ ⟧ ⇑ ⇑
-Sub↑-upRep₂ {U} {V} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
-  begin
-    E ⇑ ⇑ ⟦ Sub↑ K (Sub↑ L σ) ⟧
-  ≡⟨ Sub↑-upRep (E ⇑) ⟩
-    E ⇑ ⟦ Sub↑ L σ ⟧ ⇑
-  ≡⟨ rep-congl (Sub↑-upRep E) ⟩
-    E ⟦ σ ⟧ ⇑ ⇑
-  ∎
-
-Rep↑-upRep₂ : ∀ {U} {V} {K} {L} {M} (E : Expression U M) {σ : Rep U V} → E ⇑ ⇑ 〈 Rep↑ K (Rep↑ L σ) 〉 ≡ E 〈 σ 〉 ⇑ ⇑
-Rep↑-upRep₂ {U} {V} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
-  begin
-    E ⇑ ⇑ 〈 Rep↑ K (Rep↑ L σ) 〉
-  ≡⟨ Rep↑-upRep (E ⇑) ⟩
-    E ⇑ 〈 Rep↑ L σ 〉 ⇑
-  ≡⟨ rep-congl (Rep↑-upRep E) ⟩
-    E 〈 σ 〉 ⇑ ⇑
-  ∎
-
 subrepsublemma : ∀ {U} {V} {W} {D} (E : Expression U D) {A B C : VarKind} {σ : Sub U V} {ρ : Rep V W} {F : Expression W (varKind C)} →
   E ⇑ ⇑ ⇑ ⟦ Sub↑ A (Sub↑ B (Sub↑ C σ)) ⟧ 〈 Rep↑ A (Rep↑ B (Rep↑ C ρ)) 〉 ⟦ Sub↑ A (Sub↑ B (x₀:= F)) ⟧ ≡ E ⇑ ⇑ ⟦ Sub↑ A (Sub↑ B σ) ⟧ 〈 Rep↑ A (Rep↑ B ρ) 〉
 subrepsublemma {U} {V} {W} {D} E {A} {B} {C} {σ} {ρ} {F} = let open ≡-Reasoning in 
@@ -114,3 +94,53 @@ subrepsublemma {U} {V} {W} {D} E {A} {B} {C} {σ} {ρ} {F} = let open ≡-Reason
   ≡⟨⟨ rep-congl (Sub↑-upRep₂ E) ⟩⟩
     E ⇑ ⇑ ⟦ Sub↑ A (Sub↑ B σ) ⟧ 〈 Rep↑ A (Rep↑ B ρ) 〉
   ∎
+
+aux-lm1 : ∀ U V (σ : Sub U V) Γ Δ φ δ ψ →
+  (∀ W Θ (τ : Sub (U , -Proof) W) → τ ∶ Γ ,P φ ⇒C Θ → valid Θ → EP Θ (ψ ⇑ ⟦ τ ⟧) (δ ⟦ τ ⟧)) →
+  σ ∶ Γ ⇒C Δ → Γ ,P φ ⊢ δ ∶ ψ ⇑ → valid Δ → EP Δ  (φ ⟦ σ ⟧ ⊃ ψ ⟦ σ ⟧) (ΛP (φ ⟦ σ ⟧) (δ ⟦ Sub↑ -Proof σ ⟧))
+aux-lm1 U V σ Γ Δ φ δ ψ ih σ∶Γ⇒CΔ Γ,φ⊢δ∶ψ validΔ =   func-EP (λ W Θ ρ ε validΘ ρ∶Δ⇒RΘ ε∈EΘφσρ → 
+  let EPδ : EP Θ (ψ ⟦ σ ⟧ 〈 ρ 〉) (δ ⟦ Sub↑ -Proof σ ⟧ 〈 Rep↑ -Proof ρ 〉 ⟦ x₀:= ε ⟧)
+      EPδ = subst₂ (EP Θ) 
+        (let open ≡-Reasoning in 
+        begin
+          ψ ⇑ ⟦ x₀:= ε •₂ Rep↑ -Proof ρ • Sub↑ -Proof σ ⟧
+        ≡⟨ sub-comp (ψ ⇑) ⟩
+          ψ ⇑ ⟦ Sub↑ -Proof σ ⟧ ⟦ x₀:= ε •₂ Rep↑ -Proof ρ ⟧
+        ≡⟨ sub-comp₂ (ψ ⇑ ⟦ Sub↑ -Proof σ ⟧) ⟩
+          ψ ⇑ ⟦ Sub↑ -Proof σ ⟧ 〈 Rep↑ -Proof ρ 〉 ⟦ x₀:= ε ⟧
+        ≡⟨ cong (λ x → (x 〈 Rep↑ -Proof ρ 〉) ⟦ x₀:= ε ⟧) (Sub↑-upRep ψ) ⟩
+          ψ ⟦ σ ⟧ ⇑ 〈 Rep↑ -Proof ρ 〉 ⟦ x₀:= ε ⟧
+        ≡⟨ sub-congl (Rep↑-upRep (ψ ⟦ σ ⟧)) ⟩
+          ψ ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⟦ x₀:= ε ⟧
+        ≡⟨ botsub-upRep _ ⟩
+          ψ ⟦ σ ⟧ 〈 ρ 〉
+        ∎)
+       (let open ≡-Reasoning in 
+         begin
+           δ ⟦ x₀:= ε •₂ Rep↑ -Proof ρ • Sub↑ -Proof σ ⟧
+         ≡⟨ sub-comp δ ⟩
+           δ ⟦ Sub↑ -Proof σ ⟧ ⟦ x₀:= ε •₂ Rep↑ -Proof ρ ⟧
+         ≡⟨ sub-comp₂ (δ ⟦ Sub↑ -Proof σ ⟧) ⟩
+           δ ⟦ Sub↑ -Proof σ ⟧ 〈 Rep↑ -Proof ρ 〉 ⟦ x₀:= ε ⟧
+         ∎) 
+        (ih W Θ (x₀:= ε •₂ Rep↑ -Proof ρ • Sub↑ -Proof σ) (compC (comp₂C (botsubCP ε∈EΘφσρ) (Rep↑-typed ρ∶Δ⇒RΘ)) (Sub↑C σ∶Γ⇒CΔ)) validΘ)
+ in
+  expand-EP EPδ
+    (appPR (ΛPR (subst₂ (λ M A → (Θ ,P ((φ ⟦ σ ⟧) 〈 ρ 〉)) ⊢ M ∶ A) 
+      (sub-comp₁ δ)
+      (let open ≡-Reasoning in 
+      begin
+        ψ ⇑ ⟦ Rep↑ -Proof ρ •₁ Sub↑ -Proof σ ⟧
+      ≡⟨ sub-comp₁ (ψ ⇑) ⟩
+        ψ ⇑ ⟦ Sub↑ -Proof σ ⟧ 〈 Rep↑ -Proof ρ 〉
+      ≡⟨ rep-congl (Sub↑-upRep ψ) ⟩
+        ψ ⟦ σ ⟧ ⇑ 〈 Rep↑ -Proof ρ 〉
+      ≡⟨ Rep↑-upRep (ψ ⟦ σ ⟧) ⟩
+        ψ ⟦ σ ⟧ 〈 ρ 〉 ⇑
+      ∎) 
+      (Substitution Γ,φ⊢δ∶ψ (ctxPR (Prop-Validity (EP-typed ε∈EΘφσρ))) 
+        (comp₁-typed (Rep↑-typed ρ∶Δ⇒RΘ) (Sub↑-typed (subC-typed σ∶Γ⇒CΔ)))))) 
+    (EP-typed ε∈EΘφσρ)) 
+    (redexR βR) 
+    (SN-βexp (EP-SN ε∈EΘφσρ) (EP-SN EPδ))) -- TODO Common pattern with Computable-Substitution
+
