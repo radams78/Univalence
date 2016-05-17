@@ -2,6 +2,8 @@ module PHOPL.Meta where
 open import Prelims
 open import PHOPL
 open import PHOPL.Rules
+open import PHOPL.PathSub
+open import PHOPL.Close
 
 postulate β-respects-sub : respects' substitution
 
@@ -20,6 +22,9 @@ postulate upRep-typed : ∀ {V} {Γ : Context V} {K} {A} → upRep ∶ Γ ⇒R _
 
 postulate Rep↑-typed : ∀ {U} {V} {ρ : Rep U V} {K} {Γ} {Δ} {A} →
                      ρ ∶ Γ ⇒R Δ → Rep↑ K ρ ∶ (Γ , A) ⇒R (Δ , A 〈 ρ 〉)
+
+postulate compR-typed : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Rep U V} {Γ} {Δ} {Θ : Context W} →
+                        ρ ∶ Δ ⇒R Θ → σ ∶ Γ ⇒R Δ → ρ •R σ ∶ Γ ⇒R Θ
 
 postulate Weakening : ∀ {U} {V} {ρ : Rep U V} {K}
                     {Γ : Context U} {M : Expression U (varKind K)} {A} {Δ} →
@@ -69,3 +74,31 @@ lemma {U} {V} {W} M Q N' N ρ σ = let open ≡-Reasoning in
           ∎
 
 postulate change-cod' : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {Δ'} → σ ∶ Γ ⇒ Δ → Δ ≡ Δ' → σ ∶ Γ ⇒ Δ'
+
+_∶_∼_∶_⇒_ : ∀ {U} {V} → PathSub U V → Sub U V → Sub U V → Context U → Context V → Set
+τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ = ∀ x → Δ ⊢ τ x ∶ ρ _ x ≡〈 typeof x Γ ⟦ ρ ⟧ 〉 σ _ x
+
+postulate Path-Substitution : ∀ {U} {V} {τ : PathSub U V} {ρ σ : Sub U V} {Γ : Context U} {Δ : Context V} {M : Term U} {A : Type U} →
+                            Γ ⊢ M ∶ A → τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → Δ ⊢ M ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ ∶ M ⟦ ρ ⟧ ≡〈 (close A) 〈 magic 〉 〉 M ⟦ σ ⟧
+
+postulate pathsub↑-typed : ∀ {U} {V} {τ : PathSub U V} {ρ σ : Sub U V} {Γ} {Δ} {A} →
+                           τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → pathsub↑ τ ∶ sub↖ ρ ∼ sub↗ σ ∶ Γ , A ⇒ Δ , ty A , ty A , var x₁ ≡〈 ty A 〉 var x₀
+
+postulate pathsub-valid₁ : ∀ {U} {V} {τ : PathSub U V} {ρ σ : Sub U V} {Γ} {Δ} →
+                           τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → ρ ∶ Γ ⇒ Δ
+
+postulate pathsub-valid₂ : ∀ {U} {V} {τ : PathSub U V} {ρ σ : Sub U V} {Γ} {Δ} →
+                           τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → σ ∶ Γ ⇒ Δ
+
+extendSub : ∀ {U} {V} → Sub U V → Term V → Sub (U , -Term) V
+extendSub σ M _ x₀ = M
+extendSub σ M _ (↑ x) = σ _ x
+
+postulate extendPS-typed : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {Δ} {P} {M} {N} {A} →
+                           τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → Δ ⊢ P ∶ M ≡〈 close A 〈 magic 〉 〉 N →
+                           extendPS τ P ∶ extendSub ρ M ∼ extendSub σ N ∶ Γ , A ⇒ Δ
+
+postulate compRP-typed : ∀ {U} {V} {W} {ρ : Rep V W} {τ : PathSub U V} {σ σ' : Sub U V}
+                           {Γ} {Δ} {Θ} →
+                           ρ ∶ Δ ⇒R Θ → τ ∶ σ ∼ σ' ∶ Γ ⇒ Δ →
+                           ρ •RP τ ∶ ρ •₁ σ ∼ ρ •₁ σ' ∶ Γ ⇒ Θ

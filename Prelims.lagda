@@ -33,5 +33,10 @@ postulate cong₃ : ∀ {A B C D : Set} (f : A → B → C → D) {a a' b b' c c
 
 postulate subst₃ : ∀ {A B C : Set} (P : A → B → C → Set) {a a' b b' c c'} →
                  a ≡ a' → b ≡ b' → c ≡ c' → P a b c → P a' b' c'
+
+postulate subst₄ : ∀ {A1 A2 A3 A4 : Set} (P : A1 → A2 -> A3 -> A4  → Set) 
+                   {a1 a1' a2 a2' a3 a3' a4 a4'} →
+                 a1 ≡ a1' -> a2 ≡ a2' -> a3 ≡ a3' -> a4 ≡ a4' ->
+                 P a1 a2 a3 a4 -> P a1' a2' a3' a4'
 \end{code}
 }
