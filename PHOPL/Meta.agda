@@ -34,6 +34,8 @@ postulate Sub↑-typed : ∀ {U} {V} {K} {σ : Sub U V} {Γ} {Δ} {A} →
 postulate change-type : ∀ {V} {Γ} {K} {M : Expression V (varKind K)} {A} {B} →
                       Γ ⊢ M ∶ A → A ≡ B → Γ ⊢ M ∶ B
 
+postulate botsub-typed : ∀ {V} {K} {Γ} {E : Expression V (varKind K)} {A} → Γ ⊢ E ∶ A → x₀:= E ∶ Γ , A ⇒ Γ
+
 lemma : ∀ {U} {V} {W} {K} (M : Expression U K) Q N' N (ρ : Rep V W) (σ : Sub U V) → M ⇑ ⇑ ⇑ ⟦ x₀:= Q • Sub↑ -Path (x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •₁ σ))) ⟧ ≡ M ⟦ σ ⟧ 〈 ρ 〉 --TODO Rename
 lemma {U} {V} {W} M Q N' N ρ σ = let open ≡-Reasoning in 
           begin
@@ -42,20 +44,22 @@ lemma {U} {V} {W} M Q N' N ρ σ = let open ≡-Reasoning in
             M ⇑ ⇑ ⇑ ⟦ Sub↑ -Path (x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •₁ σ))) ⟧ ⟦ x₀:= Q ⟧
           ≡⟨ sub-congl (Sub↑-upRep (M ⇑ ⇑)) ⟩
             M ⇑ ⇑ ⟦ x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •₁ σ)) ⟧ ⇑ ⟦ x₀:= Q ⟧
-          ≡⟨ botsub-upRep ⟩
+          ≡⟨ botsub-upRep _ ⟩
             M ⇑ ⇑ ⟦ x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •₁ σ)) ⟧
           ≡⟨ sub-comp (M ⇑ ⇑) ⟩
             M ⇑ ⇑ ⟦ Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •₁ σ)) ⟧ ⟦ x₀:= N' ⟧
           ≡⟨ sub-congl (Sub↑-upRep (M ⇑)) ⟩
             M ⇑ ⟦ x₀:= N • Sub↑ -Term (ρ •₁ σ) ⟧ ⇑ ⟦ x₀:= N' ⟧
-          ≡⟨ botsub-upRep ⟩
+          ≡⟨ botsub-upRep _ ⟩
             M ⇑ ⟦ x₀:= N • Sub↑ -Term (ρ •₁ σ) ⟧
           ≡⟨ sub-comp (M ⇑) ⟩
             M ⇑ ⟦ Sub↑ -Term (ρ •₁ σ) ⟧ ⟦ x₀:= N ⟧
           ≡⟨ sub-congl (Sub↑-upRep M) ⟩
             M ⟦ ρ •₁ σ ⟧ ⇑ ⟦ x₀:= N ⟧
-          ≡⟨ botsub-upRep ⟩
+          ≡⟨ botsub-upRep _ ⟩
             M ⟦ ρ •₁ σ ⟧
           ≡⟨ sub-comp₁ M ⟩
             M ⟦ σ ⟧ 〈 ρ 〉
           ∎
+
+postulate change-cod' : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {Δ'} → σ ∶ Γ ⇒ Δ → Δ ≡ Δ' → σ ∶ Γ ⇒ Δ'

@@ -113,13 +113,13 @@ comp-botsub' F = let COMP = OpFamily.COMP substitution in comp-botsubGEN' {E' = 
 
 \begin{code}
 botsub-upRep : ∀ {U} {C} {K} {L}
-  {E : Subexpression U C K} {F : Expression U (varKind L)} → 
+  (E : Subexpression U C K) {F : Expression U (varKind L)} → 
   E 〈 upRep 〉 ⟦ x₀:= F ⟧ ≡ E
 \end{code}
 
 \AgdaHide{
 \begin{code}
-botsub-upRep {U} {C} {K} {L} {E} {F} = let open ≡-Reasoning in 
+botsub-upRep {U} {C} {K} {L} E {F} = let open ≡-Reasoning in 
   begin
     E 〈 upRep 〉 ⟦ x₀:= F ⟧
   ≡⟨⟨ sub-comp₂ E ⟩⟩

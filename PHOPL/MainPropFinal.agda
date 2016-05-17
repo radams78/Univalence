@@ -60,14 +60,57 @@ Computable-Substitution U V σ Γ Δ .(ΛT A M) .(A ⇛ B) σ∶Γ⇒Δ (ΛR {A 
       ∎) 
       N∈EΘA)) (Rep↑-typed ρ∶Δ⇒RΘ)) (Sub↑C σ∶Γ⇒Δ)) Γ,A⊢M∶B Θvalid)))
 
-botsub-comp-upRep : ∀ {U} {V} {K} {L} {σ : Sub U V} {E : Expression U L} {M} → E ⇑ ⟦ x₀:= M • Sub↑ K σ ⟧ ≡ E ⟦ σ ⟧
-botsub-comp-upRep {U} {V} {K} {L} {σ} {E} {M} = let open ≡-Reasoning in 
+botsub-comp-upRep : ∀ {U} {V} {K} {L} {σ : Sub U V} (E : Expression U L) {M} → E ⇑ ⟦ x₀:= M • Sub↑ K σ ⟧ ≡ E ⟦ σ ⟧
+botsub-comp-upRep {U} {V} {K} {L} {σ} E {M} = let open ≡-Reasoning in 
   begin
     E ⇑ ⟦ x₀:= M • Sub↑ K σ ⟧
   ≡⟨ sub-comp (E ⇑) ⟩
     E ⇑ ⟦ Sub↑ K σ ⟧ ⟦ x₀:= M ⟧
   ≡⟨ sub-congl (Sub↑-upRep E) ⟩
     E ⟦ σ ⟧ ⇑ ⟦ x₀:= M ⟧
-  ≡⟨ botsub-upRep ⟩
+  ≡⟨ botsub-upRep _ ⟩
     E ⟦ σ ⟧
+  ∎
+
+Sub↑-upRep₂ : ∀ {U} {V} {K} {L} {M} (E : Expression U M) {σ : Sub U V} → E ⇑ ⇑ ⟦ Sub↑ K (Sub↑ L σ) ⟧ ≡ E ⟦ σ ⟧ ⇑ ⇑
+Sub↑-upRep₂ {U} {V} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
+  begin
+    E ⇑ ⇑ ⟦ Sub↑ K (Sub↑ L σ) ⟧
+  ≡⟨ Sub↑-upRep (E ⇑) ⟩
+    E ⇑ ⟦ Sub↑ L σ ⟧ ⇑
+  ≡⟨ rep-congl (Sub↑-upRep E) ⟩
+    E ⟦ σ ⟧ ⇑ ⇑
+  ∎
+
+Rep↑-upRep₂ : ∀ {U} {V} {K} {L} {M} (E : Expression U M) {σ : Rep U V} → E ⇑ ⇑ 〈 Rep↑ K (Rep↑ L σ) 〉 ≡ E 〈 σ 〉 ⇑ ⇑
+Rep↑-upRep₂ {U} {V} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
+  begin
+    E ⇑ ⇑ 〈 Rep↑ K (Rep↑ L σ) 〉
+  ≡⟨ Rep↑-upRep (E ⇑) ⟩
+    E ⇑ 〈 Rep↑ L σ 〉 ⇑
+  ≡⟨ rep-congl (Rep↑-upRep E) ⟩
+    E 〈 σ 〉 ⇑ ⇑
+  ∎
+
+subrepsublemma : ∀ {U} {V} {W} {D} (E : Expression U D) {A B C : VarKind} {σ : Sub U V} {ρ : Rep V W} {F : Expression W (varKind C)} →
+  E ⇑ ⇑ ⇑ ⟦ Sub↑ A (Sub↑ B (Sub↑ C σ)) ⟧ 〈 Rep↑ A (Rep↑ B (Rep↑ C ρ)) 〉 ⟦ Sub↑ A (Sub↑ B (x₀:= F)) ⟧ ≡ E ⇑ ⇑ ⟦ Sub↑ A (Sub↑ B σ) ⟧ 〈 Rep↑ A (Rep↑ B ρ) 〉
+subrepsublemma {U} {V} {W} {D} E {A} {B} {C} {σ} {ρ} {F} = let open ≡-Reasoning in 
+  begin
+    E ⇑ ⇑ ⇑ ⟦ Sub↑ A (Sub↑ B (Sub↑ C σ)) ⟧ 〈 Rep↑ A (Rep↑ B (Rep↑ C ρ)) 〉 ⟦ Sub↑ A (Sub↑ B (x₀:= F)) ⟧ 
+  ≡⟨ sub-congl (rep-congl (Sub↑-upRep₂ (E ⇑))) ⟩
+    E ⇑ ⟦ Sub↑ C σ ⟧ ⇑ ⇑ 〈 Rep↑ A (Rep↑ B (Rep↑ C ρ)) 〉 ⟦ Sub↑ A (Sub↑ B (x₀:= F)) ⟧
+  ≡⟨ sub-congl (rep-congl (rep-congl (rep-congl (Sub↑-upRep E)))) ⟩
+    E ⟦ σ ⟧ ⇑ ⇑ ⇑ 〈 Rep↑ A (Rep↑ B (Rep↑ C ρ)) 〉 ⟦ Sub↑ A (Sub↑ B (x₀:= F)) ⟧
+  ≡⟨ sub-congl (Rep↑-upRep₂ (E ⟦ σ ⟧ ⇑)) ⟩
+    E ⟦ σ ⟧ ⇑ 〈 Rep↑ C ρ 〉 ⇑ ⇑ ⟦ Sub↑ A (Sub↑ B (x₀:= F)) ⟧
+  ≡⟨ sub-congl (rep-congl (rep-congl (Rep↑-upRep (E ⟦ σ ⟧)))) ⟩
+    E ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑ ⟦ Sub↑ A (Sub↑ B (x₀:= F)) ⟧
+  ≡⟨ Sub↑-upRep₂ (E ⟦ σ ⟧ 〈 ρ 〉 ⇑) ⟩
+    E ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⟦ x₀:= F ⟧ ⇑ ⇑
+  ≡⟨ rep-congl (rep-congl (botsub-upRep (E ⟦ σ ⟧ 〈 ρ 〉))) ⟩
+    E ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑
+  ≡⟨⟨ Rep↑-upRep₂ (E ⟦ σ ⟧) ⟩⟩
+    E ⟦ σ ⟧  ⇑ ⇑ 〈 Rep↑ A (Rep↑ B ρ) 〉
+  ≡⟨⟨ rep-congl (Sub↑-upRep₂ E) ⟩⟩
+    E ⇑ ⇑ ⟦ Sub↑ A (Sub↑ B σ) ⟧ 〈 Rep↑ A (Rep↑ B ρ) 〉
   ∎
