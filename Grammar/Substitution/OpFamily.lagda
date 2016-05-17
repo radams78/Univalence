@@ -86,13 +86,13 @@ sub-comp₂ E = Composition.ap-circ COMP₂ E
 }
 
 \begin{code}
-Sub↑-upRep : ∀ {U} {V} {C} {K} {L} {E : Subexpression U C K} {σ : Sub U V} →
+Sub↑-upRep : ∀ {U} {V} {C} {K} {L} (E : Subexpression U C K) {σ : Sub U V} →
   E 〈 upRep 〉 ⟦ Sub↑ L σ ⟧ ≡ E ⟦ σ ⟧ 〈 upRep 〉
 \end{code}
 
 \AgdaHide{
 \begin{code}
-Sub↑-upRep {E = E} = liftOp-up-mixed' COMP₂ COMP₁ (λ {_} {_} {_} {_} {E} → sym (up-is-up' {E = E})) {E}
+Sub↑-upRep E = liftOp-up-mixed' COMP₂ COMP₁ (λ {_} {_} {_} {_} {E} → sym (up-is-up' {E = E})) {E}
 \end{code}
 }
 

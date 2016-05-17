@@ -1,4 +1,5 @@
 module PHOPL.Meta where
+open import Prelims
 open import PHOPL
 open import PHOPL.Rules
 
@@ -8,6 +9,8 @@ postulate Prop-Validity : ∀ {V} {Γ : Context V} {δ : Proof V} {φ : Term V} 
                         Γ ⊢ δ ∶ φ → Γ ⊢ φ ∶ Ω
 
 postulate _∶_⇒R_ : ∀ {U} {V} → Rep U V → Context U → Context V → Set
+
+postulate upRep-typed : ∀ {V} {Γ : Context V} {K} {A} → upRep ∶ Γ ⇒R _,_ {K = K} Γ A
 
 postulate Rep↑-typed : ∀ {U} {V} {ρ : Rep U V} {K} {Γ} {Δ} {A} →
                      ρ ∶ Γ ⇒R Δ → Rep↑ K ρ ∶ (Γ , A) ⇒R (Δ , A 〈 ρ 〉)
@@ -27,3 +30,32 @@ postulate comp₁-typed : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} {Γ} {Δ
 
 postulate Sub↑-typed : ∀ {U} {V} {K} {σ : Sub U V} {Γ} {Δ} {A} →
                      σ ∶ Γ ⇒ Δ → Sub↑ K σ ∶ Γ , A ⇒ Δ , A ⟦ σ ⟧
+
+postulate change-type : ∀ {V} {Γ} {K} {M : Expression V (varKind K)} {A} {B} →
+                      Γ ⊢ M ∶ A → A ≡ B → Γ ⊢ M ∶ B
+
+lemma : ∀ {U} {V} {W} {K} (M : Expression U K) Q N' N (ρ : Rep V W) (σ : Sub U V) → M ⇑ ⇑ ⇑ ⟦ x₀:= Q • Sub↑ -Path (x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •₁ σ))) ⟧ ≡ M ⟦ σ ⟧ 〈 ρ 〉 --TODO Rename
+lemma {U} {V} {W} M Q N' N ρ σ = let open ≡-Reasoning in 
+          begin
+            M ⇑ ⇑ ⇑ ⟦ x₀:= Q • Sub↑ -Path (x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •₁ σ))) ⟧
+          ≡⟨ sub-comp (M ⇑ ⇑ ⇑) ⟩
+            M ⇑ ⇑ ⇑ ⟦ Sub↑ -Path (x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •₁ σ))) ⟧ ⟦ x₀:= Q ⟧
+          ≡⟨ sub-congl (Sub↑-upRep (M ⇑ ⇑)) ⟩
+            M ⇑ ⇑ ⟦ x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •₁ σ)) ⟧ ⇑ ⟦ x₀:= Q ⟧
+          ≡⟨ botsub-upRep ⟩
+            M ⇑ ⇑ ⟦ x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •₁ σ)) ⟧
+          ≡⟨ sub-comp (M ⇑ ⇑) ⟩
+            M ⇑ ⇑ ⟦ Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •₁ σ)) ⟧ ⟦ x₀:= N' ⟧
+          ≡⟨ sub-congl (Sub↑-upRep (M ⇑)) ⟩
+            M ⇑ ⟦ x₀:= N • Sub↑ -Term (ρ •₁ σ) ⟧ ⇑ ⟦ x₀:= N' ⟧
+          ≡⟨ botsub-upRep ⟩
+            M ⇑ ⟦ x₀:= N • Sub↑ -Term (ρ •₁ σ) ⟧
+          ≡⟨ sub-comp (M ⇑) ⟩
+            M ⇑ ⟦ Sub↑ -Term (ρ •₁ σ) ⟧ ⟦ x₀:= N ⟧
+          ≡⟨ sub-congl (Sub↑-upRep M) ⟩
+            M ⟦ ρ •₁ σ ⟧ ⇑ ⟦ x₀:= N ⟧
+          ≡⟨ botsub-upRep ⟩
+            M ⟦ ρ •₁ σ ⟧
+          ≡⟨ sub-comp₁ M ⟩
+            M ⟦ σ ⟧ 〈 ρ 〉
+          ∎

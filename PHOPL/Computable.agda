@@ -31,6 +31,8 @@ postulate func-E : ∀ {U} {Γ : Context U} {M : Term U} {A} {B} →
 postulate expand-E : ∀ {V} {Γ : Context V} {A : Type V} {B : Type ∅} {M : Term (V , -Term)} {N : Term V} →
                    E Γ B (M ⟦ x₀:= N ⟧) → E Γ B (appT (ΛT A M) N)
 
+postulate E-typed : ∀ {V} {Γ : Context V} {A} {M} → E Γ A M → Γ ⊢ M ∶ A 〈 magic 〉
+
 postulate EP : ∀ {V} → Context V → Term V → Proof V → Set
 
 postulate appP-EP : ∀ {V} {Γ : Context V} {δ ε : Proof V} {φ} {ψ} →

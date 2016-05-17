@@ -13,6 +13,19 @@ open import PHOPL.Meta
 open import PHOPL.Computable
 open import PHOPL.SubC
 
+Eclose-lm : ∀ {U} {V} {W} (Θ : Context U) (A : Type V) N (ρ : Rep V W)
+  → E Θ (close A) N → E Θ (close (A 〈 ρ 〉)) N
+Eclose-lm Θ A N ρ = subst (λ x → E Θ x N) (sym (close-rep A))
+
+Sub↑-lm₁ : ∀ {U} {V} {K} (σ : Sub U V) (Γ : Context U) (A : Expression U (parent K)) (Δ : Context V) B → 
+  σ ∶ Γ ⇒C Δ → A ⟦ σ ⟧ ≡ B → Sub↑ K σ ∶ Γ , A ⇒C Δ , B
+Sub↑-lm₁ {U} {V} σ Γ A Δ B σ∶Γ⇒CΔ Aσ≡B = change-cod (Sub↑C σ∶Γ⇒CΔ) (cong (λ x → Δ , x) Aσ≡B)
+
+Sub↑-lm : ∀ {U} {V} {W} {L} (σ : Sub U (V , -Term)) (ρ : Rep W V) Γ Δ N A B C → σ ∶ Γ ⇒C Δ , A 〈 ρ 〉 → E Δ (close A) N → B ⟦ x₀:= N • σ ⟧ ≡ C → 
+  Sub↑ L (x₀:= N • σ) ∶ _,_ {K = L} Γ B ⇒C Δ , C
+Sub↑-lm {U} {V} {L} σ ρ Γ Δ N A B C σ∶Γ⇒Δ,A N∈EΔA = Sub↑-lm₁ {U} {V} (x₀:= N • σ) Γ B Δ C 
+  (compC (botsubC (Eclose-lm Δ A N ρ N∈EΔA)) σ∶Γ⇒Δ,A)
+
 Computable-Substitution : ∀ U V (σ : Sub U V) Γ Δ M A → 
   σ ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → E Δ (close A) (M ⟦ σ ⟧)
 Computable-Substitution _ _ _ _ _ _ _ σ∶Γ⇒Δ (varR x _) _ = proj₁ σ∶Γ⇒Δ x
@@ -46,3 +59,15 @@ Computable-Substitution U V σ Γ Δ .(ΛT A M) .(A ⇛ B) σ∶Γ⇒Δ (ΛR {A 
         close (A ⟦ σ ⟧ 〈 ρ 〉)
       ∎) 
       N∈EΘA)) (Rep↑-typed ρ∶Δ⇒RΘ)) (Sub↑C σ∶Γ⇒Δ)) Γ,A⊢M∶B Θvalid)))
+
+botsub-comp-upRep : ∀ {U} {V} {K} {L} {σ : Sub U V} {E : Expression U L} {M} → E ⇑ ⟦ x₀:= M • Sub↑ K σ ⟧ ≡ E ⟦ σ ⟧
+botsub-comp-upRep {U} {V} {K} {L} {σ} {E} {M} = let open ≡-Reasoning in 
+  begin
+    E ⇑ ⟦ x₀:= M • Sub↑ K σ ⟧
+  ≡⟨ sub-comp (E ⇑) ⟩
+    E ⇑ ⟦ Sub↑ K σ ⟧ ⟦ x₀:= M ⟧
+  ≡⟨ sub-congl (Sub↑-upRep E) ⟩
+    E ⟦ σ ⟧ ⇑ ⟦ x₀:= M ⟧
+  ≡⟨ botsub-upRep ⟩
+    E ⟦ σ ⟧
+  ∎
