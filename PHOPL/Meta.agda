@@ -5,6 +5,9 @@ open import PHOPL.Rules
 
 postulate β-respects-sub : respects' substitution
 
+postulate Context-Validity : ∀ {V} {Γ} {K} {M : Expression V (varKind K)} {A} →
+                           Γ ⊢ M ∶ A → valid Γ
+
 postulate Prop-Validity : ∀ {V} {Γ : Context V} {δ : Proof V} {φ : Term V} → 
                         Γ ⊢ δ ∶ φ → Γ ⊢ φ ∶ Ω
 

@@ -12,6 +12,7 @@ open import PHOPL.Neutral
 open import PHOPL.Meta
 open import PHOPL.Computable
 open import PHOPL.SubC
+open import PHOPL.SN
 
 Eclose-lm : ∀ {U} {V} {W} (Θ : Context U) (A : Type V) N (ρ : Rep V W)
   → E Θ (close A) N → E Θ (close (A 〈 ρ 〉)) N
@@ -144,3 +145,156 @@ aux-lm1 U V σ Γ Δ φ δ ψ ih σ∶Γ⇒CΔ Γ,φ⊢δ∶ψ validΔ =   func-
     (redexR βR) 
     (SN-βexp (EP-SN ε∈EΘφσρ) (EP-SN EPδ))) -- TODO Common pattern with Computable-Substitution
 
+aux-lm1-5 : ∀ {U} {V} {W} {K1} {K2} {K3} {K4} (M : Expression U K1) (N : Expression W (varKind K2)) (N' : Expression W (varKind K3)) (Q : Expression W (varKind K4)) 
+  {ρ : Rep V W} {σ : Sub U V} →
+  M ⇑ ⇑ ⇑ ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) •₂ Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) • Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ ≡ M ⟦ σ ⟧ 〈 ρ 〉
+aux-lm1-5 {U} {V} {W} {K1} {K2} {K3} {K4} M N N' Q {ρ} {σ} = let open ≡-Reasoning in
+                  begin
+                    M ⇑ ⇑ ⇑ ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) •₂ Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) • Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧
+                  ≡⟨ sub-comp (M ⇑ ⇑ ⇑) ⟩
+                    M ⇑ ⇑ ⇑ ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) •₂ Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) ⟧
+                  ≡⟨ sub-congl (Sub↑-upRep₃ M) ⟩
+                    M ⟦ σ ⟧ ⇑ ⇑ ⇑ ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) •₂ Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) ⟧
+                  ≡⟨ sub-comp₂ (M ⟦ σ ⟧ ⇑ ⇑ ⇑) ⟩
+                    M ⟦ σ ⟧ ⇑ ⇑ ⇑ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉 ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧
+                  ≡⟨ sub-congl (Rep↑-upRep₃ (M ⟦ σ ⟧)) ⟩
+                    M ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑ ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧
+                  ≡⟨ sub-comp (M ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑) ⟩
+                    M ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑ ⟦ x₀:= (Q ⇑ ⇑) ⟧ ⟦ x₀:= N • x₀:= (N' ⇑) ⟧
+                  ≡⟨ sub-congl (botsub-upRep (M ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑)) ⟩
+                    M ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⟦ x₀:= N • x₀:= (N' ⇑) ⟧
+                  ≡⟨ sub-comp (M ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑) ⟩
+                    M ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⟦ x₀:= (N' ⇑) ⟧ ⟦ x₀:= N ⟧
+                  ≡⟨ sub-congl (botsub-upRep (M ⟦ σ ⟧ 〈 ρ 〉 ⇑)) ⟩
+                    M ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⟦ x₀:= N ⟧
+                  ≡⟨ botsub-upRep (M ⟦ σ ⟧ 〈 ρ 〉) ⟩
+                    M ⟦ σ ⟧ 〈 ρ 〉
+                  ∎
+
+aux-lm2 : ∀ (U V : Alphabet) (σ : Sub U V) (Γ : Context U) (Δ : Context V) (A : Type U) B M M' P →
+  σ ∶ Γ ⇒C Δ → 
+  Γ , A , A ⇑ , var x₁ ≡〈 A ⇑ ⇑ 〉 var x₀ ⊢ P ∶ appT (M ⇑ ⇑ ⇑) (var x₂) ≡〈 B ⇑ ⇑ ⇑  〉 appT (M' ⇑ ⇑ ⇑) (var x₁) →
+  valid Δ →
+  (∀ W (Θ : Context W) τ → τ ∶ Γ , A , A ⇑ , var x₁ ≡〈 A ⇑ ⇑ 〉 var x₀ ⇒C Θ → valid Θ → 
+    EE Θ ((appT (M ⇑ ⇑ ⇑) (var x₂) ≡〈 B ⇑ ⇑ ⇑  〉 appT (M' ⇑ ⇑ ⇑) (var x₁)) ⟦ τ ⟧) (P ⟦ τ ⟧)) →
+  EE Δ (M ⟦ σ ⟧ ≡〈 (A ⟦ σ ⟧) ⇛ (B ⟦ σ ⟧) 〉 M' ⟦ σ ⟧) ((λλλ A P) ⟦ σ ⟧)
+aux-lm2 U V σ Γ Δ A B M M' P σ∶Γ⇒Δ Γ+⊢P∶Mx≡M'y validΔ hyp = func-EE (λ W Θ N N' Q ρ ρ∶Δ⇒Θ validΘ N∈EΘA N'∈EΘA Q∈EΘN≡N' → 
+  let σ' = Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) in
+  let ρ' = Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) in
+  let ih : EE Θ (appT (M ⟦ σ ⟧ 〈 ρ 〉) N ≡〈 B ⟦ σ ⟧ 〈 ρ 〉 〉 appT (M' ⟦ σ ⟧ 〈 ρ 〉) N') (P ⟦ σ' ⟧ 〈 ρ' 〉 ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧)
+      ih = subst₂ (EE Θ) 
+                  (cong₃ _≡〈_〉_ (cong (λ x → appT x N) (aux-lm1-5 M N N' Q))
+                  (aux-lm1-5 B N N' Q) (cong₂ appT (aux-lm1-5 M' N N' Q) (botsub-upRep N'))) 
+                  (let open ≡-Reasoning in 
+                  begin
+                    P ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) •₂ ρ' • σ' ⟧
+                  ≡⟨ sub-comp P ⟩
+                    P ⟦ σ' ⟧ ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) •₂ ρ' ⟧
+                  ≡⟨ sub-comp₂ (P ⟦ σ' ⟧) ⟩
+                    P ⟦ σ' ⟧ 〈 ρ' 〉 ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧
+                  ∎) 
+                  (hyp W Θ (x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) •₂ ρ' • σ') 
+                  (compC (comp₂C {σ = x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑)} 
+                    (subC-cong {σ = x₀:= Q • Sub↑ _ (x₀:= N') • Sub↑ _ (Sub↑ _ (x₀:= N))} 
+                      (compC (compC (botsubCE 
+                        (subst (λ a → EE Θ a Q) 
+                          (cong₃ _≡〈_〉_ 
+                            (sym (botsub-upRep N))
+                            (let open ≡-Reasoning in 
+                            begin
+                              A ⟦ σ ⟧ 〈 ρ 〉
+                            ≡⟨⟨ botsub-upRep (A ⟦ σ ⟧ 〈 ρ 〉) ⟩⟩
+                             A ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⟦ x₀:= N ⟧
+                            ≡⟨⟨ botsub-upRep _ ⟩⟩
+                              A ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⟦ x₀:= N ⟧ ⇑ ⟦ x₀:= N' ⟧
+                            ≡⟨⟨ sub-congl (Sub↑-upRep (A ⟦ σ ⟧ 〈 ρ 〉 ⇑)) ⟩⟩
+                              A ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⟦ Sub↑ _ (x₀:= N) ⟧ ⟦ x₀:= N' ⟧
+                            ≡⟨⟨ sub-congl (sub-congl (Rep↑-upRep₂ (A ⟦ σ ⟧))) ⟩⟩
+                              A ⟦ σ ⟧ ⇑ ⇑ 〈 Rep↑ _ (Rep↑ _ ρ) 〉 ⟦ Sub↑ _ (x₀:= N) ⟧ ⟦ x₀:= N' ⟧
+                            ≡⟨⟨ sub-congl (sub-congl (rep-congl (Sub↑-upRep₂ A))) ⟩⟩
+                              A ⇑ ⇑ ⟦ Sub↑ _ (Sub↑ _ σ) ⟧ 〈 Rep↑ _ (Rep↑ _ ρ) 〉 ⟦ Sub↑ _ (x₀:= N) ⟧ ⟦ x₀:= N' ⟧
+                            ∎) 
+                            refl) 
+                          Q∈EΘN≡N')) 
+                        (Sub↑C (botsubC 
+                          (subst (λ a → E Θ a N') 
+                          (let open ≡-Reasoning in 
+                          begin
+                            close (A ⟦ σ ⟧)
+                          ≡⟨⟨ close-rep (A ⟦ σ ⟧) ⟩⟩
+                            close (A ⟦ σ ⟧ 〈 ρ 〉)
+                          ≡⟨⟨ cong close (botsub-upRep (A ⟦ σ ⟧ 〈 ρ 〉)) ⟩⟩
+                            close (A ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⟦ x₀:= N ⟧)
+                          ≡⟨⟨ cong close (sub-congl (Rep↑-upRep (A ⟦ σ ⟧))) ⟩⟩
+                            close (A ⟦ σ ⟧ ⇑ 〈 Rep↑ _ ρ 〉 ⟦ x₀:= N ⟧)
+                          ≡⟨⟨ cong close (sub-congl (rep-congl (Sub↑-upRep A))) ⟩⟩
+                            close (A ⇑ ⟦ Sub↑ _ σ ⟧ 〈 Rep↑ _ ρ 〉 ⟦ x₀:= N ⟧)
+                          ∎) 
+                          N'∈EΘA)))) 
+                        (Sub↑C (Sub↑C (botsubC 
+                          (subst (λ a → E Θ a N) (sym (close-rep (A ⟦ σ ⟧))) N∈EΘA))))) 
+                      (aux Q N' N))
+                    (Rep↑-typed (Rep↑-typed (Rep↑-typed ρ∶Δ⇒Θ)))) 
+                    (Sub↑C (Sub↑C (Sub↑C σ∶Γ⇒Δ))))
+                  validΘ) 
+  in (expand-EE ih
+       (let step3 : Δ , A ⟦ σ ⟧ , A ⟦ σ ⟧ ⇑ , var x₁ ≡〈 A ⟦ σ ⟧ ⇑ ⇑ 〉 var x₀ ⊢
+                  P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ ∶ appT (M ⟦ σ ⟧ ⇑ ⇑ ⇑) (var x₂) ≡〈 B ⟦ σ ⟧ ⇑ ⇑ ⇑ 〉 appT (M' ⟦ σ ⟧ ⇑ ⇑ ⇑) (var x₁)
+            step3 = change-type (Substitution Γ+⊢P∶Mx≡M'y (ctxER (varR x₁ (ctxTR (ctxTR validΔ))) (varR x₀ (ctxTR (ctxTR validΔ)))) 
+                    (change-cod' (Sub↑-typed (Sub↑-typed (Sub↑-typed (subC-typed σ∶Γ⇒Δ)))) 
+                      (cong₂ (λ a b → Δ ,T A ⟦ σ ⟧ ,T a ,E b) 
+                        (Sub↑-upRep A) 
+                        (cong (λ a → var x₁ ≡〈 a 〉 var x₀) (Sub↑-upRep₂ A))))) 
+                        (cong₃ _≡〈_〉_ (cong₂ appT (Sub↑-upRep₃ M) refl) (Sub↑-upRep₃ B) (cong (λ a → appT a (var x₁)) (Sub↑-upRep₃ M'))) in
+       let step2 : Θ , A ⟦ σ ⟧ 〈 ρ 〉 , A ⟦ σ ⟧ 〈 ρ 〉 ⇑ , var x₁ ≡〈 A ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ 〉 var x₀ ⊢
+                 P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉 ∶ 
+                 appT (M ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑) (var x₂) ≡〈 B ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑ 〉 appT (M' ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑) (var x₁)
+           step2 = change-type (Weakening step3 (ctxER (varR x₁ (ctxTR (ctxTR validΘ))) (varR x₀ (ctxTR (ctxTR validΘ)))) 
+                               (change-codR (Rep↑-typed (Rep↑-typed (Rep↑-typed ρ∶Δ⇒Θ))) 
+                                 (cong₂ (λ a b → Θ ,T A ⟦ σ ⟧ 〈 ρ 〉 ,T a ,E b) 
+                                   (Rep↑-upRep (A ⟦ σ ⟧)) 
+                                   (cong (λ a → var x₁ ≡〈 a 〉 var x₀) 
+                                     (Rep↑-upRep₂ (A ⟦ σ ⟧)))))) 
+                               (cong₃ _≡〈_〉_ (cong (λ x → appT x (var x₂)) (Rep↑-upRep₃ (M ⟦ σ ⟧))) 
+                                 (Rep↑-upRep₃ (B ⟦ σ ⟧)) 
+                                 (cong (λ x → appT x (var x₁)) (Rep↑-upRep₃ (M' ⟦ σ ⟧)))) in
+       let step1 : Θ ⊢ λλλ (A ⟦ σ ⟧ 〈 ρ 〉) (P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉) ∶ (M ⟦ σ ⟧ 〈 ρ 〉) ≡〈 (A ⟦ σ ⟧ 〈 ρ 〉) ⇛ (B ⟦ σ ⟧ 〈 ρ 〉) 〉 (M' ⟦ σ ⟧ 〈 ρ 〉)
+           step1 = lllR step2 in
+       let target : Θ ⊢ app* N N' (λλλ (A ⟦ σ ⟧ 〈 ρ 〉) (P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉)) Q ∶ appT (M ⟦ σ ⟧ 〈 ρ 〉) N ≡〈 B ⟦ σ ⟧ 〈 ρ 〉 〉 appT (M' ⟦ σ ⟧ 〈 ρ 〉) N'
+           target = app*R step1 (EE-typed Q∈EΘN≡N') in
+       target)
+    (redexR βE) 
+    (βE-exp (E-SN (close (A ⟦ σ ⟧)) N∈EΘA) (E-SN (close (A ⟦ σ ⟧)) N'∈EΘA) 
+      (EE-SN (N ≡〈 A ⟦ σ ⟧ 〈 ρ 〉 〉 N') Q∈EΘN≡N') 
+      (EE-SN (appT (M ⟦ σ ⟧ 〈 ρ 〉) N ≡〈 B ⟦ σ ⟧ 〈 ρ 〉 〉 appT (M' ⟦ σ ⟧ 〈 ρ 〉) N') ih))))
+    where
+                  aux : ∀ {V} (Q : Path V) N' (N : Term V) → (x₀:= Q • Sub↑ -Path (x₀:= N') •
+                          Sub↑ -Path (Sub↑ -Term (x₀:= N)))
+                            ∼ (x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑))
+                  aux Q N' N x₀ = let open ≡-Reasoning in 
+                    begin
+                      Q
+                    ≡⟨⟨ botsub-upRep Q ⟩⟩
+                      Q ⇑ ⟦ x₀:= N ⟧
+                    ≡⟨⟨ sub-congl (botsub-upRep (Q ⇑)) ⟩⟩
+                      Q ⇑ ⇑ ⟦ x₀:= (N' ⇑) ⟧ ⟦ x₀:= N ⟧
+                    ≡⟨⟨ sub-comp (Q ⇑ ⇑) ⟩⟩
+                      Q ⇑ ⇑ ⟦ x₀:= N • x₀:= (N' ⇑) ⟧
+                    ∎
+                  aux Q N' N (↑ x₀) = let open ≡-Reasoning in 
+                    begin
+                      N' ⇑ ⟦ x₀:= Q ⟧
+                    ≡⟨ botsub-upRep N' ⟩
+                      N'
+                    ≡⟨⟨ botsub-upRep N' ⟩⟩
+                      N' ⇑ ⟦ x₀:= N ⟧
+                    ∎
+                  aux Q N' N (↑ (↑ x₀)) = let open ≡-Reasoning in 
+                    begin
+                      N ⇑ ⇑ ⟦ x₀:= Q • Sub↑ _ (x₀:= N') ⟧
+                    ≡⟨ botsub-comp-upRep (N ⇑) ⟩
+                      N ⇑ ⟦ x₀:= N' ⟧
+                    ≡⟨ botsub-upRep N ⟩
+                      N
+                    ∎
+                  aux Q N' N (↑ (↑ (↑ x))) = refl

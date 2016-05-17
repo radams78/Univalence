@@ -11,7 +11,8 @@ postulate βR : ∀ {V} {φ} {δ} {ε} → R {V} -appProof (ΛP φ δ ,, ε ,, o
 postulate βE : ∀ {V} {M} {N} {A} {P} {Q} → R {V} -app* (M ,, N ,, λλλ A P ,, Q ,, out) (P ⟦ x₀:= M • x₀:= (N ⇑) • x₀:= (Q ⇑ ⇑) ⟧)
 
 open import Reduction PHOPL R public renaming (_⇒_ to _⇒R_;_≃_ to _≃R_;redex to redexR;app to appR;appl to applR;appr to apprR;creates' to creates'R;
-  respects' to respects'R;respects-osr to respects-osrR;respects-conv to respects-convR)
+  respects' to respects'R;respects-osr to respects-osrR;respects-conv to respects-convR;
+  trans-conv to trans-convR)
 
 postulate R-creates-rep : creates'R replacement
 

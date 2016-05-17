@@ -48,6 +48,15 @@ app -bot out ⟦⟦ τ ∶ _ ∼ _ ⟧⟧ = reff ⊥
 app -imp (φ ,, ψ ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = φ ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ ⊃* ψ ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧
 app -appTerm (M ,, N ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = app* (N ⟦ ρ ⟧) (N ⟦ σ ⟧) (M ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧) (N ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧)
 app -lamTerm (A ,, M ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = λλλ (A ⟦ ρ ⟧) (M ⟦⟦ pathsub↑ τ ∶ sub↖ ρ ∼ sub↗ σ ⟧⟧)
+
+postulate idPathSub : ∀ V → PathSub V V
+
+_•RP_ : ∀ {U} {V} {W} → Rep V W → PathSub U V → PathSub U W
+(ρ •RP τ) x = τ x 〈 ρ 〉
+
+extendPS : ∀ {U} {V} → PathSub U V → Path V → PathSub (U , -Term) V
+extendPS τ P x₀ = P
+extendPS τ P (↑ x) = τ x
 \end{code}
 }
 

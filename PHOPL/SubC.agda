@@ -15,6 +15,8 @@ _∶_⇒C_ : ∀ {U} {V} → Sub U V → Context U → Context V → Set
 postulate change-cod : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {Δ'} →
                      σ ∶ Γ ⇒C Δ → Δ ≡ Δ' → σ ∶ Γ ⇒C Δ'
 
+postulate idSubC : ∀ {V} {Γ : Context V} → idSub V ∶ Γ ⇒C Γ
+
 postulate compC : ∀ {U} {V} {W} {ρ : Sub V W} {σ : Sub U V} {Γ} {Δ} {Θ} →
                 ρ ∶ Δ ⇒C Θ → σ ∶ Γ ⇒C Δ → ρ • σ ∶ Γ ⇒C Θ
 
@@ -39,6 +41,11 @@ postulate botsubCE : ∀ {V} {Γ : Context V} {P} {E} →
 postulate subC-typed : ∀ {U} {V} {σ : Sub U V} {Γ : Context U} {Δ : Context V} →
                      σ ∶ Γ ⇒C Δ → σ ∶ Γ ⇒ Δ
 
+postulate subC-cong : ∀ {U} {V} {σ τ : Sub U V} {Γ} {Δ} →
+                    σ ∶ Γ ⇒C Δ → σ ∼ τ → τ ∶ Γ ⇒C Δ
+
 _∶_∼_∶_⇒C_ : ∀ {U} {V} → PathSub U V → Sub U V → Sub U V → Context U → Context V → Set
 τ ∶ ρ ∼ σ ∶ Γ ⇒C Δ = ∀ x → EE Δ (ρ _ x ≡〈 typeof x Γ ⟦ ρ ⟧ 〉 σ _ x) (τ x)
 
+postulate extendPS-typed : ∀ {U} {V} {τ : PathSub U V} {ρ σ : Sub U V} {Γ : Context U} {Δ : Context V} {A : Type U} {Q : Path V} {N N' : Term V} →
+                         τ ∶ ρ ∼ σ ∶ Γ ⇒C Δ → EE Δ (N ≡〈 A ⟦ σ ⟧ 〉 N') Q → extendPS τ Q ∶ x₀:= N • Sub↑ -Term ρ ∼ x₀:= N' • Sub↑ -Term σ ∶ Γ ,T A ⇒C Δ
