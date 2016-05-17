@@ -12,7 +12,7 @@ postulate βE : ∀ {V} {M} {N} {A} {P} {Q} → R {V} -app* (M ,, N ,, λλλ A 
 
 open import Reduction PHOPL R public renaming (_⇒_ to _⇒R_;_≃_ to _≃R_;redex to redexR;app to appR;appl to applR;appr to apprR;creates' to creates'R;
   respects' to respects'R;respects-osr to respects-osrR;respects-conv to respects-convR;
-  trans-conv to trans-convR)
+  osr-conv to osr-convR; sym-conv to sym-convR; trans-conv to trans-convR)
 
 postulate R-creates-rep : creates'R replacement
 

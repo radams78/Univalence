@@ -30,5 +30,8 @@ module ≡-Reasoning {a} {A : Set a} where
 
 postulate cong₃ : ∀ {A B C D : Set} (f : A → B → C → D) {a a' b b' c c'} →
                 a ≡ a' → b ≡ b' → c ≡ c' → f a b c ≡ f a' b' c'
+
+postulate subst₃ : ∀ {A B C : Set} (P : A → B → C → Set) {a a' b b' c c'} →
+                 a ≡ a' → b ≡ b' → c ≡ c' → P a b c → P a' b' c'
 \end{code}
 }
