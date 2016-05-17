@@ -51,6 +51,7 @@ app -lamTerm (A ,, M ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = λλλ (A ⟦ ρ �
 
 postulate idPathSub : ∀ V → PathSub V V
 
+infixr 75 _•RP_
 _•RP_ : ∀ {U} {V} {W} → Rep V W → PathSub U V → PathSub U W
 (ρ •RP τ) x = τ x 〈 ρ 〉
 

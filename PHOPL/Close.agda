@@ -11,3 +11,5 @@ postulate close-sub : ∀ {U} {V} (A : Type U) {σ : Sub U V} → close (A ⟦ �
 postulate close-rep : ∀ {U} {V} (A : Type U) {ρ : Rep U V} → close (A 〈 ρ 〉) ≡ close A
 
 postulate close-magic : ∀ {V} {A : Type V} → close A 〈 magic 〉 ≡ A
+
+postulate type-sub : ∀ {U} {V} {A : Type U} {σ σ' : Sub U V} → A ⟦ σ ⟧ ≡ A ⟦ σ' ⟧

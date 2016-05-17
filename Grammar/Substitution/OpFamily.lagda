@@ -146,6 +146,9 @@ Sub↑-upRep₃ {U} {V} {K} {L} {M} {N} E {σ} = let open ≡-Reasoning in
   ≡⟨ rep-congl (rep-congl (Sub↑-upRep E)) ⟩
     E ⟦ σ ⟧ ⇑ ⇑ ⇑
   ∎
+
+postulate assoc₁₂ : ∀ {U} {V} {W} {X} {ρ : Sub W X} {σ : Rep V W} {τ : Sub U V} →
+                  ρ • (σ •₁ τ) ∼ (ρ •₂ σ) • τ
 \end{code}
 }
 
@@ -162,14 +165,16 @@ substitution = record {
 
 \AgdaHide{
 \begin{code}
-open OpFamily substitution using (assoc) 
+open OpFamily substitution using (comp-congl;comp-congr)
   renaming (liftOp-idOp to Sub↑-idOp;
            ap-idOp to sub-idOp;
            ap-circ to sub-comp;
            ap-congl to sub-congr;
            ap-congr to sub-congl;
            unitl to sub-unitl;
-           unitr to sub-unitr)
+           unitr to sub-unitr;
+           ∼-trans to sub-trans;
+           assoc to sub-assoc)
   public
 \end{code}
 }

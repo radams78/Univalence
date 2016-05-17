@@ -45,6 +45,11 @@ record OpFamily : Set₂ where
     apV-circ = apV-comp }
 
   open Composition COMP public
+
+  postulate comp-congl : ∀ {U} {V} {W} {σ σ' : Op V W} {ρ : Op U V} →
+                       σ ∼op σ' → σ ∘ ρ ∼op σ' ∘ ρ
+  postulate comp-congr : ∀ {U} {V} {W} {σ : Op V W} {ρ ρ' : Op U V} →
+                       ρ ∼op ρ' → σ ∘ ρ ∼op σ ∘ ρ'
 \end{code}
 
 The following results about operations are easy to prove.
