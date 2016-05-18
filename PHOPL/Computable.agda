@@ -151,7 +151,8 @@ expand-EP : ∀ {V} {Γ : Context V} {φ : Term V} {δ ε : Proof V} →
 expand-EP (Γ⊢ε∶φ ,p φ' ,p φ↠φ' ,p computeε) Γ⊢δ∶φ δ▷ε SNδ = Γ⊢δ∶φ ,p φ' ,p φ↠φ' ,p expand-compute computeε 
   (convR Γ⊢δ∶φ (cp-typed φ' (Context-Validity Γ⊢δ∶φ)) (red-conv φ↠φ')) δ▷ε SNδ
 
-postulate EP-SN : ∀ {V} {Γ : Context V} {δ} {φ} → EP Γ φ δ → SN δ
+EP-SN : ∀ {V} {Γ : Context V} {δ} {φ} → EP Γ φ δ → SN δ
+EP-SN (Γ̌⊢δ∶φ ,p _ ,p _ ,p computeδ) = compute-SN computeδ (Context-Validity Γ̌⊢δ∶φ)
 
 postulate EE : ∀ {V} → Context V → Equation V → Path V → Set
 
