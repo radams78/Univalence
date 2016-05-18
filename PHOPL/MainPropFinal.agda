@@ -182,7 +182,13 @@ aux-lm2 : ∀ (U V : Alphabet) (σ : Sub U V) (Γ : Context U) (Δ : Context V) 
   (∀ W (Θ : Context W) τ → τ ∶ Γ , A , A ⇑ , var x₁ ≡〈 A ⇑ ⇑ 〉 var x₀ ⇒C Θ → valid Θ → 
     EE Θ ((appT (M ⇑ ⇑ ⇑) (var x₂) ≡〈 B ⇑ ⇑ ⇑  〉 appT (M' ⇑ ⇑ ⇑) (var x₁)) ⟦ τ ⟧) (P ⟦ τ ⟧)) →
   EE Δ (M ⟦ σ ⟧ ≡〈 (A ⟦ σ ⟧) ⇛ (B ⟦ σ ⟧) 〉 M' ⟦ σ ⟧) ((λλλ A P) ⟦ σ ⟧)
-aux-lm2 U V σ Γ Δ A B M M' P σ∶Γ⇒Δ Γ+⊢P∶Mx≡M'y validΔ hyp = func-EE (λ W Θ N N' Q ρ ρ∶Δ⇒Θ validΘ N∈EΘA N'∈EΘA Q∈EΘN≡N' → 
+aux-lm2 U V σ Γ Δ A B M M' P σ∶Γ⇒Δ Γ+⊢P∶Mx≡M'y validΔ hyp = 
+  func-EE 
+  (lllR (change-type (Substitution Γ+⊢P∶Mx≡M'y (ctxER (varR (↑ x₀) (ctxTR (ctxTR validΔ))) (varR x₀ (ctxTR (ctxTR validΔ)))) 
+    (change-cod' (Sub↑-typed (Sub↑-typed (Sub↑-typed (subC-typed σ∶Γ⇒Δ)))) 
+    (cong₂ (λ a b → Δ , A ⟦ σ ⟧ , a , var x₁ ≡〈 b 〉 var x₀) (Sub↑-upRep A) (Sub↑-upRep₂ A)))) (cong₃ _≡〈_〉_ (cong (λ a → appT a (var x₂)) (Sub↑-upRep₃ M)) 
+    (Sub↑-upRep₃ B) (cong (λ a → appT a (var x₁)) (Sub↑-upRep₃ M'))))) 
+  (λ W Θ N N' Q ρ ρ∶Δ⇒Θ validΘ N∈EΘA N'∈EΘA Q∈EΘN≡N' → 
   let σ' = Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) in
   let ρ' = Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) in
   let ih : EE Θ (appT (M ⟦ σ ⟧ 〈 ρ 〉) N ≡〈 B ⟦ σ ⟧ 〈 ρ 〉 〉 appT (M' ⟦ σ ⟧ 〈 ρ 〉) N') (P ⟦ σ' ⟧ 〈 ρ' 〉 ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧)

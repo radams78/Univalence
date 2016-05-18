@@ -110,3 +110,6 @@ postulate compRP-typed : ∀ {U} {V} {W} {ρ : Rep V W} {τ : PathSub U V} {σ �
 postulate ⊃-gen₁ : ∀ {V} {Γ : Context V} {φ} {ψ} → Γ ⊢ φ ⊃ ψ ∶ Ω → Γ ⊢ φ ∶ Ω
 
 postulate ⊃-gen₂ : ∀ {V} {Γ : Context V} {φ} {ψ} → Γ ⊢ φ ⊃ ψ ∶ Ω → Γ ⊢ ψ ∶ Ω
+
+postulate Type-Reduction : ∀ {V} {Γ : Context V} {K} {M : Expression V (varKind K)} {A} {B} →
+                         Γ ⊢ M ∶ A → A ↠ B → Γ ⊢ M ∶ B

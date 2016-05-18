@@ -256,11 +256,22 @@ app*-EE {V} {Γ} {M} {M'} {N} {N'} {A} {B} {P} {Q} (Γ⊢P∶M≡M' ,p computeP)
     (computeP V Γ (idRep V) N N' Q idRep-typed (change-type Γ⊢Q∶N≡N' (cong (λ a → N ≡〈 a 〉 N') (trans (sym close-magic) (sym (rep-congl (close-close {A = A})))))) 
       (subst (λ a → E Γ a N) (sym close-magic) N∈EΓA) (subst (λ a → E Γ a N') (sym close-magic) N'∈EΓA) computeQ)
 
-postulate func-EE : ∀ {U} {Γ : Context U} {A} {B} {M} {M'} {P} →
-                   (∀ V (Δ : Context V) (N N' : Term V) Q ρ → ρ ∶ Γ ⇒R Δ → valid Δ → 
-                     E Δ (close A) N → E Δ (close A) N' → EE Δ (N ≡〈 A 〈 ρ 〉 〉 N') Q →
-                     EE Δ (appT (M 〈 ρ 〉) N ≡〈 B 〈 ρ 〉 〉 appT (M' 〈 ρ 〉) N') (app* N N' (P 〈 ρ 〉) Q)) →
-                   EE Γ (M ≡〈 A ⇛ B 〉 M') P
+func-EE : ∀ {U} {Γ : Context U} {A} {B} {M} {M'} {P} →
+          Γ ⊢ P ∶ M ≡〈 A ⇛ B 〉 M' →
+          (∀ V (Δ : Context V) (N N' : Term V) Q ρ → ρ ∶ Γ ⇒R Δ → valid Δ → 
+          E Δ (close A) N → E Δ (close A) N' → EE Δ (N ≡〈 A 〈 ρ 〉 〉 N') Q →
+          EE Δ (appT (M 〈 ρ 〉) N ≡〈 B 〈 ρ 〉 〉 appT (M' 〈 ρ 〉) N') (app* N N' (P 〈 ρ 〉) Q)) →
+          EE Γ (M ≡〈 A ⇛ B 〉 M') P
+func-EE {U} {Γ} {A} {B} {M} {M'} {P} Γ⊢P∶M≡M' hyp = Γ⊢P∶M≡M' ,p (λ W Δ ρ N N' Q ρ∶Γ⇒RΔ Δ⊢Q∶N≡N' N∈EΔA N'∈EΔA computeQ → subst
+                                                                                                                          (λ b →
+                                                                                                                             computeE Δ (appT (M 〈 ρ 〉) N) b (appT (M' 〈 ρ 〉) N')
+                                                                                                                             (app* N N' (P 〈 ρ 〉) Q))
+                                                                                                                          (close-rep B) (proj₂ (hyp W Δ N N' Q ρ ρ∶Γ⇒RΔ (Context-Validity Δ⊢Q∶N≡N') (subst (λ a → E Δ a N) close-magic N∈EΔA) 
+        (subst (λ a → E Δ a N') close-magic N'∈EΔA) (
+        (subst (λ a → Δ ⊢ Q ∶ N ≡〈 a 〉 N') 
+          (trans (rep-congl (trans (close-close {A = A}) (sym (close-rep A)))) close-magic) 
+          Δ⊢Q∶N≡N') ,p 
+        subst (λ a → computeE Δ N a N' Q) (sym (close-rep A)) computeQ))))
 
 postulate expand-EE : ∀ {V} {Γ : Context V} {A} {M N : Term V} {P Q} →
                    EE Γ (M ≡〈 A 〉 N) Q → Γ ⊢ P ∶ M ≡〈 A 〉 N → P ⇒R Q → SN P → EE Γ (M ≡〈 A 〉 N) P

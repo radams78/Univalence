@@ -24,3 +24,5 @@ postulate ty-rep : ∀ {U} {V} {W} (A : Type U) {ρ : Rep U V} → ty {V = W} (A
 postulate ty-sub : ∀ {U} {V} {W} (A : Type U) {σ : Sub U V} → ty {V = W} (A ⟦ σ ⟧) ≡ ty A
 
 postulate ty-rep' : ∀ {U} {V} {W} (A : Type U) {ρ : Rep V W} → (ty A) 〈 ρ 〉 ≡ ty A
+
+postulate ty-sub' : ∀ {U} {V} {W} (A : Type U) {σ : Sub V W} → (ty A) ⟦ σ ⟧ ≡ ty A
