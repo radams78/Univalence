@@ -99,7 +99,7 @@ subrepsublemma {U} {V} {W} {D} E {A} {B} {C} {σ} {ρ} {F} = let open ≡-Reason
 aux-lm1 : ∀ U V (σ : Sub U V) Γ Δ φ δ ψ →
   (∀ W Θ (τ : Sub (U , -Proof) W) → τ ∶ Γ ,P φ ⇒C Θ → valid Θ → EP Θ (ψ ⇑ ⟦ τ ⟧) (δ ⟦ τ ⟧)) →
   σ ∶ Γ ⇒C Δ → Γ ,P φ ⊢ δ ∶ ψ ⇑ → valid Δ → EP Δ  (φ ⟦ σ ⟧ ⊃ ψ ⟦ σ ⟧) (ΛP (φ ⟦ σ ⟧) (δ ⟦ Sub↑ -Proof σ ⟧))
-aux-lm1 U V σ Γ Δ φ δ ψ ih σ∶Γ⇒CΔ Γ,φ⊢δ∶ψ validΔ =   func-EP (λ W Θ ρ ε validΘ ρ∶Δ⇒RΘ ε∈EΘφσρ → 
+aux-lm1 U V σ Γ Δ φ δ ψ ih σ∶Γ⇒CΔ Γ,φ⊢δ∶ψ validΔ = func-EP (λ W Θ ρ ε validΘ ρ∶Δ⇒RΘ ε∈EΘφσρ → 
   let EPδ : EP Θ (ψ ⟦ σ ⟧ 〈 ρ 〉) (δ ⟦ Sub↑ -Proof σ ⟧ 〈 Rep↑ -Proof ρ 〉 ⟦ x₀:= ε ⟧)
       EPδ = subst₂ (EP Θ) 
         (let open ≡-Reasoning in 
@@ -144,6 +144,10 @@ aux-lm1 U V σ Γ Δ φ δ ψ ih σ∶Γ⇒CΔ Γ,φ⊢δ∶ψ validΔ =   func-
     (EP-typed ε∈EΘφσρ)) 
     (redexR βR) 
     (SN-βexp (EP-SN ε∈EΘφσρ) (EP-SN EPδ))) -- TODO Common pattern with Computable-Substitution
+ (ΛPR (change-type (Substitution Γ,φ⊢δ∶ψ (ctxPR (Substitution Γ⊢φ∶Ω validΔ (subC-typed σ∶Γ⇒CΔ))) (Sub↑-typed (subC-typed σ∶Γ⇒CΔ))) (Sub↑-upRep ψ))) where
+ Γ⊢φ∶Ω : Γ ⊢ φ ∶ Ω
+ Γ⊢φ∶Ω with (Context-Validity Γ,φ⊢δ∶ψ)
+ Γ⊢φ∶Ω | ctxPR p = p
 
 aux-lm1-5 : ∀ {U} {V} {W} {K1} {K2} {K3} {K4} (M : Expression U K1) (N : Expression W (varKind K2)) (N' : Expression W (varKind K3)) (Q : Expression W (varKind K4)) 
   {ρ : Rep V W} {σ : Sub U V} →

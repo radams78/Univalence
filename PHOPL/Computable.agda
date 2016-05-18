@@ -54,12 +54,18 @@ cp2term : ∀ {V} → closed-prop → Term V
 cp2term ⊥C = ⊥
 cp2term (φ ⊃C ψ) = cp2term φ ⊃ cp2term ψ
 
+postulate cp-typed : ∀ {V} {Γ : Context V} {A} → valid Γ → Γ ⊢ cp2term A ∶ Ω
+
+postulate closed-rep : ∀ {U} {V} {ρ : Rep U V} (A : closed-prop) → (cp2term A) 〈 ρ 〉 ≡ cp2term A
+
 compute : ∀ {V} → Context V → closed-prop → Proof V → Set
 compute Γ ⊥C δ = SN δ
-compute Γ (φ ⊃C ψ) δ = ∀ W (Δ : Context W) ρ ε → ρ ∶ Γ ⇒R Δ → compute Δ φ ε → compute Δ ψ (appP (δ 〈 ρ 〉) ε)
+compute Γ (φ ⊃C ψ) δ = ∀ W (Δ : Context W) ρ ε → ρ ∶ Γ ⇒R Δ → Δ ⊢ ε ∶ cp2term φ → compute Δ φ ε → compute Δ ψ (appP (δ 〈 ρ 〉) ε)
 
 EP : ∀ {V} → Context V → Term V → Proof V → Set
 EP Γ φ δ = Γ ⊢ δ ∶ φ × Σ[ ψ ∈ closed-prop ] (φ ↠ cp2term ψ × compute Γ ψ δ)
+
+postulate red-conv : ∀ {V} {C} {K} {E F : Subexpression V C K} → E ↠ F → E ≃ F
 
 postulate ⊃-not-⊥ : ∀ {V} {φ ψ : Term V} → φ ⊃ ψ ↠ ⊥ → Empty
 
@@ -71,28 +77,51 @@ postulate confluent : ∀ {V} {φ : Term V} {ψ ψ' : closed-prop} → φ ↠ cp
 
 postulate confluent₂ : ∀ {V} {φ ψ : Term V} {χ : closed-prop} → φ ≃ ψ → φ ↠ cp2term χ → ψ ↠ cp2term χ
 
+postulate NF : ∀ {V} {Γ} {φ : Term V} → Γ ⊢ φ ∶ Ω → closed-prop
+
+postulate red-NF : ∀ {V} {Γ} {φ : Term V} (Γ⊢φ∶Ω : Γ ⊢ φ ∶ Ω) → φ ↠ cp2term (NF Γ⊢φ∶Ω)
+
+postulate EP-typed : ∀ {V} {Γ : Context V} {δ : Proof V} {φ : Term V} →
+                   EP Γ φ δ → Γ ⊢ δ ∶ φ
+
 appP-EP : ∀ {V} {Γ : Context V} {δ ε : Proof V} {φ} {ψ} →
           EP Γ (φ ⊃ ψ) δ → EP Γ φ ε → EP Γ ψ (appP δ ε)
 appP-EP (_ ,p ⊥C ,p φ⊃ψ↠⊥ ,p _) _ = ⊥-elim (⊃-not-⊥ φ⊃ψ↠⊥)
-appP-EP {V} {Γ} {ε = ε} {ψ = ψ} (Γ⊢δ∶φ⊃ψ ,p (φ' ⊃C ψ') ,p φ⊃ψ↠φ'⊃ψ' ,p computeδ) (Γ⊢ε∶φ ,p φ'' ,p φ↠φ'' ,p computeε) = 
+appP-EP {V} {Γ} {ε = ε} {φ} {ψ = ψ} (Γ⊢δ∶φ⊃ψ ,p (φ' ⊃C ψ') ,p φ⊃ψ↠φ'⊃ψ' ,p computeδ) (Γ⊢ε∶φ ,p φ'' ,p φ↠φ'' ,p computeε) = 
   (appPR Γ⊢δ∶φ⊃ψ Γ⊢ε∶φ) ,p ψ' ,p ⊃-inj₂ φ⊃ψ↠φ'⊃ψ' ,p 
   subst (λ x → compute Γ ψ' (appP x ε)) rep-idOp 
   (computeδ V Γ (idRep V) ε idRep-typed 
+    (convR Γ⊢ε∶φ (cp-typed {A = φ'} (Context-Validity Γ⊢ε∶φ)) (red-conv (⊃-inj₁ φ⊃ψ↠φ'⊃ψ')))
   (subst (λ x → compute Γ x ε) (confluent φ↠φ'' (⊃-inj₁ φ⊃ψ↠φ'⊃ψ')) computeε))
 
 conv-EP : ∀ {V} {Γ : Context V} {φ ψ : Term V} {δ : Proof V} →
           φ ≃ ψ → EP Γ φ δ → Γ ⊢ ψ ∶ Ω → EP Γ ψ δ
 conv-EP φ≃ψ (Γ⊢δ∶φ ,p φ' ,p φ↠φ' ,p computeδ) Γ⊢ψ∶Ω = convR Γ⊢δ∶φ Γ⊢ψ∶Ω φ≃ψ ,p φ' ,p confluent₂ {χ = φ'} φ≃ψ φ↠φ' ,p computeδ
 
-postulate func-EP : ∀ {U} {Γ : Context U} {δ : Proof U} {φ} {ψ} →
-                   (∀ V Δ (ρ : Rep U V) (ε : Proof V) → valid Δ → ρ ∶ Γ ⇒R Δ → EP Δ (φ 〈 ρ 〉) ε → EP Δ (ψ 〈 ρ 〉) (appP (δ 〈 ρ 〉) ε)) →
-                   EP Γ (φ ⊃ ψ) δ
+func-EP : ∀ {U} {Γ : Context U} {δ : Proof U} {φ} {ψ} →
+          (∀ V Δ (ρ : Rep U V) (ε : Proof V) → valid Δ → ρ ∶ Γ ⇒R Δ → EP Δ (φ 〈 ρ 〉) ε → EP Δ (ψ 〈 ρ 〉) (appP (δ 〈 ρ 〉) ε)) → -- TODO Remove "valid Δ"?
+          Γ ⊢ δ ∶ φ ⊃ ψ → EP Γ (φ ⊃ ψ) δ
+func-EP {δ = δ} {φ = φ} {ψ = ψ} hyp Γ⊢δ∶φ⊃ψ = let Γ⊢φ⊃ψ∶Ω = Prop-Validity Γ⊢δ∶φ⊃ψ in
+                      let Γ⊢φ∶Ω = ⊃-gen₁ Γ⊢φ⊃ψ∶Ω in
+                      let Γ⊢ψ∶Ω = ⊃-gen₂ Γ⊢φ⊃ψ∶Ω in
+                      let φ' = NF Γ⊢φ∶Ω in
+                      Γ⊢δ∶φ⊃ψ ,p NF Γ⊢φ∶Ω ⊃C NF Γ⊢ψ∶Ω ,p 
+                      trans-red (respects-red {f = λ x → x ⊃ ψ} (λ x → app (appl x)) (red-NF Γ⊢φ∶Ω)) 
+                                (respects-red {f = λ x → cp2term (NF Γ⊢φ∶Ω) ⊃ x} (λ x → app (appr (appl x))) (red-NF Γ⊢ψ∶Ω)) ,p  --TODO Extract lemma for reduction
+                      (λ W Δ ρ ε ρ∶Γ⇒Δ Δ⊢ε∶φ computeε →
+                      let φρ↠φ' : φ 〈 ρ 〉 ↠ cp2term φ'
+                          φρ↠φ' = subst (λ x → (φ 〈 ρ 〉) ↠ x) (closed-rep φ') (respects-red (respects-osr replacement β-respects-rep) (red-NF Γ⊢φ∶Ω)) in
+                      let ε∈EΔψ = hyp W Δ ρ ε (Context-Validity Δ⊢ε∶φ) ρ∶Γ⇒Δ        
+                                  ((convR Δ⊢ε∶φ (Weakening Γ⊢φ∶Ω (Context-Validity Δ⊢ε∶φ) ρ∶Γ⇒Δ) (sym-conv (red-conv φρ↠φ')) ) ,p φ' ,p φρ↠φ' ,p computeε ) in 
+                      let ψ' = proj₁ (proj₂ ε∈EΔψ) in 
+                      let ψρ↠ψ' : ψ 〈 ρ 〉 ↠ cp2term ψ'
+                          ψρ↠ψ' = proj₁ (proj₂ (proj₂ ε∈EΔψ)) in 
+                      subst (λ a → compute Δ a (appP (δ 〈 ρ 〉) ε)) (confluent ψρ↠ψ' 
+                        (subst (λ x → (ψ 〈 ρ 〉) ↠ x) (closed-rep (NF Γ⊢ψ∶Ω)) (respects-red (respects-osr replacement β-respects-rep) (red-NF Γ⊢ψ∶Ω)))) 
+                        (proj₂ (proj₂ (proj₂ ε∈EΔψ))))
 
 postulate expand-EP : ∀ {V} {Γ : Context V} {φ : Term V} {δ ε : Proof V} →
                    EP Γ φ ε → Γ ⊢ δ ∶ φ → δ ⇒R ε → SN δ → EP Γ φ δ
-
-postulate EP-typed : ∀ {V} {Γ : Context V} {δ : Proof V} {φ : Term V} →
-                   EP Γ φ δ → Γ ⊢ δ ∶ φ
 
 postulate EP-SN : ∀ {V} {Γ : Context V} {δ} {φ} → EP Γ φ δ → SN δ
 

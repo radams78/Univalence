@@ -5,6 +5,8 @@ open import PHOPL.Rules
 open import PHOPL.PathSub
 open import PHOPL.Close
 
+postulate β-respects-rep : respects' replacement
+
 postulate β-respects-sub : respects' substitution
 
 postulate Context-Validity : ∀ {V} {Γ} {K} {M : Expression V (varKind K)} {A} →
@@ -104,3 +106,7 @@ postulate compRP-typed : ∀ {U} {V} {W} {ρ : Rep V W} {τ : PathSub U V} {σ �
                            {Γ} {Δ} {Θ} →
                            ρ ∶ Δ ⇒R Θ → τ ∶ σ ∼ σ' ∶ Γ ⇒ Δ →
                            ρ •RP τ ∶ ρ •₁ σ ∼ ρ •₁ σ' ∶ Γ ⇒ Θ
+
+postulate ⊃-gen₁ : ∀ {V} {Γ : Context V} {φ} {ψ} → Γ ⊢ φ ⊃ ψ ∶ Ω → Γ ⊢ φ ∶ Ω
+
+postulate ⊃-gen₂ : ∀ {V} {Γ : Context V} {φ} {ψ} → Γ ⊢ φ ⊃ ψ ∶ Ω → Γ ⊢ ψ ∶ Ω
