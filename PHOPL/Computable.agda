@@ -1,4 +1,5 @@
 module PHOPL.Computable where
+open import Data.Product renaming (_,_ to _,p_)
 open import PHOPL
 open import PHOPL.Neutral
 open import PHOPL.Rules
@@ -6,7 +7,16 @@ open import PHOPL.Close
 open import PHOPL.Red
 open import PHOPL.Meta
 
-postulate E : ∀ {V} → Context V → Type ∅ → Term V → Set
+record EΩ {V} (Γ : Context V) (M : Term V) : Set where
+  field
+    typed : Γ ⊢ M ∶ Ω
+    sn    : SN M
+
+--TODO Reorganised as typed plus condition
+
+E : ∀ {V} → Context V → Type ∅ → Term V → Set
+E Γ (app -Omega out) = EΩ Γ
+E Γ (app -func (A ,, B ,, out)) M = Γ ⊢ M ∶ ty A ⇛ ty B × (∀ W (Δ : Context W) ρ N → E Δ A N → E Δ B (appT (M 〈 ρ 〉) N)) 
 
 postulate Neutral-E : ∀ {V} {Γ : Context V} {A : Type V} {M : Term V} →
                     Neutral M → Γ ⊢ M ∶ A → E Γ (close A) M
