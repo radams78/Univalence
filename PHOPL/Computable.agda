@@ -1,5 +1,8 @@
 module PHOPL.Computable where
+open import Data.Empty renaming (⊥ to Empty)
+open import Data.Sum
 open import Data.Product renaming (_,_ to _,p_)
+open import Prelims
 open import PHOPL
 open import PHOPL.Neutral
 open import PHOPL.Rules
@@ -43,12 +46,37 @@ postulate expand-E : ∀ {V} {Γ : Context V} {A : Type V} {B : Type ∅} {M : T
 
 postulate E-typed : ∀ {V} {Γ : Context V} {A} {M} → E Γ A M → Γ ⊢ M ∶ A 〈 magic 〉
 
-data EP : ∀ {V} → Context V → Term V → Proof V → Set where
-  EP⊥ : ∀ {V} {Γ : Context V} {φ} {δ} → φ ↠ ⊥ → Γ ⊢ δ ∶ φ → SN δ → EP Γ φ δ
-  EP⊃ : ∀ {V} {Γ : Context V} {φ} {ψ} {χ} {δ} → φ ↠ ψ ⊃ χ → Γ ⊢ δ ∶ φ → (∀ W (Δ : Context W) ρ ε → ρ ∶ Γ ⇒R Δ → EP {W} Δ (ψ 〈 ρ 〉) ε → EP Δ (χ 〈 ρ 〉) (appP (δ 〈 ρ 〉) ε))
+data closed-prop : Set where
+  ⊥C : closed-prop
+  _⊃C_ : closed-prop → closed-prop → closed-prop
 
-postulate appP-EP : ∀ {V} {Γ : Context V} {δ ε : Proof V} {φ} {ψ} →
-                  EP Γ (φ ⊃ ψ) δ → EP Γ φ ε → EP Γ ψ (appP δ ε)
+cp2term : ∀ {V} → closed-prop → Term V
+cp2term ⊥C = ⊥
+cp2term (φ ⊃C ψ) = cp2term φ ⊃ cp2term ψ
+
+compute : ∀ {V} → Context V → closed-prop → Proof V → Set
+compute Γ ⊥C δ = SN δ
+compute Γ (φ ⊃C ψ) δ = ∀ W (Δ : Context W) ρ ε → ρ ∶ Γ ⇒R Δ → compute Δ φ ε → compute Δ ψ (appP (δ 〈 ρ 〉) ε)
+
+EP : ∀ {V} → Context V → Term V → Proof V → Set
+EP Γ φ δ = Γ ⊢ δ ∶ φ × Σ[ ψ ∈ closed-prop ] (φ ↠ cp2term ψ × compute Γ ψ δ)
+
+postulate ⊃-not-⊥ : ∀ {V} {φ ψ : Term V} → φ ⊃ ψ ↠ ⊥ → Empty
+
+postulate ⊃-inj₁ : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ⊃ ψ ↠ φ' ⊃ ψ' → φ ↠ φ'
+
+postulate ⊃-inj₂ : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ⊃ ψ ↠ φ' ⊃ ψ' → ψ ↠ ψ'
+
+postulate confluent : ∀ {V} {φ : Term V} {ψ ψ' : closed-prop} → φ ↠ cp2term ψ → φ ↠ cp2term ψ' → ψ ≡ ψ'
+
+appP-EP : ∀ {V} {Γ : Context V} {δ ε : Proof V} {φ} {ψ} →
+          EP Γ (φ ⊃ ψ) δ → EP Γ φ ε → EP Γ ψ (appP δ ε)
+appP-EP (_ ,p ⊥C ,p φ⊃ψ↠⊥ ,p _) _ = ⊥-elim (⊃-not-⊥ φ⊃ψ↠⊥)
+appP-EP {V} {Γ} {ε = ε} {ψ = ψ} (Γ⊢δ∶φ⊃ψ ,p (φ' ⊃C ψ') ,p φ⊃ψ↠φ'⊃ψ' ,p computeδ) (Γ⊢ε∶φ ,p φ'' ,p φ↠φ'' ,p computeε) = 
+  (appPR Γ⊢δ∶φ⊃ψ Γ⊢ε∶φ) ,p ψ' ,p ⊃-inj₂ φ⊃ψ↠φ'⊃ψ' ,p 
+  subst (λ x → compute Γ ψ' (appP x ε)) rep-idOp 
+  (computeδ V Γ (idRep V) ε idRep-typed 
+  (subst (λ x → compute Γ x ε) (confluent φ↠φ'' (⊃-inj₁ φ⊃ψ↠φ'⊃ψ')) computeε))
 
 postulate conv-EP : ∀ {V} {Γ : Context V} {φ ψ : Term V} {δ : Proof V} →
                     φ ≃ ψ → EP Γ φ δ → EP Γ ψ δ
