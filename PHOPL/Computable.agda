@@ -135,6 +135,8 @@ data key-redex : ∀ {V} → Proof V → Proof V → Set where
   appPkr : ∀ {V} {δ ε χ : Proof V} → key-redex δ ε → key-redex (appP δ χ) (appP ε χ)
   plus-univ : ∀ {V} {φ ψ : Term V} {δ ε} → key-redex (plus (univ φ ψ δ ε)) δ
   minus-univ : ∀ {V} {φ ψ : Term V} {δ ε} → key-redex (minus (univ φ ψ δ ε)) ε
+  imp*-plus : ∀ {V} {P Q : Path V} {δ ε} → key-redex (appP (appP (plus (P ⊃* Q)) δ) ε) (appP (plus Q) (appP δ (appP (minus P) ε)))
+  imp*-minus : ∀ {V} {P Q : Path V} {δ ε} → key-redex (appP (appP (minus (P ⊃* Q)) δ) ε) (appP (minus Q) (appP δ (appP (plus P) ε)))
 
 postulate key-redex-rep : ∀ {U} {V} {ρ : Rep U V} {δ ε : Proof U} → key-redex δ ε → key-redex (δ 〈 ρ 〉) (ε 〈 ρ 〉)
 
@@ -165,6 +167,9 @@ computeE Γ F (app -func (A ,, B ,, out)) G P =
 
 postulate ref-compute : ∀ {V} {Γ : Context V} {M : Term V} {A : Type ∅} → E Γ A M → computeE Γ M A M (reff M)
 
+postulate rep-EP : ∀ {U} {V} {Γ} {Δ} {ρ : Rep U V} {φ} {δ} →
+                 EP Γ φ δ → ρ ∶ Γ ⇒R Δ → EP Δ (φ 〈 ρ 〉) (δ 〈 ρ 〉)
+
 EE : ∀ {V} → Context V → Equation V → Path V → Set
 EE Γ (app -eq (M ,, N ,, A ,, out)) P = Γ ⊢ P ∶ M ≡〈 A 〉 N × computeE Γ M (close A) N P
 
@@ -180,18 +185,69 @@ univ-EE {V} {Γ} {φ} {ψ} {δ} {ε} δ∈EΓφ⊃ψ ε∈EΓψ⊃φ =
       expand-EP δ∈EΓφ⊃ψ (plusR Γ⊢univ∶φ≡ψ) plus-univ ,p 
       expand-EP ε∈EΓψ⊃φ (minusR Γ⊢univ∶φ≡ψ) minus-univ)
 
-postulate imp*-EE : ∀ {V} {Γ : Context V} {φ φ' ψ ψ' : Term V} {P Q : Path V} →
-                  EE Γ (φ ≡〈 Ω 〉 φ') P → EE Γ (ψ ≡〈 Ω 〉 ψ') Q → EE Γ (φ ⊃ ψ ≡〈 Ω 〉 φ' ⊃ ψ') (P ⊃* Q)
-
-postulate app*-EE : ∀ {V} {Γ : Context V} {M} {M'} {N} {N'} {A} {B} {P} {Q} →
-                  EE Γ (M ≡〈 A ⇛ B 〉 M') P → EE Γ (N ≡〈 A 〉 N') Q →
-                  EE Γ (appT M N ≡〈 B 〉 appT M' N') (app* N N' P Q)
+postulate EE-typed : ∀ {V} {Γ : Context V} {E} {P} →
+                   EE Γ E P → Γ ⊢ P ∶ E
 
 postulate plus-EP : ∀ {V} {Γ : Context V} {P : Path V} {φ ψ : Term V} →
                   EE Γ (φ ≡〈 Ω 〉 ψ) P → EP Γ (φ ⊃ ψ) (plus P)
 
 postulate minus-EP : ∀ {V} {Γ : Context V} {P : Path V} {φ ψ : Term V} →
                    EE Γ (φ ≡〈 Ω 〉 ψ) P → EP Γ (ψ ⊃ φ) (minus P)
+
+postulate rep-EE : ∀ {U} {V} {Γ} {Δ} {ρ : Rep U V} {E} {P} →
+                 EE Γ E P → ρ ∶ Γ ⇒R Δ → EE Δ (E 〈 ρ 〉) (P 〈 ρ 〉)
+
+imp*-EE : ∀ {V} {Γ : Context V} {φ φ' ψ ψ' : Term V} {P Q : Path V} →
+          EE Γ (φ ≡〈 Ω 〉 φ') P → EE Γ (ψ ≡〈 Ω 〉 ψ') Q → EE Γ (φ ⊃ ψ ≡〈 Ω 〉 φ' ⊃ ψ') (P ⊃* Q)
+imp*-EE {Γ = Γ} {φ} {φ'} {ψ = ψ} {ψ'} {P} {Q = Q} P∈EΓφ≡φ' Q∈EΓψ≡ψ' = (imp*R (EE-typed P∈EΓφ≡φ') (EE-typed Q∈EΓψ≡ψ')) ,p 
+  func-EP (λ V Δ ρ ε validΔ ρ∶Γ⇒RΔ ε∈EΔφ⊃ψ →
+    let Pρ : EE Δ (φ 〈 ρ 〉 ≡〈 Ω 〉 φ' 〈 ρ 〉) (P 〈 ρ 〉)
+        Pρ = rep-EE P∈EΓφ≡φ' ρ∶Γ⇒RΔ in
+    let Qρ : EE Δ (ψ 〈 ρ 〉 ≡〈 Ω 〉 ψ' 〈 ρ 〉) (Q 〈 ρ 〉)
+        Qρ = rep-EE Q∈EΓψ≡ψ' ρ∶Γ⇒RΔ in
+    func-EP (λ W Θ σ χ validΘ σ∶Δ⇒RΘ χ∈EΘφ' → 
+    let Pρσ : EE Θ (φ 〈 ρ 〉 〈 σ 〉 ≡〈 Ω 〉 φ' 〈 ρ 〉 〈 σ 〉) (P 〈 ρ 〉 〈 σ 〉)
+        Pρσ = rep-EE Pρ σ∶Δ⇒RΘ in
+    let Pρσ- : EP Θ (φ' 〈 ρ 〉 〈 σ 〉 ⊃ φ 〈 ρ 〉 〈 σ 〉) (minus (P 〈 ρ 〉 〈 σ 〉))
+        Pρσ- = minus-EP Pρσ in
+    let Qρσ : EE Θ (ψ 〈 ρ 〉 〈 σ 〉 ≡〈 Ω 〉 ψ' 〈 ρ 〉 〈 σ 〉) (Q 〈 ρ 〉 〈 σ 〉)
+        Qρσ = rep-EE Qρ σ∶Δ⇒RΘ in
+    let Qρσ+ : EP Θ (ψ 〈 ρ 〉 〈 σ 〉 ⊃ ψ' 〈 ρ 〉 〈 σ 〉) (plus (Q 〈 ρ 〉 〈 σ 〉))
+        Qρσ+ = plus-EP Qρσ in
+    let εσ : EP Θ (φ 〈 ρ 〉 〈 σ 〉 ⊃ ψ 〈 ρ 〉 〈 σ 〉) (ε 〈 σ 〉)
+        εσ = rep-EP ε∈EΔφ⊃ψ σ∶Δ⇒RΘ in
+    expand-EP 
+    (appP-EP Qρσ+ (appP-EP εσ (appP-EP Pρσ- χ∈EΘφ')))
+    (appPR (appPR (plusR (imp*R (EE-typed Pρσ) (EE-typed Qρσ))) (EP-typed εσ)) (EP-typed χ∈EΘφ')) 
+    imp*-plus) 
+    (appPR (plusR (imp*R (EE-typed Pρ) (EE-typed Qρ))) (EP-typed ε∈EΔφ⊃ψ))) 
+  (plusR (imp*R (EE-typed P∈EΓφ≡φ') (EE-typed Q∈EΓψ≡ψ'))) ,p 
+  func-EP (λ V Δ ρ ε validΔ ρ∶Γ⇒RΔ ε∈EΔφ'⊃ψ' →
+    let Pρ : EE Δ (φ 〈 ρ 〉 ≡〈 Ω 〉 φ' 〈 ρ 〉) (P 〈 ρ 〉)
+        Pρ = rep-EE P∈EΓφ≡φ' ρ∶Γ⇒RΔ in
+    let Qρ : EE Δ (ψ 〈 ρ 〉 ≡〈 Ω 〉 ψ' 〈 ρ 〉) (Q 〈 ρ 〉)
+        Qρ = rep-EE Q∈EΓψ≡ψ' ρ∶Γ⇒RΔ in
+    func-EP (λ W Θ σ χ validΘ σ∶Δ⇒RΘ χ∈EΘφ' → 
+      let Pρσ : EE Θ (φ 〈 ρ 〉 〈 σ 〉 ≡〈 Ω 〉 φ' 〈 ρ 〉 〈 σ 〉) (P 〈 ρ 〉 〈 σ 〉)
+          Pρσ = rep-EE Pρ σ∶Δ⇒RΘ in
+      let Pρσ+ : EP Θ (φ 〈 ρ 〉 〈 σ 〉 ⊃ φ' 〈 ρ 〉 〈 σ 〉) (plus (P 〈 ρ 〉 〈 σ 〉))
+          Pρσ+ = plus-EP Pρσ in
+      let Qρσ : EE Θ (ψ 〈 ρ 〉 〈 σ 〉 ≡〈 Ω 〉 ψ' 〈 ρ 〉 〈 σ 〉) (Q 〈 ρ 〉 〈 σ 〉)
+          Qρσ = rep-EE Qρ σ∶Δ⇒RΘ in
+      let Qρσ- : EP Θ (ψ' 〈 ρ 〉 〈 σ 〉 ⊃ ψ 〈 ρ 〉 〈 σ 〉) (minus (Q 〈 ρ 〉 〈 σ 〉))
+          Qρσ- = minus-EP Qρσ in
+      let εσ : EP Θ (φ' 〈 ρ 〉 〈 σ 〉 ⊃ ψ' 〈 ρ 〉 〈 σ 〉) (ε 〈 σ 〉)
+          εσ = rep-EP ε∈EΔφ'⊃ψ' σ∶Δ⇒RΘ in 
+      expand-EP 
+        (appP-EP Qρσ- (appP-EP εσ (appP-EP Pρσ+ χ∈EΘφ'))) 
+          (appPR (appPR (minusR (imp*R (EE-typed Pρσ) (EE-typed Qρσ))) (EP-typed εσ)) (EP-typed χ∈EΘφ')) 
+        imp*-minus)
+    (appPR (minusR (imp*R (EE-typed Pρ) (EE-typed Qρ))) (EP-typed ε∈EΔφ'⊃ψ'))) 
+  (minusR (imp*R (EE-typed P∈EΓφ≡φ') (EE-typed Q∈EΓψ≡ψ')))
+
+postulate app*-EE : ∀ {V} {Γ : Context V} {M} {M'} {N} {N'} {A} {B} {P} {Q} →
+                  EE Γ (M ≡〈 A ⇛ B 〉 M') P → EE Γ (N ≡〈 A 〉 N') Q →
+                  EE Γ (appT M N ≡〈 B 〉 appT M' N') (app* N N' P Q)
 
 postulate func-EE : ∀ {U} {Γ : Context U} {A} {B} {M} {M'} {P} →
                    (∀ V (Δ : Context V) (N N' : Term V) Q ρ → ρ ∶ Γ ⇒R Δ → valid Δ → 
@@ -204,11 +260,5 @@ postulate expand-EE : ∀ {V} {Γ : Context V} {A} {M N : Term V} {P Q} →
 
 postulate conv-EE : ∀ {V} {Γ : Context V} {E} {E'} {P} →
                   EE Γ E P → E ≃ E' → EE Γ E' P
-
-postulate rep-EE : ∀ {U} {V} {Γ} {Δ} {ρ : Rep U V} {E} {P} →
-                 EE Γ E P → ρ ∶ Γ ⇒R Δ → EE Δ (E 〈 ρ 〉) (P 〈 ρ 〉)
-
-postulate EE-typed : ∀ {V} {Γ : Context V} {E} {P} →
-                   EE Γ E P → Γ ⊢ P ∶ E
 
 postulate EE-SN : ∀ {V} {Γ : Context V} E {P} → EE Γ E P → SN P
