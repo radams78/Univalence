@@ -16,10 +16,10 @@ record EΩ {V} (Γ : Context V) (M : Term V) : Set where
 
 E : ∀ {V} → Context V → Type ∅ → Term V → Set
 E Γ (app -Omega out) = EΩ Γ
-E Γ (app -func (A ,, B ,, out)) M = Γ ⊢ M ∶ ty A ⇛ ty B × (∀ W (Δ : Context W) ρ N → E Δ A N → E Δ B (appT (M 〈 ρ 〉) N)) 
+E Γ (app -func (A ,, B ,, out)) M = Γ ⊢ M ∶ ty A ⇛ ty B × (∀ W (Δ : Context W) ρ N → ρ ∶ Γ ⇒R Δ → E Δ A N → E Δ B (appT (M 〈 ρ 〉) N)) 
 
 postulate Neutral-E : ∀ {V} {Γ : Context V} {A : Type V} {M : Term V} →
-                    Neutral M → Γ ⊢ M ∶ A → E Γ (close A) M
+              Neutral M → Γ ⊢ M ∶ A → E Γ (close A) M
 
 var-E : ∀ {V} {Γ : Context V} {x : Var V -Term} → 
   valid Γ → E Γ (close (typeof x Γ)) (var x)
@@ -43,7 +43,9 @@ postulate expand-E : ∀ {V} {Γ : Context V} {A : Type V} {B : Type ∅} {M : T
 
 postulate E-typed : ∀ {V} {Γ : Context V} {A} {M} → E Γ A M → Γ ⊢ M ∶ A 〈 magic 〉
 
-postulate EP : ∀ {V} → Context V → Term V → Proof V → Set
+data EP : ∀ {V} → Context V → Term V → Proof V → Set where
+  EP⊥ : ∀ {V} {Γ : Context V} {φ} {δ} → φ ↠ ⊥ → Γ ⊢ δ ∶ φ → SN δ → EP Γ φ δ
+  EP⊃ : ∀ {V} {Γ : Context V} {φ} {ψ} {χ} {δ} → φ ↠ ψ ⊃ χ → Γ ⊢ δ ∶ φ → (∀ W (Δ : Context W) ρ ε → ρ ∶ Γ ⇒R Δ → EP {W} Δ (ψ 〈 ρ 〉) ε → EP Δ (χ 〈 ρ 〉) (appP (δ 〈 ρ 〉) ε))
 
 postulate appP-EP : ∀ {V} {Γ : Context V} {δ ε : Proof V} {φ} {ψ} →
                   EP Γ (φ ⊃ ψ) δ → EP Γ φ ε → EP Γ ψ (appP δ ε)
