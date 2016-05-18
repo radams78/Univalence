@@ -133,6 +133,8 @@ func-EP {δ = δ} {φ = φ} {ψ = ψ} hyp Γ⊢δ∶φ⊃ψ = let Γ⊢φ⊃ψ�
 data key-redex : ∀ {V} → Proof V → Proof V → Set where
   βkr : ∀ {V} {φ : Term V} {δ ε} → key-redex (appP (ΛP φ δ) ε) (δ ⟦ x₀:= ε ⟧)
   appPkr : ∀ {V} {δ ε χ : Proof V} → key-redex δ ε → key-redex (appP δ χ) (appP ε χ)
+  plus-univ : ∀ {V} {φ ψ : Term V} {δ ε} → key-redex (plus (univ φ ψ δ ε)) δ
+  minus-univ : ∀ {V} {φ ψ : Term V} {δ ε} → key-redex (minus (univ φ ψ δ ε)) ε
 
 postulate key-redex-rep : ∀ {U} {V} {ρ : Rep U V} {δ ε : Proof U} → key-redex δ ε → key-redex (δ 〈 ρ 〉) (ε 〈 ρ 〉)
 
@@ -146,13 +148,14 @@ expand-compute {A = A ⊃C B} computeε Γ⊢δ∶A⊃B δ▷ε SNδ W Δ ρ χ 
     (appPR (change-type (Weakening Γ⊢δ∶A⊃B (Context-Validity Δ⊢χ∶A) ρ∶Γ⇒RΔ) (closed-rep (A ⊃C B))) Δ⊢χ∶A) (appPkr (key-redex-rep δ▷ε)) 
     (key-redex-SN (appPkr (key-redex-rep δ▷ε)) (compute-SN (computeε W Δ ρ χ ρ∶Γ⇒RΔ Δ⊢χ∶A computeχ) (Context-Validity Δ⊢χ∶A)))
 
-expand-EP : ∀ {V} {Γ : Context V} {φ : Term V} {δ ε : Proof V} →
-            EP Γ φ ε → Γ ⊢ δ ∶ φ → key-redex δ ε → SN δ → EP Γ φ δ
-expand-EP (Γ⊢ε∶φ ,p φ' ,p φ↠φ' ,p computeε) Γ⊢δ∶φ δ▷ε SNδ = Γ⊢δ∶φ ,p φ' ,p φ↠φ' ,p expand-compute computeε 
-  (convR Γ⊢δ∶φ (cp-typed φ' (Context-Validity Γ⊢δ∶φ)) (red-conv φ↠φ')) δ▷ε SNδ
-
 EP-SN : ∀ {V} {Γ : Context V} {δ} {φ} → EP Γ φ δ → SN δ
 EP-SN (Γ̌⊢δ∶φ ,p _ ,p _ ,p computeδ) = compute-SN computeδ (Context-Validity Γ̌⊢δ∶φ)
+
+expand-EP : ∀ {V} {Γ : Context V} {φ : Term V} {δ ε : Proof V} →
+            EP Γ φ ε → Γ ⊢ δ ∶ φ → key-redex δ ε → EP Γ φ δ
+expand-EP (Γ⊢ε∶φ ,p φ' ,p φ↠φ' ,p computeε) Γ⊢δ∶φ δ▷ε = Γ⊢δ∶φ ,p φ' ,p φ↠φ' ,p expand-compute computeε 
+  (convR Γ⊢δ∶φ (cp-typed φ' (Context-Validity Γ⊢δ∶φ)) (red-conv φ↠φ')) δ▷ε
+  (key-redex-SN δ▷ε (compute-SN computeε (Context-Validity Γ⊢ε∶φ)))
 
 computeE : ∀ {V} → Context V → Term V → Type ∅ → Term V → Path V → Set
 computeE Γ φ (app -Omega out) ψ P = EP Γ (φ ⊃ ψ) (plus P) × EP Γ (ψ ⊃ φ) (minus P)
@@ -160,13 +163,22 @@ computeE Γ F (app -func (A ,, B ,, out)) G P =
   ∀ W (Δ : Context W) ρ N N' Q → ρ ∶ Γ ⇒R Δ → Δ ⊢ Q ∶ N ≡〈 ty A 〉 N' → E Δ (ty A) N → E Δ (ty A) N' → computeE Δ N A N' Q → 
   computeE Δ (appT (F 〈 ρ 〉) N) B (appT (G 〈 ρ 〉) N') (app* N N' (P 〈 ρ 〉) Q)
 
+postulate ref-compute : ∀ {V} {Γ : Context V} {M : Term V} {A : Type ∅} → E Γ A M → computeE Γ M A M (reff M)
+
 EE : ∀ {V} → Context V → Equation V → Path V → Set
 EE Γ (app -eq (M ,, N ,, A ,, out)) P = Γ ⊢ P ∶ M ≡〈 A 〉 N × computeE Γ M (close A) N P
 
-postulate ref-EE : ∀ {V} {Γ : Context V} {M : Term V} {A : Type V} → E Γ (close A) M → EE Γ (M ≡〈 A 〉 M) (reff M)
+ref-EE : ∀ {V} {Γ : Context V} {M : Term V} {A : Type V} → E Γ (close A) M → EE Γ (M ≡〈 A 〉 M) (reff M)
+ref-EE {V} {Γ} {M} {A} M∈EΓA = refR (change-type (E-typed M∈EΓA) close-magic) ,p ref-compute M∈EΓA
 
-postulate univ-EE : ∀ {V} {Γ : Context V} {φ ψ : Term V} {δ ε : Proof V} →
-                  EP Γ (φ ⊃ ψ) δ → EP Γ (ψ ⊃ φ) ε → EE Γ (φ ≡〈 Ω 〉 ψ) (univ φ ψ δ ε)
+univ-EE : ∀ {V} {Γ : Context V} {φ ψ : Term V} {δ ε : Proof V} →
+          EP Γ (φ ⊃ ψ) δ → EP Γ (ψ ⊃ φ) ε → EE Γ (φ ≡〈 Ω 〉 ψ) (univ φ ψ δ ε)
+univ-EE {V} {Γ} {φ} {ψ} {δ} {ε} δ∈EΓφ⊃ψ ε∈EΓψ⊃φ = 
+  let Γ⊢univ∶φ≡ψ : Γ ⊢ univ φ ψ δ ε ∶ φ ≡〈 Ω 〉 ψ
+      Γ⊢univ∶φ≡ψ = (univR (EP-typed δ∈EΓφ⊃ψ) (EP-typed ε∈EΓψ⊃φ)) in
+      (Γ⊢univ∶φ≡ψ ,p 
+      expand-EP δ∈EΓφ⊃ψ (plusR Γ⊢univ∶φ≡ψ) plus-univ ,p 
+      expand-EP ε∈EΓψ⊃φ (minusR Γ⊢univ∶φ≡ψ) minus-univ)
 
 postulate imp*-EE : ∀ {V} {Γ : Context V} {φ φ' ψ ψ' : Term V} {P Q : Path V} →
                   EE Γ (φ ≡〈 Ω 〉 φ') P → EE Γ (ψ ≡〈 Ω 〉 ψ') Q → EE Γ (φ ⊃ ψ ≡〈 Ω 〉 φ' ⊃ ψ') (P ⊃* Q)
