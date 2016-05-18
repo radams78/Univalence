@@ -10,6 +10,14 @@ open import PHOPL.Close
 open import PHOPL.Red
 open import PHOPL.Meta
 
+postulate R-respects-replacement : respects'R replacement
+
+postulate R-creates-replacement : creates'R replacement
+
+postulate appP-SN : ∀ {V} {δ ε : Proof V} → SN δ → SN ε →
+                  (∀ φ χ → δ ≡ ΛP φ χ → SN (χ ⟦ x₀:= ε ⟧)) →
+                  SN (appP δ ε)
+
 record EΩ {V} (Γ : Context V) (M : Term V) : Set where
   field
     typed : Γ ⊢ M ∶ Ω
@@ -54,13 +62,15 @@ cp2term : ∀ {V} → closed-prop → Term V
 cp2term ⊥C = ⊥
 cp2term (φ ⊃C ψ) = cp2term φ ⊃ cp2term ψ
 
-postulate cp-typed : ∀ {V} {Γ : Context V} {A} → valid Γ → Γ ⊢ cp2term A ∶ Ω
+postulate cp-typed : ∀ {V} {Γ : Context V} A → valid Γ → Γ ⊢ cp2term A ∶ Ω
 
 postulate closed-rep : ∀ {U} {V} {ρ : Rep U V} (A : closed-prop) → (cp2term A) 〈 ρ 〉 ≡ cp2term A
 
 compute : ∀ {V} → Context V → closed-prop → Proof V → Set
 compute Γ ⊥C δ = SN δ
 compute Γ (φ ⊃C ψ) δ = ∀ W (Δ : Context W) ρ ε → ρ ∶ Γ ⇒R Δ → Δ ⊢ ε ∶ cp2term φ → compute Δ φ ε → compute Δ ψ (appP (δ 〈 ρ 〉) ε)
+
+postulate compute-SN : ∀ {V} {Γ : Context V} {A} {δ} → compute Γ A δ → valid Γ → SN δ
 
 EP : ∀ {V} → Context V → Term V → Proof V → Set
 EP Γ φ δ = Γ ⊢ δ ∶ φ × Σ[ ψ ∈ closed-prop ] (φ ↠ cp2term ψ × compute Γ ψ δ)
@@ -91,7 +101,7 @@ appP-EP {V} {Γ} {ε = ε} {φ} {ψ = ψ} (Γ⊢δ∶φ⊃ψ ,p (φ' ⊃C ψ') ,
   (appPR Γ⊢δ∶φ⊃ψ Γ⊢ε∶φ) ,p ψ' ,p ⊃-inj₂ φ⊃ψ↠φ'⊃ψ' ,p 
   subst (λ x → compute Γ ψ' (appP x ε)) rep-idOp 
   (computeδ V Γ (idRep V) ε idRep-typed 
-    (convR Γ⊢ε∶φ (cp-typed {A = φ'} (Context-Validity Γ⊢ε∶φ)) (red-conv (⊃-inj₁ φ⊃ψ↠φ'⊃ψ')))
+    (convR Γ⊢ε∶φ (cp-typed φ' (Context-Validity Γ⊢ε∶φ)) (red-conv (⊃-inj₁ φ⊃ψ↠φ'⊃ψ')))
   (subst (λ x → compute Γ x ε) (confluent φ↠φ'' (⊃-inj₁ φ⊃ψ↠φ'⊃ψ')) computeε))
 
 conv-EP : ∀ {V} {Γ : Context V} {φ ψ : Term V} {δ : Proof V} →
@@ -120,8 +130,26 @@ func-EP {δ = δ} {φ = φ} {ψ = ψ} hyp Γ⊢δ∶φ⊃ψ = let Γ⊢φ⊃ψ�
                         (subst (λ x → (ψ 〈 ρ 〉) ↠ x) (closed-rep (NF Γ⊢ψ∶Ω)) (respects-red (respects-osr replacement β-respects-rep) (red-NF Γ⊢ψ∶Ω)))) 
                         (proj₂ (proj₂ (proj₂ ε∈EΔψ))))
 
-postulate expand-EP : ∀ {V} {Γ : Context V} {φ : Term V} {δ ε : Proof V} →
-                   EP Γ φ ε → Γ ⊢ δ ∶ φ → δ ⇒R ε → SN δ → EP Γ φ δ
+data key-redex : ∀ {V} → Proof V → Proof V → Set where
+  βkr : ∀ {V} {φ : Term V} {δ ε} → key-redex (appP (ΛP φ δ) ε) (δ ⟦ x₀:= ε ⟧)
+  appPkr : ∀ {V} {δ ε χ : Proof V} → key-redex δ ε → key-redex (appP δ χ) (appP ε χ)
+
+postulate key-redex-rep : ∀ {U} {V} {ρ : Rep U V} {δ ε : Proof U} → key-redex δ ε → key-redex (δ 〈 ρ 〉) (ε 〈 ρ 〉)
+
+postulate key-redex-SN : ∀ {V} {δ ε : Proof V} → key-redex δ ε → SN ε → SN δ
+
+expand-compute : ∀ {V} {Γ : Context V} {A : closed-prop} {δ ε : Proof V} →
+                compute Γ A ε → Γ ⊢ δ ∶ cp2term A → key-redex δ ε → SN δ → compute Γ A δ
+expand-compute {A = ⊥C} _ _ _ SNδ = SNδ
+expand-compute {A = A ⊃C B} computeε Γ⊢δ∶A⊃B δ▷ε SNδ W Δ ρ χ ρ∶Γ⇒RΔ Δ⊢χ∶A computeχ = 
+  expand-compute (computeε W Δ ρ χ ρ∶Γ⇒RΔ Δ⊢χ∶A computeχ) 
+    (appPR (change-type (Weakening Γ⊢δ∶A⊃B (Context-Validity Δ⊢χ∶A) ρ∶Γ⇒RΔ) (closed-rep (A ⊃C B))) Δ⊢χ∶A) (appPkr (key-redex-rep δ▷ε)) 
+    (key-redex-SN (appPkr (key-redex-rep δ▷ε)) (compute-SN (computeε W Δ ρ χ ρ∶Γ⇒RΔ Δ⊢χ∶A computeχ) (Context-Validity Δ⊢χ∶A)))
+
+expand-EP : ∀ {V} {Γ : Context V} {φ : Term V} {δ ε : Proof V} →
+            EP Γ φ ε → Γ ⊢ δ ∶ φ → key-redex δ ε → SN δ → EP Γ φ δ
+expand-EP (Γ⊢ε∶φ ,p φ' ,p φ↠φ' ,p computeε) Γ⊢δ∶φ δ▷ε SNδ = Γ⊢δ∶φ ,p φ' ,p φ↠φ' ,p expand-compute computeε 
+  (convR Γ⊢δ∶φ (cp-typed φ' (Context-Validity Γ⊢δ∶φ)) (red-conv φ↠φ')) δ▷ε SNδ
 
 postulate EP-SN : ∀ {V} {Γ : Context V} {δ} {φ} → EP Γ φ δ → SN δ
 

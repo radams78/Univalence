@@ -142,7 +142,7 @@ aux-lm1 U V σ Γ Δ φ δ ψ ih σ∶Γ⇒CΔ Γ,φ⊢δ∶ψ validΔ = func-EP
       (Substitution Γ,φ⊢δ∶ψ (ctxPR (Prop-Validity (EP-typed ε∈EΘφσρ))) 
         (comp₁-typed (Rep↑-typed ρ∶Δ⇒RΘ) (Sub↑-typed (subC-typed σ∶Γ⇒CΔ)))))) 
     (EP-typed ε∈EΘφσρ)) 
-    (redexR βR) 
+    βkr
     (SN-βexp (EP-SN ε∈EΘφσρ) (EP-SN EPδ))) -- TODO Common pattern with Computable-Substitution
  (ΛPR (change-type (Substitution Γ,φ⊢δ∶ψ (ctxPR (Substitution Γ⊢φ∶Ω validΔ (subC-typed σ∶Γ⇒CΔ))) (Sub↑-typed (subC-typed σ∶Γ⇒CΔ))) (Sub↑-upRep ψ))) where
  Γ⊢φ∶Ω : Γ ⊢ φ ∶ Ω
