@@ -23,8 +23,7 @@ record EΩ {V} (Γ : Context V) (M : Term V) : Set where
     typed : Γ ⊢ M ∶ Ω
     sn    : SN M
 
---TODO Reorganised as typed plus condition
-
+--TODO Reorganise as typed plus condition
 E : ∀ {V} → Context V → Type ∅ → Term V → Set
 E Γ (app -Omega out) = EΩ Γ
 E Γ (app -func (A ,, B ,, out)) M = Γ ⊢ M ∶ ty A ⇛ ty B × (∀ W (Δ : Context W) ρ N → ρ ∶ Γ ⇒R Δ → E Δ A N → E Δ B (appT (M 〈 ρ 〉) N)) 
@@ -245,9 +244,17 @@ imp*-EE {Γ = Γ} {φ} {φ'} {ψ = ψ} {ψ'} {P} {Q = Q} P∈EΓφ≡φ' Q∈EΓ
     (appPR (minusR (imp*R (EE-typed Pρ) (EE-typed Qρ))) (EP-typed ε∈EΔφ'⊃ψ'))) 
   (minusR (imp*R (EE-typed P∈EΓφ≡φ') (EE-typed Q∈EΓψ≡ψ')))
 
-postulate app*-EE : ∀ {V} {Γ : Context V} {M} {M'} {N} {N'} {A} {B} {P} {Q} →
-                  EE Γ (M ≡〈 A ⇛ B 〉 M') P → EE Γ (N ≡〈 A 〉 N') Q →
-                  EE Γ (appT M N ≡〈 B 〉 appT M' N') (app* N N' P Q)
+app*-EE : ∀ {V} {Γ : Context V} {M} {M'} {N} {N'} {A} {B} {P} {Q} →
+          EE Γ (M ≡〈 A ⇛ B 〉 M') P → EE Γ (N ≡〈 A 〉 N') Q →
+          E Γ (close A) N → E Γ (close A) N' →
+          EE Γ (appT M N ≡〈 B 〉 appT M' N') (app* N N' P Q)
+app*-EE {V} {Γ} {M} {M'} {N} {N'} {A} {B} {P} {Q} (Γ⊢P∶M≡M' ,p computeP) (Γ⊢Q∶N≡N' ,p computeQ) N∈EΓA N'∈EΓA = (app*R (change-type (E-typed N∈EΓA) close-magic) (change-type (E-typed N'∈EΓA) close-magic) Γ⊢P∶M≡M' Γ⊢Q∶N≡N') ,p 
+  subst₃
+    (λ a b c →
+       computeE Γ (appT a N) (close B) (appT b N') (app* N N' c Q))
+    rep-idOp rep-idOp rep-idOp 
+    (computeP V Γ (idRep V) N N' Q idRep-typed (change-type Γ⊢Q∶N≡N' (cong (λ a → N ≡〈 a 〉 N') (trans (sym close-magic) (sym (rep-congl (close-close {A = A})))))) 
+      (subst (λ a → E Γ a N) (sym close-magic) N∈EΓA) (subst (λ a → E Γ a N') (sym close-magic) N'∈EΓA) computeQ)
 
 postulate func-EE : ∀ {U} {Γ : Context U} {A} {B} {M} {M'} {P} →
                    (∀ V (Δ : Context V) (N N' : Term V) Q ρ → ρ ∶ Γ ⇒R Δ → valid Δ → 

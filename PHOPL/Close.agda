@@ -9,6 +9,8 @@ close (app -func (A ,, B ,, out)) = close A ⇛ close B
 ty : ∀ {U} {V} → Type U → Type V
 ty A = close A 〈 magic 〉
 
+postulate close-close : ∀ {V} {A : Type V} → close (close A) ≡ close A
+
 postulate close-sub : ∀ {U} {V} (A : Type U) {σ : Sub U V} → close (A ⟦ σ ⟧) ≡ close A
 
 postulate close-rep : ∀ {U} {V} (A : Type U) {ρ : Rep U V} → close (A 〈 ρ 〉) ≡ close A

@@ -55,10 +55,14 @@ Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒CΔ (lllR .{U} .{Γ} 
   aux-lm2 U V σ Γ Δ A B M M' P σ∶Γ⇒CΔ Γ+⊢P∶Mx≡M'y validΔ 
   (λ W Θ τ τ∶Γ+⇒Θ validΘ → Computable-Path-Substitution₁ (U , -Term , -Term , -Path) W τ (Γ , A , A ⇑ , var x₁ ≡〈 A ⇑ ⇑ 〉 var x₀) Θ P
                              _ τ∶Γ+⇒Θ Γ+⊢P∶Mx≡M'y validΘ)
-Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒CΔ (app*R Γ⊢P∶M≡M' Γ⊢Q∶N≡N') validΔ = 
+Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒CΔ (app*R {N = N} {N'} {A} Γ⊢N∶A Γ⊢N'∶A Γ⊢P∶M≡M' Γ⊢Q∶N≡N') validΔ = 
   app*-EE 
   (Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒CΔ Γ⊢P∶M≡M' validΔ) 
   (Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒CΔ Γ⊢Q∶N≡N' validΔ)
+  (subst (λ a → E Δ a (N ⟦ σ ⟧)) (sym (close-sub A)) 
+    (Computable-Substitution U V σ Γ Δ N A σ∶Γ⇒CΔ Γ⊢N∶A validΔ))
+  (subst (λ a → E Δ a (N' ⟦ σ ⟧)) (sym (close-sub A))
+    (Computable-Substitution U V σ Γ Δ N' A σ∶Γ⇒CΔ Γ⊢N'∶A validΔ))
 Computable-Path-Substitution₁ U V σ Γ Δ P _ σ∶Γ⇒CΔ (convER {M = M} {M'} {N} {N'} {A} Γ⊢P∶M≡N Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N') validΔ = 
   conv-EE  (Computable-Path-Substitution₁ U V σ Γ Δ P _ σ∶Γ⇒CΔ Γ⊢P∶M≡N validΔ) 
     (trans-conv (respects-conv {f = λ a → a ⟦ σ ⟧ ≡〈 A ⟦ σ ⟧ 〉 N ⟦ σ ⟧} (λ x → app (appl (respects-osr substitution β-respects-sub x))) M≃M') 
@@ -72,9 +76,13 @@ Computable-Path-Substitution U V τ σ σ' Γ Δ .(app -bot out) .(app -Omega ou
 Computable-Path-Substitution U V τ σ σ' Γ Δ _ .(app -Omega out) τ∶σ∼σ' (impR Γ⊢φ∶Ω Γ⊢ψ∶Ω) validΔ = imp*-EE 
   (Computable-Path-Substitution U V τ σ σ' Γ Δ _ Ω τ∶σ∼σ' Γ⊢φ∶Ω validΔ) 
   (Computable-Path-Substitution U V τ σ σ' Γ Δ _ Ω τ∶σ∼σ' Γ⊢ψ∶Ω validΔ) 
-Computable-Path-Substitution U V τ σ σ' Γ Δ _ A τ∶σ∼σ' (appR Γ⊢M∶A⇒B Γ⊢N∶A) validΔ = app*-EE 
+Computable-Path-Substitution U V τ σ σ' Γ Δ _ .B τ∶σ∼σ' (appR {N = N} {A} {B} Γ⊢M∶A⇒B Γ⊢N∶A) validΔ = app*-EE 
   (Computable-Path-Substitution U V τ σ σ' Γ Δ _ _ τ∶σ∼σ' Γ⊢M∶A⇒B validΔ) 
   (Computable-Path-Substitution U V τ σ σ' Γ Δ _ _ τ∶σ∼σ' Γ⊢N∶A validΔ)
+  (subst (λ a → E Δ a (N ⟦ σ ⟧)) (sym (close-sub A)) 
+    (Computable-Substitution U V σ Γ Δ N A (pathsubC-valid₁ {U} {V} {τ} {σ} {σ'} τ∶σ∼σ') Γ⊢N∶A validΔ)) 
+  (subst (λ a → E Δ a (N ⟦ σ' ⟧)) (sym (close-sub A)) 
+    (Computable-Substitution U V σ' Γ Δ N A (pathsubC-valid₂ {σ = σ'} τ∶σ∼σ') Γ⊢N∶A validΔ))
 Computable-Path-Substitution .U V τ σ σ' .Γ Δ _ _ τ∶σ∼σ' (ΛR {U} {Γ} {A} {M} {B} Γ,A⊢M∶B) validΔ = 
   func-EE (λ W Θ N N' Q ρ ρ∶Δ⇒Θ validΘ N∈EΘA N'∈EΘA Q∈EΘN≡N' → 
     let σ₁ = x₀:= N •₂ Rep↑ -Term ρ • Sub↑ -Term σ in
@@ -273,7 +281,9 @@ Computable-Path-Substitution .U V τ σ σ' .Γ Δ _ _ τ∶σ∼σ' (ΛR {U} {�
                            M ⟦ sub↗ σ' ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉
                            ∎)
                            (sym-conv (osr-conv (redex βI)))) in
-      app*R (lllR (subst₄
+      app*R (change-type (E-typed N∈EΘA) (trans (sym (ty-rep (A ⟦ σ ⟧))) close-magic)) 
+        (change-type (E-typed N'∈EΘA) (trans (sym (ty-rep (A ⟦ σ ⟧))) close-magic)) 
+      (lllR (subst₄
                      (λ a b c d →
                         Θ , a , b , var x₁ ≡〈 c 〉 var x₀ ⊢
                         (M ⟦⟦ pathsub↑ τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧) 〈 ρ' 〉 ∶

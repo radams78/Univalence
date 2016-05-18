@@ -265,9 +265,11 @@ aux-lm2 U V σ Γ Δ A B M M' P σ∶Γ⇒Δ Γ+⊢P∶Mx≡M'y validΔ hyp = fu
        let step1 : Θ ⊢ λλλ (A ⟦ σ ⟧ 〈 ρ 〉) (P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉) ∶ (M ⟦ σ ⟧ 〈 ρ 〉) ≡〈 (A ⟦ σ ⟧ 〈 ρ 〉) ⇛ (B ⟦ σ ⟧ 〈 ρ 〉) 〉 (M' ⟦ σ ⟧ 〈 ρ 〉)
            step1 = lllR step2 in
        let target : Θ ⊢ app* N N' (λλλ (A ⟦ σ ⟧ 〈 ρ 〉) (P ⟦ Sub↑ _ (Sub↑ _ (Sub↑ _ σ)) ⟧ 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉)) Q ∶ appT (M ⟦ σ ⟧ 〈 ρ 〉) N ≡〈 B ⟦ σ ⟧ 〈 ρ 〉 〉 appT (M' ⟦ σ ⟧ 〈 ρ 〉) N'
-           target = app*R step1 (EE-typed Q∈EΘN≡N') in
-       target)
-    (redexR βE) 
+           target = app*R (change-type (E-typed N∈EΘA) 
+                    (trans {j = ty ((A ⟦ σ ⟧) 〈 ρ 〉)} (sym (rep-congl (close-rep (A ⟦ σ ⟧)))) close-magic)) 
+                    (change-type (E-typed N'∈EΘA) (trans {j = ty ((A ⟦ σ ⟧) 〈 ρ 〉)} (sym (rep-congl (close-rep (A ⟦ σ ⟧)))) close-magic)) step1 (EE-typed Q∈EΘN≡N') in
+                    target)
+                  (redexR βE) 
     (βE-exp (E-SN (close (A ⟦ σ ⟧)) N∈EΘA) (E-SN (close (A ⟦ σ ⟧)) N'∈EΘA) 
       (EE-SN (N ≡〈 A ⟦ σ ⟧ 〈 ρ 〉 〉 N') Q∈EΘN≡N') 
       (EE-SN (appT (M ⟦ σ ⟧ 〈 ρ 〉) N ≡〈 B ⟦ σ ⟧ 〈 ρ 〉 〉 appT (M' ⟦ σ ⟧ 〈 ρ 〉) N') ih))))

@@ -172,6 +172,7 @@ On top of this we add extensional equality:
 
   app*R : ∀ {V} {Γ : Context V} {P Q : Path V} {M M' N N' : Term V} {A B : Type V} →
 
+    Γ ⊢ N ∶ A → Γ ⊢ N' ∶ A →
     Γ ⊢ P ∶ M ≡〈 A ⇛ B 〉 M' → Γ ⊢ Q ∶ N ≡〈 A 〉 N' →
   -------------------------------------------------
     Γ ⊢ app* N N' P Q ∶ appT M N ≡〈 B 〉 appT M' N'
