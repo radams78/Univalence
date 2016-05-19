@@ -275,10 +275,7 @@ aux-lm2 U V σ Γ Δ A B M M' P σ∶Γ⇒Δ Γ+⊢P∶Mx≡M'y validΔ hyp =
                     (trans {j = ty ((A ⟦ σ ⟧) 〈 ρ 〉)} (sym (rep-congl (close-rep (A ⟦ σ ⟧)))) close-magic)) 
                     (change-type (E-typed N'∈EΘA) (trans {j = ty ((A ⟦ σ ⟧) 〈 ρ 〉)} (sym (rep-congl (close-rep (A ⟦ σ ⟧)))) close-magic)) step1 (EE-typed Q∈EΘN≡N') in
                     target)
-                  (redexR βE) 
-    (βE-exp (E-SN (close (A ⟦ σ ⟧)) N∈EΘA) (E-SN (close (A ⟦ σ ⟧)) N'∈EΘA) 
-      (EE-SN (N ≡〈 A ⟦ σ ⟧ 〈 ρ 〉 〉 N') Q∈EΘN≡N') 
-      (EE-SN (appT (M ⟦ σ ⟧ 〈 ρ 〉) N ≡〈 B ⟦ σ ⟧ 〈 ρ 〉 〉 appT (M' ⟦ σ ⟧ 〈 ρ 〉) N') ih))))
+                  βEkr))
     where
                   aux : ∀ {V} (Q : Path V) N' (N : Term V) → (x₀:= Q • Sub↑ -Path (x₀:= N') •
                           Sub↑ -Path (Sub↑ -Term (x₀:= N)))

@@ -129,34 +129,36 @@ func-EP {δ = δ} {φ = φ} {ψ = ψ} hyp Γ⊢δ∶φ⊃ψ = let Γ⊢φ⊃ψ�
                         (subst (λ x → (ψ 〈 ρ 〉) ↠ x) (closed-rep (NF Γ⊢ψ∶Ω)) (respects-red (respects-osr replacement β-respects-rep) (red-NF Γ⊢ψ∶Ω)))) 
                         (proj₂ (proj₂ (proj₂ ε∈EΔψ))))
 
-data key-redex : ∀ {V} → Proof V → Proof V → Set where
+data key-redex : ∀ {V} {K} → Expression V K → Expression V K → Set where
   βkr : ∀ {V} {φ : Term V} {δ ε} → key-redex (appP (ΛP φ δ) ε) (δ ⟦ x₀:= ε ⟧)
-  appPkr : ∀ {V} {δ ε χ : Proof V} → key-redex δ ε → key-redex (appP δ χ) (appP ε χ)
   plus-univ : ∀ {V} {φ ψ : Term V} {δ ε} → key-redex (plus (univ φ ψ δ ε)) δ
   minus-univ : ∀ {V} {φ ψ : Term V} {δ ε} → key-redex (minus (univ φ ψ δ ε)) ε
   imp*-plus : ∀ {V} {P Q : Path V} {δ ε} → key-redex (appP (appP (plus (P ⊃* Q)) δ) ε) (appP (plus Q) (appP δ (appP (minus P) ε)))
   imp*-minus : ∀ {V} {P Q : Path V} {δ ε} → key-redex (appP (appP (minus (P ⊃* Q)) δ) ε) (appP (minus Q) (appP δ (appP (plus P) ε)))
+  βEkr : ∀ {V} {N N' : Term V} {A} {P} {Q} → key-redex (app* N N' (λλλ A P) Q)
+    (P ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧)
+  appPkr : ∀ {V} {δ ε χ : Proof V} → key-redex δ ε → key-redex (appP δ χ) (appP ε χ)
+  pluskr : ∀ {V} {P Q : Path V} → key-redex P Q → key-redex (plus P) (plus Q)
+  minuskr : ∀ {V} {P Q : Path V} → key-redex P Q → key-redex (minus P) (minus Q)
+  app*kr : ∀ {V} {N N' : Term V} {P} {P'} {Q} → key-redex P P' → key-redex (app* N N' P Q) (app* N N' P' Q)
 
-postulate key-redex-rep : ∀ {U} {V} {ρ : Rep U V} {δ ε : Proof U} → key-redex δ ε → key-redex (δ 〈 ρ 〉) (ε 〈 ρ 〉)
+postulate key-redex-rep : ∀ {U} {V} {K} {ρ : Rep U V} {E F : Expression U K} → key-redex E F → key-redex (E 〈 ρ 〉) (F 〈 ρ 〉)
 
-postulate key-redex-SN : ∀ {V} {δ ε : Proof V} → key-redex δ ε → SN ε → SN δ
+postulate key-redex-SN : ∀ {V} {K} {E F : Expression V K} → key-redex E F → SN F → SN E
 
 expand-compute : ∀ {V} {Γ : Context V} {A : closed-prop} {δ ε : Proof V} →
-                compute Γ A ε → Γ ⊢ δ ∶ cp2term A → key-redex δ ε → SN δ → compute Γ A δ
-expand-compute {A = ⊥C} _ _ _ SNδ = SNδ
-expand-compute {A = A ⊃C B} computeε Γ⊢δ∶A⊃B δ▷ε SNδ W Δ ρ χ ρ∶Γ⇒RΔ Δ⊢χ∶A computeχ = 
-  expand-compute (computeε W Δ ρ χ ρ∶Γ⇒RΔ Δ⊢χ∶A computeχ) 
-    (appPR (change-type (Weakening Γ⊢δ∶A⊃B (Context-Validity Δ⊢χ∶A) ρ∶Γ⇒RΔ) (closed-rep (A ⊃C B))) Δ⊢χ∶A) (appPkr (key-redex-rep δ▷ε)) 
-    (key-redex-SN (appPkr (key-redex-rep δ▷ε)) (compute-SN (computeε W Δ ρ χ ρ∶Γ⇒RΔ Δ⊢χ∶A computeχ) (Context-Validity Δ⊢χ∶A)))
+                compute Γ A ε → valid Γ → key-redex δ ε → compute Γ A δ
+expand-compute {A = ⊥C} computeε validΓ δ▷ε = key-redex-SN δ▷ε (compute-SN computeε validΓ)
+expand-compute {A = A ⊃C B} computeε validΓ δ▷ε W Δ ρ χ ρ∶Γ⇒RΔ Δ⊢χ∶A computeχ = 
+  expand-compute (computeε W Δ ρ χ ρ∶Γ⇒RΔ Δ⊢χ∶A computeχ) (Context-Validity Δ⊢χ∶A)
+      (appPkr (key-redex-rep δ▷ε)) 
 
 EP-SN : ∀ {V} {Γ : Context V} {δ} {φ} → EP Γ φ δ → SN δ
 EP-SN (Γ̌⊢δ∶φ ,p _ ,p _ ,p computeδ) = compute-SN computeδ (Context-Validity Γ̌⊢δ∶φ)
 
 expand-EP : ∀ {V} {Γ : Context V} {φ : Term V} {δ ε : Proof V} →
             EP Γ φ ε → Γ ⊢ δ ∶ φ → key-redex δ ε → EP Γ φ δ
-expand-EP (Γ⊢ε∶φ ,p φ' ,p φ↠φ' ,p computeε) Γ⊢δ∶φ δ▷ε = Γ⊢δ∶φ ,p φ' ,p φ↠φ' ,p expand-compute computeε 
-  (convR Γ⊢δ∶φ (cp-typed φ' (Context-Validity Γ⊢δ∶φ)) (red-conv φ↠φ')) δ▷ε
-  (key-redex-SN δ▷ε (compute-SN computeε (Context-Validity Γ⊢ε∶φ)))
+expand-EP (Γ⊢ε∶φ ,p φ' ,p φ↠φ' ,p computeε) Γ⊢δ∶φ δ▷ε = Γ⊢δ∶φ ,p φ' ,p φ↠φ' ,p expand-compute computeε (Context-Validity Γ⊢δ∶φ) δ▷ε
 
 computeE : ∀ {V} → Context V → Term V → Type ∅ → Term V → Path V → Set
 computeE Γ φ (app -Omega out) ψ P = EP Γ (φ ⊃ ψ) (plus P) × EP Γ (ψ ⊃ φ) (minus P)
@@ -273,8 +275,27 @@ func-EE {U} {Γ} {A} {B} {M} {M'} {P} Γ⊢P∶M≡M' hyp = Γ⊢P∶M≡M' ,p (
           Δ⊢Q∶N≡N') ,p 
         subst (λ a → computeE Δ N a N' Q) (sym (close-rep A)) computeQ))))
 
-postulate expand-EE : ∀ {V} {Γ : Context V} {A} {M N : Term V} {P Q} →
-                   EE Γ (M ≡〈 A 〉 N) Q → Γ ⊢ P ∶ M ≡〈 A 〉 N → P ⇒R Q → SN P → EE Γ (M ≡〈 A 〉 N) P
+expand-computeE : ∀ {V} {Γ : Context V} {A} {M} {N} {P} {Q} →
+  computeE Γ M A N Q → Γ ⊢ P ∶ M ≡〈 A 〈 magic 〉 〉 N → key-redex P Q → computeE Γ M A N P
+expand-computeE {A = app -Omega out} ((_ ,p M⊃Nnf ,p M⊃N↠M⊃Nnf ,p computeQ+) ,p (_ ,p N⊃Mnf ,p N⊃M↠N⊃Mnf ,p computeQ-)) Γ⊢P∶M≡N P▷Q = 
+  ((plusR Γ⊢P∶M≡N) ,p M⊃Nnf ,p M⊃N↠M⊃Nnf ,p expand-compute computeQ+ 
+    (Context-Validity Γ⊢P∶M≡N) (pluskr P▷Q)) ,p 
+  (minusR Γ⊢P∶M≡N) ,p N⊃Mnf ,p N⊃M↠N⊃Mnf ,p expand-compute computeQ- 
+    (Context-Validity Γ⊢P∶M≡N) (minuskr P▷Q)
+expand-computeE {A = app -func (A ,, B ,, out)} {M} {M'} computeQ Γ⊢P∶M≡M' P▷Q = 
+  λ W Δ ρ N N' R ρ∶Γ⇒Δ Δ⊢R∶N≡N' N∈EΔA N'∈EΔA computeR → 
+  expand-computeE (computeQ W Δ ρ N N' R ρ∶Γ⇒Δ Δ⊢R∶N≡N' N∈EΔA N'∈EΔA computeR) 
+  (app*R (E-typed N∈EΔA) (E-typed N'∈EΔA) 
+    (change-type (Weakening Γ⊢P∶M≡M' (Context-Validity Δ⊢R∶N≡N') ρ∶Γ⇒Δ) 
+      (cong (λ a → M 〈 ρ 〉 ≡〈 a 〉 M' 〈 ρ 〉) (cong₂ _⇛_ 
+        (trans (sym close-magic) (trans (ty-rep (A 〈 magic 〉)) (trans (ty-rep A) (sym (ty-rep' A))))) 
+        (magic-unique' B)))) 
+      (subst (λ a → Δ ⊢ R ∶ N ≡〈 a 〉 N') (sym (ty-rep' A)) Δ⊢R∶N≡N')) 
+      (app*kr (key-redex-rep P▷Q))
+
+expand-EE : ∀ {V} {Γ : Context V} {A} {M N : Term V} {P Q} →
+            EE Γ (M ≡〈 A 〉 N) Q → Γ ⊢ P ∶ M ≡〈 A 〉 N → key-redex P Q → EE Γ (M ≡〈 A 〉 N) P
+expand-EE {V} {Γ} {A} {M} {N} {P} {Q} (Γ⊢Q∶M≡N ,p computeQ) Γ⊢P∶M≡N P▷Q = Γ⊢P∶M≡N ,p expand-computeE computeQ (subst (λ a → Γ ⊢ P ∶ M ≡〈 a 〉 N) (sym close-magic) Γ⊢P∶M≡N) P▷Q
 
 postulate conv-EE : ∀ {V} {Γ : Context V} {E} {E'} {P} →
                   EE Γ E P → E ≃ E' → EE Γ E' P
