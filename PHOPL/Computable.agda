@@ -60,8 +60,10 @@ var-E Γ x validΓ = var-E' {A = close (typeof x Γ)} Γ x validΓ refl
 ⊃-E φ∈EΓΩ ψ∈EΓΩ = record { typed = impR (E-typed φ∈EΓΩ) (E-typed ψ∈EΓΩ) ; 
   sn = ⊃SN (E-SN Ω φ∈EΓΩ) (E-SN Ω ψ∈EΓΩ) }
 
-postulate appT-E : ∀ {V} {Γ : Context V} {M N : Term V} {A} {B} →
-                 valid Γ → E Γ (A ⇛ B) M → E Γ A N → E Γ B (appT M N)
+appT-E : ∀ {V} {Γ : Context V} {M N : Term V} {A} {B} →
+           valid Γ → E Γ (A ⇛ B) M → E Γ A N → E Γ B (appT M N)
+appT-E {V} {Γ} {M} {N} {A} {B} validΓ (Γ⊢M∶A⇛B ,p computeM) N∈EΓA = 
+  subst (λ a → E Γ B (appT a N)) rep-idOp (computeM V Γ (idRep V) N idRep-typed N∈EΓA)
 
 postulate func-E : ∀ {U} {Γ : Context U} {M : Term U} {A} {B} →
                    (∀ V Δ (ρ : Rep U V) (N : Term V) → valid Δ → ρ ∶ Γ ⇒R Δ → E Δ A N → E Δ B (appT (M 〈 ρ 〉) N)) →
