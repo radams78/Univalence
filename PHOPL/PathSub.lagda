@@ -84,6 +84,13 @@ postulate sub↗-comp₁ : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} →
 
 postulate Rep↑↑↑-pathsub : ∀ {U} {V} {W} M {ρ : Rep V W} {τ : PathSub U V} {σ σ' : Sub U V} →
                          M ⟦⟦ ρ •RP τ ∶ ρ •₁ σ ∼ ρ •₁ σ' ⟧⟧ ≡ M ⟦⟦ τ ∶ σ ∼ σ' ⟧⟧ 〈 ρ 〉
+
+x₀::= : ∀ {V} → Path V → PathSub (V , -Term) V
+(x₀::= P) x₀ = P
+(x₀::= P) (↑ x) = reff (var x)
+
+_⋆[_∶_∼_] : ∀ {V} → Term V → Path V → Term V → Term V → Path V
+M ⋆[ P ∶ N ∼ N' ] = (appT (M ⇑) (var x₀)) ⟦⟦ x₀::= P ∶ x₀:= N ∼ x₀:= N' ⟧⟧
 \end{code}
 }
 

@@ -4,6 +4,7 @@ open import Data.Product renaming (_,_ to _,p_)
 open import Data.List
 open import PHOPL
 open import PHOPL.Red
+open import PHOPL.PathSub
 
 data Neutral {V} : Term V → Set where
   var : ∀ (x : Var V -Term) → Neutral (var x)
@@ -22,3 +23,9 @@ Neutral-SN : ∀ {V} {M : Term V} → Neutral M → SN M
 Neutral-SN (var x) = SNvar x
 Neutral-SN (app M-neutral N-SN) = Neutral-SN-aux {NN = [ _ ]} M-neutral (N-SN ,p tt)
 
+data NeutralE {V} : Path V → Set where
+  refvar : ∀ (x : Var V -Term) → NeutralE (reff (var x))
+  app    : ∀ {N} {N'} {P Q : Path V} → NeutralE P → SN N → SN N' → SN Q → NeutralE (app* N N' P Q)
+
+postulate Neutral-⋆ : ∀ {V} {M : Term V} {P} {N} {N'} → Neutral M → SN P → SN N → SN N' →
+                    NeutralE (M ⋆[ P ∶ N ∼ N' ])
