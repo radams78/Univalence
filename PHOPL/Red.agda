@@ -2,7 +2,7 @@ module PHOPL.Red where
 open import Data.Unit
 open import Data.Product hiding (_,_)
 open import Data.List
-open import PHOPL 
+open import PHOPL.Grammar
 
 postulate R : Reduction
 

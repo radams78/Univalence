@@ -19,7 +19,16 @@ Reduction/SN
 PL/Grammar
 PL/Rules
 PL/Computable
-PHOPL
+PHOPL/Grammar
 PHOPL/Rules
 PHOPL/PathSub
+PHOPL/Close
+PHOPL/Red
+PHOPL/Neutral
+PHOPL/Meta
+PHOPL/Computable
+PHOPL/SubC
+PHOPL/SN
+PHOPL/MainPropFinal
+PHOPL/MainProp1
 PHOPL/MainProp

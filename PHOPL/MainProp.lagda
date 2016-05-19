@@ -4,7 +4,7 @@ open import Data.Unit
 open import Data.Product renaming (_,_ to _,p_)
 open import Data.List
 open import Prelims
-open import PHOPL
+open import PHOPL.Grammar
 open import PHOPL.Rules
 open import PHOPL.PathSub
 open import PHOPL.Close

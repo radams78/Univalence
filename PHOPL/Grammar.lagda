@@ -1,6 +1,6 @@
 \AgdaHide{
 \begin{code}
-module PHOPL where
+module PHOPL.Grammar where
 
 open import Data.List
 open import Data.Nat

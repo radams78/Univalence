@@ -2,7 +2,7 @@ module PHOPL.Neutral where
 open import Data.Unit
 open import Data.Product renaming (_,_ to _,p_)
 open import Data.List
-open import PHOPL
+open import PHOPL.Grammar
 open import PHOPL.Red
 open import PHOPL.PathSub
 

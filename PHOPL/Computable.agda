@@ -3,7 +3,7 @@ open import Data.Empty renaming (⊥ to Empty)
 open import Data.Sum
 open import Data.Product renaming (_,_ to _,p_)
 open import Prelims
-open import PHOPL
+open import PHOPL.Grammar
 open import PHOPL.Neutral
 open import PHOPL.Rules
 open import PHOPL.Close

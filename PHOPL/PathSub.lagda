@@ -2,8 +2,10 @@
 \begin{code}
 module PHOPL.PathSub where
 open import Prelims
-open import PHOPL
+open import PHOPL.Grammar
 open import PHOPL.Rules
+open import PHOPL.Close
+open import PHOPL.Meta
 \end{code}
 }
 
@@ -29,13 +31,6 @@ Given paths $P_1$, \ldots, $P_n$; term variales $x_1$, \ldots, $x_n$; and a term
 PathSub : Alphabet → Alphabet → Set
 PathSub U V = Var U -Term → Path V
 
-_∼∼_ : ∀ {U} {V} → PathSub U V → PathSub U V → Set
-
-τ ∼∼ τ' = ∀ x → τ x ≡ τ' x
-
-postulate ∼∼-refl : ∀ {U} {V} {τ : PathSub U V} → τ ∼∼ τ
-
---REFACTOR
 sub↖ : ∀ {U} {V} → Sub U V → Sub (U , -Term) (V , -Term , -Term , -Path)
 sub↖ σ _ x₀ = var x₂
 sub↖ σ _ (↑ x) = σ _ x ⇑ ⇑ ⇑
@@ -55,7 +50,45 @@ app -bot out ⟦⟦ τ ∶ _ ∼ _ ⟧⟧ = reff ⊥
 app -imp (φ ,, ψ ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = φ ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ ⊃* ψ ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧
 app -appTerm (M ,, N ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = app* (N ⟦ ρ ⟧) (N ⟦ σ ⟧) (M ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧) (N ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧)
 app -lamTerm (A ,, M ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = λλλ (A ⟦ ρ ⟧) (M ⟦⟦ pathsub↑ τ ∶ sub↖ ρ ∼ sub↗ σ ⟧⟧)
+\end{code}
 
+\begin{prop}
+If $\Gamma, x : A \vdash M : B$ and $\Gamma \vdash P : N =_A N'$ then
+$\Gamma \vdash \{ P / x \} M : [N / x] M =_B [N' / x] M$.
+\end{prop}
+
+\begin{code}
+_∶_∼_∶_⇒_ : ∀ {U} {V} → PathSub U V → Sub U V → Sub U V → Context U → Context V → Set
+τ ∶ σ ∼ σ' ∶ Γ ⇒ Δ = ∀ x → Δ ⊢ τ x ∶ σ -Term x ≡〈 ty (typeof x Γ) 〉 σ' -Term x
+
+pathsub↑-typed : pathsub↑ τ ∶ sub↖ ρ ∼ sub↗ σ ∶ Γ , A ⇒ Δ , ty A , ty A , var x₁ ≡〈 ty A 〉 var x₀
+
+Substitution-ty : ∀ {U} {V} {Γ : Context U} {M : Term U} {A : Type U} {Δ : Context V} {σ} → Γ ⊢ M ∶ A → valid Δ → σ ∶ Γ ⇒ Δ → Δ ⊢ M ⟦ σ ⟧ ∶ ty A
+Substitution-ty {A = A} Γ⊢M∶A validΔ σ∶Γ⇒Δ = change-type (Substitution Γ⊢M∶A validΔ σ∶Γ⇒Δ) (trans (sym close-magic) (ty-sub A))
+
+Path-Substitution : ∀ {U} {V} {Γ : Context U} {Δ : Context V} 
+  {ρ} {σ} {τ} {M} {A} →
+  Γ ⊢ M ∶ A → τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → ρ ∶ Γ ⇒ Δ → σ ∶ Γ ⇒ Δ → valid Δ → 
+  Δ ⊢ M ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ ∶ M ⟦ ρ ⟧ ≡〈 ty A 〉 M ⟦ σ ⟧
+Path-Substitution (varR x validΓ) τ∶ρ∼σ _ _ _ = τ∶ρ∼σ x
+Path-Substitution (⊥R validΓ) _ _ _ validΔ = refR (⊥R validΔ)
+Path-Substitution (⊃R Γ⊢φ∶Ω Γ⊢ψ∶Ω) τ∶ρ∼σ ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ = ⊃*R (Path-Substitution Γ⊢φ∶Ω τ∶ρ∼σ ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ) (Path-Substitution Γ⊢ψ∶Ω τ∶ρ∼σ ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ)
+Path-Substitution (appR {A = A} Γ⊢M∶A⇛B Γ⊢N∶A) τ∶σ∼σ' ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ = 
+  app*R (Substitution-ty Γ⊢N∶A validΔ ρ∶Γ⇒Δ) (Substitution-ty Γ⊢N∶A validΔ σ∶Γ⇒Δ)
+  (Path-Substitution Γ⊢M∶A⇛B τ∶σ∼σ' ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ) (Path-Substitution Γ⊢N∶A τ∶σ∼σ' ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ)
+Path-Substitution {ρ = ρ} {σ} (ΛR {V} {Γ} {A} {M} {B} Γ,A⊢M∶B) τ∶σ∼σ' ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ = change-type {A = ΛT A M ⟦ ρ ⟧ ≡〈 (A ⟦ ρ ⟧) ⇛ ty B 〉 ΛT A M ⟦ σ ⟧} 
+  (lllR (convER (change-type (Path-Substitution Γ,A⊢M∶B {!!} {!!} {!!} {!!}) {!!}) {!!} {!!} {!!} {!!})) {!!}
+
+\end{code}
+
+\AgdaHide{
+\begin{code}
+_∼∼_ : ∀ {U} {V} → PathSub U V → PathSub U V → Set
+τ ∼∼ τ' = ∀ x → τ x ≡ τ' x
+
+postulate ∼∼-refl : ∀ {U} {V} {τ : PathSub U V} → τ ∼∼ τ
+
+--REFACTOR
 postulate idPathSub : ∀ V → PathSub V V
 
 infixr 75 _•RP_
@@ -119,5 +152,18 @@ pathsub-wd {ρ = ρ} {σ} {τ = τ} .{M = ΛT A M} ρ∶Γ→Δ σ∶Γ→Δ τ�
      {!!} 
      {!!})-}
 --TODO Relabel variables
+
+postulate pathsub↑-typed : ∀ {U} {V} {τ : PathSub U V} {ρ σ : Sub U V} {Γ} {Δ} {A} →
+                           τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → pathsub↑ τ ∶ sub↖ ρ ∼ sub↗ σ ∶ Γ , A ⇒ Δ , ty A , ty A , var x₁ ≡〈 ty A 〉 var x₀
+
+postulate extendPS-typed : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {Δ} {P} {M} {N} {A} →
+                           τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → Δ ⊢ P ∶ M ≡〈 close A 〈 magic 〉 〉 N →
+                           extendPS τ P ∶ extendSub ρ M ∼ extendSub σ N ∶ Γ , A ⇒ Δ
+
+postulate compRP-typed : ∀ {U} {V} {W} {ρ : Rep V W} {τ : PathSub U V} {σ σ' : Sub U V}
+                           {Γ} {Δ} {Θ} →
+                           ρ ∶ Δ ⇒R Θ → τ ∶ σ ∼ σ' ∶ Γ ⇒ Δ →
+                           ρ •RP τ ∶ ρ •₁ σ ∼ ρ •₁ σ' ∶ Γ ⇒ Θ
+
 \end{code}
 \end{frame}

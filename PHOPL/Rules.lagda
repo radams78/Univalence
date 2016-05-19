@@ -1,7 +1,7 @@
 \AgdaHide{
 \begin{code}
 module PHOPL.Rules where
-open import PHOPL
+open import PHOPL.Grammar
 \end{code}
 }
 
@@ -65,32 +65,32 @@ data valid where
     valid (Γ ,E M ≡〈 A 〉 N)
 
 data _⊢_∶_ where
-  varR : ∀ {V} {K} {Γ : Context V} (x : Var V K) → 
+  varR : ∀ {V} {K} {Γ : Context V} (x : Var V K)
 
-          valid Γ → 
+      (validΓ : valid Γ)     → 
   -------------------------
     Γ ⊢ var x ∶ typeof x Γ
 
-  ⊥R : ∀ {V} {Γ : Context V} → 
+  ⊥R : ∀ {V} {Γ : Context V}
 
-    valid Γ →
-  --------------
-    Γ ⊢ ⊥ ∶ Ω
+   (validΓ : valid Γ) →
+  --------------------
+        Γ ⊢ ⊥ ∶ Ω
 
-  impR : ∀ {V} {Γ : Context V} {φ ψ : Term V} → 
+  ⊃R : ∀ {V} {Γ : Context V} {φ ψ : Term V}
 
-    Γ ⊢ φ ∶ Ω → Γ ⊢ ψ ∶ Ω → 
-  ---------------------------
-         Γ ⊢ φ ⊃ ψ ∶ Ω
+    (Γ⊢φ∶Ω : Γ ⊢ φ ∶ Ω) (Γ⊢ψ∶Ω : Γ ⊢ ψ ∶ Ω) →
+  ------------------------------------------
+                 Γ ⊢ φ ⊃ ψ ∶ Ω
 
-  appR : ∀ {V} {Γ : Context V} {M N : Term V} {A} {B} → 
+  appR : ∀ {V} {Γ : Context V} {M N : Term V} {A} {B} 
 
-    Γ ⊢ M ∶ A ⇛ B → Γ ⊢ N ∶ A → 
-  -------------------------------
-         Γ ⊢ appT M N ∶ B
+    (Γ⊢M∶A⇛B : Γ ⊢ M ∶ A ⇛ B) (Γ⊢N∶A : Γ ⊢ N ∶ A) →
+  ------------------------------------------------
+                  Γ ⊢ appT M N ∶ B
 
-  ΛR : ∀ {V} {Γ : Context V} {A} {M : Term (V , -Term)} {B} → 
-    Γ , A ⊢ M ∶ B 〈 upRep 〉 → Γ ⊢ ΛT A M ∶ A ⇛ B
+  ΛR : ∀ {V} {Γ : Context V} {A} {M : Term (V , -Term)} {B}
+    (Γ,A⊢M∶B : Γ , A ⊢ M ∶ B 〈 upRep 〉) → Γ ⊢ ΛT A M ∶ A ⇛ B
   appPR : ∀ {V} {Γ : Context V} {δ ε : Proof V} {φ ψ : Term V} →
     Γ ⊢ δ ∶ φ ⊃ ψ → Γ ⊢ ε ∶ φ → Γ ⊢ appP δ ε ∶ ψ
   ΛPR : ∀ {V} {Γ : Context V} {δ : Proof (V , -Proof)} {φ ψ : Term V} → 
@@ -138,7 +138,7 @@ On top of this we add extensional equality:
   ---------------------------------------
     Γ ⊢ app -ref (M ,, out) ∶ M ≡〈 A 〉 M
 
-  imp*R : ∀ {V} {Γ : Context V} {P Q : Expression V (varKind -Path)} {φ φ' ψ ψ' : Term V} →
+  ⊃*R : ∀ {V} {Γ : Context V} {P Q : Expression V (varKind -Path)} {φ φ' ψ ψ' : Term V} →
 
     Γ ⊢ P ∶ φ ≡〈 Ω 〉 φ' → Γ ⊢ Q ∶ ψ ≡〈 Ω 〉 ψ' →
   ----------------------------------------------

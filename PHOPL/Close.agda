@@ -1,6 +1,6 @@
 module PHOPL.Close where
 open import Prelims
-open import PHOPL
+open import PHOPL.Grammar
 
 close : ∀ {V} → Type V → Type ∅
 close (app -Omega out) = Ω
