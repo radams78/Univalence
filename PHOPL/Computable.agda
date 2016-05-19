@@ -20,11 +20,21 @@ E : ∀ {V} → Context V → Type ∅ → Term V → Set
 E Γ (app -Omega out) = EΩ Γ
 E Γ (app -func (A ,, B ,, out)) M = Γ ⊢ M ∶ ty A ⇛ ty B × (∀ W (Δ : Context W) ρ N → ρ ∶ Γ ⇒R Δ → E Δ A N → E Δ B (appT (M 〈 ρ 〉) N)) 
 
-postulate E-SN : ∀ {V} {Γ : Context V} A {M} → E Γ A M → SN M
-
 postulate E-typed : ∀ {V} {Γ : Context V} {A} {M} → E Γ A M → Γ ⊢ M ∶ A 〈 magic 〉
 
+E-SN : ∀ {V} {Γ : Context V} A {M} → E Γ A M → SN M
 Neutral-E : ∀ {V} {Γ : Context V} {A} {M} → Neutral M → Γ ⊢ M ∶ ty A → E Γ A M
+var-E' : ∀ {V} {A} (Γ : Context V) (x : Var V -Term) → 
+  valid Γ → A ≡ close (typeof x Γ) → E Γ (close (typeof x Γ)) (var x)
+
+E-SN (app -Omega out) = EΩ.sn
+E-SN {V} {Γ} (app -func (A ,, B ,, out)) {M} (Γ⊢M∶A⇛B ,p computeM) =
+  let SNMx : SN (appT (M ⇑) (var x₀))
+      SNMx = E-SN B 
+             (computeM (V , -Term) (Γ ,T ty A) upRep (var x₀) upRep-typed 
+             (subst (λ a → E (Γ ,T ty A) a (var x₀)) (trans (cong (close {V = V , -Term}) (magic-unique' (close A))) (close-ty (V , -Term) A)) (var-E' {A = A} (Γ ,T ty A) x₀ (ctxTR (Context-Validity Γ⊢M∶A⇛B)) (trans (sym (close-ty (V , -Term) A)) (cong close (sym (ty-rep' A))))))) 
+  in SNap' {Ops = replacement} {σ = upRep} R-respects-replacement (SNsubbodyl (SNsubexp SNMx))
+
 Neutral-E {A = app -Omega out} neutralM Γ⊢M∶A = record { 
   typed = Γ⊢M∶A ; 
   sn = Neutral-SN neutralM }
@@ -34,9 +44,12 @@ Neutral-E {A = app -func (A ,, B ,, out)} {M} neutralM Γ⊢M∶A⇛B = Γ⊢M�
   ρ∶Γ⇒Δ) (cong₂ _⇛_ (trans (trans (ty-rep' A) (sym (ty-rep A))) close-magic) 
                 (ty-rep' B))) (E-typed N∈EΔA)))
 
-var-E : ∀ {V} {Γ : Context V} {x : Var V -Term} → 
-  valid Γ → E Γ (close (typeof x Γ)) (var x)
-var-E {V} {Γ} {x} validΓ = Neutral-E (var x) (change-type (varR x validΓ) (trans (sym close-magic) (rep-congl (sym (close-close {A = typeof x Γ})))))
+var-E' {A = A} Γ x validΓ x∶A∈Γ = subst (λ a → E Γ a (var x)) x∶A∈Γ (Neutral-E (var x) 
+  (change-type (varR x validΓ) (sym (trans (cong ty x∶A∈Γ) (ty-close (typeof x Γ))))))
+
+var-E : ∀ {V} (Γ : Context V) (x : Var V -Term) → 
+        valid Γ → E Γ (close (typeof x Γ)) (var x)
+var-E Γ x validΓ = var-E' {A = close (typeof x Γ)} Γ x validΓ refl
 
 postulate ⊥-E : ∀ {V} {Γ : Context V} → valid Γ → E Γ Ω ⊥
 
@@ -337,7 +350,7 @@ computeE-SN {A = app -Omega out} {P} (P+∈EΓM⊃N ,p _) _ =
   in SNsubbodyl (SNsubexp SNplusP)
 computeE-SN {V} {Γ} {A = app -func (A ,, B ,, out)} {P} computeP validΓ =
   let x₀∈EΓ,AA : E (Γ ,T A 〈 magic 〉) (close (A 〈 magic 〉 ⇑)) (var x₀)
-      x₀∈EΓ,AA = var-E {Γ = Γ ,T A 〈 magic 〉} {x = x₀} (ctxTR validΓ) in
+      x₀∈EΓ,AA = var-E (Γ ,T A 〈 magic 〉) x₀ (ctxTR validΓ) in
   let SNapp*xxPref : SN (app* (var x₀) (var x₀) (P ⇑) (reff (var x₀)))
       SNapp*xxPref = computeE-SN {A = B} (computeP (V , -Term) (Γ ,T A 〈 magic 〉) upRep 
           (var x₀) (var x₀) (app -ref (var x₀ ,, out)) upRep-typed 
