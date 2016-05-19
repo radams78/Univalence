@@ -330,5 +330,31 @@ conv-EE : ∀ {V} {Γ : Context V} {M} {N} {M'} {N'} {A} {P} →
             EE Γ (M' ≡〈 A 〉 N') P
 conv-EE (Γ⊢P∶M≡N ,p computeP) M≃M' N≃N' Γ⊢M'∶A Γ⊢N'∶A = convER Γ⊢P∶M≡N Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N' ,p conv-computeE computeP M≃M' N≃N' (change-type Γ⊢M'∶A (sym close-magic)) (change-type Γ⊢N'∶A (sym close-magic))
 --REFACTOR Duplication                      
-                        
-postulate EE-SN : ∀ {V} {Γ : Context V} E {P} → EE Γ E P → SN P
+                 
+computeE-SN : ∀ {V} {Γ : Context V} {M} {N} {A} {P} → computeE Γ M A N P → valid Γ → SN P
+computeE-SN {A = app -Omega out} {P} (P+∈EΓM⊃N ,p _) _ = 
+  let SNplusP : SN (plus P)
+      SNplusP = EP-SN P+∈EΓM⊃N 
+  in SNsubbodyl (SNsubexp SNplusP)
+computeE-SN {V} {Γ} {A = app -func (A ,, B ,, out)} {P} computeP validΓ =
+  let x₀∈EΓ,AA : E (Γ ,T A 〈 magic 〉) (close (A 〈 magic 〉 ⇑)) (var x₀)
+      x₀∈EΓ,AA = var-E {Γ = Γ ,T A 〈 magic 〉} {x = x₀} (ctxTR validΓ) in
+  let SNapp*xxPref : SN (app* (var x₀) (var x₀) (P ⇑) (reff (var x₀)))
+      SNapp*xxPref = computeE-SN {A = B} (computeP (V , -Term) (Γ ,T A 〈 magic 〉) upRep 
+          (var x₀) (var x₀) (app -ref (var x₀ ,, out)) upRep-typed 
+          (refR (change-type (varR x₀ (ctxTR validΓ)) (trans (magic-unique' A) (trans (sym close-magic) (ty-rep A))))) 
+          (subst (λ a → E (Γ ,T A 〈 magic 〉) a (var x₀)) 
+            (trans (sym close-magic) (trans (rep-congl (close-close {A = A 〈 magic 〉 ⇑})) 
+              (trans (ty-rep (A 〈 magic 〉)) (ty-rep A)))) 
+            x₀∈EΓ,AA) 
+            ((subst (λ a → E (Γ ,T A 〈 magic 〉) a (var x₀)) 
+              (trans (sym close-magic) (trans (rep-congl (close-close {A = A 〈 magic 〉 ⇑})) 
+              (trans (ty-rep (A 〈 magic 〉)) (ty-rep A)))) 
+            x₀∈EΓ,AA) 
+           ) (ref-compute 
+             (subst (λ a → E (Γ ,T A 〈 magic 〉) a (var x₀)) (trans (trans (sym close-magic) 
+               (trans (rep-congl (close-close {A = A 〈 magic 〉 ⇑})) (trans (ty-rep (A 〈 magic 〉)) (ty-rep A)))) close-magic) x₀∈EΓ,AA))) (ctxTR validΓ)
+  in SNap' {Ops = replacement} {σ = upRep} R-respects-replacement (SNsubbodyl (SNsubbodyr (SNsubbodyr (SNsubexp SNapp*xxPref))))
+       
+EE-SN : ∀ {V} {Γ : Context V} E {P} → EE Γ E P → SN P
+EE-SN (app -eq (_ ,, _ ,, _ ,, out)) (Γ⊢P∶E ,p computeP) = computeE-SN computeP (Context-Validity Γ⊢P∶E)
