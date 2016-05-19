@@ -297,7 +297,30 @@ expand-EE : ∀ {V} {Γ : Context V} {A} {M N : Term V} {P Q} →
             EE Γ (M ≡〈 A 〉 N) Q → Γ ⊢ P ∶ M ≡〈 A 〉 N → key-redex P Q → EE Γ (M ≡〈 A 〉 N) P
 expand-EE {V} {Γ} {A} {M} {N} {P} {Q} (Γ⊢Q∶M≡N ,p computeQ) Γ⊢P∶M≡N P▷Q = Γ⊢P∶M≡N ,p expand-computeE computeQ (subst (λ a → Γ ⊢ P ∶ M ≡〈 a 〉 N) (sym close-magic) Γ⊢P∶M≡N) P▷Q
 
-postulate conv-EE : ∀ {V} {Γ : Context V} {E} {E'} {P} →
-                  EE Γ E P → E ≃ E' → EE Γ E' P
+postulate conv-type-eq : ∀ {V} {A B : Type V} → A ≃ B → A ≡ B
 
+postulate eq-inj : ∀ {V} {M M' N N' : Term V} {A} {A'} → M ≡〈 A 〉 N ≃ M' ≡〈 A' 〉 N' →
+                 A ≃ A'
+
+postulate ⊃-respects-conv : ∀ {V} {φ} {φ'} {ψ} {ψ' : Term V} → φ ≃ φ' → ψ ≃ ψ' →
+                          φ ⊃ ψ ≃ φ' ⊃ ψ'
+
+conv-computeE : ∀ {V} {Γ : Context V} {M} {M'} {N} {N'} {A} {P} →
+             computeE Γ M A N P → M ≃ M' → N ≃ N' → 
+             Γ ⊢ M' ∶ A 〈 magic 〉 → Γ ⊢ N' ∶ A 〈 magic 〉 →
+             computeE Γ M' A N' P
+conv-computeE {M = M} {A = app -Omega out} 
+  (EPΓM⊃NP+ ,p EPΓN⊃MP-) M≃M' N≃N' Γ⊢M'∶Ω Γ⊢N'∶Ω = 
+  (conv-EP (⊃-respects-conv M≃M' N≃N')
+    EPΓM⊃NP+ {!!}) ,p {!!}
+conv-computeE {A = app -func (A ,, B ,, out)} computeP M⇒M' N⇒N' = {!!}
+
+osr-EE : ∀ {V} {Γ : Context V} {E} {E'} {P} → EE Γ E P → E ⇒ E' → EE Γ E' P
+osr-EE {E = app -eq (M  ,, N ,, A ,, out)} {E' = app -eq (M' ,, N' ,, A' ,, out)} 
+  (Γ⊢P∶E ,p computeP) E⇒E' = 
+  Type-Reduction Γ⊢P∶E (osr-red E⇒E') ,p {!osr-computeE!}
+
+postulate conv-EE : ∀ {V} {Γ : Context V} {E} {E'} {P} →
+            EE Γ E P → E ≃ E' → EE Γ E' P
+                                              
 postulate EE-SN : ∀ {V} {Γ : Context V} E {P} → EE Γ E P → SN P
