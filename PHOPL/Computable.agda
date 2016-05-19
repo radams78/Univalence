@@ -10,14 +10,6 @@ open import PHOPL.Close
 open import PHOPL.Red
 open import PHOPL.Meta
 
-postulate R-respects-replacement : respects'R replacement
-
-postulate R-creates-replacement : creates'R replacement
-
-postulate appP-SN : ∀ {V} {δ ε : Proof V} → SN δ → SN ε →
-                  (∀ φ χ → δ ≡ ΛP φ χ → SN (χ ⟦ x₀:= ε ⟧)) →
-                  SN (appP δ ε)
-
 record EΩ {V} (Γ : Context V) (M : Term V) : Set where
   field
     typed : Γ ⊢ M ∶ Ω
@@ -28,14 +20,23 @@ E : ∀ {V} → Context V → Type ∅ → Term V → Set
 E Γ (app -Omega out) = EΩ Γ
 E Γ (app -func (A ,, B ,, out)) M = Γ ⊢ M ∶ ty A ⇛ ty B × (∀ W (Δ : Context W) ρ N → ρ ∶ Γ ⇒R Δ → E Δ A N → E Δ B (appT (M 〈 ρ 〉) N)) 
 
-postulate Neutral-E : ∀ {V} {Γ : Context V} {A : Type V} {M : Term V} →
-              Neutral M → Γ ⊢ M ∶ A → E Γ (close A) M
+postulate E-SN : ∀ {V} {Γ : Context V} A {M} → E Γ A M → SN M
+
+postulate E-typed : ∀ {V} {Γ : Context V} {A} {M} → E Γ A M → Γ ⊢ M ∶ A 〈 magic 〉
+
+Neutral-E : ∀ {V} {Γ : Context V} {A} {M} → Neutral M → Γ ⊢ M ∶ ty A → E Γ A M
+Neutral-E {A = app -Omega out} neutralM Γ⊢M∶A = record { 
+  typed = Γ⊢M∶A ; 
+  sn = Neutral-SN neutralM }
+Neutral-E {A = app -func (A ,, B ,, out)} {M} neutralM Γ⊢M∶A⇛B = Γ⊢M∶A⇛B ,p 
+  (λ W Δ ρ N ρ∶Γ⇒Δ N∈EΔA → Neutral-E {A = B} (app (Neutral-rep M ρ neutralM) (E-SN A N∈EΔA)) 
+  (appR (change-type (Weakening Γ⊢M∶A⇛B (Context-Validity (E-typed N∈EΔA)) 
+  ρ∶Γ⇒Δ) (cong₂ _⇛_ (trans (trans (ty-rep' A) (sym (ty-rep A))) close-magic) 
+                (ty-rep' B))) (E-typed N∈EΔA)))
 
 var-E : ∀ {V} {Γ : Context V} {x : Var V -Term} → 
   valid Γ → E Γ (close (typeof x Γ)) (var x)
-var-E {V} {Γ} {x} Γvalid = Neutral-E (var x) (varR x Γvalid)
-
-postulate E-SN : ∀ {V} {Γ : Context V} A {M} → E Γ A M → SN M
+var-E {V} {Γ} {x} validΓ = Neutral-E (var x) (change-type (varR x validΓ) (trans (sym close-magic) (rep-congl (sym (close-close {A = typeof x Γ})))))
 
 postulate ⊥-E : ∀ {V} {Γ : Context V} → valid Γ → E Γ Ω ⊥
 
@@ -50,8 +51,6 @@ postulate func-E : ∀ {U} {Γ : Context U} {M : Term U} {A} {B} →
 
 postulate expand-E : ∀ {V} {Γ : Context V} {A : Type V} {B : Type ∅} {M : Term (V , -Term)} {N : Term V} →
                    E Γ B (M ⟦ x₀:= N ⟧) → E Γ B (appT (ΛT A M) N)
-
-postulate E-typed : ∀ {V} {Γ : Context V} {A} {M} → E Γ A M → Γ ⊢ M ∶ A 〈 magic 〉
 
 data closed-prop : Set where
   ⊥C : closed-prop

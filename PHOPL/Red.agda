@@ -34,3 +34,7 @@ postulate var-APP-SN : ∀ {V} (x : Var V -Term) (MM : List (Term V)) →
 postulate SN-βexp : ∀ {V} {φ : Term V} {δ : Proof (V , -Proof)} {ε : Proof V} →
                   SN ε → SN (δ ⟦ x₀:= ε ⟧) → SN (appP (ΛP φ δ) ε) 
 
+postulate R-respects-replacement : respects'R replacement
+
+postulate R-creates-replacement : creates'R replacement
+
