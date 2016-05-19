@@ -20,7 +20,9 @@ E : ∀ {V} → Context V → Type ∅ → Term V → Set
 E Γ (app -Omega out) = EΩ Γ
 E Γ (app -func (A ,, B ,, out)) M = Γ ⊢ M ∶ ty A ⇛ ty B × (∀ W (Δ : Context W) ρ N → ρ ∶ Γ ⇒R Δ → E Δ A N → E Δ B (appT (M 〈 ρ 〉) N)) 
 
-postulate E-typed : ∀ {V} {Γ : Context V} {A} {M} → E Γ A M → Γ ⊢ M ∶ A 〈 magic 〉
+E-typed : ∀ {V} {Γ : Context V} {A} {M} → E Γ A M → Γ ⊢ M ∶ A 〈 magic 〉
+E-typed {A = app -Omega out} = EΩ.typed
+E-typed {A = app -func (A ,, B ,, out)} (Γ⊢M∶A⇛B ,p _) = change-type Γ⊢M∶A⇛B (cong₂ _⇛_ (ty-magic A) (ty-magic B))
 
 E-SN : ∀ {V} {Γ : Context V} A {M} → E Γ A M → SN M
 Neutral-E : ∀ {V} {Γ : Context V} {A} {M} → Neutral M → Γ ⊢ M ∶ ty A → E Γ A M

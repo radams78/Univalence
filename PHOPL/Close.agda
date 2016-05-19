@@ -30,3 +30,5 @@ postulate ty-sub' : ∀ {U} {V} {W} (A : Type U) {σ : Sub V W} → (ty A) ⟦ �
 postulate close-ty : ∀ V (A : Type ∅) → close (ty {V = V} A) ≡ A
 
 postulate ty-close : ∀ {V} (A : Type V) → ty (close A) ≡ A
+
+postulate ty-magic : ∀ {V} (A : Type ∅) → ty {V = V} A ≡ A 〈 magic 〉
