@@ -305,6 +305,8 @@ postulate eq-inj : ∀ {V} {M M' N N' : Term V} {A} {A'} → M ≡〈 A 〉 N �
 postulate ⊃-respects-conv : ∀ {V} {φ} {φ'} {ψ} {ψ' : Term V} → φ ≃ φ' → ψ ≃ ψ' →
                           φ ⊃ ψ ≃ φ' ⊃ ψ'
 
+postulate appT-respects-convl : ∀ {V} {M M' N : Term V} → M ≃ M' → appT M N ≃ appT M' N
+
 conv-computeE : ∀ {V} {Γ : Context V} {M} {M'} {N} {N'} {A} {P} →
              computeE Γ M A N P → M ≃ M' → N ≃ N' → 
              Γ ⊢ M' ∶ A 〈 magic 〉 → Γ ⊢ N' ∶ A 〈 magic 〉 →
@@ -312,15 +314,21 @@ conv-computeE : ∀ {V} {Γ : Context V} {M} {M'} {N} {N'} {A} {P} →
 conv-computeE {M = M} {A = app -Omega out} 
   (EPΓM⊃NP+ ,p EPΓN⊃MP-) M≃M' N≃N' Γ⊢M'∶Ω Γ⊢N'∶Ω = 
   (conv-EP (⊃-respects-conv M≃M' N≃N')
-    EPΓM⊃NP+ {!!}) ,p {!!}
-conv-computeE {A = app -func (A ,, B ,, out)} computeP M⇒M' N⇒N' = {!!}
+    EPΓM⊃NP+ (impR Γ⊢M'∶Ω Γ⊢N'∶Ω)) ,p 
+  conv-EP (⊃-respects-conv N≃N' M≃M') EPΓN⊃MP- (impR Γ⊢N'∶Ω Γ⊢M'∶Ω)
+conv-computeE {M = M} {M'} {N} {N'} {A = app -func (A ,, B ,, out)} computeP M≃M' N≃N' Γ⊢M'∶A⇛B Γ⊢N'∶A⇛B =
+  λ W Δ ρ L L' Q ρ∶Γ⇒RΔ Δ⊢Q∶L≡L' L∈EΔA L'∈EΔA computeQ → conv-computeE {A = B} 
+  (computeP W Δ ρ L L' Q ρ∶Γ⇒RΔ Δ⊢Q∶L≡L' L∈EΔA L'∈EΔA computeQ) 
+  (appT-respects-convl (respects-conv (respects-osr replacement β-respects-rep) M≃M')) 
+  (appT-respects-convl (respects-conv (respects-osr replacement β-respects-rep) N≃N')) 
+  (appR (change-type (Weakening Γ⊢M'∶A⇛B (Context-Validity Δ⊢Q∶L≡L') ρ∶Γ⇒RΔ) (cong₂ _⇛_ (trans (magic-unique' A) (sym (rep-congl (close-magic {A = A})))) (magic-unique' B))) (E-typed {W} {Γ = Δ} {A = ty A} {L} L∈EΔA)) 
+  (appR (change-type (Weakening Γ⊢N'∶A⇛B (Context-Validity Δ⊢Q∶L≡L') ρ∶Γ⇒RΔ) (cong₂ _⇛_ (trans (magic-unique' A) (sym (rep-congl (close-magic {A = A})))) (magic-unique' B))) (E-typed L'∈EΔA)) 
+--REFACTOR Duplication
 
-osr-EE : ∀ {V} {Γ : Context V} {E} {E'} {P} → EE Γ E P → E ⇒ E' → EE Γ E' P
-osr-EE {E = app -eq (M  ,, N ,, A ,, out)} {E' = app -eq (M' ,, N' ,, A' ,, out)} 
-  (Γ⊢P∶E ,p computeP) E⇒E' = 
-  Type-Reduction Γ⊢P∶E (osr-red E⇒E') ,p {!osr-computeE!}
-
-postulate conv-EE : ∀ {V} {Γ : Context V} {E} {E'} {P} →
-            EE Γ E P → E ≃ E' → EE Γ E' P
-                                              
+conv-EE : ∀ {V} {Γ : Context V} {M} {N} {M'} {N'} {A} {P} →
+            EE Γ (M ≡〈 A 〉 N) P → M ≃ M' → N ≃ N' → Γ ⊢ M' ∶ A → Γ ⊢ N' ∶ A → 
+            EE Γ (M' ≡〈 A 〉 N') P
+conv-EE (Γ⊢P∶M≡N ,p computeP) M≃M' N≃N' Γ⊢M'∶A Γ⊢N'∶A = convER Γ⊢P∶M≡N Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N' ,p conv-computeE computeP M≃M' N≃N' (change-type Γ⊢M'∶A (sym close-magic)) (change-type Γ⊢N'∶A (sym close-magic))
+--REFACTOR Duplication                      
+                        
 postulate EE-SN : ∀ {V} {Γ : Context V} E {P} → EE Γ E P → SN P

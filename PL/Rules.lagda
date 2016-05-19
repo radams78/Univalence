@@ -184,7 +184,7 @@ Sub↑-typed : ∀ {P} {Q} {σ}
 \AgdaHide{
 \begin{code}
 Sub↑-typed {σ = σ} {Γ} {Δ} {φ} σ∶Γ⇒Δ x =
-  change-type (sym (Sub↑-upRep {E = pretypeof x (Γ ,P φ)})) (pre-Sub↑-typed x) where
+  change-type (sym (Sub↑-upRep (pretypeof x (Γ ,P φ)))) (pre-Sub↑-typed x) where
   pre-Sub↑-typed : ∀ x → Δ ,P φ ⟦ σ ⟧ ⊢ Sub↑ -proof σ -proof x ∶ pretypeof x (Γ ,P φ) ⟦ σ ⟧ 〈 upRep 〉
   pre-Sub↑-typed x₀ = var
   pre-Sub↑-typed (↑ x) = Weakening (σ∶Γ⇒Δ x) (↑-typed {φ = φ ⟦ σ ⟧})
@@ -198,7 +198,7 @@ botsub-typed : ∀ {P} {Γ : Context P} {φ : Prp P} {δ} →
 
 \AgdaHide{
 \begin{code}
-botsub-typed {P} {Γ} {φ} {δ} Γ⊢δ:φ x = change-type (sym botsub-upRep) (pre-botsub-typed x) where
+botsub-typed {P} {Γ} {φ} {δ} Γ⊢δ:φ x = change-type (sym (botsub-upRep _)) (pre-botsub-typed x) where
   pre-botsub-typed : ∀ x → Γ ⊢ (x₀:= δ) -proof x ∶ pretypeof x (Γ ,P φ)
   pre-botsub-typed x₀ = Γ⊢δ:φ
   pre-botsub-typed (↑ x) = var

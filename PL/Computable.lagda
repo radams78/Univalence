@@ -2,7 +2,7 @@
 \begin{code}
 module PL.Computable where
 open import Data.Empty
-open import Data.Product
+open import Data.Product renaming (_,_ to _,p_)
 open import Prelims
 open import PL.Grammar
 open PLgrammar
@@ -63,11 +63,11 @@ C-rep : ∀ {P} {Q} {Γ : Context P} {Δ : Context Q} {φ} {δ} {ρ} →
 
 \AgdaHide{
 \begin{code}
-C-rep {φ = app -bot out} (Γ⊢δ∶x₀ , SNδ) ρ∶Γ→Δ = (Weakening Γ⊢δ∶x₀ ρ∶Γ→Δ) , SNrep β-creates-rep SNδ
-C-rep {P} {Q} {Γ} {Δ} {app -imp (φ ,, ψ ,, out)} {δ} {ρ} (Γ⊢δ∶φ⇒ψ , Cδ) ρ∶Γ→Δ = (subst 
+C-rep {φ = app -bot out} (Γ⊢δ∶x₀ ,p SNδ) ρ∶Γ→Δ = (Weakening Γ⊢δ∶x₀ ρ∶Γ→Δ) ,p SNrep β-creates-rep SNδ
+C-rep {P} {Q} {Γ} {Δ} {app -imp (φ ,, ψ ,, out)} {δ} {ρ} (Γ⊢δ∶φ⇒ψ ,p Cδ) ρ∶Γ→Δ = (subst 
   (λ x → Δ ⊢ δ 〈 ρ 〉 ∶ x) 
   (magic-unique' (φ ⇛ ψ))
-  (Weakening Γ⊢δ∶φ⇒ψ ρ∶Γ→Δ)) , (λ R {Θ} σ ε σ∶Δ→Θ ε∈CΘ → subst (C Θ ψ) 
+  (Weakening Γ⊢δ∶φ⇒ψ ρ∶Γ→Δ)) ,p (λ R {Θ} σ ε σ∶Δ→Θ ε∈CΘ → subst (C Θ ψ) 
     (cong (λ x → appP x ε) (rep-comp δ))
     (Cδ R (σ •R ρ) ε (•R-typed {σ = σ} {ρ = ρ} ρ∶Γ→Δ σ∶Δ→Θ) ε∈CΘ))
 \end{code}
@@ -79,8 +79,8 @@ C-osr : ∀ {P} {Γ : Context P} φ {δ} {ε} → C Γ φ δ → δ ⇒ ε → C
 
 \AgdaHide{
 \begin{code}
-C-osr (app -bot out) (Γ⊢δ∶x₀ , SNδ) δ→ε = (SR Γ⊢δ∶x₀ δ→ε) , (SNred SNδ (osr-red δ→ε))
-C-osr {Γ = Γ} (app -imp (_,,_ φ (_,,_ ψ out))) {δ = δ} (Γ⊢δ∶φ⇒ψ , Cδ) δ→δ' = SR Γ⊢δ∶φ⇒ψ δ→δ' , 
+C-osr (app -bot out) (Γ⊢δ∶x₀ ,p SNδ) δ→ε = (SR Γ⊢δ∶x₀ δ→ε) ,p (SNred SNδ (osr-red δ→ε))
+C-osr {Γ = Γ} (app -imp (_,,_ φ (_,,_ ψ out))) {δ = δ} (Γ⊢δ∶φ⇒ψ ,p Cδ) δ→δ' = SR Γ⊢δ∶φ⇒ψ δ→δ' ,p 
   (λ Q ρ ε ρ∶Γ→Δ ε∈Cφ → C-osr ψ (Cδ Q ρ ε ρ∶Γ→Δ ε∈Cφ) (app (appl (respects-osr replacement β-respects-rep δ→δ'))))
 
 C-red : ∀ {P} {Γ : Context P} φ {δ} {ε} → C Γ φ δ → δ ↠ ε → C Γ φ ε
@@ -101,8 +101,8 @@ CsubSN : ∀ {P} {Γ : Context P} φ {δ} → C Γ φ δ → SN δ
 
 \AgdaHide{
 \begin{code}
-NeutralC {P} {Γ} {δ} {app -bot out} Γ⊢δ∶x₀ Neutralδ hyp = Γ⊢δ∶x₀ , SNI δ (λ ε δ→ε → proj₂ (hyp ε δ→ε))
-NeutralC {P} {Γ} {δ} {app -imp (_,,_ φ (_,,_ ψ out))} Γ⊢δ∶φ→ψ neutralδ hyp = Γ⊢δ∶φ→ψ , 
+NeutralC {P} {Γ} {δ} {app -bot out} Γ⊢δ∶x₀ Neutralδ hyp = Γ⊢δ∶x₀ ,p SNI δ (λ ε δ→ε → proj₂ (hyp ε δ→ε))
+NeutralC {P} {Γ} {δ} {app -imp (_,,_ φ (_,,_ ψ out))} Γ⊢δ∶φ→ψ neutralδ hyp = Γ⊢δ∶φ→ψ ,p 
   (λ Q ρ ε ρ∶Γ→Δ ε∈Cφ → claim ε (CsubSN φ {δ = ε} ε∈Cφ) ρ∶Γ→Δ ε∈Cφ) where
   claim : ∀ {Q} {Δ} {ρ : Rep P Q} ε → SN ε → ρ ∶ Γ ⇒R Δ → C Δ φ ε → C Δ ψ (appP (δ 〈  ρ 〉) ε)
   claim {Q} {Δ} {ρ} ε (SNI .ε SNε) ρ∶Γ→Δ ε∈Cφ = NeutralC {Q} {Δ} {appP (δ 〈  ρ 〉) ε} ψ
@@ -251,7 +251,7 @@ SNmainlemma {P} {Q} {Γ} {σ = σ} {Δ} (Λ {φ = φ} {δ} {ψ} Γ,φ⊢δ∶ψ)
     ∎)
   (Substitution Γ,φ⊢δ∶ψ (Sub↑-typed (λ x → 
     subst (λ A → Δ ⊢ σ _ x ∶ A) (sym (close-magic' {φ = typeof x Γ})) (C-typed {Γ = Δ} {φ = close (typeof x Γ)} (hyp x)))))))
-  , (λ R {Θ} ρ ε ρ∶Δ→Θ ε∈CΘφ → WTE {ψ = close ψ} 
+  ,p (λ R {Θ} ρ ε ρ∶Δ→Θ ε∈CΘφ → WTE {ψ = close ψ} 
        (change-type 
          (let open ≡-Reasoning in 
          begin
@@ -309,7 +309,7 @@ SNmainlemma {P} {Q} {Γ} {σ = σ} {Δ} (Λ {φ = φ} {δ} {ψ} Γ,φ⊢δ∶ψ)
       (let open ≡-Reasoning in
       begin
         σ -proof x 〈 ρ 〉
-      ≡⟨⟨ botsub-upRep ⟩⟩
+      ≡⟨⟨ botsub-upRep _ ⟩⟩
         σ -proof x 〈 ρ 〉 〈 upRep 〉 ⟦ x₀:= ε ⟧
       ≡⟨⟨ cong (λ E → E ⟦ x₀:= ε ⟧) (Rep↑-upRep (σ -proof x)) ⟩⟩
         σ -proof x 〈 upRep 〉 〈 Rep↑ -proof ρ 〉 ⟦ x₀:= ε ⟧

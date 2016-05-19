@@ -62,7 +62,6 @@ Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒CΔ (app*R {N = N} {N
   (subst (λ a → E Δ a (N' ⟦ σ ⟧)) (sym (close-sub A))
     (Computable-Substitution U V σ Γ Δ N' A σ∶Γ⇒CΔ Γ⊢N'∶A validΔ))
 Computable-Path-Substitution₁ U V σ Γ Δ P _ σ∶Γ⇒CΔ (convER {M = M} {M'} {N} {N'} {A} Γ⊢P∶M≡N Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N') validΔ = 
-  conv-EE  (Computable-Path-Substitution₁ U V σ Γ Δ P _ σ∶Γ⇒CΔ Γ⊢P∶M≡N validΔ) 
-    (trans-conv (respects-conv {f = λ a → a ⟦ σ ⟧ ≡〈 A ⟦ σ ⟧ 〉 N ⟦ σ ⟧} (λ x → app (appl (respects-osr substitution β-respects-sub x))) M≃M') 
-      (respects-conv {f = λ a → M' ⟦ σ ⟧ ≡〈 A ⟦ σ ⟧ 〉 a ⟦ σ ⟧} (λ x → app (appr (appl (respects-osr substitution β-respects-sub x)))) N≃N'))
-
+  conv-EE  (Computable-Path-Substitution₁ U V σ Γ Δ P _ σ∶Γ⇒CΔ Γ⊢P∶M≡N validΔ) (respects-conv (respects-osr substitution β-respects-sub) 
+  M≃M') (respects-conv (respects-osr substitution β-respects-sub) N≃N') (Substitution Γ⊢M'∶A validΔ (subC-typed σ∶Γ⇒CΔ)) (Substitution Γ⊢N'∶A validΔ (subC-typed σ∶Γ⇒CΔ))
+--REFACTOR Duplication
