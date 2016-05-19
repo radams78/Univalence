@@ -162,4 +162,3 @@ APP : ∀ {V} → Term V → List (Term V) → Term V
 APP M [] = M
 APP M (N ∷ NN) = APP (appT M N) NN
 \end{code}
-

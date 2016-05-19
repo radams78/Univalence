@@ -37,4 +37,3 @@ postulate SN-βexp : ∀ {V} {φ : Term V} {δ : Proof (V , -Proof)} {ε : Proof
 postulate R-respects-replacement : respects'R replacement
 
 postulate R-creates-replacement : creates'R replacement
-

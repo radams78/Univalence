@@ -53,9 +53,12 @@ var-E : ∀ {V} (Γ : Context V) (x : Var V -Term) →
         valid Γ → E Γ (close (typeof x Γ)) (var x)
 var-E Γ x validΓ = var-E' {A = close (typeof x Γ)} Γ x validΓ refl
 
-postulate ⊥-E : ∀ {V} {Γ : Context V} → valid Γ → E Γ Ω ⊥
+⊥-E : ∀ {V} {Γ : Context V} → valid Γ → E Γ Ω ⊥
+⊥-E validΓ = record { typed = ⊥R validΓ ; sn = ⊥SN }
 
-postulate ⊃-E : ∀ {V} {Γ : Context V} {φ} {ψ} → E Γ Ω φ → E Γ Ω ψ → E Γ Ω (φ ⊃ ψ)
+⊃-E : ∀ {V} {Γ : Context V} {φ} {ψ} → E Γ Ω φ → E Γ Ω ψ → E Γ Ω (φ ⊃ ψ)
+⊃-E φ∈EΓΩ ψ∈EΓΩ = record { typed = impR (E-typed φ∈EΓΩ) (E-typed ψ∈EΓΩ) ; 
+  sn = ⊃SN (E-SN Ω φ∈EΓΩ) (E-SN Ω ψ∈EΓΩ) }
 
 postulate appT-E : ∀ {V} {Γ : Context V} {M N : Term V} {A} {B} →
                  valid Γ → E Γ (A ⇛ B) M → E Γ A N → E Γ B (appT M N)
