@@ -1,3 +1,5 @@
+\AgdaHide{
+\begin{code}
 module PHOPL.Computable where
 open import Data.Empty renaming (⊥ to Empty)
 open import Data.Sum
@@ -9,7 +11,28 @@ open import PHOPL.Rules
 open import PHOPL.Red
 open import PHOPL.Meta
 open import PHOPL.PathSub
+\end{code}
+}
 
+\begin{frame}
+Define the sets of \emph{computable} terms, proofs and paths as follows.
+\begin{align*}
+E_\Gamma(\Omega) & \eqdef \{ M \mid \Gamma \vdash M : \Omega, M \in \SN \} \\
+E_\Gamma(A \rightarrow B) & \eqdef \{ M \mid \Gamma \vdash M : A \rightarrow B, M \in \SN,
+& \forall N \in E_\Gamma(A). MN \in E_\Gamma(B), \\
+& \forall N, N' \in E_\Gamma(A). \forall P \in E_\Gamma(N =_A N´). M \bullet P \in E_\Gamma(MN =_B MN') \} \\
+E_\Gamma(\bot) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
+E_\Gamma(\phi \rightarrow \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \rightarrow \psi, \delta \in \SN, \\
+& \forall \epsilon \in E_\Gamma(\phi). \delta \epsilon \in E_\Gamma(\psi) \} \\
+E_\Gamma(\phi) & \eqdef E_\Gamma(nf(\phi)) & (\phi \mbox{ a normalizable term of type $\Omega$}) \\
+E_\Gamma(\phi =_\Omega \psi) & \eqdef \{ P \mid \Gamma \vdash P : \phi =_\Omega \psi, P \in \SN, \\
+& P^+ \in E_\Gamma(\phi \rightarrow \psi), P^- \in E_\Gamma(\psi \rightarrow \phi) \} \\
+E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \rightarrow B} M', P \in \SN, \\
+& \forall N, N' \in E_\Gamma(A), Q \in E_\Gamma(N =_A N'). PQ \in E_\Gamma(MN =_B M'N') \}
+\end{align*}
+\end{frame}
+
+\begin{code}
 record EΩ {V} (Γ : Context V) (M : Term V) : Set where
   field
     typed : Γ ⊢ M ∶ ty Ω
@@ -333,16 +356,15 @@ app*-EE {V} {Γ} {M} {M'} {N} {N'} {A} {B} {P} {Q} (Γ⊢P∶M≡M' ,p computeP)
 
 func-EE : ∀ {U} {Γ : Context U} {A} {B} {M} {M'} {P} →
           Γ ⊢ P ∶ M ≡〈 A ⇛ B 〉 M' →
-          (∀ V (Δ : Context V) (N N' : Term V) Q ρ → ρ ∶ Γ ⇒R Δ → valid Δ → 
+          (∀ V (Δ : Context V) (N N' : Term V) Q ρ → ρ ∶ Γ ⇒R Δ → 
           E Δ A N → E Δ A N' → EE Δ (N ≡〈 A 〉 N') Q →
           EE Δ (appT (M 〈 ρ 〉) N ≡〈 B 〉 appT (M' 〈 ρ 〉) N') (app* N N' (P 〈 ρ 〉) Q)) →
           EE Γ (M ≡〈 A ⇛ B 〉 M') P
 func-EE {U} {Γ} {A} {B} {M} {M'} {P} Γ⊢P∶M≡M' hyp = Γ⊢P∶M≡M' ,p (λ W Δ ρ N N' Q ρ∶Γ⇒Δ Δ⊢Q∶N≡N' N∈EΔA N'∈EΔA computeQ → 
-  proj₂ (hyp W Δ {!ρ!} {!!} {!!} {!!} {!!} {!!} {!!} {!!} {!!}))
+  proj₂ (hyp W Δ N N' Q ρ ρ∶Γ⇒Δ N∈EΔA N'∈EΔA (Δ⊢Q∶N≡N' ,p computeQ)))
 
 ref-EE : ∀ {V} {Γ : Context V} {M : Term V} {A : Type} → E Γ A M → EE Γ (M ≡〈 A 〉 M) (reff M)
 ref-EE {V} {Γ} {M} {A} M∈EΓA = refR (E-typed M∈EΓA) ,p ref-compute M∈EΓA
-
 
 expand-EE : ∀ {V} {Γ : Context V} {A} {M N : Term V} {P Q} →
             EE Γ (M ≡〈 A 〉 N) Q → Γ ⊢ P ∶ M ≡〈 A 〉 N → key-redex P Q → EE Γ (M ≡〈 A 〉 N) P
@@ -367,8 +389,8 @@ conv-computeE {M = M} {M'} {N} {N'} {A = A ⇛ B} computeP M≃M' N≃N' Γ⊢M'
   (computeP W Δ ρ L L' Q ρ∶Γ⇒RΔ Δ⊢Q∶L≡L' L∈EΔA L'∈EΔA computeQ) 
   (appT-respects-convl (respects-conv (respects-osr replacement β-respects-rep) M≃M')) 
   (appT-respects-convl (respects-conv (respects-osr replacement β-respects-rep) N≃N')) 
-  (appR (change-type (Weakening Γ⊢M'∶A⇛B (Context-Validity Δ⊢Q∶L≡L') ρ∶Γ⇒RΔ) {!!}) (E-typed {W} {Γ = Δ} {A = A} {L} L∈EΔA)) 
-  (appR (change-type (Weakening Γ⊢N'∶A⇛B (Context-Validity Δ⊢Q∶L≡L') ρ∶Γ⇒RΔ) {!!}) (E-typed L'∈EΔA)) 
+  (appR (Weakening Γ⊢M'∶A⇛B (Context-Validity Δ⊢Q∶L≡L') ρ∶Γ⇒RΔ) (E-typed {W} {Γ = Δ} {A = A} {L} L∈EΔA)) 
+  (appR (Weakening Γ⊢N'∶A⇛B (Context-Validity Δ⊢Q∶L≡L') ρ∶Γ⇒RΔ) (E-typed L'∈EΔA)) 
 --REFACTOR Duplication
 
 conv-EE : ∀ {V} {Γ : Context V} {M} {N} {M'} {N'} {A} {P} →
@@ -379,3 +401,4 @@ conv-EE (Γ⊢P∶M≡N ,p computeP) M≃M' N≃N' Γ⊢M'∶A Γ⊢N'∶A = con
                  
 EE-SN : ∀ {V} {Γ : Context V} E {P} → EE Γ E P → SN P
 EE-SN (app (-eq _) (_ ,, _ ,, out)) (Γ⊢P∶E ,p computeP) = computeE-SN computeP (Context-Validity Γ⊢P∶E)
+\end{code}
