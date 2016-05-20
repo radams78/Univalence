@@ -22,7 +22,6 @@ PL/Computable
 PHOPL/Grammar
 PHOPL/Rules
 PHOPL/PathSub
-PHOPL/Close
 PHOPL/Red
 PHOPL/Neutral
 PHOPL/Meta

@@ -2,7 +2,6 @@ module PHOPL.Meta where
 open import Prelims
 open import PHOPL.Grammar
 open import PHOPL.Rules
-open import PHOPL.Close
 
 postulate β-respects-rep : respects' replacement
 
@@ -12,7 +11,7 @@ postulate Context-Validity : ∀ {V} {Γ} {K} {M : Expression V (varKind K)} {A}
                            Γ ⊢ M ∶ A → valid Γ
 
 postulate Prop-Validity : ∀ {V} {Γ : Context V} {δ : Proof V} {φ : Term V} → 
-                        Γ ⊢ δ ∶ φ → Γ ⊢ φ ∶ Ω
+                        Γ ⊢ δ ∶ φ → Γ ⊢ φ ∶ ty Ω
 
 postulate _∶_⇒R_ : ∀ {U} {V} → Rep U V → Context U → Context V → Set
 
@@ -82,9 +81,9 @@ extendSub : ∀ {U} {V} → Sub U V → Term V → Sub (U , -Term) V
 extendSub σ M _ x₀ = M
 extendSub σ M _ (↑ x) = σ _ x
 
-postulate ⊃-gen₁ : ∀ {V} {Γ : Context V} {φ} {ψ} → Γ ⊢ φ ⊃ ψ ∶ Ω → Γ ⊢ φ ∶ Ω
+postulate ⊃-gen₁ : ∀ {V} {Γ : Context V} {φ} {ψ} → Γ ⊢ φ ⊃ ψ ∶ ty Ω → Γ ⊢ φ ∶ ty Ω
 
-postulate ⊃-gen₂ : ∀ {V} {Γ : Context V} {φ} {ψ} → Γ ⊢ φ ⊃ ψ ∶ Ω → Γ ⊢ ψ ∶ Ω
+postulate ⊃-gen₂ : ∀ {V} {Γ : Context V} {φ} {ψ} → Γ ⊢ φ ⊃ ψ ∶ ty Ω → Γ ⊢ ψ ∶ ty Ω
 
 postulate Type-Reduction : ∀ {V} {Γ : Context V} {K} {M : Expression V (varKind K)} {A} {B} →
                          Γ ⊢ M ∶ A → A ↠ B → Γ ⊢ M ∶ B
