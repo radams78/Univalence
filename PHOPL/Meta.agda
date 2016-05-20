@@ -87,3 +87,30 @@ postulate ⊃-gen₂ : ∀ {V} {Γ : Context V} {φ} {ψ} → Γ ⊢ φ ⊃ ψ �
 
 postulate Type-Reduction : ∀ {V} {Γ : Context V} {K} {M : Expression V (varKind K)} {A} {B} →
                          Γ ⊢ M ∶ A → A ↠ B → Γ ⊢ M ∶ B
+
+postulate change-cod : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {Δ'} → σ ∶ Γ ⇒ Δ → Δ ≡ Δ' → σ ∶ Γ ⇒ Δ'
+
+sub↖ : ∀ {U} {V} → Sub U V → Sub (U , -Term) (V , -Term , -Term , -Path)
+sub↖ σ _ x₀ = var x₂
+sub↖ σ _ (↑ x) = σ _ x ⇑ ⇑ ⇑
+
+postulate sub↖-typed : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {A} → σ ∶ Γ ⇒ Δ → sub↖ σ ∶ Γ ,T A ⇒ Δ ,T A ,T A ,E var x₁ ≡〈 A 〉 var x₀
+
+postulate β↖ : ∀ {U} {V} {A} (M : Term (U , -Term)) {σ : Sub U V} → β -appTerm ((ΛT A M) ⟦ σ ⟧ ⇑ ⇑ ⇑ ,, var x₂ ,, out) (M ⟦ sub↖ σ ⟧)
+
+sub↗ : ∀ {U} {V} → Sub U V → Sub (U , -Term) (V , -Term , -Term , -Path)
+sub↗ σ _ x₀ = var x₁
+sub↗ σ _ (↑ x) = σ _ x ⇑ ⇑ ⇑
+
+postulate sub↗-typed : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {A} → σ ∶ Γ ⇒ Δ → sub↗ σ ∶ Γ ,T A ⇒ Δ ,T A ,T A ,E var x₁ ≡〈 A 〉 var x₀
+
+postulate β↗ : ∀ {U} {V} {A} (M : Term (U , -Term)) {σ : Sub U V} → β -appTerm ((ΛT A M) ⟦ σ ⟧ ⇑ ⇑ ⇑ ,, var x₁ ,, out) (M ⟦ sub↗ σ ⟧)
+
+--REFACTOR Duplication
+
+postulate sub↖-comp₁ : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} →
+                     sub↖ (ρ •₁ σ) ∼ Rep↑ -Path (Rep↑ -Term (Rep↑ -Term ρ)) •₁ sub↖ σ
+
+postulate sub↗-comp₁ : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} →
+                     sub↗ (ρ •₁ σ) ∼ Rep↑ -Path (Rep↑ -Term (Rep↑ -Term ρ)) •₁ sub↗ σ
+

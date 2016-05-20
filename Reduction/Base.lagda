@@ -54,6 +54,12 @@ data _≃_ {V C K} : Subexpression V C K → Subexpression V C K → Set
   trans-conv : ∀ {M N P} → M ≃ N → N ≃ P → M ≃ P
 \end{code}
 
+\AgdaHide{
+\begin{code}
+postulate redex-conv : ∀ {V} {K} {C} {c} {E} {F} → R {V} {K} {C} c E F → app c E ≃ F
+\end{code}
+}
+
 \begin{definition}
 Let $\rhd$ be a relation between expressions such that, whenever $M \rhd N$, then $M$ and $N$ have the same kind.  Let $f$ be a function that maps expressions of kind $K$ over $U$ to expressions of kind $L$ over $V$.
 
