@@ -135,6 +135,9 @@ ty A = app (-ty A) out
 yt : ∀ {V} → Expression V (nonVarKind -Type) → Type
 yt (app (-ty A) out) = A
 
+ty-yt : ∀ {V} {A : Expression V (nonVarKind -Type)} → ty (yt A) ≡ A
+ty-yt {A = app (-ty _) out} = refl
+
 infix 60 _≡〈_〉_
 _≡〈_〉_ : ∀ {V} → Term V → Type → Term V → Equation V
 M ≡〈 A 〉 N = app (-eq A) (M ,, N ,, out)
@@ -154,9 +157,12 @@ _,E_ = _,_
 typeof' : ∀ {V} → Var V -Term → Context V → Type
 typeof' x Γ  = yt (typeof x Γ)
 
+typeof-typeof' : ∀ {V} {x : Var V -Term} {Γ} → typeof x Γ ≡ ty (typeof' x Γ)
+typeof-typeof' = sym ty-yt
+
 data β {V} : ∀ {K} {C : Kind (-Constructor K)} → 
-  Constructor C → Body V C → Expression V K → Set where
-  βI : ∀ {A} {M} {N} → β -appTerm (ΛT A M ,, N ,, out) (M ⟦ x₀:= N ⟧)
+     Constructor C → Body V C → Expression V K → Set where
+     βI : ∀ {A} {M} {N} → β -appTerm (ΛT A M ,, N ,, out) (M ⟦ x₀:= N ⟧)
 open import Reduction.Base PHOPL β public
 
 APP : ∀ {V} → Term V → List (Term V) → Term V

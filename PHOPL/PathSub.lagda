@@ -165,7 +165,7 @@ _⋆[_∶_∼_] : ∀ {V} → Term V → Path V → Term V → Term V → Path V
 M ⋆[ P ∶ N ∼ N' ] = (appT (M ⇑) (var x₀)) ⟦⟦ x₀::= P ∶ x₀:= N ∼ x₀:= N' ⟧⟧
 
 postulate ⋆-typed : ∀ {V} {M : Term V} {P N N' Γ A B} → 
-                  Γ ⊢ M ∶ ty B → Γ ⊢ P ∶ N ≡〈 A 〉 N' → Γ ⊢ M ⋆[ P ∶ N ∼ N' ] ∶ appT M N ≡〈 B 〉 appT M N'
+                  Γ ⊢ M ∶ ty (A ⇛ B) → Γ ⊢ P ∶ N ≡〈 A 〉 N' → Γ ⊢ M ⋆[ P ∶ N ∼ N' ] ∶ appT M N ≡〈 B 〉 appT M N'
 \end{code}
 }
 \end{frame}

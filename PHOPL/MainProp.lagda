@@ -7,7 +7,6 @@ open import Prelims
 open import PHOPL.Grammar
 open import PHOPL.Rules
 open import PHOPL.PathSub
-open import PHOPL.Close
 open import PHOPL.Red
 open import PHOPL.Neutral
 open import PHOPL.Meta
