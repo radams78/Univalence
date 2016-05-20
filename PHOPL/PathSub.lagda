@@ -7,6 +7,8 @@ open import PHOPL.Grammar
 open import PHOPL.Rules
 open import PHOPL.Meta
 
+postulate redex-conv : ∀ {V} {K} {C} {c} {E} {F} → β {V} {K} {C} c E F → app c E ≃ F
+
 postulate change-cod : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {Δ'} → σ ∶ Γ ⇒ Δ → Δ ≡ Δ' → σ ∶ Γ ⇒ Δ'
 \end{code}
 }
@@ -39,11 +41,17 @@ sub↖ σ _ (↑ x) = σ _ x ⇑ ⇑ ⇑
 
 postulate sub↖-typed : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {A} → σ ∶ Γ ⇒ Δ → sub↖ σ ∶ Γ ,T A ⇒ Δ ,T A ,T A ,E var x₁ ≡〈 A 〉 var x₀
 
+postulate β↖ : ∀ {U} {V} {A} (M : Term (U , -Term)) {σ : Sub U V} → β -appTerm ((ΛT A M) ⟦ σ ⟧ ⇑ ⇑ ⇑ ,, var x₂ ,, out) (M ⟦ sub↖ σ ⟧)
+
 sub↗ : ∀ {U} {V} → Sub U V → Sub (U , -Term) (V , -Term , -Term , -Path)
 sub↗ σ _ x₀ = var x₁
 sub↗ σ _ (↑ x) = σ _ x ⇑ ⇑ ⇑
 
 postulate sub↗-typed : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {A} → σ ∶ Γ ⇒ Δ → sub↗ σ ∶ Γ ,T A ⇒ Δ ,T A ,T A ,E var x₁ ≡〈 A 〉 var x₀
+
+postulate β↗ : ∀ {U} {V} {A} (M : Term (U , -Term)) {σ : Sub U V} → β -appTerm ((ΛT A M) ⟦ σ ⟧ ⇑ ⇑ ⇑ ,, var x₁ ,, out) (M ⟦ sub↗ σ ⟧)
+
+--REFACTOR Duplication
 
 pathsub↑ : ∀ {U} {V} → PathSub U V → PathSub (U , -Term) (V , -Term , -Term , -Path)
 pathsub↑ τ x₀ = var x₀
@@ -86,10 +94,17 @@ Path-Substitution (appR {A = A} Γ⊢M∶A⇛B Γ⊢N∶A) τ∶σ∼σ' ρ∶Γ
   app*R (Substitution-ty Γ⊢N∶A validΔ ρ∶Γ⇒Δ) (Substitution-ty Γ⊢N∶A validΔ σ∶Γ⇒Δ)
   (Path-Substitution Γ⊢M∶A⇛B τ∶σ∼σ' ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ) (Path-Substitution Γ⊢N∶A τ∶σ∼σ' ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ)
 Path-Substitution {U} {V} {Γ} {Δ} {ρ} {σ} {τ} (ΛR .{U} .{Γ} {A} {M} {B} Γ,A⊢M∶B) τ∶σ∼σ' ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ = 
+  let ΔAAE = Δ ,T A ,T A ,E var x₁ ≡〈 A 〉 var x₀ in
   let validΔAA  : valid (Δ ,T A ,T A)
       validΔAA = ctxTR (ctxTR validΔ) in
-  let validΔAAE : valid (Δ ,T A ,T A ,E var x₁ ≡〈 A 〉 var x₀)
+  let validΔAAE : valid ΔAAE
       validΔAAE = ctxER (varR x₁ validΔAA) (varR x₀ validΔAA) in
+  let Mσ-typed : ∀ {σ} {x} → σ ∶ Γ ⇒ Δ → typeof x ΔAAE ≡ ty A → ΔAAE ⊢ appT ((ΛT A M) ⟦ σ ⟧ ⇑ ⇑ ⇑) (var x) ∶ ty B
+      Mσ-typed = λ {σ} {x} σ∶Γ⇒Δ x∶A∈ΔAAE → appR (ΛR (Weakening (Weakening (Weakening (Substitution Γ,A⊢M∶B (ctxTR validΔ) (Sub↑-typed σ∶Γ⇒Δ)) 
+                                                                                      (ctxTR (ctxTR validΔ)) (Rep↑-typed upRep-typed)) 
+                                                                           (ctxTR (ctxTR (ctxTR validΔ))) (Rep↑-typed upRep-typed)) 
+                                                                (ctxTR validΔAAE) (Rep↑-typed upRep-typed))) 
+                                                     (change-type (varR x validΔAAE) x∶A∈ΔAAE) in
   let step1 : Δ ,T A ,T A ,E var x₁ ≡〈 A 〉 var x₀ ⊢ 
               M ⟦⟦ pathsub↑ τ ∶ sub↖ ρ ∼ sub↗ σ ⟧⟧ ∶ 
               appT ((ΛT A M) ⟦ ρ ⟧ ⇑ ⇑ ⇑) (var x₂) ≡〈 B 〉 appT ((ΛT A M) ⟦ σ ⟧ ⇑ ⇑ ⇑) (var x₁)
@@ -97,8 +112,9 @@ Path-Substitution {U} {V} {Γ} {Δ} {ρ} {σ} {τ} (ΛR .{U} .{Γ} {A} {M} {B} �
                (Path-Substitution Γ,A⊢M∶B 
                  (pathsub↑-typed τ∶σ∼σ') (sub↖-typed ρ∶Γ⇒Δ) (sub↗-typed σ∶Γ⇒Δ) 
                  validΔAAE)
-                 (appR (ΛR {!!}) (varR x₂ validΔAAE)) {!!} 
-                 {!!} {!!}
+                 (Mσ-typed ρ∶Γ⇒Δ refl)
+                 (Mσ-typed σ∶Γ⇒Δ refl)
+                 (sym-conv (redex-conv (β↖ M))) (sym-conv (redex-conv (β↗ M)))
   in lllR step1
 \end{code}
 
