@@ -118,6 +118,9 @@ postulate R-creates-replacement : creates'R replacement
 
 postulate R-respects-sub : respects'R substitution
 
+red-subl : ∀ {V} {E F : Term (V , -Term)} {G} → E ↠R F → E ⟦ x₀:= G ⟧ ↠R F ⟦ x₀:= G ⟧
+red-subl E↠F = respects-redR (respects-osrR substitution R-respects-sub) E↠F
+
 postulate ⊥SN : ∀ {V} → SN {V} ⊥
 
 postulate ⊃SN : ∀ {V} {φ ψ : Term V} → SN φ → SN ψ → SN (φ ⊃ ψ)
@@ -204,7 +207,7 @@ Local-Confluent (redexR βR) (appR (applR (redexR ())))
 Local-Confluent (redexR βR) (appR (applR (appR (applR φ⇒φ')))) = _ ,p refR ,p (osr-redR (redexR βR))
 Local-Confluent (redexR (βR {δ = δ} {ε = ε})) 
   (appR (applR (appR (apprR (applR {E' = δ'} δ⇒δ'))))) = 
-  δ' ⟦ x₀:= ε ⟧ ,p (respects-redR {f = λ x → x ⟦ x₀:= ε ⟧} (respects-osrR substitution R-respects-sub) {M = δ} {N = δ'} (osr-redR δ⇒δ')) ,p osr-redR (redexR βR)
+  δ' ⟦ x₀:= ε ⟧ ,p {!red-subl!} ,p osr-redR (redexR βR)
 Local-Confluent (redexR βR) (appR (applR (appR (apprR (apprR E⇒G))))) = {!!}
 Local-Confluent (redexR βR) (appR (apprR E⇒G)) = {!!}
 Local-Confluent (redexR βE) E⇒G = {!!}
@@ -216,13 +219,13 @@ Local-Confluent (redexR ref⊃*univ) E⇒G = {!!}
 Local-Confluent (redexR univ⊃*ref) E⇒G = {!!}
 Local-Confluent (redexR univ⊃*univ) E⇒G = {!!}
 Local-Confluent (redexR ref⊃*ref) E⇒G = {!!}
-Local-Confluent (redexR refref) E⇒G = {!!}
+Local-Confluent (redexR refref) E⇒G = {!!}}
 Local-Confluent (redexR lllred) E⇒G = {!!}
 Local-Confluent (redexR reflamvar) E⇒G = {!!}
 Local-Confluent (redexR reflam⊃*) E⇒G = {!!}
 Local-Confluent (redexR reflamuniv) E⇒G = {!!}
 Local-Confluent (redexR reflamλλλ) E⇒G = {!!}
-Local-Confluent (appR E⇒F) E⇒G = {!!} -}
+Local-Confluent (appR E⇒F) E⇒G = {!!}-}
 \end{code}
 }
 
