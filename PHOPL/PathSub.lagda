@@ -14,7 +14,7 @@ open import PHOPL.Meta
 \begin{frame}[fragile]
 \frametitle{Path Substitution}
 Define the operation of \emph{path substitution} such that,
-if $P : M =_A M'$ then $\{ P / x \} N : [M / x] N =_B [M' / x] N$.
+if $P : M =_A M'$ then $\{ P : M \sim M' \} N \equiv \{ P / x \} N : [M / x] N =_B [M' / x] N$.
 
 \mode<article>{
 Given paths $P_1$, \ldots, $P_n$; term variales $x_1$, \ldots, $x_n$; and a term $M$, define the path $\{ P_1 / x_1, \ldots, P_n / x_n \} M$ as follows.
@@ -25,7 +25,7 @@ Given paths $P_1$, \ldots, $P_n$; term variales $x_1$, \ldots, $x_n$; and a term
 \{ \vec{P} / \vec{x} \} (MN) & \eqdef \{ \vec{P} / \vec{x} \} M \{ \vec{P} / \vec{x} \} N \\
 \{ \vec{P} / \vec{x} \} (\lambda y : A . M) & \eqdef \triplelambda e : a =_A a' . \{ \vec{P} / \vec{x} , e / y \} M \\
 \{ \vec{P} / \vec{x} \} (\phi \rightarrow \psi) & \eqdef \{ \vec{P} / \vec{x} \} \phi \rightarrow \{ \vec{P} / \vec{x} \} \psi
-\end{align*}
+\end{align*}}
 
 \begin{code}
 PathSub : Alphabet → Alphabet → Set
@@ -39,45 +39,75 @@ PathSub U V = Var U -Term → Path V
 _∼∼_ : ∀ {U} {V} → PathSub U V → PathSub U V → Set
 τ ∼∼ τ' = ∀ x → τ x ≡ τ' x
 
-postulate ∼∼-refl : ∀ {U} {V} {τ : PathSub U V} → τ ∼∼ τ
-\end{code}
-}
+∼∼-refl : ∀ {U} {V} {τ : PathSub U V} → τ ∼∼ τ
+∼∼-refl _ = refl
 
-\begin{code}
 pathsub↑ : ∀ {U} {V} → PathSub U V → PathSub (U , -Term) (V , -Term , -Term , -Path)
 pathsub↑ τ x₀ = var x₀
 pathsub↑ τ (↑ x) = τ x ⇑ ⇑ ⇑
 
+pathsub↑-cong : ∀ {U} {V} {τ τ' : PathSub U V} → τ ∼∼ τ' → pathsub↑ τ ∼∼ pathsub↑ τ'
+pathsub↑-cong _ x₀ = refl
+pathsub↑-cong τ∼∼τ' (↑ x) = rep-congl (rep-congl (rep-congl (τ∼∼τ' x)))
+
 infix 70 _⟦⟦_∶_∼_⟧⟧
+\end{code}
+}
+
+\begin{align*}
+x \{ x := P \} & \eqdef P \\
+y \{ x := P \} & \eqdef \reff{y} \\
+\bot \{ x := P \} & \eqdef \reff{\bot} \\
+(\phi \supset \psi) \{ x := P \} & \eqdef \phi \{ x := P \} \supset^* \psi \{ x := P \} \\
+(M M') \{ x := P : N \sim N' \} & \eqdef (M\{ x := P \})_{M'[x:=N], M'[x:=N']} (M'\{ x := P \})
+\end{align*}
+
+\begin{code}
 _⟦⟦_∶_∼_⟧⟧ : ∀ {U} {V} → Term U → PathSub U V → Sub U V → Sub U V → Path V
+\end{code}
+
+\AgdaHide{
+\begin{code}
 var x ⟦⟦ τ ∶ _ ∼ _ ⟧⟧ = τ x
 app -bot out ⟦⟦ τ ∶ _ ∼ _ ⟧⟧ = reff ⊥
 app -imp (φ ,, ψ ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = φ ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ ⊃* ψ ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧
 app -appTerm (M ,, N ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = app* (N ⟦ ρ ⟧) (N ⟦ σ ⟧) (M ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧) (N ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧)
 app (-lamTerm A) (M ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = λλλ A (M ⟦⟦ pathsub↑ τ ∶ sub↖ ρ ∼ sub↗ σ ⟧⟧)
-\end{code}
 
-\AgdaHide{
-\begin{code}
-postulate pathsub-cong : ∀ {U} {V} M {τ τ' : PathSub U V} {ρ} {ρ'} {σ} {σ'} →
-                       τ ∼∼ τ' → ρ ∼ ρ' → σ ∼ σ' → M ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ ≡ M ⟦⟦ τ' ∶ ρ' ∼ σ' ⟧⟧
+pathsub-cong : ∀ {U} {V} M {τ τ' : PathSub U V} {ρ} {ρ'} {σ} {σ'} →
+               τ ∼∼ τ' → ρ ∼ ρ' → σ ∼ σ' → M ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ ≡ M ⟦⟦ τ' ∶ ρ' ∼ σ' ⟧⟧
+pathsub-cong (var x) τ∼∼τ' _ _ = τ∼∼τ' x
+pathsub-cong (app -bot out) _ _ _ = refl
+pathsub-cong (app -imp (φ ,, ψ ,, out)) τ∼∼τ' ρ∼ρ' σ∼σ' = 
+  cong₂ _⊃*_ (pathsub-cong φ τ∼∼τ' ρ∼ρ' σ∼σ') 
+             (pathsub-cong ψ τ∼∼τ' ρ∼ρ' σ∼σ')
+pathsub-cong (app -appTerm (M ,, N ,, out)) τ∼∼τ' ρ∼ρ' σ∼σ' = 
+  cong₄ app* (sub-congr N ρ∼ρ') (sub-congr N σ∼σ') 
+             (pathsub-cong M τ∼∼τ' ρ∼ρ' σ∼σ') 
+             (pathsub-cong N τ∼∼τ' ρ∼ρ' σ∼σ')
+pathsub-cong (app (-lamTerm A) (M ,, out)) τ∼∼τ' ρ∼ρ' σ∼σ' = 
+  cong (λλλ A) (pathsub-cong M (pathsub↑-cong τ∼∼τ') 
+               (sub↖-cong ρ∼ρ') (sub↗-cong σ∼σ'))
 \end{code}
 }
+\end{frame}
 
+\begin{frame}[fragile]
+\frametitle{Path Substitution}
 \begin{prop}
 If $\Gamma, x : A \vdash M : B$ and $\Gamma \vdash P : N =_A N'$ then
 $\Gamma \vdash \{ P / x \} M : [N / x] M =_B [N' / x] M$.
 \end{prop}
 
+\AgdaHide{
 \begin{code}
 _∶_∼_∶_⇒_ : ∀ {U} {V} → PathSub U V → Sub U V → Sub U V → Context U → Context V → Set
 τ ∶ σ ∼ σ' ∶ Γ ⇒ Δ = ∀ x → Δ ⊢ τ x ∶ σ -Term x ≡〈 typeof' x Γ 〉 σ' -Term x
-\end{code}
 
-\AgdaHide{
-\begin{code}
-postulate change-cod-PS : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {Δ} {Δ'} →
-                        τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → Δ ≡ Δ' → τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ'
+change-cod-PS : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {Δ} {Δ'} →
+                τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → Δ ≡ Δ' → τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ'
+change-cod-PS {τ = τ} {ρ} {σ} {Γ} τ∶ρ∼σ Δ≡Δ' = 
+  subst (λ x → τ ∶ ρ ∼ σ ∶ Γ ⇒ x) Δ≡Δ' τ∶ρ∼σ
 
 postulate pathsub↑-typed : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {A} {Δ} → τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → pathsub↑ τ ∶ sub↖ ρ ∼ sub↗ σ ∶ Γ ,T A ⇒ Δ ,T  A ,T  A ,E var x₁ ≡〈 A 〉 var x₀
 \end{code}
@@ -86,7 +116,9 @@ postulate pathsub↑-typed : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {A} {
 \begin{code}
 Path-Substitution : ∀ {U} {V} {Γ : Context U} {Δ : Context V} 
   {ρ} {σ} {τ} {M} {A} →
-  Γ ⊢ M ∶ A → τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → ρ ∶ Γ ⇒ Δ → σ ∶ Γ ⇒ Δ → valid Δ → 
+  (Γ ⊢ M ∶ A) → (τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ) →
+  (ρ ∶ Γ ⇒ Δ) → (σ ∶ Γ ⇒ Δ) → 
+  valid Δ → 
   Δ ⊢ M ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ ∶ M ⟦ ρ ⟧ ≡〈 yt A 〉 M ⟦ σ ⟧
 \end{code}
 
@@ -155,7 +187,6 @@ x₀::= : ∀ {V} → Path V → PathSub (V , -Term) V
 (x₀::= P) x₀ = P
 (x₀::= P) (↑ x) = reff (var x)
 \end{code}
-}
 
 We define $M * P \eqdef \{ P / x \} (M x)$.  Thus, if $P : N =_A N'$
 then $M * P : M N =_B M N'$.

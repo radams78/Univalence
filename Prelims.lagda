@@ -28,15 +28,22 @@ module ≡-Reasoning {a} {A : Set a} where
   _ ≡⟨⟨ y≡x ⟩⟩ y≡z = trans (sym y≡x) y≡z
 --TODO Add this to standard library
 
-postulate cong₃ : ∀ {A B C D : Set} (f : A → B → C → D) {a a' b b' c c'} →
-                a ≡ a' → b ≡ b' → c ≡ c' → f a b c ≡ f a' b' c'
+cong₃ : ∀ {A B C D : Set} (f : A → B → C → D) {a a' b b' c c'} →
+        a ≡ a' → b ≡ b' → c ≡ c' → f a b c ≡ f a' b' c'
+cong₃ _ refl refl refl = refl
 
-postulate subst₃ : ∀ {A B C : Set} (P : A → B → C → Set) {a a' b b' c c'} →
-                 a ≡ a' → b ≡ b' → c ≡ c' → P a b c → P a' b' c'
+cong₄ : ∀ {A B C D E : Set} (f : A → B → C → D → E) {a a' b b' c c' d d'} →
+        a ≡ a' → b ≡ b' → c ≡ c' → d ≡ d' → f a b c d ≡ f a' b' c' d'
+cong₄ _ refl refl refl refl = refl
 
-postulate subst₄ : ∀ {A1 A2 A3 A4 : Set} (P : A1 → A2 -> A3 -> A4  → Set) 
-                   {a1 a1' a2 a2' a3 a3' a4 a4'} →
-                 a1 ≡ a1' -> a2 ≡ a2' -> a3 ≡ a3' -> a4 ≡ a4' ->
-                 P a1 a2 a3 a4 -> P a1' a2' a3' a4'
+subst₃ : ∀ {A B C : Set} (P : A → B → C → Set) {a a' b b' c c'} →
+         a ≡ a' → b ≡ b' → c ≡ c' → P a b c → P a' b' c'
+subst₃ _ refl refl refl Pabc = Pabc
+
+subst₄ : ∀ {A1 A2 A3 A4 : Set} (P : A1 → A2 -> A3 -> A4  → Set) 
+           {a1 a1' a2 a2' a3 a3' a4 a4'} →
+         a1 ≡ a1' -> a2 ≡ a2' -> a3 ≡ a3' -> a4 ≡ a4' ->
+         P a1 a2 a3 a4 -> P a1' a2' a3' a4'
+subst₄ _ refl refl refl refl Paaaa = Paaaa
 \end{code}
 }

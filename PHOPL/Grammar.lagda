@@ -11,17 +11,6 @@ open import Grammar.Base
 \end{code}
 }
 
-\begin{frame}
-\frametitle{Syntax}
-The syntax of the system is given by the following grammar.
-
-\[ \begin{array}{lrcl}
-\text{Proof} & \delta & ::= & p \mid \delta \delta \mid \lambda p : \phi . \delta \\
-\text{Term} & M, \phi & ::= & x \mid \bot \mid M M \mid \lambda x : A . M \mid \phi \supset \phi \\
-\text{Type} & A & ::= & \Omega \mid A \rightarrow A \\
-\end{array} \]
-\end{frame}
-
 \begin{code}
 data PHOPLVarKind : Set where
   -Proof : PHOPLVarKind
