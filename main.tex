@@ -46,6 +46,7 @@
 \newcommand{\reff}[1]{\ensuremath{\mathsf{ref} \left( {#1} \right)}}
 \newcommand{\univ}[4]{\ensuremath{\mathsf{univ}_{{#1} , {#2}} \left( {#3} , {#4} \right)}}
 \newcommand{\triplelambda}{\lambda \!\! \lambda \!\! \lambda}
+\newcommand{\SN}{\mathbf{SN}}
 
 \begin{document}
 
@@ -162,10 +163,72 @@ expressions.  The details are given in Appendix \ref{appendix:repsub}.
 
 \mode<all>{\input{PHOPL/Red.lagda}}
 
+\subsection{Strong Normalization Proof}
+
+\mode<all>{\input{PHOPL/Computable.lagda}}
+\mode<all>{\input{PHOPL/MainProp.lagda}}
+
 \section{Systems Two and Three}
+
+\begin{frame}
+\frametitle{Include equations in $\Omega$}
+
+We can include the equations $M =_A N$ in our logic.
+
+Now we can form (and prove) $sym_{MN} : M =_A N \supset N =_A M$ and $trans_{MNP} : M =_A N \supset N =_A P \supset M =_A P$ (by recursion on $A$).
+
+\pause
+
+\[ \infer{\Gamma \vdash M =_A N : \Omega}{\Gamma \vdash M : A \quad \Gamma \vdash N : A} \]
+\[ \infer{\Gamma \vdash \delta =^* \epsilon : (M =_A N) =_\Omega (M' =_A N')}
+{\Gamma \vdash \delta : M =_A M' \quad \Gamma \vdash \epsilon : N =_A N'} \]
+
+\pause
+
+\[ (\delta =^* \epsilon)^+ \rhd \lambda p. trans \, \epsilon \, (trans \, p \, (sym \delta)) \]
+\[ (\delta =^* \epsilon)^- \rhd \lambda p. trans \, (sym \, \epsilon) \, (trans \, p \, \delta) \]
+\end{frame}
+
+\begin{frame}
+\frametitle{Universal Quantification}
+
+We can close $\Omega$ under universal quantification in any of the types $A$ (including $\Omega$!)
+
+\[ \infer{\Gamma \vdash \forall I (x.\delta) : \forall x : A. \phi}{\Gamma, x : A vdash \delta : \phi} \]
+\[ \infer{\Gamma \vdash \forall E(\delta, M) : \phi[x:=M]} {\Gamma \vdash \delta : \forall x :A.\phi \quad \Gamma \vdash M : A} \]
+\[ \infer{\Gamma \vdash \forall* x:A.\delta : \forall x:A.\phi =_\Omega \forall x:A.\psi}{\Gamma, x : A \vdash \delta : \phi =_\Omega \psi} \]
+
+\pause
+
+\[ (\forall^* x:A.\delta)^+ \rhd \lambda p. \forall I(x.\delta^+ \forall E(p,x)) \]
+\[ (\forall^* x:A.\delta)^- \rhd \lambda p.\forall I(x.\delta^- \forall E(p,x)) \]
+\end{frame}
 
 \section{Conclusion}
 
+\begin{frame}
+\frametitle{Conclusion}
+\begin{itemize}[<+->]
+\item
+We have shown a system that has all these properties:
+\begin{itemize}
+\item
+Univalence
+\item
+Strong Normalization
+\item
+Confluence of typed terms
+\item
+Canonicity
+\end{itemize}
+\item
+So it is possible!
+\item
+The simplicity is due to the separation between terms and proofs.
+\item
+Let's see how far we can go.
+\end{itemize}
+\end{frame}
 \appendix
 
 \section{Replacement and Substitution}

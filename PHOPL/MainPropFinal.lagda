@@ -1,3 +1,4 @@
+\begin{code}
 module PHOPL.MainPropFinal where
 open import Data.Unit
 open import Data.Product renaming (_,_ to _,p_)
@@ -276,3 +277,4 @@ aux-lm2 U V σ Γ Δ A B M M' P σ∶Γ⇒Δ Γ+⊢P∶Mx≡M'y validΔ hyp =
                       N
                     ∎
                   aux Q N' N (↑ (↑ (↑ x))) = refl
+\end{code}

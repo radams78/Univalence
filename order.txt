@@ -23,7 +23,6 @@ PHOPL/Grammar
 PHOPL/Rules
 PHOPL/PathSub
 PHOPL/Red
-PHOPL/Neutral
 PHOPL/Meta
 PHOPL/Computable
 PHOPL/SubC

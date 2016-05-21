@@ -14,80 +14,128 @@ open import PHOPL.PathSub
 }
 
 \begin{frame}
+\frametitle{Tait's Method}
+
+We define a model of the type theory with types as sets of terms.
+
+For every type (proposition, equation) $A$ in context $\Gamma$, define
+the set of \emph{computable} terms $E_\Gamma(A)$.
+
+The definition is such that:
+\begin{enumerate}
+\item
+If $M \in E_\Gamma(A)$ then $\Gamma \vdash M : A$ and $M$ is strongly normalizing.
+\item
+$E_\Gamma(A)$ is closed under \emph{key redex expansion}.
+\item
+If $A \simeq B$ then $E_\Gamma(A) = E_\Gamma(B)$.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
 Define the sets of \emph{computable} terms, proofs and paths as follows.
 \begin{align*}
 E_\Gamma(\Omega) & \eqdef \{ M \mid \Gamma \vdash M : \Omega, M \in \SN \} \\
-E_\Gamma(A \rightarrow B) & \eqdef \{ M \mid \Gamma \vdash M : A \rightarrow B, M \in \SN,
-& \forall N \in E_\Gamma(A). MN \in E_\Gamma(B), \\
-& \forall N, N' \in E_\Gamma(A). \forall P \in E_\Gamma(N =_A N´). M \bullet P \in E_\Gamma(MN =_B MN') \} \\
+E_\Gamma(A \rightarrow B) & \eqdef \{ M \mid \Gamma \vdash M : A \rightarrow B, \\
+& \forall (\Delta \supseteq \Gamma) (N \in E_\Delta(A)). MN \in E_\Delta(B), \\
+& \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (P \in E_\Delta(N =_A N')). \\
+& (M x) {x := P} \in E_\Gamma(MN =_B MN') \} \\
 E_\Gamma(\bot) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
-E_\Gamma(\phi \rightarrow \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \rightarrow \psi, \delta \in \SN, \\
-& \forall \epsilon \in E_\Gamma(\phi). \delta \epsilon \in E_\Gamma(\psi) \} \\
-E_\Gamma(\phi) & \eqdef E_\Gamma(nf(\phi)) & (\phi \mbox{ a normalizable term of type $\Omega$}) \\
-E_\Gamma(\phi =_\Omega \psi) & \eqdef \{ P \mid \Gamma \vdash P : \phi =_\Omega \psi, P \in \SN, \\
-& P^+ \in E_\Gamma(\phi \rightarrow \psi), P^- \in E_\Gamma(\psi \rightarrow \phi) \} \\
-E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \rightarrow B} M', P \in \SN, \\
-& \forall N, N' \in E_\Gamma(A), Q \in E_\Gamma(N =_A N'). PQ \in E_\Gamma(MN =_B M'N') \}
+E_\Gamma(\phi \rightarrow \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \rightarrow \psi, \\
+& \forall (\Delta \supseteq \Gamma)(\epsilon \in E_\Delta(\phi)). \delta \epsilon \in E_\Gamma(\psi) \} \\
+E_\Gamma(\phi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
+& \qquad (\phi \text{ neutral}) \\
+E_\Gamma(\phi) & \eqdef E_\Gamma(nf(\phi)) \\
+& \qquad (\phi \mbox{ a normalizable term of type $\Omega$})
 \end{align*}
 \end{frame}
 
+\begin{frame}
+\frametitle{Computable Terms}
+\begin{align*}
+E_\Gamma(\phi =_\Omega \psi) & \eqdef \{ P \mid \Gamma \vdash P : \phi =_\Omega \psi, \\
+& P^+ \in E_\Gamma(\phi \rightarrow \psi), P^- \in E_\Gamma(\psi \rightarrow \phi) \} \\
+E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \rightarrow B} M', \\
+& \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Gamma(A)) (Q \in E_\Gamma(N =_A N')). \\
+& PQ \in E_\Gamma(MN =_B M'N') \}
+\end{align*}
+\end{frame}
+
+\AgdaHide{
 \begin{code}
-data Neutral (V : Alphabet) : VarKind → Set
-data Nf : Alphabet → VarKind → Set
-
-data Neutral V where
-  var    : ∀ K → Var V K → Neutral V K
-  appTn  : Neutral V -Term → Nf V -Term → Neutral V -Term
-  appPn  : Neutral V -Proof → Nf V -Proof → Neutral V -Proof
-  plusn  : Neutral V -Path → Neutral V -Proof
-  minusn : Neutral V -Path → Neutral V -Proof
-  _⊃*l_  : Neutral V -Path → Nf V -Path → Neutral V -Path
-  _⊃*r_  : Nf V -Path → Neutral V -Path → Neutral V -Path
-  app*n  : Nf V -Term → Nf V -Term → Neutral V -Path → Nf V -Path → Neutral V -Path
-
-data Nf  where
-  neutral : ∀ {V} {K} → Neutral V K → Nf V K
-  ⊥nf   : ∀ {V} → Nf V -Term
-  _⊃nf_ : ∀ {V} → Nf V -Term → Nf V -Term → Nf V -Term
-  ΛTnf  : ∀ {V} → Type → Nf (V , -Term) -Term → Nf V -Term
-  ΛPnf  : ∀ {V} → Nf V -Term → Nf (V , -Proof) -Proof → Nf V -Proof
-  refnf : ∀ {V} → Nf V -Term → Nf V -Path
-  univnf : ∀ {V} → Nf V -Term → Nf V -Term → Nf V -Proof → Nf V -Proof → Nf V -Path
-  λλλnf  : ∀ {V} → Type → Nf (V , -Term , -Term , -Path) -Path → Nf V -Path
-
-decode : ∀ {V} {K} → Neutral V K → Expression V (varKind K)
-decodenf : ∀ {V} {K} → Nf V K → Expression V (varKind K)
-
-decode (var K x) = var x
-decode (appTn E F) = appT (decode E) (decodenf F)
-decode (appPn E F) = appP (decode E) (decodenf F)
-decode (plusn E) = plus (decode E)
-decode (minusn E) = minus (decode E)
-decode (E ⊃*l F) = decode E ⊃* decodenf F
-decode (E ⊃*r F) = decodenf E ⊃* decode F
-decode (app*n E₁ E₂ E₃ E₄) = app* (decodenf E₁) (decodenf E₂) (decode E₃) (decodenf E₄)
-
-decodenf (neutral E) = decode E
-decodenf ⊥nf = ⊥
-decodenf (E ⊃nf F) = decodenf E ⊃ decodenf F
-decodenf (ΛTnf A E) = ΛT A (decodenf E)
-decodenf (ΛPnf E F) = ΛP (decodenf E) (decodenf F)
-decodenf (refnf E) = reff (decodenf E)
-decodenf (univnf E₁ E₂ E₃ E₄) = univ (decodenf E₁) (decodenf E₂) (decodenf E₃) (decodenf E₄)
-decodenf (λλλnf A E) = λλλ A (decodenf E)
-
 --REFACTOR Abstract
-
 postulate key-redex : ∀ {V} {K} → Expression V K → Expression V K → Set
 postulate βkr : ∀ {V} {φ : Term V} {δ ε} → key-redex (appP (ΛP φ δ) ε) (δ ⟦ x₀:= ε ⟧)
 postulate βEkr : ∀ {V} {N N' : Term V} {A} {P} {Q} → key-redex (app* N N' (λλλ A P) Q)
                (P ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧)
 
-computeT : ∀ {V} → Context V → Type → Term V → Set
-computeT {V} Γ Ω φ = Γ ⊢ φ ∶ ty Ω × SN φ × Σ[ ψ ∈ Nf V -Term ] φ ↠ decodenf ψ
-computeT {V} Γ (A ⇛ B) F = Γ ⊢ F ∶ ty (A ⇛ B) × ∀ W (Δ : Context W) ρ M → ρ ∶ Γ ⇒R Δ → computeT Δ A M → computeT Δ B (appT (F 〈 ρ 〉) M)
+data Neutral (V : Alphabet) : Set where
+  var : Var V -Term → Neutral V
+  app : Neutral V → Term V → Neutral V
 
-postulate E' : ∀ {V} {K} → Context V → Expression V (parent K) → Expression V (varKind K) → Set
+decode-Neutral : ∀ {V} → Neutral V → Term V
+decode-Neutral (var x) = var x
+decode-Neutral (app M N) = appT (decode-Neutral M) N
+
+nrep : ∀ {U} {V} → Rep U V → Neutral U → Neutral V
+nrep ρ (var x) = var (ρ -Term x)
+nrep ρ (app M N) = app (nrep ρ M) (N 〈 ρ 〉)
+
+data Shape : Set where
+  neutral : Shape
+  bot : Shape
+  imp : Shape → Shape → Shape
+
+data Leaves (V : Alphabet) : Shape → Set where
+  neutral : Neutral V → Leaves V neutral
+  bot : Leaves V bot
+  imp : ∀ {S} {T} → Leaves V S → Leaves V T → Leaves V (imp S T)
+
+lrep : ∀ {U} {V} {S} → Rep U V → Leaves U S → Leaves V S
+lrep ρ (neutral N) = neutral (nrep ρ N)
+lrep ρ bot = bot
+lrep ρ (imp φ ψ) = imp (lrep ρ φ) (lrep ρ ψ)
+
+decode-Prop : ∀ {V} {S} → Leaves V S → Term V
+decode-Prop (neutral N) = decode-Neutral N
+decode-Prop bot = ⊥
+decode-Prop (imp φ ψ) = decode-Prop φ ⊃ decode-Prop ψ
+
+--computeT : ∀ {V} → Context V → Type → Term V → Set
+--computeT {V} Γ Ω φ = Γ ⊢ φ ∶ ty Ω × SN φ × Σ[ ψ ∈ Nf V -Term ] φ ↠ decodenf ψ
+--computeT {V} Γ (A ⇛ B) F = Γ ⊢ F ∶ ty (A ⇛ B) × ∀ W (Δ : Context W) ρ M → ρ ∶ Γ ⇒R Δ → computeT Δ A M → computeT Δ B (appT (F 〈 ρ 〉) M)
+
+computeP : ∀ {V} {S} → Context V → Leaves V S → Proof V → Set
+computeP {S = neutral} Γ (neutral _) δ = SN δ
+computeP {S = bot} Γ bot δ = SN δ
+computeP {S = imp S T} Γ (imp φ ψ) δ = ∀ {W} (Δ : Context W) {ρ} {ε} → ρ ∶ Γ ⇒R Δ → Δ ⊢ ε ∶ (decode-Prop (lrep ρ φ)) → computeP {S = S} Δ (lrep ρ φ) ε → computeP {S = T} Δ (lrep ρ ψ) (appP (δ 〈 ρ 〉) ε)
+
+computeT : ∀ {V} → Context V → Type → Term V → Set
+computeE : ∀ {V} → Context V → Term V → Type → Term V → Path V → Set
+
+computeT Γ Ω M = SN M
+computeT Γ (A ⇛ B) M = 
+  (∀ {W} (Δ : Context W) {ρ} {N} → Δ ⊢ N ∶ ty A → computeT Δ A N →
+    computeT Δ B (appT (M 〈 ρ 〉) N)) ×
+  (∀ {W} (Δ : Context W) {ρ} {N} {N'} {P} → 
+    Δ ⊢ P ∶ N ≡〈 A 〉 N' → 
+    computeT Δ A N → computeT Δ A N' → computeE Δ N A N' P →
+    computeE Δ (appT (M 〈 ρ 〉) N) B (appT (M 〈 ρ 〉) N') (M 〈 ρ 〉 ⋆[ P ∶ N ∼ N' ]))
+computeE {V} Γ M Ω N P = Σ[ S ∈ Shape ] Σ[ T ∈ Shape ] Σ[ L ∈ Leaves V S ] Σ[ L' ∈ Leaves V T ] M ↠R decode-Prop L × N ↠R decode-Prop L' × computeP Γ (imp L L') (plus P) × computeP Γ (imp L' L) (minus P)
+computeE Γ M (A ⇛ B) M' P =
+  ∀ {W} (Δ : Context W) {ρ} {N} {N'} {Q} → Δ ⊢ Q ∶ N ≡〈 A 〉 N' →
+  computeE Δ N A N' Q → computeE Δ (appT (M 〈 ρ 〉) N) B (appT (M' 〈 ρ 〉)  N') 
+    (app* N N' (P 〈 ρ 〉) Q)
+
+compute : ∀ {V} {K} → Context V → Expression V (parent K) → Expression V (varKind K) → Set
+compute {K = -Term} Γ (app (-ty A) out) M = computeT Γ A M
+compute {V} {K = -Proof} Γ φ δ = Σ[ S ∈ Shape ] Σ[ L ∈ Leaves V S ] φ ↠R decode-Prop L × computeP Γ L δ
+compute {K = -Path} Γ (app (-eq A) (M ,, N ,, out)) P = computeE Γ M A N P
+
+record E' {V} {K} (Γ : Context V) (A : Expression V (parent K)) (E : Expression V (varKind K)) : Set where
+  field
+    typed : Γ ⊢ E ∶ A
+    computable : compute Γ A E
 
 --TODO Inline the following?
 E : ∀ {V} → Context V → Type → Term V → Set
@@ -99,8 +147,9 @@ EP Γ φ δ = E' Γ φ δ
 EE : ∀ {V} → Context V → Equation V → Path V → Set
 EE Γ E P = E' Γ E P
 
-postulate E'-typed : ∀ {V} {K} {Γ : Context V} {A} {M : Expression V (varKind K)} → 
-                   E' Γ A M → Γ ⊢ M ∶ A
+E'-typed : ∀ {V} {K} {Γ : Context V} {A} {M : Expression V (varKind K)} → 
+           E' Γ A M → Γ ⊢ M ∶ A
+E'-typed = E'.typed
 
 postulate expand-E' : ∀ {V} {K} {Γ} {A} {M N : Expression V (varKind K)} →
                     E' Γ A N → Γ ⊢ M ∶ A → key-redex M N → E' Γ A M
@@ -109,6 +158,8 @@ postulate conv-E' : ∀ {V} {K} {Γ} {A} {B} {M : Expression V (varKind K)} →
                   A ≃ B → E' Γ A M → valid (_,_ {K = K} Γ B) → E' Γ B M
 
 postulate E'-SN : ∀ {V} {K} {Γ} {A} {M : Expression V (varKind K)} → E' Γ A M → SN M
+
+postulate var-E' : ∀ {V} {K} {x : Var V K} {Γ : Context V} → E' Γ (typeof x Γ) (var x)
 
 postulate ⊥-E : ∀ {V} {Γ : Context V} → valid Γ → E' Γ (ty Ω) ⊥
 
@@ -176,48 +227,7 @@ EE-typed = E'-typed
 EE-SN : ∀ {V} {Γ : Context V} E {P} → EE Γ E P → SN P
 EE-SN _ = E'-SN
 
-{-record EΩ {V} (Γ : Context V) (M : Term V) : Set where
-  field
-    typed : Γ ⊢ M ∶ ty Ω
-    sn    : SN M
-
---TODO Reorganise as typed plus condition
-data closed-prop : Set where
-  ⊥C : closed-prop
-  _⊃C_ : closed-prop → closed-prop → closed-prop
-
-cp2term : ∀ {V} → closed-prop → Term V
-cp2term ⊥C = ⊥
-cp2term (φ ⊃C ψ) = cp2term φ ⊃ cp2term ψ
-
-compute : ∀ {V} → Context V → closed-prop → Proof V → Set
-compute Γ ⊥C δ = SN δ
-compute Γ (φ ⊃C ψ) δ = ∀ W (Δ : Context W) ρ ε → ρ ∶ Γ ⇒R Δ → Δ ⊢ ε ∶ cp2term φ → compute Δ φ ε → compute Δ ψ (appP (δ 〈 ρ 〉) ε)
-
-EP : ∀ {V} → Context V → Term V → Proof V → Set
-EP Γ φ δ = Γ ⊢ δ ∶ φ × Σ[ ψ ∈ closed-prop ] (φ ↠ cp2term ψ × compute Γ ψ δ)
-
-E : ∀ {V} → Context V → Type → Term V → Set
-computeE : ∀ {V} → Context V → Term V → Type → Term V → Path V → Set
-
-E Γ Ω = EΩ Γ
-E Γ (A ⇛ B) M = 
-  Γ ⊢ M ∶ ty (A ⇛ B) × 
-  (∀ W (Δ : Context W) ρ N (ρ∶Γ⇒RΔ : ρ ∶ Γ ⇒R Δ) (N∈EΔA : E Δ A N) → E Δ B (appT (M 〈 ρ 〉) N)) ×
-  (∀ W (Δ : Context W) ρ N N' P (ρ∶Γ⇒RΔ : ρ ∶ Γ ⇒R Δ) (N∈EΔA : E Δ A N) (N'∈EΔA : E Δ A N') (Pcompute : computeE Δ N A N' P) (Δ⊢P∶N≡N' : Δ ⊢ P ∶ N ≡〈 A 〉 N') →
-    computeE Δ (appT (M 〈 ρ 〉) N) B (appT (M 〈 ρ 〉) N') (M 〈 ρ 〉 ⋆[ P ∶ N ∼ N' ]))
-
-computeE Γ φ Ω ψ P = EP Γ (φ ⊃ ψ) (plus P) × EP Γ (ψ ⊃ φ) (minus P)
-computeE Γ F (A ⇛ B) G P = 
-  ∀ W (Δ : Context W) ρ N N' Q → ρ ∶ Γ ⇒R Δ → Δ ⊢ Q ∶ N ≡〈 A 〉 N' → E Δ A N → E Δ A N' → computeE Δ N A N' Q → 
-  computeE Δ (appT (F 〈 ρ 〉) N) B (appT (G 〈 ρ 〉) N') (app* N N' (P 〈 ρ 〉) Q)
-
-EE : ∀ {V} → Context V → Equation V → Path V → Set
-EE Γ (app (-eq A) (M ,, N ,, out)) P = Γ ⊢ P ∶ M ≡〈 A 〉 N × computeE Γ M A N P
-
-E-typed {A = Ω} = EΩ.typed
-E-typed {A = A ⇛ B} (Γ⊢M∶A⇛B ,p _) = Γ⊢M∶A⇛B 
-
+{-
 postulate Neutral-computeE : ∀ {V} {Γ : Context V} {M} {A} {N} {P : NeutralP V} →
                            Γ ⊢ decode P ∶ M ≡〈 A 〉 N → computeE Γ M A N (decode P)
 
@@ -494,3 +504,4 @@ conv-EE (Γ⊢P∶M≡N ,p computeP) M≃M' N≃N' Γ⊢M'∶A Γ⊢N'∶A = con
                  
 EE-SN (app (-eq _) (_ ,, _ ,, out)) (Γ⊢P∶E ,p computeP) = computeE-SN computeP (Context-Validity Γ⊢P∶E) -}
 \end{code}
+}

@@ -67,7 +67,7 @@ We make $\mathsf{univ}$ and $\mathsf{ref}$ move out past $\supset^*$ and applica
 \end{code}
 }
 
-\begin{frame}
+\begin{frame}[fragile]
 \frametitle{The Reduction Relation}
 We construct a proof of $M =_{A \rightarrow B} N$, then apply it.  What is the result?
 \begin{itemize}[<+->]
@@ -82,7 +82,7 @@ If $P \not\equiv \reff{-}$, then $\reff{\lambda x:A.M} P \rhd ???$
 
 \mode<all>{\input{PHOPL/PathSub.lagda}}
 
-\begin{frame}
+\begin{frame}[fragile]
 \frametitle{The Reduction Relation}
 We construct a proof of $M =_{A \rightarrow B} N$, then apply it.  What is the result?
 \begin{itemize}
@@ -200,6 +200,11 @@ postulate Local-Confluent : ∀ {V} {K} {E F G : Expression V K} →
                   Σ[ H ∈ Expression V K ] (F ↠R H × G ↠R H)
 \end{code}
 
+\begin{corollary}
+Every strongly normalizing term is confluent, hence has a unique normal form.
+\end{corollary}
+\end{frame}
+
 \AgdaHide{
 \begin{code}
 {-Local-Confluent (redexR βR) (redexR βR) = _ ,p refR ,p refR
@@ -228,9 +233,3 @@ Local-Confluent (redexR reflamλλλ) E⇒G = {!!}
 Local-Confluent (appR E⇒F) E⇒G = {!!}-}
 \end{code}
 }
-
-\begin{corollary}
-Every strongly normalizing term is confluent, hence has a unique normal form.
-\end{corollary}
-\end{frame}
-

@@ -1,3 +1,4 @@
+\begin{code}
 module PHOPL.SubC where
 open import Data.Product hiding (_,_)
 open import Prelims
@@ -7,14 +8,13 @@ open import PHOPL.Computable
 open import PHOPL.PathSub
 
 _∶_⇒C_ : ∀ {U} {V} → Sub U V → Context U → Context V → Set
-σ ∶ Γ ⇒C Δ = (∀ x → E Δ (typeof' x Γ) (σ _ x)) × 
-             (∀ x → EP Δ (typeof x Γ ⟦ σ ⟧) (σ _ x)) ×
-             (∀ x → EE Δ (typeof x Γ ⟦ σ ⟧) (σ _ x))
+_∶_⇒C_ {U} {V} σ Γ Δ = ∀ {K} (x : Var U K) → E' {V} Δ ((typeof x Γ) ⟦ σ ⟧) (σ _ x)
 
 postulate change-codC : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {Δ'} →
                      σ ∶ Γ ⇒C Δ → Δ ≡ Δ' → σ ∶ Γ ⇒C Δ'
 
-postulate idSubC : ∀ {V} {Γ : Context V} → idSub V ∶ Γ ⇒C Γ
+idSubC : ∀ {V} {Γ : Context V} → idSub V ∶ Γ ⇒C Γ
+idSubC {V} {Γ} x = subst (λ a → E' Γ a (var x)) (sym sub-idOp) var-E'
 
 postulate compC : ∀ {U} {V} {W} {ρ : Sub V W} {σ : Sub U V} {Γ} {Δ} {Θ} →
                 ρ ∶ Δ ⇒C Θ → σ ∶ Γ ⇒C Δ → ρ • σ ∶ Γ ⇒C Θ
@@ -63,3 +63,4 @@ postulate pathsubC-valid₁ : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {Δ}
 
 postulate pathsubC-valid₂ : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {Δ} →
                           τ ∶ ρ ∼ σ ∶ Γ ⇒C Δ → σ ∶ Γ ⇒C Δ
+\end{code}
