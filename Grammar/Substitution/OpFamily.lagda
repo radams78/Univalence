@@ -127,8 +127,8 @@ Sub↑-comp {W = W} {ρ = ρ} {σ = σ} {K = K} {L} (↑ x) =
      ρ L x 〈 upRep 〉 ⟦ Sub↑ K σ ⟧ 
   ∎
 
-Sub↑-upRep₂ : ∀ {U} {V} {K} {L} {M} (E : Expression U M) {σ : Sub U V} → E ⇑ ⇑ ⟦ Sub↑ K (Sub↑ L σ) ⟧ ≡ E ⟦ σ ⟧ ⇑ ⇑
-Sub↑-upRep₂ {U} {V} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
+Sub↑-upRep₂ : ∀ {U} {V} {C} {K} {L} {M} (E : Subexpression U C M) {σ : Sub U V} → E ⇑ ⇑ ⟦ Sub↑ K (Sub↑ L σ) ⟧ ≡ E ⟦ σ ⟧ ⇑ ⇑
+Sub↑-upRep₂ {U} {V} {C} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
   begin
     E ⇑ ⇑ ⟦ Sub↑ K (Sub↑ L σ) ⟧
   ≡⟨ Sub↑-upRep (E ⇑) ⟩
@@ -137,8 +137,8 @@ Sub↑-upRep₂ {U} {V} {K} {L} {M} E {σ} = let open ≡-Reasoning in
     E ⟦ σ ⟧ ⇑ ⇑
   ∎
 
-Sub↑-upRep₃ : ∀ {U} {V} {K} {L} {M} {N} (E : Expression U N) {σ : Sub U V} → E ⇑ ⇑ ⇑ ⟦ Sub↑ K (Sub↑ L (Sub↑ M σ)) ⟧ ≡ E ⟦ σ ⟧ ⇑ ⇑ ⇑
-Sub↑-upRep₃ {U} {V} {K} {L} {M} {N} E {σ} = let open ≡-Reasoning in 
+Sub↑-upRep₃ : ∀ {U} {V} {C} {K} {L} {M} {N} (E : Subexpression U C N) {σ : Sub U V} → E ⇑ ⇑ ⇑ ⟦ Sub↑ K (Sub↑ L (Sub↑ M σ)) ⟧ ≡ E ⟦ σ ⟧ ⇑ ⇑ ⇑
+Sub↑-upRep₃ {U} {V} {C} {K} {L} {M} {N} E {σ} = let open ≡-Reasoning in 
   begin
     E ⇑ ⇑ ⇑ ⟦ Sub↑ K (Sub↑ L (Sub↑ M σ)) ⟧
   ≡⟨ Sub↑-upRep₂ (E ⇑) ⟩
@@ -146,6 +146,13 @@ Sub↑-upRep₃ {U} {V} {K} {L} {M} {N} E {σ} = let open ≡-Reasoning in
   ≡⟨ rep-congl (rep-congl (Sub↑-upRep E)) ⟩
     E ⟦ σ ⟧ ⇑ ⇑ ⇑
   ∎
+
+Rep↑-Sub↑-upRep₃ : ∀ {U} {V} {W} {K1} {K2} {K3} {C} {K4} 
+                   (M : Subexpression U C K4)
+                   (σ : Sub U V) (ρ : Rep V W) →
+                    M ⇑ ⇑ ⇑ ⟦ Sub↑ K1 (Sub↑ K2 (Sub↑ K3 σ)) ⟧ 〈 Rep↑ K1 (Rep↑ K2 (Rep↑ K3 ρ)) 〉
+                    ≡ M ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑
+Rep↑-Sub↑-upRep₃ M σ ρ = trans (rep-congl (Sub↑-upRep₃ M {σ})) (Rep↑-upRep₃ (M ⟦ σ ⟧))
 
 postulate assoc₁₂ : ∀ {U} {V} {W} {X} {ρ : Sub W X} {σ : Rep V W} {τ : Sub U V} →
                   ρ • (σ •₁ τ) ∼ (ρ •₂ σ) • τ

@@ -168,4 +168,11 @@ open import Reduction.Base PHOPL β public
 APP : ∀ {V} → Term V → List (Term V) → Term V
 APP M [] = M
 APP M (N ∷ NN) = APP (appT M N) NN
+--REFACTOR Remove this?
+
+addpath : ∀ {V} → Context V → Type → Context (V , -Term , -Term , -Path)
+addpath Γ A = Γ ,T A ,T A ,E var x₁ ≡〈 A 〉 var x₀
+
+postulate eq-resp-conv : ∀ {V} {M M' N N' : Term V} {A : Type} →
+                       M ≃ M' → N ≃ N' → M ≡〈 A 〉 N ≃ M' ≡〈 A 〉 N'
 \end{code}

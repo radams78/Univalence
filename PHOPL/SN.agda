@@ -1,5 +1,5 @@
 module PHOPL.SN where
-open import PHOPL
+open import PHOPL.Grammar
 open import PHOPL.Red
 
 postulate βE-exp : ∀ {V} {A} {M N : Term V} {P} {Q} →

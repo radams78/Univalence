@@ -177,9 +177,17 @@ On top of this we add extensional equality:
   -------------------------------------------------
     Γ ⊢ app* N N' P Q ∶ appT M N ≡〈 B 〉 appT M' N'
 
-  convER : ∀ {V} {Γ : Context V} {P : Expression V (varKind -Path)} {M M' N N' : Term V} {A : Type} →
+  convER : ∀ {V} {Γ : Context V} {P : Expression V (varKind -Path)} {M M' N N' : Term V} {A : Type}
 
-                             Γ ⊢ P ∶ M ≡〈 A 〉 N → Γ ⊢ M' ∶ ty A → Γ ⊢ N' ∶ ty A →
-         M ≃ M' → N ≃ N' → -------------------------------------------------
-                                    Γ ⊢ P ∶ M' ≡〈 A 〉 N'
+                                           (Γ⊢P∶M≡N : Γ ⊢ P ∶ M ≡〈 A 〉 N)   (Γ⊢M':A : Γ ⊢ M' ∶ ty A)   (Γ⊢N'∶A : Γ ⊢ N' ∶ ty A)
+         (M≃M' : M ≃ M') (N≃N' : N ≃ N') → ------------------------------------------------------------------------------------
+                                                                             Γ ⊢ P ∶ M' ≡〈 A 〉 N'
 \end{code}
+
+\AgdaHide{
+\begin{code}
+addpath-valid : ∀ {V} {Γ : Context V} {A} → valid Γ → valid (addpath Γ A)
+addpath-valid validΓ = ctxER (varR x₁ (ctxTR (ctxTR validΓ))) 
+                             (varR x₀ (ctxTR (ctxTR validΓ)))
+\end{code}
+}

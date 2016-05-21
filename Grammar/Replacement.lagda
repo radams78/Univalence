@@ -150,8 +150,8 @@ magic-unique' E {ρ} = let open ≡-Reasoning in
     E 〈 magic 〉
   ∎
 
-Rep↑-upRep₂ : ∀ {U} {V} {K} {L} {M} (E : Expression U M) {σ : Rep U V} → E ⇑ ⇑ 〈 Rep↑ K (Rep↑ L σ) 〉 ≡ E 〈 σ 〉 ⇑ ⇑
-Rep↑-upRep₂ {U} {V} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
+Rep↑-upRep₂ : ∀ {U} {V} {C} {K} {L} {M} (E : Subexpression U C M) {σ : Rep U V} → E ⇑ ⇑ 〈 Rep↑ K (Rep↑ L σ) 〉 ≡ E 〈 σ 〉 ⇑ ⇑
+Rep↑-upRep₂ {U} {V} {C} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
   begin
     E ⇑ ⇑ 〈 Rep↑ K (Rep↑ L σ) 〉
   ≡⟨ Rep↑-upRep (E ⇑) ⟩
@@ -160,9 +160,9 @@ Rep↑-upRep₂ {U} {V} {K} {L} {M} E {σ} = let open ≡-Reasoning in
     E 〈 σ 〉 ⇑ ⇑
   ∎
 
-Rep↑-upRep₃ : ∀ {U} {V} {K} {L} {M} {N} (E : Expression U N) {σ : Rep U V} → 
+Rep↑-upRep₃ : ∀ {U} {V} {C} {K} {L} {M} {N} (E : Subexpression U C N) {σ : Rep U V} → 
   E ⇑ ⇑ ⇑ 〈 Rep↑ K (Rep↑ L (Rep↑ M σ)) 〉 ≡ E 〈 σ 〉 ⇑ ⇑ ⇑
-Rep↑-upRep₃ {U} {V} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
+Rep↑-upRep₃ {U} {V} {C} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
   begin
     E ⇑ ⇑ ⇑ 〈 Rep↑ K (Rep↑ L (Rep↑ M σ)) 〉
   ≡⟨ Rep↑-upRep₂ (E ⇑) ⟩
