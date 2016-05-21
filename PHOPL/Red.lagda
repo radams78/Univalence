@@ -2,9 +2,11 @@
 \begin{code}
 module PHOPL.Red where
 open import Data.Unit
-open import Data.Product hiding (_,_)
+open import Data.Product renaming (_,_ to _,p_)
 open import Data.List
 open import PHOPL.Grammar
+open import PHOPL.PathSub
+open import PHOPL.Rules
 \end{code}
 }
 
@@ -74,15 +76,33 @@ $\reff{M} \reff{N} \rhd \reff{MN}$
 \item
 $(\triplelambda e:x =_A y. P)_{MN}Q \rhd P[x:=M, y:=N, e:=Q]$
 \item
-$\reff{\lambda x:A.M} P \rhd ???$
+If $P \not\equiv \reff{-}$, then $\reff{\lambda x:A.M} P \rhd ???$
 \end{itemize}
 \end{frame}
 
 \mode<all>{\input{PHOPL/PathSub.lagda}}
 
+\begin{frame}
+\frametitle{The Reduction Relation}
+We construct a proof of $M =_{A \rightarrow B} N$, then apply it.  What is the result?
+\begin{itemize}
+\item
+$\reff{M} \reff{N} \rhd \reff{MN}$
+\item
+$(\triplelambda e:x =_A y. P)_{MN}Q \rhd P[x:=M, y:=N, e:=Q]$
+\item
+If $P \not\equiv \reff{-}$, then $\reff{\lambda x:A.M}_{N,N'} P \rhd M \{ x := P : N ∼ N' \}$
+\end{itemize}
+\end{frame}
+
 \AgdaHide{
 \begin{code}
   refref : ∀ {V} {M} {N} → R {V} -app* (N ,, N ,, reff M ,, reff N ,, out) (reff (appT M N))
+  lllred : ∀ {V} {A} {P} {M} {N} {Q} → R {V} -app* (M ,, N ,, λλλ A P ,, Q ,, out) (P ⟦ x₀:= M • x₀:= (N ⇑) • x₀:= (Q ⇑ ⇑) ⟧) --TODO Definition for triple substitution
+  reflamvar : ∀ {V} {N} {N'} {A} {M} {e} → R {V} -app* (N ,, N' ,, reff (ΛT A M) ,, var e ,, out) (M ⟦⟦ x₀::= (var e) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
+  reflam⊃* : ∀ {V} {N} {N'} {A} {M} {P} {Q} → R {V} -app* (N ,, N' ,, reff (ΛT A M) ,, (P ⊃* Q) ,, out) (M ⟦⟦ x₀::= (P ⊃* Q) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
+  reflamuniv : ∀ {V} {N} {N'} {A} {M} {φ} {ψ} {δ} {ε} → R {V} -app* (N ,, N' ,, reff (ΛT A M) ,, univ φ ψ δ ε ,, out) (M ⟦⟦ x₀::= (univ φ ψ δ ε) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
+  reflamλλλ : ∀ {V} {N} {N'} {A} {M} {B} {P} → R {V} -app* (N ,, N' ,, reff (ΛT A M) ,, λλλ B P ,, out) (M ⟦⟦ x₀::= (λλλ B P) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
 
 open import Reduction PHOPL R public renaming (_⇒_ to _⇒R_;_↠_ to _↠R_;_≃_ to _≃R_;redex to redexR;app to appR;appl to applR;appr to apprR;creates' to creates'R;
   respects' to respects'R;respects-osr to respects-osrR;respects-conv to respects-convR;
@@ -95,6 +115,8 @@ postulate R-creates-rep : creates'R replacement
 postulate R-respects-replacement : respects'R replacement
 
 postulate R-creates-replacement : creates'R replacement
+
+postulate R-respects-sub : respects'R substitution
 
 postulate ⊥SN : ∀ {V} → SN {V} ⊥
 
@@ -116,3 +138,96 @@ postulate SN-βexp : ∀ {V} {φ : Term V} {δ : Proof (V , -Proof)} {ε : Proof
 
 \end{code}
 }
+
+\begin{frame}[fragile]
+\frametitle{Subject Reduction}
+
+\begin{theorem}[Subject Reduction]
+Let $E$ be a path (proof, term) and $A$ an equation (term, type).
+If $\Gamma \vdash E : A$ and $E \twoheadrightarrow F$ then $\Gamma \vdash F : A$.
+\end{theorem}
+
+\AgdaHide{
+\begin{code}
+postulate Generation-ΛP : ∀ {V} {Γ : Context V} {φ} {δ} {ε} {ψ} →
+                       Γ ⊢ appP (ΛP φ δ) ε ∶ ψ →
+                       Σ[ χ ∈ Term V ] 
+                       (ψ ≃ φ ⊃ χ × Γ ,P φ ⊢ δ ∶ χ ⇑)
+
+postulate Subject-Reduction-R : ∀ {V} {K} {C} 
+                              {c : Constructor C} {E : Body V C} {F : Expression V (varKind K)} {Γ} {A} →
+                              Γ ⊢ (app c E) ∶ A → R c E F → Γ ⊢ F ∶ A
+
+{-Subject-Reduction-R : ∀ {V} {K} {C} 
+  {c : Constructor C} {E : Body V C} {F : Expression V (varKind K)} {Γ} {A} →
+  Γ ⊢ (app c E) ∶ A → R c E F → Γ ⊢ F ∶ A
+Subject-Reduction-R Γ⊢ΛPφδε∶A βR =
+  let (χ ,p A≃φ⊃χ ,p Γ,φ⊢δ∶χ) = Generation-ΛP Γ⊢ΛPφδε∶A in {!!}
+Subject-Reduction-R Γ⊢cE∶A βE = {!!}
+Subject-Reduction-R Γ⊢cE∶A plus-ref = {!!}
+Subject-Reduction-R Γ⊢cE∶A minus-ref = {!!}
+Subject-Reduction-R Γ⊢cE∶A plus-univ = {!!}
+Subject-Reduction-R Γ⊢cE∶A minus-univ = {!!}
+Subject-Reduction-R Γ⊢cE∶A ref⊃*univ = {!!}
+Subject-Reduction-R Γ⊢cE∶A univ⊃*ref = {!!}
+Subject-Reduction-R Γ⊢cE∶A univ⊃*univ = {!!}
+Subject-Reduction-R Γ⊢cE∶A ref⊃*ref = {!!}
+Subject-Reduction-R Γ⊢cE∶A refref = {!!}
+Subject-Reduction-R Γ⊢cE∶A lllred = {!!}
+Subject-Reduction-R Γ⊢cE∶A reflamvar = {!!}
+Subject-Reduction-R Γ⊢cE∶A reflam⊃* = {!!}
+Subject-Reduction-R Γ⊢cE∶A reflamuniv = {!!}
+Subject-Reduction-R Γ⊢cE∶A reflamλλλ = {!!} -}
+\end{code}
+}
+
+\begin{code}
+postulate Subject-Reduction : ∀ {V} {K} {Γ}
+                            {E F : Expression V (varKind K)} {A} → 
+                            (Γ ⊢ E ∶ A) → (E ↠R F) → (Γ ⊢ F ∶ A)
+\end{code}
+
+\begin{theorem}[Local Confluence]
+The reduction is locally confluent.
+\end{theorem}
+
+\begin{code}
+postulate Local-Confluent : ∀ {V} {K} {E F G : Expression V K} →
+                  E ⇒R F → E ⇒R G → 
+                  Σ[ H ∈ Expression V K ] (F ↠R H × G ↠R H)
+\end{code}
+
+\AgdaHide{
+\begin{code}
+{-Local-Confluent (redexR βR) (redexR βR) = _ ,p refR ,p refR
+Local-Confluent (redexR βR) (appR (applR (redexR ())))
+Local-Confluent (redexR βR) (appR (applR (appR (applR φ⇒φ')))) = _ ,p refR ,p (osr-redR (redexR βR))
+Local-Confluent (redexR (βR {δ = δ} {ε = ε})) 
+  (appR (applR (appR (apprR (applR {E' = δ'} δ⇒δ'))))) = 
+  δ' ⟦ x₀:= ε ⟧ ,p (respects-redR {f = λ x → x ⟦ x₀:= ε ⟧} (respects-osrR substitution R-respects-sub) {M = δ} {N = δ'} (osr-redR δ⇒δ')) ,p osr-redR (redexR βR)
+Local-Confluent (redexR βR) (appR (applR (appR (apprR (apprR E⇒G))))) = {!!}
+Local-Confluent (redexR βR) (appR (apprR E⇒G)) = {!!}
+Local-Confluent (redexR βE) E⇒G = {!!}
+Local-Confluent (redexR plus-ref) E⇒G = {!!}
+Local-Confluent (redexR minus-ref) E⇒G = {!!}
+Local-Confluent (redexR plus-univ) E⇒G = {!!}
+Local-Confluent (redexR minus-univ) E⇒G = {!!}
+Local-Confluent (redexR ref⊃*univ) E⇒G = {!!}
+Local-Confluent (redexR univ⊃*ref) E⇒G = {!!}
+Local-Confluent (redexR univ⊃*univ) E⇒G = {!!}
+Local-Confluent (redexR ref⊃*ref) E⇒G = {!!}
+Local-Confluent (redexR refref) E⇒G = {!!}
+Local-Confluent (redexR lllred) E⇒G = {!!}
+Local-Confluent (redexR reflamvar) E⇒G = {!!}
+Local-Confluent (redexR reflam⊃*) E⇒G = {!!}
+Local-Confluent (redexR reflamuniv) E⇒G = {!!}
+Local-Confluent (redexR reflamλλλ) E⇒G = {!!}
+Local-Confluent (appR E⇒F) E⇒G = {!!} -}
+\end{code}
+}
+
+\begin{corollary}
+Every strongly normalizing term is confluent, hence has a unique normal form.
+\end{corollary}
+\end{frame}
+
