@@ -7,10 +7,8 @@
 \AgdaHide{
 \begin{code}
 module Grammar.Taxonomy where
-
-open import Data.Nat public
-open import Data.Fin public using (Fin;zero;suc)
-open import Data.List public
+open import Data.List
+open import Prelims
 \end{code}
 }
 
@@ -47,6 +45,10 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
   extend : Alphabet → List VarKind → Alphabet
   extend A [] = A
   extend A (K ∷ KK) = extend (A , K) KK
+
+  snoc-extend : Alphabet → snocList VarKind → Alphabet
+  snoc-extend A [] = A
+  snoc-extend A (KK ∷ K) = snoc-extend A KK , K
 
   data Var : Alphabet → VarKind → Set where
     x₀ : ∀ {V} {K} → Var (V , K) K

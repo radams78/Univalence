@@ -19,6 +19,19 @@ open import Grammar.Substitution.OpFamily G
 Let $E$ be an expression of kind $K$ over $V$.  Then we write $[x_0 := E]$ for the following substitution
 $(V , K) \Rightarrow V$:
 
+\AgdaHide{
+\begin{code}
+data ExpList V : snocList VarKind → Set where
+  [] : ExpList V []
+  _∷_ : ∀ {A} {K} → ExpList V A → Expression V (varKind K) → ExpList V (A ∷ K)
+
+botsub : ∀ {V} {A} → ExpList V A → Sub (snoc-extend V A) V
+botsub {A = []} _ _ x = var x
+botsub {A = _ ∷ _} (_ ∷ E) _ x₀ = E
+botsub {A = _ ∷ _} (EE ∷ _) L (↑ x) = botsub EE L x
+\end{code}
+}
+
 \begin{code}
 infix 65 x₀:=_
 x₀:=_ : ∀ {V} {K} → Expression V (varKind K) → Sub (V , K) V

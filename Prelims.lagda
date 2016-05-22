@@ -45,5 +45,9 @@ subst₄ : ∀ {A1 A2 A3 A4 : Set} (P : A1 → A2 -> A3 -> A4  → Set)
          a1 ≡ a1' -> a2 ≡ a2' -> a3 ≡ a3' -> a4 ≡ a4' ->
          P a1 a2 a3 a4 -> P a1' a2' a3' a4'
 subst₄ _ refl refl refl refl Paaaa = Paaaa
+
+data snocList (A : Set) : Set where
+  [] : snocList A
+  _∷_ : snocList A → A → snocList A
 \end{code}
 }
