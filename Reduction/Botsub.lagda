@@ -11,4 +11,6 @@ botsub₃-red _ _ M3↠M3' _ x₀ = M3↠M3'
 botsub₃-red _ M2↠M2' _ _ (↑ x₀) = M2↠M2'
 botsub₃-red M1↠M1' _ _ _ (↑ (↑ x₀)) = M1↠M1'
 botsub₃-red _ _ _ _ (↑ (↑ (↑ _))) = ref
+
+--TODO General botsub n
 \end{code}

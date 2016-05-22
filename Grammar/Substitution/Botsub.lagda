@@ -138,5 +138,33 @@ x₂:=_,x₁:=_,x₀:=_ : ∀ {V} {K1} {K2} {K3} → Expression V (varKind K1) �
 (x₂:= M₂ ,x₁:= M₁ ,x₀:= M₀) _ (↑ x₀) = M₁
 (x₂:= M₂ ,x₁:= M₁ ,x₀:= M₀) _ (↑ (↑ x₀)) = M₂
 (x₂:= M₂ ,x₁:= M₁ ,x₀:= M₀) _ (↑ (↑ (↑ x))) = var x
+
+--TODO Definition for Expression varKind
+--TODO General notion of botsub n
+--TODO Rename •₁ and •₂
+botsub₃-Rep↑₃' : ∀ {U} {V} {K2} {K1} {K0}
+  {M2 : Expression U (varKind K1)} {M1 : Expression U (varKind K2)} {M0 : Expression U (varKind K0)} {ρ : Rep U V} →
+  (x₂:= M2 〈 ρ 〉 ,x₁:= M1 〈 ρ 〉 ,x₀:= M0 〈 ρ 〉) •₂ Rep↑ _ (Rep↑ _ (Rep↑ _ ρ))
+  ∼ ρ •₁ (x₂:= M2 ,x₁:= M1 ,x₀:= M0)
+botsub₃-Rep↑₃' x₀ = refl
+botsub₃-Rep↑₃' (↑ x₀) = refl
+botsub₃-Rep↑₃' (↑ (↑ x₀)) = refl 
+botsub₃-Rep↑₃' (↑ (↑ (↑ x))) = refl
+
+botsub₃-Rep↑₃ : ∀ {U} {V} {K2} {K1} {K0} {L}
+  {M2 : Expression U (varKind K2)} {M1 : Expression U (varKind K1)} {M0 : Expression U (varKind K0)} {ρ : Rep U V} {N : Expression (U , K2 , K1 , K0) L} →
+  N 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉 ⟦ x₂:= M2 〈 ρ 〉 ,x₁:= M1 〈 ρ 〉 ,x₀:= M0 〈 ρ 〉 ⟧
+  ≡ N ⟦ x₂:= M2 ,x₁:= M1 ,x₀:= M0 ⟧ 〈 ρ 〉
+botsub₃-Rep↑₃ {M2 = M2} {M1} {M0} {ρ} {N} = let open ≡-Reasoning in
+  begin
+    N 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉 ⟦ x₂:= M2 〈 ρ 〉 ,x₁:= M1 〈 ρ 〉 ,x₀:= M0 〈 ρ 〉 ⟧
+  ≡⟨⟨ sub-comp₂ N ⟩⟩
+    N ⟦ (x₂:= M2 〈 ρ 〉 ,x₁:= M1 〈 ρ 〉 ,x₀:= M0 〈 ρ 〉) •₂ Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) ⟧
+  ≡⟨ sub-congr N botsub₃-Rep↑₃' ⟩
+    N ⟦ ρ •₁ (x₂:= M2 ,x₁:= M1 ,x₀:= M0) ⟧
+  ≡⟨ sub-comp₁ N ⟩
+    N ⟦ x₂:= M2 ,x₁:= M1 ,x₀:= M0 ⟧ 〈 ρ 〉
+  ∎
+--TODO General lemma for this
 \end{code}
 }
