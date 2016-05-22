@@ -31,8 +31,7 @@ botsub {A = _ ∷ _} (EE ∷ _) L (↑ x) = botsub EE L x
 \begin{code}
 infix 65 x₀:=_
 x₀:=_ : ∀ {V} {K} → Expression V (varKind K) → Sub (V , K) V
-(x₀:= E) _ x₀ = E
-(x₀:= E) K₁ (↑ x) = var x
+x₀:= E = botsub ([] ∷ E)
 \end{code}
 
 \begin{lemma}$ $
@@ -49,9 +48,9 @@ $ E [ \uparrow ] [ x_0 := F ] \equiv E$
 \begin{code}
 open LiftFamily
 
-botsub-upGEN : ∀ {F} {V} {K} {E : Expression V (varKind K)} (circ : Composition proto-substitution F proto-substitution) →
+botsub-up' : ∀ {F} {V} {K} {E : Expression V (varKind K)} (circ : Composition proto-substitution F proto-substitution) →
   Composition.circ circ (x₀:= E) (up F) ∼ idSub V
-botsub-upGEN {F} {V} {K} {E} circ x = let open ≡-Reasoning in 
+botsub-up' {F} {V} {K} {E} circ x = let open ≡-Reasoning in 
   begin
     (Composition.circ circ (x₀:= E) (up F)) _ x
   ≡⟨ Composition.apV-circ circ ⟩
@@ -60,12 +59,12 @@ botsub-upGEN {F} {V} {K} {E} circ x = let open ≡-Reasoning in
     var x
   ∎
 
-comp-botsubGEN : ∀ {F} {U} {V} {K} {E : Expression U (varKind K)} 
+circ-botsub' : ∀ {F} {U} {V} {K} {E : Expression U (varKind K)} 
   (circ₁ : Composition F proto-substitution proto-substitution) 
   (circ₂ : Composition proto-substitution F proto-substitution)
   {σ : Op F U V} →
   Composition.circ circ₁ σ (x₀:= E) ∼ Composition.circ circ₂ (x₀:= (ap F σ E)) (liftOp F K σ)
-comp-botsubGEN {F} {U} {V} {K} {E} circ₁ circ₂ {σ} x₀ = let open ≡-Reasoning in 
+circ-botsub' {F} {U} {V} {K} {E} circ₁ circ₂ {σ} x₀ = let open ≡-Reasoning in 
   begin
     (Composition.circ circ₁ σ (x₀:= E)) _ x₀
   ≡⟨ Composition.apV-circ circ₁ ⟩
@@ -75,14 +74,14 @@ comp-botsubGEN {F} {U} {V} {K} {E} circ₁ circ₂ {σ} x₀ = let open ≡-Reas
   ≡⟨⟨ Composition.apV-circ circ₂ ⟩⟩
     (Composition.circ circ₂ (x₀:= (ap F σ E)) (liftOp F K σ)) _ x₀
   ∎
-comp-botsubGEN {F} {U} {V} {K} {E} circ₁ circ₂ {σ} (↑ x) = let open ≡-Reasoning in 
+circ-botsub' {F} {U} {V} {K} {E} circ₁ circ₂ {σ} (↑ x) = let open ≡-Reasoning in 
   begin
     (Composition.circ circ₁ σ (x₀:= E)) _ (↑ x)
   ≡⟨ Composition.apV-circ circ₁ ⟩
     apV F σ x
   ≡⟨⟨ sub-idOp ⟩⟩
     apV F σ x ⟦ idSub V ⟧
-  ≡⟨⟨ sub-congr (apV F σ x) (botsub-upGEN circ₂) ⟩⟩
+  ≡⟨⟨ sub-congr (apV F σ x) (botsub-up' circ₂) ⟩⟩
     apV F σ x ⟦ Composition.circ circ₂ (x₀:= (ap F σ E)) (up F) ⟧
   ≡⟨ Composition.ap-circ circ₂ (apV F σ x) ⟩
     ap F (up F) (apV F σ x) ⟦ x₀:= (ap F σ E) ⟧
@@ -92,32 +91,32 @@ comp-botsubGEN {F} {U} {V} {K} {E} circ₁ circ₂ {σ} (↑ x) = let open ≡-R
     (Composition.circ circ₂ (x₀:= (ap F σ E)) (liftOp F K σ)) _ (↑ x)
   ∎
 
-comp-botsubGEN' : ∀ {F} {U} {V} {K} {C} {L} 
+circ-botsub : ∀ {F} {U} {V} {K} {C} {L} 
   {E : Expression U (varKind K)} {E' : Subexpression (U , K) C L} {σ : Op F U V} →
   Composition F proto-substitution proto-substitution →
   Composition proto-substitution F proto-substitution →
   ap F σ (E' ⟦ x₀:= E ⟧) ≡ (ap F (liftOp F K σ) E') ⟦ x₀:= (ap F σ E) ⟧
-comp-botsubGEN' {E' = E'} circ₁ circ₂ = ap-circ-sim circ₁ circ₂ (comp-botsubGEN circ₁ circ₂) E'
+circ-botsub {E' = E'} circ₁ circ₂ = ap-circ-sim circ₁ circ₂ (circ-botsub' circ₁ circ₂) E'
 
-comp₁-botsub' : ∀ {U} {V} {C} {K} {L} (E : Subexpression (U , K) C L) {F : Expression U (varKind K)} {ρ : Rep U V} →
+comp₁-botsub : ∀ {U} {V} {C} {K} {L} (E : Subexpression (U , K) C L) {F : Expression U (varKind K)} {ρ : Rep U V} →
   E ⟦ x₀:= F ⟧ 〈 ρ 〉 ≡ E 〈 Rep↑ K ρ 〉 ⟦ x₀:= (F 〈 ρ 〉) ⟧
 \end{code}
 
 \AgdaHide{
 \begin{code}
-comp₁-botsub' E = comp-botsubGEN' {E' = E} COMP₁ COMP₂
+comp₁-botsub E = circ-botsub {E' = E} COMP₁ COMP₂
 \end{code}
 }
 
 \begin{code}
-comp-botsub' : ∀ {U} {V} {C} {K} {L} 
+comp-botsub : ∀ {U} {V} {C} {K} {L} 
   {E : Expression U (varKind K)} {σ : Sub U V} (F : Subexpression (U , K) C L) →
   F ⟦ x₀:= E ⟧ ⟦ σ ⟧ ≡ F ⟦ Sub↑ K σ ⟧ ⟦ x₀:= (E ⟦ σ ⟧) ⟧
 \end{code}
 
 \AgdaHide{
 \begin{code}
-comp-botsub' F = let COMP = OpFamily.COMP substitution in comp-botsubGEN' {E' = F} COMP COMP
+comp-botsub F = let COMP = OpFamily.COMP substitution in circ-botsub {E' = F} COMP COMP
 \end{code}
 }
 
@@ -135,7 +134,7 @@ botsub-upRep {U} {C} {K} {L} E {F} = let open ≡-Reasoning in
   ≡⟨⟨ sub-comp₂ E ⟩⟩
     E ⟦ x₀:= F •₂ upRep ⟧
   ≡⟨ sub-idOp ⟩
-     E
+    E
   ∎
 
 postulate botsub-botsub' : ∀ {V} {K} {L} (N : Expression V (varKind K)) (N' : Expression V (varKind L)) → x₀:= N' • Sub↑ L (x₀:= N) ∼ x₀:= N • x₀:= (N' ⇑)
@@ -161,10 +160,10 @@ botsub₃-Rep↑₃' (↑ (↑ x₀)) = refl
 botsub₃-Rep↑₃' (↑ (↑ (↑ x))) = refl
 
 botsub₃-Rep↑₃ : ∀ {U} {V} {K2} {K1} {K0} {L}
-  {M2 : Expression U (varKind K2)} {M1 : Expression U (varKind K1)} {M0 : Expression U (varKind K0)} {ρ : Rep U V} {N : Expression (U , K2 , K1 , K0) L} →
+  {M2 : Expression U (varKind K2)} {M1 : Expression U (varKind K1)} {M0 : Expression U (varKind K0)} {ρ : Rep U V} (N : Expression (U , K2 , K1 , K0) L) →
   N 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉 ⟦ x₂:= M2 〈 ρ 〉 ,x₁:= M1 〈 ρ 〉 ,x₀:= M0 〈 ρ 〉 ⟧
   ≡ N ⟦ x₂:= M2 ,x₁:= M1 ,x₀:= M0 ⟧ 〈 ρ 〉
-botsub₃-Rep↑₃ {M2 = M2} {M1} {M0} {ρ} {N} = let open ≡-Reasoning in
+botsub₃-Rep↑₃ {M2 = M2} {M1} {M0} {ρ} N = let open ≡-Reasoning in
   begin
     N 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉 ⟦ x₂:= M2 〈 ρ 〉 ,x₁:= M1 〈 ρ 〉 ,x₀:= M0 〈 ρ 〉 ⟧
   ≡⟨⟨ sub-comp₂ N ⟩⟩
