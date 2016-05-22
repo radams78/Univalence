@@ -21,10 +21,6 @@ private βR-exp' : ∀ {V} {φ : Term V} {δ} {ε} {χ} → SN φ → SN δ → 
 βR-exp {φ = φ} {δ} {ε} SNφ SNε SNδε = SNI (appP (ΛP φ δ) ε) (λ χ → βR-exp' SNφ 
   (SNap' {Ops = substitution} R-respects-sub SNδε) SNε SNδε)
 
-postulate botsub₃-red : ∀ {V} {K1} {K2} {K3} 
-                      {M1 M1' : Expression V (varKind K1)} {M2 M2' : Expression V (varKind K2)} {M3 M3' : Expression V (varKind K3)} →
-                      M1 ↠ M1' → M2 ↠ M2' → M3 ↠ M3' → _↠s_ substitution (x₂:= M1 ,x₁:= M2 ,x₀:= M3) (x₂:= M1' ,x₁:= M2' ,x₀:= M3')
-
 private βE-exp' : ∀ {V} {A} {M N : Term V} {P} {Q} {R} →
                  SN M → SN N → SN P → SN Q →
                  SN (P ⟦ x₂:= M ,x₁:= N ,x₀:= Q ⟧) →
