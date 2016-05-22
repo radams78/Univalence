@@ -17,17 +17,17 @@ open import Grammar.Substitution.RepSub G
 We now define two compositions $\bullet_1 : \mathrm{replacement};\mathrm{substitution} \rightarrow \mathrm{substitution}$ and $\bullet_2 : \mathrm{substitution};\mathrm{replacement} \rightarrow \mathrm{substitution}$.
 
 \begin{code}
-infixl 60 _•₁_
-_•₁_ : ∀ {U} {V} {W} → Rep V W → Sub U V → Sub U W
-(ρ •₁ σ) K x = (σ K x) 〈 ρ 〉
+infixl 60 _•RS_
+_•RS_ : ∀ {U} {V} {W} → Rep V W → Sub U V → Sub U W
+(ρ •RS σ) K x = (σ K x) 〈 ρ 〉
 
-Sub↑-comp₁ : ∀ {U} {V} {W} {K} {ρ : Rep V W} {σ : Sub U V} → Sub↑ K (ρ •₁ σ) ∼ Rep↑ K ρ •₁ Sub↑ K σ
+Sub↑-compRS : ∀ {U} {V} {W} {K} {ρ : Rep V W} {σ : Sub U V} → Sub↑ K (ρ •RS σ) ∼ Rep↑ K ρ •RS Sub↑ K σ
 \end{code}
 
 \AgdaHide{
 \begin{code}
-Sub↑-comp₁ {K = K} x₀ = refl
-Sub↑-comp₁ {U} {V} {W} {K} {ρ} {σ} {L} (↑ x) = let open ≡-Reasoning {A = Expression (W , K) (varKind L)} in 
+Sub↑-compRS {K = K} x₀ = refl
+Sub↑-compRS {U} {V} {W} {K} {ρ} {σ} {L} (↑ x) = let open ≡-Reasoning {A = Expression (W , K) (varKind L)} in 
   begin 
     (σ L x) 〈 ρ 〉 〈 upRep 〉
   ≡⟨⟨ rep-comp (σ L x) ⟩⟩
@@ -41,47 +41,47 @@ Sub↑-comp₁ {U} {V} {W} {K} {ρ} {σ} {L} (↑ x) = let open ≡-Reasoning {A
 }
 
 \begin{code}
-COMP₁ : Composition proto-replacement proto-substitution proto-substitution
-COMP₁ = record { 
-  circ = _•₁_ ; 
-  liftOp-circ = Sub↑-comp₁ ; 
+COMPRS : Composition proto-replacement proto-substitution proto-substitution
+COMPRS = record { 
+  circ = _•RS_ ; 
+  liftOp-circ = Sub↑-compRS ; 
   apV-circ = refl }
 
-sub-comp₁ : ∀ {U} {V} {W} {C} {K} 
+sub-compRS : ∀ {U} {V} {W} {C} {K} 
   (E : Subexpression U C K) {ρ : Rep V W} {σ : Sub U V} →
-  E ⟦ ρ •₁ σ ⟧ ≡ E ⟦ σ ⟧ 〈 ρ 〉
-sub-comp₁ E = Composition.ap-circ COMP₁ E
+  E ⟦ ρ •RS σ ⟧ ≡ E ⟦ σ ⟧ 〈 ρ 〉
+sub-compRS E = Composition.ap-circ COMPRS E
 
-infixl 60 _•₂_
-_•₂_ : ∀ {U} {V} {W} → Sub V W → Rep U V → Sub U W
-(σ •₂ ρ) K x = σ K (ρ K x)
+infixl 60 _•SR_
+_•SR_ : ∀ {U} {V} {W} → Sub V W → Rep U V → Sub U W
+(σ •SR ρ) K x = σ K (ρ K x)
 
-Sub↑-comp₂ : ∀ {U} {V} {W} {K} {σ : Sub V W} {ρ : Rep U V} → 
-  Sub↑ K (σ •₂ ρ) ∼ Sub↑ K σ •₂ Rep↑ K ρ
+Sub↑-compSR : ∀ {U} {V} {W} {K} {σ : Sub V W} {ρ : Rep U V} → 
+  Sub↑ K (σ •SR ρ) ∼ Sub↑ K σ •SR Rep↑ K ρ
 \end{code}
 
 \AgdaHide{
 \begin{code}
-Sub↑-comp₂ {K = K} x₀ = refl
-Sub↑-comp₂ (↑ x) = refl
+Sub↑-compSR {K = K} x₀ = refl
+Sub↑-compSR (↑ x) = refl
 \end{code}
 }
 
 \begin{code}
-COMP₂ : Composition proto-substitution proto-replacement proto-substitution
-COMP₂ = record { 
-  circ = _•₂_ ; 
-  liftOp-circ = Sub↑-comp₂ ; 
+COMPSR : Composition proto-substitution proto-replacement proto-substitution
+COMPSR = record { 
+  circ = _•SR_ ; 
+  liftOp-circ = Sub↑-compSR ; 
   apV-circ = refl }
 
-sub-comp₂ : ∀ {U} {V} {W} {C} {K} 
+sub-compSR : ∀ {U} {V} {W} {C} {K} 
   (E : Subexpression U C K) {σ : Sub V W} {ρ : Rep U V} → 
-  E ⟦ σ •₂ ρ ⟧ ≡ E 〈 ρ 〉 ⟦ σ ⟧
+  E ⟦ σ •SR ρ ⟧ ≡ E 〈 ρ 〉 ⟦ σ ⟧
 \end{code}
 
 \AgdaHide{
 \begin{code}
-sub-comp₂ E = Composition.ap-circ COMP₂ E
+sub-compSR E = Composition.ap-circ COMPSR E
 \end{code}
 }
 
@@ -92,7 +92,7 @@ Sub↑-upRep : ∀ {U} {V} {C} {K} {L} (E : Subexpression U C K) {σ : Sub U V} 
 
 \AgdaHide{
 \begin{code}
-Sub↑-upRep E = liftOp-up-mixed' COMP₂ COMP₁ (λ {_} {_} {_} {_} {E} → sym (up-is-up' {E = E})) {E}
+Sub↑-upRep E = liftOp-up-mixed COMPSR COMPRS (λ {_} {_} {_} {_} {E} → sym (up-is-up' {E = E})) {E}
 \end{code}
 }
 
@@ -115,17 +115,7 @@ Sub↑-comp : ∀ {U} {V} {W} {ρ : Sub U V} {σ : Sub V W} {K} →
 \AgdaHide{
 \begin{code}
 Sub↑-comp x₀ = refl
-Sub↑-comp {W = W} {ρ = ρ} {σ = σ} {K = K} {L} (↑ x) = 
-  let open ≡-Reasoning in 
-  begin 
-    ρ L x ⟦ σ ⟧ 〈 upRep 〉
-  ≡⟨⟨ sub-comp₁ (ρ L x) ⟩⟩
-    ρ L x ⟦ upRep •₁ σ ⟧
-  ≡⟨⟩
-    ρ L x ⟦ Sub↑ K σ •₂ upRep ⟧
-  ≡⟨ sub-comp₂ (ρ L x) ⟩
-     ρ L x 〈 upRep 〉 ⟦ Sub↑ K σ ⟧ 
-  ∎
+Sub↑-comp {W = W} {ρ = ρ} {σ = σ} {K = K} {L} (↑ x) = sym (Sub↑-upRep (ρ L x))
 
 Sub↑-upRep₂ : ∀ {U} {V} {C} {K} {L} {M} (E : Subexpression U C M) {σ : Sub U V} → E ⇑ ⇑ ⟦ Sub↑ K (Sub↑ L σ) ⟧ ≡ E ⟦ σ ⟧ ⇑ ⇑
 Sub↑-upRep₂ {U} {V} {C} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
@@ -154,8 +144,9 @@ Rep↑-Sub↑-upRep₃ : ∀ {U} {V} {W} {K1} {K2} {K3} {C} {K4}
                     ≡ M ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑
 Rep↑-Sub↑-upRep₃ M σ ρ = trans (rep-congl (Sub↑-upRep₃ M {σ})) (Rep↑-upRep₃ (M ⟦ σ ⟧))
 
-postulate assoc₁₂ : ∀ {U} {V} {W} {X} {ρ : Sub W X} {σ : Rep V W} {τ : Sub U V} →
-                  ρ • (σ •₁ τ) ∼ (ρ •₂ σ) • τ
+assocRSSR : ∀ {U} {V} {W} {X} {ρ : Sub W X} {σ : Rep V W} {τ : Sub U V} →
+            ρ • (σ •RS τ) ∼ (ρ •SR σ) • τ
+assocRSSR {ρ = ρ} {σ} {τ} x = sym (sub-compSR (τ _ x))
 \end{code}
 }
 
