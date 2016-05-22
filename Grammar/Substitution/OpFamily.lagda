@@ -17,7 +17,7 @@ open import Grammar.Substitution.RepSub G
 We now define two compositions $\bullet_1 : \mathrm{replacement};\mathrm{substitution} \rightarrow \mathrm{substitution}$ and $\bullet_2 : \mathrm{substitution};\mathrm{replacement} \rightarrow \mathrm{substitution}$.
 
 \begin{code}
-infixl 75 _•₁_
+infixl 60 _•₁_
 _•₁_ : ∀ {U} {V} {W} → Rep V W → Sub U V → Sub U W
 (ρ •₁ σ) K x = (σ K x) 〈 ρ 〉
 
@@ -52,7 +52,7 @@ sub-comp₁ : ∀ {U} {V} {W} {C} {K}
   E ⟦ ρ •₁ σ ⟧ ≡ E ⟦ σ ⟧ 〈 ρ 〉
 sub-comp₁ E = Composition.ap-circ COMP₁ E
 
-infixl 75 _•₂_
+infixl 60 _•₂_
 _•₂_ : ∀ {U} {V} {W} → Sub V W → Rep U V → Sub U W
 (σ •₂ ρ) K x = σ K (ρ K x)
 
@@ -99,7 +99,7 @@ Sub↑-upRep E = liftOp-up-mixed' COMP₂ COMP₁ (λ {_} {_} {_} {_} {E} → sy
 Composition is defined by $(\sigma \circ \rho)(x) \equiv \rho(x) [ \sigma ]$.
 
 \begin{code}
-infixl 75 _•_
+infixl 60 _•_
 _•_ : ∀ {U} {V} {W} → Sub V W → Sub U V → Sub U W
 (σ • ρ) K x = ρ K x ⟦ σ ⟧
 \end{code}

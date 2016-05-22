@@ -20,9 +20,10 @@ Let $E$ be an expression of kind $K$ over $V$.  Then we write $[x_0 := E]$ for t
 $(V , K) \Rightarrow V$:
 
 \begin{code}
-x₀:= : ∀ {V} {K} → Expression V (varKind K) → Sub (V , K) V
-x₀:= E _ x₀ = E
-x₀:= E K₁ (↑ x) = var x
+infix 65 x₀:=_
+x₀:=_ : ∀ {V} {K} → Expression V (varKind K) → Sub (V , K) V
+(x₀:= E) _ x₀ = E
+(x₀:= E) K₁ (↑ x) = var x
 \end{code}
 
 \begin{lemma}$ $
@@ -131,5 +132,11 @@ botsub-upRep {U} {C} {K} {L} E {F} = let open ≡-Reasoning in
 postulate botsub-botsub' : ∀ {V} {K} {L} (N : Expression V (varKind K)) (N' : Expression V (varKind L)) → x₀:= N' • Sub↑ L (x₀:= N) ∼ x₀:= N • x₀:= (N' ⇑)
 
 postulate botsub-botsub : ∀ {V} {K} {L} {M} (E : Expression (V , K , L) M) F G → E ⟦ Sub↑ L (x₀:= F) ⟧ ⟦ x₀:= G ⟧ ≡ E ⟦ x₀:= (G ⇑) ⟧ ⟦ x₀:= F ⟧
+
+x₂:=_,x₁:=_,x₀:=_ : ∀ {V} {K1} {K2} {K3} → Expression V (varKind K1) → Expression V (varKind K2) → Expression V (varKind K3) → Sub (V , K1 , K2 , K3) V
+(x₂:= M₂ ,x₁:= M₁ ,x₀:= M₀) _ x₀ = M₀
+(x₂:= M₂ ,x₁:= M₁ ,x₀:= M₀) _ (↑ x₀) = M₁
+(x₂:= M₂ ,x₁:= M₁ ,x₀:= M₀) _ (↑ (↑ x₀)) = M₂
+(x₂:= M₂ ,x₁:= M₁ ,x₀:= M₀) _ (↑ (↑ (↑ x))) = var x
 \end{code}
 }

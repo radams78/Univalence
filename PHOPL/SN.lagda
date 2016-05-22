@@ -21,8 +21,39 @@ private βR-exp' : ∀ {V} {φ : Term V} {δ} {ε} {χ} → SN φ → SN δ → 
 βR-exp {φ = φ} {δ} {ε} SNφ SNε SNδε = SNI (appP (ΛP φ δ) ε) (λ χ → βR-exp' SNφ 
   (SNap' {Ops = substitution} R-respects-sub SNδε) SNε SNδε)
 
+postulate botsub₃-red : ∀ {V} {K1} {K2} {K3} 
+                      {M1 M1' : Expression V (varKind K1)} {M2 M2' : Expression V (varKind K2)} {M3 M3' : Expression V (varKind K3)} →
+                      M1 ↠ M1' → M2 ↠ M2' → M3 ↠ M3' → _↠s_ substitution (x₂:= M1 ,x₁:= M2 ,x₀:= M3) (x₂:= M1' ,x₁:= M2' ,x₀:= M3')
+
+private βE-exp' : ∀ {V} {A} {M N : Term V} {P} {Q} {R} →
+                 SN M → SN N → SN P → SN Q →
+                 SN (P ⟦ x₂:= M ,x₁:= N ,x₀:= Q ⟧) →
+                 app* M N (λλλ A P) Q ⇒ R →
+                 SN R
+βE-exp' SNM SNN SNP SNQ SNPMNQ (redex βE) = SNPMNQ
+βE-exp' {P = P} (SNI M SNM) SNN SNP SNQ SNPMNQ (app (appl M⇒M')) = 
+  SNI _ (λ _ → βE-exp' (SNM _ M⇒M') SNN SNP SNQ 
+    (SNred SNPMNQ (apredl substitution {E = P} R-respects-sub 
+      (botsub₃-red (osr-red M⇒M') ref ref)))) 
+βE-exp' {P = P} SNM (SNI _ SNN) SNP SNQ SNPMNQ (app (appr (appl N⇒N'))) = 
+  SNI _ (λ _ → βE-exp' SNM (SNN _ N⇒N') SNP SNQ 
+    (SNred SNPMNQ (apredl substitution {E = P} R-respects-sub 
+      (botsub₃-red ref (osr-red N⇒N') ref))))
+βE-exp' SNM SNN SNP SNQ SNPMNQ (app (appr (appr (appl (redex ())))))
+βE-exp' SNM SNN (SNI _ SNP) SNQ SNPMNQ (app (appr (appr (appl (app (appl P⇒P')))))) = 
+  SNI _ (λ _ → βE-exp' SNM SNN (SNP _ P⇒P') SNQ
+    (SNred SNPMNQ (apredr substitution R-respects-sub (osr-red P⇒P'))))
+βE-exp' SNM SNN SNP SNQ SNPMNQ (app (appr (appr (appl (app (appr ()))))))
+βE-exp' {P = P} SNM SNN SNP (SNI _ SNQ) SNPMNQ (app (appr (appr (appr (appl Q⇒Q'))))) = 
+  SNI _ (λ _ → βE-exp' SNM SNN SNP (SNQ _ Q⇒Q') 
+    (SNred SNPMNQ (apredl substitution {E = P} R-respects-sub 
+      (botsub₃-red ref ref (osr-red Q⇒Q')))))
+βE-exp' SNM SNN SNP SNQ SNPMNQ (app (appr (appr (appr (appr ())))))
+
 postulate βE-exp : ∀ {V} {A} {M N : Term V} {P} {Q} →
                  SN M → SN N → SN Q →
-                 SN (P ⟦ x₀:= M • x₀:= (N ⇑) • x₀:= (Q ⇑ ⇑) ⟧) →
+                 SN (P ⟦ x₂:= M ,x₁:= N ,x₀:= Q ⟧) →
                  SN (app* M N (λλλ A P) Q)
+
+--REFACTOR Common pattern
 \end{code}

@@ -65,13 +65,28 @@ E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \
 \AgdaHide{
 \begin{code}
 data key-redex {V} : ∀ {K} → Expression V K → Expression V K → Set where
-  βkr : ∀ {φ : Term V} {δ ε} → SN φ → SN ε → key-redex (appP (ΛP φ δ) ε) (δ ⟦ x₀:= ε ⟧)
-  βEkr : ∀ {N N' : Term V} {A} {P} {Q} → SN N → SN N' → SN Q →
-           key-redex (app* N N' (λλλ A P) Q) (P ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧)
+  βkr : ∀ {φ : Term V} {δ ε} (SNφ : SN φ) (SNε : SN ε) → key-redex (appP (ΛP φ δ) ε) (δ ⟦ x₀:= ε ⟧)
+  βEkr : ∀ {N N' : Term V} {A} {P} {Q} (SNN : SN N) (SNN' : SN N') (SNQ : SN Q) →
+           key-redex (app* N N' (λλλ A P) Q) (P ⟦ x₂:= N ,x₁:= N' ,x₀:= Q ⟧)
 
 key-redex-SN : ∀ {V} {K} {M N : Expression V K} → key-redex M N → SN N → SN M
 key-redex-SN (βkr SNφ SNε) SNδε = βR-exp SNφ SNε SNδε 
 key-redex-SN (βEkr SNN SNN' SNQ) SNPQ = βE-exp SNN SNN' SNQ SNPQ
+
+postulate botsub-Rep↑₃ : ∀ {U} {V} {C} {K1} {K2} {K3} {K4} 
+                       {P : Subexpression (U , K1 , K2 , K3) C K4} {ρ : Rep U V}
+                       {M1 : Expression U (varKind K1)} {M2 : Expression U (varKind K2)} {M3 : Expression U (varKind K3)} →
+                       P 〈 Rep↑ K3 (Rep↑ K2 (Rep↑ K1 ρ)) 〉 ⟦ x₀:= M1 〈 ρ 〉 • x₀:= M2 〈 ρ 〉 ⇑ • x₀:= M3 〈 ρ 〉 ⇑ ⇑ ⟧
+                       ≡ P ⟦ x₀:= M1 • x₀:= (M2 ⇑) • x₀:= (M3 ⇑ ⇑) ⟧ 〈 ρ 〉
+
+key-redex-rep : ∀ {U} {V} {K} {M N : Expression U K} {ρ : Rep U V} →
+  key-redex M N → key-redex (M 〈 ρ 〉) (N 〈 ρ 〉)
+key-redex-rep {ρ = ρ} (βkr {φ} {δ} {ε} SNφ SNε) = 
+  subst (key-redex ((appP (ΛP φ δ) ε) 〈 ρ 〉)) (sym (comp₁-botsub' δ)) 
+    (βkr (SNrep R-creates-rep SNφ) (SNrep R-creates-rep SNε))
+key-redex-rep {ρ = ρ} (βEkr {N} {N'} {A} {P} {Q} SNN SNN' SNQ) = 
+  subst (key-redex (app* N N' (λλλ A P) Q 〈 ρ 〉)) {!!} 
+    (βEkr (SNrep R-creates-rep SNN) (SNrep R-creates-rep SNN') (SNrep R-creates-rep SNQ))
 
 data Neutral (V : Alphabet) : Set where
   var : Var V -Term → Neutral V
@@ -119,11 +134,11 @@ computeE : ∀ {V} → Context V → Term V → Type → Term V → Path V → S
 
 computeT Γ Ω M = SN M
 computeT Γ (A ⇛ B) M = 
-  (∀ {W} (Δ : Context W) {ρ} {N} → Δ ⊢ N ∶ ty A → computeT Δ A N →
+  (∀ {W} (Δ : Context W) {ρ} {N} (ρ∶Γ⇒Δ : ρ ∶ Γ ⇒R Δ) (Δ⊢N∶A : Δ ⊢ N ∶ ty A) (computeN : computeT Δ A N) →
     computeT Δ B (appT (M 〈 ρ 〉) N)) ×
-  (∀ {W} (Δ : Context W) {ρ} {N} {N'} {P} → 
-    Δ ⊢ P ∶ N ≡〈 A 〉 N' → 
-    computeT Δ A N → computeT Δ A N' → computeE Δ N A N' P →
+  (∀ {W} (Δ : Context W) {ρ} {N} {N'} {P} 
+    (ρ∶Γ⇒Δ : ρ ∶ Γ ⇒R Δ) (Δ⊢P∶N≡N' : Δ ⊢ P ∶ N ≡〈 A 〉 N') 
+    (computeN : computeT Δ A N) (computeN' : computeT Δ A N') (computeP : computeE Δ N A N' P) →
     computeE Δ (appT (M 〈 ρ 〉) N) B (appT (M 〈 ρ 〉) N') (M 〈 ρ 〉 ⋆[ P ∶ N ∼ N' ]))
 
 computeE {V} Γ M Ω N P = Σ[ S ∈ Shape ] Σ[ T ∈ Shape ] Σ[ L ∈ Leaves V S ] Σ[ L' ∈ Leaves V T ] M ↠ decode-Prop L × N ↠ decode-Prop L' × computeP Γ (imp L L') (plus P) × computeP Γ (imp L' L) (minus P)
@@ -133,8 +148,14 @@ computeE Γ M (A ⇛ B) M' P =
     (app* N N' (P 〈 ρ 〉) Q)
 
 expand-computeT : ∀ {V} {Γ : Context V} {A} {M} {N} → computeT Γ A N → Γ ⊢ M ∶ ty A → key-redex M N → computeT Γ A M
-expand-computeT {A = Ω} computeψ Γ⊢φ∶Ω M▷N = {!!}
-expand-computeT {A = A ⇛ B} computeN Γ⊢M∶A⇛B M▷N = {!!}
+expand-computeT {A = Ω} computeψ _ φ▷ψ = key-redex-SN φ▷ψ computeψ
+expand-computeT {A = A ⇛ B} {M} {M'} (computeM'app ,p computeM'eq) Γ⊢M∶A⇛B M▷M' = 
+  (λ Δ {ρ} {N} ρ∶Γ⇒Δ Δ⊢N∶A computeN → 
+    let computeM'N : computeT Δ B (appT (M' 〈 ρ 〉) N)
+        computeM'N = computeM'app Δ ρ∶Γ⇒Δ Δ⊢N∶A computeN
+    in expand-computeT computeM'N 
+       (appR (Weakening Γ⊢M∶A⇛B (Context-Validity Δ⊢N∶A) ρ∶Γ⇒Δ) Δ⊢N∶A) 
+             {!!}) ,p {!!}
 
 compute : ∀ {V} {K} → Context V → Expression V (parent K) → Expression V (varKind K) → Set
 compute {K = -Term} Γ (app (-ty A) out) M = computeT Γ A M
