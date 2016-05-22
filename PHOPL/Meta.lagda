@@ -1,12 +1,11 @@
+\AgdaHide{
 \begin{code}
 module PHOPL.Meta where
+open import Data.Product renaming (_,_ to _,p_)
 open import Prelims
 open import PHOPL.Grammar
+open import PHOPL.Red
 open import PHOPL.Rules
-
-postulate β-respects-rep : respects' replacement
-
-postulate β-respects-sub : respects' substitution
 
 postulate Context-Validity : ∀ {V} {Γ} {K} {M : Expression V (varKind K)} {A} →
                            Γ ⊢ M ∶ A → valid Γ
@@ -93,32 +92,57 @@ postulate Type-Reduction : ∀ {V} {Γ : Context V} {K} {M : Expression V (varKi
                          Γ ⊢ M ∶ A → A ↠ B → Γ ⊢ M ∶ B
 
 postulate change-cod : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {Δ'} → σ ∶ Γ ⇒ Δ → Δ ≡ Δ' → σ ∶ Γ ⇒ Δ'
-
-sub↖ : ∀ {U} {V} → Sub U V → Sub (U , -Term) (V , -Term , -Term , -Path)
-sub↖ σ _ x₀ = var x₂
-sub↖ σ _ (↑ x) = σ _ x ⇑ ⇑ ⇑
-
-postulate sub↖-cong : ∀ {U} {V} {ρ σ : Sub U V} → ρ ∼ σ → sub↖ ρ ∼ sub↖ σ
-
 postulate sub↖-typed : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {A} → σ ∶ Γ ⇒ Δ → sub↖ σ ∶ Γ ,T A ⇒ Δ ,T A ,T A ,E var x₁ ≡〈 A 〉 var x₀
 
-postulate β↖ : ∀ {U} {V} {A} (M : Term (U , -Term)) {σ : Sub U V} → β -appTerm ((ΛT A M) ⟦ σ ⟧ ⇑ ⇑ ⇑ ,, var x₂ ,, out) (M ⟦ sub↖ σ ⟧)
-
-sub↗ : ∀ {U} {V} → Sub U V → Sub (U , -Term) (V , -Term , -Term , -Path)
-sub↗ σ _ x₀ = var x₁
-sub↗ σ _ (↑ x) = σ _ x ⇑ ⇑ ⇑
-
-postulate sub↗-cong : ∀ {U} {V} {ρ σ : Sub U V} → ρ ∼ σ → sub↗ ρ ∼ sub↗ σ
-
 postulate sub↗-typed : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {A} → σ ∶ Γ ⇒ Δ → sub↗ σ ∶ Γ ,T A ⇒ Δ ,T A ,T A ,E var x₁ ≡〈 A 〉 var x₀
-
-postulate β↗ : ∀ {U} {V} {A} (M : Term (U , -Term)) {σ : Sub U V} → β -appTerm ((ΛT A M) ⟦ σ ⟧ ⇑ ⇑ ⇑ ,, var x₁ ,, out) (M ⟦ sub↗ σ ⟧)
-
---REFACTOR Duplication
-
-postulate sub↖-comp₁ : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} →
-                     sub↖ (ρ •₁ σ) ∼ Rep↑ -Path (Rep↑ -Term (Rep↑ -Term ρ)) •₁ sub↖ σ
-
-postulate sub↗-comp₁ : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} →
-                     sub↗ (ρ •₁ σ) ∼ Rep↑ -Path (Rep↑ -Term (Rep↑ -Term ρ)) •₁ sub↗ σ
 \end{code}
+}
+
+\begin{frame}[fragile]
+\frametitle{Subject Reduction}
+
+\begin{theorem}[Subject Reduction]
+Let $E$ be a path (proof, term) and $A$ an equation (term, type).
+If $\Gamma \vdash E : A$ and $E \twoheadrightarrow F$ then $\Gamma \vdash F : A$.
+\end{theorem}
+
+\AgdaHide{
+\begin{code}
+postulate Generation-ΛP : ∀ {V} {Γ : Context V} {φ} {δ} {ε} {ψ} →
+                          Γ ⊢ appP (ΛP φ δ) ε ∶ ψ →
+                          Σ[ χ ∈ Term V ] 
+                          (ψ ≃ φ ⊃ χ × Γ ,P φ ⊢ δ ∶ χ ⇑)
+
+postulate Subject-Reduction-R : ∀ {V} {K} {C} 
+                              {c : Constructor C} {E : Body V C} {F : Expression V (varKind K)} {Γ} {A} →
+                              Γ ⊢ (app c E) ∶ A → R c E F → Γ ⊢ F ∶ A
+
+{-Subject-Reduction-R : ∀ {V} {K} {C} 
+  {c : Constructor C} {E : Body V C} {F : Expression V (varKind K)} {Γ} {A} →
+  Γ ⊢ (app c E) ∶ A → R c E F → Γ ⊢ F ∶ A
+Subject-Reduction-R Γ⊢ΛPφδε∶A βR =
+  let (χ ,p A≃φ⊃χ ,p Γ,φ⊢δ∶χ) = Generation-ΛP Γ⊢ΛPφδε∶A in {!!}
+Subject-Reduction-R Γ⊢cE∶A βE = {!!}
+Subject-Reduction-R Γ⊢cE∶A plus-ref = {!!}
+Subject-Reduction-R Γ⊢cE∶A minus-ref = {!!}
+Subject-Reduction-R Γ⊢cE∶A plus-univ = {!!}
+Subject-Reduction-R Γ⊢cE∶A minus-univ = {!!}
+Subject-Reduction-R Γ⊢cE∶A ref⊃*univ = {!!}
+Subject-Reduction-R Γ⊢cE∶A univ⊃*ref = {!!}
+Subject-Reduction-R Γ⊢cE∶A univ⊃*univ = {!!}
+Subject-Reduction-R Γ⊢cE∶A ref⊃*ref = {!!}
+Subject-Reduction-R Γ⊢cE∶A refref = {!!}
+Subject-Reduction-R Γ⊢cE∶A lllred = {!!}
+Subject-Reduction-R Γ⊢cE∶A reflamvar = {!!}
+Subject-Reduction-R Γ⊢cE∶A reflam⊃* = {!!}
+Subject-Reduction-R Γ⊢cE∶A reflamuniv = {!!}
+Subject-Reduction-R Γ⊢cE∶A reflamλλλ = {!!} -}
+\end{code}
+}
+
+\begin{code}
+postulate Subject-Reduction : ∀ {V} {K} {Γ}
+                            {E F : Expression V (varKind K)} {A} → 
+                            (Γ ⊢ E ∶ A) → (E ↠ F) → (Γ ⊢ F ∶ A)
+\end{code}
+

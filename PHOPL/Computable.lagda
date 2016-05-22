@@ -6,8 +6,9 @@ open import Data.Sum
 open import Data.Product renaming (_,_ to _,p_)
 open import Prelims
 open import PHOPL.Grammar
-open import PHOPL.Rules
 open import PHOPL.Red
+open import PHOPL.SN
+open import PHOPL.Rules
 open import PHOPL.Meta
 open import PHOPL.PathSub
 \end{code}
@@ -63,11 +64,14 @@ E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \
 
 \AgdaHide{
 \begin{code}
---REFACTOR Abstract
-postulate key-redex : ∀ {V} {K} → Expression V K → Expression V K → Set
-postulate βkr : ∀ {V} {φ : Term V} {δ ε} → key-redex (appP (ΛP φ δ) ε) (δ ⟦ x₀:= ε ⟧)
-postulate βEkr : ∀ {V} {N N' : Term V} {A} {P} {Q} → key-redex (app* N N' (λλλ A P) Q)
-               (P ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧)
+data key-redex {V} : ∀ {K} → Expression V K → Expression V K → Set where
+  βkr : ∀ {φ : Term V} {δ ε} → SN φ → SN ε → key-redex (appP (ΛP φ δ) ε) (δ ⟦ x₀:= ε ⟧)
+  βEkr : ∀ {N N' : Term V} {A} {P} {Q} → SN N → SN N' → SN Q →
+           key-redex (app* N N' (λλλ A P) Q) (P ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧)
+
+key-redex-SN : ∀ {V} {K} {M N : Expression V K} → key-redex M N → SN N → SN M
+key-redex-SN (βkr SNφ SNε) SNδε = βR-exp SNφ SNε SNδε 
+key-redex-SN (βEkr SNN SNN' SNQ) SNPQ = βE-exp SNN SNN' SNQ SNPQ
 
 data Neutral (V : Alphabet) : Set where
   var : Var V -Term → Neutral V
@@ -121,18 +125,30 @@ computeT Γ (A ⇛ B) M =
     Δ ⊢ P ∶ N ≡〈 A 〉 N' → 
     computeT Δ A N → computeT Δ A N' → computeE Δ N A N' P →
     computeE Δ (appT (M 〈 ρ 〉) N) B (appT (M 〈 ρ 〉) N') (M 〈 ρ 〉 ⋆[ P ∶ N ∼ N' ]))
-computeE {V} Γ M Ω N P = Σ[ S ∈ Shape ] Σ[ T ∈ Shape ] Σ[ L ∈ Leaves V S ] Σ[ L' ∈ Leaves V T ] M ↠R decode-Prop L × N ↠R decode-Prop L' × computeP Γ (imp L L') (plus P) × computeP Γ (imp L' L) (minus P)
+
+computeE {V} Γ M Ω N P = Σ[ S ∈ Shape ] Σ[ T ∈ Shape ] Σ[ L ∈ Leaves V S ] Σ[ L' ∈ Leaves V T ] M ↠ decode-Prop L × N ↠ decode-Prop L' × computeP Γ (imp L L') (plus P) × computeP Γ (imp L' L) (minus P)
 computeE Γ M (A ⇛ B) M' P =
   ∀ {W} (Δ : Context W) {ρ} {N} {N'} {Q} → Δ ⊢ Q ∶ N ≡〈 A 〉 N' →
   computeE Δ N A N' Q → computeE Δ (appT (M 〈 ρ 〉) N) B (appT (M' 〈 ρ 〉)  N') 
     (app* N N' (P 〈 ρ 〉) Q)
 
+expand-computeT : ∀ {V} {Γ : Context V} {A} {M} {N} → computeT Γ A N → Γ ⊢ M ∶ ty A → key-redex M N → computeT Γ A M
+expand-computeT {A = Ω} computeψ Γ⊢φ∶Ω M▷N = {!!}
+expand-computeT {A = A ⇛ B} computeN Γ⊢M∶A⇛B M▷N = {!!}
+
 compute : ∀ {V} {K} → Context V → Expression V (parent K) → Expression V (varKind K) → Set
 compute {K = -Term} Γ (app (-ty A) out) M = computeT Γ A M
-compute {V} {K = -Proof} Γ φ δ = Σ[ S ∈ Shape ] Σ[ L ∈ Leaves V S ] φ ↠R decode-Prop L × computeP Γ L δ
+compute {V} {K = -Proof} Γ φ δ = Σ[ S ∈ Shape ] Σ[ L ∈ Leaves V S ] φ ↠ decode-Prop L × computeP Γ L δ
 compute {K = -Path} Γ (app (-eq A) (M ,, N ,, out)) P = computeE Γ M A N P
 
+expand-compute : ∀ {V} {K} {Γ : Context V} {A : Expression V (parent K)} {M N : Expression V (varKind K)} →
+  compute Γ A N → Γ ⊢ M ∶ A → key-redex M N → compute Γ A M
+expand-compute {K = -Term} {A = app (-ty A) out} = expand-computeT {A = A}
+expand-compute {K = -Proof} (S ,p ψ ,p φ↠ψ ,p computeε) Γ⊢δ∶φ δ▷ε = {!!}
+expand-compute {K = -Path} {A = app (-eq A) (M ,, N ,, out)} computeQ Γ⊢P∶M≡N P▷Q = {!!}
+
 record E' {V} {K} (Γ : Context V) (A : Expression V (parent K)) (E : Expression V (varKind K)) : Set where
+  constructor E'I
   field
     typed : Γ ⊢ E ∶ A
     computable : compute Γ A E
@@ -151,8 +167,9 @@ E'-typed : ∀ {V} {K} {Γ : Context V} {A} {M : Expression V (varKind K)} →
            E' Γ A M → Γ ⊢ M ∶ A
 E'-typed = E'.typed
 
-postulate expand-E' : ∀ {V} {K} {Γ} {A} {M N : Expression V (varKind K)} →
-                    E' Γ A N → Γ ⊢ M ∶ A → key-redex M N → E' Γ A M
+expand-E' : ∀ {V} {K} {Γ} {A} {M N : Expression V (varKind K)} →
+            E' Γ A N → Γ ⊢ M ∶ A → key-redex M N → E' Γ A M
+expand-E' N∈EΓA Γ⊢M∶A M▷N = E'I Γ⊢M∶A (expand-compute (E'.computable N∈EΓA) Γ⊢M∶A M▷N)
 
 postulate conv-E' : ∀ {V} {K} {Γ} {A} {B} {M : Expression V (varKind K)} →
                   A ≃ B → E' Γ A M → valid (_,_ {K = K} Γ B) → E' Γ B M

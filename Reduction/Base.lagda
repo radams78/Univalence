@@ -181,6 +181,10 @@ $E[\rho] \twoheadrightarrow_R E[\sigma]$ for all $K$, $A$, $E$.
   apredl {E = app _ E} hyp ρ↠σ = respects-red app (apredl {E = E} hyp ρ↠σ)
   apredl {E = out} _ _ = ref
   apredl {E = _,,_ {A = A} E F} hyp ρ↠σ = trans-red (respects-red appl (apredl {E = E} hyp (liftOp'-red {A = A} hyp ρ↠σ))) (respects-red appr (apredl {E = F} hyp ρ↠σ))
+
+  apredr : ∀ {U} {V} {C} {K} {σ : Op U V} {E F : Subexpression U C K} → respects' →
+         E ↠ F → ap σ E ↠ ap σ F
+  apredr resp = respects-red (respects-osr resp)
 \end{code}
 }
 

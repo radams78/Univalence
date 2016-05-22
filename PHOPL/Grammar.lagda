@@ -149,11 +149,6 @@ typeof' x Γ  = yt (typeof x Γ)
 typeof-typeof' : ∀ {V} {x : Var V -Term} {Γ} → typeof x Γ ≡ ty (typeof' x Γ)
 typeof-typeof' = sym ty-yt
 
-data β {V} : ∀ {K} {C : Kind (-Constructor K)} → 
-     Constructor C → Body V C → Expression V K → Set where
-     βI : ∀ {A} {M} {N} → β -appTerm (ΛT A M ,, N ,, out) (M ⟦ x₀:= N ⟧)
-open import Reduction.Base PHOPL β public
-
 APP : ∀ {V} → Term V → List (Term V) → Term V
 APP M [] = M
 APP M (N ∷ NN) = APP (appT M N) NN
@@ -162,6 +157,23 @@ APP M (N ∷ NN) = APP (appT M N) NN
 addpath : ∀ {V} → Context V → Type → Context (V , -Term , -Term , -Path)
 addpath Γ A = Γ ,T A ,T A ,E var x₁ ≡〈 A 〉 var x₀
 
-postulate eq-resp-conv : ∀ {V} {M M' N N' : Term V} {A : Type} →
-                       M ≃ M' → N ≃ N' → M ≡〈 A 〉 N ≃ M' ≡〈 A 〉 N'
+sub↖ : ∀ {U} {V} → Sub U V → Sub (U , -Term) (V , -Term , -Term , -Path)
+sub↖ σ _ x₀ = var x₂
+sub↖ σ _ (↑ x) = σ _ x ⇑ ⇑ ⇑
+
+postulate sub↖-cong : ∀ {U} {V} {ρ σ : Sub U V} → ρ ∼ σ → sub↖ ρ ∼ sub↖ σ
+
+postulate sub↖-comp₁ : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} →
+                     sub↖ (ρ •₁ σ) ∼ Rep↑ -Path (Rep↑ -Term (Rep↑ -Term ρ)) •₁ sub↖ σ
+
+sub↗ : ∀ {U} {V} → Sub U V → Sub (U , -Term) (V , -Term , -Term , -Path)
+sub↗ σ _ x₀ = var x₁
+sub↗ σ _ (↑ x) = σ _ x ⇑ ⇑ ⇑
+
+postulate sub↗-cong : ∀ {U} {V} {ρ σ : Sub U V} → ρ ∼ σ → sub↗ ρ ∼ sub↗ σ
+
+postulate sub↗-comp₁ : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} →
+                     sub↗ (ρ •₁ σ) ∼ Rep↑ -Path (Rep↑ -Term (Rep↑ -Term ρ)) •₁ sub↗ σ
+
+--REFACTOR Duplication
 \end{code}

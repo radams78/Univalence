@@ -2,6 +2,7 @@
 \begin{code}
 module PHOPL.Rules where
 open import PHOPL.Grammar
+open import PHOPL.Red
 
 infix 10 _⊢_∶_
 data valid : ∀ {V} → Context V → Set

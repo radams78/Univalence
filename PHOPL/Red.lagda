@@ -6,7 +6,6 @@ open import Data.Product renaming (_,_ to _,p_)
 open import Data.List
 open import PHOPL.Grammar
 open import PHOPL.PathSub
-open import PHOPL.Rules
 \end{code}
 }
 
@@ -104,22 +103,21 @@ If $P \not\equiv \reff{-}$, then $\reff{\lambda x:A.M}_{N,N'} P \rhd M \{ x := P
   reflamuniv : ∀ {V} {N} {N'} {A} {M} {φ} {ψ} {δ} {ε} → R {V} -app* (N ,, N' ,, reff (ΛT A M) ,, univ φ ψ δ ε ,, out) (M ⟦⟦ x₀::= (univ φ ψ δ ε) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
   reflamλλλ : ∀ {V} {N} {N'} {A} {M} {B} {P} → R {V} -app* (N ,, N' ,, reff (ΛT A M) ,, λλλ B P ,, out) (M ⟦⟦ x₀::= (λλλ B P) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
 
-open import Reduction PHOPL R public renaming (_⇒_ to _⇒R_;_↠_ to _↠R_;_≃_ to _≃R_;redex to redexR;app to appR;appl to applR;appr to apprR;creates' to creates'R;
-  respects' to respects'R;respects-osr to respects-osrR;respects-conv to respects-convR;
-  osr-conv to osr-convR; sym-conv to sym-convR; trans-conv to trans-convR;osr-red to osr-redR;ref to refR;trans-red to trans-redR;
-  respects-red to respects-redR;redex-conv to redex-convR)
---TODO Tidy up
+open import Reduction PHOPL R public 
 
-postulate R-creates-rep : creates'R replacement
+postulate eq-resp-conv : ∀ {V} {M M' N N' : Term V} {A : Type} →
+                       M ≃ M' → N ≃ N' → M ≡〈 A 〉 N ≃ M' ≡〈 A 〉 N'
 
-postulate R-respects-replacement : respects'R replacement
+postulate R-creates-rep : creates' replacement
 
-postulate R-creates-replacement : creates'R replacement
+postulate R-respects-replacement : respects' replacement
 
-postulate R-respects-sub : respects'R substitution
+postulate R-creates-replacement : creates' replacement
 
-red-subl : ∀ {V} {E F : Term (V , -Term)} {G} → E ↠R F → E ⟦ x₀:= G ⟧ ↠R F ⟦ x₀:= G ⟧
-red-subl E↠F = respects-redR (respects-osrR substitution R-respects-sub) E↠F
+postulate R-respects-sub : respects' substitution
+
+red-subl : ∀ {V} {E F : Term (V , -Term)} {G} → E ↠ F → E ⟦ x₀:= G ⟧ ↠ F ⟦ x₀:= G ⟧
+red-subl E↠F = respects-red (respects-osr substitution R-respects-sub) E↠F
 
 postulate ⊥SN : ∀ {V} → SN {V} ⊥
 
@@ -142,62 +140,14 @@ postulate SN-βexp : ∀ {V} {φ : Term V} {δ : Proof (V , -Proof)} {ε : Proof
 \end{code}
 }
 
-\begin{frame}[fragile]
-\frametitle{Subject Reduction}
-
-\begin{theorem}[Subject Reduction]
-Let $E$ be a path (proof, term) and $A$ an equation (term, type).
-If $\Gamma \vdash E : A$ and $E \twoheadrightarrow F$ then $\Gamma \vdash F : A$.
-\end{theorem}
-
-\AgdaHide{
-\begin{code}
-postulate Generation-ΛP : ∀ {V} {Γ : Context V} {φ} {δ} {ε} {ψ} →
-                       Γ ⊢ appP (ΛP φ δ) ε ∶ ψ →
-                       Σ[ χ ∈ Term V ] 
-                       (ψ ≃ φ ⊃ χ × Γ ,P φ ⊢ δ ∶ χ ⇑)
-
-postulate Subject-Reduction-R : ∀ {V} {K} {C} 
-                              {c : Constructor C} {E : Body V C} {F : Expression V (varKind K)} {Γ} {A} →
-                              Γ ⊢ (app c E) ∶ A → R c E F → Γ ⊢ F ∶ A
-
-{-Subject-Reduction-R : ∀ {V} {K} {C} 
-  {c : Constructor C} {E : Body V C} {F : Expression V (varKind K)} {Γ} {A} →
-  Γ ⊢ (app c E) ∶ A → R c E F → Γ ⊢ F ∶ A
-Subject-Reduction-R Γ⊢ΛPφδε∶A βR =
-  let (χ ,p A≃φ⊃χ ,p Γ,φ⊢δ∶χ) = Generation-ΛP Γ⊢ΛPφδε∶A in {!!}
-Subject-Reduction-R Γ⊢cE∶A βE = {!!}
-Subject-Reduction-R Γ⊢cE∶A plus-ref = {!!}
-Subject-Reduction-R Γ⊢cE∶A minus-ref = {!!}
-Subject-Reduction-R Γ⊢cE∶A plus-univ = {!!}
-Subject-Reduction-R Γ⊢cE∶A minus-univ = {!!}
-Subject-Reduction-R Γ⊢cE∶A ref⊃*univ = {!!}
-Subject-Reduction-R Γ⊢cE∶A univ⊃*ref = {!!}
-Subject-Reduction-R Γ⊢cE∶A univ⊃*univ = {!!}
-Subject-Reduction-R Γ⊢cE∶A ref⊃*ref = {!!}
-Subject-Reduction-R Γ⊢cE∶A refref = {!!}
-Subject-Reduction-R Γ⊢cE∶A lllred = {!!}
-Subject-Reduction-R Γ⊢cE∶A reflamvar = {!!}
-Subject-Reduction-R Γ⊢cE∶A reflam⊃* = {!!}
-Subject-Reduction-R Γ⊢cE∶A reflamuniv = {!!}
-Subject-Reduction-R Γ⊢cE∶A reflamλλλ = {!!} -}
-\end{code}
-}
-
-\begin{code}
-postulate Subject-Reduction : ∀ {V} {K} {Γ}
-                            {E F : Expression V (varKind K)} {A} → 
-                            (Γ ⊢ E ∶ A) → (E ↠R F) → (Γ ⊢ F ∶ A)
-\end{code}
-
 \begin{theorem}[Local Confluence]
 The reduction is locally confluent.
 \end{theorem}
 
 \begin{code}
 postulate Local-Confluent : ∀ {V} {K} {E F G : Expression V K} →
-                  E ⇒R F → E ⇒R G → 
-                  Σ[ H ∈ Expression V K ] (F ↠R H × G ↠R H)
+                  E ⇒ F → E ⇒ G → 
+                  Σ[ H ∈ Expression V K ] (F ↠ H × G ↠ H)
 \end{code}
 
 \begin{corollary}
