@@ -39,13 +39,33 @@ record Composition (F G H : LiftFamily) : Set where
 For any composition $\circ$:
 \begin{enumerate}
 \item
+If $\sigma \sim \sigma'$ and $\rho \sim \rho'$ then $\sigma \circ \rho \sim \sigma' \circ \rho'$
+\item
 $(\sigma \circ \rho)^A \sim \sigma^A \circ \rho^A$
 \item
 $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
-\item
-If $\sigma \sim \sigma'$ and $\rho \sim \rho'$ then $\sigma \circ \rho \sim \sigma' \circ \rho'$
 \end{enumerate}
 \end{lemma}
+
+\begin{code}
+  circ-cong : ∀ {U V W} {σ σ' : Op F V W} {ρ ρ' : Op G U V} → 
+    _∼op_ F σ σ' → _∼op_ G ρ ρ' → _∼op_ H (circ σ ρ) (circ σ' ρ')
+\end{code}
+
+\AgdaHide{
+\begin{code}
+  circ-cong {U} {V} {W} {σ} {σ'} {ρ} {ρ'} σ∼σ' ρ∼ρ' x = let open ≡-Reasoning in 
+    begin
+      apV H (circ σ ρ) x
+    ≡⟨ apV-circ ⟩
+      ap F σ (apV G ρ x)
+    ≡⟨ ap-cong F σ∼σ' (ρ∼ρ' x) ⟩
+      ap F σ' (apV G ρ' x)
+    ≡⟨⟨ apV-circ ⟩⟩
+      apV H (circ σ' ρ') x
+    ∎
+\end{code}
+}
 
 \begin{code}
   liftOp'-circ : ∀ {U V W} A {σ ρ} → 
@@ -87,26 +107,6 @@ If $\sigma \sim \sigma'$ and $\rho \sim \rho'$ then $\sigma \circ \rho \sim \sig
       ap F (liftOp' F A σ) (ap G (liftOp' G A ρ) E)
     ∎) 
     (ap-circ E')
-\end{code}
-}
-
-\begin{code}
-  circ-cong : ∀ {U V W} {σ σ' : Op F V W} {ρ ρ' : Op G U V} → 
-    _∼op_ F σ σ' → _∼op_ G ρ ρ' → _∼op_ H (circ σ ρ) (circ σ' ρ')
-\end{code}
-
-\AgdaHide{
-\begin{code}
-  circ-cong {U} {V} {W} {σ} {σ'} {ρ} {ρ'} σ∼σ' ρ∼ρ' x = let open ≡-Reasoning in 
-    begin
-      apV H (circ σ ρ) x
-    ≡⟨ apV-circ ⟩
-      ap F σ (apV G ρ x)
-    ≡⟨ ap-cong F σ∼σ' (ρ∼ρ' x) ⟩
-      ap F σ' (apV G ρ' x)
-    ≡⟨⟨ apV-circ ⟩⟩
-      apV H (circ σ' ρ') x
-    ∎
 
 ap-circ-sim : ∀ {F F' G G' H} (circ₁ : Composition F G H) (circ₂ : Composition F' G' H) {U} {V} {V'} {W}
   {σ : Op F V W} {ρ : Op G U V} {σ' : Op F' V' W} {ρ' : Op G' U V'} →
@@ -125,11 +125,11 @@ ap-circ-sim {F} {F'} {G} {G'} {H} circ₁ circ₂ {U} {V} {V'} {W} {σ} {ρ} {σ
     ap F' σ' (ap G' ρ' E)
   ∎
 
-liftOp-up-mixed : ∀ {F} {G} {H} {F'} (circ₁ : Composition F G H) (circ₂ : Composition F' F H)
+liftOp-up-mixed' : ∀ {F} {G} {H} {F'} (circ₁ : Composition F G H) (circ₂ : Composition F' F H)
   {U} {V} {K} {σ : Op F U V} →
   (∀ {V} {C} {K} {L} {E : Subexpression V C K} → ap F (up F {V} {L}) E ≡ ap F' (up F' {V} {L}) E) →
   _∼op_ H (Composition.circ circ₁ (liftOp F K σ) (up G)) (Composition.circ circ₂ (up F') σ)
-liftOp-up-mixed {F} {G} {H} {F'} circ₁ circ₂ {U} {V} {K} {σ} hyp {L} x = 
+liftOp-up-mixed' {F} {G} {H} {F'} circ₁ circ₂ {U} {V} {K} {σ} hyp {L} x = 
   let open ≡-Reasoning in 
   begin
     apV H (Composition.circ circ₁ (liftOp F K σ) (up G)) x
@@ -145,10 +145,10 @@ liftOp-up-mixed {F} {G} {H} {F'} circ₁ circ₂ {U} {V} {K} {σ} hyp {L} x =
     apV H (Composition.circ circ₂ (up F') σ) x
   ∎
 
-liftOp-up-mixed' : ∀ {F} {G} {H} {F'} (circ₁ : Composition F G H) (circ₂ : Composition F' F H)
+liftOp-up-mixed : ∀ {F} {G} {H} {F'} (circ₁ : Composition F G H) (circ₂ : Composition F' F H)
   {U} {V} {C} {K} {L} {σ : Op F U V} →
   (∀ {V} {C} {K} {L} {E : Subexpression V C K} → ap F (up F {V} {L}) E ≡ ap F' (up F' {V} {L}) E) →
   ∀ {E : Subexpression U C K} → ap F (liftOp F L σ) (ap G (up G) E) ≡ ap F' (up F') (ap F σ E)
-liftOp-up-mixed' circ₁ circ₂ hyp {E = E} = ap-circ-sim circ₁ circ₂ (liftOp-up-mixed circ₁ circ₂ (λ {_} {_} {_} {_} {E} → hyp {E = E})) E
+liftOp-up-mixed circ₁ circ₂ hyp {E = E} = ap-circ-sim circ₁ circ₂ (liftOp-up-mixed' circ₁ circ₂ (λ {_} {_} {_} {_} {E} → hyp {E = E})) E
 \end{code}
 }

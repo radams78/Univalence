@@ -70,7 +70,7 @@ The following results about operations are easy to prove.
 
 \AgdaHide{
 \begin{code}
-  liftOp-up' E = liftOp-up-mixed' COMP COMP refl {E = E}
+  liftOp-up' E = liftOp-up-mixed COMP COMP refl {E = E}
 \end{code}
 }
 

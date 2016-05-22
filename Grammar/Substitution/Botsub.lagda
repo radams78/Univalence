@@ -59,6 +59,19 @@ botsub-up' {F} {V} {K} {E} circ x = let open ≡-Reasoning in
     var x
   ∎
 
+botsub-up : ∀ {F} {V} {K} {E : Expression V (varKind K)} (circ : Composition proto-substitution F proto-substitution) {E' : Expression V (varKind K)} →
+  ap F (up F) E' ⟦ x₀:= E ⟧ ≡ E'
+botsub-up {F} {V} {K} {E} circ {E'} = let open ≡-Reasoning in
+  begin
+    ap F (up F) E' ⟦ x₀:= E ⟧
+  ≡⟨⟨ Composition.ap-circ circ E' ⟩⟩
+    E' ⟦ Composition.circ circ (x₀:= E) (up F) ⟧
+  ≡⟨ sub-congr E' (botsub-up' circ) ⟩
+    E' ⟦ idSub V ⟧
+  ≡⟨ sub-idOp ⟩
+    E'
+  ∎
+
 circ-botsub' : ∀ {F} {U} {V} {K} {E : Expression U (varKind K)} 
   (circ₁ : Composition F proto-substitution proto-substitution) 
   (circ₂ : Composition proto-substitution F proto-substitution)
@@ -137,9 +150,22 @@ botsub-upRep {U} {C} {K} {L} E {F} = let open ≡-Reasoning in
     E
   ∎
 
-postulate botsub-botsub' : ∀ {V} {K} {L} (N : Expression V (varKind K)) (N' : Expression V (varKind L)) → x₀:= N' • Sub↑ L (x₀:= N) ∼ x₀:= N • x₀:= (N' ⇑)
+botsub-botsub' : ∀ {V} {K} {L} (N : Expression V (varKind K)) (N' : Expression V (varKind L)) → x₀:= N' • Sub↑ L (x₀:= N) ∼ x₀:= N • x₀:= (N' ⇑)
+botsub-botsub' N N' x₀ = sym (botsub-upRep N')
+botsub-botsub' N N' (↑ x₀) = botsub-upRep N
+botsub-botsub' N N' (↑ (↑ x)) = refl
 
-postulate botsub-botsub : ∀ {V} {K} {L} {M} (E : Expression (V , K , L) M) F G → E ⟦ Sub↑ L (x₀:= F) ⟧ ⟦ x₀:= G ⟧ ≡ E ⟦ x₀:= (G ⇑) ⟧ ⟦ x₀:= F ⟧
+botsub-botsub : ∀ {V} {K} {L} {M} (E : Expression (V , K , L) M) F G → E ⟦ Sub↑ L (x₀:= F) ⟧ ⟦ x₀:= G ⟧ ≡ E ⟦ x₀:= (G ⇑) ⟧ ⟦ x₀:= F ⟧
+botsub-botsub {V} {K} {L} {M} E F G = let open ≡-Reasoning in 
+  begin
+    E ⟦ Sub↑ L (x₀:= F) ⟧ ⟦ x₀:= G ⟧
+  ≡⟨⟨ sub-comp E ⟩⟩
+    E ⟦ x₀:= G • Sub↑ L (x₀:= F) ⟧
+  ≡⟨ sub-congr E (botsub-botsub' F G) ⟩
+    E ⟦ x₀:= F • x₀:= G ⇑ ⟧
+  ≡⟨ sub-comp E ⟩
+    E ⟦ x₀:= G ⇑ ⟧ ⟦ x₀:= F ⟧
+  ∎
 
 x₂:=_,x₁:=_,x₀:=_ : ∀ {V} {K1} {K2} {K3} → Expression V (varKind K1) → Expression V (varKind K2) → Expression V (varKind K3) → Sub (V , K1 , K2 , K3) V
 (x₂:= M₂ ,x₁:= M₁ ,x₀:= M₀) _ x₀ = M₀
