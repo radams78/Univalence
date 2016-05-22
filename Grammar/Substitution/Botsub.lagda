@@ -21,10 +21,6 @@ $(V , K) \Rightarrow V$:
 
 \AgdaHide{
 \begin{code}
-data ExpList V : snocList VarKind → Set where
-  [] : ExpList V []
-  _∷_ : ∀ {A} {K} → ExpList V A → Expression V (varKind K) → ExpList V (A ∷ K)
-
 botsub : ∀ {V} {A} → ExpList V A → Sub (snoc-extend V A) V
 botsub {A = []} _ _ x = var x
 botsub {A = _ ∷ _} (_ ∷ E) _ x₀ = E

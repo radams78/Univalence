@@ -53,6 +53,10 @@ We can now define the set of expressions over a grammar:
   var-inj : ∀ {V} {K} {x y : Var V K} → var x ≡ var y → x ≡ y
   var-inj refl = refl
 
+  data ExpList V : snocList VarKind → Set where
+    [] : ExpList V []
+    _∷_ : ∀ {A} {K} → ExpList V A → Expression V (varKind K) → ExpList V (A ∷ K)
+
   Reduction : Set₁
   Reduction = ∀ {V} {K} {C : Kind (-Constructor K)} → 
     Constructor C → Body V C → Expression V K → Set
