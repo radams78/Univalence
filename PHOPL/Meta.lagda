@@ -154,5 +154,8 @@ postulate Equation-Validity₂ : ∀ {V} {Γ : Context V} {P : Path V} {M} {A} {
 
 postulate ⋆-typed : ∀ {V} {M : Term V} {P N N' Γ A B} → 
                   Γ ⊢ M ∶ ty (A ⇛ B) → Γ ⊢ P ∶ N ≡〈 A 〉 N' → Γ ⊢ M ⋆[ P ∶ N ∼ N' ] ∶ appT M N ≡〈 B 〉 appT M N'
+
+valid-addpath : ∀ {V} {Γ : Context V} {A} → valid Γ → valid (addpath Γ A)
+valid-addpath validΓ = ctxER (varR x₁ (ctxTR (ctxTR validΓ))) (varR x₀ (ctxTR (ctxTR validΓ)))
 \end{code}
 
