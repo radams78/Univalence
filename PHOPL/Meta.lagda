@@ -42,7 +42,7 @@ postulate comp-typed : ∀ {U} {V} {W} {σ : Sub V W} {ρ : Sub U V} {Γ} {Δ} {
                          σ ∶ Δ ⇒ Θ → ρ ∶ Γ ⇒ Δ → σ • ρ ∶ Γ ⇒ Θ
 
 postulate comp₁-typed : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} {Γ} {Δ} {Θ} →
-                      ρ ∶ Δ ⇒R Θ → σ ∶ Γ ⇒ Δ → ρ •₁ σ ∶ Γ ⇒ Θ
+                      ρ ∶ Δ ⇒R Θ → σ ∶ Γ ⇒ Δ → ρ •RS σ ∶ Γ ⇒ Θ
 
 postulate Sub↑-typed : ∀ {U} {V} {K} {σ : Sub U V} {Γ} {Δ} {A} →
                      σ ∶ Γ ⇒ Δ → Sub↑ K σ ∶ Γ , A ⇒ Δ , A ⟦ σ ⟧
@@ -52,29 +52,29 @@ postulate change-type : ∀ {V} {Γ} {K} {M : Expression V (varKind K)} {A} {B} 
 
 postulate botsub-typed : ∀ {V} {K} {Γ} {E : Expression V (varKind K)} {A} → Γ ⊢ E ∶ A → x₀:= E ∶ Γ , A ⇒ Γ
 
-lemma : ∀ {U} {V} {W} {K} (M : Expression U K) Q N' N (ρ : Rep V W) (σ : Sub U V) → M ⇑ ⇑ ⇑ ⟦ x₀:= Q • Sub↑ -Path (x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •₁ σ))) ⟧ ≡ M ⟦ σ ⟧ 〈 ρ 〉 --TODO Rename
+lemma : ∀ {U} {V} {W} {K} (M : Expression U K) Q N' N (ρ : Rep V W) (σ : Sub U V) → M ⇑ ⇑ ⇑ ⟦ x₀:= Q • Sub↑ -Path (x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •RS σ))) ⟧ ≡ M ⟦ σ ⟧ 〈 ρ 〉 --TODO Rename
 lemma {U} {V} {W} M Q N' N ρ σ = let open ≡-Reasoning in 
           begin
-            M ⇑ ⇑ ⇑ ⟦ x₀:= Q • Sub↑ -Path (x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •₁ σ))) ⟧
+            M ⇑ ⇑ ⇑ ⟦ x₀:= Q • Sub↑ -Path (x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •RS σ))) ⟧
           ≡⟨ sub-comp (M ⇑ ⇑ ⇑) ⟩
-            M ⇑ ⇑ ⇑ ⟦ Sub↑ -Path (x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •₁ σ))) ⟧ ⟦ x₀:= Q ⟧
+            M ⇑ ⇑ ⇑ ⟦ Sub↑ -Path (x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •RS σ))) ⟧ ⟦ x₀:= Q ⟧
           ≡⟨ sub-congl (Sub↑-upRep (M ⇑ ⇑)) ⟩
-            M ⇑ ⇑ ⟦ x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •₁ σ)) ⟧ ⇑ ⟦ x₀:= Q ⟧
+            M ⇑ ⇑ ⟦ x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •RS σ)) ⟧ ⇑ ⟦ x₀:= Q ⟧
           ≡⟨ botsub-upRep _ ⟩
-            M ⇑ ⇑ ⟦ x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •₁ σ)) ⟧
+            M ⇑ ⇑ ⟦ x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •RS σ)) ⟧
           ≡⟨ sub-comp (M ⇑ ⇑) ⟩
-            M ⇑ ⇑ ⟦ Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •₁ σ)) ⟧ ⟦ x₀:= N' ⟧
+            M ⇑ ⇑ ⟦ Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •RS σ)) ⟧ ⟦ x₀:= N' ⟧
           ≡⟨ sub-congl (Sub↑-upRep (M ⇑)) ⟩
-            M ⇑ ⟦ x₀:= N • Sub↑ -Term (ρ •₁ σ) ⟧ ⇑ ⟦ x₀:= N' ⟧
+            M ⇑ ⟦ x₀:= N • Sub↑ -Term (ρ •RS σ) ⟧ ⇑ ⟦ x₀:= N' ⟧
           ≡⟨ botsub-upRep _ ⟩
-            M ⇑ ⟦ x₀:= N • Sub↑ -Term (ρ •₁ σ) ⟧
+            M ⇑ ⟦ x₀:= N • Sub↑ -Term (ρ •RS σ) ⟧
           ≡⟨ sub-comp (M ⇑) ⟩
-            M ⇑ ⟦ Sub↑ -Term (ρ •₁ σ) ⟧ ⟦ x₀:= N ⟧
+            M ⇑ ⟦ Sub↑ -Term (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧
           ≡⟨ sub-congl (Sub↑-upRep M) ⟩
-            M ⟦ ρ •₁ σ ⟧ ⇑ ⟦ x₀:= N ⟧
+            M ⟦ ρ •RS σ ⟧ ⇑ ⟦ x₀:= N ⟧
           ≡⟨ botsub-upRep _ ⟩
-            M ⟦ ρ •₁ σ ⟧
-          ≡⟨ sub-comp₁ M ⟩
+            M ⟦ ρ •RS σ ⟧
+          ≡⟨ sub-compRS M ⟩
             M ⟦ σ ⟧ 〈 ρ 〉
           ∎
 

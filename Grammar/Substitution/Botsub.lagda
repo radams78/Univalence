@@ -23,15 +23,15 @@ $(V , K) \Rightarrow V$:
 \begin{code}
 botsub : ∀ {V} {A} → ExpList V A → Sub (snoc-extend V A) V
 botsub {A = []} _ _ x = var x
-botsub {A = _ ∷ _} (_ ∷ E) _ x₀ = E
-botsub {A = _ ∷ _} (EE ∷ _) L (↑ x) = botsub EE L x
+botsub {A = _ snoc _} (_ snoc E) _ x₀ = E
+botsub {A = _ snoc _} (EE snoc _) L (↑ x) = botsub EE L x
 \end{code}
 }
 
 \begin{code}
 infix 65 x₀:=_
 x₀:=_ : ∀ {V} {K} → Expression V (varKind K) → Sub (V , K) V
-x₀:= E = botsub ([] ∷ E)
+x₀:= E = botsub ([] snoc E)
 \end{code}
 
 \begin{lemma}$ $
@@ -59,9 +59,9 @@ botsub-up' {F} {V} {K} {E} circ x = let open ≡-Reasoning in
     var x
   ∎
 
-botsub-up : ∀ {F} {V} {K} {E : Expression V (varKind K)} (circ : Composition proto-substitution F proto-substitution) {E' : Expression V (varKind K)} →
+botsub-up : ∀ {F} {V} {K} {C} {L} {E : Expression V (varKind K)} (circ : Composition proto-substitution F proto-substitution) {E' : Subexpression V C L} →
   ap F (up F) E' ⟦ x₀:= E ⟧ ≡ E'
-botsub-up {F} {V} {K} {E} circ {E'} = let open ≡-Reasoning in
+botsub-up {F} {V} {K} {C} {L} {E} circ {E'} = let open ≡-Reasoning in
   begin
     ap F (up F) E' ⟦ x₀:= E ⟧
   ≡⟨⟨ Composition.ap-circ circ E' ⟩⟩
@@ -111,13 +111,13 @@ circ-botsub : ∀ {F} {U} {V} {K} {C} {L}
   ap F σ (E' ⟦ x₀:= E ⟧) ≡ (ap F (liftOp F K σ) E') ⟦ x₀:= (ap F σ E) ⟧
 circ-botsub {E' = E'} circ₁ circ₂ = ap-circ-sim circ₁ circ₂ (circ-botsub' circ₁ circ₂) E'
 
-comp₁-botsub : ∀ {U} {V} {C} {K} {L} (E : Subexpression (U , K) C L) {F : Expression U (varKind K)} {ρ : Rep U V} →
+compRS-botsub : ∀ {U} {V} {C} {K} {L} (E : Subexpression (U , K) C L) {F : Expression U (varKind K)} {ρ : Rep U V} →
   E ⟦ x₀:= F ⟧ 〈 ρ 〉 ≡ E 〈 Rep↑ K ρ 〉 ⟦ x₀:= (F 〈 ρ 〉) ⟧
 \end{code}
 
 \AgdaHide{
 \begin{code}
-comp₁-botsub E = circ-botsub {E' = E} COMP₁ COMP₂
+compRS-botsub E = circ-botsub {E' = E} COMPRS COMPSR
 \end{code}
 }
 
@@ -141,14 +141,7 @@ botsub-upRep : ∀ {U} {C} {K} {L}
 
 \AgdaHide{
 \begin{code}
-botsub-upRep {U} {C} {K} {L} E {F} = let open ≡-Reasoning in 
-  begin
-    E 〈 upRep 〉 ⟦ x₀:= F ⟧
-  ≡⟨⟨ sub-comp₂ E ⟩⟩
-    E ⟦ x₀:= F •₂ upRep ⟧
-  ≡⟨ sub-idOp ⟩
-    E
-  ∎
+botsub-upRep _ = botsub-up COMPSR
 
 botsub-botsub' : ∀ {V} {K} {L} (N : Expression V (varKind K)) (N' : Expression V (varKind L)) → x₀:= N' • Sub↑ L (x₀:= N) ∼ x₀:= N • x₀:= (N' ⇑)
 botsub-botsub' N N' x₀ = sym (botsub-upRep N')
@@ -156,30 +149,16 @@ botsub-botsub' N N' (↑ x₀) = botsub-upRep N
 botsub-botsub' N N' (↑ (↑ x)) = refl
 
 botsub-botsub : ∀ {V} {K} {L} {M} (E : Expression (V , K , L) M) F G → E ⟦ Sub↑ L (x₀:= F) ⟧ ⟦ x₀:= G ⟧ ≡ E ⟦ x₀:= (G ⇑) ⟧ ⟦ x₀:= F ⟧
-botsub-botsub {V} {K} {L} {M} E F G = let open ≡-Reasoning in 
-  begin
-    E ⟦ Sub↑ L (x₀:= F) ⟧ ⟦ x₀:= G ⟧
-  ≡⟨⟨ sub-comp E ⟩⟩
-    E ⟦ x₀:= G • Sub↑ L (x₀:= F) ⟧
-  ≡⟨ sub-congr E (botsub-botsub' F G) ⟩
-    E ⟦ x₀:= F • x₀:= G ⇑ ⟧
-  ≡⟨ sub-comp E ⟩
-    E ⟦ x₀:= G ⇑ ⟧ ⟦ x₀:= F ⟧
-  ∎
+botsub-botsub {V} {K} {L} {M} E F G = let COMP = OpFamily.COMP substitution in ap-circ-sim COMP COMP (botsub-botsub' F G) E
 
 x₂:=_,x₁:=_,x₀:=_ : ∀ {V} {K1} {K2} {K3} → Expression V (varKind K1) → Expression V (varKind K2) → Expression V (varKind K3) → Sub (V , K1 , K2 , K3) V
-(x₂:= M₂ ,x₁:= M₁ ,x₀:= M₀) _ x₀ = M₀
-(x₂:= M₂ ,x₁:= M₁ ,x₀:= M₀) _ (↑ x₀) = M₁
-(x₂:= M₂ ,x₁:= M₁ ,x₀:= M₀) _ (↑ (↑ x₀)) = M₂
-(x₂:= M₂ ,x₁:= M₁ ,x₀:= M₀) _ (↑ (↑ (↑ x))) = var x
+x₂:=_,x₁:=_,x₀:=_ M1 M2 M3 = botsub ([] snoc M1 snoc M2 snoc M3)
 
 --TODO Definition for Expression varKind
---TODO General notion of botsub n
---TODO Rename •₁ and •₂
 botsub₃-Rep↑₃' : ∀ {U} {V} {K2} {K1} {K0}
   {M2 : Expression U (varKind K1)} {M1 : Expression U (varKind K2)} {M0 : Expression U (varKind K0)} {ρ : Rep U V} →
-  (x₂:= M2 〈 ρ 〉 ,x₁:= M1 〈 ρ 〉 ,x₀:= M0 〈 ρ 〉) •₂ Rep↑ _ (Rep↑ _ (Rep↑ _ ρ))
-  ∼ ρ •₁ (x₂:= M2 ,x₁:= M1 ,x₀:= M0)
+  (x₂:= M2 〈 ρ 〉 ,x₁:= M1 〈 ρ 〉 ,x₀:= M0 〈 ρ 〉) •SR Rep↑ _ (Rep↑ _ (Rep↑ _ ρ))
+  ∼ ρ •RS (x₂:= M2 ,x₁:= M1 ,x₀:= M0)
 botsub₃-Rep↑₃' x₀ = refl
 botsub₃-Rep↑₃' (↑ x₀) = refl
 botsub₃-Rep↑₃' (↑ (↑ x₀)) = refl 
@@ -192,11 +171,11 @@ botsub₃-Rep↑₃ : ∀ {U} {V} {K2} {K1} {K0} {L}
 botsub₃-Rep↑₃ {M2 = M2} {M1} {M0} {ρ} N = let open ≡-Reasoning in
   begin
     N 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉 ⟦ x₂:= M2 〈 ρ 〉 ,x₁:= M1 〈 ρ 〉 ,x₀:= M0 〈 ρ 〉 ⟧
-  ≡⟨⟨ sub-comp₂ N ⟩⟩
-    N ⟦ (x₂:= M2 〈 ρ 〉 ,x₁:= M1 〈 ρ 〉 ,x₀:= M0 〈 ρ 〉) •₂ Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) ⟧
+  ≡⟨⟨ sub-compSR N ⟩⟩
+    N ⟦ (x₂:= M2 〈 ρ 〉 ,x₁:= M1 〈 ρ 〉 ,x₀:= M0 〈 ρ 〉) •SR Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) ⟧
   ≡⟨ sub-congr N botsub₃-Rep↑₃' ⟩
-    N ⟦ ρ •₁ (x₂:= M2 ,x₁:= M1 ,x₀:= M0) ⟧
-  ≡⟨ sub-comp₁ N ⟩
+    N ⟦ ρ •RS (x₂:= M2 ,x₁:= M1 ,x₀:= M0) ⟧
+  ≡⟨ sub-compRS N ⟩
     N ⟦ x₂:= M2 ,x₁:= M1 ,x₀:= M0 ⟧ 〈 ρ 〉
   ∎
 --TODO General lemma for this

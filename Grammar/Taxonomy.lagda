@@ -48,7 +48,7 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
 
   snoc-extend : Alphabet → snocList VarKind → Alphabet
   snoc-extend A [] = A
-  snoc-extend A (KK ∷ K) = snoc-extend A KK , K
+  snoc-extend A (KK snoc K) = snoc-extend A KK , K
 
   data Var : Alphabet → VarKind → Set where
     x₀ : ∀ {V} {K} → Var (V , K) K

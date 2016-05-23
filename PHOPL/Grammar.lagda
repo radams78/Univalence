@@ -93,6 +93,9 @@ _⊃_ : ∀ {V} → Term V → Term V → Term V
 appT : ∀ {V} → Term V → Term V → Term V
 appT M N = app -appTerm (M ,, N ,, out)
 
+appT-injl : ∀ {V} {M M' N N' : Term V} → appT M N ≡ appT M' N' → M ≡ M'
+appT-injl refl = refl
+
 ΛT : ∀ {V} → Type → Term (V , -Term) → Term V
 ΛT A M = app (-lamTerm A) (M ,, out)
 
@@ -164,7 +167,7 @@ sub↖ σ _ (↑ x) = σ _ x ⇑ ⇑ ⇑
 postulate sub↖-cong : ∀ {U} {V} {ρ σ : Sub U V} → ρ ∼ σ → sub↖ ρ ∼ sub↖ σ
 
 postulate sub↖-comp₁ : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} →
-                     sub↖ (ρ •₁ σ) ∼ Rep↑ -Path (Rep↑ -Term (Rep↑ -Term ρ)) •₁ sub↖ σ
+                     sub↖ (ρ •RS σ) ∼ Rep↑ -Path (Rep↑ -Term (Rep↑ -Term ρ)) •RS sub↖ σ
 
 sub↗ : ∀ {U} {V} → Sub U V → Sub (U , -Term) (V , -Term , -Term , -Path)
 sub↗ σ _ x₀ = var x₁
@@ -173,7 +176,7 @@ sub↗ σ _ (↑ x) = σ _ x ⇑ ⇑ ⇑
 postulate sub↗-cong : ∀ {U} {V} {ρ σ : Sub U V} → ρ ∼ σ → sub↗ ρ ∼ sub↗ σ
 
 postulate sub↗-comp₁ : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} →
-                     sub↗ (ρ •₁ σ) ∼ Rep↑ -Path (Rep↑ -Term (Rep↑ -Term ρ)) •₁ sub↗ σ
+                     sub↗ (ρ •RS σ) ∼ Rep↑ -Path (Rep↑ -Term (Rep↑ -Term ρ)) •RS sub↗ σ
 
 --REFACTOR Duplication
 \end{code}

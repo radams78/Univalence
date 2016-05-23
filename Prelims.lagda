@@ -46,8 +46,9 @@ subst₄ : ∀ {A1 A2 A3 A4 : Set} (P : A1 → A2 -> A3 -> A4  → Set)
          P a1 a2 a3 a4 -> P a1' a2' a3' a4'
 subst₄ _ refl refl refl refl Paaaa = Paaaa
 
+infixl 20 _snoc_
 data snocList (A : Set) : Set where
   [] : snocList A
-  _∷_ : snocList A → A → snocList A
+  _snoc_ : snocList A → A → snocList A
 \end{code}
 }

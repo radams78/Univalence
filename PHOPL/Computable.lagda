@@ -68,25 +68,43 @@ data key-redex {V} : ∀ {K} → Expression V K → Expression V K → Set where
   βkr : ∀ {φ : Term V} {δ ε} (SNφ : SN φ) (SNε : SN ε) → key-redex (appP (ΛP φ δ) ε) (δ ⟦ x₀:= ε ⟧)
   βEkr : ∀ {N N' : Term V} {A} {P} {Q} (SNN : SN N) (SNN' : SN N') (SNQ : SN Q) →
            key-redex (app* N N' (λλλ A P) Q) (P ⟦ x₂:= N ,x₁:= N' ,x₀:= Q ⟧)
+  appTkr : ∀ {M N P : Term V} → key-redex M N → key-redex (appT M P) (appT N P)
 
-key-redex-SN : ∀ {V} {K} {M N : Expression V K} → key-redex M N → SN N → SN M
-key-redex-SN (βkr SNφ SNε) SNδε = βR-exp SNφ SNε SNδε 
-key-redex-SN (βEkr SNN SNN' SNQ) SNPQ = βE-exp SNN SNN' SNQ SNPQ
+data _↠⁺_ {V} {C} {K} : Subexpression V C K → Subexpression V C K → Set where
+  osr-red+ : ∀ {E} {F} → E ⇒ F → E ↠⁺ F
+  trans-red+ : ∀ {E} {F} {G} → E ↠⁺ F → F ↠⁺ G → E ↠⁺ G
 
-postulate botsub-Rep↑₃ : ∀ {U} {V} {C} {K1} {K2} {K3} {K4} 
-                       {P : Subexpression (U , K1 , K2 , K3) C K4} {ρ : Rep U V}
-                       {M1 : Expression U (varKind K1)} {M2 : Expression U (varKind K2)} {M3 : Expression U (varKind K3)} →
-                       P 〈 Rep↑ K3 (Rep↑ K2 (Rep↑ K1 ρ)) 〉 ⟦ x₀:= M1 〈 ρ 〉 • x₀:= M2 〈 ρ 〉 ⇑ • x₀:= M3 〈 ρ 〉 ⇑ ⇑ ⟧
-                       ≡ P ⟦ x₀:= M1 • x₀:= (M2 ⇑) • x₀:= (M3 ⇑ ⇑) ⟧ 〈 ρ 〉
+postulate red-conv : ∀ {V} {C} {K} {M N : Subexpression V C K} → M ↠ N → M ≃ N
+
+postulate ChurchRosserT : ∀ {V} {M N P : Term V} → M ↠ N → M ↠ P →
+                        Σ[ Q ∈ Term V ] N ↠ Q × P ↠ Q
+
+postulate confluenceT : ∀ {V} {M N : Term V} → M ≃ N →
+                        Σ[ Q ∈ Term V ] M ↠ Q × N ↠ Q
+
+postulate SNE : ∀ {V} {C} {K} (P : Subexpression V C K → Set) →
+              (∀ {M : Subexpression V C K} → SN M → (∀ N → M ↠⁺ N → P N) → P M) →
+              ∀ {M : Subexpression V C K} → SN M → P M
+
+postulate key-redex-confluent : ∀ {V} {K} {M N P : Expression V K} →
+                              key-redex M N → M ⇒ P → Σ[ Q ∈ Expression V K ] key-redex P Q × N ↠⁺ Q
+
+key-redex-SN : ∀ {V} {K} {M N : Expression V K} → SN N → key-redex M N → SN M
+key-redex-SN {M = M} {N} SNN = SNE (λ N → ∀ {M} → key-redex M N → SN M) 
+  (λ {N} SNN ih {M} M▷N → SNI M (λ M' M⇒M' → 
+    let (P ,p M'▷P ,p N↠⁺P) = key-redex-confluent M▷N M⇒M' in 
+    ih P N↠⁺P M'▷P)) 
+  SNN
 
 key-redex-rep : ∀ {U} {V} {K} {M N : Expression U K} {ρ : Rep U V} →
   key-redex M N → key-redex (M 〈 ρ 〉) (N 〈 ρ 〉)
 key-redex-rep {ρ = ρ} (βkr {φ} {δ} {ε} SNφ SNε) = 
-  subst (key-redex ((appP (ΛP φ δ) ε) 〈 ρ 〉)) (sym (comp₁-botsub' δ)) 
+  subst (key-redex ((appP (ΛP φ δ) ε) 〈 ρ 〉)) (sym (compRS-botsub δ)) 
     (βkr (SNrep R-creates-rep SNφ) (SNrep R-creates-rep SNε))
 key-redex-rep {ρ = ρ} (βEkr {N} {N'} {A} {P} {Q} SNN SNN' SNQ) = 
-  subst (key-redex (app* N N' (λλλ A P) Q 〈 ρ 〉)) ?
+  subst (key-redex (app* N N' (λλλ A P) Q 〈 ρ 〉)) (botsub₃-Rep↑₃ P)
     (βEkr (SNrep R-creates-rep SNN) (SNrep R-creates-rep SNN') (SNrep R-creates-rep SNQ))
+key-redex-rep {ρ = ρ} (appTkr M▷N) = appTkr (key-redex-rep M▷N)
 
 data Neutral (V : Alphabet) : Set where
   var : Var V -Term → Neutral V
@@ -99,6 +117,47 @@ decode-Neutral (app M N) = appT (decode-Neutral M) N
 nrep : ∀ {U} {V} → Rep U V → Neutral U → Neutral V
 nrep ρ (var x) = var (ρ -Term x)
 nrep ρ (app M N) = app (nrep ρ M) (N 〈 ρ 〉)
+
+var-red' : ∀ {V} {K} {x : Var V K} {M} {N} → M ↠ N → M ≡ var x → N ≡ var x
+var-red' (osr-red (redex _)) ()
+var-red' (osr-red (app _)) ()
+var-red' ref M≡x = M≡x
+var-red' (trans-red M↠N N↠P) M≡x = var-red' N↠P (var-red' M↠N M≡x)
+
+var-red : ∀ {V} {K} {x : Var V K} {M} → var x ↠ M → M ≡ var x
+var-red x↠M = var-red' x↠M refl
+
+var-not-Λ : ∀ {V} {x : Var V -Term} {A} {M : Term (V , -Term)} → var x ≡ ΛT A M → Empty
+var-not-Λ ()
+
+app-not-Λ : ∀ {V} {M N : Term V} {A} {P : Term (V , -Term)} → appT M N ≡ ΛT A P → Empty
+app-not-Λ ()
+
+appT-injr : ∀ {V} {M N P Q : Term V} → appT M N ≡ appT P Q → N ≡ Q
+appT-injr refl = refl
+
+neutral-red' : ∀ {V} {N : Neutral V} {M₁} {M₂} → M₁ ↠ M₂ → decode-Neutral N ≡ M₁ →
+  Σ[ N' ∈ Neutral V ] decode-Neutral N' ≡ M₂
+neutral-red' {N = var _} (osr-red (redex βT)) ()
+neutral-red' {N = app (var _) _} (osr-red (redex βT)) xF≡ΛMN = ⊥-elim (var-not-Λ (appT-injl xF≡ΛMN))
+neutral-red' {N = app (app _ _) _} (osr-red (redex βT)) EF≡ΛMN = ⊥-elim (app-not-Λ (appT-injl EF≡ΛMN))
+neutral-red' {N = var _} (osr-red (app _)) ()
+neutral-red' {N = app _ _} (osr-red (app {c = -bot} _)) ()
+neutral-red' {N = app _ _} (osr-red (app {c = -imp} _)) ()
+neutral-red' {N = app N P} (osr-red (app {c = -appTerm} (appl {F = F ,, out} E⇒E'))) NP≡EF = 
+  let (N' ,p N'≡E') = neutral-red' (osr-red E⇒E') (appT-injl NP≡EF) in
+  app N' P ,p cong₂ appT N'≡E' (appT-injr NP≡EF)
+neutral-red' {N = app N P} (osr-red (app {c = -appTerm} (appr (appl {E' = F'} {F = out} F↠F')))) NP≡EF = app N F' ,p cong (λ x → appT x F') (appT-injl NP≡EF)
+neutral-red' {N = app _ _} (osr-red (app {c = -appTerm} (appr (appr ())))) _
+neutral-red' {N = app _ _} (osr-red (app {c = -lamTerm x} _)) ()
+neutral-red' {N = N} ref N≡M₁ = N ,p N≡M₁
+neutral-red' (trans-red M₁↠M₂ M₂↠M₃) N≡M₁ = 
+  let (_ ,p N₂≡M₂) = neutral-red' M₁↠M₂ N≡M₁ in
+  neutral-red' M₂↠M₃ N₂≡M₂
+
+neutral-red : ∀ {V} {N : Neutral V} {M} → decode-Neutral N ↠ M →
+  Σ[ N' ∈ Neutral V ] decode-Neutral N' ≡ M
+neutral-red N↠M = neutral-red' N↠M refl
 
 data Shape : Set where
   neutral : Shape
@@ -120,9 +179,58 @@ decode-Prop (neutral N) = decode-Neutral N
 decode-Prop bot = ⊥
 decode-Prop (imp φ ψ) = decode-Prop φ ⊃ decode-Prop ψ
 
---computeT : ∀ {V} → Context V → Type → Term V → Set
---computeT {V} Γ Ω φ = Γ ⊢ φ ∶ ty Ω × SN φ × Σ[ ψ ∈ Nf V -Term ] φ ↠ decodenf ψ
---computeT {V} Γ (A ⇛ B) F = Γ ⊢ F ∶ ty (A ⇛ B) × ∀ W (Δ : Context W) ρ M → ρ ∶ Γ ⇒R Δ → computeT Δ A M → computeT Δ B (appT (F 〈 ρ 〉) M)
+bot-red' : ∀ {V} {φ ψ : Term V} → φ ↠ ψ → φ ≡ ⊥ → ψ ≡ ⊥
+bot-red' (osr-red (redex βT)) ()
+bot-red' (osr-red (app {c = -bot} {F = out} x)) _ = refl
+bot-red' (osr-red (app {c = -imp} _)) ()
+bot-red' (osr-red (app {c = -appTerm} _)) ()
+bot-red' (osr-red (app {c = -lamTerm _} _)) ()
+bot-red' ref φ≡⊥ = φ≡⊥
+bot-red' (trans-red φ↠ψ ψ↠χ) φ≡⊥ = bot-red' ψ↠χ (bot-red' φ↠ψ φ≡⊥)
+
+bot-red : ∀ {V} {φ : Term V} → ⊥ ↠ φ → φ ≡ ⊥
+bot-red ⊥↠φ = bot-red' ⊥↠φ refl
+
+imp-injl : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ⊃ ψ ≡ φ' ⊃ ψ' → φ ≡ φ'
+imp-injl refl = refl
+
+imp-injr : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ⊃ ψ ≡ φ' ⊃ ψ' → ψ ≡ ψ'
+imp-injr refl = refl
+
+imp-red' : ∀ {V} {φ ψ χ θ : Term V} → φ ↠ ψ → φ ≡ χ ⊃ θ →
+  Σ[ χ' ∈ Term V ] Σ[ θ' ∈ Term V ] χ ↠ χ' × θ ↠ θ' × ψ ≡ χ' ⊃ θ'
+imp-red' (osr-red (redex βT)) ()
+imp-red' (osr-red (app {c = -bot} _)) ()
+imp-red' {θ = θ} (osr-red (app {c = -imp} (appl {E' = χ'} {F = _ ,, out} χ⇒χ'))) φ≡χ⊃θ = 
+  χ' ,p θ ,p subst (λ x → x ↠ χ') (imp-injl φ≡χ⊃θ) (osr-red χ⇒χ') ,p 
+  ref ,p (cong (λ x → χ' ⊃ x) (imp-injr φ≡χ⊃θ))
+imp-red' {χ = χ} (osr-red (app {c = -imp} (appr (appl {E' = θ'} {F = out} θ⇒θ')))) φ≡χ⊃θ = 
+  χ ,p θ' ,p ref ,p (subst (λ x → x ↠ θ') (imp-injr φ≡χ⊃θ) (osr-red θ⇒θ')) ,p 
+  cong (λ x → x ⊃ θ') (imp-injl φ≡χ⊃θ)
+imp-red' (osr-red (app {c = -imp} (appr (appr ())))) _
+imp-red' (osr-red (app {c = -appTerm} _)) ()
+imp-red' (osr-red (app {c = -lamTerm _} _)) ()
+imp-red' {χ = χ} {θ} ref φ≡χ⊃θ = χ ,p θ ,p ref ,p ref ,p φ≡χ⊃θ
+imp-red' (trans-red φ↠ψ ψ↠ψ') φ≡χ⊃θ = 
+  let (χ' ,p θ' ,p χ↠χ' ,p θ↠θ' ,p ψ≡χ'⊃θ') = imp-red' φ↠ψ φ≡χ⊃θ in 
+  let (χ'' ,p θ'' ,p χ'↠χ'' ,p θ'↠θ'' ,p ψ'≡χ''⊃θ'') = imp-red' ψ↠ψ' ψ≡χ'⊃θ' in 
+  χ'' ,p θ'' ,p trans-red χ↠χ' χ'↠χ'' ,p trans-red θ↠θ' θ'↠θ'' ,p ψ'≡χ''⊃θ''
+
+imp-red : ∀ {V} {χ θ ψ : Term V} → χ ⊃ θ ↠ ψ →
+  Σ[ χ' ∈ Term V ] Σ[ θ' ∈ Term V ] χ ↠ χ' × θ ↠ θ' × ψ ≡ χ' ⊃ θ'
+imp-red χ⊃θ↠ψ = imp-red' χ⊃θ↠ψ refl
+
+leaves-red : ∀ {V} {S} {L : Leaves V S} {φ : Term V} →
+  decode-Prop L ↠ φ →
+  Σ[ L' ∈ Leaves V S ] decode-Prop L' ≡ φ
+leaves-red {S = neutral} {L = neutral N} L↠φ = 
+  let (N ,p N≡φ) = neutral-red {N = N} L↠φ in neutral N ,p N≡φ
+leaves-red {S = bot} {L = bot} L↠φ = bot ,p sym (bot-red L↠φ)
+leaves-red {S = imp S T} {L = imp φ ψ} φ⊃ψ↠χ = 
+  let (φ' ,p ψ' ,p φ↠φ' ,p ψ↠ψ' ,p χ≡φ'⊃ψ') = imp-red φ⊃ψ↠χ in 
+  let (L₁ ,p L₁≡φ') = leaves-red {L = φ} φ↠φ' in 
+  let (L₂ ,p L₂≡ψ') = leaves-red {L = ψ} ψ↠ψ' in 
+  (imp L₁ L₂) ,p (trans (cong₂ _⊃_ L₁≡φ' L₂≡ψ') (sym χ≡φ'⊃ψ'))
 
 computeP : ∀ {V} {S} → Context V → Leaves V S → Proof V → Set
 computeP {S = neutral} Γ (neutral _) δ = SN δ
@@ -147,15 +255,31 @@ computeE Γ M (A ⇛ B) M' P =
   computeE Δ N A N' Q → computeE Δ (appT (M 〈 ρ 〉) N) B (appT (M' 〈 ρ 〉)  N') 
     (app* N N' (P 〈 ρ 〉) Q)
 
+conv-computeE : ∀ {V} {Γ : Context V} {M} {M'} {A} {N} {N'} {P} →
+  computeE Γ M A N P → Γ ⊢ M' ∶ ty A → Γ ⊢ N' ∶ ty A → M ≃ M' → N ≃ N' →
+  computeE Γ M' A N' P
+conv-computeE {M' = M'} {A = Ω} {N' = N'} (S ,p T ,p φ ,p ψ ,p M↠φ ,p N↠ψ ,p computeP+ ,p computeP-) 
+  Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N' = 
+    let (Q ,p φ↠Q ,p M'↠Q) = confluenceT (trans-conv (sym-conv (red-conv M↠φ)) M≃M') in
+    let (φ' ,p φ'≡Q) = leaves-red {L = φ} φ↠Q in
+    let (R ,p ψ↠R ,p N'↠R) = confluenceT (trans-conv (sym-conv (red-conv N↠ψ)) N≃N') in
+    let (ψ' ,p ψ'≡R) = leaves-red {L = ψ} ψ↠R in
+    S ,p T ,p φ' ,p ψ' ,p subst (_↠_ M') (sym φ'≡Q) M'↠Q ,p 
+    subst (_↠_ N') (sym ψ'≡R) N'↠R ,p 
+    (λ Δ ρ∶Γ⇒RΔ Δ⊢ε∶φ'ρ computeε → {!!}) ,p {!!}
+conv-computeE {A = A ⇛ A₁} computeP Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N' Δ x x₁ = {!!}
+
 expand-computeT : ∀ {V} {Γ : Context V} {A} {M} {N} → computeT Γ A N → Γ ⊢ M ∶ ty A → key-redex M N → computeT Γ A M
-expand-computeT {A = Ω} computeψ _ φ▷ψ = key-redex-SN φ▷ψ computeψ
+expand-computeT {A = Ω} computeψ _ φ▷ψ = key-redex-SN computeψ φ▷ψ
 expand-computeT {A = A ⇛ B} {M} {M'} (computeM'app ,p computeM'eq) Γ⊢M∶A⇛B M▷M' = 
   (λ Δ {ρ} {N} ρ∶Γ⇒Δ Δ⊢N∶A computeN → 
     let computeM'N : computeT Δ B (appT (M' 〈 ρ 〉) N)
         computeM'N = computeM'app Δ ρ∶Γ⇒Δ Δ⊢N∶A computeN
     in expand-computeT computeM'N 
        (appR (Weakening Γ⊢M∶A⇛B (Context-Validity Δ⊢N∶A) ρ∶Γ⇒Δ) Δ⊢N∶A) 
-             {!!}) ,p {!!}
+             (appTkr (key-redex-rep M▷M'))) ,p 
+  (λ Δ ρ∶Γ⇒Δ Δ⊢P∶N≡N' computeN computeN' computeP₁ → 
+    {!!})
 
 compute : ∀ {V} {K} → Context V → Expression V (parent K) → Expression V (varKind K) → Set
 compute {K = -Term} Γ (app (-ty A) out) M = computeT Γ A M
