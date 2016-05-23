@@ -8,8 +8,34 @@ open import PHOPL.Red
 open import PHOPL.Rules
 open import PHOPL.PathSub
 
-postulate Context-Validity : ∀ {V} {Γ} {K} {M : Expression V (varKind K)} {A} →
-                           Γ ⊢ M ∶ A → valid Γ
+Context-Validity : ∀ {V} {Γ} {K} {M : Expression V (varKind K)} {A} →
+                   Γ ⊢ M ∶ A → valid Γ
+Context-Validity' : ∀ {V} {Γ : Context V} {φ} → valid (Γ ,P φ) → valid Γ
+Context-Validity'' : ∀ {V} {Γ : Context V} {A} → valid (addpath Γ A) → valid Γ
+--BUG "with" does not work on lines 8 and 15below
+
+Context-Validity (varR _ validΓ) = validΓ
+Context-Validity (appR Γ⊢M∶A⇛B _) = Context-Validity Γ⊢M∶A⇛B
+Context-Validity (ΛR Γ,A⊢M∶B) with Context-Validity Γ,A⊢M∶B
+Context-Validity (ΛR _) | ctxTR validΓ = validΓ
+Context-Validity (⊥R validΓ) = validΓ
+Context-Validity (⊃R Γ⊢φ∶Ω _) = Context-Validity Γ⊢φ∶Ω
+Context-Validity (appPR Γ⊢δ∶φ⊃ψ _) = Context-Validity Γ⊢δ∶φ⊃ψ
+Context-Validity (ΛPR Γ,φ⊢δ∶ψ) = Context-Validity' (Context-Validity Γ,φ⊢δ∶ψ)
+Context-Validity (convR Γ⊢M∶A _ _) = Context-Validity Γ⊢M∶A
+Context-Validity (refR Γ⊢M∶A) = Context-Validity Γ⊢M∶A
+Context-Validity (⊃*R Γ⊢φ∶Ω _) = Context-Validity Γ⊢φ∶Ω
+Context-Validity (univR Γ⊢δ∶φ⊃ψ _) = Context-Validity Γ⊢δ∶φ⊃ψ
+Context-Validity (plusR Γ⊢P∶φ≡ψ) = Context-Validity Γ⊢P∶φ≡ψ
+Context-Validity (minusR Γ⊢P∶φ≡ψ) = Context-Validity Γ⊢P∶φ≡ψ
+Context-Validity (lllR addpathΓ⊢P∶M≡N) = Context-Validity'' (Context-Validity addpathΓ⊢P∶M≡N)
+Context-Validity (app*R Γ⊢N∶A _ _ _) = Context-Validity Γ⊢N∶A
+Context-Validity (convER Γ⊢P∶M≡N _ _ _ _) = Context-Validity Γ⊢P∶M≡N
+
+Context-Validity' (ctxPR Γ⊢φ∶Ω) = Context-Validity Γ⊢φ∶Ω
+
+Context-Validity'' (ctxER (varR .(↑ x₀) (ctxTR (ctxTR validΓ))) _) = validΓ
+
 
 postulate Prop-Validity : ∀ {V} {Γ : Context V} {δ : Proof V} {φ : Term V} → 
                         Γ ⊢ δ ∶ φ → Γ ⊢ φ ∶ ty Ω
