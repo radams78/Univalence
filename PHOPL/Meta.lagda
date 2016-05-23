@@ -6,6 +6,7 @@ open import Prelims
 open import PHOPL.Grammar
 open import PHOPL.Red
 open import PHOPL.Rules
+open import PHOPL.PathSub
 
 postulate Context-Validity : ∀ {V} {Γ} {K} {M : Expression V (varKind K)} {A} →
                            Γ ⊢ M ∶ A → valid Γ
@@ -144,5 +145,14 @@ Subject-Reduction-R Γ⊢cE∶A reflamλλλ = {!!} -}
 postulate Subject-Reduction : ∀ {V} {K} {Γ}
                             {E F : Expression V (varKind K)} {A} → 
                             (Γ ⊢ E ∶ A) → (E ↠ F) → (Γ ⊢ F ∶ A)
+
+postulate Equation-Validity₁ : ∀ {V} {Γ : Context V} {P : Path V} {M} {A} {N} →
+                             Γ ⊢ P ∶ M ≡〈 A 〉 N → Γ ⊢ M ∶ ty A
+
+postulate Equation-Validity₂ : ∀ {V} {Γ : Context V} {P : Path V} {M} {A} {N} →
+                             Γ ⊢ P ∶ M ≡〈 A 〉 N → Γ ⊢ N ∶ ty A
+
+postulate ⋆-typed : ∀ {V} {M : Term V} {P N N' Γ A B} → 
+                  Γ ⊢ M ∶ ty (A ⇛ B) → Γ ⊢ P ∶ N ≡〈 A 〉 N' → Γ ⊢ M ⋆[ P ∶ N ∼ N' ] ∶ appT M N ≡〈 B 〉 appT M N'
 \end{code}
 
