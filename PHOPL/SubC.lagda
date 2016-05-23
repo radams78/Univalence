@@ -28,7 +28,8 @@ change-cod-PS : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {Δ} {Δ'} →
                 τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → Δ ≡ Δ' → τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ'
 change-cod-PS {τ = τ} {ρ} {σ} {Γ} τ∶ρ∼σ Δ≡Δ' = subst (λ x → τ ∶ ρ ∼ σ ∶ Γ ⇒ x) Δ≡Δ' τ∶ρ∼σ
 
-postulate valid-addpath : ∀ {V} {Γ : Context V} {A} → valid Γ → valid (addpath Γ A)
+valid-addpath : ∀ {V} {Γ : Context V} {A} → valid Γ → valid (addpath Γ A)
+valid-addpath validΓ = ctxER (varR x₁ (ctxTR (ctxTR validΓ))) (varR x₀ (ctxTR (ctxTR validΓ)))
 
 postulate typeof'-up : ∀ {V} {Γ : Context V} {A} {x} → typeof' (↑ x) (Γ ,T A) ≡ typeof' x Γ
 
@@ -36,9 +37,9 @@ pathsub↑-typed : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {A} {Δ} →
   τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → valid Δ → pathsub↑ τ ∶ sub↖ ρ ∼ sub↗ σ ∶ Γ ,T A ⇒ Δ ,T  A ,T  A ,E var x₁ ≡〈 A 〉 var x₀
 pathsub↑-typed _ validΔ x₀ = varR x₀ (valid-addpath validΔ)
 pathsub↑-typed {U} {Γ = Γ} {A} τ∶ρ∼σ validΔ (↑ x) = change-type (Weakening (Weakening (Weakening (τ∶ρ∼σ x) (ctxTR validΔ) upRep-typed) 
-                                                                      (ctxTR (ctxTR validΔ)) upRep-typed) 
-                                                           (valid-addpath validΔ) upRep-typed) 
-                                                        (cong₃ _≡〈_〉_ refl (sym (typeof'-up {U} {Γ = Γ} {A} {x = x})) refl)
+                                                                           (ctxTR (ctxTR validΔ)) upRep-typed) 
+                                                                (valid-addpath validΔ) upRep-typed) 
+                                                    (cong₃ _≡〈_〉_ refl (sym (typeof'-up {U} {Γ = Γ} {A} {x = x})) refl)
 
 postulate sub↖-decomp : ∀ {U} {V} {C} {K} (M : Subexpression (U , -Term) C K) {ρ : Sub U V} → 
                      M ⟦ Sub↑ _ ρ ⟧ 〈 Rep↑ _ upRep 〉 〈 Rep↑ _ upRep 〉 〈 Rep↑ _ upRep 〉 ⟦ x₀:= var x₂ ⟧ ≡ M ⟦ sub↖ ρ ⟧
