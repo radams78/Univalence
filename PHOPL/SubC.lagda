@@ -30,6 +30,12 @@ change-cod-PS {τ = τ} {ρ} {σ} {Γ} τ∶ρ∼σ Δ≡Δ' =
   subst (λ x → τ ∶ ρ ∼ σ ∶ Γ ⇒ x) Δ≡Δ' τ∶ρ∼σ
 
 postulate pathsub↑-typed : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {A} {Δ} → τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → pathsub↑ τ ∶ sub↖ ρ ∼ sub↗ σ ∶ Γ ,T A ⇒ Δ ,T  A ,T  A ,E var x₁ ≡〈 A 〉 var x₀
+
+postulate sub↖-decomp : ∀ {U} {V} {C} {K} (M : Subexpression (U , -Term) C K) {ρ : Sub U V} → 
+                     M ⟦ Sub↑ _ ρ ⟧ 〈 Rep↑ _ upRep 〉 〈 Rep↑ _ upRep 〉 〈 Rep↑ _ upRep 〉 ⟦ x₀:= var x₂ ⟧ ≡ M ⟦ sub↖ ρ ⟧
+
+postulate sub↗-decomp : ∀ {U} {V} {C} {K} (M : Subexpression (U , -Term) C K) {ρ : Sub U V} → 
+                     M ⟦ Sub↑ _ ρ ⟧ 〈 Rep↑ _ upRep 〉 〈 Rep↑ _ upRep 〉 〈 Rep↑ _ upRep 〉 ⟦ x₀:= var x₁ ⟧ ≡ M ⟦ sub↗ ρ ⟧
 \end{code}
 }
 
@@ -71,7 +77,7 @@ Path-Substitution {U} {V} {Γ} {Δ} {ρ} {σ} {τ} (ΛR .{U} .{Γ} {A} {M} {B} �
                  validΔAAE)
                  (Mσ-typed ρ∶Γ⇒Δ refl)
                  (Mσ-typed σ∶Γ⇒Δ refl)
-                 (sym-conv (redex-conv ?)) (sym-conv (redex-conv ?))
+                 (sym-conv (redex-conv (subst (R -appTerm ((ΛT A M ⟦ ρ ⟧) ⇑ ⇑ ⇑ ,, var x₂ ,, out)) (sub↖-decomp M) βT))) (sym-conv (redex-conv (subst (R -appTerm ((ΛT A M ⟦ σ ⟧) ⇑ ⇑ ⇑ ,, var x₁ ,, out)) (sub↗-decomp M) βT)))
   in lllR step1
 
 postulate idPathSub : ∀ V → PathSub V V
@@ -123,10 +129,10 @@ postulate compC : ∀ {U} {V} {W} {ρ : Sub V W} {σ : Sub U V} {Γ} {Δ} {Θ} �
                 ρ ∶ Δ ⇒C Θ → σ ∶ Γ ⇒C Δ → ρ • σ ∶ Γ ⇒C Θ
 
 postulate comp₁C : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} {Γ} {Δ} {Θ} →
-                 ρ ∶ Δ ⇒R Θ → σ ∶ Γ ⇒C Δ → ρ •₁ σ ∶ Γ ⇒C Θ
+                 ρ ∶ Δ ⇒R Θ → σ ∶ Γ ⇒C Δ → ρ •RS σ ∶ Γ ⇒C Θ
 
 postulate comp₂C : ∀ {U} {V} {W} {σ : Sub V W} {ρ : Rep U V} {Γ} {Δ} {Θ} →
-                 σ ∶ Δ ⇒C Θ → ρ ∶ Γ ⇒R Δ → σ •₂ ρ ∶ Γ ⇒C Θ
+                 σ ∶ Δ ⇒C Θ → ρ ∶ Γ ⇒R Δ → σ •SR ρ ∶ Γ ⇒C Θ
 
 postulate Sub↑C : ∀ {U} {V} {σ : Sub U V} {K} {Γ} {Δ} {A} →
                     σ ∶ Γ ⇒C Δ → Sub↑ K σ ∶ (Γ , A) ⇒C (Δ , A ⟦ σ ⟧)
@@ -156,7 +162,7 @@ postulate extendPS-typedC : ∀ {U} {V} {τ : PathSub U V} {ρ σ : Sub U V} {Γ
                          τ ∶ ρ ∼ σ ∶ Γ ⇒C Δ → EE Δ (N ≡〈 A 〉 N') Q → extendPS τ Q ∶ x₀:= N • Sub↑ -Term ρ ∼ x₀:= N' • Sub↑ -Term σ ∶ Γ ,T A ⇒C Δ
 
 postulate compRP-typedC : ∀ {U} {V} {W} {ρ : Rep V W} {τ : PathSub U V} {σ} {σ'} {Γ} {Δ} {Θ} →
-                         τ ∶ σ ∼ σ' ∶ Γ ⇒C Δ → ρ ∶ Δ ⇒R Θ → ρ •RP τ ∶ ρ •₁ σ ∼ ρ •₁ σ' ∶ Γ ⇒C Θ
+                         τ ∶ σ ∼ σ' ∶ Γ ⇒C Δ → ρ ∶ Δ ⇒R Θ → ρ •RP τ ∶ ρ •RS σ ∼ ρ •RS σ' ∶ Γ ⇒C Θ
 
 postulate pathsubC-typed : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {Δ} → 
                      τ ∶ ρ ∼ σ ∶ Γ ⇒C Δ → τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ
