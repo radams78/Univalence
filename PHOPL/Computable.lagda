@@ -2,15 +2,15 @@
 \begin{code}
 module PHOPL.Computable where
 open import Data.Empty renaming (⊥ to Empty)
-open import Data.Sum
 open import Data.Product renaming (_,_ to _,p_)
 open import Prelims
 open import PHOPL.Grammar
+open import PHOPL.PathSub
 open import PHOPL.Red
 open import PHOPL.SN
 open import PHOPL.Rules
 open import PHOPL.Meta
-open import PHOPL.PathSub
+open import PHOPL.KeyRedex
 \end{code}
 }
 
@@ -64,16 +64,6 @@ E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \
 
 \AgdaHide{
 \begin{code}
-data key-redex {V} : ∀ {K} → Expression V K → Expression V K → Set where
-  βkr : ∀ {φ : Term V} {δ ε} (SNφ : SN φ) (SNε : SN ε) → key-redex (appP (ΛP φ δ) ε) (δ ⟦ x₀:= ε ⟧)
-  βEkr : ∀ {N N' : Term V} {A} {P} {Q} (SNN : SN N) (SNN' : SN N') (SNQ : SN Q) →
-           key-redex (app* N N' (λλλ A P) Q) (P ⟦ x₂:= N ,x₁:= N' ,x₀:= Q ⟧)
-  appTkr : ∀ {M N P : Term V} → key-redex M N → key-redex (appT M P) (appT N P)
-
-data _↠⁺_ {V} {C} {K} : Subexpression V C K → Subexpression V C K → Set where
-  osr-red+ : ∀ {E} {F} → E ⇒ F → E ↠⁺ F
-  trans-red+ : ∀ {E} {F} {G} → E ↠⁺ F → F ↠⁺ G → E ↠⁺ G
-
 postulate red-conv : ∀ {V} {C} {K} {M N : Subexpression V C K} → M ↠ N → M ≃ N
 
 postulate ChurchRosserT : ∀ {V} {M N P : Term V} → M ↠ N → M ↠ P →
@@ -392,11 +382,14 @@ compute {K = -Term} Γ (app (-ty A) out) M = computeT Γ A M
 compute {V} {K = -Proof} Γ φ δ = Σ[ S ∈ Shape ] Σ[ L ∈ Leaves V S ] φ ↠ decode-Prop L × computeP Γ L δ
 compute {K = -Path} Γ (app (-eq A) (M ,, N ,, out)) P = computeE Γ M A N P
 
+postulate expand-computeP : ∀ {V} {Γ : Context V} {S} {L : Leaves V S} {δ ε} →
+                          computeP Γ L ε → Γ ⊢ δ ∶ decode-Prop L → key-redex δ ε → computeP Γ L δ
+
 expand-compute : ∀ {V} {K} {Γ : Context V} {A : Expression V (parent K)} {M N : Expression V (varKind K)} →
   compute Γ A N → Γ ⊢ M ∶ A → key-redex M N → compute Γ A M
 expand-compute {K = -Term} {A = app (-ty A) out} = expand-computeT {A = A}
-expand-compute {K = -Proof} (S ,p ψ ,p φ↠ψ ,p computeε) Γ⊢δ∶φ δ▷ε = {!!}
-expand-compute {K = -Path} {A = app (-eq A) (M ,, N ,, out)} computeQ Γ⊢P∶M≡N P▷Q = {!!}
+expand-compute {K = -Proof} (S ,p ψ ,p φ↠ψ ,p computeε) Γ⊢δ∶φ δ▷ε = (S ,p ψ ,p φ↠ψ ,p expand-computeP {S = S} computeε (Type-Reduction Γ⊢δ∶φ φ↠ψ) δ▷ε)
+expand-compute {K = -Path} {A = app (-eq A) (M ,, N ,, out)} computeQ Γ⊢P∶M≡N P▷Q = expand-computeE computeQ Γ⊢P∶M≡N P▷Q
 
 record E' {V} {K} (Γ : Context V) (A : Expression V (parent K)) (E : Expression V (varKind K)) : Set where
   constructor E'I

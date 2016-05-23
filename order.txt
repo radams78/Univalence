@@ -24,6 +24,7 @@ PHOPL/Rules
 PHOPL/PathSub
 PHOPL/Red
 PHOPL/Meta
+PHOPL/KeyRedex
 PHOPL/Computable
 PHOPL/SubC
 PHOPL/SN
