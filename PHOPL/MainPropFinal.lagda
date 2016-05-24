@@ -18,17 +18,16 @@ open import PHOPL.KeyRedex
 Computable-Substitution : ∀ U V (σ : Sub U V) Γ Δ M A {A'} → 
                                   σ ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A' → A' ≡ ty A → valid Δ → E Δ A (M ⟦ σ ⟧)
 Computable-Substitution _ V σ _ Δ _ A σ∶Γ⇒Δ (varR x _) A'≡A _ = subst (λ a → E' Δ a _) (sub-congl A'≡A) (σ∶Γ⇒Δ x)
-Computable-Substitution _ V _ _ Δ .⊥ _ _ (⊥R _) A'≡A Δvalid = subst (λ a → E Δ a _) (cong yt A'≡A) (E'I (⊥R Δvalid) SN⊥)
-Computable-Substitution U V σ Γ Δ .(φ ⊃ ψ) _ σ∶Γ⇒Δ (⊃R {φ = φ} {ψ} Γ⊢φ∶Ω Γ⊢ψ∶Ω) A'≡A Δvalid = subst (λ x → E Δ x _) (cong yt A'≡A) (⊃-E 
-  (Computable-Substitution U V σ Γ Δ φ Ω σ∶Γ⇒Δ Γ⊢φ∶Ω refl Δvalid) 
-  (Computable-Substitution U V σ Γ Δ ψ Ω σ∶Γ⇒Δ Γ⊢ψ∶Ω refl Δvalid))
-Computable-Substitution U V σ Γ Δ .(appT M N) _ σ∶Γ⇒Δ (appR {M = M} {N} {A} {B} Γ⊢M∶A⇒B Γ⊢N∶A) A'≡A Δvalid = subst (λ x → E Δ x _) (cong yt A'≡A) (appT-E 
-  Δvalid
-  (Computable-Substitution U V σ Γ Δ M (A ⇛ B) σ∶Γ⇒Δ Γ⊢M∶A⇒B refl Δvalid) 
-  (Computable-Substitution U V σ Γ Δ N A σ∶Γ⇒Δ Γ⊢N∶A refl Δvalid))
-Computable-Substitution U V σ Γ Δ .(ΛT A M) _ σ∶Γ⇒Δ (ΛR {A = A} {M} {B} Γ,A⊢M∶B) A'≡A Δvalid = subst (λ x → E Δ x _) (cong yt A'≡A) (func-E (λ W Θ ρ N validθ ρ∶Δ⇒RΘ N∈EΘA → 
-  expand-E {!!} {!!} {!!}))
-{-  expand-E (subst (E Θ B)
+Computable-Substitution _ V _ _ Δ .⊥ _ _ (⊥R _) A'≡A validΔ = subst (λ a → E Δ a _) (cong yt A'≡A) (E'I (⊥R validΔ) SN⊥)
+Computable-Substitution U V σ Γ Δ .(φ ⊃ ψ) _ σ∶Γ⇒Δ (⊃R {φ = φ} {ψ} Γ⊢φ∶Ω Γ⊢ψ∶Ω) A'≡A validΔ = subst (λ x → E Δ x _) (cong yt A'≡A) (⊃-E 
+  (Computable-Substitution U V σ Γ Δ φ Ω σ∶Γ⇒Δ Γ⊢φ∶Ω refl validΔ) 
+  (Computable-Substitution U V σ Γ Δ ψ Ω σ∶Γ⇒Δ Γ⊢ψ∶Ω refl validΔ))
+Computable-Substitution U V σ Γ Δ .(appT M N) _ σ∶Γ⇒Δ (appR {M = M} {N} {A} {B} Γ⊢M∶A⇒B Γ⊢N∶A) A'≡A validΔ = subst (λ x → E Δ x _) (cong yt A'≡A) (appT-E 
+  validΔ
+  (Computable-Substitution U V σ Γ Δ M (A ⇛ B) σ∶Γ⇒Δ Γ⊢M∶A⇒B refl validΔ) 
+  (Computable-Substitution U V σ Γ Δ N A σ∶Γ⇒Δ Γ⊢N∶A refl validΔ))
+Computable-Substitution U V σ Γ Δ .(ΛT A M) _ σ∶Γ⇒Δ (ΛR {A = A} {M} {B} Γ,A⊢M∶B) A'≡A validΔ = subst (λ x → E Δ x _) (cong yt A'≡A) (func-E (λ W Θ ρ N validθ ρ∶Δ⇒RΘ N∈EΘA → 
+  expand-E ((subst (E Θ B)
   (let open ≡-Reasoning in 
   begin
     M ⟦ x₀:= N •SR Rep↑ -Term ρ • Sub↑ -Term σ ⟧
@@ -36,9 +35,16 @@ Computable-Substitution U V σ Γ Δ .(ΛT A M) _ σ∶Γ⇒Δ (ΛR {A = A} {M} 
     M ⟦ Sub↑ -Term σ ⟧ ⟦ x₀:= N •SR Rep↑ -Term ρ ⟧
   ≡⟨ sub-compSR (M ⟦ Sub↑ -Term σ ⟧) ⟩
     M ⟦ Sub↑ -Term σ ⟧ 〈 Rep↑ -Term ρ 〉 ⟦ x₀:= N ⟧
-  ∎)  (Computable-Substitution (U , -Term) W 
-    (x₀:= N •SR Rep↑ -Term ρ • Sub↑ -Term σ) (Γ ,T A) Θ M B 
-    (compC (compSRC (botsubC N∈EΘA) (Rep↑-typed ρ∶Δ⇒RΘ)) (Sub↑C σ∶Γ⇒Δ)) Γ,A⊢M∶B refl validθ)))) -}
+  ∎) (Computable-Substitution (U , -Term) W
+        (x₀:= N •SR Rep↑ -Term ρ • Sub↑ -Term σ) (Γ ,T A) Θ M B
+        (compC (compSRC (botsubC N∈EΘA) (Rep↑-typed ρ∶Δ⇒RΘ)) (Sub↑C σ∶Γ⇒Δ))
+        Γ,A⊢M∶B refl validθ))) 
+  (appR (ΛR (Weakening (Substitution Γ,A⊢M∶B (ctxTR validΔ) 
+                       (Sub↑-typed (subC-typed σ∶Γ⇒Δ))) (ctxTR validθ) (Rep↑-typed ρ∶Δ⇒RΘ))) 
+            (E-typed N∈EΘA))
+  (βTkr (SNrep R-creates-rep (E-SN B 
+    (Computable-Substitution (U , -Term) (V , -Term) (Sub↑ -Term σ)
+       (Γ ,T A) (Δ ,T A) M B (Sub↑C σ∶Γ⇒Δ) Γ,A⊢M∶B refl (ctxTR validΔ)))))))
 
 botsub-comp-upRep : ∀ {U} {V} {K} {L} {σ : Sub U V} (E : Expression U L) {M} → E ⇑ ⟦ x₀:= M • Sub↑ K σ ⟧ ≡ E ⟦ σ ⟧
 botsub-comp-upRep {U} {V} {K} {L} {σ} E {M} = let open ≡-Reasoning in 
@@ -123,7 +129,7 @@ aux-lm1 U V σ Γ Δ φ δ ψ ih σ∶Γ⇒CΔ Γ,φ⊢δ∶ψ validΔ = func-EP
       (Substitution Γ,φ⊢δ∶ψ (ctxPR (Prop-Validity (EP-typed ε∈EΘφσρ))) 
         (compRS-typed (Rep↑-typed ρ∶Δ⇒RΘ) (Sub↑-typed (subC-typed σ∶Γ⇒CΔ)))))) 
     (EP-typed ε∈EΘφσρ)) 
-    (βkr (E-SN Ω (subst (E Θ Ω) (sub-compRS φ)
+    (βPkr (E-SN Ω (subst (E Θ Ω) (sub-compRS φ)
       (Computable-Substitution U W (ρ •RS σ) Γ Θ φ Ω (compRSC ρ∶Δ⇒RΘ σ∶Γ⇒CΔ) (Context-Validity-Prop (Context-Validity Γ,φ⊢δ∶ψ)) 
       refl (Context-Validity (EP-typed ε∈EΘφσρ))))) (EP-SN ε∈EΘφσρ)))
 -- TODO Common pattern with Computable-Substitution
