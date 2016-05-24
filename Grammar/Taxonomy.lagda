@@ -21,6 +21,23 @@ A \emph{taxononmy} consists of:
 \item a subset of expression kinds, called the \emph{variable kinds}.  We refer to the other expession kinds as \emph{non-variable kinds}.
 \end{itemize}
 
+\begin{frame}[fragile]
+\frametitle{Grammars}
+A \emph{grammar} consists of:
+\begin{itemize}
+\item a set of \emph{expression kinds};
+\item a subset of expression kinds, called the \emph{variable kinds}.  We refer to the other expession kinds as \emph{non-variable kinds}.
+\item a set of \emph{constructors}, each with an associated \emph{constructor kind} of the form
+\begin{equation}
+\label{eq:conkind}
+ ((A_{11}, \ldots, A_{1r_1}) B_1, \ldots, (A_{m1}, \ldots, A_{mr_m}) B_m) C
+\end{equation}
+where each $A_{ij}$ is a variable kind, and each $B_i$ and $C$ is an expression kind.
+\item a function assigning, to each variable kind $K$, an expression kind, the \emph{parent} of $K$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
 \begin{code}
 record Taxonomy : Set₁ where
   field
@@ -32,6 +49,9 @@ record Taxonomy : Set₁ where
     nonVarKind : NonVarKind → ExpressionKind
 \end{code}
 
+\pause
+
+\mode<article>{
 An \emph{alphabet} $A$ consists of a finite set of \emph{variables}, to each of which is assigned a variable kind $K$.
 Let $\emptyset$ be the empty alphabet, and $(A , K)$ be the result of extending the alphabet $A$ with one
 fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of all variables in $A$ of kind $K$.
@@ -54,6 +74,7 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
     x₀ : ∀ {V} {K} → Var (V , K) K
     ↑ : ∀ {V} {K} {L} → Var V L → Var (V , K) L
 \end{code}
+}
 
 \AgdaHide{
 \begin{code}
@@ -66,6 +87,7 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
 \end{code}
 }
 
+\mode<article>{
 A \emph{grammar} over a taxonomy consists of:
 \begin{itemize}
 \item a set of \emph{constructors}, each with an associated \emph{constructor kind} of the form
@@ -90,6 +112,7 @@ The subexpressions of the form $[x_{i1}, \ldots, x_{ir_i}]E_i$ shall be called \
 When giving a specific grammar, we shall feel free to use BNF notation.  
 
 We formalise this as follows.  First, we construct the sets of expression kinds and constructor kinds over a taxonomy:
+}
 
 \begin{code}
   data KindClass : Set where
@@ -102,3 +125,4 @@ We formalise this as follows.  First, we construct the sets of expression kinds 
     Π    : ∀ {K} → List VarKind → ExpressionKind → 
            Kind (-Constructor K) → Kind (-Constructor K)
 \end{code}
+\end{frame}

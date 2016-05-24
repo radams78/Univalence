@@ -70,16 +70,16 @@ This talk is a literate Agda file
 
 \begin{frame}
 \frametitle{The problem}
-\begin{itemize}
+\begin{itemize}[<+->]
 \item
 A type theory should enjoy three properties:
 \begin{description}
-\item[Canonicity] Every well-typed term of type $A$ reduces to a canonical form of $A$.
-\item[Confluence] Reduction is confluent.  (Therefore, the canonical form is unique.)
+\item[Confluence] Reduction is confluent.
 \item[Strong Normalization] Every reduction strategy terminates.
+\item[Canonicity] Every well-typed term of type $A$ reduces to a unique canonical form of $A$.
 \end{description}
 \item
-Every term of type $\mathbb{N}$ reduces to a unique numeral.
+E.g. every closed term of type $\mathbb{N}$ reduces to a unique numeral.
 \item 
 The \emph{univalence axiom} postulates a function
 \[ \isotoid : A \simeq B \rightarrow A = B \]
@@ -88,15 +88,18 @@ that is an inverse to the obvious function $A = B \rightarrow A \simeq B$.
 This breaks canonicity.
 \end{itemize}
 \end{frame}
-%TODO Define canonical form
 
 \begin{frame}
 \frametitle{Possible Solutions}
 \begin{itemize}
 \item
-Lower our standards (propositional canonicity).
+Lower our standards
+\begin{description}
+\item[Voevodsky's Conjecture]
+For every closed term $t : \mathbb{N}$, there exists a numeral $n$ and a proof $\vdash p : Id_\mathbb{N}(t,n)$.
+\end{description}
 \item
-Use a type theory in which $\isotoid$ is definable (e.g. Cubical Type Theory, Polonsky) %TODO Cite
+Use a type theory in which $\isotoid$ is definable (Cubical Type Theory, \cite{Polonsky14a}) %TODO Cite
 \item
 Introduce a reduction rule for $\isotoid$.
 \end{itemize}
@@ -126,23 +129,27 @@ For the future: natural numbers, inductive types, path elimination, \ldots
 \frametitle{About the Formalization}
 This work is being formalized in Agda (work in progress).
 
+It will involve several systems and reduction relations.
+
+I want to prove only once:
 \begin{itemize}
 \item
-General definition of a grammar, a reduction rule.
+$M[x:=N][y:=P] \equiv M[y:=P[x:=N]][x:=N]$
 \item
-Expressions are divided into \emph{kinds} (e.g. terms, types).
+If $M \twoheadrightarrow N$ then $M[x:=P] \twoheadrightarrow N[x:=P]$
 \item
-An \emph{alphabet} provides a finite set of variables of each kind.
+If $M[x:=P]$ is SN then $M$ is SN.
 \item
-\texttt{Expression V K} is the type of expressions of kind $K$ with variables in $V$.
+Etc.
 \end{itemize}
+The formalization includes a general notion of `grammar' and `reduction relation'.  (To do: general notion of derivation rules.)
 
 Follow the progress here: \url{www.github.com/radams78/Univalence}
 \end{frame}
 
 \input{Prelims.lagda}
-\input{Grammar/Taxonomy.lagda}
-\input{Grammar/Base.lagda}
+\mode<all>{\input{Grammar/Taxonomy.lagda}}
+\mode<all>{\input{Grammar/Base.lagda}}
 
 We define the operations of replacement and substitution on
 expressions.  The details are given in Appendix \ref{appendix:repsub}.
@@ -229,6 +236,12 @@ The simplicity is due to the separation between terms and proofs.
 Let's see how far we can go.
 \end{itemize}
 \end{frame}
+
+\begin{frame}
+\frametitle{Bibliography}
+\bibliography{../../../type}
+\end{frame}
+
 \appendix
 
 \section{Replacement and Substitution}
