@@ -1,5 +1,6 @@
 \begin{code}
 module PHOPL.SN where
+open import Data.Empty renaming (⊥ to Empty)
 open import PHOPL.Grammar
 open import PHOPL.Red
 open import Reduction.Botsub PHOPL R
@@ -55,5 +56,10 @@ private βE-exp' : ∀ {V} {A} {M N : Term V} {P} {Q} {R} →
 
 --REFACTOR Common pattern
 
-postulate SN⊥ : ∀ {V} → SN {V} ⊥
+private SN' : ∀ {V} {φ : Term V} → ⊥ ⇒ φ → Empty
+SN' (redex ())
+SN' (app ())
+
+SN⊥ : ∀ {V} → SN {V} ⊥
+SN⊥ {V} = SNI ⊥ (λ _ ⊥⇒F → ⊥-elim (SN' ⊥⇒F))
 \end{code}
