@@ -88,13 +88,17 @@ key-redex-SN {M = M} {N} SNN = SNE (λ N → ∀ {M} → key-redex M N → SN M)
 
 key-redex-rep : ∀ {U} {V} {K} {M N : Expression U K} {ρ : Rep U V} →
   key-redex M N → key-redex (M 〈 ρ 〉) (N 〈 ρ 〉)
-key-redex-rep {ρ = ρ} (βkr {φ} {δ} {ε} SNφ SNε) = 
+key-redex-rep {ρ = ρ} (βTkr {A} {M} {N} SNM) = 
+  subst (key-redex (appT (ΛT A M) N 〈 ρ 〉)) (sym (compRS-botsub M)) 
+    (βTkr (SNrep R-creates-rep SNM))
+key-redex-rep {ρ = ρ} (βPkr {φ} {δ} {ε} SNφ SNε) = 
   subst (key-redex ((appP (ΛP φ δ) ε) 〈 ρ 〉)) (sym (compRS-botsub δ)) 
-    (βkr (SNrep R-creates-rep SNφ) (SNrep R-creates-rep SNε))
+    (βPkr (SNrep R-creates-rep SNφ) (SNrep R-creates-rep SNε))
 key-redex-rep {ρ = ρ} (βEkr {N} {N'} {A} {P} {Q} SNN SNN' SNQ) = 
   subst (key-redex (app* N N' (λλλ A P) Q 〈 ρ 〉)) (botsub₃-Rep↑₃ P)
     (βEkr (SNrep R-creates-rep SNN) (SNrep R-creates-rep SNN') (SNrep R-creates-rep SNQ))
 key-redex-rep {ρ = ρ} (appTkr M▷N) = appTkr (key-redex-rep M▷N)
+--REFACTOR Common pattern
 
 data Neutral (V : Alphabet) : Set where
   var : Var V -Term → Neutral V
@@ -415,8 +419,8 @@ expand-E' : ∀ {V} {K} {Γ} {A} {M N : Expression V (varKind K)} →
             E' Γ A N → Γ ⊢ M ∶ A → key-redex M N → E' Γ A M
 expand-E' N∈EΓA Γ⊢M∶A M▷N = E'I Γ⊢M∶A (expand-compute (E'.computable N∈EΓA) Γ⊢M∶A M▷N)
 
-postulate expand-E : ∀ {V} {Γ : Context V} {A : Type} {B : Type} {M : Term (V , -Term)} {N : Term V} →
-                   E Γ B (M ⟦ x₀:= N ⟧) → E Γ B (appT (ΛT A M) N)
+postulate expand-E : ∀ {V} {Γ : Context V} {A : Type} {M N : Term V} →
+                   E Γ A N → Γ ⊢ M ∶ ty A → key-redex M N → E Γ A M
 
 postulate func-E : ∀ {U} {Γ : Context U} {M : Term U} {A} {B} →
                    (∀ V Δ (ρ : Rep U V) (N : Term V) → valid Δ → ρ ∶ Γ ⇒R Δ → E Δ A N → E Δ B (appT (M 〈 ρ 〉) N)) →

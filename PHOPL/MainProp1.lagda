@@ -16,7 +16,29 @@ open import PHOPL.SubC
 open import PHOPL.SN
 open import PHOPL.MainPropFinal
 
-Computable-Proof-Substitution : ∀ U V (σ : Sub U V) Γ Δ δ φ →
+Computable-Sub : ∀ {U} {V} {K} (σ : Sub U V) {Γ} {Δ} {M : Expression U (varKind K)} {A} →
+  σ ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → E' Δ (A ⟦ σ ⟧) (M ⟦ σ ⟧)
+Computable-Sub σ σ∶Γ⇒Δ (varR x validΓ) validΔ = σ∶Γ⇒Δ x
+Computable-Sub {V = V} σ {Δ = Δ} σ∶Γ⇒Δ (appR Γ⊢M∶A⇛B Γ⊢N∶A) validΔ = 
+  appT-E validΔ (Computable-Sub σ σ∶Γ⇒Δ Γ⊢M∶A⇛B validΔ) (Computable-Sub σ σ∶Γ⇒Δ Γ⊢N∶A validΔ)
+Computable-Sub σ σ∶Γ⇒Δ (ΛR {A = A} {M} {B = B} Γ⊢M∶A) validΔ = 
+  func-E (λ W Θ ρ N validΘ ρ∶Δ⇒Θ N∈EΘA → 
+    expand-E {!!})
+Computable-Sub σ σ∶Γ⇒Δ (⊥R validΓ) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒Δ (⊃R Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒Δ (appPR Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒Δ (ΛPR Γ⊢M∶A) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒Δ (convR Γ⊢M∶A Γ⊢M∶A₁ x) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒Δ (refR Γ⊢M∶A) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒Δ (⊃*R Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒Δ (univR Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒Δ (plusR Γ⊢M∶A) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒Δ (minusR Γ⊢M∶A) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒Δ (lllR Γ⊢M∶A) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒Δ (app*R Γ⊢M∶A Γ⊢M∶A₁ Γ⊢M∶A₂ Γ⊢M∶A₃) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒Δ (convER Γ⊢M∶A Γ⊢M∶A₁ Γ⊢M∶A₂ M≃M' N≃N') validΔ = {!!}
+
+{-Computable-Proof-Substitution : ∀ U V (σ : Sub U V) Γ Δ δ φ →
   σ ∶ Γ ⇒C Δ → Γ ⊢ δ ∶ φ → valid Δ → EP Δ (φ ⟦ σ ⟧) (δ ⟦ σ ⟧)
 Computable-Path-Substitution₁ : ∀ U V (σ : Sub U V) Γ Δ P E →
   σ ∶ Γ ⇒C Δ → Γ ⊢ P ∶ E → valid Δ → EE Δ (E ⟦ σ ⟧) (P ⟦ σ ⟧)
@@ -59,7 +81,7 @@ Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒CΔ (app*R {N = N} {N
     (Computable-Substitution U V σ Γ Δ N' A σ∶Γ⇒CΔ Γ⊢N'∶A refl validΔ)
 Computable-Path-Substitution₁ U V σ Γ Δ P _ σ∶Γ⇒CΔ (convER {M = M} {M'} {N} {N'} {A} Γ⊢P∶M≡N Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N') validΔ = 
   conv-EE  (Computable-Path-Substitution₁ U V σ Γ Δ P _ σ∶Γ⇒CΔ Γ⊢P∶M≡N validΔ) (respects-conv (respects-osr substitution R-respects-sub) 
-  M≃M') (respects-conv (respects-osr substitution R-respects-sub) N≃N') (Substitution Γ⊢M'∶A validΔ (subC-typed σ∶Γ⇒CΔ)) (Substitution Γ⊢N'∶A validΔ (subC-typed σ∶Γ⇒CΔ))
+  M≃M') (respects-conv (respects-osr substitution R-respects-sub) N≃N') (Substitution Γ⊢M'∶A validΔ (subC-typed σ∶Γ⇒CΔ)) (Substitution Γ⊢N'∶A validΔ (subC-typed σ∶Γ⇒CΔ)) -}
 --REFACTOR Duplication
 \end{code}
 }

@@ -113,6 +113,7 @@ circ-botsub {E' = E'} circ₁ circ₂ = ap-circ-sim circ₁ circ₂ (circ-botsub
 
 compRS-botsub : ∀ {U} {V} {C} {K} {L} (E : Subexpression (U , K) C L) {F : Expression U (varKind K)} {ρ : Rep U V} →
   E ⟦ x₀:= F ⟧ 〈 ρ 〉 ≡ E 〈 Rep↑ K ρ 〉 ⟦ x₀:= (F 〈 ρ 〉) ⟧
+--TODO Common pattern with Rep↑-botsub₃
 \end{code}
 
 \AgdaHide{

@@ -27,7 +27,8 @@ Computable-Substitution U V σ Γ Δ .(appT M N) _ σ∶Γ⇒Δ (appR {M = M} {N
   (Computable-Substitution U V σ Γ Δ M (A ⇛ B) σ∶Γ⇒Δ Γ⊢M∶A⇒B refl Δvalid) 
   (Computable-Substitution U V σ Γ Δ N A σ∶Γ⇒Δ Γ⊢N∶A refl Δvalid))
 Computable-Substitution U V σ Γ Δ .(ΛT A M) _ σ∶Γ⇒Δ (ΛR {A = A} {M} {B} Γ,A⊢M∶B) A'≡A Δvalid = subst (λ x → E Δ x _) (cong yt A'≡A) (func-E (λ W Θ ρ N validθ ρ∶Δ⇒RΘ N∈EΘA → 
-  expand-E (subst (E Θ B)
+  expand-E {!!} {!!} {!!}))
+{-  expand-E (subst (E Θ B)
   (let open ≡-Reasoning in 
   begin
     M ⟦ x₀:= N •SR Rep↑ -Term ρ • Sub↑ -Term σ ⟧
@@ -37,7 +38,7 @@ Computable-Substitution U V σ Γ Δ .(ΛT A M) _ σ∶Γ⇒Δ (ΛR {A = A} {M} 
     M ⟦ Sub↑ -Term σ ⟧ 〈 Rep↑ -Term ρ 〉 ⟦ x₀:= N ⟧
   ∎)  (Computable-Substitution (U , -Term) W 
     (x₀:= N •SR Rep↑ -Term ρ • Sub↑ -Term σ) (Γ ,T A) Θ M B 
-    (compC (compSRC (botsubC N∈EΘA) (Rep↑-typed ρ∶Δ⇒RΘ)) (Sub↑C σ∶Γ⇒Δ)) Γ,A⊢M∶B refl validθ))))
+    (compC (compSRC (botsubC N∈EΘA) (Rep↑-typed ρ∶Δ⇒RΘ)) (Sub↑C σ∶Γ⇒Δ)) Γ,A⊢M∶B refl validθ)))) -}
 
 botsub-comp-upRep : ∀ {U} {V} {K} {L} {σ : Sub U V} (E : Expression U L) {M} → E ⇑ ⟦ x₀:= M • Sub↑ K σ ⟧ ≡ E ⟦ σ ⟧
 botsub-comp-upRep {U} {V} {K} {L} {σ} E {M} = let open ≡-Reasoning in 
