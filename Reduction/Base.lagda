@@ -61,6 +61,11 @@ data _≃_ {V C K} : Subexpression V C K → Subexpression V C K → Set
 \begin{code}
 redex-conv : ∀ {V} {K} {C} {c} {E} {F} → R {V} {K} {C} c E F → app c E ≃ F
 redex-conv rcEF = osr-conv (redex rcEF)
+
+red-conv : ∀ {V} {C} {K} {M N : Subexpression V C K} → M ↠ N → M ≃ N
+red-conv (osr-red M⇒N) = osr-conv M⇒N
+red-conv ref = ref
+red-conv (trans-red M↠N N↠P) = trans-conv (red-conv M↠N) (red-conv N↠P)
 \end{code}
 }
 

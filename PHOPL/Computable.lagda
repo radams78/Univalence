@@ -64,8 +64,6 @@ E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \
 
 \AgdaHide{
 \begin{code}
-postulate red-conv : ∀ {V} {C} {K} {M N : Subexpression V C K} → M ↠ N → M ≃ N
-
 postulate ChurchRosserT : ∀ {V} {M N P : Term V} → M ↠ N → M ↠ P →
                         Σ[ Q ∈ Term V ] N ↠ Q × P ↠ Q
 
