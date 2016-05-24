@@ -15,19 +15,42 @@ open import PHOPL.Computable
 open import PHOPL.SubC
 open import PHOPL.SN
 open import PHOPL.MainPropFinal
+open import PHOPL.KeyRedex
+
+postulate subrepsub : ∀ {U} {V} {W} {X} {K} (M : Expression U K) {σ₁ : Sub U V} {σ₂ : Rep V W} {σ₃ : Sub W X} →
+                    M ⟦ σ₃ •SR σ₂ • σ₁ ⟧ ≡ M ⟦ σ₁ ⟧ 〈 σ₂ 〉 ⟦ σ₃ ⟧
 
 Computable-Sub : ∀ {U} {V} {K} (σ : Sub U V) {Γ} {Δ} {M : Expression U (varKind K)} {A} →
   σ ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → E' Δ (A ⟦ σ ⟧) (M ⟦ σ ⟧)
 Computable-Sub σ σ∶Γ⇒Δ (varR x validΓ) validΔ = σ∶Γ⇒Δ x
 Computable-Sub {V = V} σ {Δ = Δ} σ∶Γ⇒Δ (appR Γ⊢M∶A⇛B Γ⊢N∶A) validΔ = 
   appT-E validΔ (Computable-Sub σ σ∶Γ⇒Δ Γ⊢M∶A⇛B validΔ) (Computable-Sub σ σ∶Γ⇒Δ Γ⊢N∶A validΔ)
-Computable-Sub σ σ∶Γ⇒Δ (ΛR {A = A} {M} {B = B} Γ⊢M∶A) validΔ = 
-  func-E (λ W Θ ρ N validΘ ρ∶Δ⇒Θ N∈EΘA → 
-    expand-E {!!})
-Computable-Sub σ σ∶Γ⇒Δ (⊥R validΓ) validΔ = {!!}
-Computable-Sub σ σ∶Γ⇒Δ (⊃R Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
-Computable-Sub σ σ∶Γ⇒Δ (appPR Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
-Computable-Sub σ σ∶Γ⇒Δ (ΛPR Γ⊢M∶A) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒Δ (ΛR {M = M} {B} Γ,A⊢M∶B) validΔ = 
+  func-E (λ _ Θ ρ N validΘ ρ∶Δ⇒Θ N∈EΘA → 
+    let MN∈EΘB = subst (E Θ B) (subrepsub M)
+                 (Computable-Sub (x₀:= N •SR Rep↑ _ ρ • Sub↑ -Term σ) 
+                 (compC (compSRC (botsubC N∈EΘA) 
+                        (Rep↑-typed ρ∶Δ⇒Θ)) 
+                 (Sub↑C σ∶Γ⇒Δ)) 
+                 Γ,A⊢M∶B validΘ) in
+    expand-E MN∈EΘB
+      (appR (ΛR (Weakening (Substitution Γ,A⊢M∶B (ctxTR validΔ) (Sub↑-typed (subC-typed σ∶Γ⇒Δ))) 
+                                                      (ctxTR validΘ) 
+                                         (Rep↑-typed ρ∶Δ⇒Θ))) 
+                (E-typed N∈EΘA)) 
+      (βTkr (SNap' {Ops = substitution} R-respects-sub (E-SN B MN∈EΘB))))
+Computable-Sub σ σ∶Γ⇒Δ (⊥R _) validΔ = ⊥-E validΔ
+Computable-Sub σ σ∶Γ⇒Δ (⊃R Γ⊢φ∶Ω Γ⊢ψ∶Ω) validΔ = ⊃-E 
+  (Computable-Sub σ σ∶Γ⇒Δ Γ⊢φ∶Ω validΔ) (Computable-Sub σ σ∶Γ⇒Δ Γ⊢ψ∶Ω validΔ)
+Computable-Sub σ σ∶Γ⇒Δ (appPR Γ⊢δ∶φ⊃ψ Γ⊢ε∶φ) validΔ = appP-EP 
+  (Computable-Sub σ σ∶Γ⇒Δ Γ⊢δ∶φ⊃ψ validΔ) (Computable-Sub σ σ∶Γ⇒Δ Γ⊢ε∶φ validΔ)
+Computable-Sub σ σ∶Γ⇒Δ (ΛPR {δ = δ} {φ} {ψ} Γ,φ⊢δ∶ψ) validΔ = 
+  func-EP (λ W Θ ρ ε ρ∶Δ⇒Θ ε∈EΔφ → 
+    let δε∈EΘψ : EP Θ (ψ ⟦ σ ⟧ 〈 ρ 〉) (δ ⟦ Sub↑ _ σ ⟧ 〈 Rep↑ _ ρ 〉 ⟦ x₀:= ε ⟧)
+        δε∈EΘψ = {!!} in
+    expand-EP 
+    {!!} {!!} (βPkr {!!} (EP-SN ε∈EΔφ))) 
+  {!!}
 Computable-Sub σ σ∶Γ⇒Δ (convR Γ⊢M∶A Γ⊢M∶A₁ x) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒Δ (refR Γ⊢M∶A) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒Δ (⊃*R Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}

@@ -114,7 +114,9 @@ aux-lm1 U V σ Γ Δ φ δ ψ ih σ∶Γ⇒CΔ Γ,φ⊢δ∶ψ validΔ = func-EP
         (ih W Θ (x₀:= ε •SR Rep↑ -Proof ρ • Sub↑ -Proof σ) (compC (compSRC (botsubCP ε∈EΘφσρ) (Rep↑-typed ρ∶Δ⇒RΘ)) (Sub↑C σ∶Γ⇒CΔ)) (Context-Validity (EP-typed ε∈EΘφσρ)))
  in
   expand-EP EPδ
-    (appPR (ΛPR (subst₂ (λ M A → (Θ ,P ((φ ⟦ σ ⟧) 〈 ρ 〉)) ⊢ M ∶ A) 
+    (appPR (ΛPR (Weakening (Substitution (Context-Validity-Prop (Context-Validity Γ,φ⊢δ∶ψ)) validΔ (subC-typed σ∶Γ⇒CΔ)) (Context-Validity (EP-typed ε∈EΘφσρ)) 
+                ρ∶Δ⇒RΘ) 
+           (subst₂ (λ M A → (Θ ,P ((φ ⟦ σ ⟧) 〈 ρ 〉)) ⊢ M ∶ A) 
       (sub-compRS δ)
       (let open ≡-Reasoning in 
       begin
@@ -133,7 +135,8 @@ aux-lm1 U V σ Γ Δ φ δ ψ ih σ∶Γ⇒CΔ Γ,φ⊢δ∶ψ validΔ = func-EP
       (Computable-Substitution U W (ρ •RS σ) Γ Θ φ Ω (compRSC ρ∶Δ⇒RΘ σ∶Γ⇒CΔ) (Context-Validity-Prop (Context-Validity Γ,φ⊢δ∶ψ)) 
       refl (Context-Validity (EP-typed ε∈EΘφσρ))))) (EP-SN ε∈EΘφσρ)))
 -- TODO Common pattern with Computable-Substitution
- (ΛPR (change-type (Substitution Γ,φ⊢δ∶ψ (ctxPR (Substitution Γ⊢φ∶Ω validΔ (subC-typed σ∶Γ⇒CΔ))) (Sub↑-typed (subC-typed σ∶Γ⇒CΔ))) (Sub↑-upRep ψ))) where
+ (ΛPR (Substitution (Context-Validity-Prop (Context-Validity Γ,φ⊢δ∶ψ)) validΔ (subC-typed σ∶Γ⇒CΔ)) 
+   (change-type (Substitution Γ,φ⊢δ∶ψ (ctxPR (Substitution Γ⊢φ∶Ω validΔ (subC-typed σ∶Γ⇒CΔ))) (Sub↑-typed (subC-typed σ∶Γ⇒CΔ))) (Sub↑-upRep ψ))) where
  Γ⊢φ∶Ω : Γ ⊢ φ ∶ ty Ω
  Γ⊢φ∶Ω with (Context-Validity Γ,φ⊢δ∶ψ)
  Γ⊢φ∶Ω | ctxPR p = p
