@@ -15,8 +15,6 @@ open import PHOPL.SubC
 open import PHOPL.SN
 open import PHOPL.KeyRedex
 
-postulate SN⊥ : ∀ {V} → SN {V} ⊥
-
 Computable-Substitution : ∀ U V (σ : Sub U V) Γ Δ M A {A'} → 
                                   σ ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A' → A' ≡ ty A → valid Δ → E Δ A (M ⟦ σ ⟧)
 Computable-Substitution _ V σ _ Δ _ A σ∶Γ⇒Δ (varR x _) A'≡A _ = subst (λ a → E' Δ a _) (sub-congl A'≡A) (σ∶Γ⇒Δ x)

@@ -47,10 +47,13 @@ private βE-exp' : ∀ {V} {A} {M N : Term V} {P} {Q} {R} →
       (botsub₃-red ref ref (osr-red Q⇒Q')))))
 βE-exp' SNM SNN SNP SNQ SNPMNQ (app (appr (appr (appr (appr ())))))
 
-postulate βE-exp : ∀ {V} {A} {M N : Term V} {P} {Q} →
-                 SN M → SN N → SN Q →
-                 SN (P ⟦ x₂:= M ,x₁:= N ,x₀:= Q ⟧) →
-                 SN (app* M N (λλλ A P) Q)
+βE-exp : ∀ {V} {A} {M N : Term V} {P} {Q} →
+         SN M → SN N → SN Q →
+         SN (P ⟦ x₂:= M ,x₁:= N ,x₀:= Q ⟧) →
+         SN (app* M N (λλλ A P) Q)
+βE-exp SNM SNN SNQ SNPQ = SNI _ (λ R PQ⇒R → βE-exp' SNM SNN (SNap' {Ops = substitution} R-respects-sub SNPQ) SNQ SNPQ PQ⇒R)
 
 --REFACTOR Common pattern
+
+postulate SN⊥ : ∀ {V} → SN {V} ⊥
 \end{code}
