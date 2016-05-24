@@ -61,7 +61,8 @@ y \{ x := P \} & \eqdef \reff{y} \\
 \end{align*}
 
 \begin{code}
-_⟦⟦_∶_∼_⟧⟧ : ∀ {U} {V} → Term U → PathSub U V → Sub U V → Sub U V → Path V
+_⟦⟦_∶_∼_⟧⟧ : ∀ {U} {V} → Term U → PathSub U V → 
+  Sub U V → Sub U V → Path V
 \end{code}
 
 \AgdaHide{
@@ -98,7 +99,6 @@ x₀::= : ∀ {V} → Path V → PathSub (V , -Term) V
 \end{code}
 }
 
-\begin{frame}
 We define $M * P \eqdef \{ P / x \} (M x)$.  Thus, if $P : N =_A N'$
 then $M * P : M N =_B M N'$.
 
@@ -108,4 +108,3 @@ _⋆[_∶_∼_] : ∀ {V} → Term V → Path V → Term V → Term V → Path V
 M ⋆[ P ∶ N ∼ N' ] = (appT (M ⇑) (var x₀)) ⟦⟦ x₀::= P ∶ x₀:= N ∼ x₀:= N' ⟧⟧
 \end{code}
 }
-\end{frame}

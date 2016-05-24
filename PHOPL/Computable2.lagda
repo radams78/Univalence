@@ -1,6 +1,6 @@
 \AgdaHide{
 \begin{code}
-module PHOPL.Computable where
+module PHOPL.Computable2 where
 open import Data.Empty renaming (⊥ to Empty)
 open import Data.Product renaming (_,_ to _,p_)
 open import Prelims
@@ -149,23 +149,11 @@ neutral-red : ∀ {V} {N : Neutral V} {M} → decode-Neutral N ↠ M →
   Σ[ N' ∈ Neutral V ] decode-Neutral N' ≡ M
 neutral-red N↠M = neutral-red' N↠M refl
 
-data Shape : Set where
-  neutral : Shape
-  bot : Shape
-  imp : Shape → Shape → Shape
+data Closed-Prop : Set where
+  bot : Closed-Prop
+  imp : Closed-Prop → Closed-Prop → Closed-Prop
 
-data Leaves (V : Alphabet) : Shape → Set where
-  neutral : Neutral V → Leaves V neutral
-  bot : Leaves V bot
-  imp : ∀ {S} {T} → Leaves V S → Leaves V T → Leaves V (imp S T)
-
-lrep : ∀ {U} {V} {S} → Rep U V → Leaves U S → Leaves V S
-lrep ρ (neutral N) = neutral (nrep ρ N)
-lrep ρ bot = bot
-lrep ρ (imp φ ψ) = imp (lrep ρ φ) (lrep ρ ψ)
-
-decode-Prop : ∀ {V} {S} → Leaves V S → Term V
-decode-Prop (neutral N) = decode-Neutral N
+decode-Prop : ∀ {V} → Closed-Prop → Term V
 decode-Prop bot = ⊥
 decode-Prop (imp φ ψ) = decode-Prop φ ⊃ decode-Prop ψ
 
@@ -209,18 +197,6 @@ imp-red' (trans-red φ↠ψ ψ↠ψ') φ≡χ⊃θ =
 imp-red : ∀ {V} {χ θ ψ : Term V} → χ ⊃ θ ↠ ψ →
   Σ[ χ' ∈ Term V ] Σ[ θ' ∈ Term V ] χ ↠ χ' × θ ↠ θ' × ψ ≡ χ' ⊃ θ'
 imp-red χ⊃θ↠ψ = imp-red' χ⊃θ↠ψ refl
-
-leaves-red : ∀ {V} {S} {L : Leaves V S} {φ : Term V} →
-  decode-Prop L ↠ φ →
-  Σ[ L' ∈ Leaves V S ] decode-Prop L' ≡ φ
-leaves-red {S = neutral} {L = neutral N} L↠φ = 
-  let (N ,p N≡φ) = neutral-red {N = N} L↠φ in neutral N ,p N≡φ
-leaves-red {S = bot} {L = bot} L↠φ = bot ,p sym (bot-red L↠φ)
-leaves-red {S = imp S T} {L = imp φ ψ} φ⊃ψ↠χ = 
-  let (φ' ,p ψ' ,p φ↠φ' ,p ψ↠ψ' ,p χ≡φ'⊃ψ') = imp-red φ⊃ψ↠χ in 
-  let (L₁ ,p L₁≡φ') = leaves-red {L = φ} φ↠φ' in 
-  let (L₂ ,p L₂≡ψ') = leaves-red {L = ψ} ψ↠ψ' in 
-  (imp L₁ L₂) ,p (trans (cong₂ _⊃_ L₁≡φ' L₂≡ψ') (sym χ≡φ'⊃ψ'))
 
 computeP : ∀ {V} {S} → Context V → Leaves V S → Proof V → Set
 computeP {S = neutral} Γ (neutral _) δ = SN δ

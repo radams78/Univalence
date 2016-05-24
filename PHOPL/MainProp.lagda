@@ -375,7 +375,8 @@ Computable-Path-Substitution .U V τ σ σ' .Γ Δ _ _ σ∶Γ⇒CΔ σ'∶Γ⇒
 }
 
 \begin{code}
-Strong-Normalization : ∀ V K (Γ : Context V) (M : Expression V (varKind K)) A → Γ ⊢ M ∶ A → SN M
+Strong-Normalization : ∀ V K (Γ : Context V) 
+  (M : Expression V (varKind K)) A → Γ ⊢ M ∶ A → SN M
 \end{code}
 
 \AgdaHide{

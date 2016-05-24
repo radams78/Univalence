@@ -82,7 +82,7 @@ $$
   varR : ∀ {V} {K} {Γ : Context V} (x : Var V K)
 
       (validΓ : valid Γ)     → 
-  -------------------------
+  ------------------------------
     Γ ⊢ var x ∶ typeof x Γ
 
   appR : ∀ {V} {Γ : Context V} {M N : Term V} {A} {B} 
@@ -226,11 +226,3 @@ $e$, $x$ and $y$ are bound within $P$.
          (M≃M' : M ≃ M') (N≃N' : N ≃ N') → ------------------------------------------------------------------------------------
                                                                              Γ ⊢ P ∶ M' ≡〈 A 〉 N'
 \end{code}
-
-\AgdaHide{
-\begin{code}
-addpath-valid : ∀ {V} {Γ : Context V} {A} → valid Γ → valid (addpath Γ A)
-addpath-valid validΓ = ctxER (varR x₁ (ctxTR (ctxTR validΓ))) 
-                             (varR x₀ (ctxTR (ctxTR validΓ)))
-\end{code}
-}
