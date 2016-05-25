@@ -119,27 +119,22 @@ postulate R-creates-replacement : creates' replacement
 
 postulate R-respects-sub : respects' substitution
 
-red-subl : ∀ {V} {E F : Term (V , -Term)} {G} → E ↠ F → E ⟦ x₀:= G ⟧ ↠ F ⟦ x₀:= G ⟧
+red-subl : ∀ {U} {V} {C} {K} {E F : Subexpression U C K} {σ : Sub U V} → E ↠ F → E ⟦ σ ⟧ ↠ F ⟦ σ ⟧
 red-subl E↠F = respects-red (respects-osr substitution R-respects-sub) E↠F
+
+postulate red-subr : ∀ {U} {V} {C} {K} (E : Subexpression U C K) {ρ σ : Sub U V} → _↠s_ substitution ρ σ → E ⟦ ρ ⟧ ↠ E ⟦ σ ⟧
 
 postulate ⊥SN : ∀ {V} → SN {V} ⊥
 
 postulate ⊃SN : ∀ {V} {φ ψ : Term V} → SN φ → SN ψ → SN (φ ⊃ ψ)
 
-all-SN : ∀ {V} → List (Term V) → Set
-all-SN [] = ⊤
-all-SN (M ∷ MM) = SN M × all-SN MM
---TODO Use Data.List library
---TODO Delete?
-
-postulate var-APP-SN : ∀ {V} (x : Var V -Term) (MM : List (Term V)) →
-                     all-SN MM → SN (APP (var x) MM)
---TODO Move to Reduction library
---TODO Delete?
-
 postulate SN-βexp : ∀ {V} {φ : Term V} {δ : Proof (V , -Proof)} {ε : Proof V} →
                   SN ε → SN (δ ⟦ x₀:= ε ⟧) → SN (appP (ΛP φ δ) ε) 
 
+postulate botsub₃-red : ∀ {V} {K1} {K2} {K3} {M1 M1' : Expression V (varKind K1)} 
+                      {M2 M2' : Expression V (varKind K2)} {M3 M3' : Expression V (varKind K3)} →
+                      M1 ↠ M1' → M2 ↠ M2' → M3 ↠ M3' → 
+                      _↠s_ substitution (x₂:= M1 ,x₁:= M2 ,x₀:= M3) (x₂:= M1' ,x₁:= M2' ,x₀:= M3')
 \end{code}
 }
 
@@ -157,19 +152,49 @@ Local-Confluent : ∀ {V} {K} {E F G : Expression V K} →
 
 \AgdaHide{
 \begin{code}
-Local-Confluent (redex βT) δ = {!!}
+Local-Confluent (redex βT) (redex βT) = _ ,p ref ,p ref
+Local-Confluent (redex βT) (app (appl (redex ())))
+Local-Confluent (redex (βT {M = M} {N})) (app (appl (app (appl {E' = M'} M⇒M')))) = 
+  M' ⟦ x₀:= N ⟧ ,p (red-subl (osr-red M⇒M')) ,p (osr-red (redex βT))
+Local-Confluent (redex βT) (app (appl (app (appr ()))))
+Local-Confluent (redex (βT {M = M})) (app (appr (appl {E' = N'} N⇒N'))) =
+  M ⟦ x₀:= N' ⟧ ,p red-subr M (botsub-red N⇒N') ,p 
+  (osr-red (redex βT))
+Local-Confluent (redex βT) (app (appr (appr ())))
 Local-Confluent (redex βR) (redex βR) = _ ,p ref ,p ref
 Local-Confluent (redex βR) (app (appl (redex ())))
 Local-Confluent (redex βR) (app (appl (app (appl φ⇒φ')))) = _ ,p ref ,p (osr-red (redex βR))
 Local-Confluent (redex (βR {δ = δ} {ε = ε})) 
   (app (appl (app (appr (appl {E' = δ'} δ⇒δ'))))) = 
-  δ' ⟦ x₀:= ε ⟧ ,p {!red-subl!} ,p osr-red (redex βR)
-Local-Confluent (redex βR) (app (appl (app (appr (appr E⇒G))))) = {!!}
-Local-Confluent (redex βR) (app (appr E⇒G)) = {!!}
-Local-Confluent (redex βE) E⇒G = {!!}
-Local-Confluent (redex plus-ref) E⇒G = {!!}
-Local-Confluent (redex minus-ref) E⇒G = {!!}
-Local-Confluent (redex plus-univ) E⇒G = {!!}
+  δ' ⟦ x₀:= ε ⟧ ,p red-subl (osr-red δ⇒δ') ,p osr-red (redex βR)
+Local-Confluent (redex βR) (app (appl (app (appr (appr ())))))
+Local-Confluent (redex (βR {δ = δ})) (app (appr (appl {E' = ε'} ε⇒ε'))) = 
+  δ ⟦ x₀:= ε' ⟧ ,p red-subr δ (botsub-red ε⇒ε') ,p osr-red (redex βR)
+Local-Confluent (redex βR) (app (appr (appr ())))
+Local-Confluent (redex βE) (redex βE) = _ ,p ref ,p ref
+Local-Confluent (redex (βE {N = N} {A = A} {P = P} {Q = Q})) (app (appl {E' = M'} M⇒M')) = 
+  P ⟦ x₂:= M' ,x₁:= N ,x₀:= Q ⟧ ,p red-subr P (botsub₃-red (osr-red M⇒M') ref ref) ,p osr-red (redex βE)
+Local-Confluent (redex (βE {M = M} {P = P} {Q = Q})) (app (appr (appl {E' = N'} N⇒N'))) = 
+  P ⟦ x₂:= M ,x₁:= N' ,x₀:= Q ⟧ ,p (red-subr P (botsub₃-red ref (osr-red N⇒N') ref)) ,p 
+  osr-red (redex βE)
+Local-Confluent (redex βE) (app (appr (appr (appl (redex ())))))
+Local-Confluent (redex (βE {M = M} {N = N} {Q = Q})) (app (appr (appr (appl (app (appl {E' = P'} P⇒P')))))) = P' ⟦ x₂:= M ,x₁:= N ,x₀:= Q ⟧ ,p (red-subl (osr-red P⇒P')) ,p osr-red (redex βE)
+Local-Confluent (redex βE) (app (appr (appr (appl (app (appr ()))))))
+Local-Confluent (redex (βE {M = M} {N = N} {P = P})) (app (appr (appr (appr (appl {E' = Q'} Q⇒Q'))))) = P ⟦ x₂:= M ,x₁:= N ,x₀:= Q' ⟧ ,p (red-subr P (botsub₃-red ref ref (osr-red Q⇒Q'))) ,p (osr-red (redex βE))
+Local-Confluent (redex βE) (app (appr (appr (appr (appr ())))))
+Local-Confluent (redex plus-ref) (redex plus-ref) = _ ,p (ref ,p ref)
+Local-Confluent (redex plus-ref) (app (appl (redex ())))
+Local-Confluent (redex plus-ref) (app (appl (app (appl {E' = φ'} φ⇒φ')))) = ΛP φ' (var x₀)  ,p (osr-red (app (appl φ⇒φ'))) ,p (osr-red (redex plus-ref))
+Local-Confluent (redex plus-ref) (app (appl (app (appr ()))))
+Local-Confluent (redex plus-ref) (app (appr ()))
+Local-Confluent (redex minus-ref) (redex minus-ref) = _ ,p ref ,p ref
+Local-Confluent (redex minus-ref) (app (appl (redex ())))
+Local-Confluent (redex minus-ref) (app (appl (app (appl {E' = φ'} φ⇒φ')))) = ΛP φ' (var x₀) ,p (osr-red (app (appl φ⇒φ'))) ,p (osr-red (redex minus-ref))
+Local-Confluent (redex minus-ref) (app (appl (app (appr ()))))
+Local-Confluent (redex minus-ref) (app (appr ()))
+Local-Confluent (redex plus-univ) (redex plus-univ) = _ ,p ref ,p ref
+Local-Confluent (redex plus-univ) (app (appl E⇒G)) = {!!}
+Local-Confluent (redex plus-univ) (app (appr E⇒G)) = {!!}
 Local-Confluent (redex minus-univ) E⇒G = {!!}
 Local-Confluent (redex ref⊃*univ) E⇒G = {!!}
 Local-Confluent (redex univ⊃*ref) E⇒G = {!!}
