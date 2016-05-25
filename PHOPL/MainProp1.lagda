@@ -24,9 +24,26 @@ postulate subrepbotsub-up : ∀ {U} {V} {W} {K} {L} (M : Expression U K) {N : Ex
                             M ⇑ ⟦ x₀:= N •SR Rep↑ _ ρ • Sub↑ _ σ ⟧ ≡ M ⟦ σ ⟧ 〈 ρ 〉
 
 postulate ΛR' : ∀ {V} {Γ : Context V} {φ} {δ} {ψ} → Γ ,P φ ⊢ δ ∶ ψ ⇑ → Γ ⊢ ΛP φ δ ∶ ψ
+\end{code}
+}
 
-Computable-Sub : ∀ {U} {V} {K} (σ : Sub U V) {Γ} {Δ} {M : Expression U (varKind K)} {A} →
+\begin{frame}[fragile]
+\frametitle{The Main Proof}
+
+\begin{theorem}
+If $\Gamma \vdash M : B$, and $\sigma(x) \in E_\Delta(A[\sigma])$ for all $x : A \in \Gamma$,
+then $M[\sigma] \in E_\Delta(B[\sigma])$.
+\end{theorem}
+
+\begin{code}
+Computable-Sub : ∀ {U} {V} {K} (σ : Sub U V) {Γ} {Δ} 
+  {M : Expression U (varKind K)} {A} →
   σ ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → E' Δ (A ⟦ σ ⟧) (M ⟦ σ ⟧)
+\end{code}
+\end{frame}
+
+\AgdaHide{
+\begin{code}
 Computable-Sub σ σ∶Γ⇒Δ (varR x validΓ) validΔ = σ∶Γ⇒Δ x
 Computable-Sub {V = V} σ {Δ = Δ} σ∶Γ⇒Δ (appR Γ⊢M∶A⇛B Γ⊢N∶A) validΔ = 
   appT-E validΔ (Computable-Sub σ σ∶Γ⇒Δ Γ⊢M∶A⇛B validΔ) (Computable-Sub σ σ∶Γ⇒Δ Γ⊢N∶A validΔ)

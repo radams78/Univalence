@@ -19,25 +19,6 @@ open import PHOPL.MainProp1
 \end{code}
 }
 
-\begin{frame}[fragile]
-\frametitle{The Main Proof}
-
-\begin{theorem}
-If $\Gamma \vdash M : A$ then $M$ is strongly normalizable.
-\end{theorem}
-
-\begin{proof}
-\begin{enumerate}
-\item
-Every computable term (proof, path) is strongly normalizable.
-\item
-If $x_1 : A_1, \ldots, x_n : A_n \vdash N : B$ and
-\[ M_i \in E_\Gamma(A_i [x_1 := M_1 , \ldots, x_{i-1} : M_{i-1} ] \]
-for all $i$, then
-\[ N [x_1 := M_1, \ldots, x_n := M_n ] \in E_\Gamma(B[x_1 := M_1, \ldots, x_n := M_n]) \]
-\end{enumerate}
-\end{proof}
-
 \AgdaHide{
 \begin{code}
 --TODO Rename
@@ -374,10 +355,16 @@ Computable-Path-Substitution .U V τ σ σ' .Γ Δ _ _ σ∶Γ⇒CΔ σ'∶Γ⇒
 \end{code}
 }
 
+\begin{frame}[fragile]
+\begin{corollary}[Strong Normalization]
+If $\Gamma \vdash M : A$ then $M \in \SN$.
+\end{corollary}
+
 \begin{code}
 Strong-Normalization : ∀ V K (Γ : Context V) 
   (M : Expression V (varKind K)) A → Γ ⊢ M ∶ A → SN M
 \end{code}
+\end{frame}
 
 \AgdaHide{
 \begin{code}

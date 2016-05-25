@@ -36,11 +36,17 @@ If $A \simeq B$ then $E_\Gamma(A) = E_\Gamma(B)$.
 \begin{frame}
 Define the sets of \emph{computable} terms, proofs and paths as follows.
 \begin{align*}
-E_\Gamma(\Omega) & \eqdef \{ M \mid \Gamma \vdash M : \Omega, M \in \SN \} \\
-E_\Gamma(A \rightarrow B) & \eqdef \{ M \mid \Gamma \vdash M : A \rightarrow B, \\
-& \forall (\Delta \supseteq \Gamma) (N \in E_\Delta(A)). MN \in E_\Delta(B), \\
-& \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (P \in E_\Delta(N =_A N')). \\
-& (M x) {x := P} \in E_\Gamma(MN =_B MN') \} \\
+E_\Gamma(\Omega) \eqdef & \{ M \mid \Gamma \vdash M : \Omega, M \in \SN \} \\
+E_\Gamma(A \rightarrow B) \eqdef & \{ M \mid \Gamma \vdash M : A \rightarrow B, \\
+& \quad \forall (\Delta \supseteq \Gamma) (N \in E_\Delta(A)). MN \in E_\Delta(B), \\
+& \quad \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (P \in E_\Delta(N =_A N')). \\
+& \quad \quad (M x) \{x := P\} \in E_\Gamma(MN =_B MN') \}
+\end{align*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Computable Terms}
+\begin{align*}
 E_\Gamma(\bot) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
 E_\Gamma(\phi \rightarrow \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \rightarrow \psi, \\
 & \forall (\Delta \supseteq \Gamma)(\epsilon \in E_\Delta(\phi)). \delta \epsilon \in E_\Gamma(\psi) \} \\

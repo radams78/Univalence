@@ -57,26 +57,9 @@ data valid where
         valid (Γ ,E M ≡〈 A 〉 N)
 \end{code}
 
-\begin{frame}[fragile]
-\frametitle{Simply-Typed Lambda Calculus}
 \begin{code}
 data _⊢_∶_ where
 \end{code}
-
-\mode<beamer>{We begin with the simply-typed lambda calculus (no surprises so far):
-
-$$
-\begin{array}{lrcl}
-\text{Type} & A & ::= & \Omega \mid A \rightarrow A \\
-\text{Term} & M,\phi & ::= & x \mid \lambda x:A.M \mid M M
-\end{array}
-$$
-
-\[ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \qquad
-\infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \]
-}
-
-\end{frame}
 
 \begin{code}
   varR : ∀ {V} {K} {Γ : Context V} (x : Var V K)

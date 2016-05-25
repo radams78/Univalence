@@ -9,6 +9,9 @@ module Grammar.Base where
 \end{code}
 }
 
+\begin{frame}[fragile]
+\frametitle{Grammar}
+
 \begin{code}
 record IsGrammar (T : Taxonomy) : Set₁ where
   open Taxonomy T
@@ -16,6 +19,7 @@ record IsGrammar (T : Taxonomy) : Set₁ where
     Constructor    : ∀ {K} → Kind (-Constructor K) → Set
     parent         : VarKind → ExpressionKind
 \end{code}
+\end{frame}
 
 \AgdaHide{
 \begin{code}
@@ -28,6 +32,7 @@ record Grammar : Set₁ where
 \end{code}
 }
 
+\begin{frame}[fragile]
 We can now define the set of expressions over a grammar:
 
 \begin{code}
@@ -47,6 +52,7 @@ We can now define the set of expressions over a grammar:
     _,,_ : ∀ {V} {K} {A} {L} {C} → Expression (extend V A) L → 
       Body V {K} C → Body V (Π A L C)
 \end{code}
+\end{frame}
 
 \AgdaHide{
 \begin{code}

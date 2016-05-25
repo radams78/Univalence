@@ -12,7 +12,7 @@ open import PHOPL.Grammar
 \begin{frame}[fragile]
 \frametitle{Path Substitution}
 Define the operation of \emph{path substitution} such that,
-if $P : M =_A M'$ then $\{ P : M \sim M' \} N \equiv \{ P / x \} N : [M / x] N =_B [M' / x] N$.
+if $P : M =_A M'$ then $N \{ x := P : M \sim M' \} \equiv N \{ x:= P \} : N [x := M ]=_B N [x := M']$.
 
 \mode<article>{
 Given paths $P_1$, \ldots, $P_n$; term variales $x_1$, \ldots, $x_n$; and a term $M$, define the path $\{ P_1 / x_1, \ldots, P_n / x_n \} M$ as follows.
@@ -57,7 +57,8 @@ x \{ x := P \} & \eqdef P \\
 y \{ x := P \} & \eqdef \reff{y} \\
 \bot \{ x := P \} & \eqdef \reff{\bot} \\
 (\phi \supset \psi) \{ x := P \} & \eqdef \phi \{ x := P \} \supset^* \psi \{ x := P \} \\
-(M M') \{ x := P : N \sim N' \} & \eqdef (M\{ x := P \})_{M'[x:=N], M'[x:=N']} (M'\{ x := P \})
+\lefteqn{(M M') \{ x := P : N \sim N' \}} \\
+ & \eqdef (M\{ x := P \})_{M'[x:=N], M'[x:=N']} (M'\{ x := P \})
 \end{align*}
 
 \begin{code}

@@ -32,11 +32,37 @@ module PHOPLgrammar where
   data Type : Set where
     Ω : Type
     _⇛_ : Type → Type → Type
+\end{code}
 
-  data PHOPLcon : ∀ {K : ExpressionKind} → Kind (-Constructor K) → Set where
+\begin{frame}[fragile]
+\frametitle{Simply-Typed Lambda Calculus}
+\mode<beamer>{We begin with the simply-typed lambda calculus (no surprises so far):
+
+$$
+\begin{array}{lrcl}
+\text{Type} & A & ::= & \Omega \mid A \rightarrow A \\
+\text{Term} & M,\phi & ::= & x \mid \lambda x:A.M \mid M M
+\end{array}
+$$
+
+\[ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \qquad
+\infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \]
+}
+
+\begin{code}
+  data PHOPLcon : ∀ {K : ExpressionKind} → 
+    Kind (-Constructor K) → Set where
     -ty : Type → PHOPLcon (out (nonVarKind -Type))
-    -appProof : PHOPLcon (Π [] (varKind -Proof) (Π [] (varKind -Proof) (out (varKind -Proof))))
-    -lamProof : PHOPLcon (Π [] (varKind -Term) (Π [ -Proof ] (varKind -Proof) (out (varKind -Proof))))
+    -appProof : PHOPLcon (Π [] (varKind -Proof) 
+      (Π [] (varKind -Proof) (out (varKind -Proof))))
+    -lamProof : PHOPLcon (Π [] (varKind -Term) 
+      (Π [ -Proof ] (varKind -Proof) (out (varKind -Proof))))
+\end{code}
+etc.
+\end{frame}
+
+\AgdaHide{
+\begin{code}
     -bot : PHOPLcon (out (varKind -Term))
     -imp : PHOPLcon (Π [] (varKind -Term) (Π [] (varKind -Term) (out (varKind -Term))))
     -appTerm : PHOPLcon (Π [] (varKind -Term) (Π [] (varKind -Term) (out (varKind -Term))))
@@ -180,3 +206,4 @@ postulate sub↗-comp₁ : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} →
 
 --REFACTOR Duplication
 \end{code}
+}

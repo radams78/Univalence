@@ -29,7 +29,7 @@
 
 \usepackage{textalpha}
 
-\DefineVerbatimEnvironment{code}{Verbatim}{fontsize=\small}
+\DefineVerbatimEnvironment{code}{Verbatim}{fontsize=\footnotesize}
 
 % \newtheorem{lemma}{Lemma}[section]
 % \newtheorem{corollary}[lemma]{Corollary}
@@ -69,17 +69,19 @@ This talk is a literate Agda file
 \section{Introduction}
 
 \begin{frame}
-\frametitle{The problem}
+\frametitle{Type Theory Orthoodoxy}
 \begin{itemize}[<+->]
 \item
-A type theory should enjoy three properties:
-\begin{description}
-\item[Confluence] Reduction is confluent.
-\item[Strong Normalization] Every reduction strategy terminates.
-\item[Canonicity] Every well-typed term of type $A$ reduces to a unique canonical form of $A$.
-\end{description}
+To enjoy a good meaning explanation, a type theory should enjoy three properties:
+\begin{itemize}
+\item \textbf{Confluence} --- Reduction is confluent.
+\item \textbf{Strong Normalization} --- Every reduction strategy terminates.
+\item \textbf{Canonicity} --- Hence every well-typed term of type $A$ reduces to a unique canonical form of $A$.
+\begin{itemize}
 \item
 E.g. every closed term of type $\mathbb{N}$ reduces to a unique numeral.
+\end{itemize}
+\end{itemize}
 \item 
 The \emph{univalence axiom} postulates a function
 \[ \isotoid : A \simeq B \rightarrow A = B \]
@@ -91,13 +93,15 @@ This breaks canonicity.
 
 \begin{frame}
 \frametitle{Possible Solutions}
-\begin{itemize}
+\begin{itemize}[<+->]
 \item
 Lower our standards
-\begin{description}
-\item[Voevodsky's Conjecture]
+\begin{itemize}
+\item
+\textbf{Voevodsky's Conjecture --- Propositional Canonicity}
+
 For every closed term $t : \mathbb{N}$, there exists a numeral $n$ and a proof $\vdash p : Id_\mathbb{N}(t,n)$.
-\end{description}
+\end{itemize}
 \item
 Use a type theory in which $\isotoid$ is definable (Cubical Type Theory, \cite{Polonsky14a}) %TODO Cite
 \item
@@ -110,29 +114,32 @@ Introduce a reduction rule for $\isotoid$.
 \frametitle{Our Approach}
 We begin with a small type theory, and work our way up to the full HoTT. %Too much?
 \begin{enumerate}
-\item \emph{Predicative Higher-Order Propositional Logic} A type theory with:
+\item \textbf{$\lambda o e$ --- Predicative Higher-Order Propositional Logic} A type theory with:
   \begin{itemize}
   \item a universe $\Omega$ of \emph{propositions} with $\bot$ and $\supset$
   \item a universe $U$ of \emph{small types} with $\Omega$ and $\rightarrow$
   \item for any two terms $M, N : A$, a (large) type $M =_A N$.
   \end{itemize}
-\item \emph{PHOPL with Equality}
+\item \textbf{$\lambda o e$ --- P.H.O.P.L. with Equality}
 Make $\delta =_\phi \epsilon$ a proposition.  (So we can form propositions like $M =_A N \epsilon \supset N =_A M$.)
-\item \emph{Predicative Higher-Order Predicate Logic} Close $\Omega$ under $\forall$.  (So we can form propositions like $\forall x : \phi. x =_A x$.)
+\item \textbf{$\lambda o \forall$} Close $\Omega$ under $\forall$.  (So we can form propositions like $\forall x : \phi. x =_A x$.)
 \end{enumerate}
 For the future: natural numbers, inductive types, path elimination, \ldots
 \end{frame}
+%TODO Better names
 
 \section{About the Formalization}
 
 \begin{frame}
 \frametitle{About the Formalization}
 This work is being formalized in Agda (work in progress).
+\pause
 
 It will involve several systems and reduction relations.
 
 I want to prove only once:
-\begin{itemize}
+\pause
+\begin{itemize}[<+->]
 \item
 $M[x:=N][y:=P] \equiv M[y:=P[x:=N]][x:=N]$
 \item
@@ -142,9 +149,8 @@ If $M[x:=P]$ is SN then $M$ is SN.
 \item
 Etc.
 \end{itemize}
+\pause
 The formalization includes a general notion of `grammar' and `reduction relation'.  (To do: general notion of derivation rules.)
-
-Follow the progress here: \url{www.github.com/radams78/Univalence}
 \end{frame}
 
 \input{Prelims.lagda}
@@ -152,7 +158,12 @@ Follow the progress here: \url{www.github.com/radams78/Univalence}
 \mode<all>{\input{Grammar/Base.lagda}}
 
 We define the operations of replacement and substitution on
-expressions.  The details are given in Appendix \ref{appendix:repsub}.
+expressions.  
+
+\mode<all>{\input{Grammar/Substitution/PreOpFamily.lagda}}
+\mode<all>{\input{Grammar/Substitution/OpFamily.lagda}}
+
+The details are given in Appendix \ref{appendix:repsub}.
 
 \input{Grammar/Context.lagda}
 \input{Reduction/Base.lagda}
@@ -163,7 +174,7 @@ expressions.  The details are given in Appendix \ref{appendix:repsub}.
 
 \section{Predicative Higher-Order Propositional Logic}
 
-\input{PHOPL/Grammar.lagda}
+\mode<all>{\input{PHOPL/Grammar.lagda}}
 \mode<all>{\input{PHOPL/Rules.lagda}}
 
 \subsection{The Reduction Relation}
@@ -173,6 +184,7 @@ expressions.  The details are given in Appendix \ref{appendix:repsub}.
 \subsection{Strong Normalization Proof}
 
 \mode<all>{\input{PHOPL/Computable.lagda}}
+\mode<all>{\input{PHOPL/MainProp1.lagda}}
 \mode<all>{\input{PHOPL/MainProp.lagda}}
 
 \section{Systems Two and Three}
@@ -234,6 +246,8 @@ So it is possible!
 The simplicity is due to the separation between terms and proofs.
 \item
 Let's see how far we can go.
+\item
+Follow the progress here: \url{www.github.com/radams78/Univalence}
 \end{itemize}
 \end{frame}
 
@@ -253,11 +267,9 @@ Let's see how far we can go.
 \input{Grammar/OpFamily/Composition.lagda}
 \input{Grammar/OpFamily/OpFamily.lagda}
 \input{Grammar/Replacement.lagda}
-\input{Grammar/Substitution/PreOpFamily.lagda}
 \input{Grammar/Substitution/Lifting.lagda}
 \input{Grammar/Substitution/RepSub.lagda}
 \input{Grammar/Substitution/LiftFamily.lagda}
-\input{Grammar/Substitution/OpFamily.lagda}
 \input{Grammar/Substitution/Botsub.lagda}
 
 \end{document}

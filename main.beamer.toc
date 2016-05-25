@@ -1,13 +1,14 @@
 \beamer@endinputifotherversion {3.24pt}
 \select@language {english}
 \beamer@sectionintoc {1}{Introduction}{2}{0}{1}
-\beamer@sectionintoc {2}{About the Formalization}{12}{0}{2}
-\beamer@sectionintoc {3}{Grammars}{14}{0}{3}
-\beamer@subsectionintoc {3}{1}{Taxonomy}{15}{0}{3}
-\beamer@sectionintoc {4}{Predicative Higher-Order Propositional Logic}{19}{0}{4}
-\beamer@subsectionintoc {4}{1}{The Reduction Relation}{28}{0}{4}
-\beamer@subsectionintoc {4}{2}{Path Substitution}{33}{0}{4}
-\beamer@subsectionintoc {4}{3}{Strong Normalization Proof}{35}{0}{4}
-\beamer@sectionintoc {5}{Systems Two and Three}{39}{0}{5}
-\beamer@sectionintoc {6}{Conclusion}{45}{0}{6}
-\beamer@sectionintoc {7}{Replacement and Substitution}{55}{1}{7}
+\beamer@sectionintoc {2}{About the Formalization}{15}{0}{2}
+\beamer@sectionintoc {3}{Grammars}{24}{0}{3}
+\beamer@subsectionintoc {3}{1}{Taxonomy}{25}{0}{3}
+\beamer@subsectionintoc {3}{2}{Substitution}{32}{0}{3}
+\beamer@sectionintoc {4}{Predicative Higher-Order Propositional Logic}{34}{0}{4}
+\beamer@subsectionintoc {4}{1}{The Reduction Relation}{43}{0}{4}
+\beamer@subsectionintoc {4}{2}{Path Substitution}{51}{0}{4}
+\beamer@subsectionintoc {4}{3}{Strong Normalization Proof}{53}{0}{4}
+\beamer@sectionintoc {5}{Systems Two and Three}{59}{0}{5}
+\beamer@sectionintoc {6}{Conclusion}{65}{0}{6}
+\beamer@sectionintoc {7}{Replacement and Substitution}{76}{1}{7}

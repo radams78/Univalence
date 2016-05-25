@@ -14,6 +14,7 @@ open import Grammar.Substitution.RepSub G
 \end{code}
 }
 
+\mode<article>{
 We now define two compositions $\bullet_1 : \mathrm{replacement};\mathrm{substitution} \rightarrow \mathrm{substitution}$ and $\bullet_2 : \mathrm{substitution};\mathrm{replacement} \rightarrow \mathrm{substitution}$.
 
 \begin{code}
@@ -166,7 +167,6 @@ substitution = record {
 open OpFamily substitution using (comp-congl;comp-congr)
   renaming (liftOp-idOp to Sub↑-idOp;
            ap-idOp to sub-idOp;
-           ap-circ to sub-comp;
            ap-congl to sub-congr;
            ap-congr to sub-congl;
            unitl to sub-unitl;
@@ -175,5 +175,23 @@ open OpFamily substitution using (comp-congl;comp-congr)
            ∼-trans to sub-trans;
            assoc to sub-assoc)
   public
+\end{code}
+}
+}
+
+\begin{frame}[fragile]
+\frametitle{Metatheorems}
+We can now prove general results such as:
+
+\begin{code}
+sub-comp : ∀ {U} {V} {W} {C} {K}
+  {E : Subexpression U C K} {σ : Sub V W} {ρ : Sub U V} →
+  E ⟦ ρ ⟧ ⟦ σ ⟧ ≡ E ⟦ σ • ρ ⟧
+\end{code}
+\end{frame}
+
+\AgdaHide{
+\begin{code}
+sub-comp = OpFamily.ap-comp substitution
 \end{code}
 }

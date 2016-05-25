@@ -38,20 +38,21 @@ The `$\beta$-rules':
 \begin{frame}[fragile]
 \frametitle{The Reduction Relation}
 We make $\mathsf{univ}$ and $\mathsf{ref}$ move out past $\supset^*$ and application:
-\begin{align*}
-& \reff \phi \supset^* \univ{\psi}{\chi}{\delta}{\epsilon}
-\rhd \mathsf{univ}_{\phi \supset \psi,\phi \supset \chi}(\lambda p, q . \delta (p q), \lambda p, q . \epsilon (p q)) \\
-& \univ{\phi}{\psi}{\delta}{\epsilon} \supset^* \reff{\chi}
-\rhd \univ{\phi \supset \chi}{\psi \supset \chi}{\lambda p,q .p (\epsilon q)}{\lambda p,q .p (\delta q)}
-\\
-& \univ{\phi}{\psi}{\delta}{\epsilon} \supset^* \univ{\phi'}{\psi'}{\delta'}{\epsilon'} \\
-& \quad \rhd \univ{\phi \supset \phi'}{\psi \supset \psi'}
+$$\reff \phi \supset^* \univ{\psi}{\chi}{\delta}{\epsilon}
+\rhd \mathsf{univ}_{\phi \supset \psi,\phi \supset \chi}(\lambda p, q . \delta (p q), \lambda p, q . \epsilon (p q))$$
+\pause
+$$\univ{\phi}{\psi}{\delta}{\epsilon} \supset^* \reff{\chi}
+\rhd \univ{\phi \supset \chi}{\psi \supset \chi}{\lambda p,q .p (\epsilon q)}{\lambda p,q .p (\delta q)}$$
+\pause
+\begin{gather*}
+\univ{\phi}{\psi}{\delta}{\epsilon} \supset^* \univ{\phi'}{\psi'}{\delta'}{\epsilon'} \\
+\quad \rhd \univ{\phi \supset \phi'}{\psi \supset \psi'}
 {\lambda p,q . \delta' (p (\epsilon q))}{\lambda p, q . \epsilon' (p (\delta q))}
-\\
-& \reff{\phi} \supset^* \reff{\psi} \rhd \reff{\phi \supset \psi}
+\end{gather*}
+\pause
+$$\reff{\phi} \supset^* \reff{\psi} \rhd \reff{\phi \supset \psi}
 \qquad
-\reff{M} \reff{N} \rhd \reff{MN}
-\end{align*}
+\reff{M} \reff{N} \rhd \reff{MN}$$
 \end{frame}
 
 \AgdaHide{

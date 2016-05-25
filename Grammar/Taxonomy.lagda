@@ -23,6 +23,32 @@ A \emph{taxononmy} consists of:
 
 \begin{frame}[fragile]
 \frametitle{Grammars}
+Example: Simply-typed lambda calculus
+\[ \begin{array}{lrcl}
+\text{Type} & A & ::= & \bot \mid A \rightarrow A \\
+\text{Term} & M & ::= & x \mid \lambda x:A.M \mid M M
+\end{array} \]
+
+\begin{itemize}
+\item
+Two kinds: `Type' (non-variable kind) and `Term' (variable kind)
+\item
+Four constructors:
+\begin{itemize}
+\item
+$\bot$ --- kind Type
+\item
+$\rightarrow$ --- kind (Type, Type) Type
+\item
+$\lambda$ --- kind (Type, (Term) Term) Term
+\item
+$app$ --- kind (Term, Term) Term
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Grammars}
 A \emph{grammar} consists of:
 \begin{itemize}
 \item a set of \emph{expression kinds};
@@ -38,6 +64,12 @@ where each $A_{ij}$ is a variable kind, and each $B_i$ and $C$ is an expression 
 \end{frame}
 
 \begin{frame}[fragile]
+A \emph{taxonomy } consists of:
+\begin{itemize}
+\item a set of \emph{expression kinds};
+\item a subset of expression kinds, called the \emph{variable kinds}.  We refer to the other expession kinds as \emph{non-variable kinds}.
+\end{itemize}
+
 \begin{code}
 record Taxonomy : Set₁ where
   field
@@ -48,20 +80,25 @@ record Taxonomy : Set₁ where
     varKind : VarKind → ExpressionKind
     nonVarKind : NonVarKind → ExpressionKind
 \end{code}
+\end{frame}
 
-\pause
-
-\mode<article>{
-An \emph{alphabet} $A$ consists of a finite set of \emph{variables}, to each of which is assigned a variable kind $K$.
+\begin{frame}[fragile]
+\frametitle{Alphabets}
+An \emph{alphabet} $A$ consists of a finite set of \emph{variables},
+\mode<article>{to each of which is assigned a variable kind $K$.
 Let $\emptyset$ be the empty alphabet, and $(A , K)$ be the result of extending the alphabet $A$ with one
-fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of all variables in $A$ of kind $K$.
+fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of all variables in $A$ of kind $K$.}
+\mode<beamer>{each with a variable kind.}
 
 \begin{code}
   infixl 55 _,_
   data Alphabet : Set where
     ∅ : Alphabet
     _,_ : Alphabet → VarKind → Alphabet
+\end{code}
 
+\AgdaHide{
+\begin{code}
   extend : Alphabet → List VarKind → Alphabet
   extend A [] = A
   extend A (K ∷ KK) = extend (A , K) KK
@@ -69,23 +106,35 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
   snoc-extend : Alphabet → snocList VarKind → Alphabet
   snoc-extend A [] = A
   snoc-extend A (KK snoc K) = snoc-extend A KK , K
+\end{code}
+}
 
+\begin{code}
   data Var : Alphabet → VarKind → Set where
     x₀ : ∀ {V} {K} → Var (V , K) K
     ↑ : ∀ {V} {K} {L} → Var V L → Var (V , K) L
 \end{code}
-}
 
 \AgdaHide{
 \begin{code}
   x₁ : ∀ {V} {K} {L} → Var (V , K , L) K
-  x₁ = ↑ x₀
-
-  x₂ : ∀ {V} {K} {L} {L'} → Var (V , K , L , L') K
-  x₂ = ↑ x₁
---REFACTOR?
 \end{code}
 }
+
+\begin{code}
+  x₁ = ↑ x₀
+\end{code}
+
+\AgdaHide{
+\begin{code}
+  x₂ : ∀ {V} {K} {L} {L'} → Var (V , K , L , L') K
+\end{code}
+}
+
+\begin{code}
+  x₂ = ↑ x₁
+\end{code}
+\end{frame}
 
 \mode<article>{
 A \emph{grammar} over a taxonomy consists of:
@@ -114,6 +163,9 @@ When giving a specific grammar, we shall feel free to use BNF notation.
 We formalise this as follows.  First, we construct the sets of expression kinds and constructor kinds over a taxonomy:
 }
 
+\begin{frame}[fragile]
+There are two \emph{classes} of kinds: expression kinds and constructor kinds.
+
 \begin{code}
   data KindClass : Set where
     -Expression : KindClass
@@ -124,5 +176,6 @@ We formalise this as follows.  First, we construct the sets of expression kinds 
     out  : ∀ K → Kind (-Constructor K)
     Π    : ∀ {K} → List VarKind → ExpressionKind → 
            Kind (-Constructor K) → Kind (-Constructor K)
-\end{code}
+ \end{code}
 \end{frame}
+%TODO Colours in Agda code?
