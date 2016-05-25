@@ -4,11 +4,10 @@
 \beamer@sectionintoc {2}{About the Formalization}{15}{0}{2}
 \beamer@sectionintoc {3}{Grammars}{24}{0}{3}
 \beamer@subsectionintoc {3}{1}{Taxonomy}{25}{0}{3}
-\beamer@subsectionintoc {3}{2}{Substitution}{32}{0}{3}
-\beamer@sectionintoc {4}{Predicative Higher-Order Propositional Logic}{34}{0}{4}
-\beamer@subsectionintoc {4}{1}{The Reduction Relation}{42}{0}{4}
-\beamer@subsectionintoc {4}{2}{Path Substitution}{47}{0}{4}
-\beamer@subsectionintoc {4}{3}{Strong Normalization Proof}{50}{0}{4}
-\beamer@sectionintoc {5}{$\lambda o i$}{56}{0}{5}
-\beamer@sectionintoc {6}{Conclusion}{59}{0}{6}
-\beamer@sectionintoc {7}{Replacement and Substitution}{70}{1}{7}
+\beamer@sectionintoc {4}{Predicative Higher-Order Propositional Logic}{31}{0}{4}
+\beamer@subsectionintoc {4}{1}{The Reduction Relation}{39}{0}{4}
+\beamer@subsectionintoc {4}{2}{Path Substitution}{44}{0}{4}
+\beamer@subsectionintoc {4}{3}{Strong Normalization Proof}{47}{0}{4}
+\beamer@sectionintoc {5}{$\lambda o i$}{53}{0}{5}
+\beamer@sectionintoc {6}{Conclusion}{56}{0}{6}
+\beamer@sectionintoc {7}{Replacement and Substitution}{67}{1}{7}

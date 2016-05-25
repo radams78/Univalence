@@ -46,7 +46,9 @@ $$
 \[ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \qquad
 \infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \]
 }
+\end{frame}
 
+\AgdaHide{
 \begin{code}
   data PHOPLcon : ∀ {K : ExpressionKind} → 
     Kind (-Constructor K) → Set where
@@ -55,12 +57,6 @@ $$
       (Π [] (varKind -Proof) (out (varKind -Proof))))
     -lamProof : PHOPLcon (Π [] (varKind -Term) 
       (Π [ -Proof ] (varKind -Proof) (out (varKind -Proof))))
-\end{code}
-etc.
-\end{frame}
-
-\AgdaHide{
-\begin{code}
     -bot : PHOPLcon (out (varKind -Term))
     -imp : PHOPLcon (Π [] (varKind -Term) (Π [] (varKind -Term) (out (varKind -Term))))
     -appTerm : PHOPLcon (Π [] (varKind -Term) (Π [] (varKind -Term) (out (varKind -Term))))

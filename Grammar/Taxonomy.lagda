@@ -173,6 +173,7 @@ There are two \emph{classes} of kinds: expression kinds and constructor kinds.
 
   data Kind : KindClass → Set where
     base : ExpressionKind → Kind -Expression
+
     out  : ∀ K → Kind (-Constructor K)
     Π    : ∀ {K} → List VarKind → ExpressionKind → 
            Kind (-Constructor K) → Kind (-Constructor K)
