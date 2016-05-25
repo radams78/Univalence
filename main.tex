@@ -72,7 +72,7 @@ This talk is a literate Agda file
 \frametitle{Type Theory Orthoodoxy}
 \begin{itemize}[<+->]
 \item
-To enjoy a good meaning explanation, a type theory should enjoy three properties:
+To enjoy a good meaning explanation, a type theory should enjoy these properties:
 \begin{itemize}
 \item \textbf{Confluence} --- Reduction is confluent.
 \item \textbf{Strong Normalization} --- Every reduction strategy terminates.
@@ -125,11 +125,8 @@ We begin with a small type theory, and work our way up to the full HoTT. %Too mu
 \item \textbf{$\lambda o i$ --- P.H.O.P.L. with Equality}
 
 Make $\delta =_\phi \epsilon$ a proposition.  (So we can form propositions like $M =_A N \supset N =_A M$.)
-\item \textbf{$\lambda o \forall$} 
-
-Close $\Omega$ under $\forall$.  (So we can form propositions like $\forall x : \phi. x =_A x$.)
 \end{enumerate}
-For the future: natural numbers, inductive types, path elimination, \ldots
+For the future: universal quantification, natural numbers, inductive types, path elimination, \ldots
 \end{frame}
 %TODO Better names
 
@@ -192,7 +189,7 @@ The details are given in Appendix \ref{appendix:repsub}.
 \mode<all>{\input{PHOPL/MainProp1.lagda}}
 \mode<all>{\input{PHOPL/MainProp.lagda}}
 
-\section{Systems Two and Three}
+\section{$\lambda o i$}
 
 \begin{frame}
 \frametitle{Include equations in $\Omega$}
@@ -218,29 +215,13 @@ New computation rules include:
 \[ \lambda p. \triplelambda e:x=_A y. (F x =_{\delta} G y =_{p \reff{y}}) \]
 \end{frame}
 
-\begin{frame}
-\frametitle{Universal Quantification}
-
-We can close $\Omega$ under universal quantification in any of the types $A$ (including $\Omega$!)
-
-\[ \infer{\Gamma \vdash \forall I (x.\delta) : \forall x : A. \phi}{\Gamma, x : A vdash \delta : \phi} \]
-\[ \infer{\Gamma \vdash \forall E(\delta, M) : \phi[x:=M]} {\Gamma \vdash \delta : \forall x :A.\phi \quad \Gamma \vdash M : A} \]
-\[ \infer{\Gamma \vdash \forall^* x:A.\delta : \forall x:A.\phi =_\Omega \forall x:A.\psi}{\Gamma, x : A \vdash \delta : \phi =_\Omega \psi} \]
-
-\pause
-
-New computation rules include:
-\[ \forall^* x:A.\univ{\phi}{\psi}{\delta}{\epsilon} \]
-\[ \rhd \univ{\forall x \phi}{\forall x \psi}{\lambda p.\forall I(x. \delta \forall E(p,x))}{\lambda p. \forall I(x. \epsilon \forall E(p,x)))} \]
-\end{frame}
-
 \section{Conclusion}
 
 \begin{frame}
 \frametitle{Conclusion}
 \begin{itemize}[<+->]
 \item
-We have shown three systems that each have all these properties:
+We have shown two systems that each have all these properties:
 \begin{itemize}
 \item
 Univalence
@@ -256,7 +237,7 @@ So it is possible!
 \item
 The simplicity is due to the separation between terms and proofs.
 \item
-For the future: extract a normalizer.
+For the future: extract a normalizer.  Universal quantification.
 \item
 Follow the progress here: \url{www.github.com/radams78/Univalence}
 \end{itemize}

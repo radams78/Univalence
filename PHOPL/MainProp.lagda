@@ -364,7 +364,6 @@ If $\Gamma \vdash M : A$ then $M \in \SN$.
 Strong-Normalization : ∀ V K (Γ : Context V) 
   (M : Expression V (varKind K)) A → Γ ⊢ M ∶ A → SN M
 \end{code}
-\end{frame}
 
 \AgdaHide{
 \begin{code}
@@ -381,18 +380,18 @@ Strong-Normalization V -Path Γ P E Γ⊢P∶E = EE-SN E
 }
 
 \begin{corollary}[Consistency]
-There is no proof $\delta$ such that $\vdash \delta : \Omega$.
+There is no proof $\delta$ such that $\vdash \delta : \bot$.
 \end{corollary}
 
 \AgdaHide{
 \begin{code}
-Consistency' : ∀ {M : Term ∅} → SN M → 〈〉 ⊢ M ∶ ty Ω → Empty
-Consistency' (SNI M SNM) ⊢M∶Ω = ?
+Consistency' : ∀ {M : Term ∅} → SN M → 〈〉 ⊢ M ∶ ⊥ → Empty
+Consistency' (SNI M SNM) ⊢M∶⊥ = ?
 \end{code}
 }
 
 \begin{code}
-Consistency : ∀ {M : Term ∅} → 〈〉 ⊢ M ∶ ty Ω → Empty
+Consistency : ∀ {M : Term ∅} → 〈〉 ⊢ M ∶ ⊥ → Empty
 \end{code}
 
 \AgdaHide{

@@ -125,6 +125,8 @@ $\Omega$ is the universe of propositions:
 \end{array}
 \]
 
+Judgement form $\Gamma \vdash P : M =_A N$.
+
 \only<2>{Two main ways to prove equality:
 
 \[ \infer{\Gamma \vdash \reff{M} : M =_A M}{\Gamma \vdash M : A} \qquad

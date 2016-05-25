@@ -9,6 +9,6 @@
 \beamer@subsectionintoc {4}{1}{The Reduction Relation}{42}{0}{4}
 \beamer@subsectionintoc {4}{2}{Path Substitution}{47}{0}{4}
 \beamer@subsectionintoc {4}{3}{Strong Normalization Proof}{50}{0}{4}
-\beamer@sectionintoc {5}{Systems Two and Three}{56}{0}{5}
-\beamer@sectionintoc {6}{Conclusion}{61}{0}{6}
-\beamer@sectionintoc {7}{Replacement and Substitution}{72}{1}{7}
+\beamer@sectionintoc {5}{$\lambda o i$}{56}{0}{5}
+\beamer@sectionintoc {6}{Conclusion}{59}{0}{6}
+\beamer@sectionintoc {7}{Replacement and Substitution}{70}{1}{7}

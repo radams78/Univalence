@@ -50,8 +50,10 @@ E_\Gamma(A \rightarrow B) \eqdef & \{ M \mid \Gamma \vdash M : A \rightarrow B, 
 E_\Gamma(\bot) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
 E_\Gamma(\phi \rightarrow \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \rightarrow \psi, \\
 & \forall (\Delta \supseteq \Gamma)(\epsilon \in E_\Delta(\phi)). \delta \epsilon \in E_\Gamma(\psi) \} \\
+\\
 E_\Gamma(\phi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
 & \qquad (\phi \text{ neutral}) \\
+\\
 E_\Gamma(\phi) & \eqdef E_\Gamma(nf(\phi)) \\
 & \qquad (\phi \mbox{ a normalizable term of type $\Omega$})
 \end{align*}
@@ -62,9 +64,10 @@ E_\Gamma(\phi) & \eqdef E_\Gamma(nf(\phi)) \\
 \begin{align*}
 E_\Gamma(\phi =_\Omega \psi) & \eqdef \{ P \mid \Gamma \vdash P : \phi =_\Omega \psi, \\
 & P^+ \in E_\Gamma(\phi \rightarrow \psi), P^- \in E_\Gamma(\psi \rightarrow \phi) \} \\
+\\
 E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \rightarrow B} M', \\
-& \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Gamma(A)) (Q \in E_\Gamma(N =_A N')). \\
-& PQ \in E_\Gamma(MN =_B M'N') \}
+& \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (Q \in E_\Delta(N =_A N')). \\
+& P_{NN'}Q \in E_\Delta(MN =_B M'N') \}
 \end{align*}
 \end{frame}
 
