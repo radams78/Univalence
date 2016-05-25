@@ -135,6 +135,93 @@ postulate botsub₃-red : ∀ {V} {K1} {K2} {K3} {M1 M1' : Expression V (varKind
                       {M2 M2' : Expression V (varKind K2)} {M3 M3' : Expression V (varKind K3)} →
                       M1 ↠ M1' → M2 ↠ M2' → M3 ↠ M3' → 
                       _↠s_ substitution (x₂:= M1 ,x₁:= M2 ,x₀:= M3) (x₂:= M1' ,x₁:= M2' ,x₀:= M3')
+
+postulate univ-red : ∀ {V} {φ φ' ψ ψ' : Term V} {δ} {δ'} {ε} {ε'} → 
+                   φ ↠ φ' → ψ ↠ ψ' → δ ↠ δ' → ε ↠ ε' → univ φ ψ δ ε ↠ univ φ' ψ' δ' ε'
+
+postulate ΛP-red : ∀ {V} {φ φ' : Term V} {δ} {δ'} → φ ↠ φ' → δ ↠ δ' → ΛP φ δ ↠ ΛP φ' δ'
+
+pre-Confluent : ∀ {V} {K} {C} {c : Constructor C} {E E' : Body V C} {F} →
+  R c E F → E ⇒ E' → Σ[ F' ∈ Expression V K ] R c E' F' × F ↠ F'
+pre-Confluent = {!!}
+{-pre-Confluent βT (appl (redex ()))
+pre-Confluent βT (appl (app (appl M⇒M'))) = _ ,p βT ,p red-subl (osr-red M⇒M')
+pre-Confluent βT (appl (app (appr ())))
+pre-Confluent (βT {M = M}) (appr (appl N⇒N')) = _ ,p βT ,p red-subr M (botsub-red N⇒N')
+pre-Confluent βT (appr (appr ()))
+pre-Confluent βR (appl (redex ()))
+pre-Confluent βR (appl (app (appl _))) = _ ,p βR ,p ref
+pre-Confluent βR (appl (app (appr (appl δ⇒δ')))) = _ ,p βR ,p red-subl (osr-red δ⇒δ')
+pre-Confluent βR (appl (app (appr (appr ()))))
+pre-Confluent (βR {δ = δ}) (appr (appl ε⇒ε')) = _ ,p βR ,p red-subr δ (botsub-red ε⇒ε')
+pre-Confluent βR (appr (appr ()))
+pre-Confluent plus-ref (appl (redex ()))
+pre-Confluent plus-ref (appl (app (appl φ⇒φ'))) = _ ,p plus-ref ,p osr-red (app (appl φ⇒φ'))
+pre-Confluent plus-ref (appl (app (appr ())))
+pre-Confluent plus-ref (appr ())
+pre-Confluent minus-ref (appl (redex ()))
+pre-Confluent minus-ref (appl (app (appl φ⇒φ'))) = _ ,p minus-ref ,p osr-red (app (appl φ⇒φ'))
+pre-Confluent minus-ref (appl (app (appr ())))
+pre-Confluent minus-ref (appr ())
+pre-Confluent plus-univ (appl (redex ()))
+pre-Confluent plus-univ (appl (app (appl _))) = _ ,p plus-univ ,p ref
+pre-Confluent plus-univ (appl (app (appr (appl _)))) = _ ,p plus-univ ,p ref
+pre-Confluent plus-univ (appl (app (appr (appr (appl δ⇒δ'))))) = _ ,p plus-univ ,p osr-red δ⇒δ'
+pre-Confluent plus-univ (appl (app (appr (appr (appr (appl _)))))) = _ ,p plus-univ ,p ref
+pre-Confluent plus-univ (appl (app (appr (appr (appr (appr ()))))))
+pre-Confluent plus-univ (appr ())
+pre-Confluent minus-univ (appl (redex ()))
+pre-Confluent minus-univ (appl (app (appl _))) = _ ,p minus-univ ,p ref
+pre-Confluent minus-univ (appl (app (appr (appl _)))) = _ ,p minus-univ ,p ref
+pre-Confluent minus-univ (appl (app (appr (appr (appl _))))) = _ ,p minus-univ ,p ref
+pre-Confluent minus-univ (appl (app (appr (appr (appr (appl ε⇒ε')))))) = _ ,p minus-univ ,p osr-red ε⇒ε'
+pre-Confluent minus-univ (appl (app (appr (appr (appr (appr ()))))))
+pre-Confluent minus-univ (appr ())
+pre-Confluent ref⊃*univ (appl (redex ()))
+pre-Confluent ref⊃*univ (appl (app (appl {E = φ} {E' = φ'} φ⇒φ'))) = 
+  let φ⊃ψ↠φ'⊃ψ : ∀ x → (φ ⊃ x) ↠ (φ' ⊃ x)
+      φ⊃ψ↠φ'⊃ψ = λ _ → osr-red (app (appl φ⇒φ')) in
+  _ ,p ref⊃*univ ,p univ-red (φ⊃ψ↠φ'⊃ψ _) (φ⊃ψ↠φ'⊃ψ _) (ΛP-red (φ⊃ψ↠φ'⊃ψ _) (osr-red (app (appl (respects-osr replacement R-respects-replacement φ⇒φ'))))) 
+  (ΛP-red (φ⊃ψ↠φ'⊃ψ _) (osr-red (app (appl (respects-osr replacement R-respects-replacement φ⇒φ')))))
+pre-Confluent ref⊃*univ (appl (app (appr ())))
+pre-Confluent ref⊃*univ (appr (appl (redex ())))
+pre-Confluent ref⊃*univ (appr (appl (app (appl ψ⇒ψ')))) = _ ,p ref⊃*univ ,p (univ-red (osr-red (app (appr (appl ψ⇒ψ')))) ref 
+  (ΛP-red (osr-red (app (appr (appl ψ⇒ψ')))) ref) ref)
+pre-Confluent ref⊃*univ (appr (appl (app (appr (appl χ⇒χ'))))) = _ ,p (ref⊃*univ ,p (univ-red ref (osr-red (app (appr (appl χ⇒χ')))) 
+  ref (osr-red (app (appl (app (appr (appl χ⇒χ'))))))))
+pre-Confluent ref⊃*univ (appr (appl (app (appr (appr (appl δ⇒δ')))))) = _ ,p ref⊃*univ ,p osr-red (app (appr (appr (appl (app (appr (appl (app (appr (appl 
+  (app (appl (respects-osr replacement R-respects-replacement (respects-osr replacement R-respects-replacement δ⇒δ'))))))))))))))
+pre-Confluent ref⊃*univ (appr (appl (app (appr (appr (appr (appl ε⇒ε'))))))) = _ ,p ref⊃*univ ,p osr-red (app (appr (appr (appr (appl (app (appr (appl (app (appr 
+  (appl (app (appl (respects-osr replacement R-respects-replacement (respects-osr replacement R-respects-replacement ε⇒ε')))))))))))))))
+pre-Confluent ref⊃*univ (appr (appl (app (appr (appr (appr (appr ())))))))
+pre-Confluent ref⊃*univ (appr (appr ()))
+pre-Confluent univ⊃*ref E⇒E' = {!!}
+pre-Confluent univ⊃*univ E⇒E' = {!!}
+pre-Confluent ref⊃*ref E⇒E' = {!!}
+pre-Confluent refref E⇒E' = {!!}
+pre-Confluent βE E⇒E' = {!!}
+pre-Confluent reflamvar E⇒E' = {!!}
+pre-Confluent reflam⊃* E⇒E' = {!!}
+pre-Confluent reflamuniv E⇒E' = {!!}
+pre-Confluent reflamλλλ E⇒E' = {!!} -}
+
+Critical-Pairs : ∀ {V} {K} {C} {c : Constructor C} {E : Body V C} {F} {G} → R c E F → R c E G → Σ[ H ∈ Expression V K ] F ↠ H × G ↠ H
+Critical-Pairs βT βT = _ ,p ref ,p ref
+Critical-Pairs βR βR = _ ,p ref ,p ref
+Critical-Pairs plus-ref plus-ref = _ ,p ref ,p ref
+Critical-Pairs minus-ref minus-ref = _ ,p ref ,p ref
+Critical-Pairs plus-univ plus-univ = _ ,p ref ,p ref
+Critical-Pairs minus-univ minus-univ = _ ,p ref ,p ref
+Critical-Pairs ref⊃*univ ref⊃*univ = _ ,p ref ,p ref
+Critical-Pairs univ⊃*ref univ⊃*ref = _ ,p ref ,p ref
+Critical-Pairs univ⊃*univ univ⊃*univ = _ ,p ref ,p ref
+Critical-Pairs ref⊃*ref ref⊃*ref = _ ,p ref ,p ref
+Critical-Pairs refref refref = _ ,p ref ,p ref
+Critical-Pairs βE βE = _ ,p ref ,p ref
+Critical-Pairs reflamvar reflamvar = _ ,p ref ,p ref
+Critical-Pairs reflam⊃* reflam⊃* = _ ,p ref ,p ref
+Critical-Pairs reflamuniv reflamuniv = _ ,p ref ,p ref
+Critical-Pairs reflamλλλ reflamλλλ = _ ,p ref ,p ref
 \end{code}
 }
 
@@ -145,14 +232,27 @@ The reduction is locally confluent.
 \end{theorem}
 
 \begin{code}
-Local-Confluent : ∀ {V} {K} {E F G : Expression V K} →
+Local-Confluent : ∀ {V} {C} {K} {E F G : Subexpression V C K} →
                   E ⇒ F → E ⇒ G → 
-                  Σ[ H ∈ Expression V K ] (F ↠ H × G ↠ H)
+                  Σ[ H ∈ Subexpression V C K ] (F ↠ H × G ↠ H)
 \end{code}
 
 \AgdaHide{
 \begin{code}
-Local-Confluent (redex βT) (redex βT) = _ ,p ref ,p ref
+Local-Confluent (redex x) (redex y) = Critical-Pairs x y
+Local-Confluent (redex r) (app E⇒G) = let (H ,p r⇒H ,p G↠H) = pre-Confluent r E⇒G in 
+  H ,p G↠H ,p osr-red (redex r⇒H)
+Local-Confluent (app E⇒F) (redex r) = let (H ,p r⇒H ,p G↠H) = pre-Confluent r E⇒F in 
+  H ,p osr-red (redex r⇒H) ,p G↠H
+Local-Confluent (app E⇒F) (app E⇒G) = let (H ,p F↠H ,p G↠H) = Local-Confluent E⇒F E⇒G in 
+  app _ H ,p respects-red app F↠H ,p respects-red app G↠H
+Local-Confluent (appl E⇒F) (appl E⇒G) = let (H ,p F↠H ,p G↠H) = Local-Confluent E⇒F E⇒G in 
+  (H ,, _) ,p respects-red appl F↠H ,p respects-red appl G↠H
+Local-Confluent (appl {E' = E'} E⇒F) (appr {F' = F'} E⇒G) = (E' ,, F') ,p osr-red (appr E⇒G) ,p osr-red (appl E⇒F)
+Local-Confluent (appr {F' = F'} E⇒F) (appl {E' = E'} E⇒G) = E' ,, F' ,p (osr-red (appl E⇒G)) ,p (osr-red (appr E⇒F))
+Local-Confluent (appr E⇒F) (appr E⇒G) = let (H ,p F↠H ,p G↠H) = Local-Confluent E⇒F E⇒G in
+  (_ ,, H) ,p respects-red appr F↠H ,p respects-red appr G↠H
+{-Local-Confluent (redex βT) (redex βT) = _ ,p ref ,p ref
 Local-Confluent (redex βT) (app (appl (redex ())))
 Local-Confluent (redex (βT {M = M} {N})) (app (appl (app (appl {E' = M'} M⇒M')))) = 
   M' ⟦ x₀:= N ⟧ ,p (red-subl (osr-red M⇒M')) ,p (osr-red (redex βT))
@@ -193,10 +293,38 @@ Local-Confluent (redex minus-ref) (app (appl (app (appl {E' = φ'} φ⇒φ')))) 
 Local-Confluent (redex minus-ref) (app (appl (app (appr ()))))
 Local-Confluent (redex minus-ref) (app (appr ()))
 Local-Confluent (redex plus-univ) (redex plus-univ) = _ ,p ref ,p ref
-Local-Confluent (redex plus-univ) (app (appl E⇒G)) = {!!}
-Local-Confluent (redex plus-univ) (app (appr E⇒G)) = {!!}
-Local-Confluent (redex minus-univ) E⇒G = {!!}
-Local-Confluent (redex ref⊃*univ) E⇒G = {!!}
+Local-Confluent (redex plus-univ) (app (appl (redex ())))
+Local-Confluent (redex plus-univ) (app (appl (app (appl _)))) = 
+  _ ,p ref ,p osr-red (redex plus-univ)
+Local-Confluent (redex plus-univ) (app (appl (app (appr (appl _))))) = 
+  _ ,p ref ,p (osr-red (redex plus-univ))
+Local-Confluent (redex plus-univ) (app (appl (app (appr (appr (appl δ⇒δ')))))) = 
+  _ ,p osr-red δ⇒δ' ,p osr-red (redex plus-univ)
+Local-Confluent (redex plus-univ) (app (appl (app (appr (appr (appr (appl E⇒G))))))) = 
+  _ ,p ref ,p osr-red (redex plus-univ)
+Local-Confluent (redex plus-univ) (app (appl (app (appr (appr (appr (appr ())))))))
+Local-Confluent (redex plus-univ) (app (appr ()))
+Local-Confluent (redex minus-univ) (redex minus-univ) = _ ,p ref ,p ref
+Local-Confluent (redex minus-univ) (app (appl (redex ())))
+Local-Confluent (redex minus-univ) (app (appl (app (appl _)))) = 
+  _ ,p ref ,p osr-red (redex minus-univ)
+Local-Confluent (redex minus-univ) (app (appl (app (appr (appl _))))) = 
+  _ ,p ref ,p (osr-red (redex minus-univ))
+Local-Confluent (redex minus-univ) (app (appl (app (appr (appr (appl _)))))) = 
+  _ ,p ref ,p osr-red (redex minus-univ)
+Local-Confluent (redex minus-univ) (app (appl (app (appr (appr (appr (appl ε⇒ε'))))))) = 
+  _ ,p osr-red ε⇒ε' ,p osr-red (redex minus-univ)
+Local-Confluent (redex minus-univ) (app (appl (app (appr (appr (appr (appr ())))))))
+Local-Confluent (redex minus-univ) (app (appr ()))
+Local-Confluent (redex ref⊃*univ) (redex ref⊃*univ) = 
+  _ ,p ref ,p ref
+Local-Confluent (redex ref⊃*univ) (app (appl (redex ())))
+Local-Confluent (redex ref⊃*univ) (app (appl (app (appl φ⇒φ')))) = 
+  _ ,p univ-red (osr-red (app (appl φ⇒φ'))) (osr-red (app (appl φ⇒φ'))) 
+    (ΛP-red (osr-red (app (appl φ⇒φ'))) (ΛP-red (apredr replacement R-respects-replacement (osr-red φ⇒φ')) ref)) (ΛP-red (osr-red (app (appl φ⇒φ'))) (ΛP-red (apredr replacement R-respects-replacement (osr-red φ⇒φ')) ref)) ,p osr-red (redex ref⊃*univ)
+Local-Confluent (redex ref⊃*univ) (app (appl (app (appr ()))))
+Local-Confluent (redex ref⊃*univ) (app (appr (appl E⇒G))) = {!!}
+Local-Confluent (redex ref⊃*univ) (app (appr (appr E⇒G))) = {!!}
 Local-Confluent (redex univ⊃*ref) E⇒G = {!!}
 Local-Confluent (redex univ⊃*univ) E⇒G = {!!}
 Local-Confluent (redex ref⊃*ref) E⇒G = {!!}
@@ -205,7 +333,8 @@ Local-Confluent (redex reflamvar) E⇒G = {!!}
 Local-Confluent (redex reflam⊃*) E⇒G = {!!}
 Local-Confluent (redex reflamuniv) E⇒G = {!!}
 Local-Confluent (redex reflamλλλ) E⇒G = {!!}
-Local-Confluent (app E⇒F) E⇒G = {!!}
+Local-Confluent (app E⇒F) E⇒G = {!!} -}
+--TODO General theory of reduction
 \end{code}
 }
 
