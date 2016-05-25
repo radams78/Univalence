@@ -8,10 +8,7 @@ open import Data.Fin
 open import Prelims
 open import Grammar.Taxonomy
 open import Grammar.Base
-\end{code}
-}
 
-\begin{code}
 data PHOPLVarKind : Set where
   -Proof : PHOPLVarKind
   -Term : PHOPLVarKind
@@ -33,6 +30,7 @@ module PHOPLgrammar where
     Ω : Type
     _⇛_ : Type → Type → Type
 \end{code}
+}
 
 \begin{frame}[fragile]
 \frametitle{Simply-Typed Lambda Calculus}

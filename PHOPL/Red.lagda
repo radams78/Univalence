@@ -40,16 +40,13 @@ The `$\beta$-rules':
 We make $\mathsf{univ}$ and $\mathsf{ref}$ move out past $\supset^*$ and application:
 $$\reff \phi \supset^* \univ{\psi}{\chi}{\delta}{\epsilon}
 \rhd \mathsf{univ}_{\phi \supset \psi,\phi \supset \chi}(\lambda p, q . \delta (p q), \lambda p, q . \epsilon (p q))$$
-\pause
 $$\univ{\phi}{\psi}{\delta}{\epsilon} \supset^* \reff{\chi}
 \rhd \univ{\phi \supset \chi}{\psi \supset \chi}{\lambda p,q .p (\epsilon q)}{\lambda p,q .p (\delta q)}$$
-\pause
 \begin{gather*}
 \univ{\phi}{\psi}{\delta}{\epsilon} \supset^* \univ{\phi'}{\psi'}{\delta'}{\epsilon'} \\
 \quad \rhd \univ{\phi \supset \phi'}{\psi \supset \psi'}
 {\lambda p,q . \delta' (p (\epsilon q))}{\lambda p, q . \epsilon' (p (\delta q))}
 \end{gather*}
-\pause
 $$\reff{\phi} \supset^* \reff{\psi} \rhd \reff{\phi \supset \psi}
 \qquad
 \reff{M} \reff{N} \rhd \reff{MN}$$
@@ -78,6 +75,10 @@ $(\triplelambda e:x =_A y. P)_{MN}Q \rhd P[x:=M, y:=N, e:=Q]$
 \item
 If $P \not\equiv \reff{-}$, then $\reff{\lambda x:A.M} P \rhd ???$
 \end{itemize}
+
+\only<2>{$\Gamma , x : A , y : A , e : x=_A y ⊢ P : L =_B L', \qquad \Gamma \vdash Q : M =_A N$}
+
+\only<3>{$\Gamma , x : A \vdash M : B, \qquad \Gamma \vdash P : N =_A N'$}
 \end{frame}
 
 \mode<all>{\input{PHOPL/PathSub.lagda}}

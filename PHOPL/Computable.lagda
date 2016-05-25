@@ -40,7 +40,7 @@ E_\Gamma(\Omega) \eqdef & \{ M \mid \Gamma \vdash M : \Omega, M \in \SN \} \\
 E_\Gamma(A \rightarrow B) \eqdef & \{ M \mid \Gamma \vdash M : A \rightarrow B, \\
 & \quad \forall (\Delta \supseteq \Gamma) (N \in E_\Delta(A)). MN \in E_\Delta(B), \\
 & \quad \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (P \in E_\Delta(N =_A N')). \\
-& \quad \quad (M x) \{x := P\} \in E_\Gamma(MN =_B MN') \}
+& \quad \quad \reff{M} P \in E_\Gamma(MN =_B MN') \}
 \end{align*}
 \end{frame}
 

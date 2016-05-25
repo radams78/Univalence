@@ -106,6 +106,7 @@ then $M * P : M N =_B M N'$.
 \AgdaHide{
 \begin{code}
 _⋆[_∶_∼_] : ∀ {V} → Term V → Path V → Term V → Term V → Path V
-M ⋆[ P ∶ N ∼ N' ] = (appT (M ⇑) (var x₀)) ⟦⟦ x₀::= P ∶ x₀:= N ∼ x₀:= N' ⟧⟧
+--M ⋆[ P ∶ N ∼ N' ] = (appT (M ⇑) (var x₀)) ⟦⟦ x₀::= P ∶ x₀:= N ∼ x₀:= N' ⟧⟧
+M ⋆[ P ∶ N ∼ N' ] = app* N N' (reff M) P
 \end{code}
 }

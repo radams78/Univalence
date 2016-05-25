@@ -114,15 +114,20 @@ Introduce a reduction rule for $\isotoid$.
 \frametitle{Our Approach}
 We begin with a small type theory, and work our way up to the full HoTT. %Too much?
 \begin{enumerate}
-\item \textbf{$\lambda o e$ --- Predicative Higher-Order Propositional Logic} A type theory with:
+\item \textbf{$\lambda o e$ --- Predicative Higher-Order Propositional Logic}
+
+ A type theory with:
   \begin{itemize}
   \item a universe $\Omega$ of \emph{propositions} with $\bot$ and $\supset$
   \item a universe $U$ of \emph{small types} with $\Omega$ and $\rightarrow$
   \item for any two terms $M, N : A$, a (large) type $M =_A N$.
   \end{itemize}
 \item \textbf{$\lambda o i$ --- P.H.O.P.L. with Equality}
-Make $\delta =_\phi \epsilon$ a proposition.  (So we can form propositions like $M =_A N \epsilon \supset N =_A M$.)
-\item \textbf{$\lambda o \forall$} Close $\Omega$ under $\forall$.  (So we can form propositions like $\forall x : \phi. x =_A x$.)
+
+Make $\delta =_\phi \epsilon$ a proposition.  (So we can form propositions like $M =_A N \supset N =_A M$.)
+\item \textbf{$\lambda o \forall$} 
+
+Close $\Omega$ under $\forall$.  (So we can form propositions like $\forall x : \phi. x =_A x$.)
 \end{enumerate}
 For the future: natural numbers, inductive types, path elimination, \ldots
 \end{frame}
