@@ -8,7 +8,7 @@
 \beamer@sectionintoc {4}{Predicative Higher-Order Propositional Logic}{34}{0}{4}
 \beamer@subsectionintoc {4}{1}{The Reduction Relation}{43}{0}{4}
 \beamer@subsectionintoc {4}{2}{Path Substitution}{51}{0}{4}
-\beamer@subsectionintoc {4}{3}{Strong Normalization Proof}{53}{0}{4}
-\beamer@sectionintoc {5}{Systems Two and Three}{59}{0}{5}
+\beamer@subsectionintoc {4}{3}{Strong Normalization Proof}{54}{0}{4}
+\beamer@sectionintoc {5}{Systems Two and Three}{60}{0}{5}
 \beamer@sectionintoc {6}{Conclusion}{65}{0}{6}
 \beamer@sectionintoc {7}{Replacement and Substitution}{76}{1}{7}

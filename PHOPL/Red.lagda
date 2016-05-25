@@ -142,46 +142,60 @@ postulate SN-βexp : ∀ {V} {φ : Term V} {δ : Proof (V , -Proof)} {ε : Proof
 \end{code}
 }
 
+\begin{frame}[fragile]
+\frametitle{Confluence}
 \begin{theorem}[Local Confluence]
 The reduction is locally confluent.
 \end{theorem}
 
 \begin{code}
-postulate Local-Confluent : ∀ {V} {K} {E F G : Expression V K} →
+Local-Confluent : ∀ {V} {K} {E F G : Expression V K} →
                   E ⇒ F → E ⇒ G → 
                   Σ[ H ∈ Expression V K ] (F ↠ H × G ↠ H)
 \end{code}
 
+\AgdaHide{
+\begin{code}
+Local-Confluent (redex βT) δ = {!!}
+Local-Confluent (redex βR) (redex βR) = _ ,p ref ,p ref
+Local-Confluent (redex βR) (app (appl (redex ())))
+Local-Confluent (redex βR) (app (appl (app (appl φ⇒φ')))) = _ ,p ref ,p (osr-red (redex βR))
+Local-Confluent (redex (βR {δ = δ} {ε = ε})) 
+  (app (appl (app (appr (appl {E' = δ'} δ⇒δ'))))) = 
+  δ' ⟦ x₀:= ε ⟧ ,p {!red-subl!} ,p osr-red (redex βR)
+Local-Confluent (redex βR) (app (appl (app (appr (appr E⇒G))))) = {!!}
+Local-Confluent (redex βR) (app (appr E⇒G)) = {!!}
+Local-Confluent (redex βE) E⇒G = {!!}
+Local-Confluent (redex plus-ref) E⇒G = {!!}
+Local-Confluent (redex minus-ref) E⇒G = {!!}
+Local-Confluent (redex plus-univ) E⇒G = {!!}
+Local-Confluent (redex minus-univ) E⇒G = {!!}
+Local-Confluent (redex ref⊃*univ) E⇒G = {!!}
+Local-Confluent (redex univ⊃*ref) E⇒G = {!!}
+Local-Confluent (redex univ⊃*univ) E⇒G = {!!}
+Local-Confluent (redex ref⊃*ref) E⇒G = {!!}
+Local-Confluent (redex refref) E⇒G = {!!}
+Local-Confluent (redex reflamvar) E⇒G = {!!}
+Local-Confluent (redex reflam⊃*) E⇒G = {!!}
+Local-Confluent (redex reflamuniv) E⇒G = {!!}
+Local-Confluent (redex reflamλλλ) E⇒G = {!!}
+Local-Confluent (app E⇒F) E⇒G = {!!}
+\end{code}
+}
+
 \begin{corollary}
 Every strongly normalizing term is confluent, hence has a unique normal form.
 \end{corollary}
+
+\begin{code}
+Newmans : ∀ {V} {C} {K} {E F G : Subexpression V C K} → 
+  SN E → (E ↠ F) → (E ↠ G) →
+  Σ[ H ∈ Subexpression V C K ] (F ↠ H × G ↠ H)
+\end{code}
 \end{frame}
 
 \AgdaHide{
 \begin{code}
-{-Local-Confluent (redexR βR) (redexR βR) = _ ,p refR ,p refR
-Local-Confluent (redexR βR) (appR (applR (redexR ())))
-Local-Confluent (redexR βR) (appR (applR (appR (applR φ⇒φ')))) = _ ,p refR ,p (osr-redR (redexR βR))
-Local-Confluent (redexR (βR {δ = δ} {ε = ε})) 
-  (appR (applR (appR (apprR (applR {E' = δ'} δ⇒δ'))))) = 
-  δ' ⟦ x₀:= ε ⟧ ,p {!red-subl!} ,p osr-redR (redexR βR)
-Local-Confluent (redexR βR) (appR (applR (appR (apprR (apprR E⇒G))))) = {!!}
-Local-Confluent (redexR βR) (appR (apprR E⇒G)) = {!!}
-Local-Confluent (redexR βE) E⇒G = {!!}
-Local-Confluent (redexR plus-ref) E⇒G = {!!}
-Local-Confluent (redexR minus-ref) E⇒G = {!!}
-Local-Confluent (redexR plus-univ) E⇒G = {!!}
-Local-Confluent (redexR minus-univ) E⇒G = {!!}
-Local-Confluent (redexR ref⊃*univ) E⇒G = {!!}
-Local-Confluent (redexR univ⊃*ref) E⇒G = {!!}
-Local-Confluent (redexR univ⊃*univ) E⇒G = {!!}
-Local-Confluent (redexR ref⊃*ref) E⇒G = {!!}
-Local-Confluent (redexR refref) E⇒G = {!!}}
-Local-Confluent (redexR lllred) E⇒G = {!!}
-Local-Confluent (redexR reflamvar) E⇒G = {!!}
-Local-Confluent (redexR reflam⊃*) E⇒G = {!!}
-Local-Confluent (redexR reflamuniv) E⇒G = {!!}
-Local-Confluent (redexR reflamλλλ) E⇒G = {!!}
-Local-Confluent (appR E⇒F) E⇒G = {!!}-}
+Newmans = {!!}
 \end{code}
 }

@@ -109,5 +109,13 @@ SNred SNE (trans-red E↠F F↠G) = SNred (SNred SNE E↠F) F↠G
 
 SNvar : ∀ {V} {K} (x : Var V K) → SN (var x)
 SNvar x = SNI (var x) (λ _ ())
+
+data redview {V} {C} {K} (E : Subexpression V C K) : Subexpression V C K → Set where
+  ref : redview E E
+  trans-redview : ∀ {F} {G} → E ⇒ F → redview F G → redview E G
+
+data SNview : ∀ {V} {C} {K} → Subexpression V C K → Set where
+  SNviewI : ∀ {V} {C} {K} {E : Subexpression V C K} →
+    (∀ F → E ↠ F → SNview F) → SNview E
 \end{code}
 }

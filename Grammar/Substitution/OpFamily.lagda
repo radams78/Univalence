@@ -185,13 +185,13 @@ We can now prove general results such as:
 
 \begin{code}
 sub-comp : ∀ {U} {V} {W} {C} {K}
-  {E : Subexpression U C K} {σ : Sub V W} {ρ : Sub U V} →
-  E ⟦ ρ ⟧ ⟦ σ ⟧ ≡ E ⟦ σ • ρ ⟧
+  (E : Subexpression U C K) {σ : Sub V W} {ρ : Sub U V} →
+  E ⟦ σ • ρ ⟧ ≡ E ⟦ ρ ⟧ ⟦ σ ⟧
 \end{code}
 \end{frame}
 
 \AgdaHide{
 \begin{code}
-sub-comp = OpFamily.ap-comp substitution
+sub-comp = OpFamily.ap-circ substitution
 \end{code}
 }

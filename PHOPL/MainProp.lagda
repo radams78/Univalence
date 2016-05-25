@@ -380,4 +380,25 @@ Strong-Normalization V -Path Γ P E Γ⊢P∶E = EE-SN E
 \end{code}
 }
 
+\begin{corollary}[Consistency]
+There is no proof $\delta$ such that $\vdash \delta : \Omega$.
+\end{corollary}
+
+\AgdaHide{
+\begin{code}
+Consistency' : ∀ {M : Term ∅} → SN M → 〈〉 ⊢ M ∶ ty Ω → Empty
+Consistency' (SNI M SNM) ⊢M∶Ω = ?
+\end{code}
+}
+
+\begin{code}
+Consistency : ∀ {M : Term ∅} → 〈〉 ⊢ M ∶ ty Ω → Empty
+\end{code}
+
+\AgdaHide{
+\begin{code}
+Consistency = ?
+\end{code}
+}
+
 \end{frame}
