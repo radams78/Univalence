@@ -145,10 +145,10 @@ neutral-red' {N = app (app _ _) _} (osr-red (redex βT)) EF≡ΛMN = ⊥-elim (a
 neutral-red' {N = var _} (osr-red (app _)) ()
 neutral-red' {N = app _ _} (osr-red (app {c = -bot} _)) ()
 neutral-red' {N = app _ _} (osr-red (app {c = -imp} _)) ()
-neutral-red' {N = app N P} (osr-red (app {c = -appTerm} (appl {F = F ,, out} E⇒E'))) NP≡EF = 
+neutral-red' {N = app N P} (osr-red (app {c = -appTerm} (appl {F = F ,, ●} E⇒E'))) NP≡EF = 
   let (N' ,p N'≡E') = neutral-red' (osr-red E⇒E') (appT-injl NP≡EF) in
   app N' P ,p cong₂ appT N'≡E' (appT-injr NP≡EF)
-neutral-red' {N = app N P} (osr-red (app {c = -appTerm} (appr (appl {E' = F'} {F = out} F↠F')))) NP≡EF = app N F' ,p cong (λ x → appT x F') (appT-injl NP≡EF)
+neutral-red' {N = app N P} (osr-red (app {c = -appTerm} (appr (appl {E' = F'} {F = ●} F↠F')))) NP≡EF = app N F' ,p cong (λ x → appT x F') (appT-injl NP≡EF)
 neutral-red' {N = app _ _} (osr-red (app {c = -appTerm} (appr (appr ())))) _
 neutral-red' {N = app _ _} (osr-red (app {c = -lamTerm x} _)) ()
 neutral-red' {N = N} ref N≡M₁ = N ,p N≡M₁
@@ -182,7 +182,7 @@ decode-Prop (imp φ ψ) = decode-Prop φ ⊃ decode-Prop ψ
 
 bot-red' : ∀ {V} {φ ψ : Term V} → φ ↠ ψ → φ ≡ ⊥ → ψ ≡ ⊥
 bot-red' (osr-red (redex βT)) ()
-bot-red' (osr-red (app {c = -bot} {F = out} x)) _ = refl
+bot-red' (osr-red (app {c = -bot} {F = ●} x)) _ = refl
 bot-red' (osr-red (app {c = -imp} _)) ()
 bot-red' (osr-red (app {c = -appTerm} _)) ()
 bot-red' (osr-red (app {c = -lamTerm _} _)) ()
@@ -202,10 +202,10 @@ imp-red' : ∀ {V} {φ ψ χ θ : Term V} → φ ↠ ψ → φ ≡ χ ⊃ θ →
   Σ[ χ' ∈ Term V ] Σ[ θ' ∈ Term V ] χ ↠ χ' × θ ↠ θ' × ψ ≡ χ' ⊃ θ'
 imp-red' (osr-red (redex βT)) ()
 imp-red' (osr-red (app {c = -bot} _)) ()
-imp-red' {θ = θ} (osr-red (app {c = -imp} (appl {E' = χ'} {F = _ ,, out} χ⇒χ'))) φ≡χ⊃θ = 
+imp-red' {θ = θ} (osr-red (app {c = -imp} (appl {E' = χ'} {F = _ ,, ●} χ⇒χ'))) φ≡χ⊃θ = 
   χ' ,p θ ,p subst (λ x → x ↠ χ') (imp-injl φ≡χ⊃θ) (osr-red χ⇒χ') ,p 
   ref ,p (cong (λ x → χ' ⊃ x) (imp-injr φ≡χ⊃θ))
-imp-red' {χ = χ} (osr-red (app {c = -imp} (appr (appl {E' = θ'} {F = out} θ⇒θ')))) φ≡χ⊃θ = 
+imp-red' {χ = χ} (osr-red (app {c = -imp} (appr (appl {E' = θ'} {F = ●} θ⇒θ')))) φ≡χ⊃θ = 
   χ ,p θ' ,p ref ,p (subst (λ x → x ↠ θ') (imp-injr φ≡χ⊃θ) (osr-red θ⇒θ')) ,p 
   cong (λ x → x ⊃ θ') (imp-injl φ≡χ⊃θ)
 imp-red' (osr-red (app {c = -imp} (appr (appr ())))) _
@@ -389,18 +389,18 @@ expand-computeT {A = A ⇛ B} {M} {M'} (computeM'app ,p computeM'eq) Γ⊢M∶A�
       (key-redex-⋆ (key-redex-rep M▷M')))
 
 compute : ∀ {V} {K} → Context V → Expression V (parent K) → Expression V (varKind K) → Set
-compute {K = -Term} Γ (app (-ty A) out) M = computeT Γ A M
+compute {K = -Term} Γ (app (-ty A) ●) M = computeT Γ A M
 compute {V} {K = -Proof} Γ φ δ = Σ[ S ∈ Shape ] Σ[ L ∈ Leaves V S ] φ ↠ decode-Prop L × computeP Γ L δ
-compute {K = -Path} Γ (app (-eq A) (M ,, N ,, out)) P = computeE Γ M A N P
+compute {K = -Path} Γ (app (-eq A) (M ,, N ,, ●)) P = computeE Γ M A N P
 
 postulate expand-computeP : ∀ {V} {Γ : Context V} {S} {L : Leaves V S} {δ ε} →
                           computeP Γ L ε → Γ ⊢ δ ∶ decode-Prop L → key-redex δ ε → computeP Γ L δ
 
 expand-compute : ∀ {V} {K} {Γ : Context V} {A : Expression V (parent K)} {M N : Expression V (varKind K)} →
   compute Γ A N → Γ ⊢ M ∶ A → key-redex M N → compute Γ A M
-expand-compute {K = -Term} {A = app (-ty A) out} = expand-computeT {A = A}
+expand-compute {K = -Term} {A = app (-ty A) ●} = expand-computeT {A = A}
 expand-compute {K = -Proof} (S ,p ψ ,p φ↠ψ ,p computeε) Γ⊢δ∶φ δ▷ε = (S ,p ψ ,p φ↠ψ ,p expand-computeP {S = S} computeε (Type-Reduction Γ⊢δ∶φ φ↠ψ) δ▷ε)
-expand-compute {K = -Path} {A = app (-eq A) (M ,, N ,, out)} computeQ Γ⊢P∶M≡N P▷Q = expand-computeE computeQ Γ⊢P∶M≡N P▷Q
+expand-compute {K = -Path} {A = app (-eq A) (M ,, N ,, ●)} computeQ Γ⊢P∶M≡N P▷Q = expand-computeE computeQ Γ⊢P∶M≡N P▷Q
 
 record E' {V} {K} (Γ : Context V) (A : Expression V (parent K)) (E : Expression V (varKind K)) : Set where
   constructor E'I
@@ -616,7 +616,7 @@ computeE-SN {V} {Γ} {A = A ⇛ B} {P} computeP validΓ =
       x₀∈EΓ,AA = var-E' {A = A} (Γ ,T A) x₀ (ctxTR validΓ) refl in
   let SNapp*xxPref : SN (app* (var x₀) (var x₀) (P ⇑) (reff (var x₀)))
       SNapp*xxPref = computeE-SN {A = B} (computeP (V , -Term) (Γ ,T A ) upRep 
-          (var x₀) (var x₀) (app -ref (var x₀ ,, out)) upRep-typed 
+          (var x₀) (var x₀) (app -ref (var x₀ ,, ●)) upRep-typed 
           (refR (varR x₀ (ctxTR validΓ)) )
           x₀∈EΓ,AA x₀∈EΓ,AA (ref-compute x₀∈EΓ,AA)) 
           (ctxTR validΓ)
@@ -776,6 +776,6 @@ conv-computeE {M = M} {M'} {N} {N'} {A = A ⇛ B} computeP M≃M' N≃N' Γ⊢M'
 conv-EE (Γ⊢P∶M≡N ,p computeP) M≃M' N≃N' Γ⊢M'∶A Γ⊢N'∶A = convER Γ⊢P∶M≡N Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N' ,p conv-computeE computeP M≃M' N≃N' Γ⊢M'∶A Γ⊢N'∶A
 --REFACTOR Duplication                      
                  
-EE-SN (app (-eq _) (_ ,, _ ,, out)) (Γ⊢P∶E ,p computeP) = computeE-SN computeP (Context-Validity Γ⊢P∶E) -}
+EE-SN (app (-eq _) (_ ,, _ ,, ●)) (Γ⊢P∶E ,p computeP) = computeE-SN computeP (Context-Validity Γ⊢P∶E) -}
 \end{code}
 }

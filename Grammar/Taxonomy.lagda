@@ -174,16 +174,16 @@ There are two \emph{classes} of kinds: expression kinds and constructor kinds.
   data AbstractionKind : Set where
     _⟶_ : List VarKind → ExpressionKind → AbstractionKind
 
-  data Kind : KindClass → Set
-  ConstructorKind : ExpressionKind → Set
+  data ConstructorKind (K : ExpressionKind) : Set where
+    ● : ConstructorKind K
+    _⟶_ : AbstractionKind → ConstructorKind K → ConstructorKind K
 
-  ConstructorKind K = Kind (-Constructor K)
+  Kind : KindClass → Set
+  Kind -Expression = ExpressionKind
+  Kind (-Constructor K) = ConstructorKind K
 
-  data Kind where
-    base : ExpressionKind → Kind -Expression
-
-    out  : ∀ K → ConstructorKind K
-    _⟶_ : ∀ {K} → AbstractionKind → ConstructorKind K → ConstructorKind K
+  out : ∀ K → ConstructorKind K
+  out _ = ●
 
   Π    : ∀ {K} → List VarKind → ExpressionKind → ConstructorKind K → ConstructorKind K
   Π A K L = (A ⟶ K) ⟶ L

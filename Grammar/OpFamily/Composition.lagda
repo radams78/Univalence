@@ -96,7 +96,7 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
 \begin{code}
   ap-circ (var _) = apV-circ
   ap-circ (app c E) = cong (app c) (ap-circ E)
-  ap-circ out = refl
+  ap-circ ● = refl
   ap-circ (_,,_ {A = A} E E') {σ} {ρ} = cong₂ _,,_
     (let open ≡-Reasoning in 
     begin

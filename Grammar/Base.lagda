@@ -30,7 +30,7 @@ We can now define the set of expressions over a grammar:
   Expression : Alphabet → ExpressionKind → Set
   Body : Alphabet → ∀ {K} → Kind (-Constructor K) → Set
 
-  Expression V K = Subexpression V -Expression (base K)
+  Expression V K = Subexpression V -Expression K
   Body V {K} C = Subexpression V (-Constructor K) C
 
   infixr 50 _,,_
@@ -39,7 +39,7 @@ We can now define the set of expressions over a grammar:
     app : ∀ {V} {K} {C} → Constructor C → Body V {K} C → 
       Expression V K
 
-    out : ∀ {V} {K} → Body V (out K)
+    ● : ∀ {V} {K} → Body V (out K)
     _,,_ : ∀ {V} {K} {A} {L} {C} → Expression (extend V A) L → 
       Body V {K} C → Body V (Π A L C)
 \end{code}

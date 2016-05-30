@@ -98,61 +98,61 @@ Equation : Alphabet → Set
 Equation V = Expression V (nonVarKind -Equation)
 
 appP : ∀ {V} → Proof V → Proof V → Proof V
-appP δ ε = app -appProof (δ ,, ε ,, out)
+appP δ ε = app -appProof (δ ,, ε ,, ●)
 
 ΛP : ∀ {V} → Term V → Proof (V , -Proof) → Proof V
-ΛP φ δ = app -lamProof (φ ,, δ ,, out)
+ΛP φ δ = app -lamProof (φ ,, δ ,, ●)
 
 ⊥ : ∀ {V} → Term V
-⊥ = app -bot out
+⊥ = app -bot ●
 
 infix 65 _⊃_
 _⊃_ : ∀ {V} → Term V → Term V → Term V
-φ ⊃ ψ = app -imp (φ ,, ψ ,, out)
+φ ⊃ ψ = app -imp (φ ,, ψ ,, ●)
 
 appT : ∀ {V} → Term V → Term V → Term V
-appT M N = app -appTerm (M ,, N ,, out)
+appT M N = app -appTerm (M ,, N ,, ●)
 
 appT-injl : ∀ {V} {M M' N N' : Term V} → appT M N ≡ appT M' N' → M ≡ M'
 appT-injl refl = refl
 
 ΛT : ∀ {V} → Type → Term (V , -Term) → Term V
-ΛT A M = app (-lamTerm A) (M ,, out)
+ΛT A M = app (-lamTerm A) (M ,, ●)
 
 reff : ∀ {V} → Term V → Path V
-reff M = app -ref (M ,, out)
+reff M = app -ref (M ,, ●)
 
 infix 15 _⊃*_
 _⊃*_ : ∀ {V} → Path V → Path V → Path V
-P ⊃* Q = app -imp* (P ,, Q ,, out)
+P ⊃* Q = app -imp* (P ,, Q ,, ●)
 
 univ : ∀ {V} → Term V → Term V → Proof V → Proof V → Path V
-univ φ ψ P Q = app -univ (φ ,, ψ ,, P ,, Q ,, out)
+univ φ ψ P Q = app -univ (φ ,, ψ ,, P ,, Q ,, ●)
 
 λλλ : ∀ {V} → Type → Path (V , -Term , -Term , -Path) → Path V
-λλλ A P = app (-lll A) (P ,, out)
+λλλ A P = app (-lll A) (P ,, ●)
 
 app* : ∀ {V} → Term V → Term V → Path V → Path V → Path V
-app* M N P Q = app -app* (M ,, N ,, P ,, Q ,, out)
+app* M N P Q = app -app* (M ,, N ,, P ,, Q ,, ●)
 
 plus : ∀ {V} → Path V → Proof V
-plus P = app -plus (P ,, out)
+plus P = app -plus (P ,, ●)
 
 minus : ∀ {V} → Path V → Proof V
-minus P = app -minus (P ,, out)
+minus P = app -minus (P ,, ●)
 
 ty : ∀ {V} → Type → Expression V (nonVarKind -Type)
-ty A = app (-ty A) out
+ty A = app (-ty A) ●
 
 yt : ∀ {V} → Expression V (nonVarKind -Type) → Type
-yt (app (-ty A) out) = A
+yt (app (-ty A) ●) = A
 
 ty-yt : ∀ {V} {A : Expression V (nonVarKind -Type)} → ty (yt A) ≡ A
-ty-yt {A = app (-ty _) out} = refl
+ty-yt {A = app (-ty _) ●} = refl
 
 infix 60 _≡〈_〉_
 _≡〈_〉_ : ∀ {V} → Term V → Type → Term V → Equation V
-M ≡〈 A 〉 N = app (-eq A) (M ,, N ,, out)
+M ≡〈 A 〉 N = app (-eq A) (M ,, N ,, ●)
 
 infixl 59 _,T_
 _,T_ : ∀ {V} → Context V → Type → Context (V , -Term)

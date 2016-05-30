@@ -89,7 +89,7 @@ rep-is-sub : ∀ {U} {V} {K} {C} (E : Subexpression U K C) {ρ : Rep U V} →
 \begin{code}
 rep-is-sub (var _) = refl
 rep-is-sub (app c E) = cong (app c) (rep-is-sub E)
-rep-is-sub out = refl
+rep-is-sub ● = refl
 rep-is-sub {U} {V} (_,,_ {A = A} {L = L} E F) {ρ} = cong₂ _,,_ 
   (let open ≡-Reasoning {A = Expression (extend V A) L} in
   begin 

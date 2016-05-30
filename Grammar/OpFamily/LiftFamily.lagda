@@ -112,7 +112,7 @@ $E[\id{V}] \equiv E$
 \begin{code}
   ap-idOp {E = var x} = apV-idOp x
   ap-idOp {E = app c EE} = cong (app c) ap-idOp
-  ap-idOp {E = out} = refl
+  ap-idOp {E = ●} = refl
   ap-idOp {E = _,,_ {A = A} E F} = cong₂ _,,_ (trans (ap-congl E (liftOp'-idOp A)) ap-idOp) ap-idOp
 \end{code}
 }

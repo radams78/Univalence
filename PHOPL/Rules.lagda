@@ -164,7 +164,7 @@ $e$, $x$ and $y$ are bound within $P$.
 
                Γ ⊢ M ∶ ty A → 
   ---------------------------------------
-    Γ ⊢ app -ref (M ,, out) ∶ M ≡〈 A 〉 M
+    Γ ⊢ app -ref (M ,, ●) ∶ M ≡〈 A 〉 M
 
   ⊃*R : ∀ {V} {Γ : Context V} {P Q : Expression V (varKind -Path)} {φ φ' ψ ψ' : Term V} →
 

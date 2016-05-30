@@ -49,7 +49,7 @@ This allows us to define the action of \emph{application} $E[\sigma]$:
     Op U V → Subexpression U C K → Subexpression V C K
   ap ρ (var x) = apV ρ x
   ap ρ (app c EE) = app c (ap ρ EE)
-  ap _ out = out
+  ap _ ● = ●
   ap ρ (_,,_ {A = A} {L = L} E EE) = ap (liftOp' A ρ) E ,, ap ρ EE
 \end{code}
 
@@ -65,7 +65,7 @@ We prove that application respects $\sim$.
 \begin{code}
   ap-congl (var x) ρ-is-σ = ρ-is-σ x
   ap-congl (app c E) ρ-is-σ = cong (app c) (ap-congl E ρ-is-σ)
-  ap-congl out _ = refl
+  ap-congl ● _ = refl
   ap-congl (_,,_ {A = A} E F) ρ-is-σ = 
     cong₂ _,,_ (ap-congl E (liftOp'-cong A ρ-is-σ)) (ap-congl F ρ-is-σ)
 

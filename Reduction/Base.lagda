@@ -204,7 +204,7 @@ $E[\rho] \twoheadrightarrow_R E[\sigma]$ for all $K$, $A$, $E$.
 \begin{code}
   apredl {E = var x} hyp ρ↠σ = ρ↠σ _ x
   apredl {E = app _ E} hyp ρ↠σ = respects-red app (apredl {E = E} hyp ρ↠σ)
-  apredl {E = out} _ _ = ref
+  apredl {E = ●} _ _ = ref
   apredl {E = _,,_ {A = A} E F} hyp ρ↠σ = trans-red (respects-red appl (apredl {E = E} hyp (liftOp'-red {A = A} hyp ρ↠σ))) (respects-red appr (apredl {E = F} hyp ρ↠σ))
 \end{code}
 }
@@ -285,7 +285,7 @@ create-osr hyp (app c E) (app σE⇒F) =
     red-created = app red-created; 
     ap-created = cong (app c) ap-created 
     }
-create-osr _ out ()
+create-osr _ ● ()
 create-osr hyp (_,,_ E F) {σ = σ} (appl σE⇒E') =     
   let open creation (create-osr hyp E σE⇒E') in 
   record { 
