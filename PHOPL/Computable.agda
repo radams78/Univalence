@@ -331,14 +331,12 @@ app*-EE {V} {Γ} {M} {M'} {N} {N'} {A} {B} {P} {Q} (Γ⊢P∶M≡M' ,p computeP)
     (computeP V Γ (idRep V) N N' Q idRep-typed Γ⊢Q∶N≡N' 
       N∈EΓA N'∈EΓA computeQ)
 
-func-EE : ∀ {U} {Γ : Context U} {A} {B} {M} {M'} {P} →
-          Γ ⊢ P ∶ M ≡〈 A ⇛ B 〉 M' →
-          (∀ V (Δ : Context V) (N N' : Term V) Q ρ → ρ ∶ Γ ⇒R Δ → valid Δ → 
-          E Δ A N → E Δ A N' → EE Δ (N ≡〈 A 〉 N') Q →
-          EE Δ (appT (M 〈 ρ 〉) N ≡〈 B 〉 appT (M' 〈 ρ 〉) N') (app* N N' (P 〈 ρ 〉) Q)) →
-          EE Γ (M ≡〈 A ⇛ B 〉 M') P
-func-EE {U} {Γ} {A} {B} {M} {M'} {P} Γ⊢P∶M≡M' hyp = Γ⊢P∶M≡M' ,p (λ W Δ ρ N N' Q ρ∶Γ⇒Δ Δ⊢Q∶N≡N' N∈EΔA N'∈EΔA computeQ → 
-  proj₂ (hyp W Δ {!ρ!} {!!} {!!} {!!} {!!} {!!} {!!} {!!} {!!}))
+postulate func-EE : ∀ {U} {Γ : Context U} {A} {B} {M} {M'} {P} →
+                  Γ ⊢ P ∶ M ≡〈 A ⇛ B 〉 M' →
+                  (∀ V (Δ : Context V) (N N' : Term V) Q ρ → ρ ∶ Γ ⇒R Δ → valid Δ → 
+                  E Δ A N → E Δ A N' → EE Δ (N ≡〈 A 〉 N') Q →
+                  EE Δ (appT (M 〈 ρ 〉) N ≡〈 B 〉 appT (M' 〈 ρ 〉) N') (app* N N' (P 〈 ρ 〉) Q)) →
+                  EE Γ (M ≡〈 A ⇛ B 〉 M') P
 
 ref-EE : ∀ {V} {Γ : Context V} {M : Term V} {A : Type} → E Γ A M → EE Γ (M ≡〈 A 〉 M) (reff M)
 ref-EE {V} {Γ} {M} {A} M∈EΓA = refR (E-typed M∈EΓA) ,p ref-compute M∈EΓA
@@ -353,11 +351,11 @@ postulate ⊃-respects-conv : ∀ {V} {φ} {φ'} {ψ} {ψ' : Term V} → φ ≃ 
 
 postulate appT-respects-convl : ∀ {V} {M M' N : Term V} → M ≃ M' → appT M N ≃ appT M' N
 
-conv-computeE : ∀ {V} {Γ : Context V} {M} {M'} {N} {N'} {A} {P} →
+postulate conv-computeE : ∀ {V} {Γ : Context V} {M} {M'} {N} {N'} {A} {P} →
              computeE Γ M A N P → M ≃ M' → N ≃ N' → 
              Γ ⊢ M' ∶ ty A  → Γ ⊢ N' ∶ ty A  →
              computeE Γ M' A N' P
-conv-computeE {M = M} {A = Ω} 
+{-conv-computeE {M = M} {A = Ω} 
   (EPΓM⊃NP+ ,p EPΓN⊃MP-) M≃M' N≃N' Γ⊢M'∶Ω Γ⊢N'∶Ω = 
   (conv-EP (⊃-respects-conv M≃M' N≃N')
     EPΓM⊃NP+ (⊃R Γ⊢M'∶Ω Γ⊢N'∶Ω)) ,p 
@@ -368,7 +366,7 @@ conv-computeE {M = M} {M'} {N} {N'} {A = A ⇛ B} computeP M≃M' N≃N' Γ⊢M'
   (appT-respects-convl (respects-conv (respects-osr replacement β-respects-rep) M≃M')) 
   (appT-respects-convl (respects-conv (respects-osr replacement β-respects-rep) N≃N')) 
   (appR (change-type (Weakening Γ⊢M'∶A⇛B (Context-Validity Δ⊢Q∶L≡L') ρ∶Γ⇒RΔ) {!!}) (E-typed {W} {Γ = Δ} {A = A} {L} L∈EΔA)) 
-  (appR (change-type (Weakening Γ⊢N'∶A⇛B (Context-Validity Δ⊢Q∶L≡L') ρ∶Γ⇒RΔ) {!!}) (E-typed L'∈EΔA)) 
+  (appR (change-type (Weakening Γ⊢N'∶A⇛B (Context-Validity Δ⊢Q∶L≡L') ρ∶Γ⇒RΔ) {!!}) (E-typed L'∈EΔA)) -}
 --REFACTOR Duplication
 
 conv-EE : ∀ {V} {Γ : Context V} {M} {N} {M'} {N'} {A} {P} →
