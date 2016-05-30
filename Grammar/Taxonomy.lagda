@@ -182,11 +182,10 @@ There are two \emph{classes} of kinds: expression kinds and constructor kinds.
   data Kind where
     base : ExpressionKind → Kind -Expression
 
-    out  : ∀ K → Kind (-Constructor K)
-    _⟶_ : ∀ {K} → AbstractionKind → Kind (-Constructor K) → Kind (-Constructor K)
+    out  : ∀ K → ConstructorKind K
+    _⟶_ : ∀ {K} → AbstractionKind → ConstructorKind K → ConstructorKind K
 
-  Π    : ∀ {K} → List VarKind → ExpressionKind → 
-         Kind (-Constructor K) → Kind (-Constructor K)
+  Π    : ∀ {K} → List VarKind → ExpressionKind → ConstructorKind K → ConstructorKind K
   Π A K L = (A ⟶ K) ⟶ L
 --TODO Inline
  \end{code}
