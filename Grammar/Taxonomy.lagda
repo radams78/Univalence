@@ -178,8 +178,12 @@ There are two \emph{classes} of kinds: expression kinds and constructor kinds.
     base : ExpressionKind → Kind -Expression
 
     out  : ∀ K → Kind (-Constructor K)
-    Π    : ∀ {K} → List VarKind → ExpressionKind → 
-           Kind (-Constructor K) → Kind (-Constructor K)
+    _⟶_ : ∀ {K} → AbstractionKind → Kind (-Constructor K) → Kind (-Constructor K)
+
+  Π    : ∀ {K} → List VarKind → ExpressionKind → 
+         Kind (-Constructor K) → Kind (-Constructor K)
+  Π A K L = (A ⟶ K) ⟶ L
+--TODO Inline
  \end{code}
 \end{frame}
 %TODO Colours in Agda code?
