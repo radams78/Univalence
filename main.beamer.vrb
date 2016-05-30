@@ -1,15 +1,15 @@
-\begin{corollary}[Strong Normalization]
+\begin {corollary}[Strong Normalization]
 If $\Gamma \vdash M : A$ then $M \in \SN$.
 \end{corollary}
 
 \begin{code}
-Strong-Normalization : ∀ V K (Γ : Context V)
-  (M : Expression V (varKind K)) A → Γ ⊢ M ∶ A → SN M
+postulate Strong-Normalization : ∀ V K (Γ : Context V)
+                               (M : Expression V (varKind K)) A → Γ ⊢ M ∶ A → SN M
 \end{code}
 
 \AgdaHide{
 \begin{code}
-Strong-Normalization V -Proof Γ δ φ Γ⊢δ∶φ = EP-SN
+{- Strong-Normalization V -Proof Γ δ φ Γ⊢δ∶φ = EP-SN
   (subst (EP Γ _) sub-idOp
   (Computable-Proof-Substitution V V (idSub V) Γ Γ δ φ idSubC Γ⊢δ∶φ (Context-Validity Γ⊢δ∶φ)))
 Strong-Normalization V -Term Γ M (app (-ty A) out) Γ⊢M∶A = E-SN A
@@ -17,7 +17,7 @@ Strong-Normalization V -Term Γ M (app (-ty A) out) Γ⊢M∶A = E-SN A
   (Computable-Substitution V V (idSub V) Γ Γ M A idSubC Γ⊢M∶A (Context-Validity Γ⊢M∶A)))
 Strong-Normalization V -Path Γ P E Γ⊢P∶E = EE-SN E
   (subst₂ (EE Γ) sub-idOp sub-idOp
-  (Computable-Path-Substitution₁ V V (idSub V) Γ Γ P E idSubC Γ⊢P∶E (Context-Validity Γ⊢P∶E)))
+  (Computable-Path-Substitution₁ V V (idSub V) Γ Γ P E idSubC Γ⊢P∶E (Context-Validity Γ⊢P∶E))) -}
 \end{code}
 }
 
@@ -27,18 +27,18 @@ There is no proof $\delta$ such that $\vdash \delta : \bot$.
 
 \AgdaHide{
 \begin{code}
-Consistency' : ∀ {M : Term ∅} → SN M → 〈〉 ⊢ M ∶ ⊥ → Empty
-Consistency' (SNI M SNM) ⊢M∶⊥ = ?
+postulate Consistency' : ∀ {M : Proof ∅} → SN M → 〈〉 ⊢ M ∶ ⊥ → Empty
+-- Consistency' (SNI M SNM) ⊢M∶⊥ = {!!}
 \end{code}
 }
 
 \begin{code}
-Consistency : ∀ {M : Term ∅} → 〈〉 ⊢ M ∶ ⊥ → Empty
+postulate Consistency : ∀ {M : Proof ∅} → 〈〉 ⊢ M ∶ ⊥ → Empty
 \end{code}
 
 \AgdaHide{
 \begin{code}
-Consistency = ?
+-- Consistency = {!!}
 \end{code}
 }
 

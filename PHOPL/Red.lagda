@@ -131,19 +131,13 @@ postulate ⊃SN : ∀ {V} {φ ψ : Term V} → SN φ → SN ψ → SN (φ ⊃ ψ
 postulate SN-βexp : ∀ {V} {φ : Term V} {δ : Proof (V , -Proof)} {ε : Proof V} →
                   SN ε → SN (δ ⟦ x₀:= ε ⟧) → SN (appP (ΛP φ δ) ε) 
 
-postulate botsub₃-red : ∀ {V} {K1} {K2} {K3} {M1 M1' : Expression V (varKind K1)} 
-                      {M2 M2' : Expression V (varKind K2)} {M3 M3' : Expression V (varKind K3)} →
-                      M1 ↠ M1' → M2 ↠ M2' → M3 ↠ M3' → 
-                      _↠s_ substitution (x₂:= M1 ,x₁:= M2 ,x₀:= M3) (x₂:= M1' ,x₁:= M2' ,x₀:= M3')
-
 postulate univ-red : ∀ {V} {φ φ' ψ ψ' : Term V} {δ} {δ'} {ε} {ε'} → 
                    φ ↠ φ' → ψ ↠ ψ' → δ ↠ δ' → ε ↠ ε' → univ φ ψ δ ε ↠ univ φ' ψ' δ' ε'
 
 postulate ΛP-red : ∀ {V} {φ φ' : Term V} {δ} {δ'} → φ ↠ φ' → δ ↠ δ' → ΛP φ δ ↠ ΛP φ' δ'
 
-pre-Confluent : ∀ {V} {K} {C} {c : Constructor C} {E E' : Body V C} {F} →
-  R c E F → E ⇒ E' → Σ[ F' ∈ Expression V K ] R c E' F' × F ↠ F'
-pre-Confluent = {!!}
+postulate pre-Confluent : ∀ {V} {K} {C} {c : Constructor C} {E E' : Body V C} {F} →
+                        R c E F → E ⇒ E' → Σ[ F' ∈ Expression V K ] R c E' F' × F ↠ F'
 {-pre-Confluent βT (appl (redex ()))
 pre-Confluent βT (appl (app (appl M⇒M'))) = _ ,p βT ,p red-subl (osr-red M⇒M')
 pre-Confluent βT (appl (app (appr ())))
@@ -343,14 +337,8 @@ Every strongly normalizing term is confluent, hence has a unique normal form.
 \end{corollary}
 
 \begin{code}
-Newmans : ∀ {V} {C} {K} {E F G : Subexpression V C K} → 
-  SN E → (E ↠ F) → (E ↠ G) →
-  Σ[ H ∈ Subexpression V C K ] (F ↠ H × G ↠ H)
+postulate Newmans : ∀ {V} {C} {K} {E F G : Subexpression V C K} → 
+                  SN E → (E ↠ F) → (E ↠ G) →
+                  Σ[ H ∈ Subexpression V C K ] (F ↠ H × G ↠ H)
 \end{code}
 \end{frame}
-
-\AgdaHide{
-\begin{code}
-Newmans = {!!}
-\end{code}
-}

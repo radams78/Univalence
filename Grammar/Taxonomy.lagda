@@ -49,7 +49,7 @@ $app$ --- kind (Term, Term) Term
 
 \begin{frame}
 \frametitle{Grammars}
-A \emph{grammar} consists of:
+A \emph{grammar} over a taxonomy consists of: consists of:
 \begin{itemize}
 \item a set of \emph{expression kinds};
 \item a subset of expression kinds, called the \emph{variable kinds}.  We refer to the other expession kinds as \emph{non-variable kinds}.
@@ -136,18 +136,6 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
 \end{code}
 \end{frame}
 
-\mode<article>{
-A \emph{grammar} over a taxonomy consists of:
-\begin{itemize}
-\item a set of \emph{constructors}, each with an associated \emph{constructor kind} of the form
-\begin{equation}
-\label{eq:conkind}
- ((A_{11}, \ldots, A_{1r_1}) B_1, \ldots, (A_{m1}, \ldots, A_{mr_m}) B_m) C
-\end{equation}
-where each $A_{ij}$ is a variable kind, and each $B_i$ and $C$ is an expression kind.
-\item a function assigning, to each variable kind $K$, an expression kind, the \emph{parent} of $K$.
-\end{itemize}
-
 A constructor $c$ of kind (\ref{eq:conkind}) is a constructor that takes $m$ arguments of kind $B_1$, \ldots, $B_m$, and binds $r_i$ variables in its $i$th argument of kind $A_{ij}$,
 producing an expression of kind $C$.  We write this expression as
 
@@ -161,7 +149,6 @@ The subexpressions of the form $[x_{i1}, \ldots, x_{ir_i}]E_i$ shall be called \
 When giving a specific grammar, we shall feel free to use BNF notation.  
 
 We formalise this as follows.  First, we construct the sets of expression kinds and constructor kinds over a taxonomy:
-}
 
 \begin{frame}[fragile]
 There are two \emph{classes} of kinds: expression kinds and constructor kinds.

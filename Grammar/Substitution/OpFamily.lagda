@@ -14,8 +14,7 @@ open import Grammar.Substitution.RepSub G
 \end{code}
 }
 
-\mode<article>{
-We now define two compositions $\bullet_1 : \mathrm{replacement};\mathrm{substitution} \rightarrow \mathrm{substitution}$ and $\bullet_2 : \mathrm{substitution};\mathrm{replacement} \rightarrow \mathrm{substitution}$.
+We now define two compositions $\bullet_1 : \mathrm{replacement} ; \mathrm{substitution} \rightarrow \mathrm{substitution}$ and $\bullet_2 : \mathrm{substitution};\mathrm{replacement} \rightarrow \mathrm{substitution}$.
 
 \begin{code}
 infixl 60 _•RS_
@@ -176,7 +175,6 @@ open OpFamily substitution using (comp-congl;comp-congr)
            assoc to sub-assoc)
   public
 \end{code}
-}
 }
 
 \begin{frame}[fragile]

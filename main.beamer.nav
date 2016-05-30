@@ -1,4 +1,4 @@
-\beamer@endinputifotherversion {3.24pt}
+\beamer@endinputifotherversion {3.06pt}
 \headcommand {\slideentry {0}{0}{1}{1/1}{}{0}}
 \headcommand {\beamer@framepages {1}{1}}
 \headcommand {\sectionentry {1}{Introduction}{2}{Introduction}{0}}
@@ -24,7 +24,7 @@
 \headcommand {\beamer@subsectionpages {15}{23}}
 \headcommand {\slideentry {3}{0}{8}{24/24}{}{0}}
 \headcommand {\beamer@framepages {24}{24}}
-\headcommand {\beamer@subsectionentry {0}{3}{1}{25}{Taxonomy}}\headcommand {\beamer@subsectionpages {24}{24}}
+\headcommand {\beamer@subsectionpages {24}{24}}
 \headcommand {\slideentry {3}{1}{1}{25/25}{Taxonomy}{0}}
 \headcommand {\beamer@framepages {25}{25}}
 \headcommand {\slideentry {3}{1}{2}{26/26}{Taxonomy}{0}}
@@ -48,21 +48,21 @@
 \headcommand {\beamer@framepages {33}{33}}
 \headcommand {\slideentry {4}{0}{10}{34/38}{}{0}}
 \headcommand {\beamer@framepages {34}{38}}
-\headcommand {\beamer@subsectionentry {0}{4}{1}{39}{The Reduction Relation}}\headcommand {\beamer@subsectionpages {31}{38}}
+\headcommand {\beamer@subsectionpages {31}{38}}
 \headcommand {\slideentry {4}{1}{1}{39/39}{The Reduction Relation}{0}}
 \headcommand {\beamer@framepages {39}{39}}
 \headcommand {\slideentry {4}{1}{2}{40/40}{The Reduction Relation}{0}}
 \headcommand {\beamer@framepages {40}{40}}
 \headcommand {\slideentry {4}{1}{3}{41/43}{The Reduction Relation}{0}}
 \headcommand {\beamer@framepages {41}{43}}
-\headcommand {\beamer@subsectionentry {0}{4}{2}{44}{Path Substitution}}\headcommand {\beamer@subsectionpages {39}{43}}
+\headcommand {\beamer@subsectionpages {39}{43}}
 \headcommand {\slideentry {4}{2}{1}{44/44}{Path Substitution}{0}}
 \headcommand {\beamer@framepages {44}{44}}
 \headcommand {\slideentry {4}{2}{2}{45/45}{Path Substitution}{0}}
 \headcommand {\beamer@framepages {45}{45}}
 \headcommand {\slideentry {4}{2}{3}{46/46}{Path Substitution}{0}}
 \headcommand {\beamer@framepages {46}{46}}
-\headcommand {\beamer@subsectionentry {0}{4}{3}{47}{Strong Normalization Proof}}\headcommand {\beamer@subsectionpages {44}{46}}
+\headcommand {\beamer@subsectionpages {44}{46}}
 \headcommand {\slideentry {4}{3}{1}{47/47}{Strong Normalization Proof}{0}}
 \headcommand {\beamer@framepages {47}{47}}
 \headcommand {\slideentry {4}{3}{2}{48/48}{Strong Normalization Proof}{0}}
