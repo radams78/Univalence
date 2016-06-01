@@ -32,9 +32,10 @@ module PHOPLgrammar where
 \end{code}
 }
 
+\mode<beamer>{
 \begin{frame}[fragile]
 \frametitle{Simply-Typed Lambda Calculus}
-\mode<beamer>{We begin with the simply-typed lambda calculus (no surprises so far):
+We begin with the simply-typed lambda calculus (no surprises so far):
 
 $$
 \begin{array}{lrcl}
@@ -47,6 +48,77 @@ $$
 \infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \]
 }
 \end{frame}
+}
+
+\mode<article>
+We call the following type theory $\lambda o$, or \emph{predicative higher-order propositional logic}.  Its
+syntax is given by the grammar:
+
+\[
+\begin{array}{lrcl}
+\text{Type} & A & ::= & \Omega \mid A \rightarrow A \\
+\text{Term} & M, \phi & ::= & x \mid \bot \mid \phi \sup \phi \mid \lambda x:A.M \mid MM \\
+\text{Proof} & \delta & ::= & p \mid \lambda x:\phi.\delta \mid \delta \delta
+\end{array}
+\]
+
+where $p$ is a \emph{proof variable} and $x$ is a \emph{term variable}.
+Its rules of deduction are
+
+\[ \infer{\langle \rangle \vald}{} \qquad
+\infer{\Gamma, x : A \vald}{\Gamma \vald} \qquad 
+\infer{\Gamma, p : \phi \vald}{\Gamma \vdash \phi : \Omega} \]
+
+\[ \infer[(x : A \in \Gamma)]{\Gamma \vdash x : A}{\Gamma \vald} \qquad
+\infer[(p : \phi \in \Gamma)]{\Gamma \vdash p : \phi}{\Gamma \vald} \]
+
+\[ \infer{\Gamma \vdash \bot : \Omega}{\Gamma \vald} \qquad
+\infer{\Gamma \vdash \phi \rightarrow \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} \]
+
+\[ \infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \qquad
+\infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \rightarrow \psi \quad \Gamma \vdash \epsilon : \phi} \]
+
+\[ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \qquad
+\infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \rightarrow \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
+
+\[ \infer[(\phi \simeq \phi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
+
+\subsection{Extensional Equality}
+
+On top of this system, we add an extensional equality relation.  We extend the grammar with
+
+\[
+\begin{array}{lrcl}
+\text{Path} & P & ::= & e \mid \reff{M} \mid P \supset P \mid \univ{\phi}{\phi}{\delta}{\delta} \mid \triplelambda e : x =_A x . P \mid P P\\
+\text{Proof} & \delta & ::= & \cdots \mid P^+ \mid P^- \\
+\text{Context} & \Gamma & ::= & \cdots \mid \Gamma, e : M =_A M \\
+\text{Judgement} & \mathcal{J} & ::= & \cdots \mid \Gamma \vdash P : M =_A M
+\end{array}
+\]
+
+Note that, in the path $\triplelambda e : x =_A y . P$, the term variables $x$ and $y$ and the proof variable $e$ are all bound within $P$.
+
+We add the following rules of deduction
+
+\[ \infer{\Gamma, e : M =_A N \vald}{\Gamma \vdash M : A \quad \Gamma \vdash N : A}
+\qquad
+\infer[e : M =_A N \in \Gamma]{\Gamma \vdash e : M =_A N}{\Gamma \vald} \]
+
+\[ \infer{\Gamma \vdash \reff{M} : M =_A M}{\Gamma \vdash M : A}
+\qquad
+\infer{\Gamma \vdash P \rightarrow Q : \phi \rightarrow \psi =_\Omega \phi' \rightarrow \psi´}{\Gamma \vdash P : \phi =_\Omega \phi´ \quad \Gamma \vdash Q : \psi =_\Omega \psi´} \]
+
+\[ \infer{\Gamma \vdash \univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi}{\Gamma \vdash \delta : \phi \rightarrow \psi \quad \Gamma \vdash \epsilon : \psi \rightarrow \phi} 
+\qquad
+\infer{\Gamma \vdash P^+ : \phi \rightarrow \psi}{\Gamma \vdash P : \phi =_\Omega \psi}
+\qquad
+\infer{\Gamma \vdash P^- : \psi \rightarrow \phi}{\Gamma \vdash P : \psi =_\Omega \psi} \]
+
+\[ \infer{\Gamma \vdash \triplelambda e : x =_A y . P : M =_{A \rightarrow B} N}{\Gamma, x : A, y : A, e : x =_A y \vdash M x =_B N y} \]
+
+\[ \infer{\Gamma \vdash PQ : MN =_B M' N'}{\Gamma \vdash P : M =_{A \rightarrow B} M' \quad \Gamma \vdash Q : N =_A N'} \]
+
+\[ \infer[(M \simeq_\beta M', N \simeq_\beta N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
 
 \AgdaHide{
 \begin{code}

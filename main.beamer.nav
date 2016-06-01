@@ -12,95 +12,95 @@
 \headcommand {\beamer@framepages {10}{13}}
 \headcommand {\slideentry {1}{0}{5}{14/14}{}{0}}
 \headcommand {\beamer@framepages {14}{14}}
-\headcommand {\sectionentry {2}{About the Formalization}{15}{About the Formalization}{0}}
+\headcommand {\sectionentry {2}{Predicative Higher-Order Propositional Logic}{15}{Predicative Higher-Order Propositional Logic}{0}}
 \headcommand {\beamer@sectionpages {2}{14}}
 \headcommand {\beamer@subsectionpages {2}{14}}
 \headcommand {\slideentry {2}{0}{6}{15/15}{}{0}}
 \headcommand {\beamer@framepages {15}{15}}
-\headcommand {\slideentry {2}{0}{7}{16/23}{}{0}}
-\headcommand {\beamer@framepages {16}{23}}
-\headcommand {\sectionentry {3}{Grammars}{24}{Grammars}{0}}
-\headcommand {\beamer@sectionpages {15}{23}}
-\headcommand {\beamer@subsectionpages {15}{23}}
-\headcommand {\slideentry {3}{0}{8}{24/24}{}{0}}
+\headcommand {\slideentry {2}{0}{7}{16/16}{}{0}}
+\headcommand {\beamer@framepages {16}{16}}
+\headcommand {\slideentry {2}{0}{8}{17/17}{}{0}}
+\headcommand {\beamer@framepages {17}{17}}
+\headcommand {\slideentry {2}{0}{9}{18/22}{}{0}}
+\headcommand {\beamer@framepages {18}{22}}
+\headcommand {\beamer@subsectionpages {15}{22}}
+\headcommand {\slideentry {2}{1}{1}{23/23}{The Reduction Relation}{0}}
+\headcommand {\beamer@framepages {23}{23}}
+\headcommand {\slideentry {2}{1}{2}{24/24}{The Reduction Relation}{0}}
 \headcommand {\beamer@framepages {24}{24}}
-\headcommand {\beamer@subsectionpages {24}{24}}
-\headcommand {\slideentry {3}{1}{1}{25/25}{Taxonomy}{0}}
-\headcommand {\beamer@framepages {25}{25}}
-\headcommand {\slideentry {3}{1}{2}{26/26}{Taxonomy}{0}}
-\headcommand {\beamer@framepages {26}{26}}
-\headcommand {\slideentry {3}{1}{3}{27/27}{Taxonomy}{0}}
-\headcommand {\beamer@framepages {27}{27}}
-\headcommand {\slideentry {3}{1}{4}{28/28}{Taxonomy}{0}}
+\headcommand {\slideentry {2}{1}{3}{25/27}{The Reduction Relation}{0}}
+\headcommand {\beamer@framepages {25}{27}}
+\headcommand {\beamer@subsectionpages {23}{27}}
+\headcommand {\slideentry {2}{2}{1}{28/28}{Path Substitution}{0}}
 \headcommand {\beamer@framepages {28}{28}}
-\headcommand {\slideentry {3}{1}{5}{29/29}{Taxonomy}{0}}
+\headcommand {\slideentry {2}{2}{2}{29/29}{Path Substitution}{0}}
 \headcommand {\beamer@framepages {29}{29}}
-\headcommand {\slideentry {3}{1}{6}{30/30}{Taxonomy}{0}}
+\headcommand {\slideentry {2}{2}{3}{30/30}{Path Substitution}{0}}
 \headcommand {\beamer@framepages {30}{30}}
-\headcommand {\sectionentry {4}{Predicative Higher-Order Propositional Logic}{31}{Predicative Higher-Order Propositional Logic}{0}}
-\headcommand {\beamer@sectionpages {24}{30}}
-\headcommand {\beamer@subsectionpages {25}{30}}
-\headcommand {\slideentry {4}{0}{7}{31/31}{}{0}}
+\headcommand {\beamer@subsectionpages {28}{30}}
+\headcommand {\slideentry {2}{3}{1}{31/31}{Strong Normalization Proof}{0}}
 \headcommand {\beamer@framepages {31}{31}}
-\headcommand {\slideentry {4}{0}{8}{32/32}{}{0}}
+\headcommand {\slideentry {2}{3}{2}{32/32}{Strong Normalization Proof}{0}}
 \headcommand {\beamer@framepages {32}{32}}
-\headcommand {\slideentry {4}{0}{9}{33/33}{}{0}}
+\headcommand {\slideentry {2}{3}{3}{33/33}{Strong Normalization Proof}{0}}
 \headcommand {\beamer@framepages {33}{33}}
-\headcommand {\slideentry {4}{0}{10}{34/38}{}{0}}
-\headcommand {\beamer@framepages {34}{38}}
-\headcommand {\beamer@subsectionpages {31}{38}}
-\headcommand {\slideentry {4}{1}{1}{39/39}{The Reduction Relation}{0}}
-\headcommand {\beamer@framepages {39}{39}}
-\headcommand {\slideentry {4}{1}{2}{40/40}{The Reduction Relation}{0}}
+\headcommand {\slideentry {2}{3}{4}{34/34}{Strong Normalization Proof}{0}}
+\headcommand {\beamer@framepages {34}{34}}
+\headcommand {\slideentry {2}{3}{5}{35/35}{Strong Normalization Proof}{0}}
+\headcommand {\beamer@framepages {35}{35}}
+\headcommand {\slideentry {2}{3}{6}{36/36}{Strong Normalization Proof}{0}}
+\headcommand {\beamer@framepages {36}{36}}
+\headcommand {\sectionentry {3}{$\lambda o i$}{37}{$\lambda o i$}{0}}
+\headcommand {\beamer@sectionpages {15}{36}}
+\headcommand {\beamer@subsectionpages {31}{36}}
+\headcommand {\slideentry {3}{0}{7}{37/37}{}{0}}
+\headcommand {\beamer@framepages {37}{37}}
+\headcommand {\slideentry {3}{0}{8}{38/39}{}{0}}
+\headcommand {\beamer@framepages {38}{39}}
+\headcommand {\sectionentry {4}{Conclusion}{40}{Conclusion}{0}}
+\headcommand {\beamer@sectionpages {37}{39}}
+\headcommand {\beamer@subsectionpages {37}{39}}
+\headcommand {\slideentry {4}{0}{9}{40/40}{}{0}}
 \headcommand {\beamer@framepages {40}{40}}
-\headcommand {\slideentry {4}{1}{3}{41/43}{The Reduction Relation}{0}}
-\headcommand {\beamer@framepages {41}{43}}
-\headcommand {\beamer@subsectionpages {39}{43}}
-\headcommand {\slideentry {4}{2}{1}{44/44}{Path Substitution}{0}}
-\headcommand {\beamer@framepages {44}{44}}
-\headcommand {\slideentry {4}{2}{2}{45/45}{Path Substitution}{0}}
-\headcommand {\beamer@framepages {45}{45}}
-\headcommand {\slideentry {4}{2}{3}{46/46}{Path Substitution}{0}}
-\headcommand {\beamer@framepages {46}{46}}
-\headcommand {\beamer@subsectionpages {44}{46}}
-\headcommand {\slideentry {4}{3}{1}{47/47}{Strong Normalization Proof}{0}}
-\headcommand {\beamer@framepages {47}{47}}
-\headcommand {\slideentry {4}{3}{2}{48/48}{Strong Normalization Proof}{0}}
-\headcommand {\beamer@framepages {48}{48}}
-\headcommand {\slideentry {4}{3}{3}{49/49}{Strong Normalization Proof}{0}}
-\headcommand {\beamer@framepages {49}{49}}
-\headcommand {\slideentry {4}{3}{4}{50/50}{Strong Normalization Proof}{0}}
+\headcommand {\slideentry {4}{0}{10}{41/49}{}{0}}
+\headcommand {\beamer@framepages {41}{49}}
+\headcommand {\slideentry {4}{0}{11}{50/50}{}{0}}
 \headcommand {\beamer@framepages {50}{50}}
-\headcommand {\slideentry {4}{3}{5}{51/51}{Strong Normalization Proof}{0}}
-\headcommand {\beamer@framepages {51}{51}}
-\headcommand {\slideentry {4}{3}{6}{52/52}{Strong Normalization Proof}{0}}
-\headcommand {\beamer@framepages {52}{52}}
-\headcommand {\sectionentry {5}{$\lambda o i$}{53}{$\lambda o i$}{0}}
-\headcommand {\beamer@sectionpages {31}{52}}
-\headcommand {\beamer@subsectionpages {47}{52}}
-\headcommand {\slideentry {5}{0}{7}{53/53}{}{0}}
-\headcommand {\beamer@framepages {53}{53}}
-\headcommand {\slideentry {5}{0}{8}{54/55}{}{0}}
-\headcommand {\beamer@framepages {54}{55}}
-\headcommand {\sectionentry {6}{Conclusion}{56}{Conclusion}{0}}
-\headcommand {\beamer@sectionpages {53}{55}}
-\headcommand {\beamer@subsectionpages {53}{55}}
-\headcommand {\slideentry {6}{0}{9}{56/56}{}{0}}
-\headcommand {\beamer@framepages {56}{56}}
-\headcommand {\slideentry {6}{0}{10}{57/65}{}{0}}
-\headcommand {\beamer@framepages {57}{65}}
-\headcommand {\slideentry {6}{0}{11}{66/66}{}{0}}
-\headcommand {\beamer@framepages {66}{66}}
 \headcommand {\partentry {Appendix}{1}}
-\headcommand {\beamer@partpages {1}{66}}
-\headcommand {\beamer@sectionpages {56}{66}}
-\headcommand {\beamer@subsectionpages {56}{66}}
+\headcommand {\beamer@partpages {1}{50}}
+\headcommand {\beamer@sectionpages {40}{50}}
+\headcommand {\beamer@subsectionpages {40}{50}}
+\headcommand {\sectionentry {5}{About the Formalization}{51}{About the Formalization}{1}}
+\headcommand {\beamer@sectionpages {51}{50}}
+\headcommand {\beamer@subsectionpages {51}{50}}
+\headcommand {\slideentry {5}{0}{12}{51/51}{}{1}}
+\headcommand {\beamer@framepages {51}{51}}
+\headcommand {\slideentry {5}{0}{13}{52/59}{}{1}}
+\headcommand {\beamer@framepages {52}{59}}
+\headcommand {\sectionentry {6}{Grammars}{60}{Grammars}{1}}
+\headcommand {\beamer@sectionpages {51}{59}}
+\headcommand {\beamer@subsectionpages {51}{59}}
+\headcommand {\slideentry {6}{0}{14}{60/60}{}{1}}
+\headcommand {\beamer@framepages {60}{60}}
+\headcommand {\beamer@subsectionpages {60}{60}}
+\headcommand {\slideentry {6}{1}{1}{61/61}{Taxonomy}{1}}
+\headcommand {\beamer@framepages {61}{61}}
+\headcommand {\slideentry {6}{1}{2}{62/62}{Taxonomy}{1}}
+\headcommand {\beamer@framepages {62}{62}}
+\headcommand {\slideentry {6}{1}{3}{63/63}{Taxonomy}{1}}
+\headcommand {\beamer@framepages {63}{63}}
+\headcommand {\slideentry {6}{1}{4}{64/64}{Taxonomy}{1}}
+\headcommand {\beamer@framepages {64}{64}}
+\headcommand {\slideentry {6}{1}{5}{65/65}{Taxonomy}{1}}
+\headcommand {\beamer@framepages {65}{65}}
+\headcommand {\slideentry {6}{1}{6}{66/66}{Taxonomy}{1}}
+\headcommand {\beamer@framepages {66}{66}}
 \headcommand {\sectionentry {7}{Replacement and Substitution}{67}{Replacement and Substitution}{1}}
-\headcommand {\beamer@sectionpages {67}{66}}
-\headcommand {\beamer@subsectionpages {67}{66}}
-\headcommand {\slideentry {7}{0}{12}{67/67}{}{1}}
+\headcommand {\beamer@sectionpages {60}{66}}
+\headcommand {\beamer@subsectionpages {61}{66}}
+\headcommand {\slideentry {7}{0}{7}{67/67}{}{1}}
 \headcommand {\beamer@framepages {67}{67}}
-\headcommand {\beamer@partpages {67}{67}}
+\headcommand {\beamer@partpages {51}{67}}
 \headcommand {\beamer@subsectionpages {67}{67}}
 \headcommand {\beamer@sectionpages {67}{67}}
 \headcommand {\beamer@documentpages {67}}

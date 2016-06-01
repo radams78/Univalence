@@ -8,6 +8,7 @@
 \usepackage{fancyvrb}
 \usepackage{proof}
 \usepackage{stmaryrd}
+\usepackage{todo}
 
 \DeclareUnicodeCharacter{8598}{\ensuremath{\nwarrow}}
 \DeclareUnicodeCharacter{8599}{\ensuremath{\nearrow}}
@@ -61,13 +62,11 @@ This talk is a literate Agda file
 \end{center}
 \end{small}
 }
-
-%TODO Full author and conference information
-
 \end{frame}
 
 \section{Introduction}
 
+\mode<beamer>{
 \begin{frame}
 \frametitle{Type Theory Orthoodoxy}
 \begin{itemize}[<+->]
@@ -129,50 +128,45 @@ Make $\delta =_\phi \epsilon$ a proposition.  (So we can form propositions like 
 For the future: universal quantification, natural numbers, inductive types, path elimination, \ldots
 \end{frame}
 %TODO Better names
+}
 
-\section{About the Formalization}
-
-\begin{frame}
-\frametitle{About the Formalization}
-This work is being formalized in Agda (work in progress).
-\pause
-
-It will involve several systems and reduction relations.
-
-I want to prove only once:
-\pause
-\begin{itemize}[<+->]
-\item
-$M[x:=N][y:=P] \equiv M[y:=P[x:=N]][x:=N]$
-\item
-If $M \twoheadrightarrow N$ then $M[x:=P] \twoheadrightarrow N[x:=P]$
-\item
-If $M[x:=P]$ is SN then $M$ is SN.
-\item
-Etc.
+According to the traditional approach to type theory \todo{Citation}, a type theory should have the
+following properties in order to enjoy a good meaning explanation:
+\begin{itemize}
+\item \textbf{Confluence} --- The reduction relation should be confluent.
+\item \textbf{Strong Normalization} --- Every reduction strategy should terminate.
+\item \textbf{Canonicity} --- Hence every well-typed term of type $A$ reduces to a unique canonical form of $A$.  (For example,
+every closed term of type $\mathbb{N}$ reduces to a unique \emph{numeral} --- a term formed by applying $\mathrm{suc}$ some
+finite number of times to 0.)
 \end{itemize}
-\pause
-The formalization includes a general notion of `grammar' and `reduction relation'.  (To do: general notion of derivation rules.)
-\end{frame}
 
-\input{Prelims.lagda}
-\mode<all>{\input{Grammar/Taxonomy.lagda}}
-\mode<all>{\input{Grammar/Base.lagda}}
+The \emph{univalence axiom} of Homotopy Type theory (HoTT) \todo{Citation} breaks the property of canonicity.  It postulates a
+constant
+\[ \isotoid : A \simeq B \rightarrow A = B \]
+that is an inverse to the canonical function $A = B \rightarrow A \simeq B$.  When a computation reaches a point
+where we eliminate a path (proof of equality) formed by $\isotoid$, it gets 'stuck'.
 
-We define the operations of replacement and substitution on
-expressions.  
+As possible solutions to this problem, we may try to do with a weaker property than canonicity, such as \emph{propositional canonicity}.
+We may attempt to prove that every closed term of type $\mathbb{N}$ is \emph{propositionally} equal to a numeral.  (This is known as
+\emph{Voevodsky's Conecture} \todo{Cite}.)  Or we may attempt to change the definition of equality to make $\isotoid$ definable (\cite{Polonsky14a}), or
+shift to an entirely different type theory such as Cubical Type Theory \todo{Cite}.
 
-\input{Grammar/Substitution/PreOpFamily.lagda}
-\input{Grammar/Substitution/OpFamily.lagda}
+We could also try a more conservative approach, and simply attempt to find a reduction relation for a type theory involving $\isotoid$ that satisfies
+all three of the properties above.  There seems to be no reason \emph{a priori} to believe this is not possible, but it is difficult to do because
+the full Homotopy Type Theory is a complex and interdependent system.  We can tackle the problem by adding univalence to a much simpler system, finding
+a well-behaved reduction relation, then doing the same for more and more complex systems, gradually approaching the full strength of HoTT.
 
-The details are given in Appendix \ref{appendix:repsub}.
+In this paper, we present a system we call $\lambda o e$, or predicative higher-order propositional logic.  It is a type theory with two universes: the universe $\Omega$
+of \emph{propositions}, and the universe $U$ of \emph{types}.  The propositions are closed under $\sup$ (implication) and include $\bot$ (falsehood), and an equality proposition $M =_A N$ for
+any type $A : U$ and terms $M : A$ and $N : A$.  The types include $\Omega$ itself and are closed under $\rightarrow$ (non-dependent function type).
 
-\input{Grammar/Context.lagda}
-\input{Reduction/Base.lagda}
-\input{Reduction/SN.lagda}
-\input{PL/Grammar.lagda}
-\input{PL/Rules.lagda}
-\input{PL/Computable.lagda}
+There are two canonical forms for proofs of $M =_A N$.  For any term $M : A$, we have $\reff{M} : M =_A M$.  We also add univalence for this system, in this form:
+if $\delta : \phi \sup \psi$ and $\epsilon : \psi \sup \phi$, then $\univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi$.  We present a reduction relation for this system, and prove it satisfies confluence, strong normalization and canonicity. \todo{Cross-reference lemma numbers.}  The reduction relation does not necessarily satisfy confluence on raw terms, but it does satisfy local confluence.  Hence, as
+every typed term is strongly normalizing, we know by Newman's Lemma that the reduction is confluent on the typed terms.
+
+For the future, we wish to expand the system with universal quantification, and expand it to a 2-dimensional system (with equations between proofs).
+
+\todo{Elimination of the false proposition?}
 
 \section{Predicative Higher-Order Propositional Logic}
 
@@ -243,12 +237,58 @@ Follow the progress here: \url{www.github.com/radams78/Univalence}
 \end{itemize}
 \end{frame}
 
+\todos
+
 \begin{frame}
 \frametitle{Bibliography}
 \bibliography{../../../type}
 \end{frame}
 
 \appendix
+
+\section{About the Formalization}
+
+\begin{frame}
+\frametitle{About the Formalization}
+This work is being formalized in Agda (work in progress).
+\pause
+
+It will involve several systems and reduction relations.
+
+I want to prove only once:
+\pause
+\begin{itemize}[<+->]
+\item
+$M[x:=N][y:=P] \equiv M[y:=P[x:=N]][x:=N]$
+\item
+If $M \twoheadrightarrow N$ then $M[x:=P] \twoheadrightarrow N[x:=P]$
+\item
+If $M[x:=P]$ is SN then $M$ is SN.
+\item
+Etc.
+\end{itemize}
+\pause
+The formalization includes a general notion of `grammar' and `reduction relation'.  (To do: general notion of derivation rules.)
+\end{frame}
+
+\input{Prelims.lagda}
+\mode<all>{\input{Grammar/Taxonomy.lagda}}
+\mode<all>{\input{Grammar/Base.lagda}}
+
+We define the operations of replacement and substitution on
+expressions.  
+
+\input{Grammar/Substitution/PreOpFamily.lagda}
+\input{Grammar/Substitution/OpFamily.lagda}
+
+The details are given in Appendix \ref{appendix:repsub}.
+
+\input{Grammar/Context.lagda}
+\input{Reduction/Base.lagda}
+\input{Reduction/SN.lagda}
+%\input{PL/Grammar.lagda}
+%\input{PL/Rules.lagda}
+%\input{PL/Computable.lagda}
 
 \section{Replacement and Substitution}
 \label{appendix:repsub}
