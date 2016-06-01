@@ -27,17 +27,11 @@
 \DeclareUnicodeCharacter{10215}{\ensuremath{]}}
 \DeclareUnicodeCharacter{10219}{\ensuremath{\rangle\rangle}}
 
-
 \usepackage{textalpha}
 
 \DefineVerbatimEnvironment{code}{Verbatim}{fontsize=\footnotesize}
 
-% \newtheorem{lemma}{Lemma}[section]
-% \newtheorem{corollary}[lemma]{Corollary}
 \newtheorem{prop}{Proposition}[section]
-% \newtheorem{theorem}{Theorem}[section]
-% \theoremstyle{definition}
-% \newtheorem{definition}[lemma]{Definition}
 
 \newcommand{\Set}{\mathbf{Set}}
 \newcommand{\eqdef}{\mathrel{\smash{\stackrel{\text{def}}{=}}}}
@@ -51,84 +45,9 @@
 
 \begin{document}
 
-\begin{frame}
 \maketitle
 
-\mode<beamer>{
-\begin{small}
-\begin{center}
-This talk is a literate Agda file
-\texttt{https://github.com/radams78/Univalence}
-\end{center}
-\end{small}
-}
-\end{frame}
-
 \section{Introduction}
-
-\mode<beamer>{
-\begin{frame}
-\frametitle{Type Theory Orthoodoxy}
-\begin{itemize}[<+->]
-\item
-To enjoy a good meaning explanation, a type theory should enjoy these properties:
-\begin{itemize}
-\item \textbf{Confluence} --- Reduction is confluent.
-\item \textbf{Strong Normalization} --- Every reduction strategy terminates.
-\item \textbf{Canonicity} --- Hence every well-typed term of type $A$ reduces to a unique canonical form of $A$.
-\begin{itemize}
-\item
-E.g. every closed term of type $\mathbb{N}$ reduces to a unique numeral.
-\end{itemize}
-\end{itemize}
-\item 
-The \emph{univalence axiom} postulates a function
-\[ \isotoid : A \simeq B \rightarrow A = B \]
-that is an inverse to the obvious function $A = B \rightarrow A \simeq B$.
-\item
-This breaks canonicity.
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Possible Solutions}
-\begin{itemize}[<+->]
-\item
-Lower our standards
-\begin{itemize}
-\item
-\textbf{Voevodsky's Conjecture --- Propositional Canonicity}
-
-For every closed term $t : \mathbb{N}$, there exists a numeral $n$ and a proof $\vdash p : Id_\mathbb{N}(t,n)$.
-\end{itemize}
-\item
-Use a type theory in which $\isotoid$ is definable (Cubical Type Theory, \cite{Polonsky14a}) %TODO Cite
-\item
-Introduce a reduction rule for $\isotoid$.
-\end{itemize}
-\end{frame}
-%TODO Look up other possible solutions.
-
-\begin{frame}
-\frametitle{Our Approach}
-We begin with a small type theory, and work our way up to the full HoTT. %Too much?
-\begin{enumerate}
-\item \textbf{$\lambda o e$ --- Predicative Higher-Order Propositional Logic}
-
- A type theory with:
-  \begin{itemize}
-  \item a universe $\Omega$ of \emph{propositions} with $\bot$ and $\supset$
-  \item a universe $U$ of \emph{small types} with $\Omega$ and $\rightarrow$
-  \item for any two terms $M, N : A$, a (large) type $M =_A N$.
-  \end{itemize}
-\item \textbf{$\lambda o i$ --- P.H.O.P.L. with Equality}
-
-Make $\delta =_\phi \epsilon$ a proposition.  (So we can form propositions like $M =_A N \supset N =_A M$.)
-\end{enumerate}
-For the future: universal quantification, natural numbers, inductive types, path elimination, \ldots
-\end{frame}
-%TODO Better names
-}
 
 According to the traditional approach to type theory \todo{Citation}, a type theory should have the
 following properties in order to enjoy a good meaning explanation:
@@ -170,7 +89,82 @@ For the future, we wish to expand the system with universal quantification, and 
 
 \section{Predicative Higher-Order Propositional Logic}
 
-\mode<all>{\input{PHOPL/Grammar.lagda}}
+We call the following type theory $\lambda o$, or \emph{predicative higher-order propositional logic}.  Its
+syntax is given by the grammar:
+
+\[
+\begin{array}{lrcl}
+\text{Type} & A & ::= & \Omega \mid A \rightarrow A \\
+\text{Term} & M, \phi & ::= & x \mid \bot \mid \phi \sup \phi \mid \lambda x:A.M \mid MM \\
+\text{Proof} & \delta & ::= & p \mid \lambda x:\phi.\delta \mid \delta \delta
+\end{array}
+\]
+where $p$ is a \emph{proof variable} and $x$ is a \emph{term variable}.
+Its rules of deduction are given in Figure \ref{fig:lambdao}
+
+\begin{figure}
+\[ \infer{\langle \rangle \vald}{} \qquad
+\infer{\Gamma, x : A \vald}{\Gamma \vald} \qquad 
+\infer{\Gamma, p : \phi \vald}{\Gamma \vdash \phi : \Omega} \]
+
+\[ \infer[(x : A \in \Gamma)]{\Gamma \vdash x : A}{\Gamma \vald} \qquad
+\infer[(p : \phi \in \Gamma)]{\Gamma \vdash p : \phi}{\Gamma \vald} \]
+
+\[ \infer{\Gamma \vdash \bot : \Omega}{\Gamma \vald} \qquad
+\infer{\Gamma \vdash \phi \rightarrow \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} \]
+
+\[ \infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \qquad
+\infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \rightarrow \psi \quad \Gamma \vdash \epsilon : \phi} \]
+
+\[ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \qquad
+\infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \rightarrow \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
+
+\[ \infer[(\phi \simeq \phi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
+\caption{Rules of Deduction of $\lambda o$}
+\label{fig:lambdao}
+\end{figure}
+
+\subsection{Extensional Equality}
+
+On top of this system, we add an extensional equality relation.  We extend the grammar with
+
+\[
+\begin{array}{lrcl}
+\text{Path} & P & ::= & e \mid \reff{M} \mid P \supset P \mid \univ{\phi}{\phi}{\delta}{\delta} \mid \triplelambda e : x =_A x . P \mid P P\\
+\text{Proof} & \delta & ::= & \cdots \mid P^+ \mid P^- \\
+\text{Context} & \Gamma & ::= & \cdots \mid \Gamma, e : M =_A M \\
+\text{Judgement} & \mathcal{J} & ::= & \cdots \mid \Gamma \vdash P : M =_A M
+\end{array}
+\]
+
+Note that, in the path $\triplelambda e : x =_A y . P$, the term variables $x$ and $y$ and the proof variable $e$ are all bound within $P$.
+
+We add the rules of deduction given in Figure \ref{fig:lambdaoe}.
+
+\begin{figure}
+\[ \infer{\Gamma, e : M =_A N \vald}{\Gamma \vdash M : A \quad \Gamma \vdash N : A}
+\qquad
+\infer[e : M =_A N \in \Gamma]{\Gamma \vdash e : M =_A N}{\Gamma \vald} \]
+
+\[ \infer{\Gamma \vdash \reff{M} : M =_A M}{\Gamma \vdash M : A}
+\qquad
+\infer{\Gamma \vdash P \rightarrow Q : \phi \rightarrow \psi =_\Omega \phi' \rightarrow \psi'}{\Gamma \vdash P : \phi =_\Omega \phi' \quad \Gamma \vdash Q : \psi =_\Omega \psi'} \]
+
+\[ \infer{\Gamma \vdash \univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi}{\Gamma \vdash \delta : \phi \rightarrow \psi \quad \Gamma \vdash \epsilon : \psi \rightarrow \phi} 
+\qquad
+\infer{\Gamma \vdash P^+ : \phi \rightarrow \psi}{\Gamma \vdash P : \phi =_\Omega \psi}
+\qquad
+\infer{\Gamma \vdash P^- : \psi \rightarrow \phi}{\Gamma \vdash P : \psi =_\Omega \psi} \]
+
+\[ \infer{\Gamma \vdash \triplelambda e : x =_A y . P : M =_{A \rightarrow B} N}{\Gamma, x : A, y : A, e : x =_A y \vdash M x =_B N y} \]
+
+\[ \infer{\Gamma \vdash PQ : MN =_B M' N'}{\Gamma \vdash P : M =_{A \rightarrow B} M' \quad \Gamma \vdash Q : N =_A N'} \]
+
+\[ \infer[(M \simeq_\beta M', N \simeq_\beta N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
+\caption{Rules of Deduction of $\lambda oe$}
+\label{fig:lambdaoe}
+\end{figure}
+
 \mode<all>{\input{PHOPL/Rules.lagda}}
 
 \subsection{The Reduction Relation}
@@ -241,7 +235,7 @@ Follow the progress here: \url{www.github.com/radams78/Univalence}
 
 \begin{frame}
 \frametitle{Bibliography}
-\bibliography{../../../type}
+\bibliography{type}
 \end{frame}
 
 \appendix

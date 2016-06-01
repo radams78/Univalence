@@ -1,0 +1,78 @@
+\mode<beamer>{
+\begin{frame}
+\frametitle{Type Theory Orthoodoxy}
+\begin{itemize}[<+->]
+\item
+To enjoy a good meaning explanation, a type theory should enjoy these properties:
+\begin{itemize}
+\item \textbf{Confluence} --- Reduction is confluent.
+\item \textbf{Strong Normalization} --- Every reduction strategy terminates.
+\item \textbf{Canonicity} --- Hence every well-typed term of type $A$ reduces to a unique canonical form of $A$.
+\begin{itemize}
+\item
+E.g. every closed term of type $\mathbb{N}$ reduces to a unique numeral.
+\end{itemize}
+\end{itemize}
+\item 
+The \emph{univalence axiom} postulates a function
+\[ \isotoid : A \simeq B \rightarrow A = B \]
+that is an inverse to the obvious function $A = B \rightarrow A \simeq B$.
+\item
+This breaks canonicity.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Possible Solutions}
+\begin{itemize}[<+->]
+\item
+Lower our standards
+\begin{itemize}
+\item
+\textbf{Voevodsky's Conjecture --- Propositional Canonicity}
+
+For every closed term $t : \mathbb{N}$, there exists a numeral $n$ and a proof $\vdash p : Id_\mathbb{N}(t,n)$.
+\end{itemize}
+\item
+Use a type theory in which $\isotoid$ is definable (Cubical Type Theory, \cite{Polonsky14a}) %TODO Cite
+\item
+Introduce a reduction rule for $\isotoid$.
+\end{itemize}
+\end{frame}
+%TODO Look up other possible solutions.
+
+\begin{frame}
+\frametitle{Our Approach}
+We begin with a small type theory, and work our way up to the full HoTT. %Too much?
+\begin{enumerate}
+\item \textbf{$\lambda o e$ --- Predicative Higher-Order Propositional Logic}
+
+ A type theory with:
+  \begin{itemize}
+  \item a universe $\Omega$ of \emph{propositions} with $\bot$ and $\supset$
+  \item a universe $U$ of \emph{small types} with $\Omega$ and $\rightarrow$
+  \item for any two terms $M, N : A$, a (large) type $M =_A N$.
+  \end{itemize}
+\item \textbf{$\lambda o i$ --- P.H.O.P.L. with Equality}
+
+Make $\delta =_\phi \epsilon$ a proposition.  (So we can form propositions like $M =_A N \supset N =_A M$.)
+\end{enumerate}
+For the future: universal quantification, natural numbers, inductive types, path elimination, \ldots
+\end{frame}
+%TODO Better names
+}
+
+We begin with the simply-typed lambda calculus (no surprises so far):
+
+$$
+\begin{array}{lrcl}
+\text{Type} & A & ::= & \Omega \mid A \rightarrow A \\
+\text{Term} & M,\phi & ::= & x \mid \lambda x:A.M \mid M M
+\end{array}
+$$
+
+\[ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \qquad
+\infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \]
+\end{frame}
+}
+

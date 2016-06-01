@@ -12,25 +12,6 @@ data _⊢_∶_ : ∀ {V} {K} → Context V →
 \end{code}
 }
 
-\mode<article>{The rules of deduction of the system
-are as follows.
-
-$$ \infer{\langle \rangle \vald}{} \qquad
-\infer{\Gamma, x : A \vald}{\Gamma \vald} \qquad 
-\infer{\Gamma, p : \phi \vald}{\Gamma \vdash \phi : \Omega} $$
-
-$$ \infer[(x : A \in \Gamma)]{\Gamma \vdash x : A}{\Gamma \vald} \qquad
-\infer[(p : \phi \in \Gamma)]{\Gamma \vdash p : \phi}{\Gamma \vald} x$$}
-
-\[ \infer{\Gamma \vdash \bot : \Omega}{\Gamma \vald} \qquad
-\infer{\Gamma \vdash \phi \rightarrow \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} \]
-
-\[ \infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \rightarrow \psi \quad \Gamma \vdash \epsilon : \phi} \]
-
-\[ \infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \rightarrow \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
-
-\mode<article>{$$ \infer[(\phi \simeq \phi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} y$$}
-
 \begin{code}
 data valid where
   empR : 

@@ -1,1 +1,20 @@
-\frametitle {Simply-Typed Lambda Calculus} We begin with the simply-typed lambda calculus (no surprises so far): \par $$ \begin {array}{lrcl} \text {Type} & A & ::= & \Omega \mid A \rightarrow A \\ \text {Term} & M,\phi & ::= & x \mid \lambda x:A.M \mid M M \end {array} $$ \par \[ \infer {\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma , x : A \vdash M : B} \qquad \infer {\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \] \beamer@mode \par 
+We can now define the set of expressions over a grammar:
+
+\begin{code}
+  data Subexpression : Alphabet → ∀ C → Kind C → Set
+  Expression : Alphabet → ExpressionKind → Set
+  Body : Alphabet → ∀ {K} → Kind (-Constructor K) → Set
+
+  Expression V K = Subexpression V -Expression (base K)
+  Body V {K} C = Subexpression V (-Constructor K) C
+
+  infixr 50 _,,_
+  data Subexpression where
+    var : ∀ {V} {K} → Var V K → Expression V (varKind K)
+    app : ∀ {V} {K} {C} → Constructor C → Body V {K} C →
+      Expression V K
+
+    out : ∀ {V} {K} → Body V (out K)
+    _,,_ : ∀ {V} {K} {A} {L} {C} → Expression (extend V A) L →
+      Body V {K} C → Body V (Π A L C)
+\end{code}
