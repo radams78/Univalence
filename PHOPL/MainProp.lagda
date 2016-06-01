@@ -159,10 +159,10 @@ Computable-Path-Substitution .U V τ σ σ' .Γ Δ _ _ σ∶Γ⇒CΔ σ'∶Γ⇒
     let Θ⊢N'∶A : Θ ⊢ N' ∶ ty A
         Θ⊢N'∶A = E-typed N'∈EΘA in
         expand-EE (conv-EE 
-          (subst (EE Θ (M ⟦ σ₁ ⟧ ≡〈 B 〉 M ⟦ σ₂ ⟧)) (let open ≡-Reasoning in
+          (subst (EE Θ (M ⟦ σ₁ ⟧ ≡〈 B 〉 M ⟦ σSR ⟧)) (let open ≡-Reasoning in
           begin
             M ⟦⟦ extendPS (ρ •RP τ) Q ∶ σ₁ ∼
-                 σ₂ ⟧⟧
+                 σSR ⟧⟧
           ≡⟨⟨ pathsub-cong M ∼∼-refl step1 step2 ⟩⟩
             M ⟦⟦ extendPS (ρ •RP τ) Q ∶ x₀:= N • Sub↑ -Term (ρ •RS σ) ∼
                  x₀:= N' • Sub↑ -Term (ρ •RS σ') ⟧⟧
@@ -368,15 +368,15 @@ postulate Strong-Normalization : ∀ V K (Γ : Context V)
 
 \AgdaHide{
 \begin{code}
-{- Strong-Normalization V -Proof Γ δ φ Γ⊢δ∶φ = EP-SN 
+{-Strong-Normalization V -Proof Γ δ φ Γ⊢δ∶φ = EP-SN 
   (subst (EP Γ _) sub-idOp
   (Computable-Proof-Substitution V V (idSub V) Γ Γ δ φ idSubC Γ⊢δ∶φ (Context-Validity Γ⊢δ∶φ)))
 Strong-Normalization V -Term Γ M (app (-ty A) out) Γ⊢M∶A = E-SN A
   (subst (E Γ A) sub-idOp 
   (Computable-Substitution V V (idSub V) Γ Γ M A idSubC Γ⊢M∶A (Context-Validity Γ⊢M∶A)))
 Strong-Normalization V -Path Γ P E Γ⊢P∶E = EE-SN E 
-  (subst₂ (EE Γ) sub-idOp sub-idOp
-  (Computable-Path-Substitution₁ V V (idSub V) Γ Γ P E idSubC Γ⊢P∶E (Context-Validity Γ⊢P∶E))) -}
+  (substSR (EE Γ) sub-idOp sub-idOp
+  (Computable-Path-SubstitutionRS V V (idSub V) Γ Γ P E idSubC Γ⊢P∶E (Context-Validity Γ⊢P∶E)))-}
 \end{code}
 }
 
