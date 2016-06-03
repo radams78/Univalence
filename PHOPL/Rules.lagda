@@ -3,16 +3,39 @@
 module PHOPL.Rules where
 open import PHOPL.Grammar
 open import PHOPL.Red
+\end{code}
+}
 
+The rules of deduction of $\lambda o e$ are those of $\lambda o$ (Figure \ref{fig:lambdao}) together with those given in Figure \ref{fig:lambdaoe}.
+
+\begin{figure}
+\begin{framed}
+\[ \infer{\Gamma, e : M =_A N \vald}{\Gamma \vdash M : A \quad \Gamma \vdash N : A}
+\qquad
+\infer[(e : M =_A N \in \Gamma)]{\Gamma \vdash e : M =_A N}{\Gamma \vald} \]
+\[ \infer{\Gamma \vdash \reff{M} : M =_A M}{\Gamma \vdash M : A}
+\qquad
+\infer{\Gamma \vdash P \rightarrow Q : \phi \rightarrow \psi =_\Omega \phi' \rightarrow \psi'}{\Gamma \vdash P : \phi =_\Omega \phi' \quad \Gamma \vdash Q : \psi =_\Omega \psi'} \]
+\[ \infer{\Gamma \vdash \univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi}{\Gamma \vdash \delta : \phi \rightarrow \psi \quad \Gamma \vdash \epsilon : \psi \rightarrow \phi} 
+\qquad
+\infer{\Gamma \vdash P^+ : \phi \rightarrow \psi}{\Gamma \vdash P : \phi =_\Omega \psi}
+\qquad
+\infer{\Gamma \vdash P^- : \psi \rightarrow \phi}{\Gamma \vdash P : \psi =_\Omega \psi} \]
+\[ \infer{\Gamma \vdash \triplelambda e : x =_A y . P : M =_{A \rightarrow B} N}{\Gamma, x : A, y : A, e : x =_A y \vdash M x =_B N y} \]
+\[ \infer{\Gamma \vdash PQ : MN =_B M' N'}{\Gamma \vdash P : M =_{A \rightarrow B} M' \quad \Gamma \vdash Q : N =_A N'} \]
+\[ \infer[(M \simeq M', N \simeq N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
+\end{framed}
+\caption{Rules of Deduction of $\lambda oe$}
+\label{fig:lambdaoe}
+\end{figure}
+
+\begin{code}
 infix 10 _⊢_∶_
 data valid : ∀ {V} → Context V → Set
 data _⊢_∶_ : ∀ {V} {K} → Context V → 
   Expression V (varKind K) → 
   Expression V (parent K) → Set
-\end{code}
-}
 
-\begin{code}
 data valid where
   empR : 
 
@@ -36,13 +59,9 @@ data valid where
     Γ ⊢ M ∶ ty A → Γ ⊢ N ∶ ty A → 
   --------------------------------
         valid (Γ ,E M ≡〈 A 〉 N)
-\end{code}
 
-\begin{code}
 data _⊢_∶_ where
-\end{code}
 
-\begin{code}
   varR : ∀ {V} {K} {Γ : Context V} (x : Var V K)
 
       (validΓ : valid Γ)     → 
@@ -57,24 +76,7 @@ data _⊢_∶_ where
 
   ΛR : ∀ {V} {Γ : Context V} {A} {M : Term (V , -Term)} {B}
     (Γ,A⊢M∶B : Γ , ty A ⊢ M ∶ ty B) → Γ ⊢ ΛT A M ∶ ty (A ⇛ B)
-\end{code}
 
-\begin{frame}[fragile]
-\frametitle{Propositional Logic}
-$\Omega$ is the universe of propositions:
-\[
-\begin{array}{lrcl}
-\text{Term} & M,\phi & ::= & \cdots \mid \bot \mid \phi \supset \phi \\
-\text{Proof} & \delta & ::= & p \mid \lambda p : \phi . \delta \mid \delta \delta
-\end{array}
-\]
-\[ \infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \rightarrow \psi \quad \Gamma \vdash \epsilon : \phi}
-\qquad \infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \rightarrow \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
-
-\[ \infer[(\phi \simeq \phi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
-\end{frame}
-
-\begin{code}
   ⊥R : ∀ {V} {Γ : Context V}
 
    (validΓ : valid Γ) →
@@ -93,54 +95,7 @@ $\Omega$ is the universe of propositions:
     Γ ⊢ φ ∶ ty Ω → Γ ,P φ ⊢ δ ∶ ψ 〈 upRep 〉 → Γ ⊢ ΛP φ δ ∶ φ ⊃ ψ
   convR : ∀ {V} {Γ : Context V} {δ : Proof V} {φ ψ : Term V} →
     Γ ⊢ δ ∶ φ → Γ ⊢ ψ ∶ ty Ω → φ ≃ ψ → Γ ⊢ δ ∶ ψ
-\end{code}
 
-\begin{frame}
-\frametitle{Extensional Equality}
-\onslide<1>{On top of this we add extensional equality.}
-
-\[ \begin{array}{lrcl}
-\text{Path} & P & ::= & e \onslide<2->{\mid \reff{M} \mid \univ{\phi}{\phi}{P}{P}} \onslide<4->{\mid P \supset^* P \mid} \\
-& & & \onslide<4->{PP} \onslide<5->{\mid \triplelambda e : x =_A x . P} \\
-\text{Proof} & \delta & ::= & \cdots \onslide<3->{\mid P^+ \mid P^-}
-\end{array}
-\]
-
-Judgement form $\Gamma \vdash P : M =_A N$.
-
-\only<2>{Two main ways to prove equality:
-
-\[ \infer{\Gamma \vdash \reff{M} : M =_A M}{\Gamma \vdash M : A} \qquad
-\infer{\Gamma \vdash \univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi}{\Gamma \vdash \delta : \phi \rightarrow \psi \quad \Gamma \vdash \epsilon : \psi \rightarrow \phi} \]}
-
-\mode<article>{$$ \infer{\Gamma, e : M =_A N \vald}{\Gamma \vdash M : A \quad \Gamma \vdash N : A}
-\qquad
-\infer[e : M =_A N \in \Gamma]{\Gamma \vdash e : M =_A N}{\Gamma \vald} $$
-}
-
-\only<3>{We can eliminate equalities in $\Omega$:
-\[ 
-\qquad
-\infer{\Gamma \vdash P^+ : \phi \rightarrow \psi}{\Gamma \vdash P : \phi =_\Omega \psi}
-\qquad
-\infer{\Gamma \vdash P^- : \psi \rightarrow \phi}{\Gamma \vdash P : \psi =_\Omega \psi} \]
-}
-
-\only<5>{Congruence rule for $\lambda$:
-
-\[ \infer{\Gamma \vdash \triplelambda e : x =_A y . P : M =_{A \rightarrow B} N}{\Gamma, x : A, y : A, e : x =_A y \vdash M x =_B N y} \]
-
-$e$, $x$ and $y$ are bound within $P$.
-}
-
-\onslide<4>{Congruence rules and conversion
-\[ \infer{\Gamma \vdash P \sup* Q : \phi \sup \psi =_\Omega \phi' \sup \psi'}{\Gamma \vdash P : \phi =_\Omega \phi' \quad \Gamma \vdash Q : \psi =_\Omega \psi'}  \]
-\[ \infer{\Gamma \vdash PQ : MN =_B M' N'}{\Gamma \vdash P : M =_{A \rightarrow B} M' \quad \Gamma \vdash Q : N =_A N'} \]
-\[ \infer[(M \simeq_\beta M', N \simeq_\beta N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
-}
-\end{frame}
-
-\begin{code}
   refR : ∀ {V} {Γ : Context V} {M : Term V} {A : Type} → 
 
                Γ ⊢ M ∶ ty A → 
@@ -191,4 +146,5 @@ $e$, $x$ and $y$ are bound within $P$.
                                            (Γ⊢P∶M≡N : Γ ⊢ P ∶ M ≡〈 A 〉 N)   (Γ⊢M':A : Γ ⊢ M' ∶ ty A)   (Γ⊢N'∶A : Γ ⊢ N' ∶ ty A)
          (M≃M' : M ≃ M') (N≃N' : N ≃ N') → ------------------------------------------------------------------------------------
                                                                              Γ ⊢ P ∶ M' ≡〈 A 〉 N'
+
 \end{code}

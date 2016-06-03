@@ -76,3 +76,182 @@ $$
 \end{frame}
 }
 
+\begin{frame}[fragile]
+\frametitle{Propositional Logic}
+$\Omega$ is the universe of propositions:
+\[
+\begin{array}{lrcl}
+\text{Term} & M,\phi & ::= & \cdots \mid \bot \mid \phi \supset \phi \\
+\text{Proof} & \delta & ::= & p \mid \lambda p : \phi . \delta \mid \delta \delta
+\end{array}
+\]
+\[ \infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \rightarrow \psi \quad \Gamma \vdash \epsilon : \phi}
+\qquad \infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \rightarrow \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
+
+\[ \infer[(\phi \simeq \phi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
+\end{frame}
+
+\begin{frame}
+\frametitle{Extensional Equality}
+\onslide<1>{On top of this we add extensional equality.}
+
+\[ \begin{array}{lrcl}
+\text{Path} & P & ::= & e \onslide<2->{\mid \reff{M} \mid \univ{\phi}{\phi}{P}{P}} \onslide<4->{\mid P \supset^* P \mid} \\
+& & & \onslide<4->{PP} \onslide<5->{\mid \triplelambda e : x =_A x . P} \\
+\text{Proof} & \delta & ::= & \cdots \onslide<3->{\mid P^+ \mid P^-}
+\end{array}
+\]
+
+Judgement form $\Gamma \vdash P : M =_A N$.
+
+\only<2>{Two main ways to prove equality:
+
+\[ \infer{\Gamma \vdash \reff{M} : M =_A M}{\Gamma \vdash M : A} \qquad
+\infer{\Gamma \vdash \univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi}{\Gamma \vdash \delta : \phi \rightarrow \psi \quad \Gamma \vdash \epsilon : \psi \rightarrow \phi} \]}
+
+\mode<article>{$$ \infer{\Gamma, e : M =_A N \vald}{\Gamma \vdash M : A \quad \Gamma \vdash N : A}
+\qquad
+\infer[e : M =_A N \in \Gamma]{\Gamma \vdash e : M =_A N}{\Gamma \vald} $$
+}
+
+\only<3>{We can eliminate equalities in $\Omega$:
+\[ 
+\qquad
+\infer{\Gamma \vdash P^+ : \phi \rightarrow \psi}{\Gamma \vdash P : \phi =_\Omega \psi}
+\qquad
+\infer{\Gamma \vdash P^- : \psi \rightarrow \phi}{\Gamma \vdash P : \psi =_\Omega \psi} \]
+}
+
+\only<5>{Congruence rule for $\lambda$:
+
+\[ \infer{\Gamma \vdash \triplelambda e : x =_A y . P : M =_{A \rightarrow B} N}{\Gamma, x : A, y : A, e : x =_A y \vdash M x =_B N y} \]
+
+$e$, $x$ and $y$ are bound within $P$.
+}
+
+\onslide<4>{Congruence rules and conversion
+\[ \infer{\Gamma \vdash P \sup* Q : \phi \sup \psi =_\Omega \phi' \sup \psi'}{\Gamma \vdash P : \phi =_\Omega \phi' \quad \Gamma \vdash Q : \psi =_\Omega \psi'}  \]
+\[ \infer{\Gamma \vdash PQ : MN =_B M' N'}{\Gamma \vdash P : M =_{A \rightarrow B} M' \quad \Gamma \vdash Q : N =_A N'} \]
+\[ \infer[(M \simeq_\beta M', N \simeq_\beta N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
+}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{The Reduction Relation}
+The `$\beta$-rules':
+
+\begin{align*}
+(\lambda x:A.M)N & \rhd M[x:=N] & (\lambda p:\phi.\delta)\epsilon & \rhd \delta[p:=\epsilon] \\
+ \reff{\phi}^+ & \rhd \lambda p:\phi.p & \reff{\phi}^- & \rhd \lambda p:\phi.p \\
+\univ{\phi}{\psi}{\delta}{\epsilon}^+ & \rhd \delta & \univ{\phi}{\psi}{\delta}{\epsilon}^- & \rhd \epsilon
+\end{align*}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{The Reduction Relation}
+We make $\mathsf{univ}$ and $\mathsf{ref}$ move out past $\supset^*$ and application:
+$$\reff \phi \supset^* \univ{\psi}{\chi}{\delta}{\epsilon}
+\rhd \mathsf{univ}_{\phi \supset \psi,\phi \supset \chi}(\lambda p, q . \delta (p q), \lambda p, q . \epsilon (p q))$$
+$$\univ{\phi}{\psi}{\delta}{\epsilon} \supset^* \reff{\chi}
+\rhd \univ{\phi \supset \chi}{\psi \supset \chi}{\lambda p,q .p (\epsilon q)}{\lambda p,q .p (\delta q)}$$
+\begin{gather*}
+\univ{\phi}{\psi}{\delta}{\epsilon} \supset^* \univ{\phi'}{\psi'}{\delta'}{\epsilon'} \\
+\quad \rhd \univ{\phi \supset \phi'}{\psi \supset \psi'}
+{\lambda p,q . \delta' (p (\epsilon q))}{\lambda p, q . \epsilon' (p (\delta q))}
+\end{gather*}
+$$\reff{\phi} \supset^* \reff{\psi} \rhd \reff{\phi \supset \psi}
+\qquad
+\reff{M} \reff{N} \rhd \reff{MN}$$
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{The Reduction Relation}
+We construct a proof of $M =_{A \rightarrow B} N$, then apply it.  What is the result?
+\begin{itemize}[<+->]
+\item
+$\reff{M} \reff{N} \rhd \reff{MN}$
+\item
+$(\triplelambda e:x =_A y. P)_{MN}Q \rhd P[x:=M, y:=N, e:=Q]$
+\item
+If $P \not\equiv \reff{-}$, then $\reff{\lambda x:A.M} P \rhd ???$
+\end{itemize}
+
+\only<2>{$\Gamma , x : A , y : A , e : x=_A y ⊢ P : L =_B L', \qquad \Gamma \vdash Q : M =_A N$}
+
+\only<3>{$\Gamma , x : A \vdash M : B, \qquad \Gamma \vdash P : N =_A N'$}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{The Reduction Relation}
+We construct a proof of $M =_{A \rightarrow B} N$, then apply it.  What is the result?
+\begin{itemize}
+\item
+$\reff{M} \reff{N} \rhd \reff{MN}$
+\item
+$(\triplelambda e:x =_A y. P)_{MN}Q \rhd P[x:=M, y:=N, e:=Q]$
+\item
+If $P \not\equiv \reff{-}$, then $\reff{\lambda x:A.M}_{N,N'} P \rhd M \{ x := P : N ∼ N' \}$
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Path Substitution}
+Define the operation of \emph{path substitution} such that,
+if $P : M =_A M'$ then $N \{ x := P : M \sim M' \} \equiv N \{ x:= P \} : N [x := M ]=_B N [x := M']$.
+
+\begin{frame}
+\frametitle{Tait's Method}
+
+We define a model of the type theory with types as sets of terms.
+
+For every type (proposition, equation) $A$ in context $\Gamma$, define
+the set of \emph{computable} terms $E_\Gamma(A)$.
+
+The definition is such that:
+\begin{enumerate}
+\item
+If $M \in E_\Gamma(A)$ then $\Gamma \vdash M : A$ and $M$ is strongly normalizing.
+\item
+$E_\Gamma(A)$ is closed under \emph{key redex expansion}.
+\item
+If $A \simeq B$ then $E_\Gamma(A) = E_\Gamma(B)$.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+Define the sets of \emph{computable} terms, proofs and paths as follows.
+\begin{align*}
+E_\Gamma(\Omega) \eqdef & \{ M \mid \Gamma \vdash M : \Omega, M \in \SN \} \\
+E_\Gamma(A \rightarrow B) \eqdef & \{ M \mid \Gamma \vdash M : A \rightarrow B, \\
+& \quad \forall (\Delta \supseteq \Gamma) (N \in E_\Delta(A)). MN \in E_\Delta(B), \\
+& \quad \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (P \in E_\Delta(N =_A N')). \\
+& \quad \quad \reff{M} P \in E_\Gamma(MN =_B MN') \}
+\end{align*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Computable Terms}
+\begin{align*}
+E_\Gamma(\bot) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
+E_\Gamma(\phi \rightarrow \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \rightarrow \psi, \\
+& \forall (\Delta \supseteq \Gamma)(\epsilon \in E_\Delta(\phi)). \delta \epsilon \in E_\Gamma(\psi) \} \\
+\\
+E_\Gamma(\phi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
+& \qquad (\phi \text{ neutral}) \\
+\\
+E_\Gamma(\phi) & \eqdef E_\Gamma(nf(\phi)) \\
+& \qquad (\phi \mbox{ a normalizable term of type $\Omega$})
+\end{align*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Computable Terms}
+\begin{align*}
+E_\Gamma(\phi =_\Omega \psi) & \eqdef \{ P \mid \Gamma \vdash P : \phi =_\Omega \psi, \\
+& P^+ \in E_\Gamma(\phi \rightarrow \psi), P^- \in E_\Gamma(\psi \rightarrow \phi) \} \\
+\\
+E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \rightarrow B} M', \\
+& \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (Q \in E_\Delta(N =_A N')). \\
+& P_{NN'}Q \in E_\Delta(MN =_B M'N') \}
+\end{align*}
+\end{frame}

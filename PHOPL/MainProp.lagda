@@ -20,12 +20,85 @@ open import PHOPL.MainProp1
 \end{code}
 }
 
-\AgdaHide{
+Our main theorem is as follows.
+
+\begin{theorem}$ $
+\begin{enumerate}
+\item
+If $\Gamma \vdash M : A$, and $\sigma : \Gamma \rightarrow \Delta$ is computable,
+then $M [ \sigma ] \in E_\Delta(A)$.
+\item
+If $\Gamma \vdash \delta : \phi$, and $\sigma : \Gamma \rightarrow \Delta$ is computable,
+then $\delta [ \sigma ] \in E_\Delta(\phi[\sigma])$.
+\item
+If $\Gamma \vdash P : M =_A N$, and $\sigma : \Gamma \rightarrow \Delta$ is computable,
+then $P [ \sigma ] \in E_\Delta(M [ \sigma ] =_A N [ \sigma ])$.
+\item
+\label{computable-path-sub}
+If $\Gamma \vdash M : A$, $\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$, and $\tau$, $\sigma$
+and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delta(M [ \sigma ] =_A M [ \rho ])$.
+\end{enumerate}
+\end{theorem}
+
 \begin{code}
---TODO Rename
+postulate Computable-Sub : ∀ {U} {V} {K} (σ : Sub U V) {Γ} {Δ} 
+                         {M : Expression U (varKind K)} {A} →
+                         σ ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → E' Δ (A ⟦ σ ⟧) (M ⟦ σ ⟧)
+
 postulate Computable-Path-Substitution : ∀ U V (τ : PathSub U V) σ σ' Γ Δ M A → σ ∶ Γ ⇒C Δ → σ' ∶ Γ ⇒C Δ → τ ∶ σ ∼ σ' ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → 
                                        EE Δ (M ⟦ σ ⟧ ≡〈 yt A 〉 M ⟦ σ' ⟧) (M ⟦⟦ τ ∶ σ ∼ σ' ⟧⟧) 
-{- Computable-Path-Substitution U V τ σ σ' Γ Δ .(var x) ._ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' (varR x _) _ = 
+\end{code}
+
+\AgdaHide{
+\begin{code}
+{-Computable-Sub σ σ∶Γ⇒Δ (varR x validΓ) validΔ = σ∶Γ⇒Δ x
+Computable-Sub {V = V} σ {Δ = Δ} σ∶Γ⇒Δ (appR Γ⊢M∶A⇛B Γ⊢N∶A) validΔ = 
+  appT-E validΔ (Computable-Sub σ σ∶Γ⇒Δ Γ⊢M∶A⇛B validΔ) (Computable-Sub σ σ∶Γ⇒Δ Γ⊢N∶A validΔ)
+Computable-Sub σ σ∶Γ⇒Δ (ΛR {M = M} {B} Γ,A⊢M∶B) validΔ = 
+  func-E (λ _ Θ ρ N validΘ ρ∶Δ⇒Θ N∈EΘA → 
+    let MN∈EΘB = subst (E Θ B) (subrepsub M)
+                 (Computable-Sub (x₀:= N •SR Rep↑ _ ρ • Sub↑ -Term σ) 
+                 (compC (compSRC (botsubC N∈EΘA) 
+                        (Rep↑-typed ρ∶Δ⇒Θ)) 
+                 (Sub↑C σ∶Γ⇒Δ)) 
+                 Γ,A⊢M∶B validΘ) in
+    expand-E MN∈EΘB
+      (appR (ΛR (Weakening (Substitution Γ,A⊢M∶B (ctxTR validΔ) (Sub↑-typed (subC-typed σ∶Γ⇒Δ))) 
+                                                      (ctxTR validΘ) 
+                                         (Rep↑-typed ρ∶Δ⇒Θ))) 
+                (E-typed N∈EΘA)) 
+      (βTkr (SNap' {Ops = substitution} R-respects-sub (E-SN B MN∈EΘB))))
+Computable-Sub σ σ∶Γ⇒Δ (⊥R _) validΔ = ⊥-E validΔ
+Computable-Sub σ σ∶Γ⇒Δ (⊃R Γ⊢φ∶Ω Γ⊢ψ∶Ω) validΔ = ⊃-E 
+  (Computable-Sub σ σ∶Γ⇒Δ Γ⊢φ∶Ω validΔ) (Computable-Sub σ σ∶Γ⇒Δ Γ⊢ψ∶Ω validΔ)
+Computable-Sub σ σ∶Γ⇒Δ (appPR Γ⊢δ∶φ⊃ψ Γ⊢ε∶φ) validΔ = appP-EP 
+  (Computable-Sub σ σ∶Γ⇒Δ Γ⊢δ∶φ⊃ψ validΔ) (Computable-Sub σ σ∶Γ⇒Δ Γ⊢ε∶φ validΔ)
+Computable-Sub σ {Γ = Γ} {Δ = Δ} σ∶Γ⇒Δ (ΛPR {δ = δ} {φ} {ψ} Γ⊢φ∶Ω Γ,φ⊢δ∶ψ) validΔ = 
+  let Δ⊢Λφδσ∶φ⊃ψ : Δ ⊢ (ΛP φ δ) ⟦ σ ⟧ ∶ φ ⟦ σ ⟧ ⊃ ψ ⟦ σ ⟧
+      Δ⊢Λφδσ∶φ⊃ψ = Substitution {A = φ ⊃ ψ} (ΛPR Γ⊢φ∶Ω Γ,φ⊢δ∶ψ) validΔ (subC-typed σ∶Γ⇒Δ) in
+  func-EP (λ W Θ ρ ε ρ∶Δ⇒Θ ε∈EΔφ → 
+    let δε∈EΘψ : EP Θ (ψ ⟦ σ ⟧ 〈 ρ 〉) (δ ⟦ Sub↑ _ σ ⟧ 〈 Rep↑ _ ρ 〉 ⟦ x₀:= ε ⟧)
+        δε∈EΘψ = subst₂ (EP Θ) (subrepbotsub-up ψ) (subrepsub δ) 
+                 (Computable-Sub (x₀:= ε •SR Rep↑ _ ρ • Sub↑ _ σ) 
+                 (compC (compSRC (botsubCP ε∈EΔφ) 
+                        (Rep↑-typed ρ∶Δ⇒Θ)) 
+                 (Sub↑C σ∶Γ⇒Δ)) Γ,φ⊢δ∶ψ (Context-Validity (EP-typed ε∈EΔφ))) in
+    expand-EP δε∈EΘψ (appPR (Weakening Δ⊢Λφδσ∶φ⊃ψ (Context-Validity (EP-typed ε∈EΔφ)) ρ∶Δ⇒Θ) (EP-typed ε∈EΔφ))
+      (βPkr (SNrep R-creates-rep (E-SN Ω (Computable-Sub σ σ∶Γ⇒Δ Γ⊢φ∶Ω validΔ))) (EP-SN ε∈EΔφ))) 
+  Δ⊢Λφδσ∶φ⊃ψ
+Computable-Sub σ σ∶Γ⇒Δ (convR Γ⊢δ∶φ Γ⊢ψ∶Ω φ≃ψ) validΔ = conv-E' (respects-conv (respects-osr substitution R-respects-sub) φ≃ψ) 
+  (Computable-Sub σ σ∶Γ⇒Δ Γ⊢δ∶φ validΔ) (ctxPR (Substitution Γ⊢ψ∶Ω validΔ (subC-typed σ∶Γ⇒Δ)))
+Computable-Sub σ σ∶Γ⇒Δ (refR Γ⊢M∶A) validΔ = ref-EE (Computable-Sub σ σ∶Γ⇒Δ Γ⊢M∶A validΔ)
+Computable-Sub σ σ∶Γ⇒Δ (⊃*R Γ⊢φ∶Ω Γ⊢ψ∶Ω) validΔ = ⊃*-EE (Computable-Sub σ σ∶Γ⇒Δ Γ⊢φ∶Ω validΔ) (Computable-Sub σ σ∶Γ⇒Δ Γ⊢ψ∶Ω validΔ)
+Computable-Sub σ σ∶Γ⇒Δ (univR Γ⊢δ∶φ⊃ψ Γ⊢ε∶ψ⊃φ) validΔ = univ-EE (Computable-Sub σ σ∶Γ⇒Δ Γ⊢δ∶φ⊃ψ validΔ) (Computable-Sub σ σ∶Γ⇒Δ Γ⊢ε∶ψ⊃φ validΔ)
+Computable-Sub σ σ∶Γ⇒Δ (plusR Γ⊢P∶φ≡ψ) validΔ = plus-EP (Computable-Sub σ σ∶Γ⇒Δ Γ⊢P∶φ≡ψ validΔ)
+Computable-Sub σ σ∶Γ⇒Δ (minusR Γ⊢P∶φ≡ψ) validΔ = minus-EP (Computable-Sub σ σ∶Γ⇒Δ Γ⊢P∶φ≡ψ validΔ)
+Computable-Sub σ σ∶Γ⇒Δ (lllR Γ⊢M∶A) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒Δ (app*R Γ⊢M∶A Γ⊢M∶A₁ Γ⊢M∶A₂ Γ⊢M∶A₃) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒Δ (convER Γ⊢M∶A Γ⊢M∶A₁ Γ⊢M∶A₂ M≃M' N≃N') validΔ = {!!}
+
+--TODO Rename
+Computable-Path-Substitution U V τ σ σ' Γ Δ .(var x) ._ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' (varR x _) _ = 
   τ∶σ∼σ' x
 Computable-Path-Substitution U V τ σ σ' Γ Δ .(app -bot out) .(ty Ω) σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' (⊥R x) validΔ = ref-EE (⊥-E validΔ)
 Computable-Path-Substitution U V τ σ σ' Γ Δ _ .(ty Ω) σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' (⊃R Γ⊢φ∶Ω Γ⊢ψ∶Ω) validΔ = ⊃*-EE 
@@ -36,8 +109,27 @@ Computable-Path-Substitution U V τ σ σ' Γ Δ _ .(ty B) σ∶Γ⇒CΔ σ'∶�
   (Computable-Path-Substitution U V τ σ σ' Γ Δ _ _ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' Γ⊢M∶A⇒B validΔ) 
   (Computable-Path-Substitution U V τ σ σ' Γ Δ _ _ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' Γ⊢N∶A validΔ)
   (Computable-Substitution U V σ Γ Δ N A (pathsubC-valid₁ {U} {V} {τ} {σ} {σ'} τ∶σ∼σ') Γ⊢N∶A refl validΔ)
-  (Computable-Substitution U V σ' Γ Δ N A (pathsubC-valid₂ {τ = τ} {σ} {σ = σ'} {Γ} {Δ} τ∶σ∼σ') Γ⊢N∶A refl validΔ)
-Computable-Path-Substitution .U V τ σ σ' .Γ Δ _ _ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' (ΛR {U} {Γ} {A} {M} {B} Γ,A⊢M∶B) validΔ = 
+  (Computable-Substitution U V σ' Γ Δ N A (pathsubC-valid₂ {τ = τ} {σ} {σ = σ'} {Γ} {Δ} τ∶σ∼σ') Γ⊢N∶A refl validΔ)-}
+\end{code}
+}
+
+\begin{proof}
+The four parts are proved simultaneously by induction on derivations.  We give the details of
+one case here, for part \ref{computable-path-sub} for the rule
+\[ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \]
+
+We must prove that 
+\[ \triplelambda e:a =_A a' . M \{ \tau : \sigma \sim \rho, x := e : a \sim a' \} \in E_\Delta(\lambda x:A.M[\sigma] =_{A \rightarrow B} \lambda x:A.M[\rho]) \enspace . \]
+So let $\Theta \supseteq \Delta$; $N, N' \in E_\Theta(A)$; and $Q \in E_\Theta(N =_A N')$.  The induction hypothesis gives
+\[ M \{ \tau , x := Q \} \in E_\Theta(M[\sigma, x:= N] =_B M [ \rho, x := N' ]) \enspace . \]
+Applying Lemmas \ref{lm:expand-compute} and \ref{lm:conv-compute} gives
+\[ (\triplelambda e:a =_A a' . M \{ \tau, x := e \})_{N N'} Q \in E_\Theta((\lambda x:A.M[\sigma]) N =_B (\lambda x:A.M[\rho]) N') \]
+as required.
+\end{proof}
+
+\AgdaHide{
+\begin{code}
+{-Computable-Path-Substitution .U V τ σ σ' .Γ Δ _ _ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' (ΛR {U} {Γ} {A} {M} {B} Γ,A⊢M∶B) validΔ = 
   let validΔAA : valid (Δ ,T A ,T A)
       validΔAA = ctxTR (ctxTR validΔ) in
   let validΔAAE : valid (addpath Δ A)
@@ -356,10 +448,14 @@ Computable-Path-Substitution .U V τ σ σ' .Γ Δ _ _ σ∶Γ⇒CΔ σ'∶Γ⇒
 \end{code}
 }
 
-\begin{frame}[fragile]
 \begin{corollary}[Strong Normalization]
-If $\Gamma \vdash M : A$ then $M \in \SN$.
+Every well-typed term, proof and path is strongly normalizing.
 \end{corollary}
+
+\begin{proof}
+We apply the theorem with $\sigma$ the identity substitution.  The identity substitution is computable
+by Lemma \ref{lm:var-compute}.
+\end{proof}
 
 \begin{code}
 postulate Strong-Normalization : ∀ V K (Γ : Context V) 
@@ -400,5 +496,3 @@ postulate Consistency : ∀ {M : Proof ∅} → 〈〉 ⊢ M ∶ ⊥ → Empty
 -- Consistency = {!!}
 \end{code}
 }
-
-\end{frame}

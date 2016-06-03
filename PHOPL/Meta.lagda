@@ -55,9 +55,26 @@ postulate compR-typed : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Rep U V} {Γ} {Δ} 
 postulate Weakening : ∀ {U} {V} {ρ : Rep U V} {K}
                     {Γ : Context U} {M : Expression U (varKind K)} {A} {Δ} →
                     Γ ⊢ M ∶ A → valid Δ → ρ ∶ Γ ⇒R Δ → Δ ⊢ M 〈 ρ 〉 ∶ A 〈 ρ 〉
+\end{code}
+}
 
+Let $\Gamma$ and $\Delta$ be contexts.  A \emph{substitution} $\sigma : \Gamma \Rightarrow \Delta$
+is a function mapping a term $\sigma(x)$ to every term variable $x \in \dom \Gamma$, and a proof $\sigma(p)$ to
+every proof variable $p \in \dom \Gamma$, such that:
+\begin{itemize}
+\item
+for every term variable $x : A \in \Gamma$, we have $\Delta \vdash \sigma(x) : A$;
+\item
+for every proof variable $p : \phi \in \Gamma$, we have $\Delta \vdash \sigma(p) : \phi [ \sigma ]$
+\end{itemize}
+where $\phi [ \sigma ]$ is the result of substituting $\sigma(x)$ for every term variable $x$ in $\phi$.
+
+\begin{code}
 postulate _∶_⇒_ : ∀ {U} {V} → Sub U V → Context U → Context V → Set
+\end{code}
 
+\AgdaHide{
+\begin{code}
 postulate Substitution : ∀ {U} {V} {σ : Sub U V} {K}
                        {Γ : Context U} {M : Expression U (varKind K)} {A} {Δ} →
                        Γ ⊢ M ∶ A → valid Δ → σ ∶ Γ ⇒ Δ → Δ ⊢ M ⟦ σ ⟧ ∶ A ⟦ σ ⟧
@@ -121,9 +138,6 @@ postulate sub↖-typed : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {A} → σ ∶ Γ 
 postulate sub↗-typed : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {A} → σ ∶ Γ ⇒ Δ → sub↗ σ ∶ Γ ,T A ⇒ Δ ,T A ,T A ,E var x₁ ≡〈 A 〉 var x₀
 \end{code}
 }
-
-\begin{frame}[fragile]
-\frametitle{Subject Reduction}
 
 \begin{theorem}[Subject Reduction]
 Let $E$ be a path (proof, term) and $A$ an equation (term, type).

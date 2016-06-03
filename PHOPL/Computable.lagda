@@ -11,57 +11,29 @@ open import PHOPL.SN
 open import PHOPL.Rules
 open import PHOPL.Meta
 open import PHOPL.KeyRedex
+open import PHOPL.Neutral
 \end{code}
 }
 
-\begin{frame}
-\frametitle{Tait's Method}
+We define a model of the type theory with types as sets of terms.  For every type (proposition, equation) $A$ in context $\Gamma$, define
+the set of \emph{computable} terms (proofs, paths) $E_\Gamma(A)$.
 
-We define a model of the type theory with types as sets of terms.
-
-For every type (proposition, equation) $A$ in context $\Gamma$, define
-the set of \emph{computable} terms $E_\Gamma(A)$.
-
-The definition is such that:
-\begin{enumerate}
-\item
-If $M \in E_\Gamma(A)$ then $\Gamma \vdash M : A$ and $M$ is strongly normalizing.
-\item
-$E_\Gamma(A)$ is closed under \emph{key redex expansion}.
-\item
-If $A \simeq B$ then $E_\Gamma(A) = E_\Gamma(B)$.
-\end{enumerate}
-\end{frame}
-
-\begin{frame}
-Define the sets of \emph{computable} terms, proofs and paths as follows.
+\begin{definition}[Computable Expressions]
 \begin{align*}
 E_\Gamma(\Omega) \eqdef & \{ M \mid \Gamma \vdash M : \Omega, M \in \SN \} \\
 E_\Gamma(A \rightarrow B) \eqdef & \{ M \mid \Gamma \vdash M : A \rightarrow B, \\
 & \quad \forall (\Delta \supseteq \Gamma) (N \in E_\Delta(A)). MN \in E_\Delta(B), \\
 & \quad \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (P \in E_\Delta(N =_A N')). \\
-& \quad \quad \reff{M} P \in E_\Gamma(MN =_B MN') \}
-\end{align*}
-\end{frame}
-
-\begin{frame}
-\frametitle{Computable Terms}
-\begin{align*}
+& \quad \quad \reff{M}_{N N'} P \in E_\Gamma(MN =_B MN') \} \\
+\\
 E_\Gamma(\bot) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
 E_\Gamma(\phi \rightarrow \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \rightarrow \psi, \\
 & \forall (\Delta \supseteq \Gamma)(\epsilon \in E_\Delta(\phi)). \delta \epsilon \in E_\Gamma(\psi) \} \\
-\\
 E_\Gamma(\phi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
 & \qquad (\phi \text{ neutral}) \\
-\\
 E_\Gamma(\phi) & \eqdef E_\Gamma(nf(\phi)) \\
-& \qquad (\phi \mbox{ a normalizable term of type $\Omega$})
-\end{align*}
-\end{frame}
-
-\begin{frame}
-\frametitle{Computable Terms}
-\begin{align*}
+& \qquad (\phi \mbox{ a normalizable term of type $\Omega$}) \\
+\\
 E_\Gamma(\phi =_\Omega \psi) & \eqdef \{ P \mid \Gamma \vdash P : \phi =_\Omega \psi, \\
 & P^+ \in E_\Gamma(\phi \rightarrow \psi), P^- \in E_\Gamma(\psi \rightarrow \phi) \} \\
 \\
@@ -69,97 +41,10 @@ E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \
 & \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (Q \in E_\Delta(N =_A N')). \\
 & P_{NN'}Q \in E_\Delta(MN =_B M'N') \}
 \end{align*}
-\end{frame}
+\end{definition}
 
 \AgdaHide{
 \begin{code}
-postulate ChurchRosserT : ∀ {V} {M N P : Term V} → M ↠ N → M ↠ P →
-                        Σ[ Q ∈ Term V ] N ↠ Q × P ↠ Q
-
-postulate confluenceT : ∀ {V} {M N : Term V} → M ≃ N →
-                        Σ[ Q ∈ Term V ] M ↠ Q × N ↠ Q
-
-postulate SNE : ∀ {V} {C} {K} (P : Subexpression V C K → Set) →
-              (∀ {M : Subexpression V C K} → SN M → (∀ N → M ↠⁺ N → P N) → P M) →
-              ∀ {M : Subexpression V C K} → SN M → P M
-
-postulate key-redex-confluent : ∀ {V} {K} {M N P : Expression V K} →
-                              key-redex M N → M ⇒ P → Σ[ Q ∈ Expression V K ] key-redex P Q × N ↠⁺ Q
-
-key-redex-SN : ∀ {V} {K} {M N : Expression V K} → SN N → key-redex M N → SN M
-key-redex-SN {M = M} {N} SNN = SNE (λ N → ∀ {M} → key-redex M N → SN M) 
-  (λ {N} SNN ih {M} M▷N → SNI M (λ M' M⇒M' → 
-    let (P ,p M'▷P ,p N↠⁺P) = key-redex-confluent M▷N M⇒M' in 
-    ih P N↠⁺P M'▷P)) 
-  SNN
-
-key-redex-rep : ∀ {U} {V} {K} {M N : Expression U K} {ρ : Rep U V} →
-  key-redex M N → key-redex (M 〈 ρ 〉) (N 〈 ρ 〉)
-key-redex-rep {ρ = ρ} (βTkr {A} {M} {N} SNM) = 
-  subst (key-redex (appT (ΛT A M) N 〈 ρ 〉)) (sym (compRS-botsub M)) 
-    (βTkr (SNrep R-creates-rep SNM))
-key-redex-rep {ρ = ρ} (βPkr {φ} {δ} {ε} SNφ SNε) = 
-  subst (key-redex ((appP (ΛP φ δ) ε) 〈 ρ 〉)) (sym (compRS-botsub δ)) 
-    (βPkr (SNrep R-creates-rep SNφ) (SNrep R-creates-rep SNε))
-key-redex-rep {ρ = ρ} (βEkr {N} {N'} {A} {P} {Q} SNN SNN' SNQ) = 
-  subst (key-redex (app* N N' (λλλ A P) Q 〈 ρ 〉)) (botsub₃-Rep↑₃ P)
-    (βEkr (SNrep R-creates-rep SNN) (SNrep R-creates-rep SNN') (SNrep R-creates-rep SNQ))
-key-redex-rep {ρ = ρ} (appTkr M▷N) = appTkr (key-redex-rep M▷N)
---REFACTOR Common pattern
-
-data Neutral (V : Alphabet) : Set where
-  var : Var V -Term → Neutral V
-  app : Neutral V → Term V → Neutral V
-
-decode-Neutral : ∀ {V} → Neutral V → Term V
-decode-Neutral (var x) = var x
-decode-Neutral (app M N) = appT (decode-Neutral M) N
-
-nrep : ∀ {U} {V} → Rep U V → Neutral U → Neutral V
-nrep ρ (var x) = var (ρ -Term x)
-nrep ρ (app M N) = app (nrep ρ M) (N 〈 ρ 〉)
-
-var-red' : ∀ {V} {K} {x : Var V K} {M} {N} → M ↠ N → M ≡ var x → N ≡ var x
-var-red' (osr-red (redex _)) ()
-var-red' (osr-red (app _)) ()
-var-red' ref M≡x = M≡x
-var-red' (trans-red M↠N N↠P) M≡x = var-red' N↠P (var-red' M↠N M≡x)
-
-var-red : ∀ {V} {K} {x : Var V K} {M} → var x ↠ M → M ≡ var x
-var-red x↠M = var-red' x↠M refl
-
-var-not-Λ : ∀ {V} {x : Var V -Term} {A} {M : Term (V , -Term)} → var x ≡ ΛT A M → Empty
-var-not-Λ ()
-
-app-not-Λ : ∀ {V} {M N : Term V} {A} {P : Term (V , -Term)} → appT M N ≡ ΛT A P → Empty
-app-not-Λ ()
-
-appT-injr : ∀ {V} {M N P Q : Term V} → appT M N ≡ appT P Q → N ≡ Q
-appT-injr refl = refl
-
-neutral-red' : ∀ {V} {N : Neutral V} {M₁} {M₂} → M₁ ↠ M₂ → decode-Neutral N ≡ M₁ →
-  Σ[ N' ∈ Neutral V ] decode-Neutral N' ≡ M₂
-neutral-red' {N = var _} (osr-red (redex βT)) ()
-neutral-red' {N = app (var _) _} (osr-red (redex βT)) xF≡ΛMN = ⊥-elim (var-not-Λ (appT-injl xF≡ΛMN))
-neutral-red' {N = app (app _ _) _} (osr-red (redex βT)) EF≡ΛMN = ⊥-elim (app-not-Λ (appT-injl EF≡ΛMN))
-neutral-red' {N = var _} (osr-red (app _)) ()
-neutral-red' {N = app _ _} (osr-red (app {c = -bot} _)) ()
-neutral-red' {N = app _ _} (osr-red (app {c = -imp} _)) ()
-neutral-red' {N = app N P} (osr-red (app {c = -appTerm} (appl {F = F ,, out} E⇒E'))) NP≡EF = 
-  let (N' ,p N'≡E') = neutral-red' (osr-red E⇒E') (appT-injl NP≡EF) in
-  app N' P ,p cong₂ appT N'≡E' (appT-injr NP≡EF)
-neutral-red' {N = app N P} (osr-red (app {c = -appTerm} (appr (appl {E' = F'} {F = out} F↠F')))) NP≡EF = app N F' ,p cong (λ x → appT x F') (appT-injl NP≡EF)
-neutral-red' {N = app _ _} (osr-red (app {c = -appTerm} (appr (appr ())))) _
-neutral-red' {N = app _ _} (osr-red (app {c = -lamTerm x} _)) ()
-neutral-red' {N = N} ref N≡M₁ = N ,p N≡M₁
-neutral-red' (trans-red M₁↠M₂ M₂↠M₃) N≡M₁ = 
-  let (_ ,p N₂≡M₂) = neutral-red' M₁↠M₂ N≡M₁ in
-  neutral-red' M₂↠M₃ N₂≡M₂
-
-neutral-red : ∀ {V} {N : Neutral V} {M} → decode-Neutral N ↠ M →
-  Σ[ N' ∈ Neutral V ] decode-Neutral N' ≡ M
-neutral-red N↠M = neutral-red' N↠M refl
-
 data Shape : Set where
   neutral : Shape
   bot : Shape
@@ -179,47 +64,6 @@ decode-Prop : ∀ {V} {S} → Leaves V S → Term V
 decode-Prop (neutral N) = decode-Neutral N
 decode-Prop bot = ⊥
 decode-Prop (imp φ ψ) = decode-Prop φ ⊃ decode-Prop ψ
-
-bot-red' : ∀ {V} {φ ψ : Term V} → φ ↠ ψ → φ ≡ ⊥ → ψ ≡ ⊥
-bot-red' (osr-red (redex βT)) ()
-bot-red' (osr-red (app {c = -bot} {F = out} x)) _ = refl
-bot-red' (osr-red (app {c = -imp} _)) ()
-bot-red' (osr-red (app {c = -appTerm} _)) ()
-bot-red' (osr-red (app {c = -lamTerm _} _)) ()
-bot-red' ref φ≡⊥ = φ≡⊥
-bot-red' (trans-red φ↠ψ ψ↠χ) φ≡⊥ = bot-red' ψ↠χ (bot-red' φ↠ψ φ≡⊥)
-
-bot-red : ∀ {V} {φ : Term V} → ⊥ ↠ φ → φ ≡ ⊥
-bot-red ⊥↠φ = bot-red' ⊥↠φ refl
-
-imp-injl : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ⊃ ψ ≡ φ' ⊃ ψ' → φ ≡ φ'
-imp-injl refl = refl
-
-imp-injr : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ⊃ ψ ≡ φ' ⊃ ψ' → ψ ≡ ψ'
-imp-injr refl = refl
-
-imp-red' : ∀ {V} {φ ψ χ θ : Term V} → φ ↠ ψ → φ ≡ χ ⊃ θ →
-  Σ[ χ' ∈ Term V ] Σ[ θ' ∈ Term V ] χ ↠ χ' × θ ↠ θ' × ψ ≡ χ' ⊃ θ'
-imp-red' (osr-red (redex βT)) ()
-imp-red' (osr-red (app {c = -bot} _)) ()
-imp-red' {θ = θ} (osr-red (app {c = -imp} (appl {E' = χ'} {F = _ ,, out} χ⇒χ'))) φ≡χ⊃θ = 
-  χ' ,p θ ,p subst (λ x → x ↠ χ') (imp-injl φ≡χ⊃θ) (osr-red χ⇒χ') ,p 
-  ref ,p (cong (λ x → χ' ⊃ x) (imp-injr φ≡χ⊃θ))
-imp-red' {χ = χ} (osr-red (app {c = -imp} (appr (appl {E' = θ'} {F = out} θ⇒θ')))) φ≡χ⊃θ = 
-  χ ,p θ' ,p ref ,p (subst (λ x → x ↠ θ') (imp-injr φ≡χ⊃θ) (osr-red θ⇒θ')) ,p 
-  cong (λ x → x ⊃ θ') (imp-injl φ≡χ⊃θ)
-imp-red' (osr-red (app {c = -imp} (appr (appr ())))) _
-imp-red' (osr-red (app {c = -appTerm} _)) ()
-imp-red' (osr-red (app {c = -lamTerm _} _)) ()
-imp-red' {χ = χ} {θ} ref φ≡χ⊃θ = χ ,p θ ,p ref ,p ref ,p φ≡χ⊃θ
-imp-red' (trans-red φ↠ψ ψ↠ψ') φ≡χ⊃θ = 
-  let (χ' ,p θ' ,p χ↠χ' ,p θ↠θ' ,p ψ≡χ'⊃θ') = imp-red' φ↠ψ φ≡χ⊃θ in 
-  let (χ'' ,p θ'' ,p χ'↠χ'' ,p θ'↠θ'' ,p ψ'≡χ''⊃θ'') = imp-red' ψ↠ψ' ψ≡χ'⊃θ' in 
-  χ'' ,p θ'' ,p trans-red χ↠χ' χ'↠χ'' ,p trans-red θ↠θ' θ'↠θ'' ,p ψ'≡χ''⊃θ''
-
-imp-red : ∀ {V} {χ θ ψ : Term V} → χ ⊃ θ ↠ ψ →
-  Σ[ χ' ∈ Term V ] Σ[ θ' ∈ Term V ] χ ↠ χ' × θ ↠ θ' × ψ ≡ χ' ⊃ θ'
-imp-red χ⊃θ↠ψ = imp-red' χ⊃θ↠ψ refl
 
 leaves-red : ∀ {V} {S} {L : Leaves V S} {φ : Term V} →
   decode-Prop L ↠ φ →
@@ -263,15 +107,9 @@ computeE Γ M (A ⇛ B) M' P =
 postulate decode-rep : ∀ {U} {V} {S} (L : Leaves U S) {ρ : Rep U V} →
                      decode-Prop (lrep ρ L) ≡ decode-Prop L 〈 ρ 〉
 
-postulate red-rep : ∀ {U} {V} {C} {K} {ρ : Rep U V} {M N : Subexpression U C K} → M ↠ N → M 〈 ρ 〉 ↠ N 〈 ρ 〉
-
-postulate conv-rep : ∀ {U} {V} {C} {K} {ρ : Rep U V} {M N : Subexpression U C K} → M ≃ N → M 〈 ρ 〉 ≃ N 〈 ρ 〉
-
 postulate conv-computeP : ∀ {V} {Γ : Context V} {S} {L M : Leaves V S} {δ} →
                         computeP Γ L δ → decode-Prop L ≃ decode-Prop M →
                         Γ ⊢ decode-Prop M ∶ ty Ω → computeP Γ M δ
-
-postulate appT-convl : ∀ {V} {M M' N : Term V} → M ≃ M' → appT M N ≃ appT M' N
 
 conv-computeE : ∀ {V} {Γ : Context V} {M} {M'} {A} {N} {N'} {P} →
   computeE Γ M A N P → 
@@ -354,11 +192,6 @@ conv-computeE {A = A ⇛ B} computeP Γ⊢M∶A Γ⊢N∶A Γ⊢M'∶A Γ⊢N'�
 postulate expand-computeE : ∀ {V} {Γ : Context V} {M} {A} {N} {P} {Q} →
                           computeE Γ M A N Q → Γ ⊢ P ∶ M ≡〈 A 〉 N → key-redex P Q → computeE Γ M A N P
 
-postulate key-redex-red : ∀ {V} {K} {M N : Expression V K} → key-redex M N → M ↠ N
-
-postulate key-redex-⋆ : ∀ {V} {M M' N N' : Term V} {P} →
-                        key-redex M M' → key-redex (M ⋆[ P ∶ N ∼ N' ]) (M' ⋆[ P ∶ N ∼ N' ])
-
 expand-computeT : ∀ {V} {Γ : Context V} {A} {M} {N} → computeT Γ A N → Γ ⊢ M ∶ ty A → key-redex M N → computeT Γ A M
 expand-computeT {A = Ω} computeψ _ φ▷ψ = key-redex-SN computeψ φ▷ψ
 expand-computeT {A = A ⇛ B} {M} {M'} (computeM'app ,p computeM'eq) Γ⊢M∶A⇛B M▷M' = 
@@ -395,9 +228,22 @@ compute {K = -Path} Γ (app (-eq A) (M ,, N ,, out)) P = computeE Γ M A N P
 
 postulate expand-computeP : ∀ {V} {Γ : Context V} {S} {L : Leaves V S} {δ ε} →
                           computeP Γ L ε → Γ ⊢ δ ∶ decode-Prop L → key-redex δ ε → computeP Γ L δ
+\end{code}
+}
 
+\begin{lm}
+\label{lm:expand-compute}
+Suppose $P[x:=N, y:=N', e:=Q] \in E_\Gamma(M =_A M')$.  Suppose also $\Gamma \vdash (\triplelambda e:x=_By.P)_{N N'} Q : M =_A M'$,
+and $N$, $N'$ and $Q$ are all strongly normalizing.  Then $(\triplelambda e:x=_By.P)_{N N'} Q \in E_\Gamma(M =_A M')$.
+\end{lm}
+
+\begin{code}
 expand-compute : ∀ {V} {K} {Γ : Context V} {A : Expression V (parent K)} {M N : Expression V (varKind K)} →
   compute Γ A N → Γ ⊢ M ∶ A → key-redex M N → compute Γ A M
+\end{code}
+
+\AgdaHide{
+\begin{code}
 expand-compute {K = -Term} {A = app (-ty A) out} = expand-computeT {A = A}
 expand-compute {K = -Proof} (S ,p ψ ,p φ↠ψ ,p computeε) Γ⊢δ∶φ δ▷ε = (S ,p ψ ,p φ↠ψ ,p expand-computeP {S = S} computeε (Type-Reduction Γ⊢δ∶φ φ↠ψ) δ▷ε)
 expand-compute {K = -Path} {A = app (-eq A) (M ,, N ,, out)} computeQ Γ⊢P∶M≡N P▷Q = expand-computeE computeQ Γ⊢P∶M≡N P▷Q
@@ -432,14 +278,43 @@ postulate expand-E : ∀ {V} {Γ : Context V} {A : Type} {M N : Term V} →
 postulate func-E : ∀ {U} {Γ : Context U} {M : Term U} {A} {B} →
                    (∀ V Δ (ρ : Rep U V) (N : Term V) → valid Δ → ρ ∶ Γ ⇒R Δ → E Δ A N → E Δ B (appT (M 〈 ρ 〉) N)) →
                    E Γ (A ⇛ B) M
+\end{code}
+}
 
+\begin{lm}$ $
+\label{lm:conv-compute}
+\begin{enumerate}
+\item
+If $\delta \in E_\Gamma(\phi)$, $\Gamma \vdash \psi : \Omega$ and $\phi \simeq \psi$, then $\delta \in E_\Gamma(\psi)$.
+\item
+If $P \in E_\Gamma(M =_A N)$, $\Gamma \vdash M' : A$, $\Gamma \vdash N' : A$, $M \simeq M'$ and $N \simeq N'$,
+then $P \in E_\Gamma(M' =_A N')$.
+\end{enumerate}
+\end{lm}
+
+\begin{code}
 postulate conv-E' : ∀ {V} {K} {Γ} {A} {B} {M : Expression V (varKind K)} →
                   A ≃ B → E' Γ A M → valid (_,_ {K = K} Γ B) → E' Γ B M
+\end{code}
 
+\AgdaHide{
+\begin{code}
 postulate E'-SN : ∀ {V} {K} {Γ} {A} {M : Expression V (varKind K)} → E' Γ A M → SN M
+\end{code}
+}
 
+\begin{lm}
+\label{lm:var-compute}
+Variables are computable.  That is, if $x : A \in \Gamma$ and $\Gamma \vald$, then $x \in E_\Gamma(A)$; and similarly
+for proof variables and path variables.
+\end{lm}
+
+\begin{code}
 postulate var-E' : ∀ {V} {K} {x : Var V K} {Γ : Context V} → E' Γ (typeof x Γ) (var x)
+\end{code}
 
+\AgdaHide{
+\begin{code}
 postulate ⊥-E : ∀ {V} {Γ : Context V} → valid Γ → E' Γ (ty Ω) ⊥
 
 postulate ⊃-E : ∀ {V} {Γ : Context V} {φ} {ψ} → E Γ Ω φ → E Γ Ω ψ → E Γ Ω (φ ⊃ ψ)

@@ -4,56 +4,48 @@ module PHOPL.Red where
 open import Data.Unit
 open import Data.Product renaming (_,_ to _,p_)
 open import Data.List
+open import Prelims
 open import PHOPL.Grammar
 open import PHOPL.PathSub
 \end{code}
 }
 
-\begin{frame}[fragile]
-\frametitle{The Reduction Relation}
-\begin{code}
-data R : Reduction where
-\end{code}
+\subsection{The Reduction Relation}
 
-The `$\beta$-rules':
-
+Let $\rhd$ be the relation consisting of the following pairs:
 \begin{align*}
 (\lambda x:A.M)N & \rhd M[x:=N] & (\lambda p:\phi.\delta)\epsilon & \rhd \delta[p:=\epsilon] \\
  \reff{\phi}^+ & \rhd \lambda p:\phi.p & \reff{\phi}^- & \rhd \lambda p:\phi.p \\
 \univ{\phi}{\psi}{\delta}{\epsilon}^+ & \rhd \delta & \univ{\phi}{\psi}{\delta}{\epsilon}^- & \rhd \epsilon
 \end{align*}
-\end{frame}
+\begin{align*}
+& \reff \phi \supset^* \univ{\psi}{\chi}{\delta}{\epsilon} \\
+& \quad \rhd \mathsf{univ}_{\phi \supset \psi,\phi \supset \chi}(\lambda p : \phi \supset \psi. \lambda q : \phi . \delta (p q), 
+\lambda p : \phi \supset \chi. \lambda q : \phi . \epsilon (p q)) \\
+& \univ{\phi}{\psi}{\delta}{\epsilon} \supset^* \reff{\chi} \\
+& \quad \rhd \univ{\phi \supset \chi}{\psi \supset \chi}{\lambda p : \phi \supset \chi . \lambda q : \psi .p (\epsilon q)}{\lambda p : \psi \supset \chi . \lambda q : \phi .p (\delta q)} \\
+& \univ{\phi}{\psi}{\delta}{\epsilon} \supset^* \univ{\phi'}{\psi'}{\delta'}{\epsilon'} \\
+& \quad \rhd \univ{\phi \supset \phi'}{\psi \supset \psi'}
+{\lambda p : \phi \supset \phi' . \lambda q \psi . \delta' (p (\epsilon q))}{\lambda p : \psi \supset \psi'. \lambda q : \phi . \epsilon' (p (\delta q))}
+\end{align*}
+\begin{align*}
+\reff{\phi} \supset^* \reff{\psi} & \rhd \reff{\phi \supset \psi} \\
+\reff{M} \reff{N} & \rhd \reff{MN} \\
+(\triplelambda e:x =_A y. P)_{MN}Q & \rhd P[x:=M, y:=N, e:=Q] \\
+\text{If $P$ does not have the form } \reff{-}, \text{ then } \\ \reff{\lambda x:A.M}_{N,N'} P & \rhd M \{ x := P : N ∼ N' \}
+\end{align*}
 
-\AgdaHide{
+\todo{Conjecture: We can remove the restriction on $P$ in the last clause if we add reduction rules:
+$\triplelambda e:y=_Ay'.M\{x:=e:y\sim y'\} \rhd \reff{\lambda x:A.M}$}
+
 \begin{code}
+data R : Reduction where
   βT : ∀ {V} {A} {M} {N} → R {V} -appTerm (ΛT A M ,, N ,, out) (M ⟦ x₀:= N ⟧)
   βR : ∀ {V} {φ} {δ} {ε} → R {V} -appProof (ΛP φ δ ,, ε ,, out) (δ ⟦ x₀:= ε ⟧)
   plus-ref : ∀ {V} {φ} → R {V} -plus (reff φ ,, out) (ΛP φ (var x₀))
   minus-ref : ∀ {V} {φ} → R {V} -minus (reff φ ,, out) (ΛP φ (var x₀))
   plus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → R {V} -plus (univ φ ψ δ ε ,, out) δ 
   minus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → R {V} -minus (univ φ ψ δ ε ,, out) ε
-\end{code}
-}
-
-\begin{frame}[fragile]
-\frametitle{The Reduction Relation}
-We make $\mathsf{univ}$ and $\mathsf{ref}$ move out past $\supset^*$ and application:
-$$\reff \phi \supset^* \univ{\psi}{\chi}{\delta}{\epsilon}
-\rhd \mathsf{univ}_{\phi \supset \psi,\phi \supset \chi}(\lambda p, q . \delta (p q), \lambda p, q . \epsilon (p q))$$
-$$\univ{\phi}{\psi}{\delta}{\epsilon} \supset^* \reff{\chi}
-\rhd \univ{\phi \supset \chi}{\psi \supset \chi}{\lambda p,q .p (\epsilon q)}{\lambda p,q .p (\delta q)}$$
-\begin{gather*}
-\univ{\phi}{\psi}{\delta}{\epsilon} \supset^* \univ{\phi'}{\psi'}{\delta'}{\epsilon'} \\
-\quad \rhd \univ{\phi \supset \phi'}{\psi \supset \psi'}
-{\lambda p,q . \delta' (p (\epsilon q))}{\lambda p, q . \epsilon' (p (\delta q))}
-\end{gather*}
-$$\reff{\phi} \supset^* \reff{\psi} \rhd \reff{\phi \supset \psi}
-\qquad
-\reff{M} \reff{N} \rhd \reff{MN}$$
-\end{frame}
-
-\AgdaHide{
-\begin{code}
   ref⊃*univ : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → R {V} -imp* (reff φ ,, univ ψ χ δ ε ,, out) (univ (φ ⊃ ψ) (φ ⊃ χ) (ΛP (φ ⊃ ψ) (ΛP (φ ⇑) (appP (δ ⇑ ⇑) (appP (var x₁) (var x₀))))) (ΛP (φ ⊃ χ) (ΛP (φ ⇑) (appP (ε ⇑ ⇑) (appP (var x₁) (var x₀))))))
   univ⊃*ref : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → R {V} -imp* (univ φ ψ δ ε ,, reff χ ,, out) (univ (φ ⊃ χ) (ψ ⊃ χ) (ΛP (φ ⊃ χ) (ΛP (ψ ⇑) (appP (var x₁) (appP (ε ⇑ ⇑) (var x₀))))) (ΛP (ψ ⊃ χ) (ΛP (φ ⇑) (appP (var x₁) (appP (δ ⇑ ⇑) (var x₀))))))
   univ⊃*univ : ∀ {V} {φ} {φ'} {ψ} {ψ'} {δ} {δ'} {ε} {ε'} →
@@ -61,43 +53,6 @@ $$\reff{\phi} \supset^* \reff{\psi} \rhd \reff{\phi \supset \psi}
     (univ (φ ⊃ φ') (ψ ⊃ ψ') (ΛP (φ ⊃ φ') (ΛP (ψ ⇑) (appP (δ' ⇑ ⇑) (appP (var x₁) (appP (ε ⇑ ⇑) (var x₀))))))
       (ΛP (ψ ⊃ ψ') (ΛP (φ ⇑) (appP (ε' ⇑ ⇑) (appP (var x₁) (appP (δ ⇑ ⇑) (var x₀)))))))
   ref⊃*ref : ∀ {V} {φ} {ψ} → R {V} -imp* (reff φ ,, reff ψ ,, out) (reff (φ ⊃ ψ))
-\end{code}
-}
-
-\begin{frame}[fragile]
-\frametitle{The Reduction Relation}
-We construct a proof of $M =_{A \rightarrow B} N$, then apply it.  What is the result?
-\begin{itemize}[<+->]
-\item
-$\reff{M} \reff{N} \rhd \reff{MN}$
-\item
-$(\triplelambda e:x =_A y. P)_{MN}Q \rhd P[x:=M, y:=N, e:=Q]$
-\item
-If $P \not\equiv \reff{-}$, then $\reff{\lambda x:A.M} P \rhd ???$
-\end{itemize}
-
-\only<2>{$\Gamma , x : A , y : A , e : x=_A y ⊢ P : L =_B L', \qquad \Gamma \vdash Q : M =_A N$}
-
-\only<3>{$\Gamma , x : A \vdash M : B, \qquad \Gamma \vdash P : N =_A N'$}
-\end{frame}
-
-\mode<all>{\input{PHOPL/PathSub.lagda}}
-
-\begin{frame}[fragile]
-\frametitle{The Reduction Relation}
-We construct a proof of $M =_{A \rightarrow B} N$, then apply it.  What is the result?
-\begin{itemize}
-\item
-$\reff{M} \reff{N} \rhd \reff{MN}$
-\item
-$(\triplelambda e:x =_A y. P)_{MN}Q \rhd P[x:=M, y:=N, e:=Q]$
-\item
-If $P \not\equiv \reff{-}$, then $\reff{\lambda x:A.M}_{N,N'} P \rhd M \{ x := P : N ∼ N' \}$
-\end{itemize}
-\end{frame}
-
-\AgdaHide{
-\begin{code}
   refref : ∀ {V} {M} {N} → R {V} -app* (N ,, N ,, reff M ,, reff N ,, out) (reff (appT M N))
   βE : ∀ {V} {M} {N} {A} {P} {Q} → R {V} -app* (M ,, N ,, λλλ A P ,, Q ,, out) 
     (P ⟦ x₂:= M ,x₁:= N ,x₀:= Q ⟧)
@@ -105,7 +60,12 @@ If $P \not\equiv \reff{-}$, then $\reff{\lambda x:A.M}_{N,N'} P \rhd M \{ x := P
   reflam⊃* : ∀ {V} {N} {N'} {A} {M} {P} {Q} → R {V} -app* (N ,, N' ,, reff (ΛT A M) ,, (P ⊃* Q) ,, out) (M ⟦⟦ x₀::= (P ⊃* Q) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
   reflamuniv : ∀ {V} {N} {N'} {A} {M} {φ} {ψ} {δ} {ε} → R {V} -app* (N ,, N' ,, reff (ΛT A M) ,, univ φ ψ δ ε ,, out) (M ⟦⟦ x₀::= (univ φ ψ δ ε) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
   reflamλλλ : ∀ {V} {N} {N'} {A} {M} {B} {P} → R {V} -app* (N ,, N' ,, reff (ΛT A M) ,, λλλ B P ,, out) (M ⟦⟦ x₀::= (λλλ B P) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
+\end{code}
 
+Let $\rightarrow$ be the congruence generated by $\rhd$, $\twoheadrightarrow$ the reflexive, transitive closure of $\rightarrow$, and $\simeq$ the equivalence relation generated by $\rightarrow$.
+
+\AgdaHide{
+\begin{code}
 open import Reduction PHOPL R public 
 
 postulate eq-resp-conv : ∀ {V} {M M' N N' : Term V} {A : Type} →
@@ -219,11 +179,14 @@ Critical-Pairs reflamλλλ reflamλλλ = _ ,p ref ,p ref
 \end{code}
 }
 
-\begin{frame}[fragile]
-\frametitle{Confluence}
 \begin{theorem}[Local Confluence]
-The reduction is locally confluent.
+The reduction relation $\rightarrow$ is locally confluent.  That is, if $E \rightarrow F$ and $E \rightarrow G$, then there
+exists $H$ such that $F \twoheadrightarrow H$ and $G \twoheadrightarrow H$.
 \end{theorem}
+
+\begin{proof}
+Case analysis on $E \rightarrow F$ and $E \rightarrow G$.  There are no critical pairs.
+\end{proof}
 
 \begin{code}
 Local-Confluent : ∀ {V} {C} {K} {E F G : Subexpression V C K} →
@@ -336,9 +299,72 @@ Local-Confluent (app E⇒F) E⇒G = {!!} -}
 Every strongly normalizing term is confluent, hence has a unique normal form.
 \end{corollary}
 
+\begin{proof}
+By Newman's Lemma \cite{NewmansLemma}.
+\end{proof}
+
 \begin{code}
 postulate Newmans : ∀ {V} {C} {K} {E F G : Subexpression V C K} → 
                   SN E → (E ↠ F) → (E ↠ G) →
                   Σ[ H ∈ Subexpression V C K ] (F ↠ H × G ↠ H)
+
+postulate ChurchRosserT : ∀ {V} {M N P : Term V} → M ↠ N → M ↠ P →
+                        Σ[ Q ∈ Term V ] N ↠ Q × P ↠ Q
+
+postulate confluenceT : ∀ {V} {M N : Term V} → M ≃ N →
+                        Σ[ Q ∈ Term V ] M ↠ Q × N ↠ Q
+
+postulate SNE : ∀ {V} {C} {K} (P : Subexpression V C K → Set) →
+              (∀ {M : Subexpression V C K} → SN M → (∀ N → M ↠⁺ N → P N) → P M) →
+              ∀ {M : Subexpression V C K} → SN M → P M
+
+private var-red' : ∀ {V} {K} {x : Var V K} {M} {N} → M ↠ N → M ≡ var x → N ≡ var x
+var-red' (osr-red (redex _)) ()
+var-red' (osr-red (app _)) ()
+var-red' ref M≡x = M≡x
+var-red' (trans-red M↠N N↠P) M≡x = var-red' N↠P (var-red' M↠N M≡x)
+
+var-red : ∀ {V} {K} {x : Var V K} {M} → var x ↠ M → M ≡ var x
+var-red x↠M = var-red' x↠M refl
+
+private bot-red' : ∀ {V} {φ ψ : Term V} → φ ↠ ψ → φ ≡ ⊥ → ψ ≡ ⊥
+bot-red' (osr-red (redex βT)) ()
+bot-red' (osr-red (app {c = -bot} {F = out} x)) _ = refl
+bot-red' (osr-red (app {c = -imp} _)) ()
+bot-red' (osr-red (app {c = -appTerm} _)) ()
+bot-red' (osr-red (app {c = -lamTerm _} _)) ()
+bot-red' ref φ≡⊥ = φ≡⊥
+bot-red' (trans-red φ↠ψ ψ↠χ) φ≡⊥ = bot-red' ψ↠χ (bot-red' φ↠ψ φ≡⊥)
+
+bot-red : ∀ {V} {φ : Term V} → ⊥ ↠ φ → φ ≡ ⊥
+bot-red ⊥↠φ = bot-red' ⊥↠φ refl
+
+imp-red' : ∀ {V} {φ ψ χ θ : Term V} → φ ↠ ψ → φ ≡ χ ⊃ θ →
+  Σ[ χ' ∈ Term V ] Σ[ θ' ∈ Term V ] χ ↠ χ' × θ ↠ θ' × ψ ≡ χ' ⊃ θ'
+imp-red' (osr-red (redex βT)) ()
+imp-red' (osr-red (app {c = -bot} _)) ()
+imp-red' {θ = θ} (osr-red (app {c = -imp} (appl {E' = χ'} {F = _ ,, out} χ⇒χ'))) φ≡χ⊃θ = 
+  χ' ,p θ ,p subst (λ x → x ↠ χ') (imp-injl φ≡χ⊃θ) (osr-red χ⇒χ') ,p 
+  ref ,p (cong (λ x → χ' ⊃ x) (imp-injr φ≡χ⊃θ))
+imp-red' {χ = χ} (osr-red (app {c = -imp} (appr (appl {E' = θ'} {F = out} θ⇒θ')))) φ≡χ⊃θ = 
+  χ ,p θ' ,p ref ,p (subst (λ x → x ↠ θ') (imp-injr φ≡χ⊃θ) (osr-red θ⇒θ')) ,p 
+  cong (λ x → x ⊃ θ') (imp-injl φ≡χ⊃θ)
+imp-red' (osr-red (app {c = -imp} (appr (appr ())))) _
+imp-red' (osr-red (app {c = -appTerm} _)) ()
+imp-red' (osr-red (app {c = -lamTerm _} _)) ()
+imp-red' {χ = χ} {θ} ref φ≡χ⊃θ = χ ,p θ ,p ref ,p ref ,p φ≡χ⊃θ
+imp-red' (trans-red φ↠ψ ψ↠ψ') φ≡χ⊃θ = 
+  let (χ' ,p θ' ,p χ↠χ' ,p θ↠θ' ,p ψ≡χ'⊃θ') = imp-red' φ↠ψ φ≡χ⊃θ in 
+  let (χ'' ,p θ'' ,p χ'↠χ'' ,p θ'↠θ'' ,p ψ'≡χ''⊃θ'') = imp-red' ψ↠ψ' ψ≡χ'⊃θ' in 
+  χ'' ,p θ'' ,p trans-red χ↠χ' χ'↠χ'' ,p trans-red θ↠θ' θ'↠θ'' ,p ψ'≡χ''⊃θ''
+
+imp-red : ∀ {V} {χ θ ψ : Term V} → χ ⊃ θ ↠ ψ →
+  Σ[ χ' ∈ Term V ] Σ[ θ' ∈ Term V ] χ ↠ χ' × θ ↠ θ' × ψ ≡ χ' ⊃ θ'
+imp-red χ⊃θ↠ψ = imp-red' χ⊃θ↠ψ refl
+
+postulate red-rep : ∀ {U} {V} {C} {K} {ρ : Rep U V} {M N : Subexpression U C K} → M ↠ N → M 〈 ρ 〉 ↠ N 〈 ρ 〉
+
+postulate conv-rep : ∀ {U} {V} {C} {K} {ρ : Rep U V} {M N : Subexpression U C K} → M ≃ N → M 〈 ρ 〉 ≃ N 〈 ρ 〉
+
+postulate appT-convl : ∀ {V} {M M' N : Term V} → M ≃ M' → appT M N ≃ appT M' N
 \end{code}
-\end{frame}

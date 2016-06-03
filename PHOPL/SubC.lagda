@@ -12,18 +12,25 @@ open import PHOPL.PathSub
 \end{code}
 }
 
-\begin{frame}[fragile]
-\frametitle{Path Substitution}
-\begin{prop}
+\begin{prop}[Path Substitution]
 If $\Gamma, x : A \vdash M : B$ and $\Gamma \vdash P : N =_A N'$ then
-$\Gamma \vdash \{ P / x \} M : [N / x] M =_B [N' / x] M$.
+$\Gamma \vdash M \{ x := P : N ∼ N' \} : M [ x:= N ] =_B M [ x:= N' ]$.
 \end{prop}
 
-\AgdaHide{
+Given substitutions $\sigma, \rho : \Gamma \rightarrow \Delta$, a \emph{path substitution} $\tau : \sigma \sim \rho$
+is a function mapping every term variable $x \in \Gamma$ to a path $\tau(x)$ such that:
+\begin{itemize}
+\item
+if $x : A \in \Gamma$ then $\Delta \vdash \tau(x) : \sigma(x) =_A \rho(x)$.
+\end{itemize}
+
 \begin{code}
 _∶_∼_∶_⇒_ : ∀ {U} {V} → PathSub U V → Sub U V → Sub U V → Context U → Context V → Set
 τ ∶ σ ∼ σ' ∶ Γ ⇒ Δ = ∀ x → Δ ⊢ τ x ∶ σ -Term x ≡〈 typeof' x Γ 〉 σ' -Term x
+\end{code}
 
+\AgdaHide{
+\begin{code}
 change-cod-PS : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {Δ} {Δ'} →
                 τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → Δ ≡ Δ' → τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ'
 change-cod-PS {τ = τ} {ρ} {σ} {Γ} τ∶ρ∼σ Δ≡Δ' = subst (λ x → τ ∶ ρ ∼ σ ∶ Γ ⇒ x) Δ≡Δ' τ∶ρ∼σ
@@ -45,6 +52,11 @@ postulate sub↗-decomp : ∀ {U} {V} {C} {K} (M : Subexpression (U , -Term) C K
                      M ⟦ Sub↑ _ ρ ⟧ 〈 Rep↑ _ upRep 〉 〈 Rep↑ _ upRep 〉 〈 Rep↑ _ upRep 〉 ⟦ x₀:= var x₁ ⟧ ≡ M ⟦ sub↗ ρ ⟧
 \end{code}
 }
+
+\begin{corollary}
+If $\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$ and $\Gamma \vdash M : A$,
+then $\Gamma \vdash M \{ \tau : \sigma \sim \rho \} : M [ \sigma ] =_A M [ \rho ]$.
+\end{corollary}
 
 \begin{code}
 Path-Substitution : ∀ {U} {V} {Γ : Context U} {Δ : Context V} 
@@ -117,15 +129,19 @@ postulate pathsub-compRP : ∀ {U} {V} {W} M {ρ : Rep V W} {τ : PathSub U V} {
                          M ⟦⟦ ρ •RP τ ∶ ρ •RS σ ∼ ρ •RS σ' ⟧⟧ ≡ M ⟦⟦ τ ∶ σ ∼ σ' ⟧⟧ 〈 ρ 〉
 
 \end{code}
-x}
+}
 
-\end{frame}
+Let us say that a substitution $\sigma : \Gamma \rightarrow \Delta$ is \emph{computable}
+iff, for all $x : A \in \Gamma$, we have $\sigma(x) \in E_\Delta(A)$; and, for all $p : \phi \in
+\Gamma$, we have $\sigma(p) \in E_\Delta(\phi[\sigma])$.
 
-\AgdaHide{
 \begin{code}
 _∶_⇒C_ : ∀ {U} {V} → Sub U V → Context U → Context V → Set
 _∶_⇒C_ {U} {V} σ Γ Δ = ∀ {K} (x : Var U K) → E' {V} Δ ((typeof x Γ) ⟦ σ ⟧) (σ _ x)
+\end{code}
 
+\AgdaHide{
+\begin{code}
 postulate change-codC : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {Δ'} →
                      σ ∶ Γ ⇒C Δ → Δ ≡ Δ' → σ ∶ Γ ⇒C Δ'
 
@@ -158,10 +174,19 @@ postulate subC-typed : ∀ {U} {V} {σ : Sub U V} {Γ : Context U} {Δ : Context
 
 postulate subC-cong : ∀ {U} {V} {σ τ : Sub U V} {Γ} {Δ} →
                     σ ∶ Γ ⇒C Δ → σ ∼ τ → τ ∶ Γ ⇒C Δ
+\end{code}
+}
 
+Let us say that a path substitution $\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$ is
+\emph{computable} iff, for all $x : A \in \Gamma$, we have $\tau(x) \in E_\Delta(\sigma(x) =_A \rho(x))$.
+
+\begin{code}
 _∶_∼_∶_⇒C_ : ∀ {U} {V} → PathSub U V → Sub U V → Sub U V → Context U → Context V → Set
 τ ∶ ρ ∼ σ ∶ Γ ⇒C Δ = ∀ x → EE Δ (ρ _ x ≡〈 typeof' x Γ 〉 σ _ x) (τ x)
+\end{code}
 
+\AgdaHide{
+\begin{code}
 postulate change-ends : ∀ {U} {V} {τ : PathSub U V} {ρ} {ρ'} {σ} {σ'} {Γ} {Δ} → 
                       τ ∶ ρ ∼ σ ∶ Γ ⇒C Δ → ρ ∼ ρ' → σ ∼ σ' → τ ∶ ρ' ∼ σ' ∶ Γ ⇒C Δ
 

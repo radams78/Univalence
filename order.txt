@@ -17,9 +17,9 @@ Grammar/Context
 Reduction/Base
 Reduction/SN
 PHOPL/Grammar
-PHOPL/Rules
 PHOPL/PathSub
 PHOPL/Red
+PHOPL/Rules
 PHOPL/Meta
 PHOPL/KeyRedex
 PHOPL/Computable

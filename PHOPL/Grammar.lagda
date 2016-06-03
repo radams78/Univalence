@@ -1,12 +1,33 @@
+\AgdaHide{
+\begin{code}
 module PHOPL.Grammar where
 
+open import Data.Empty renaming (⊥ to Empty)
 open import Data.List
-open import Data.Nat
-open import Data.Fin
 open import Prelims
 open import Grammar.Taxonomy
 open import Grammar.Base
+\end{code}
+}
 
+\subsection{Syntax}
+
+We extend the grammar of $\lambda o$ with
+
+\[
+\begin{array}{lrcl}
+\text{Path} & P & ::= & e \mid \reff{M} \mid P \supset^* P \mid \univ{\phi}{\phi}{\delta}{\delta} \mid \triplelambda e : x =_A x . P \mid P_{MM} P\\
+\text{Proof} & \delta & ::= & \cdots \mid P^+ \mid P^- \\
+\text{Context} & \Gamma & ::= & \cdots \mid \Gamma, e : M =_A M \\
+\text{Judgement} & \mathcal{J} & ::= & \cdots \mid \Gamma \vdash P : M =_A M
+\end{array}
+\]
+
+Note that, in the path $\triplelambda e : x =_A y . P$, the term variables $x$ and $y$ and the proof variable $e$ are all bound within $P$.
+
+\todo{Give the intuition}.
+
+\begin{code}
 data PHOPLVarKind : Set where
   -Proof : PHOPLVarKind
   -Term : PHOPLVarKind
@@ -143,7 +164,10 @@ _,P_ = _,_
 infixl 59 _,E_
 _,E_ : ∀ {V} → Context V → Equation V → Context (V , -Path)
 _,E_ = _,_
+\end{code}
 
+\AgdaHide{
+\begin{code}
 typeof' : ∀ {V} → Var V -Term → Context V → Type
 typeof' x Γ  = yt (typeof x Γ)
 
@@ -177,3 +201,21 @@ postulate sub↗-comp₁ : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} →
                      sub↗ (ρ •RS σ) ∼ Rep↑ -Path (Rep↑ -Term (Rep↑ -Term ρ)) •RS sub↗ σ
 
 --REFACTOR Duplication
+
+var-not-Λ : ∀ {V} {x : Var V -Term} {A} {M : Term (V , -Term)} → var x ≡ ΛT A M → Empty
+var-not-Λ ()
+
+app-not-Λ : ∀ {V} {M N : Term V} {A} {P : Term (V , -Term)} → appT M N ≡ ΛT A P → Empty
+app-not-Λ ()
+
+appT-injr : ∀ {V} {M N P Q : Term V} → appT M N ≡ appT P Q → N ≡ Q
+appT-injr refl = refl
+
+imp-injl : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ⊃ ψ ≡ φ' ⊃ ψ' → φ ≡ φ'
+imp-injl refl = refl
+
+imp-injr : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ⊃ ψ ≡ φ' ⊃ ψ' → ψ ≡ ψ'
+imp-injr refl = refl
+--REFACTOR General pattern
+\end{code}
+}

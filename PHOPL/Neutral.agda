@@ -1,53 +1,45 @@
 module PHOPL.Neutral where
+
+open import Data.Empty renaming (⊥ to Empty) -- TODO Move to Prelims
 open import Data.Unit
-open import Data.Product renaming (_,_ to _,p_)
+open import Data.Product renaming (_,_ to _,p_) -- TODO Move to Prelims
 open import Data.List
+open import Prelims
 open import PHOPL.Grammar
 open import PHOPL.Red
 open import PHOPL.PathSub
 
-data Neutral (V : Alphabet) : VarKind → Set
-data Nf : Alphabet → VarKind → Set
+data Neutral (V : Alphabet) : Set where
+  var : Var V -Term → Neutral V
+  app : Neutral V → Term V → Neutral V
 
-data Neutral V where
-  var    : ∀ K → Var V K → Neutral V K
-  appTn  : Neutral V -Term → Nf V -Term → Neutral V -Term
-  appPn  : Neutral V -Proof → Nf V -Proof → Neutral V -Proof
-  plusn  : Neutral V -Path → Neutral V -Proof
-  minusn : Neutral V -Path → Neutral V -Proof
-  _⊃*l_  : Neutral V -Path → Nf V -Path → Neutral V -Path
-  _⊃*r_  : Nf V -Path → Neutral V -Path → Neutral V -Path
-  app*n  : Nf V -Term → Nf V -Term → Neutral V -Path → Nf V -Path → Neutral V -Path
+decode-Neutral : ∀ {V} → Neutral V → Term V
+decode-Neutral (var x) = var x
+decode-Neutral (app M N) = appT (decode-Neutral M) N
 
-data Nf  where
-  neutral : ∀ {V} {K} → Neutral V K → Nf V K
-  ⊥nf   : ∀ {V} → Nf V -Term
-  _⊃nf_ : ∀ {V} → Nf V -Term → Nf V -Term → Nf V -Term
-  ΛTnf  : ∀ {V} → Type → Nf (V , -Term) -Term → Nf V -Term
-  ΛPnf  : ∀ {V} → Nf V -Term → Nf (V , -Proof) -Proof → Nf V -Proof
-  refnf : ∀ {V} → Nf V -Term → Nf V -Path
-  univnf : ∀ {V} → Nf V -Term → Nf V -Term → Nf V -Proof → Nf V -Proof → Nf V -Path
-  λλλnf  : ∀ {V} → Type → Nf (V , -Term , -Term , -Path) -Path → Nf V -Path
+nrep : ∀ {U} {V} → Rep U V → Neutral U → Neutral V
+nrep ρ (var x) = var (ρ -Term x)
+nrep ρ (app M N) = app (nrep ρ M) (N 〈 ρ 〉)
 
-decode : ∀ {V} {K} → Neutral V K → Expression V (varKind K)
-decodenf : ∀ {V} {K} → Nf V K → Expression V (varKind K)
+neutral-red' : ∀ {V} {N : Neutral V} {M₁} {M₂} → M₁ ↠ M₂ → decode-Neutral N ≡ M₁ →
+  Σ[ N' ∈ Neutral V ] decode-Neutral N' ≡ M₂
+neutral-red' {N = var _} (osr-red (redex βT)) ()
+neutral-red' {N = app (var _) _} (osr-red (redex βT)) xF≡ΛMN = ⊥-elim (var-not-Λ (appT-injl xF≡ΛMN))
+neutral-red' {N = app (app _ _) _} (osr-red (redex βT)) EF≡ΛMN = ⊥-elim (app-not-Λ (appT-injl EF≡ΛMN))
+neutral-red' {N = var _} (osr-red (app _)) ()
+neutral-red' {N = app _ _} (osr-red (app {c = -bot} _)) ()
+neutral-red' {N = app _ _} (osr-red (app {c = -imp} _)) ()
+neutral-red' {N = app N P} (osr-red (app {c = -appTerm} (appl {F = F ,, out} E⇒E'))) NP≡EF = 
+  let (N' ,p N'≡E') = neutral-red' (osr-red E⇒E') (appT-injl NP≡EF) in
+  app N' P ,p cong₂ appT N'≡E' (appT-injr NP≡EF)
+neutral-red' {N = app N P} (osr-red (app {c = -appTerm} (appr (appl {E' = F'} {F = out} F↠F')))) NP≡EF = app N F' ,p cong (λ x → appT x F') (appT-injl NP≡EF)
+neutral-red' {N = app _ _} (osr-red (app {c = -appTerm} (appr (appr ())))) _
+neutral-red' {N = app _ _} (osr-red (app {c = -lamTerm x} _)) ()
+neutral-red' {N = N} ref N≡M₁ = N ,p N≡M₁
+neutral-red' (trans-red M₁↠M₂ M₂↠M₃) N≡M₁ = 
+  let (_ ,p N₂≡M₂) = neutral-red' M₁↠M₂ N≡M₁ in
+  neutral-red' M₂↠M₃ N₂≡M₂
 
-decode (var K x) = var x
-decode (appTn E F) = appT (decode E) (decodenf F)
-decode (appPn E F) = appP (decode E) (decodenf F)
-decode (plusn E) = plus (decode E)
-decode (minusn E) = minus (decode E)
-decode (E ⊃*l F) = decode E ⊃* decodenf F
-decode (E ⊃*r F) = decodenf E ⊃* decode F
-decode (app*n E₁ E₂ E₃ E₄) = app* (decodenf E₁) (decodenf E₂) (decode E₃) (decodenf E₄)
-
-decodenf (neutral E) = decode E
-decodenf ⊥nf = ⊥
-decodenf (E ⊃nf F) = decodenf E ⊃ decodenf F
-decodenf (ΛTnf A E) = ΛT A (decodenf E)
-decodenf (ΛPnf E F) = ΛP (decodenf E) (decodenf F)
-decodenf (refnf E) = reff (decodenf E)
-decodenf (univnf E₁ E₂ E₃ E₄) = univ (decodenf E₁) (decodenf E₂) (decodenf E₃) (decodenf E₄)
-decodenf (λλλnf A E) = λλλ A (decodenf E)
-
-
+neutral-red : ∀ {V} {N : Neutral V} {M} → decode-Neutral N ↠ M →
+  Σ[ N' ∈ Neutral V ] decode-Neutral N' ≡ M
+neutral-red N↠M = neutral-red' N↠M refl

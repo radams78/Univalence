@@ -27,69 +27,6 @@ postulate ΛR' : ∀ {V} {Γ : Context V} {φ} {δ} {ψ} → Γ ,P φ ⊢ δ ∶
 \end{code}
 }
 
-\begin{frame}[fragile]
-\frametitle{The Main Proof}
-
-\begin{theorem}
-If $\Gamma \vdash M : B$, and $\sigma(x) \in E_\Delta(A[\sigma])$ for all $x : A \in \Gamma$,
-then $M[\sigma] \in E_\Delta(B[\sigma])$.
-\end{theorem}
-
-\begin{code}
-postulate Computable-Sub : ∀ {U} {V} {K} (σ : Sub U V) {Γ} {Δ} 
-                         {M : Expression U (varKind K)} {A} →
-                         σ ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → E' Δ (A ⟦ σ ⟧) (M ⟦ σ ⟧)
-\end{code}
-\end{frame}
-
-\AgdaHide{
-\begin{code}
-{-Computable-Sub σ σ∶Γ⇒Δ (varR x validΓ) validΔ = σ∶Γ⇒Δ x
-Computable-Sub {V = V} σ {Δ = Δ} σ∶Γ⇒Δ (appR Γ⊢M∶A⇛B Γ⊢N∶A) validΔ = 
-  appT-E validΔ (Computable-Sub σ σ∶Γ⇒Δ Γ⊢M∶A⇛B validΔ) (Computable-Sub σ σ∶Γ⇒Δ Γ⊢N∶A validΔ)
-Computable-Sub σ σ∶Γ⇒Δ (ΛR {M = M} {B} Γ,A⊢M∶B) validΔ = 
-  func-E (λ _ Θ ρ N validΘ ρ∶Δ⇒Θ N∈EΘA → 
-    let MN∈EΘB = subst (E Θ B) (subrepsub M)
-                 (Computable-Sub (x₀:= N •SR Rep↑ _ ρ • Sub↑ -Term σ) 
-                 (compC (compSRC (botsubC N∈EΘA) 
-                        (Rep↑-typed ρ∶Δ⇒Θ)) 
-                 (Sub↑C σ∶Γ⇒Δ)) 
-                 Γ,A⊢M∶B validΘ) in
-    expand-E MN∈EΘB
-      (appR (ΛR (Weakening (Substitution Γ,A⊢M∶B (ctxTR validΔ) (Sub↑-typed (subC-typed σ∶Γ⇒Δ))) 
-                                                      (ctxTR validΘ) 
-                                         (Rep↑-typed ρ∶Δ⇒Θ))) 
-                (E-typed N∈EΘA)) 
-      (βTkr (SNap' {Ops = substitution} R-respects-sub (E-SN B MN∈EΘB))))
-Computable-Sub σ σ∶Γ⇒Δ (⊥R _) validΔ = ⊥-E validΔ
-Computable-Sub σ σ∶Γ⇒Δ (⊃R Γ⊢φ∶Ω Γ⊢ψ∶Ω) validΔ = ⊃-E 
-  (Computable-Sub σ σ∶Γ⇒Δ Γ⊢φ∶Ω validΔ) (Computable-Sub σ σ∶Γ⇒Δ Γ⊢ψ∶Ω validΔ)
-Computable-Sub σ σ∶Γ⇒Δ (appPR Γ⊢δ∶φ⊃ψ Γ⊢ε∶φ) validΔ = appP-EP 
-  (Computable-Sub σ σ∶Γ⇒Δ Γ⊢δ∶φ⊃ψ validΔ) (Computable-Sub σ σ∶Γ⇒Δ Γ⊢ε∶φ validΔ)
-Computable-Sub σ {Γ = Γ} {Δ = Δ} σ∶Γ⇒Δ (ΛPR {δ = δ} {φ} {ψ} Γ⊢φ∶Ω Γ,φ⊢δ∶ψ) validΔ = 
-  let Δ⊢Λφδσ∶φ⊃ψ : Δ ⊢ (ΛP φ δ) ⟦ σ ⟧ ∶ φ ⟦ σ ⟧ ⊃ ψ ⟦ σ ⟧
-      Δ⊢Λφδσ∶φ⊃ψ = Substitution {A = φ ⊃ ψ} (ΛPR Γ⊢φ∶Ω Γ,φ⊢δ∶ψ) validΔ (subC-typed σ∶Γ⇒Δ) in
-  func-EP (λ W Θ ρ ε ρ∶Δ⇒Θ ε∈EΔφ → 
-    let δε∈EΘψ : EP Θ (ψ ⟦ σ ⟧ 〈 ρ 〉) (δ ⟦ Sub↑ _ σ ⟧ 〈 Rep↑ _ ρ 〉 ⟦ x₀:= ε ⟧)
-        δε∈EΘψ = subst₂ (EP Θ) (subrepbotsub-up ψ) (subrepsub δ) 
-                 (Computable-Sub (x₀:= ε •SR Rep↑ _ ρ • Sub↑ _ σ) 
-                 (compC (compSRC (botsubCP ε∈EΔφ) 
-                        (Rep↑-typed ρ∶Δ⇒Θ)) 
-                 (Sub↑C σ∶Γ⇒Δ)) Γ,φ⊢δ∶ψ (Context-Validity (EP-typed ε∈EΔφ))) in
-    expand-EP δε∈EΘψ (appPR (Weakening Δ⊢Λφδσ∶φ⊃ψ (Context-Validity (EP-typed ε∈EΔφ)) ρ∶Δ⇒Θ) (EP-typed ε∈EΔφ))
-      (βPkr (SNrep R-creates-rep (E-SN Ω (Computable-Sub σ σ∶Γ⇒Δ Γ⊢φ∶Ω validΔ))) (EP-SN ε∈EΔφ))) 
-  Δ⊢Λφδσ∶φ⊃ψ
-Computable-Sub σ σ∶Γ⇒Δ (convR Γ⊢δ∶φ Γ⊢ψ∶Ω φ≃ψ) validΔ = conv-E' (respects-conv (respects-osr substitution R-respects-sub) φ≃ψ) 
-  (Computable-Sub σ σ∶Γ⇒Δ Γ⊢δ∶φ validΔ) (ctxPR (Substitution Γ⊢ψ∶Ω validΔ (subC-typed σ∶Γ⇒Δ)))
-Computable-Sub σ σ∶Γ⇒Δ (refR Γ⊢M∶A) validΔ = ref-EE (Computable-Sub σ σ∶Γ⇒Δ Γ⊢M∶A validΔ)
-Computable-Sub σ σ∶Γ⇒Δ (⊃*R Γ⊢φ∶Ω Γ⊢ψ∶Ω) validΔ = ⊃*-EE (Computable-Sub σ σ∶Γ⇒Δ Γ⊢φ∶Ω validΔ) (Computable-Sub σ σ∶Γ⇒Δ Γ⊢ψ∶Ω validΔ)
-Computable-Sub σ σ∶Γ⇒Δ (univR Γ⊢δ∶φ⊃ψ Γ⊢ε∶ψ⊃φ) validΔ = univ-EE (Computable-Sub σ σ∶Γ⇒Δ Γ⊢δ∶φ⊃ψ validΔ) (Computable-Sub σ σ∶Γ⇒Δ Γ⊢ε∶ψ⊃φ validΔ)
-Computable-Sub σ σ∶Γ⇒Δ (plusR Γ⊢P∶φ≡ψ) validΔ = plus-EP (Computable-Sub σ σ∶Γ⇒Δ Γ⊢P∶φ≡ψ validΔ)
-Computable-Sub σ σ∶Γ⇒Δ (minusR Γ⊢P∶φ≡ψ) validΔ = minus-EP (Computable-Sub σ σ∶Γ⇒Δ Γ⊢P∶φ≡ψ validΔ)
-Computable-Sub σ σ∶Γ⇒Δ (lllR Γ⊢M∶A) validΔ = {!!}
-Computable-Sub σ σ∶Γ⇒Δ (app*R Γ⊢M∶A Γ⊢M∶A₁ Γ⊢M∶A₂ Γ⊢M∶A₃) validΔ = {!!}
-Computable-Sub σ σ∶Γ⇒Δ (convER Γ⊢M∶A Γ⊢M∶A₁ Γ⊢M∶A₂ M≃M' N≃N') validΔ = {!!} -}
-
 {-Computable-Proof-Substitution : ∀ U V (σ : Sub U V) Γ Δ δ φ →
   σ ∶ Γ ⇒C Δ → Γ ⊢ δ ∶ φ → valid Δ → EP Δ (φ ⟦ σ ⟧) (δ ⟦ σ ⟧)
 Computable-Path-Substitution₁ : ∀ U V (σ : Sub U V) Γ Δ P E →

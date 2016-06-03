@@ -2,13 +2,15 @@
 \usepackage{amssymb}
 \usepackage{bbm}
 \usepackage[greek,english]{babel}
+\usepackage{framed}
 \usepackage{ucs}
 \usepackage[utf8x]{inputenc}
 \usepackage{autofe}
-\usepackage{fancyvrb}
 \usepackage{proof}
 \usepackage{stmaryrd}
+\usepackage{textalpha}
 \usepackage{todo}
+
 
 \DeclareUnicodeCharacter{8598}{\ensuremath{\nwarrow}}
 \DeclareUnicodeCharacter{8599}{\ensuremath{\nearrow}}
@@ -27,11 +29,9 @@
 \DeclareUnicodeCharacter{10215}{\ensuremath{]}}
 \DeclareUnicodeCharacter{10219}{\ensuremath{\rangle\rangle}}
 
-\usepackage{textalpha}
-
-\DefineVerbatimEnvironment{code}{Verbatim}{fontsize=\footnotesize}
 
 \newtheorem{prop}{Proposition}[section]
+\newtheorem{lm}[prop]{Lemma}
 
 \newcommand{\Set}{\mathbf{Set}}
 \newcommand{\eqdef}{\mathrel{\smash{\stackrel{\text{def}}{=}}}}
@@ -40,8 +40,9 @@
 \newcommand{\vald}{\ensuremath{\ \mathrm{valid}}}
 \newcommand{\reff}[1]{\ensuremath{\mathsf{ref} \left( {#1} \right)}}
 \newcommand{\univ}[4]{\ensuremath{\mathsf{univ}_{{#1} , {#2}} \left( {#3} , {#4} \right)}}
-\newcommand{\triplelambda}{\lambda \!\! \lambda \!\! \lambda}
-\newcommand{\SN}{\mathbf{SN}}
+\newcommand{\triplelambda}{\ensuremath{\lambda \!\! \lambda \!\! \lambda}}
+\newcommand{\SN}{\ensuremath{\mathbf{SN}}}
+\newcommand{\dom}{\ensuremath{\operatorname{dom}}}
 
 \begin{document}
 
@@ -103,105 +104,68 @@ where $p$ is a \emph{proof variable} and $x$ is a \emph{term variable}.
 Its rules of deduction are given in Figure \ref{fig:lambdao}
 
 \begin{figure}
+\begin{framed}
 \[ \infer{\langle \rangle \vald}{} \qquad
 \infer{\Gamma, x : A \vald}{\Gamma \vald} \qquad 
 \infer{\Gamma, p : \phi \vald}{\Gamma \vdash \phi : \Omega} \]
-
 \[ \infer[(x : A \in \Gamma)]{\Gamma \vdash x : A}{\Gamma \vald} \qquad
 \infer[(p : \phi \in \Gamma)]{\Gamma \vdash p : \phi}{\Gamma \vald} \]
-
 \[ \infer{\Gamma \vdash \bot : \Omega}{\Gamma \vald} \qquad
 \infer{\Gamma \vdash \phi \rightarrow \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} \]
-
 \[ \infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \qquad
 \infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \rightarrow \psi \quad \Gamma \vdash \epsilon : \phi} \]
-
 \[ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \qquad
 \infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \rightarrow \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
-
-\[ \infer[(\phi \simeq \phi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
+\[ \infer[(\phi \simeq \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
+\end{framed}
 \caption{Rules of Deduction of $\lambda o$}
 \label{fig:lambdao}
 \end{figure}
 
-\subsection{Extensional Equality}
+\section{Extensional Equality}
 
-On top of this system, we add an extensional equality relation.  We extend the grammar with
+We extend the system to a type theory $\lambda o e$, or predicative higher-order propositional logic with extensional equality.
 
-\[
-\begin{array}{lrcl}
-\text{Path} & P & ::= & e \mid \reff{M} \mid P \supset P \mid \univ{\phi}{\phi}{\delta}{\delta} \mid \triplelambda e : x =_A x . P \mid P P\\
-\text{Proof} & \delta & ::= & \cdots \mid P^+ \mid P^- \\
-\text{Context} & \Gamma & ::= & \cdots \mid \Gamma, e : M =_A M \\
-\text{Judgement} & \mathcal{J} & ::= & \cdots \mid \Gamma \vdash P : M =_A M
-\end{array}
-\]
-
-Note that, in the path $\triplelambda e : x =_A y . P$, the term variables $x$ and $y$ and the proof variable $e$ are all bound within $P$.
-
-We add the rules of deduction given in Figure \ref{fig:lambdaoe}.
-
-\begin{figure}
-\[ \infer{\Gamma, e : M =_A N \vald}{\Gamma \vdash M : A \quad \Gamma \vdash N : A}
-\qquad
-\infer[e : M =_A N \in \Gamma]{\Gamma \vdash e : M =_A N}{\Gamma \vald} \]
-
-\[ \infer{\Gamma \vdash \reff{M} : M =_A M}{\Gamma \vdash M : A}
-\qquad
-\infer{\Gamma \vdash P \rightarrow Q : \phi \rightarrow \psi =_\Omega \phi' \rightarrow \psi'}{\Gamma \vdash P : \phi =_\Omega \phi' \quad \Gamma \vdash Q : \psi =_\Omega \psi'} \]
-
-\[ \infer{\Gamma \vdash \univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi}{\Gamma \vdash \delta : \phi \rightarrow \psi \quad \Gamma \vdash \epsilon : \psi \rightarrow \phi} 
-\qquad
-\infer{\Gamma \vdash P^+ : \phi \rightarrow \psi}{\Gamma \vdash P : \phi =_\Omega \psi}
-\qquad
-\infer{\Gamma \vdash P^- : \psi \rightarrow \phi}{\Gamma \vdash P : \psi =_\Omega \psi} \]
-
-\[ \infer{\Gamma \vdash \triplelambda e : x =_A y . P : M =_{A \rightarrow B} N}{\Gamma, x : A, y : A, e : x =_A y \vdash M x =_B N y} \]
-
-\[ \infer{\Gamma \vdash PQ : MN =_B M' N'}{\Gamma \vdash P : M =_{A \rightarrow B} M' \quad \Gamma \vdash Q : N =_A N'} \]
-
-\[ \infer[(M \simeq_\beta M', N \simeq_\beta N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
-\caption{Rules of Deduction of $\lambda oe$}
-\label{fig:lambdaoe}
-\end{figure}
-
-\mode<all>{\input{PHOPL/Rules.lagda}}
-
-\subsection{The Reduction Relation}
-
-\mode<all>{\input{PHOPL/Red.lagda}}
+\input{PHOPL/Grammar.lagda}
+\input{PHOPL/PathSub.lagda}
+\input{PHOPL/Red.lagda}
+\input{PHOPL/Rules.lagda}
+\input{PHOPL/Meta.lagda}
+\input{PHOPL/SubC.lagda}
 
 \subsection{Strong Normalization Proof}
 
-\mode<all>{\input{PHOPL/Computable.lagda}}
-\mode<all>{\input{PHOPL/MainProp1.lagda}}
-\mode<all>{\input{PHOPL/MainProp.lagda}}
+\input{PHOPL/Computable.lagda}
+\input{PHOPL/MainProp.lagda}
+
+%TODO Canonicity
 
 \section{$\lambda o i$}
 
-\begin{frame}
-\frametitle{Include equations in $\Omega$}
+We further extend the system so that the equations are elements of $\Omega$.  This allows us, for example,
+to form propositions of the form $M =_A N \supset N =_A M$.
 
-\begin{itemize}
-\item
-We can include the equations $M =_A N$ in our logic.
-\onslide<2->{
-\item
-Now we can form (and prove) $sym_{MN} : M =_A N \supset N =_A M$ and $trans_{MNP} : M =_A N \supset N =_A P \supset M =_A P$ (by recursion on $A$).}
-\end{itemize}
+The system $\lambda o i$ ($\lambda o$ with \emph{internal} equality) is defined as follows.  The
+syntax is formed by extending the grammar of $\lambda o$ with
+\[
+\begin{array}{lrcl}
+\text{Term} & M, \phi & ::= & \cdots \mid M =_A M \\
+\text{Proof} & \delta & ::= & \cdots \mid \reff{M} \mid \delta \supset^* \delta \mid \univ{\phi}{\phi}{\delta}{\delta} \mid \triplelambda e : x =_A x . \delta \mid \delta_{MM} \delta\\
+& & & \quad \mid \delta =^*_A \delta \mid \delta^+ \mid \delta^-
+\end{array}
+\]
 
+The rules of deduction of $\lambda o i$ are those of Figures \ref{fig:lambdao} and \ref{fig:lambdaoe}, together with:
 \[ \infer{\Gamma \vdash M =_A N : \Omega}{\Gamma \vdash M : A \quad \Gamma \vdash N : A} \]
-\only<2->{\[ \infer{\Gamma \vdash \delta =^*_A \epsilon : (M =_A N) =_\Omega (M' =_A N')}
-{\Gamma \vdash \delta : M =_A M' \quad \Gamma \vdash \epsilon : N =_A N'} \]}
+\[ \infer{\Gamma \vdash \delta =^*_A \epsilon : (M =_A N) =_\Omega (M' =_A N')}
+{\Gamma \vdash \delta : M =_A M' \quad \Gamma \vdash \epsilon : N =_A N'} \]
 
-\pause
-
-New computation rules include:
+The reduction relation is that of $\lambda o e$ together with the following clauses:
+\
 
 \[ (\triplelambda^{F,G} e:x =_A y . \delta) =^* \reff{H} \]
 \[ \rhd \mathsf{univ}_{F = H,G = H}(\lambda p. \triplelambda e:x=_Ay. (Gx =_{sym\ \delta} F y =_{p \reff{y}} H y), \]
 \[ \lambda p. \triplelambda e:x=_A y. (F x =_{\delta} G y =_{p \reff{y}}) \]
-\end{frame}
 
 \section{Conclusion}
 

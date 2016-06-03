@@ -164,6 +164,6 @@ There are two \emph{classes} of kinds: expression kinds and constructor kinds.
     out  : ∀ K → Kind (-Constructor K)
     Π    : ∀ {K} → List VarKind → ExpressionKind → 
            Kind (-Constructor K) → Kind (-Constructor K)
- \end{code}
+\end{code}
 \end{frame}
 %TODO Colours in Agda code?

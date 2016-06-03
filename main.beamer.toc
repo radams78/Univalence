@@ -1,13 +1,14 @@
 \beamer@endinputifotherversion {3.06pt}
 \select@language {english}
-\beamer@sectionintoc {1}{Introduction}{2}{0}{1}
-\beamer@sectionintoc {2}{Predicative Higher-Order Propositional Logic}{15}{0}{2}
-\beamer@subsectionintoc {2}{1}{The Reduction Relation}{22}{0}{2}
-\beamer@subsectionintoc {2}{2}{Path Substitution}{27}{0}{2}
-\beamer@subsectionintoc {2}{3}{Strong Normalization Proof}{30}{0}{2}
-\beamer@sectionintoc {3}{$\lambda o i$}{36}{0}{3}
-\beamer@sectionintoc {4}{Conclusion}{39}{0}{4}
-\beamer@sectionintoc {5}{About the Formalization}{50}{1}{5}
-\beamer@sectionintoc {6}{Grammars}{59}{1}{6}
-\beamer@subsectionintoc {6}{1}{Taxonomy}{60}{1}{6}
-\beamer@sectionintoc {7}{Replacement and Substitution}{66}{1}{7}
+\beamer@sectionintoc {1}{Introduction}{1}{0}{1}
+\beamer@sectionintoc {2}{Predicative Higher-Order Propositional Logic}{2}{0}{2}
+\beamer@subsectionintoc {2}{1}{Extensional Equality}{3}{0}{2}
+\beamer@subsectionintoc {2}{2}{The Reduction Relation}{3}{0}{2}
+\beamer@subsectionintoc {2}{3}{Path Substitution}{8}{0}{2}
+\beamer@subsectionintoc {2}{4}{Strong Normalization Proof}{11}{0}{2}
+\beamer@sectionintoc {3}{$\lambda o i$}{17}{0}{3}
+\beamer@sectionintoc {4}{Conclusion}{20}{0}{4}
+\beamer@sectionintoc {5}{About the Formalization}{31}{1}{5}
+\beamer@sectionintoc {6}{Grammars}{40}{1}{6}
+\beamer@subsectionintoc {6}{1}{Taxonomy}{41}{1}{6}
+\beamer@sectionintoc {7}{Replacement and Substitution}{47}{1}{7}

@@ -9,21 +9,20 @@ open import PHOPL.Grammar
 
 \subsection{Path Substitution}
 
-\begin{frame}[fragile]
-\frametitle{Path Substitution}
-Define the operation of \emph{path substitution} such that,
-if $P : M =_A M'$ then $N \{ x := P : M \sim M' \} \equiv N \{ x:= P \} : N [x := M ]=_B N [x := M']$.
+We introduce a notion of \emph{path substitution}.  The intention is that, if
+$\Gamma \vdash P : M =_A M'$ and $\Gamma, x : A \vdash N : B$ then $\Gamma \vdash N \{ x := P : M \sim M' \} : N [ x:= M ] =_B N [ x := M' ]$.
 
-\mode<article>{
-Given paths $P_1$, \ldots, $P_n$; term variales $x_1$, \ldots, $x_n$; and a term $M$, define the path $\{ P_1 / x_1, \ldots, P_n / x_n \} M$ as follows.
+\begin{definition}[Path Substitution]
+Given terms $M_1$, \ldots, $M_n$ and $N_1$, \ldots, $N_n$; paths $P_1$, \ldots, $P_n$; term variales $x_1$, \ldots, $x_n$; and a term $L$, define the path $L \{ x_1 := P_1 : M_1 \sim N_1 , \ldots, x_n := P_n : M_n \sim N_n \}$ as follows.
 \begin{align*}
-\{ P_1 / x_1, \ldots, P_n / x_n \} x_i & \eqdef P_i \\
-\{ P_1 / x_1, \ldots, P_n / x_n \} y & \eqdef \reff{y} & (y \not\equiv x_1, \ldots, x_n) \\
-\{ P_1 / x_1, \ldots, P_n / x_n \} \bot & \eqdef \reff{\bot} \\
-\{ \vec{P} / \vec{x} \} (MN) & \eqdef \{ \vec{P} / \vec{x} \} M \{ \vec{P} / \vec{x} \} N \\
-\{ \vec{P} / \vec{x} \} (\lambda y : A . M) & \eqdef \triplelambda e : a =_A a' . \{ \vec{P} / \vec{x} , e / y \} M \\
-\{ \vec{P} / \vec{x} \} (\phi \rightarrow \psi) & \eqdef \{ \vec{P} / \vec{x} \} \phi \rightarrow \{ \vec{P} / \vec{x} \} \psi
-\end{align*}}
+x_i \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef P_i \\
+y \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef \reff{y} & (y \not\equiv x_1, \ldots, x_n) \\
+\bot \{ vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef \reff{\bot} \\
+(LL') \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef L \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \}_{L' [\vec{x} := \vec{M}] L' [\vec{x} := \vec{N}]} L' \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} \\
+(\lambda y:A.L) \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef \triplelambda e : a =_A a' . L \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} , y := e : a \sim a' \} \\
+(\phi \supset \psi) \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef \phi \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} \supset^* \psi \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \}
+\end{align*}
+\end{definition}
 
 \begin{code}
 PathSub : Alphabet → Alphabet → Set
@@ -52,28 +51,18 @@ infix 70 _⟦⟦_∶_∼_⟧⟧
 \end{code}
 }
 
-\begin{align*}
-x \{ x := P \} & \eqdef P \\
-y \{ x := P \} & \eqdef \reff{y} \\
-\bot \{ x := P \} & \eqdef \reff{\bot} \\
-(\phi \supset \psi) \{ x := P \} & \eqdef \phi \{ x := P \} \supset^* \psi \{ x := P \} \\
-\lefteqn{(M M') \{ x := P : N \sim N' \}} \\
- & \eqdef (M\{ x := P \})_{M'[x:=N], M'[x:=N']} (M'\{ x := P \})
-\end{align*}
-
 \begin{code}
 _⟦⟦_∶_∼_⟧⟧ : ∀ {U} {V} → Term U → PathSub U V → 
   Sub U V → Sub U V → Path V
-\end{code}
-
-\AgdaHide{
-\begin{code}
 var x ⟦⟦ τ ∶ _ ∼ _ ⟧⟧ = τ x
 app -bot out ⟦⟦ τ ∶ _ ∼ _ ⟧⟧ = reff ⊥
 app -imp (φ ,, ψ ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = φ ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ ⊃* ψ ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧
 app -appTerm (M ,, N ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = app* (N ⟦ ρ ⟧) (N ⟦ σ ⟧) (M ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧) (N ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧)
 app (-lamTerm A) (M ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = λλλ A (M ⟦⟦ pathsub↑ τ ∶ sub↖ ρ ∼ sub↗ σ ⟧⟧)
+\end{code}
 
+\AgdaHide{
+\begin{code}
 pathsub-cong : ∀ {U} {V} M {τ τ' : PathSub U V} {ρ} {ρ'} {σ} {σ'} →
                τ ∼∼ τ' → ρ ∼ ρ' → σ ∼ σ' → M ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ ≡ M ⟦⟦ τ' ∶ ρ' ∼ σ' ⟧⟧
 pathsub-cong (var x) τ∼∼τ' _ _ = τ∼∼τ' x
@@ -88,12 +77,7 @@ pathsub-cong (app -appTerm (M ,, N ,, out)) τ∼∼τ' ρ∼ρ' σ∼σ' =
 pathsub-cong (app (-lamTerm A) (M ,, out)) τ∼∼τ' ρ∼ρ' σ∼σ' = 
   cong (λλλ A) (pathsub-cong M (pathsub↑-cong τ∼∼τ') 
                (sub↖-cong ρ∼ρ') (sub↗-cong σ∼σ'))
-\end{code}
-}
-\end{frame}
 
-\AgdaHide{
-\begin{code}
 x₀::= : ∀ {V} → Path V → PathSub (V , -Term) V
 (x₀::= P) x₀ = P
 (x₀::= P) (↑ x) = reff (var x)
