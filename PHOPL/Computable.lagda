@@ -337,7 +337,7 @@ E-SN {V} {Γ} (A ⇛ B) {M} (Γ⊢M∶A⇛B ,p computeM ,p computeMpath) =
              (var-E' {A = A} (Γ ,T A) x₀ (ctxTR (Context-Validity Γ⊢M∶A⇛B)) refl)) 
   in SNap' {Ops = replacement} {σ = upRep} R-respects-replacement (SNsubbodyl (SNsubexp SNMx)) 
 
-{- Neutral-E {A = Ω} neutralM Γ⊢M∶A = record { 
+Neutral-E {A = Ω} neutralM Γ⊢M∶A = record { 
   typed = Γ⊢M∶A ; 
   sn = Neutral-SN neutralM }
 Neutral-E {A = A ⇛ B} {M} neutralM Γ⊢M∶A⇛B = 
@@ -349,7 +349,7 @@ Neutral-E {A = A ⇛ B} {M} neutralM Γ⊢M∶A⇛B =
     Neutral-computeE (Neutral-⋆ (Neutral-rep M ρ neutralM) (computeE-SN computeP validΔ) (E-SN A N∈EΔA) (E-SN A N'∈EΔA)) 
     (⋆-typed (Weakening Γ⊢M∶A⇛B validΔ ρ∶Γ⇒Δ) Δ⊢P∶N≡N')) -}
 
-var-E' {A = A} Γ x validΓ x∶A∈Γ = Neutral-E (var x) (change-type (varR x validΓ) x∶A∈Γ)
+{-var-E' {A = A} Γ x validΓ x∶A∈Γ = Neutral-E (var x) (change-type (varR x validΓ) x∶A∈Γ)
 
 var-E Γ x validΓ = var-E' {A = typeof' x Γ} Γ x validΓ typeof-typeof'
 
@@ -459,8 +459,12 @@ app*-EE {V} {Γ} {M} {M'} {N} {N'} {A} {B} {P} {Q} (Γ⊢P∶M≡M' ,p computeP)
     (computeP V Γ (idRep V) N N' Q idRep-typed Γ⊢Q∶N≡N' 
       N∈EΓA N'∈EΓA computeQ)
 
-func-EE {U} {Γ} {A} {B} {M} {M'} {P} Γ⊢P∶M≡M' hyp = Γ⊢P∶M≡M' ,p (λ W Δ ρ N N' Q ρ∶Γ⇒Δ Δ⊢Q∶N≡N' N∈EΔA N'∈EΔA computeQ → 
-  proj₂ (hyp W Δ N N' Q ρ ρ∶Γ⇒Δ N∈EΔA N'∈EΔA (Δ⊢Q∶N≡N' ,p computeQ)))
+postulate func-EE : ∀ {U} {Γ : Context U} {A} {B} {M} {M'} {P} →
+                  Γ ⊢ P ∶ M ≡〈 A ⇛ B 〉 M' →
+                  (∀ V (Δ : Context V) (N N' : Term V) Q ρ → ρ ∶ Γ ⇒R Δ → valid Δ → 
+                  E Δ A N → E Δ A N' → EE Δ (N ≡〈 A 〉 N') Q →
+                  EE Δ (appT (M 〈 ρ 〉) N ≡〈 B 〉 appT (M' 〈 ρ 〉) N') (app* N N' (P 〈 ρ 〉) Q)) →
+                  EE Γ (M ≡〈 A ⇛ B 〉 M') P
 
 ref-EE {V} {Γ} {M} {A} M∈EΓA = refR (E-typed M∈EΓA) ,p ref-compute M∈EΓA
 
@@ -471,7 +475,7 @@ postulate ⊃-respects-conv : ∀ {V} {φ} {φ'} {ψ} {ψ' : Term V} → φ ≃ 
 
 postulate appT-respects-convl : ∀ {V} {M M' N : Term V} → M ≃ M' → appT M N ≃ appT M' N
 
-conv-computeE : ∀ {V} {Γ : Context V} {M} {M'} {N} {N'} {A} {P} →
+postulate conv-computeE : ∀ {V} {Γ : Context V} {M} {M'} {N} {N'} {A} {P} →
              computeE Γ M A N P → M ≃ M' → N ≃ N' → 
              Γ ⊢ M' ∶ ty A  → Γ ⊢ N' ∶ ty A  →
              computeE Γ M' A N' P
