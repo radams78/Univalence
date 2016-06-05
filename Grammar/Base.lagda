@@ -41,7 +41,7 @@ We can now define the set of expressions over a grammar:
 
     ● : ∀ {V} {K} → Body V (out K)
     _,,_ : ∀ {V} {K} {A} {L} {C} → Expression (extend V A) L → 
-      Body V {K} C → Body V (Π A L C)
+      Body V {K} C → Body V ((A ⟶ L ✧) ⟶ C)
 \end{code}
 \end{frame}
 

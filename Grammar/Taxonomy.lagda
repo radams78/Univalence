@@ -171,22 +171,28 @@ There are two \emph{classes} of kinds: expression kinds and constructor kinds.
     -Expression : KindClass
     -Constructor : ExpressionKind → KindClass
 
-  data AbstractionKind : Set where
-    _⟶_ : List VarKind → ExpressionKind → AbstractionKind
+  infixr 10 _⟶_
+  data codAbstractionKind : ExpressionKind → Set where
+    _⟶_ : List VarKind → ∀ K → codAbstractionKind K
 
-  data ConstructorKind (K : ExpressionKind) : Set where
-    ● : ConstructorKind K
-    _⟶_ : AbstractionKind → ConstructorKind K → ConstructorKind K
+  infix 5 _✧
+  data AbstractionKind : Set where
+    _✧ : ∀ {K} → codAbstractionKind K → AbstractionKind
+
+  data ConstructorKind : ExpressionKind → Set where
+    _● : ∀ K → ConstructorKind K
+    _⟶_ : ∀ {K} → AbstractionKind → ConstructorKind K → ConstructorKind K
 
   Kind : KindClass → Set
   Kind -Expression = ExpressionKind
   Kind (-Constructor K) = ConstructorKind K
 
   out : ∀ K → ConstructorKind K
-  out _ = ●
+  out K = K ●
+--TODO Inline
 
   Π    : ∀ {K} → List VarKind → ExpressionKind → ConstructorKind K → ConstructorKind K
-  Π A K L = (A ⟶ K) ⟶ L
+  Π A K L = (A ⟶ K ✧) ⟶ L
 --TODO Inline
  \end{code}
 \end{frame}
