@@ -6,6 +6,8 @@ open import PHOPL.Red
 \end{code}
 }
 
+\subsection{Rules of Deduction}
+
 The rules of deduction of $\lambda o e$ are those of $\lambda o$ (Figure \ref{fig:lambdao}) together with those given in Figure \ref{fig:lambdaoe}.
 
 \begin{figure}

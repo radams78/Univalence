@@ -30,8 +30,8 @@
 \DeclareUnicodeCharacter{10219}{\ensuremath{\rangle\rangle}}
 
 
-\newtheorem{prop}{Proposition}[section]
-\newtheorem{lm}[prop]{Lemma}
+\newtheorem{prop}[theorem]{Proposition}
+\newtheorem{lm}[theorem]{Lemma}
 
 \newcommand{\Set}{\mathbf{Set}}
 \newcommand{\eqdef}{\mathrel{\smash{\stackrel{\text{def}}{=}}}}
@@ -77,11 +77,11 @@ the full Homotopy Type Theory is a complex and interdependent system.  We can ta
 a well-behaved reduction relation, then doing the same for more and more complex systems, gradually approaching the full strength of HoTT.
 
 In this paper, we present a system we call $\lambda o e$, or predicative higher-order propositional logic.  It is a type theory with two universes: the universe $\Omega$
-of \emph{propositions}, and the universe $U$ of \emph{types}.  The propositions are closed under $\sup$ (implication) and include $\bot$ (falsehood), and an equality proposition $M =_A N$ for
+of \emph{propositions}, and the universe $U$ of \emph{types}.  The propositions are closed under $\supset$ (implication) and include $\bot$ (falsehood), and an equality proposition $M =_A N$ for
 any type $A : U$ and terms $M : A$ and $N : A$.  The types include $\Omega$ itself and are closed under $\rightarrow$ (non-dependent function type).
 
 There are two canonical forms for proofs of $M =_A N$.  For any term $M : A$, we have $\reff{M} : M =_A M$.  We also add univalence for this system, in this form:
-if $\delta : \phi \sup \psi$ and $\epsilon : \psi \sup \phi$, then $\univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi$.  We present a reduction relation for this system, and prove it satisfies confluence, strong normalization and canonicity. \todo{Cross-reference lemma numbers.}  The reduction relation does not necessarily satisfy confluence on raw terms, but it does satisfy local confluence.  Hence, as
+if $\delta : \phi \supset \psi$ and $\epsilon : \psi \supset\phi$, then $\univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi$.  We present a reduction relation for this system, and prove it satisfies confluence, strong normalization and canonicity. \todo{Cross-reference lemma numbers.}  The reduction relation does not necessarily satisfy confluence on raw terms, but it does satisfy local confluence.  Hence, as
 every typed term is strongly normalizing, we know by Newman's Lemma that the reduction is confluent on the typed terms.
 
 For the future, we wish to expand the system with universal quantification, and expand it to a 2-dimensional system (with equations between proofs).
@@ -96,7 +96,7 @@ syntax is given by the grammar:
 \[
 \begin{array}{lrcl}
 \text{Type} & A & ::= & \Omega \mid A \rightarrow A \\
-\text{Term} & M, \phi & ::= & x \mid \bot \mid \phi \sup \phi \mid \lambda x:A.M \mid MM \\
+\text{Term} & M, \phi & ::= & x \mid \bot \mid \phi \supset\phi \mid \lambda x:A.M \mid MM \\
 \text{Proof} & \delta & ::= & p \mid \lambda x:\phi.\delta \mid \delta \delta
 \end{array}
 \]
@@ -131,11 +131,11 @@ We extend the system to a type theory $\lambda o e$, or predicative higher-order
 \input{PHOPL/Red.lagda}
 \input{PHOPL/Rules.lagda}
 \input{PHOPL/Meta.lagda}
-\input{PHOPL/SubC.lagda}
 
 \subsection{Strong Normalization Proof}
 
 \input{PHOPL/Computable.lagda}
+\input{PHOPL/SubC.lagda}
 \input{PHOPL/MainProp.lagda}
 
 %TODO Canonicity
@@ -161,11 +161,21 @@ The rules of deduction of $\lambda o i$ are those of Figures \ref{fig:lambdao} a
 {\Gamma \vdash \delta : M =_A M' \quad \Gamma \vdash \epsilon : N =_A N'} \]
 
 The reduction relation is that of $\lambda o e$ together with the following clauses:
-\
 
-\[ (\triplelambda^{F,G} e:x =_A y . \delta) =^* \reff{H} \]
-\[ \rhd \mathsf{univ}_{F = H,G = H}(\lambda p. \triplelambda e:x=_Ay. (Gx =_{sym\ \delta} F y =_{p \reff{y}} H y), \]
-\[ \lambda p. \triplelambda e:x=_A y. (F x =_{\delta} G y =_{p \reff{y}}) \]
+\[ \reff{M} =^*_A \reff{N} \rhd \reff{M =_A N} \]
+\[ \reff{\phi} =^*_\Omega \univ{\psi}{\chi}{\delta}{\epsilon} \rhd 
+  \univ{\phi =_\Omega \psi}{\phi =_\Omega \chi}
+  {\lambda p:\phi =_\psi. \univ{\phi}{\chi}{\lambda q:\phi.\delta (p^+ q)}
+    {\lambda q : \chi. p^- (\epsilon q)}}
+  {\lambda p:\phi =_\Omega \chi. \univ{\phi}{\psi}{\lambda q:\phi. \epsilon (p^+ q)}
+    {\lambda q : \psi. p^- (\delta q)}}\]
+\[ \univ{\phi}{\psi}{\delta}{\epsilon} =^*_\Omega \reff{\chi} \rhd
+  \univ{\phi =_\Omega \chi}{\psi =_\Omega \chi}
+    {\lambda p:\phi = \chi . \univ{\psi}{\chi}{\lambda q:\psi. p^+ (\epsilon q)}
+      {\lambda q:\chi. \delta (p^- q)}}
+    {\lambda p:\psi =_\Omega \chi. \univ{\phi}{\chi}{\lambda q:\phi. p^+ (\delta q)}
+      {\lambda q:\chi. \epsilon (p^- q)}} \]
+\[ 
 
 \section{Conclusion}
 
