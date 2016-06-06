@@ -8,8 +8,6 @@
 \begin{code}
 module Grammar.Taxonomy where
 
-open import Data.Nat public
-open import Data.Fin public using (Fin;zero;suc)
 open import Data.List public
 \end{code}
 }
@@ -90,13 +88,29 @@ When giving a specific grammar, we shall feel free to use BNF notation.
 We formalise this as follows.  First, we construct the sets of expression kinds and constructor kinds over a taxonomy:
 
 \begin{code}
+  data AbstractionKind : Set where
+    pi : List VarKind → ExpressionKind → AbstractionKind
+
+  infix 22 _✧
+  _✧ : ExpressionKind → AbstractionKind
+  K ✧ = pi [] K
+
+  infixr 21 _abs_
+  _abs_ : VarKind → AbstractionKind → AbstractionKind
+  K abs pi KK L = pi (K ∷ KK) L
+  --TODO Rewrite?
+
+  infix 22 _●
+  infixr 20 _⟶_
+  data ConstructorKind : ExpressionKind → Set where
+    _● : ∀ K → ConstructorKind K
+    _⟶_ : ∀ {K} → AbstractionKind → ConstructorKind K → ConstructorKind K
+
   data KindClass : Set where
     -Expression : KindClass
     -Constructor : ExpressionKind → KindClass
 
-  data Kind : KindClass → Set where
-    base : ExpressionKind → Kind -Expression
-    out  : ∀ K → Kind (-Constructor K)
-    Π    : ∀ {K} → List VarKind → ExpressionKind → 
-           Kind (-Constructor K) → Kind (-Constructor K)
+  Kind : KindClass → Set
+  Kind -Expression = ExpressionKind
+  Kind (-Constructor K) = ConstructorKind K
 \end{code}

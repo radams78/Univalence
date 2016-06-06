@@ -35,9 +35,9 @@ data _⇒_ {V} : ∀ {K} {C} →
     {E F : Subexpression V (-Constructor K) C} → 
     E ⇒ F → app c E ⇒ app c F
   appl : ∀ {K A L C E E' F} → 
-    E ⇒ E' → _,,_ {V} {K} {A} {L} {C} E F ⇒ E' ,, F
+    E ⇒ E' → _,,_ {V} {K} {pi A L} {C} E F ⇒ E' ,, F
   appr : ∀ {K A L C E F F'} → 
-    F ⇒ F' → _,,_ {V} {K} {A} {L} {C} E F ⇒ E ,, F'
+    F ⇒ F' → _,,_ {V} {K} {pi A L} {C} E F ⇒ E ,, F'
 --TODO Refactor
 
 data _↠_ {V C K} (M : Subexpression V C K) : 
@@ -180,7 +180,7 @@ $E[\rho] \twoheadrightarrow_R E[\sigma]$ for all $K$, $A$, $E$.
   apredl {E = var x} hyp ρ↠σ = ρ↠σ _ x
   apredl {E = app _ E} hyp ρ↠σ = respects-red app (apredl {E = E} hyp ρ↠σ)
   apredl {E = out} _ _ = ref
-  apredl {E = _,,_ {A = A} E F} hyp ρ↠σ = trans-red (respects-red appl (apredl {E = E} hyp (liftOp'-red {A = A} hyp ρ↠σ))) (respects-red appr (apredl {E = F} hyp ρ↠σ))
+  apredl {E = _,,_ {A = pi A _} E F} hyp ρ↠σ = trans-red (respects-red appl (apredl {E = E} hyp (liftOp'-red {A = A} hyp ρ↠σ))) (respects-red appr (apredl {E = F} hyp ρ↠σ))
 \end{code}
 }
 
@@ -268,7 +268,7 @@ create-osr hyp (_,,_ E F) {σ = σ} (appl σE⇒E') =
     red-created = appl red-created; 
     ap-created = cong (λ x → _,,_ x (F 〈 σ 〉)) ap-created
     }
-create-osr hyp (_,,_ {A = A} E F) {σ = σ} (appr {F' = F'} σF⇒F') =     
+create-osr hyp (_,,_ {A = pi A _} E F) {σ = σ} (appr {F' = F'} σF⇒F') =     
   let open creation {Ops = replacement} (create-osr hyp F σF⇒F') in 
   record { 
     created = _,,_ E created; 

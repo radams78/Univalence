@@ -77,7 +77,7 @@ If $\sigma \sim \sigma'$ and $\rho \sim \rho'$ then $\sigma \circ \rho \sim \sig
   ap-circ (var _) = apV-circ
   ap-circ (app c E) = cong (app c) (ap-circ E)
   ap-circ out = refl
-  ap-circ (_,,_ {A = A} E E') {σ} {ρ} = cong₂ _,,_
+  ap-circ (_,,_ {A = pi A _} E E') {σ} {ρ} = cong₂ _,,_
     (let open ≡-Reasoning in 
     begin
       ap H (liftOp' H A (circ σ ρ)) E

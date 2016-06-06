@@ -13,7 +13,7 @@ module Grammar.Base where
 record IsGrammar (T : Taxonomy) : Set₁ where
   open Taxonomy T
   field
-    Constructor    : ∀ {K} → Kind (-Constructor K) → Set
+    Constructor    : ∀ {K} → ConstructorKind K → Set
     parent         : VarKind → ExpressionKind
 \end{code}
 
@@ -33,19 +33,21 @@ We can now define the set of expressions over a grammar:
 \begin{code}
   data Subexpression : Alphabet → ∀ C → Kind C → Set
   Expression : Alphabet → ExpressionKind → Set
-  Body : Alphabet → ∀ {K} → Kind (-Constructor K) → Set
+  VExpression : Alphabet → VarKind → Set
+  Abstraction : Alphabet → AbstractionKind → Set
+  Body : Alphabet → ∀ {K} → ConstructorKind K → Set
 
-  Expression V K = Subexpression V -Expression (base K)
+  Expression V K = Subexpression V -Expression K
+  VExpression V K = Expression V (varKind K)
+  Abstraction V (pi A L) = Expression (extend V A) L
   Body V {K} C = Subexpression V (-Constructor K) C
 
   infixr 50 _,,_
   data Subexpression where
-    var : ∀ {V} {K} → Var V K → Expression V (varKind K)
-    app : ∀ {V} {K} {C} → Constructor C → Body V {K} C → 
-      Expression V K
-    out : ∀ {V} {K} → Body V (out K)
-    _,,_ : ∀ {V} {K} {A} {L} {C} → Expression (extend V A) L → 
-      Body V {K} C → Body V (Π A L C)
+    var : ∀ {V} {K} → Var V K → VExpression V K
+    app : ∀ {V} {K} {C} → Constructor C → Body V {K} C → Expression V K
+    out : ∀ {V} {K} → Body V (K ●)
+    _,,_ : ∀ {V} {K} {A} {C} → Abstraction V A → Body V {K} C → Body V (A ⟶ C)
 \end{code}
 
 \AgdaHide{
@@ -54,7 +56,7 @@ We can now define the set of expressions over a grammar:
   var-inj refl = refl
 
   Reduction : Set₁
-  Reduction = ∀ {V} {K} {C : Kind (-Constructor K)} → 
-    Constructor C → Body V C → Expression V K → Set
+  Reduction = ∀ {V} {K} {C} → 
+    Constructor C → Body V {K} C → Expression V K → Set
 \end{code}
 }

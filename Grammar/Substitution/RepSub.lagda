@@ -90,8 +90,8 @@ rep-is-sub : ∀ {U} {V} {K} {C} (E : Subexpression U K C) {ρ : Rep U V} →
 rep-is-sub (var _) = refl
 rep-is-sub (app c E) = cong (app c) (rep-is-sub E)
 rep-is-sub out = refl
-rep-is-sub {U} {V} (_,,_ {A = A} {L = L} E F) {ρ} = cong₂ _,,_ 
-  (let open ≡-Reasoning {A = Expression (extend V A) L} in
+rep-is-sub {U} {V} (_,,_ {A = pi A L} E F) {ρ} = cong₂ _,,_ 
+  (let open ≡-Reasoning {A = Abstraction V (pi A L)} in
   begin 
     E 〈 liftOp'R A ρ 〉
   ≡⟨ rep-is-sub E ⟩
