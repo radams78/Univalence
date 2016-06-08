@@ -64,6 +64,10 @@ If $\sigma \sim \sigma'$ and $\rho \sim \rho'$ then $\sigma \circ \rho \sim \sig
     ≈⟨ liftOp'-circ A ⟩
       circ (liftOp' F A (liftOp F K σ)) (liftOp' G A (liftOp G K ρ))
     ∎
+
+  postulate liftOp''-circ : ∀ {U V W K} A {σ ρ} → 
+                          _∼op_ H (liftOp'' H {K = K} A (circ {U} {V} {W} σ ρ)) 
+                          (circ (liftOp'' F A σ) (liftOp'' G A ρ))
 \end{code}
 }
 
@@ -77,14 +81,14 @@ If $\sigma \sim \sigma'$ and $\rho \sim \rho'$ then $\sigma \circ \rho \sim \sig
   ap-circ (var _) = apV-circ
   ap-circ (app c E) = cong (app c) (ap-circ E)
   ap-circ out = refl
-  ap-circ (_,,_ {A = pi A _} E E') {σ} {ρ} = cong₂ _,,_
+  ap-circ (_,,_ {A = A} E E') {σ} {ρ} = cong₂ _,,_
     (let open ≡-Reasoning in 
     begin
-      ap H (liftOp' H A (circ σ ρ)) E
-    ≡⟨ ap-congl H E (liftOp'-circ A) ⟩
-      ap H (circ (liftOp' F A σ) (liftOp' G A ρ)) E
+      ap H (liftOp'' H A (circ σ ρ)) E
+    ≡⟨ ap-congl H E (liftOp''-circ A) ⟩
+      ap H (circ (liftOp'' F A σ) (liftOp'' G A ρ)) E
     ≡⟨ ap-circ E ⟩
-      ap F (liftOp' F A σ) (ap G (liftOp' G A ρ) E)
+      ap F (liftOp'' F A σ) (ap G (liftOp'' G A ρ) E)
     ∎) 
     (ap-circ E')
 \end{code}

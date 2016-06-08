@@ -30,6 +30,7 @@ record Taxonomy : Set₁ where
   data ExpressionKind : Set where
     varKind : VarKind → ExpressionKind
     nonVarKind : NonVarKind → ExpressionKind
+--TODO: Maybe get rid of NonVarKind, and just have parent : VarKind -> Set?
 \end{code}
 
 An \emph{alphabet} $A$ consists of a finite set of \emph{variables}, to each of which is assigned a variable kind $K$.
@@ -88,23 +89,17 @@ When giving a specific grammar, we shall feel free to use BNF notation.
 We formalise this as follows.  First, we construct the sets of expression kinds and constructor kinds over a taxonomy:
 
 \begin{code}
-  data AbstractionKind : Set where
-    pi : List VarKind → ExpressionKind → AbstractionKind
-
   infix 22 _✧
-  _✧ : ExpressionKind → AbstractionKind
-  K ✧ = pi [] K
-
   infixr 21 _abs_
-  _abs_ : VarKind → AbstractionKind → AbstractionKind
-  K abs pi KK L = pi (K ∷ KK) L
-  --TODO Rewrite?
+  data AbstractionKind : ExpressionKind → Set where
+    _✧ : ∀ K → AbstractionKind K
+    _abs_ : ∀ {K} → VarKind → AbstractionKind K → AbstractionKind K
 
   infix 22 _●
   infixr 20 _⟶_
   data ConstructorKind : ExpressionKind → Set where
     _● : ∀ K → ConstructorKind K
-    _⟶_ : ∀ {K} → AbstractionKind → ConstructorKind K → ConstructorKind K
+    _⟶_ : ∀ {L} {K} → AbstractionKind L → ConstructorKind K → ConstructorKind K
 
   data KindClass : Set where
     -Expression : KindClass

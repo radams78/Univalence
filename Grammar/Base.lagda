@@ -34,12 +34,15 @@ We can now define the set of expressions over a grammar:
   data Subexpression : Alphabet → ∀ C → Kind C → Set
   Expression : Alphabet → ExpressionKind → Set
   VExpression : Alphabet → VarKind → Set
-  Abstraction : Alphabet → AbstractionKind → Set
+  dom : Alphabet → ∀ {K} → AbstractionKind K → Alphabet
+  Abstraction : Alphabet → ∀ {K} → AbstractionKind K → Set
   Body : Alphabet → ∀ {K} → ConstructorKind K → Set
 
   Expression V K = Subexpression V -Expression K
   VExpression V K = Expression V (varKind K)
-  Abstraction V (pi A L) = Expression (extend V A) L
+  dom V (K ✧) = V
+  dom V (K abs A) = dom (V , K) A
+  Abstraction V {K} A = Expression (dom V A) K
   Body V {K} C = Subexpression V (-Constructor K) C
 
   infixr 50 _,,_
@@ -47,7 +50,7 @@ We can now define the set of expressions over a grammar:
     var : ∀ {V} {K} → Var V K → VExpression V K
     app : ∀ {V} {K} {C} → Constructor C → Body V {K} C → Expression V K
     out : ∀ {V} {K} → Body V (K ●)
-    _,,_ : ∀ {V} {K} {A} {C} → Abstraction V A → Body V {K} C → Body V (A ⟶ C)
+    _,,_ : ∀ {V} {L} {A} {K} {C} → Abstraction V {L} A → Body V {K} C → Body V (A ⟶ C)
 \end{code}
 
 \AgdaHide{
@@ -58,5 +61,6 @@ We can now define the set of expressions over a grammar:
   Reduction : Set₁
   Reduction = ∀ {V} {K} {C} → 
     Constructor C → Body V {K} C → Expression V K → Set
+--TODO Delete
 \end{code}
 }

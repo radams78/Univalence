@@ -63,11 +63,9 @@ We formalize this definition in stages.  First, we define a \emph{pre-family of 
 record PreOpFamily : Set₂ where
   field
     Op : Alphabet → Alphabet → Set
-    apV : ∀ {U} {V} {K} → Op U V → Var U K → 
-      Expression V (varKind K)
+    apV : ∀ {U} {V} {K} → Op U V → Var U K → VExpression V K
     up : ∀ {V} {K} → Op V (V , K)
-    apV-up : ∀ {V} {K} {L} {x : Var V K} → 
-      apV (up {K = L}) x ≡ var (↑ x)
+    apV-up : ∀ {V} {K} {L} {x : Var V K} → apV (up {K = L}) x ≡ var (↑ x)
     idOp : ∀ V → Op V V
     apV-idOp : ∀ {V} {K} (x : Var V K) → apV (idOp V) x ≡ var x
 \end{code}

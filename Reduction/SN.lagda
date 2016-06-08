@@ -50,7 +50,7 @@ SNsubexp {c = c} {E = E} (SNI .(app c E) SNcE) =
 
 \begin{code}
 SNsubbodyl : ∀ {V K A L C M N} → 
-  SN (_,,_ {V} {K} {A} {L} {C} M N) → SN M
+  SN (_,,_ {V} {K} {pi A L} {C} M N) → SN M
 \end{code}
 
 \AgdaHide{
@@ -61,7 +61,7 @@ SNsubbodyl {V} {K} {A} {L} {C} {M} {N} (SNI .(_,,_ M N) SNM) = SNI M (λ M' M⇒
 
 \begin{code}
 SNsubbodyr : ∀ {V K A L C M N} → 
-  SN (_,,_ {V} {K} {A} {L} {C} M N) → SN N
+  SN (_,,_ {V} {K} {pi A L} {C} M N) → SN N
 \end{code}
 
 \AgdaHide{

@@ -10,7 +10,7 @@ open import Grammar.Replacement G
 open import Grammar.Substitution.PreOpFamily G
 open import Grammar.Substitution.Lifting G
 
-open OpFamily replacement using () renaming (liftOp' to liftOp'R)
+open OpFamily replacement using () renaming (liftOp'' to liftOp''R)
 open PreOpFamily pre-substitution
 open Lifting SUB↑
 \end{code}
@@ -62,20 +62,20 @@ up-is-up _ = refl
 }
 
 \begin{code}
-liftOp'-is-liftOp' : ∀ {U} {V} {ρ : Rep U V} {A} → 
-  rep2sub (liftOp'R  A ρ) ∼ liftOp' A (rep2sub ρ)
+liftOp'-is-liftOp' : ∀ {U} {V} {ρ : Rep U V} {K} {A} → 
+  rep2sub (liftOp''R {K = K} A ρ) ∼ liftOp'' A (rep2sub ρ)
 \end{code}
 
 \AgdaHide{
 \begin{code}
-liftOp'-is-liftOp' {ρ = ρ} {A = []} = ∼-refl {σ = rep2sub ρ}
-liftOp'-is-liftOp' {U} {V} {ρ} {K ∷ A} = let open EqReasoning (OP _ _) in 
+liftOp'-is-liftOp' {ρ = ρ} {A = _ ✧} = ∼-refl {σ = rep2sub ρ}
+liftOp'-is-liftOp' {U} {V} {ρ} {_} {K abs A} = let open EqReasoning (OP _ _) in 
   begin
-    rep2sub (liftOp'R A (Rep↑ K ρ))
+    rep2sub (liftOp''R A (Rep↑ K ρ))
   ≈⟨ liftOp'-is-liftOp' {A = A} ⟩
-    liftOp' A (rep2sub (Rep↑ K ρ))
-  ≈⟨ liftOp'-cong A Rep↑-is-Sub↑ ⟩
-    liftOp' A (Sub↑ K (rep2sub ρ))
+    liftOp'' A (rep2sub (Rep↑ K ρ))
+  ≈⟨ liftOp''-cong A Rep↑-is-Sub↑ ⟩
+    liftOp'' A (Sub↑ K (rep2sub ρ))
   ∎
 \end{code}
 }
@@ -90,14 +90,14 @@ rep-is-sub : ∀ {U} {V} {K} {C} (E : Subexpression U K C) {ρ : Rep U V} →
 rep-is-sub (var _) = refl
 rep-is-sub (app c E) = cong (app c) (rep-is-sub E)
 rep-is-sub out = refl
-rep-is-sub {U} {V} (_,,_ {A = pi A L} E F) {ρ} = cong₂ _,,_ 
-  (let open ≡-Reasoning {A = Abstraction V (pi A L)} in
+rep-is-sub {U} {V} (_,,_ {A = A} E F) {ρ} = cong₂ _,,_ 
+  (let open ≡-Reasoning {A = Abstraction V A} in
   begin 
-    E 〈 liftOp'R A ρ 〉
+    E 〈 liftOp''R A ρ 〉
   ≡⟨ rep-is-sub E ⟩
-    E ⟦ (λ K x → var (liftOp'R A ρ K x)) ⟧ 
+    E ⟦ (λ K x → var (liftOp''R A ρ K x)) ⟧ 
   ≡⟨ ap-congl E (liftOp'-is-liftOp' {A = A}) ⟩
-    E ⟦ liftOp' A (λ K x → var (ρ K x)) ⟧
+    E ⟦ liftOp'' A (λ K x → var (ρ K x)) ⟧
   ∎)
   (rep-is-sub F)
 \end{code}
