@@ -1,0 +1,71 @@
+\AgdaHide{
+\begin{code}%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar.Base}\<%
+\\
+%
+\\
+\>\AgdaKeyword{module} \AgdaModule{Grammar.Context} \AgdaSymbol{(}\AgdaBound{G} \AgdaSymbol{:} \AgdaRecord{Grammar}\AgdaSymbol{)} \AgdaKeyword{where}\<%
+\\
+%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Nat}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Fin}\<%
+\\
+\>\AgdaKeyword{open} \AgdaModule{Grammar} \AgdaBound{G}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar.Replacement} \AgdaBound{G}\<%
+\end{code}
+}
+
+\subsection{Contexts}
+
+A \emph{context} has the form $x_1 : A_1, \ldots, x_n : A_n$ where, for each $i$:
+\begin{itemize}
+\item $x_i$ is a variable of kind $K_i$ distinct from $x_1$, \ldots, $x_{i-1}$;
+\item $A_i$ is an expression whose kind is the parent of $K_i$.
+\end{itemize}
+The \emph{domain} of this context is the alphabet $\{ x_1, \ldots, x_n \}$.
+
+\begin{code}%
+\>\AgdaKeyword{infixl} \AgdaNumber{55} \AgdaFixityOp{\_,\_}\<%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{Context} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{〈〉} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaInductiveConstructor{∅}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{\_,\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaFunction{parent} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \<[58]%
+\>[58]\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaDatatype{Context} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaFunction{pretypeof} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{x} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{)} \AgdaBound{L}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaFunction{parent} \AgdaBound{L}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{typeof} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{x} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{V} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{)} \AgdaSymbol{→} \<[51]%
+\>[51]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaFunction{parent} \AgdaBound{K}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaFunction{pretypeof} \AgdaInductiveConstructor{x₀} \AgdaSymbol{(}\AgdaBound{Γ} \AgdaInductiveConstructor{,} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaBound{A}\<%
+\\
+\>\AgdaFunction{pretypeof} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaBound{x}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{Γ} \AgdaInductiveConstructor{,} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{typeof} \AgdaBound{x} \AgdaBound{Γ}\<%
+\\
+%
+\\
+\>\AgdaFunction{typeof} \AgdaSymbol{\{}\AgdaInductiveConstructor{∅}\AgdaSymbol{\}} \AgdaSymbol{()}\<%
+\\
+\>\AgdaFunction{typeof} \AgdaSymbol{\{\_} \AgdaInductiveConstructor{,} \AgdaSymbol{\_\}} \AgdaBound{x} \AgdaBound{Γ} \AgdaSymbol{=} \AgdaFunction{pretypeof} \AgdaBound{x} \AgdaBound{Γ} \AgdaFunction{〈} \AgdaFunction{upRep} \AgdaFunction{〉}\<%
+\\
+\>\AgdaComment{--We define it this way so that typeof x Γ computes to an expression of the form --- 〈 upRep 〉, even if x is not in canonical form.}\<%
+\end{code}

@@ -1,0 +1,101 @@
+\AgdaHide{
+\begin{code}%
+\>\AgdaKeyword{module} \AgdaModule{PHOPL.MainProp1} \AgdaKeyword{where}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Unit}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Product} \AgdaKeyword{renaming} \AgdaSymbol{(}\AgdaInductiveConstructor{\_,\_} \AgdaSymbol{to} \AgdaInductiveConstructor{\_,p\_}\AgdaSymbol{)}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.List}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Grammar}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Rules}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.PathSub}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Red}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Neutral}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Meta}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Computable}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.SubC}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.SN}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.MainPropFinal}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.KeyRedex}\<%
+\\
+%
+\\
+\>\AgdaKeyword{postulate} \AgdaPostulate{subrepsub} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{X}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{M} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{U} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{σ₁} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ₂} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ₃} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{W} \AgdaBound{X}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{20}{}\<[20]%
+\>[20]\AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ₃} \AgdaFunction{•SR} \AgdaBound{σ₂} \AgdaFunction{•} \AgdaBound{σ₁} \AgdaFunction{⟧} \AgdaDatatype{≡} \AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ₁} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaBound{σ₂} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaBound{σ₃} \AgdaFunction{⟧}\<%
+\\
+%
+\\
+\>\AgdaKeyword{postulate} \AgdaPostulate{subrepbotsub-up} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{M} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{U} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{N} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{W} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{L}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[20]\AgdaIndent{28}{}\<[28]%
+\>[28]\AgdaBound{M} \AgdaFunction{⇑} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{N} \AgdaFunction{•SR} \AgdaFunction{Rep↑} \AgdaSymbol{\_} \AgdaBound{ρ} \AgdaFunction{•} \AgdaFunction{Sub↑} \AgdaSymbol{\_} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaDatatype{≡} \AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\<%
+\\
+%
+\\
+\>\AgdaKeyword{postulate} \AgdaPostulate{ΛR'} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ψ}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaFunction{,P} \AgdaBound{φ} \AgdaDatatype{⊢} \AgdaBound{δ} \AgdaDatatype{∶} \AgdaBound{ψ} \AgdaFunction{⇑} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaFunction{ΛP} \AgdaBound{φ} \AgdaBound{δ} \AgdaDatatype{∶} \AgdaBound{ψ}\<%
+\end{code}
+}
+
+{-Computable-Proof-Substitution : ∀ U V (σ : Sub U V) Γ Δ δ φ →
+  σ ∶ Γ ⇒C Δ → Γ ⊢ δ ∶ φ → valid Δ → EP Δ (φ ⟦ σ ⟧) (δ ⟦ σ ⟧)
+Computable-Path-Substitution₁ : ∀ U V (σ : Sub U V) Γ Δ P E →
+  σ ∶ Γ ⇒C Δ → Γ ⊢ P ∶ E → valid Δ → EE Δ (E ⟦ σ ⟧) (P ⟦ σ ⟧)
+
+Computable-Proof-Substitution U V σ Γ Δ .(var x) .(typeof x Γ) σ∶Γ⇒CΔ (varR x x₁) validΔ = σ∶Γ⇒CΔ x
+Computable-Proof-Substitution U V σ Γ Δ .(appP δ ε) .ψ σ∶Γ⇒CΔ (appPR {δ = δ} {ε} {φ} {ψ} Γ⊢δ∶φ⊃ψ Γ⊢ε∶φ) validΔ = appP-EP {V} {Δ} {δ ⟦ σ ⟧} {ε ⟦ σ ⟧} {φ ⟦ σ ⟧} {ψ ⟦ σ ⟧}
+  (Computable-Proof-Substitution U V σ Γ Δ δ (φ ⊃ ψ) σ∶Γ⇒CΔ Γ⊢δ∶φ⊃ψ validΔ) 
+  (Computable-Proof-Substitution U V σ Γ Δ ε φ σ∶Γ⇒CΔ Γ⊢ε∶φ validΔ)
+Computable-Proof-Substitution U V σ Γ Δ _ _ σ∶Γ⇒CΔ (ΛPR {δ = δ} {φ} {ψ} Γ,φ⊢δ∶ψ) validΔ = 
+  aux-lm1 U V σ Γ Δ φ δ ψ 
+    (λ W Θ τ τ∶Γ,φ⇒CΘ validΘ → Computable-Proof-Substitution (U , -Proof) W τ (Γ , φ) Θ δ (ψ ⇑)
+                          τ∶Γ,φ⇒CΘ Γ,φ⊢δ∶ψ validΘ) σ∶Γ⇒CΔ Γ,φ⊢δ∶ψ validΔ
+Computable-Proof-Substitution U V σ Γ Δ δ φ σ∶Γ⇒CΔ (convR Γ⊢δ∶φ Γ⊢ψ∶Ω φ≃ψ) validΔ = 
+  conv-EP (respects-conv (respects-osr substitution R-respects-sub) φ≃ψ) 
+  (Computable-Proof-Substitution U V σ Γ Δ δ _ σ∶Γ⇒CΔ Γ⊢δ∶φ validΔ)
+  (Substitution Γ⊢ψ∶Ω validΔ (subC-typed σ∶Γ⇒CΔ))
+Computable-Proof-Substitution U V σ Γ Δ _ _ σ∶Γ⇒CΔ (plusR Γ⊢P∶φ≡ψ) validΔ = 
+  plus-EP (Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒CΔ Γ⊢P∶φ≡ψ validΔ)
+Computable-Proof-Substitution U V σ Γ Δ _ _ σ∶Γ⇒CΔ (minusR Γ⊢P∶φ≡ψ) validΔ = 
+  minus-EP (Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒CΔ Γ⊢P∶φ≡ψ validΔ)
+
+Computable-Path-Substitution₁ U V σ Γ Δ .(var x) .(typeof x Γ) σ∶Γ⇒CΔ (varR x x₁) validΔ = σ∶Γ⇒CΔ x
+Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒CΔ (refR {M = M} {A} Γ⊢M∶A) validΔ = ref-EE (Computable-Substitution U V σ Γ Δ M A σ∶Γ⇒CΔ Γ⊢M∶A refl validΔ)
+Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒CΔ (⊃*R Γ⊢P∶φ≡φ' Γ⊢Q∶ψ≡ψ') validΔ = 
+  imp*-EE 
+  (Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒CΔ Γ⊢P∶φ≡φ' validΔ) 
+  (Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒CΔ Γ⊢Q∶ψ≡ψ' validΔ)
+Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒CΔ (univR Γ⊢δ∶φ⊃ψ Γ⊢ε∶ψ⊃φ) validΔ = 
+  univ-EE 
+  (Computable-Proof-Substitution U V σ Γ Δ _ _ σ∶Γ⇒CΔ Γ⊢δ∶φ⊃ψ validΔ) 
+  (Computable-Proof-Substitution U V σ Γ Δ _ _ σ∶Γ⇒CΔ Γ⊢ε∶ψ⊃φ validΔ)
+Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒CΔ (lllR .{U} .{Γ} {A} {B} {M} {M'} {P} Γ+⊢P∶Mx≡M'y) validΔ = 
+  aux-lm2 U V σ Γ Δ A B M M' P σ∶Γ⇒CΔ Γ+⊢P∶Mx≡M'y validΔ 
+  (λ W Θ τ τ∶Γ+⇒Θ validΘ → Computable-Path-Substitution₁ (U , -Term , -Term , -Path) W τ (addpath Γ A) Θ P _ τ∶Γ+⇒Θ Γ+⊢P∶Mx≡M'y validΘ)
+Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒CΔ (app*R {N = N} {N'} {A} Γ⊢N∶A Γ⊢N'∶A Γ⊢P∶M≡M' Γ⊢Q∶N≡N') validΔ = 
+  app*-EE 
+  (Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒CΔ Γ⊢P∶M≡M' validΔ) 
+  (Computable-Path-Substitution₁ U V σ Γ Δ _ _ σ∶Γ⇒CΔ Γ⊢Q∶N≡N' validΔ)
+    (Computable-Substitution U V σ Γ Δ N A σ∶Γ⇒CΔ Γ⊢N∶A refl validΔ)
+    (Computable-Substitution U V σ Γ Δ N' A σ∶Γ⇒CΔ Γ⊢N'∶A refl validΔ)
+Computable-Path-Substitution₁ U V σ Γ Δ P _ σ∶Γ⇒CΔ (convER {M = M} {M'} {N} {N'} {A} Γ⊢P∶M≡N Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N') validΔ = 
+  conv-EE  (Computable-Path-Substitution₁ U V σ Γ Δ P _ σ∶Γ⇒CΔ Γ⊢P∶M≡N validΔ) (respects-conv (respects-osr substitution R-respects-sub) 
+  M≃M') (respects-conv (respects-osr substitution R-respects-sub) N≃N') (Substitution Γ⊢M'∶A validΔ (subC-typed σ∶Γ⇒CΔ)) (Substitution Γ⊢N'∶A validΔ (subC-typed σ∶Γ⇒CΔ)) -}
+--REFACTOR Duplication
+\end{code}
+}

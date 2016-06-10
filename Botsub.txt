@@ -165,11 +165,11 @@ botsub₃-Rep↑₃' (↑ x₀) = refl
 botsub₃-Rep↑₃' (↑ (↑ x₀)) = refl 
 botsub₃-Rep↑₃' (↑ (↑ (↑ x))) = refl
 
-postulate botsub₃-Rep↑₃ : ∀ {U} {V} {K2} {K1} {K0} {L}
-                        {M2 : Expression U (varKind K2)} {M1 : Expression U (varKind K1)} {M0 : Expression U (varKind K0)} {ρ : Rep U V} (N : Expression (U , K2 , K1 , K0) L) →
-                        N 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉 ⟦ x₂:= M2 〈 ρ 〉 ,x₁:= M1 〈 ρ 〉 ,x₀:= M0 〈 ρ 〉 ⟧
-                        ≡ N ⟦ x₂:= M2 ,x₁:= M1 ,x₀:= M0 ⟧ 〈 ρ 〉
-{- botsub₃-Rep↑₃ {M2 = M2} {M1} {M0} {ρ} N = let open ≡-Reasoning in
+botsub₃-Rep↑₃ : ∀ {U} {V} {K2} {K1} {K0} {L}
+                {M2 : Expression U (varKind K2)} {M1 : Expression U (varKind K1)} {M0 : Expression U (varKind K0)} {ρ : Rep U V} (N : Expression (U , K2 , K1 , K0) L) →
+                N 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉 ⟦ x₂:= M2 〈 ρ 〉 ,x₁:= M1 〈 ρ 〉 ,x₀:= M0 〈 ρ 〉 ⟧
+                ≡ N ⟦ x₂:= M2 ,x₁:= M1 ,x₀:= M0 ⟧ 〈 ρ 〉
+botsub₃-Rep↑₃ {M2 = M2} {M1} {M0} {ρ} N = let open ≡-Reasoning in
               begin
                 N 〈 Rep↑ _ (Rep↑ _ (Rep↑ _ ρ)) 〉 ⟦ x₂:= M2 〈 ρ 〉 ,x₁:= M1 〈 ρ 〉 ,x₀:= M0 〈 ρ 〉 ⟧
               ≡⟨⟨ sub-compSR N ⟩⟩
@@ -178,7 +178,7 @@ postulate botsub₃-Rep↑₃ : ∀ {U} {V} {K2} {K1} {K0} {L}
                 N ⟦ ρ •RS (x₂:= M2 ,x₁:= M1 ,x₀:= M0) ⟧
               ≡⟨ sub-compRS N ⟩
                 N ⟦ x₂:= M2 ,x₁:= M1 ,x₀:= M0 ⟧ 〈 ρ 〉
-              ∎ -}
+              ∎
 --TODO General lemma for this
 \end{code}
 }
