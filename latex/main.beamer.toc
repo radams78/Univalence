@@ -1,5 +1,0 @@
-\beamer@endinputifotherversion {3.24pt}
-\beamer@sectionintoc {1}{Introduction}{2}{0}{1}
-\beamer@sectionintoc {2}{About the Formalization}{6}{0}{2}
-\beamer@sectionintoc {3}{Predicative Higher-Order Propositional Logic}{10}{0}{3}
-\beamer@sectionintoc {4}{Strong Normalization}{20}{0}{4}
