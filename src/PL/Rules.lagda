@@ -220,9 +220,9 @@ Substitution {Q = Q} {Δ = Δ} {σ = σ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ�
   (let open ≡-Reasoning {A = Expression ( Q , -proof) prp} in
   begin 
     ψ 〈 upRep 〉 ⟦ Sub↑ -proof σ ⟧
-  ≡⟨⟨ sub-comp₂ ψ ⟩⟩
-    ψ ⟦ Sub↑ -proof σ •₂ (λ _ → ↑) ⟧  
-  ≡⟨ sub-comp₁ ψ ⟩
+  ≡⟨⟨ sub-compSR ψ ⟩⟩
+    ψ ⟦ Sub↑ -proof σ •SR (λ _ → ↑) ⟧  
+  ≡⟨ sub-compRS ψ ⟩
     ψ ⟦ σ ⟧ 〈 upRep 〉
   ∎)
   (Substitution Γ,φ⊢δ∶ψ (Sub↑-typed σ∶Γ→Δ)))
@@ -254,7 +254,7 @@ SR (app {ε = ε} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∶ψ) Γ⊢ε∶φ) (re
   (let open ≡-Reasoning in
   begin 
     ψ 〈 upRep 〉 ⟦ x₀:= ε ⟧
-  ≡⟨⟨ sub-comp₂ ψ ⟩⟩
+  ≡⟨⟨ sub-compSR ψ ⟩⟩
     ψ ⟦ idSub P ⟧                 
   ≡⟨ sub-idOp ⟩
     ψ                           

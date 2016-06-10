@@ -1,7 +1,7 @@
 \AgdaHide{
 \begin{code}
 open import Grammar.Base
-
+  
 module Grammar.Substitution.Botsub (G : Grammar) where
 open import Prelims
 open Grammar G

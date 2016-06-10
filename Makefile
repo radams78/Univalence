@@ -1,8 +1,6 @@
-order_file := order.txt
-modules := $(shell cat ${order_file})
+agdatex := $(subst src/,latex/,$(subst .lagda,.tex,$(shell find src -name *.lagda)))
 
-all: $(addsuffix .agdai,$(modules)) main.article.pdf
-%.agdai: %.lagda
-	agda -i . -i ${AGDALIBDIR} $< 
-main.article.pdf: main.article.tex $(addsuffix .agdai,$(modules)) main.tex
-	latexmk -pdf -g $<
+latex/%.tex: src/%.lagda
+	@cd src; agda -i . -i ${AGDALIBDIR} --latex --latex-dir=../latex $*.lagda
+main.article.pdf: $(agdatex) latex/main.article.tex latex/main.tex
+	@cd latex;latexmk -g -pdf main.article

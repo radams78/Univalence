@@ -1,0 +1,50 @@
+\AgdaHide{
+\begin{code}%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar.Base}\<%
+\\
+%
+\\
+\>\AgdaKeyword{module} \AgdaModule{Grammar.Substitution.LiftFamily} \AgdaSymbol{(}\AgdaBound{G} \AgdaSymbol{:} \AgdaRecord{Grammar}\AgdaSymbol{)} \AgdaKeyword{where}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims}\<%
+\\
+\>\AgdaKeyword{open} \AgdaModule{Grammar} \AgdaBound{G}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar.OpFamily.LiftFamily} \AgdaBound{G}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar.Substitution.PreOpFamily} \AgdaBound{G}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar.Substitution.Lifting} \AgdaBound{G}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar.Substitution.RepSub} \AgdaBound{G}\<%
+\end{code}
+}
+
+It is now easy to show that substitution forms a pre-family with lifting.  If $\sigma : U \rightarrow V$ and $x \in U$ then $(\sigma , K)(\uparrow x) \equiv
+\sigma(x) \langle \uparrow \rangle \equiv (\sigma , K)(x) [ \uparrow ]$.
+
+\begin{code}%
+\>\AgdaFunction{proto-substitution} \AgdaSymbol{:} \AgdaRecord{LiftFamily}\<%
+\\
+\>\AgdaFunction{proto-substitution} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{} \<[30]%
+\>[30]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{preOpFamily} \AgdaSymbol{=} \AgdaFunction{pre-substitution} \AgdaSymbol{;} \<[35]%
+\>[35]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{lifting} \AgdaSymbol{=} \AgdaFunction{SUB↑} \AgdaSymbol{;} \<[19]%
+\>[19]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{isLiftFamily} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{} \<[26]%
+\>[26]\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{liftOp-x₀} \AgdaSymbol{=} \AgdaInductiveConstructor{refl} \AgdaSymbol{;} \<[23]%
+\>[23]\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{liftOp-↑} \AgdaSymbol{=} \AgdaSymbol{λ} \AgdaSymbol{\{}\AgdaBound{\_}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{\_}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{\_}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{\_}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ}\AgdaSymbol{\}} \AgdaBound{x} \AgdaSymbol{→} \AgdaFunction{rep-is-sub} \AgdaSymbol{(}\AgdaBound{σ} \AgdaSymbol{\_} \AgdaBound{x}\AgdaSymbol{)} \AgdaSymbol{\}\}}\<%
+\end{code}

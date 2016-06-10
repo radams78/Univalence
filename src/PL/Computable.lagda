@@ -242,11 +242,11 @@ SNmainlemma {P} {Q} {Γ} {σ = σ} {Δ} (Λ {φ = φ} {δ} {ψ} Γ,φ⊢δ∶ψ)
     (let open ≡-Reasoning in 
     begin
       ψ 〈 upRep 〉 ⟦ Sub↑ -proof σ ⟧
-    ≡⟨⟨ sub-comp₂ ψ ⟩⟩
-      ψ ⟦ Sub↑ -proof σ •₂ upRep ⟧
+    ≡⟨⟨ sub-compSR ψ ⟩⟩
+      ψ ⟦ Sub↑ -proof σ •SR upRep ⟧
     ≡⟨⟩
-      ψ ⟦ upRep •₁ σ ⟧
-    ≡⟨ sub-comp₁ ψ ⟩
+      ψ ⟦ upRep •RS σ ⟧
+    ≡⟨ sub-compRS ψ ⟩
       ψ ⟦ σ ⟧ 〈 upRep 〉
     ∎)
   (Substitution Γ,φ⊢δ∶ψ (Sub↑-typed (λ x → 
@@ -267,10 +267,10 @@ SNmainlemma {P} {Q} {Γ} {σ = σ} {Δ} (Λ {φ = φ} {δ} {ψ} Γ,φ⊢δ∶ψ)
          begin
            close φ 〈 magic 〉
          ≡⟨⟨ rep-congl (close-sub φ) ⟩⟩
-           close (φ ⟦ ρ •₁ σ ⟧) 〈 magic 〉
+           close (φ ⟦ ρ •RS σ ⟧) 〈 magic 〉
          ≡⟨ close-magic ⟩ 
-           φ ⟦ ρ •₁ σ ⟧
-         ≡⟨ sub-comp₁ φ ⟩
+           φ ⟦ ρ •RS σ ⟧
+         ≡⟨ sub-compRS φ ⟩
            φ ⟦ σ ⟧ 〈 ρ 〉
          ∎) 
          (C-typed {φ = close φ} ε∈CΘφ)) --TODO Make argument explicit in C-typed?
@@ -278,18 +278,18 @@ SNmainlemma {P} {Q} {Γ} {σ = σ} {Δ} (Λ {φ = φ} {δ} {ψ} Γ,φ⊢δ∶ψ)
          (close-rep ψ)
          (let open ≡-Reasoning in 
          begin
-           δ ⟦ x₀:= ε •₂ Rep↑ -proof ρ • Sub↑ -proof σ ⟧
+           δ ⟦ x₀:= ε •SR Rep↑ -proof ρ • Sub↑ -proof σ ⟧
          ≡⟨ sub-comp δ ⟩
-           δ ⟦ Sub↑ -proof σ ⟧ ⟦ x₀:= ε •₂ Rep↑ -proof ρ ⟧
-         ≡⟨ sub-comp₂ (δ ⟦ Sub↑ -proof σ ⟧) ⟩
+           δ ⟦ Sub↑ -proof σ ⟧ ⟦ x₀:= ε •SR Rep↑ -proof ρ ⟧
+         ≡⟨ sub-compSR (δ ⟦ Sub↑ -proof σ ⟧) ⟩
            δ ⟦ Sub↑ -proof σ ⟧ 〈 Rep↑ -proof ρ 〉 ⟦ x₀:= ε ⟧
          ∎)
-         (SNmainlemma {σ = x₀:= ε •₂ Rep↑ -proof ρ • Sub↑ -proof σ} Γ,φ⊢δ∶ψ (λ x → aux x ε∈CΘφ ρ∶Δ→Θ))) 
+         (SNmainlemma {σ = x₀:= ε •SR Rep↑ -proof ρ • Sub↑ -proof σ} Γ,φ⊢δ∶ψ (λ x → aux x ε∈CΘφ ρ∶Δ→Θ))) 
        (CsubSN (close φ) ε∈CΘφ)) where
     aux : ∀ {R} {Θ : Context R} {ρ} {ε} x → 
       C Θ (close φ) ε →
       ρ ∶ Δ ⇒R Θ → 
-      C Θ (close (typeof {K = -proof} x (Γ ,P φ))) ((x₀:= ε •₂ Rep↑ -proof ρ • Sub↑ -proof σ) -proof x)
+      C Θ (close (typeof {K = -proof} x (Γ ,P φ))) ((x₀:= ε •SR Rep↑ -proof ρ • Sub↑ -proof σ) -proof x)
     aux {Θ = Θ} {ε = ε} x₀ ε∈CΘφ _ = subst (λ P₁ → C Θ P₁ ε) 
       (let open ≡-Reasoning in
       begin
@@ -313,8 +313,8 @@ SNmainlemma {P} {Q} {Γ} {σ = σ} {Δ} (Λ {φ = φ} {δ} {ψ} Γ,φ⊢δ∶ψ)
         σ -proof x 〈 ρ 〉 〈 upRep 〉 ⟦ x₀:= ε ⟧
       ≡⟨⟨ cong (λ E → E ⟦ x₀:= ε ⟧) (Rep↑-upRep (σ -proof x)) ⟩⟩
         σ -proof x 〈 upRep 〉 〈 Rep↑ -proof ρ 〉 ⟦ x₀:= ε ⟧
-      ≡⟨⟨ sub-comp₂ (σ -proof x 〈 upRep 〉) ⟩⟩
-        (σ -proof x 〈 upRep 〉) ⟦ x₀:= ε •₂ Rep↑ -proof ρ ⟧
+      ≡⟨⟨ sub-compSR (σ -proof x 〈 upRep 〉) ⟩⟩
+        (σ -proof x 〈 upRep 〉) ⟦ x₀:= ε •SR Rep↑ -proof ρ ⟧
       ∎) 
       (C-rep {φ = close (typeof x Γ)} (hyp x) ρ:Δ→Θ)
 \end{code}

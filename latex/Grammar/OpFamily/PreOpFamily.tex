@@ -1,0 +1,167 @@
+\AgdaHide{
+\begin{code}%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar.Base}\<%
+\\
+%
+\\
+\>\AgdaKeyword{module} \AgdaModule{Grammar.OpFamily.PreOpFamily} \AgdaSymbol{(}\AgdaBound{G} \AgdaSymbol{:} \AgdaRecord{Grammar}\AgdaSymbol{)} \AgdaKeyword{where}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims}\<%
+\\
+\>\AgdaKeyword{open} \AgdaModule{Grammar} \AgdaBound{G}\<%
+\end{code}
+}
+
+\subsection{Families of Operations}
+
+Our aim here is to define the operations of \emph{replacement} and \emph{substitution}.  In order to organise this work, we introduce the following definitions.
+
+A \emph{family of operations} over a grammar $G$ consists of:
+\begin{enumerate}
+\item
+for any alphabets $U$ and $V$, a set $F[U,V]$ of \emph{operations} $\sigma$ from $U$ to $V$, $\sigma : U \rightarrow V$;
+\item
+for any operation $\sigma : U \rightarrow V$ and variable $x \in U$ of kind $K$, an expression $\sigma(x)$ over $V$ of kind $K$;
+\item
+for any alphabet $V$ and variable kind $K$, an operation $\uparrow : V \rightarrow (V , K)$, the \emph{lifting} operation;
+\item
+for any alphabet $V$, an operation $\id{V} : V \rightarrow V$, the \emph{identity} operation;
+\item
+for any operation $\sigma : U \rightarrow V$ and variable kind $K$, an operation $(\sigma , K) : (U , K) \rightarrow (V , K)$, the result of \emph{lifting} $\sigma$;
+\item
+for any operations $\rho : U \rightarrow V$ and $\sigma : V \rightarrow W$, an operation
+$\sigma \circ \rho : U \rightarrow W$, the \emph{composition} of $\sigma$ and $\rho$;
+\end{enumerate}
+such that:
+\begin{itemize}
+\item
+$\uparrow (x) \equiv x$
+\item
+$\id{V}(x) \equiv x$
+\item
+If $\rho \sim \sigma$ then $(\rho , K) \sim (\sigma , K)$
+\item
+$(\rho , K)(x_0) \equiv x_0$
+\item
+Given $\sigma : U \rightarrow V$ and $x \in U$, we have $(\sigma , K)(x) \equiv x$
+\item
+$(\sigma \circ \rho , K) \sim (\sigma , K) \circ (\rho , K)$
+\item
+$(\sigma \circ \rho)(x) \equiv \rho(x) [ \sigma ]$
+\end{itemize}
+where for $\sigma, \rho : U \rightarrow V$ we write $\sigma \sim \rho$ iff $\sigma(x) \equiv \rho(x)$ for all $x \in U$; and, given $\sigma : U \rightarrow V$ and $E$ an expression over $U$, we define $E[\sigma]$, the result of \emph{applying} the operation $\sigma$ to $E$, as follows:
+
+\begin{align*}
+x[\sigma] & \eqdef \sigma(x) \\
+\lefteqn{c([\vec{x_1}] E_1, \ldots, [\vec{x_n}] E_n) [\sigma]} \\
+ & \eqdef
+c([\vec{x_1}] E_1 [(\sigma , K_{11}, \ldots, K_{1r_1})], \ldots,
+[\vec{x_n}] E_n [(\sigma, K_{n1}, \ldots, K_{nr_n})])
+\end{align*}
+for $c$ a constructor of type (\ref{eq:conkind}).
+
+\subsubsection{Pre-Families}
+We formalize this definition in stages.  First, we define a \emph{pre-family of operations} to be a family with items of data 1--4 above that satisfies the first two axioms:
+
+\begin{code}%
+\>\AgdaKeyword{record} \AgdaRecord{PreOpFamily} \AgdaSymbol{:} \AgdaPrimitiveType{Set₂} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{field}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{Op} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{apV} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaField{Op} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Var} \AgdaBound{U} \AgdaBound{K} \AgdaSymbol{→} \<[45]%
+\>[45]\<%
+\\
+\>[4]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{up} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaField{Op} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{apV-up} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{x} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{V} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \<[43]%
+\>[43]\<%
+\\
+\>[4]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaField{apV} \AgdaSymbol{(}\AgdaField{up} \AgdaSymbol{\{}\AgdaArgument{K} \AgdaSymbol{=} \AgdaBound{L}\AgdaSymbol{\})} \AgdaBound{x} \AgdaDatatype{≡} \AgdaInductiveConstructor{var} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaBound{x}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{idOp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaBound{V} \AgdaSymbol{→} \AgdaField{Op} \AgdaBound{V} \AgdaBound{V}\<%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{apV-idOp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{x} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{V} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaField{apV} \AgdaSymbol{(}\AgdaField{idOp} \AgdaBound{V}\AgdaSymbol{)} \AgdaBound{x} \AgdaDatatype{≡} \AgdaInductiveConstructor{var} \AgdaBound{x}\<%
+\end{code}
+
+This allows us to define the relation $\sim$, and prove it is an equivalence relation:
+
+\begin{code}%
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{\_∼op\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaField{Op} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaField{Op} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{\_∼op\_} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{ρ} \AgdaBound{σ} \AgdaSymbol{=} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{x} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{U} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaField{apV} \AgdaBound{ρ} \AgdaBound{x} \AgdaDatatype{≡} \AgdaField{apV} \AgdaBound{σ} \AgdaBound{x}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{∼-refl} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaField{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{σ} \AgdaFunction{∼op} \AgdaBound{σ}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{∼-refl} \AgdaSymbol{\_} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{∼-sym} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaBound{τ} \AgdaSymbol{:} \AgdaField{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{σ} \AgdaFunction{∼op} \AgdaBound{τ} \AgdaSymbol{→} \AgdaBound{τ} \AgdaFunction{∼op} \AgdaBound{σ}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{∼-sym} \AgdaBound{σ-is-τ} \AgdaBound{x} \AgdaSymbol{=} \AgdaFunction{sym} \AgdaSymbol{(}\AgdaBound{σ-is-τ} \AgdaBound{x}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{∼-trans} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaBound{σ} \AgdaBound{τ} \AgdaSymbol{:} \AgdaField{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{ρ} \AgdaFunction{∼op} \AgdaBound{σ} \AgdaSymbol{→} \AgdaBound{σ} \AgdaFunction{∼op} \AgdaBound{τ} \AgdaSymbol{→} \AgdaBound{ρ} \AgdaFunction{∼op} \AgdaBound{τ}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{∼-trans} \AgdaBound{ρ-is-σ} \AgdaBound{σ-is-τ} \AgdaBound{x} \AgdaSymbol{=} \AgdaFunction{trans} \AgdaSymbol{(}\AgdaBound{ρ-is-σ} \AgdaBound{x}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{σ-is-τ} \AgdaBound{x}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{OP} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \<[30]%
+\>[30]\AgdaRecord{Setoid} \AgdaSymbol{\_} \AgdaSymbol{\_}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{OP} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{} \<[20]%
+\>[20]\<%
+\\
+\>[2]\AgdaIndent{5}{}\<[5]%
+\>[5]\AgdaField{Carrier} \AgdaSymbol{=} \AgdaField{Op} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{;} \<[24]%
+\>[24]\<%
+\\
+\>[2]\AgdaIndent{5}{}\<[5]%
+\>[5]\AgdaField{\_≈\_} \AgdaSymbol{=} \AgdaFunction{\_∼op\_} \AgdaSymbol{;} \<[19]%
+\>[19]\<%
+\\
+\>[2]\AgdaIndent{5}{}\<[5]%
+\>[5]\AgdaField{isEquivalence} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{} \<[30]%
+\>[30]\<%
+\\
+\>[5]\AgdaIndent{7}{}\<[7]%
+\>[7]\AgdaField{refl} \AgdaSymbol{=} \AgdaFunction{∼-refl} \AgdaSymbol{;} \<[23]%
+\>[23]\<%
+\\
+\>[5]\AgdaIndent{7}{}\<[7]%
+\>[7]\AgdaField{sym} \AgdaSymbol{=} \AgdaFunction{∼-sym} \AgdaSymbol{;} \<[21]%
+\>[21]\<%
+\\
+\>[5]\AgdaIndent{7}{}\<[7]%
+\>[7]\AgdaField{trans} \AgdaSymbol{=} \AgdaFunction{∼-trans} \AgdaSymbol{\}} \AgdaSymbol{\}}\<%
+\end{code}
+

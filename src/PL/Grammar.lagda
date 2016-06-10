@@ -2,6 +2,7 @@
 \begin{code}
 module PL.Grammar where
 open import Data.Empty
+open import Data.List
 open import Prelims
 open import Grammar.Taxonomy
 open import Grammar.Base
@@ -85,8 +86,8 @@ close-magic' {P} {Q} {φ} {σ} =
     φ ⟦ σ ⟧
   ≡⟨⟨ sub-congl (close-magic {φ = φ}) ⟩⟩
     close φ 〈 magic 〉 ⟦ σ ⟧
-  ≡⟨⟨ sub-comp₂ (close φ) ⟩⟩
-    (close φ) ⟦ σ •₂ magic ⟧
+  ≡⟨⟨ sub-compSR (close φ) ⟩⟩
+    (close φ) ⟦ σ •SR magic ⟧
   ≡⟨ sub-congr (close φ) (λ ()) ⟩
     (close φ) ⟦ rep2sub magic ⟧
   ≡⟨⟨ rep-is-sub (close φ) ⟩⟩
@@ -145,7 +146,7 @@ It is easy to check that $\beta$-reduction respects and creates replacement, and
 \AgdaHide{
 \begin{code}
 β-respects-rep (βI {δ = δ}) = 
-  subst (β -app _) (sym (comp₁-botsub' δ)) βI
+  subst (β -app _) (sym (compRS-botsub δ)) βI
 \end{code}
 }
 
@@ -161,7 +162,7 @@ It is easy to check that $\beta$-reduction respects and creates replacement, and
   (app -lam (_ ,, δ ,, out) ,, (ε ,, out)) βI = record { 
   created = δ ⟦ x₀:= ε ⟧ ; 
   red-created = βI ; 
-  ap-created = comp₁-botsub' δ }
+  ap-created = compRS-botsub δ }
 β-creates-rep {c = -lam} _ ()
 β-creates-rep {c = -bot} _ ()
 β-creates-rep {c = -imp} _ ()
@@ -175,7 +176,7 @@ It is easy to check that $\beta$-reduction respects and creates replacement, and
 \AgdaHide{
 \begin{code}
 β-respects-sub {σ = σ} (βI {φ} {δ} {ε}) = subst
-  (β -app _) (sym (comp-botsub' δ)) βI
+  (β -app _) (sym (comp-botsub δ)) βI
 
 prop-not-reduce : ∀ {P} {φ ψ : Prp P} → φ ⇒ ψ → ⊥
 prop-not-reduce (redex ())
