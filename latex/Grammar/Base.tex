@@ -1,0 +1,141 @@
+\AgdaHide{
+\begin{code}%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Function}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.List}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar.Taxonomy}\<%
+\\
+%
+\\
+\>\AgdaKeyword{module} \AgdaModule{Grammar.Base} \AgdaKeyword{where}\<%
+\\
+%
+\\
+\>\AgdaKeyword{record} \AgdaRecord{IsGrammar} \AgdaSymbol{(}\AgdaBound{T} \AgdaSymbol{:} \AgdaRecord{Taxonomy}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaPrimitiveType{Set₁} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{open} \AgdaModule{Taxonomy} \AgdaBound{T}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{field}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{Constructor} \<[19]%
+\>[19]\AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Kind} \AgdaSymbol{(}\AgdaInductiveConstructor{-Constructor} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{parent} \<[19]%
+\>[19]\AgdaSymbol{:} \AgdaFunction{VarKind} \AgdaSymbol{→} \AgdaDatatype{ExpressionKind}\<%
+\\
+%
+\\
+\>\AgdaKeyword{record} \AgdaRecord{Grammar} \AgdaSymbol{:} \AgdaPrimitiveType{Set₁} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{field}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{taxonomy} \AgdaSymbol{:} \AgdaRecord{Taxonomy}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{isGrammar} \AgdaSymbol{:} \AgdaRecord{IsGrammar} \AgdaField{taxonomy}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{open} \AgdaModule{Taxonomy} \AgdaField{taxonomy} \AgdaKeyword{public}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{open} \AgdaModule{IsGrammar} \AgdaField{isGrammar} \AgdaKeyword{public}\<%
+\end{code}
+}
+
+\begin{frame}[fragile]
+We can now define the set of expressions over a grammar:
+
+\begin{code}%
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{data} \AgdaDatatype{Subexpression} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaSymbol{∀} \AgdaBound{C} \AgdaSymbol{→} \AgdaDatatype{Kind} \AgdaBound{C} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{Expression} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaDatatype{ExpressionKind} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{Body} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Kind} \AgdaSymbol{(}\AgdaInductiveConstructor{-Constructor} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{=} \AgdaDatatype{Subexpression} \AgdaBound{V} \AgdaInductiveConstructor{-Expression} \AgdaSymbol{(}\AgdaInductiveConstructor{base} \AgdaBound{K}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{Body} \AgdaBound{V} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaBound{C} \AgdaSymbol{=} \AgdaDatatype{Subexpression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{-Constructor} \AgdaBound{K}\AgdaSymbol{)} \AgdaBound{C}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{infixr} \AgdaNumber{50} \AgdaFixityOp{\_,,\_}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{data} \AgdaDatatype{Subexpression} \AgdaKeyword{where}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{var} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Var} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{app} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Constructor} \AgdaBound{C} \AgdaSymbol{→} \AgdaFunction{Body} \AgdaBound{V} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaBound{C} \AgdaSymbol{→} \<[57]%
+\>[57]\<%
+\\
+\>[4]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{out} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Body} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaBound{K}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{\_,,\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaSymbol{(}\AgdaFunction{extend} \AgdaBound{V} \AgdaBound{A}\AgdaSymbol{)} \AgdaBound{L} \AgdaSymbol{→} \<[63]%
+\>[63]\<%
+\\
+\>[4]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaFunction{Body} \AgdaBound{V} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaBound{C} \AgdaSymbol{→} \AgdaFunction{Body} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaBound{A} \AgdaBound{L} \AgdaBound{C}\AgdaSymbol{)}\<%
+\end{code}
+\end{frame}
+
+\AgdaHide{
+\begin{code}%
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{var-inj} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{x} \AgdaBound{y} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{V} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaInductiveConstructor{var} \AgdaBound{x} \AgdaDatatype{≡} \AgdaInductiveConstructor{var} \AgdaBound{y} \AgdaSymbol{→} \AgdaBound{x} \AgdaDatatype{≡} \AgdaBound{y}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{var-inj} \AgdaInductiveConstructor{refl} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{infixl} \AgdaNumber{20} \AgdaFixityOp{\_snoc\_}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{data} \AgdaDatatype{ExpList} \AgdaBound{V} \AgdaSymbol{:} \AgdaDatatype{snocList} \AgdaFunction{VarKind} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{[]} \AgdaSymbol{:} \AgdaDatatype{ExpList} \AgdaBound{V} \AgdaInductiveConstructor{[]}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{\_snoc\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{ExpList} \AgdaBound{V} \AgdaBound{A} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{ExpList} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{A} \AgdaInductiveConstructor{snoc} \AgdaBound{K}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{Reduction} \AgdaSymbol{:} \AgdaPrimitiveType{Set₁}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{Reduction} \AgdaSymbol{=} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C} \AgdaSymbol{:} \AgdaDatatype{Kind} \AgdaSymbol{(}\AgdaInductiveConstructor{-Constructor} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{→} \<[54]%
+\>[54]\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{Constructor} \AgdaBound{C} \AgdaSymbol{→} \AgdaFunction{Body} \AgdaBound{V} \AgdaBound{C} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\end{code}
+}
