@@ -23,55 +23,7 @@ A \emph{taxononmy} consists of:
 \item a subset of expression kinds, called the \emph{variable kinds}.  We refer to the other expession kinds as \emph{non-variable kinds}.
 \end{itemize}
 
-\begin{frame}[fragile]
-\frametitle{Grammars}
-Example: Simply-typed lambda calculus
-\[ \begin{array}{lrcl}
-\text{Type} & A & ::= & \bot \mid A \rightarrow A \\
-\text{Term} & M & ::= & x \mid \lambda x:A.M \mid M M
-\end{array} \]
-
-\begin{itemize}
-\item
-Two kinds: `Type' (non-variable kind) and `Term' (variable kind)
-\item
-Four constructors:
-\begin{itemize}
-\item
-$\bot$ --- kind Type
-\item
-$\rightarrow$ --- kind (Type, Type) Type
-\item
-$\lambda$ --- kind (Type, (Term) Term) Term
-\item
-$app$ --- kind (Term, Term) Term
-\end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Grammars}
-A \emph{grammar} over a taxonomy consists of: consists of:
-\begin{itemize}
-\item a set of \emph{expression kinds};
-\item a subset of expression kinds, called the \emph{variable kinds}.  We refer to the other expession kinds as \emph{non-variable kinds}.
-\item a set of \emph{constructors}, each with an associated \emph{constructor kind} of the form
-\begin{equation}
-\label{eq:conkind}
- ((A_{11}, \ldots, A_{1r_1}) B_1, \ldots, (A_{m1}, \ldots, A_{mr_m}) B_m) C
-\end{equation}
-where each $A_{ij}$ is a variable kind, and each $B_i$ and $C$ is an expression kind.
-\item a function assigning, to each variable kind $K$, an expression kind, the \emph{parent} of $K$.
-\end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]
-A \emph{taxonomy } consists of:
-\begin{itemize}
-\item a set of \emph{expression kinds};
-\item a subset of expression kinds, called the \emph{variable kinds}.  We refer to the other expession kinds as \emph{non-variable kinds}.
-\end{itemize}
-
+%<*Taxonomy>
 \begin{code}%
 \>\AgdaKeyword{record} \AgdaRecord{Taxonomy} \AgdaSymbol{:} \AgdaPrimitiveType{Set₁} \AgdaKeyword{where}\<%
 \\
@@ -95,7 +47,7 @@ A \emph{taxonomy } consists of:
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaInductiveConstructor{nonVarKind} \AgdaSymbol{:} \AgdaField{NonVarKind} \AgdaSymbol{→} \AgdaDatatype{ExpressionKind}\<%
 \end{code}
-\end{frame}
+%</Taxonomy>
 
 \begin{frame}[fragile]
 \frametitle{Alphabets}

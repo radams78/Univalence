@@ -1,12 +1,10 @@
-\documentclass[ignorenonframetext]{beamer}
+\documentclass[handout]{beamer}
 \bibliographystyle{alpha}
 \usetheme{Rochester}
 
-\usepackage{fancyvrb}
-
-\title[SN Rule for Univalence]{A Strongly Normalizing Computation Rule for Univalence in Higher-Order Propositional Logic}
-\author[R. Adams, M. Bezem, T. Coquand]{\alert{Robin Adams} \and Marc Bezem \and Thierry Coquand}
-\date[TYPES 2016]{TYPES 2016, Novi Sad, Serbia \\ May 26 2016}
+\usepackage{agda}
+\usepackage{proof}
+\usepackage{catchfilebetweentags}
 
 \AtBeginSection[]{
   \begin{frame}
@@ -19,8 +17,364 @@
   \end{frame}
 }
 
-\DefineVerbatimEnvironment{code}{Verbatim}{fontsize=\footnotesize}
+\newtheorem{prop}[theorem]{Proposition}
+\newtheorem{lm}[theorem]{Lemma}
 
-\input{main.tex}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\eqdef}{\mathrel{\smash{\stackrel{\text{def}}{=}}}}
+\newcommand{\isotoid}{\ensuremath{isotoid}}
+\newcommand{\vald}{\ensuremath{\ \mathrm{valid}}}
+\newcommand{\reff}[1]{\ensuremath{\mathsf{ref} \left( {#1} \right)}}
+\newcommand{\univ}[4]{\ensuremath{\mathsf{univ}_{{#1} , {#2}} \left( {#3} , {#4} \right)}}
+\newcommand{\triplelambda}{\ensuremath{\lambda \!\! \lambda \!\! \lambda}}
+\newcommand{\SN}{\ensuremath{\mathbf{SN}}}
+\newcommand{\dom}{\ensuremath{\operatorname{dom}}}
+\newcommand{\sym}[1]{\ensuremath{\mathsf{sym} \left( {#1} \right)}}
+\newcommand{\trans}[2]{\ensuremath{\mathsf{trans} \left( {#1} , {#2} \right)}}
 
+\title[SN Rule for Univalence]{A Strongly Normalizing Computation Rule for Univalence in Higher-Order Propositional Logic}
+\author[R. Adams, M. Bezem, T. Coquand]{\textbf{Robin Adams} \and Marc Bezem \and Thierry Coquand}
+\date[TYPES 2016]{TYPES 2016, Novi Sad, Serbia \\ May 26 2016}
 
+\begin{document}
+
+\begin{frame}
+
+\maketitle
+
+This talk is a literate Agda file:
+
+\url{https://www.github.com/radams78/Univalence}
+\end{frame}
+
+\section{Introduction}
+
+\begin{frame}
+\frametitle{Type Theory Orthoodoxy}
+\begin{itemize}[<+->]
+\item
+To enjoy a good meaning explanation, a type theory should enjoy these properties:
+\begin{itemize}
+\item \textbf{Confluence} --- Reduction is confluent.
+\item \textbf{Strong Normalization} --- Every reduction strategy terminates.
+\item \textbf{Canonicity} --- Hence every well-typed term of type $A$ reduces to a unique canonical form of $A$.
+\begin{itemize}
+\item
+E.g. every closed term of type $\mathbb{N}$ reduces to a unique numeral.
+\end{itemize}
+\end{itemize}
+\item 
+The \emph{univalence axiom} postulates a function
+\[ \isotoid : A \simeq B \rightarrow A = B \]
+that is an inverse to the obvious function $A = B \rightarrow A \simeq B$.
+\item
+This breaks canonicity.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Possible Solutions}
+\begin{itemize}[<+->]
+\item
+Lower our standards
+\begin{itemize}
+\item
+\textbf{Voevodsky's Conjecture --- Propositional Canonicity}
+
+For every closed term $t : \mathbb{N}$, there exists a numeral $n$ and a proof $\vdash p : Id_\mathbb{N}(t,n)$.
+\end{itemize}
+\item
+Use a type theory in which $\isotoid$ is definable (Cubical Type Theory, \cite{Polonsky14a}) %TODO Cite
+\item
+Introduce a reduction rule for $\isotoid$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Our Approach}
+We begin with a small type theory, and work our way up to the full HoTT. %Too much?
+\begin{enumerate}
+\item \textbf{$\lambda o e$ --- Predicative Higher-Order Propositional Logic}
+
+ A type theory with:
+  \begin{itemize}
+  \item a universe $\Omega$ of \emph{propositions} with $\bot$ and $\supset$
+  \item a universe $U$ of \emph{small types} with $\Omega$ and $\rightarrow$
+  \item for any two terms $M, N : A$, a (large) type $M =_A N$.
+  \end{itemize}
+\item \textbf{$\lambda o i$ --- P.H.O.P.L. with Equality}
+
+Make $\delta =_\phi \epsilon$ a proposition.  (So we can form propositions like $M =_A N \supset N =_A M$.)
+\end{enumerate}
+For the future: universal quantification, natural numbers, inductive types, path elimination, \ldots
+\end{frame}
+
+\section{About the Formalization}
+
+\begin{frame}[fragile]
+\frametitle{Grammars}
+Example: Simply-typed lambda calculus
+\[ \begin{array}{lrcl}
+\text{Type} & A & ::= & \bot \mid A \rightarrow A \\
+\text{Term} & M & ::= & x \mid \lambda x:A.M \mid M M
+\end{array} \]
+
+\begin{itemize}
+\item
+Two kinds: `Type' (non-variable kind) and `Term' (variable kind)
+\item
+Four constructors:
+\begin{itemize}
+\item
+$\bot$ --- kind Type
+\item
+$\rightarrow$ --- kind (Type, Type) Type
+\item
+$\lambda$ --- kind (Type, (Term) Term) Term
+\item
+$app$ --- kind (Term, Term) Term
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Grammars}
+A \emph{grammar} over a taxonomy consists of: consists of:
+\begin{itemize}
+\item a set of \emph{expression kinds};
+\item a subset of expression kinds, called the \emph{variable kinds}.  We refer to the other expession kinds as \emph{non-variable kinds}.
+\item a set of \emph{constructors}, each with an associated \emph{constructor kind} of the form
+\begin{equation}
+\label{eq:conkind}
+ ((A_{11}, \ldots, A_{1r_1}) B_1, \ldots, (A_{m1}, \ldots, A_{mr_m}) B_m) C
+\end{equation}
+where each $A_{ij}$ is a variable kind, and each $B_i$ and $C$ is an expression kind.
+\item a function assigning, to each variable kind $K$, an expression kind, the \emph{parent} of $K$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+A \emph{taxonomy } consists of:
+\begin{itemize}
+\item a set of \emph{expression kinds};
+\item a subset of expression kinds, called the \emph{variable kinds}.  We refer to the other expession kinds as \emph{non-variable kinds}.
+\end{itemize}
+\ExecuteMetaData[Grammar/Taxonomy.tex]{Taxonomy}
+\end{frame}
+
+\section{Predicative Higher-Order Propositional Logic}
+
+\begin{frame}
+\frametitle{The Simply-Typed Lambda Calculus}
+We begin with the simply-typed lambda calculus (no surprises so far):
+
+$$
+\begin{array}{lrcl}
+\text{Type} & A & ::= & \Omega \mid A \rightarrow A \\
+\text{Term} & M,\phi & ::= & x \mid \lambda x:A.M \mid M M
+\end{array}
+$$
+
+\[ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \qquad
+\infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \]
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Propositional Logic}
+$\Omega$ is the universe of propositions:
+\[
+\begin{array}{lrcl}
+\text{Term} & M,\phi & ::= & \cdots \mid \bot \mid \phi \supset \phi \\
+\text{Proof} & \delta & ::= & p \mid \lambda p : \phi . \delta \mid \delta \delta
+\end{array}
+\]
+\[ \infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \rightarrow \psi \quad \Gamma \vdash \epsilon : \phi}
+\qquad \infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \rightarrow \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
+
+\[ \infer[(\phi \simeq \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
+\end{frame}
+
+\begin{frame}
+\frametitle{Extensional Equality}
+\onslide<1>{On top of this we add extensional equality.}
+
+\[ \begin{array}{lrcl}
+\text{Path} & P & ::= & e \onslide<2->{\mid \reff{M} \mid \univ{\phi}{\phi}{P}{P}} \onslide<4->{\mid P \supset^* P \mid} \\
+& & & \onslide<4->{P_{NN}P} \onslide<5->{\mid \triplelambda e : x =_A x . P} \\
+\text{Proof} & \delta & ::= & \cdots \onslide<3->{\mid P^+ \mid P^-}
+\end{array}
+\]
+
+Judgement form $\Gamma \vdash P : M =_A N$.
+
+\only<2>{Two main ways to prove equality:
+
+\[ \infer{\Gamma \vdash \reff{M} : M =_A M}{\Gamma \vdash M : A} \qquad
+\infer{\Gamma \vdash \univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi}{\Gamma \vdash \delta : \phi \rightarrow \psi \quad \Gamma \vdash \epsilon : \psi \rightarrow \phi} \]}
+
+\mode<article>{$$ \infer{\Gamma, e : M =_A N \vald}{\Gamma \vdash M : A \quad \Gamma \vdash N : A}
+\qquad
+\infer[e : M =_A N \in \Gamma]{\Gamma \vdash e : M =_A N}{\Gamma \vald} $$
+}
+
+\only<3>{We can eliminate equalities in $\Omega$:
+\[ 
+\qquad
+\infer{\Gamma \vdash P^+ : \phi \rightarrow \psi}{\Gamma \vdash P : \phi =_\Omega \psi}
+\qquad
+\infer{\Gamma \vdash P^- : \psi \rightarrow \phi}{\Gamma \vdash P : \psi =_\Omega \psi} \]
+}
+\end{frame}
+
+\begin{frame}
+\only<5>{Congruence rule for $\lambda$:
+
+\[ \infer{\Gamma \vdash \triplelambda e : x =_A y . P : M =_{A \rightarrow B} N}{\Gamma, x : A, y : A, e : x =_A y \vdash M x =_B N y} \]
+
+$e$, $x$ and $y$ are bound within $P$.
+}
+
+\onslide<4>{Congruence rules and conversion
+\[ \infer{\Gamma \vdash P \supset^* Q : \phi \supset \psi =_\Omega \phi' \supset \psi'}{\Gamma \vdash P : \phi =_\Omega \phi' \quad \Gamma \vdash Q : \psi =_\Omega \psi'}  \]
+\[ \infer{\Gamma \vdash P_{NN'}Q : MN =_B M' N'}{\Gamma \vdash P : M =_{A \rightarrow B} M' \quad \Gamma \vdash Q : N =_A N'} \]
+\[ \infer[(M \simeq M', N \simeq N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
+}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{The Reduction Relation}
+The `$\beta$-rules':
+
+\begin{align*}
+(\lambda x:A.M)N & \rhd M[x:=N] & (\lambda p:\phi.\delta)\epsilon & \rhd \delta[p:=\epsilon] \\
+ \reff{\phi}^+ & \rhd \lambda p:\phi.p & \reff{\phi}^- & \rhd \lambda p:\phi.p \\
+\univ{\phi}{\psi}{\delta}{\epsilon}^+ & \rhd \delta & \univ{\phi}{\psi}{\delta}{\epsilon}^- & \rhd \epsilon
+\end{align*}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{The Reduction Relation}
+We make $\mathsf{univ}$ and $\mathsf{ref}$ move out past $\supset^*$ and application:
+$$\reff \phi \supset^* \univ{\psi}{\chi}{\delta}{\epsilon}
+\rhd \mathsf{univ}_{\phi \supset \psi,\phi \supset \chi}(\lambda p, q . \delta (p q), \lambda p, q . \epsilon (p q))$$
+$$\univ{\phi}{\psi}{\delta}{\epsilon} \supset^* \reff{\chi}
+\rhd \univ{\phi \supset \chi}{\psi \supset \chi}{\lambda p,q .p (\epsilon q)}{\lambda p,q .p (\delta q)}$$
+\begin{gather*}
+\univ{\phi}{\psi}{\delta}{\epsilon} \supset^* \univ{\phi'}{\psi'}{\delta'}{\epsilon'} \\
+\quad \rhd \univ{\phi \supset \phi'}{\psi \supset \psi'}
+{\lambda p,q . \delta' (p (\epsilon q))}{\lambda p, q . \epsilon' (p (\delta q))}
+\end{gather*}
+$$\reff{\phi} \supset^* \reff{\psi} \rhd \reff{\phi \supset \psi}
+\qquad
+\reff{M}_{N_1N_2} \reff{N} \rhd \reff{MN}$$
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{The Reduction Relation}
+We construct a proof of $M =_{A \rightarrow B} N$, then apply it.  What is the result?
+\begin{itemize}[<+->]
+\item
+$\reff{M}_{N_1N_2} \reff{N} \rhd \reff{MN}$
+\item
+$(\triplelambda e:x =_A y. P)_{N_1N_2}Q \rhd P[x:=N_1, y:=N_2, e:=Q]$
+\item
+If $P \not\equiv \reff{-}$, then $\reff{\lambda x:A.M}_{NN'} P \rhd ???$
+\end{itemize}
+
+\only<3>{$$\Gamma , x : A \vdash M : B, \qquad \Gamma \vdash P : N =_A N'$$}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Path Substitution}
+Define the operation of \emph{path substitution} such that,
+if $P : M =_A M'$ then $N \{ x := P : M \sim M' \} \equiv N \{ x:= P \} : N [x := M ]=_B N [x := M']$.
+\begin{align*}
+x \{ x := P \} & \eqdef P \\
+y \{ x := P \} & \eqdef \reff{y} \qquad (y \not\equiv x) \\
+\bot \{ x := P \} & \eqdef \reff{\bot} \\
+(LL') \{ x := P : M \sim M' \} \\
+\omit\rlap{\qquad \qquad $\eqdef L \{ x := P \}_{L' [x := M] L' [x := M']} L' \{ x := P \}$} \\
+(\lambda y:A.L) \{ x := P \} & \\
+\omit\rlap{\qquad\qquad $\eqdef \triplelambda e : a =_A a' . L \{ x := P , y := e : a \sim a' \}$} \\
+(\phi \supset \psi) \{ x := P \} & \eqdef \phi \{ x := P \} \supset^* \psi \{ x := P \}
+\end{align*}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{The Reduction Relation}
+We construct a proof of $M =_{A \rightarrow B} N$, then apply it.  What is the result?
+\begin{itemize}
+\item
+$\reff{M} \reff{N} \rhd \reff{MN}$
+\item
+$(\triplelambda e:x =_A y. P)_{MN}Q \rhd P[x:=M, y:=N, e:=Q]$
+\item
+If $P \not\equiv \reff{-}$, then $\reff{\lambda x:A.M}_{N,N'} P \rhd M \{ x := P : N ∼ N' \}$
+\end{itemize}
+\end{frame}
+
+\section{Strong Normalization}
+
+\begin{frame}
+\frametitle{Tait's Method}
+
+We define a model of the type theory with types as sets of terms.
+
+For every type (proposition, equation) $A$ in context $\Gamma$, define
+the set of \emph{computable} terms $E_\Gamma(A)$.
+
+The definition is such that:
+\begin{enumerate}
+\item
+If $M \in E_\Gamma(A)$ then $\Gamma \vdash M : A$ and $M$ is strongly normalizing.
+\item
+$E_\Gamma(A)$ is closed under \emph{key redex expansion}.
+\item
+If $A \simeq B$ then $E_\Gamma(A) = E_\Gamma(B)$.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+Define the sets of \emph{computable} terms, proofs and paths as follows.
+\begin{align*}
+E_\Gamma(\Omega) \eqdef & \{ M \mid \Gamma \vdash M : \Omega, M \in \SN \} \\
+E_\Gamma(A \rightarrow B) \eqdef & \{ M \mid \Gamma \vdash M : A \rightarrow B, \\
+& \quad \forall (\Delta \supseteq \Gamma) (N \in E_\Delta(A)). MN \in E_\Delta(B), \\
+& \quad \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (P \in E_\Delta(N =_A N')). \\
+& \quad \quad \reff{M}_{N N'} P \in E_\Gamma(MN =_B MN') \}
+\end{align*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Computable Terms}
+\begin{align*}
+E_\Gamma(\bot) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
+E_\Gamma(\phi \rightarrow \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \rightarrow \psi, \\
+& \forall (\Delta \supseteq \Gamma)(\epsilon \in E_\Delta(\phi)). \delta \epsilon \in E_\Gamma(\psi) \} \\
+\\
+E_\Gamma(\phi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
+& \qquad (\phi \text{ neutral}) \\
+\\
+E_\Gamma(\phi) & \eqdef E_\Gamma(nf(\phi)) \\
+& \qquad (\phi \mbox{ a normalizable term of type $\Omega$})
+\end{align*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Computable Terms}
+\begin{align*}
+E_\Gamma(\phi =_\Omega \psi) & \eqdef \{ P \mid \Gamma \vdash P : \phi =_\Omega \psi, \\
+& P^+ \in E_\Gamma(\phi \rightarrow \psi), P^- \in E_\Gamma(\psi \rightarrow \phi) \} \\
+\\
+E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \rightarrow B} M', \\
+& \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (Q \in E_\Delta(N =_A N')). \\
+& P_{NN'}Q \in E_\Delta(MN =_B M'N') \}
+\end{align*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Reference}
+\bibliography{type}
+\end{frame}
+
+\end{document}
