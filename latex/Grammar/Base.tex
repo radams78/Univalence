@@ -51,9 +51,7 @@
 \end{code}
 }
 
-\begin{frame}[fragile]
-We can now define the set of expressions over a grammar:
-
+%<*Expression>
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{data} \AgdaDatatype{Subexpression} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaSymbol{∀} \AgdaBound{C} \AgdaSymbol{→} \AgdaDatatype{Kind} \AgdaBound{C} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
@@ -102,7 +100,8 @@ We can now define the set of expressions over a grammar:
 \>[4]\AgdaIndent{6}{}\<[6]%
 \>[6]\AgdaFunction{Body} \AgdaBound{V} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaBound{C} \AgdaSymbol{→} \AgdaFunction{Body} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaBound{A} \AgdaBound{L} \AgdaBound{C}\AgdaSymbol{)}\<%
 \end{code}
-\end{frame}
+%</Expression>
+
 
 \AgdaHide{
 \begin{code}%

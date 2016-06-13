@@ -5,6 +5,24 @@
 \usepackage{agda}
 \usepackage{proof}
 \usepackage{catchfilebetweentags}
+\usepackage{textalpha}
+
+\DeclareUnicodeCharacter{8598}{\ensuremath{\nwarrow}}
+\DeclareUnicodeCharacter{8599}{\ensuremath{\nearrow}}
+\DeclareUnicodeCharacter{8608}{\ensuremath{\twoheadrightarrow}}
+\DeclareUnicodeCharacter{8657}{\ensuremath{\Uparrow}}
+\DeclareUnicodeCharacter{8667}{\ensuremath{\Rrightarrow}}
+\DeclareUnicodeCharacter{8718}{\ensuremath{\qed}}
+\DeclareUnicodeCharacter{8759}{\ensuremath{::}}
+\DeclareUnicodeCharacter{8988}{\ensuremath{\ulcorner}}
+\DeclareUnicodeCharacter{8989}{\ensuremath{\urcorner}}
+\DeclareUnicodeCharacter{8803}{\ensuremath{\overline{\equiv}}}
+\DeclareUnicodeCharacter{9001}{\ensuremath{\langle}}
+\DeclareUnicodeCharacter{9002}{\ensuremath{\rangle}}
+\DeclareUnicodeCharacter{9655}{\ensuremath{\rhd}}
+\DeclareUnicodeCharacter{10214}{\ensuremath{[}}
+\DeclareUnicodeCharacter{10215}{\ensuremath{]}}
+\DeclareUnicodeCharacter{10219}{\ensuremath{\rangle\rangle}}
 
 \AtBeginSection[]{
   \begin{frame}
@@ -159,7 +177,14 @@ A \emph{taxonomy } consists of:
 \item a set of \emph{expression kinds};
 \item a subset of expression kinds, called the \emph{variable kinds}.  We refer to the other expession kinds as \emph{non-variable kinds}.
 \end{itemize}
+{\tiny
 \ExecuteMetaData[Grammar/Taxonomy.tex]{Taxonomy}
+}
+\end{frame}
+
+\begin{frame}[fragile]
+We can now define the set of expressions over a grammar:
+\ExecuteMetaData[Grammar/Base.tex]{Expression}
 \end{frame}
 
 \section{Predicative Higher-Order Propositional Logic}

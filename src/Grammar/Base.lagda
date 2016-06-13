@@ -22,9 +22,7 @@ record Grammar : Set₁ where
 \end{code}
 }
 
-\begin{frame}[fragile]
-We can now define the set of expressions over a grammar:
-
+%<*Expression>
 \begin{code}
   data Subexpression : Alphabet → ∀ C → Kind C → Set
   Expression : Alphabet → ExpressionKind → Set
@@ -43,7 +41,8 @@ We can now define the set of expressions over a grammar:
     _,,_ : ∀ {V} {K} {A} {L} {C} → Expression (extend V A) L → 
       Body V {K} C → Body V (Π A L C)
 \end{code}
-\end{frame}
+%</Expression>
+
 
 \AgdaHide{
 \begin{code}
