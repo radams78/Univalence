@@ -38,8 +38,8 @@ postulate compRSC : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} {Γ} {Δ} {Θ}
 postulate compSRC : ∀ {U} {V} {W} {σ : Sub V W} {ρ : Rep U V} {Γ} {Δ} {Θ} →
                  σ ∶ Δ ⇒C Θ → ρ ∶ Γ ⇒R Δ → σ •SR ρ ∶ Γ ⇒C Θ
 
-postulate Sub↑C : ∀ {U} {V} {σ : Sub U V} {K} {Γ} {Δ} {A} →
-                    σ ∶ Γ ⇒C Δ → Sub↑ K σ ∶ (Γ , A) ⇒C (Δ , A ⟦ σ ⟧)
+postulate sub↑C : ∀ {U} {V} {σ : Sub U V} {K} {Γ} {Δ} {A} →
+                    σ ∶ Γ ⇒C Δ → sub↑ K σ ∶ (Γ , A) ⇒C (Δ , A ⟦ σ ⟧)
 
 postulate botsubC : ∀ {V} {Γ : Context V} {M} {A} →
                     E Γ A M → x₀:= M ∶ (Γ ,T A) ⇒C Γ
@@ -49,6 +49,11 @@ postulate botsubCP : ∀ {V} {Γ : Context V} {δ} {φ} →
 
 postulate botsubCE : ∀ {V} {Γ : Context V} {P} {E} →
                      EE Γ E P → x₀:= P ∶ (Γ ,E E) ⇒C Γ
+--TODO Common pattern
+
+postulate botsub₃C : ∀ {V} {Γ : Context V} {A} {M} {N} {P} →
+                   E Γ A M → E Γ A N → EE Γ (M ≡〈 A 〉 N) P →
+                   (x₂:= M ,x₁:= N ,x₀:= P) ∶ Γ ,T A ,T A ,E var x₁ ≡〈 A 〉 var x₀ ⇒C Γ
 
 postulate subC-typed : ∀ {U} {V} {σ : Sub U V} {Γ : Context U} {Δ : Context V} →
                      σ ∶ Γ ⇒C Δ → σ ∶ Γ ⇒ Δ
@@ -71,10 +76,10 @@ _∶_∼_∶_⇒C_ : ∀ {U} {V} → PathSub U V → Sub U V → Sub U V → Con
 postulate change-ends : ∀ {U} {V} {τ : PathSub U V} {ρ} {ρ'} {σ} {σ'} {Γ} {Δ} → 
                       τ ∶ ρ ∼ σ ∶ Γ ⇒C Δ → ρ ∼ ρ' → σ ∼ σ' → τ ∶ ρ' ∼ σ' ∶ Γ ⇒C Δ
 
-postulate extendPS-typedC : ∀ {U} {V} {τ : PathSub U V} {ρ σ : Sub U V} {Γ : Context U} {Δ : Context V} {A : Type} {Q : Path V} {N N' : Term V} →
-                         τ ∶ ρ ∼ σ ∶ Γ ⇒C Δ → EE Δ (N ≡〈 A 〉 N') Q → extendPS τ Q ∶ x₀:= N • Sub↑ -Term ρ ∼ x₀:= N' • Sub↑ -Term σ ∶ Γ ,T A ⇒C Δ
+postulate extendPSC : ∀ {U} {V} {τ : PathSub U V} {ρ σ : Sub U V} {Γ : Context U} {Δ : Context V} {A : Type} {Q : Path V} {N N' : Term V} →
+                         τ ∶ ρ ∼ σ ∶ Γ ⇒C Δ → EE Δ (N ≡〈 A 〉 N') Q → extendPS τ Q ∶ extendSub ρ N ∼ extendSub σ N' ∶ Γ ,T A ⇒C Δ
 
-postulate compRP-typedC : ∀ {U} {V} {W} {ρ : Rep V W} {τ : PathSub U V} {σ} {σ'} {Γ} {Δ} {Θ} →
+postulate compRPC : ∀ {U} {V} {W} {ρ : Rep V W} {τ : PathSub U V} {σ} {σ'} {Γ} {Δ} {Θ} →
                          τ ∶ σ ∼ σ' ∶ Γ ⇒C Δ → ρ ∶ Δ ⇒R Θ → ρ •RP τ ∶ ρ •RS σ ∼ ρ •RS σ' ∶ Γ ⇒C Θ
 
 postulate pathsubC-typed : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {Δ} → 
@@ -85,5 +90,8 @@ postulate pathsubC-valid₁ : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {Δ}
 
 postulate pathsubC-valid₂ : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {Δ} →
                           τ ∶ ρ ∼ σ ∶ Γ ⇒C Δ → σ ∶ Γ ⇒C Δ
+
+postulate extendSubC : ∀ {U} {V} {σ : Sub U V} {M : Term V} {Γ} {Δ} {A} →
+                          σ ∶ Γ ⇒C Δ → E Δ A M → extendSub σ M ∶ Γ ,T A ⇒C Δ
 \end{code}
 }

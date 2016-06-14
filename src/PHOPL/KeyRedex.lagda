@@ -33,7 +33,7 @@ key-redex-rep {ρ = ρ} (βPkr {φ} {δ} {ε} SNφ SNε) =
   subst (key-redex ((appP (ΛP φ δ) ε) 〈 ρ 〉)) (sym (compRS-botsub δ)) 
     (βPkr (SNrep R-creates-rep SNφ) (SNrep R-creates-rep SNε))
 key-redex-rep {ρ = ρ} (βEkr {N} {N'} {A} {P} {Q} SNN SNN' SNQ) = 
-  subst (key-redex (app* N N' (λλλ A P) Q 〈 ρ 〉)) (botsub₃-Rep↑₃ P)
+  subst (key-redex (app* N N' (λλλ A P) Q 〈 ρ 〉)) (botsub₃-rep↑₃ P)
     (βEkr (SNrep R-creates-rep SNN) (SNrep R-creates-rep SNN') (SNrep R-creates-rep SNQ))
 key-redex-rep {ρ = ρ} (appTkr M▷N) = appTkr (key-redex-rep M▷N)
 --REFACTOR Common pattern

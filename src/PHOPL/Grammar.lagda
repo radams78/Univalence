@@ -189,7 +189,7 @@ sub↖ σ _ (↑ x) = σ _ x ⇑ ⇑ ⇑
 postulate sub↖-cong : ∀ {U} {V} {ρ σ : Sub U V} → ρ ∼ σ → sub↖ ρ ∼ sub↖ σ
 
 postulate sub↖-comp₁ : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} →
-                     sub↖ (ρ •RS σ) ∼ Rep↑ -Path (Rep↑ -Term (Rep↑ -Term ρ)) •RS sub↖ σ
+                     sub↖ (ρ •RS σ) ∼ rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) •RS sub↖ σ
 
 sub↗ : ∀ {U} {V} → Sub U V → Sub (U , -Term) (V , -Term , -Term , -Path)
 sub↗ σ _ x₀ = var x₁
@@ -198,7 +198,7 @@ sub↗ σ _ (↑ x) = σ _ x ⇑ ⇑ ⇑
 postulate sub↗-cong : ∀ {U} {V} {ρ σ : Sub U V} → ρ ∼ σ → sub↗ ρ ∼ sub↗ σ
 
 postulate sub↗-comp₁ : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} →
-                     sub↗ (ρ •RS σ) ∼ Rep↑ -Path (Rep↑ -Term (Rep↑ -Term ρ)) •RS sub↗ σ
+                     sub↗ (ρ •RS σ) ∼ rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) •RS sub↗ σ
 
 --REFACTOR Duplication
 

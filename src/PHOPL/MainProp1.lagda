@@ -14,14 +14,13 @@ open import PHOPL.Meta
 open import PHOPL.Computable
 open import PHOPL.SubC
 open import PHOPL.SN
-open import PHOPL.MainPropFinal
 open import PHOPL.KeyRedex
 
 postulate subrepsub : ∀ {U} {V} {W} {X} {K} (M : Expression U K) {σ₁ : Sub U V} {σ₂ : Rep V W} {σ₃ : Sub W X} →
                     M ⟦ σ₃ •SR σ₂ • σ₁ ⟧ ≡ M ⟦ σ₁ ⟧ 〈 σ₂ 〉 ⟦ σ₃ ⟧
 
 postulate subrepbotsub-up : ∀ {U} {V} {W} {K} {L} (M : Expression U K) {N : Expression W (varKind L)} {σ : Sub U V} {ρ : Rep V W} →
-                            M ⇑ ⟦ x₀:= N •SR Rep↑ _ ρ • Sub↑ _ σ ⟧ ≡ M ⟦ σ ⟧ 〈 ρ 〉
+                            M ⇑ ⟦ x₀:= N •SR rep↑ _ ρ • sub↑ _ σ ⟧ ≡ M ⟦ σ ⟧ 〈 ρ 〉
 
 postulate ΛR' : ∀ {V} {Γ : Context V} {φ} {δ} {ψ} → Γ ,P φ ⊢ δ ∶ ψ ⇑ → Γ ⊢ ΛP φ δ ∶ ψ
 \end{code}

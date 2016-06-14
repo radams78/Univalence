@@ -77,12 +77,12 @@ postulate R-respects-replacement : respects' replacement
 
 postulate R-creates-replacement : creates' replacement
 
-postulate R-respects-sub : respects' substitution
+postulate R-respects-sub : respects' SUB
 
 red-subl : ∀ {U} {V} {C} {K} {E F : Subexpression U C K} {σ : Sub U V} → E ↠ F → E ⟦ σ ⟧ ↠ F ⟦ σ ⟧
-red-subl E↠F = respects-red (respects-osr substitution R-respects-sub) E↠F
+red-subl E↠F = respects-red (respects-osr SUB R-respects-sub) E↠F
 
-postulate red-subr : ∀ {U} {V} {C} {K} (E : Subexpression U C K) {ρ σ : Sub U V} → _↠s_ substitution ρ σ → E ⟦ ρ ⟧ ↠ E ⟦ σ ⟧
+postulate red-subr : ∀ {U} {V} {C} {K} (E : Subexpression U C K) {ρ σ : Sub U V} → _↠s_ SUB ρ σ → E ⟦ ρ ⟧ ↠ E ⟦ σ ⟧
 
 postulate ⊥SN : ∀ {V} → SN {V} ⊥
 
@@ -188,11 +188,13 @@ exists $H$ such that $F \twoheadrightarrow H$ and $G \twoheadrightarrow H$.
 Case analysis on $E \rightarrow F$ and $E \rightarrow G$.  There are no critical pairs.
 \end{proof}
 
+%<*Local-Confluent>
 \begin{code}
-Local-Confluent : ∀ {V} {C} {K} {E F G : Subexpression V C K} →
-                  E ⇒ F → E ⇒ G → 
-                  Σ[ H ∈ Subexpression V C K ] (F ↠ H × G ↠ H)
+Local-Confluent : ∀ {V} {C} {K} 
+  {E F G : Subexpression V C K} → E ⇒ F → E ⇒ G → 
+  Σ[ H ∈ Subexpression V C K ] (F ↠ H × G ↠ H)
 \end{code}
+%</Local-Confluent>
 
 \AgdaHide{
 \begin{code}
@@ -365,6 +367,8 @@ imp-red χ⊃θ↠ψ = imp-red' χ⊃θ↠ψ refl
 postulate red-rep : ∀ {U} {V} {C} {K} {ρ : Rep U V} {M N : Subexpression U C K} → M ↠ N → M 〈 ρ 〉 ↠ N 〈 ρ 〉
 
 postulate conv-rep : ∀ {U} {V} {C} {K} {ρ : Rep U V} {M N : Subexpression U C K} → M ≃ N → M 〈 ρ 〉 ≃ N 〈 ρ 〉
+
+postulate conv-sub : ∀ {U} {V} {C} {K} {σ : Sub U V} {M N : Subexpression U C K} → M ≃ N → M ⟦ σ ⟧ ≃ N ⟦ σ ⟧
 
 postulate appT-convl : ∀ {V} {M M' N : Term V} → M ≃ M' → appT M N ≃ appT M' N
 \end{code}

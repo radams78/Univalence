@@ -46,13 +46,13 @@ postulate idRep-typed : ∀ {V} {Γ : Context V} → idRep V ∶ Γ ⇒R Γ
 
 postulate upRep-typed : ∀ {V} {Γ : Context V} {K} {A} → upRep ∶ Γ ⇒R _,_ {K = K} Γ A
 
-postulate Rep↑-typed : ∀ {U} {V} {ρ : Rep U V} {K} {Γ} {Δ} {A} →
-                     ρ ∶ Γ ⇒R Δ → Rep↑ K ρ ∶ (Γ , A) ⇒R (Δ , A 〈 ρ 〉)
+postulate rep↑-typed : ∀ {U} {V} {ρ : Rep U V} {K} {Γ} {Δ} {A} →
+                     ρ ∶ Γ ⇒R Δ → rep↑ K ρ ∶ (Γ , A) ⇒R (Δ , A 〈 ρ 〉)
 
 postulate compR-typed : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Rep U V} {Γ} {Δ} {Θ : Context W} →
                         ρ ∶ Δ ⇒R Θ → σ ∶ Γ ⇒R Δ → ρ •R σ ∶ Γ ⇒R Θ
 
-postulate Weakening : ∀ {U} {V} {ρ : Rep U V} {K}
+postulate weakening : ∀ {U} {V} {ρ : Rep U V} {K}
                     {Γ : Context U} {M : Expression U (varKind K)} {A} {Δ} →
                     Γ ⊢ M ∶ A → valid Δ → ρ ∶ Γ ⇒R Δ → Δ ⊢ M 〈 ρ 〉 ∶ A 〈 ρ 〉
 \end{code}
@@ -77,7 +77,7 @@ postulate _∶_⇒_ : ∀ {U} {V} → Sub U V → Context U → Context V → Se
 
 \AgdaHide{
 \begin{code}
-postulate Substitution : ∀ {U} {V} {σ : Sub U V} {K}
+postulate substitution : ∀ {U} {V} {σ : Sub U V} {K}
                        {Γ : Context U} {M : Expression U (varKind K)} {A} {Δ} →
                        Γ ⊢ M ∶ A → valid Δ → σ ∶ Γ ⇒ Δ → Δ ⊢ M ⟦ σ ⟧ ∶ A ⟦ σ ⟧
 
@@ -87,33 +87,33 @@ postulate comp-typed : ∀ {U} {V} {W} {σ : Sub V W} {ρ : Sub U V} {Γ} {Δ} {
 postulate compRS-typed : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} {Γ} {Δ} {Θ} →
                       ρ ∶ Δ ⇒R Θ → σ ∶ Γ ⇒ Δ → ρ •RS σ ∶ Γ ⇒ Θ
 
-postulate Sub↑-typed : ∀ {U} {V} {K} {σ : Sub U V} {Γ} {Δ} {A} →
-                     σ ∶ Γ ⇒ Δ → Sub↑ K σ ∶ Γ , A ⇒ Δ , A ⟦ σ ⟧
+postulate sub↑-typed : ∀ {U} {V} {K} {σ : Sub U V} {Γ} {Δ} {A} →
+                     σ ∶ Γ ⇒ Δ → sub↑ K σ ∶ Γ , A ⇒ Δ , A ⟦ σ ⟧
 
 postulate change-type : ∀ {V} {Γ} {K} {M : Expression V (varKind K)} {A} {B} →
                       Γ ⊢ M ∶ A → A ≡ B → Γ ⊢ M ∶ B
 
 postulate botsub-typed : ∀ {V} {K} {Γ} {E : Expression V (varKind K)} {A} → Γ ⊢ E ∶ A → x₀:= E ∶ Γ , A ⇒ Γ
 
-lemma : ∀ {U} {V} {W} {K} (M : Expression U K) Q N' N (ρ : Rep V W) (σ : Sub U V) → M ⇑ ⇑ ⇑ ⟦ x₀:= Q • Sub↑ -Path (x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •RS σ))) ⟧ ≡ M ⟦ σ ⟧ 〈 ρ 〉 --TODO Rename
+lemma : ∀ {U} {V} {W} {K} (M : Expression U K) Q N' N (ρ : Rep V W) (σ : Sub U V) → M ⇑ ⇑ ⇑ ⟦ x₀:= Q • sub↑ -Path (x₀:= N' • sub↑ -Term (x₀:= N • sub↑ -Term (ρ •RS σ))) ⟧ ≡ M ⟦ σ ⟧ 〈 ρ 〉 --TODO Rename
 lemma {U} {V} {W} M Q N' N ρ σ = let open ≡-Reasoning in 
           begin
-            M ⇑ ⇑ ⇑ ⟦ x₀:= Q • Sub↑ -Path (x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •RS σ))) ⟧
+            M ⇑ ⇑ ⇑ ⟦ x₀:= Q • sub↑ -Path (x₀:= N' • sub↑ -Term (x₀:= N • sub↑ -Term (ρ •RS σ))) ⟧
           ≡⟨ sub-comp (M ⇑ ⇑ ⇑) ⟩
-            M ⇑ ⇑ ⇑ ⟦ Sub↑ -Path (x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •RS σ))) ⟧ ⟦ x₀:= Q ⟧
-          ≡⟨ sub-congl (Sub↑-upRep (M ⇑ ⇑)) ⟩
-            M ⇑ ⇑ ⟦ x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •RS σ)) ⟧ ⇑ ⟦ x₀:= Q ⟧
+            M ⇑ ⇑ ⇑ ⟦ sub↑ -Path (x₀:= N' • sub↑ -Term (x₀:= N • sub↑ -Term (ρ •RS σ))) ⟧ ⟦ x₀:= Q ⟧
+          ≡⟨ sub-congl (sub↑-upRep (M ⇑ ⇑)) ⟩
+            M ⇑ ⇑ ⟦ x₀:= N' • sub↑ -Term (x₀:= N • sub↑ -Term (ρ •RS σ)) ⟧ ⇑ ⟦ x₀:= Q ⟧
           ≡⟨ botsub-upRep _ ⟩
-            M ⇑ ⇑ ⟦ x₀:= N' • Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •RS σ)) ⟧
+            M ⇑ ⇑ ⟦ x₀:= N' • sub↑ -Term (x₀:= N • sub↑ -Term (ρ •RS σ)) ⟧
           ≡⟨ sub-comp (M ⇑ ⇑) ⟩
-            M ⇑ ⇑ ⟦ Sub↑ -Term (x₀:= N • Sub↑ -Term (ρ •RS σ)) ⟧ ⟦ x₀:= N' ⟧
-          ≡⟨ sub-congl (Sub↑-upRep (M ⇑)) ⟩
-            M ⇑ ⟦ x₀:= N • Sub↑ -Term (ρ •RS σ) ⟧ ⇑ ⟦ x₀:= N' ⟧
+            M ⇑ ⇑ ⟦ sub↑ -Term (x₀:= N • sub↑ -Term (ρ •RS σ)) ⟧ ⟦ x₀:= N' ⟧
+          ≡⟨ sub-congl (sub↑-upRep (M ⇑)) ⟩
+            M ⇑ ⟦ x₀:= N • sub↑ -Term (ρ •RS σ) ⟧ ⇑ ⟦ x₀:= N' ⟧
           ≡⟨ botsub-upRep _ ⟩
-            M ⇑ ⟦ x₀:= N • Sub↑ -Term (ρ •RS σ) ⟧
+            M ⇑ ⟦ x₀:= N • sub↑ -Term (ρ •RS σ) ⟧
           ≡⟨ sub-comp (M ⇑) ⟩
-            M ⇑ ⟦ Sub↑ -Term (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧
-          ≡⟨ sub-congl (Sub↑-upRep M) ⟩
+            M ⇑ ⟦ sub↑ -Term (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧
+          ≡⟨ sub-congl (sub↑-upRep M) ⟩
             M ⟦ ρ •RS σ ⟧ ⇑ ⟦ x₀:= N ⟧
           ≡⟨ botsub-upRep _ ⟩
             M ⟦ ρ •RS σ ⟧
@@ -126,6 +126,9 @@ postulate change-cod' : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {Δ'} → σ ∶ Γ
 extendSub : ∀ {U} {V} → Sub U V → Term V → Sub (U , -Term) V
 extendSub σ M _ x₀ = M
 extendSub σ M _ (↑ x) = σ _ x
+
+postulate extendSub-typed : ∀ {U} {V} {σ : Sub U V} {M : Term V} {Γ} {Δ} {A} →
+                          σ ∶ Γ ⇒ Δ → Δ ⊢ M ∶ ty A → extendSub σ M ∶ Γ ,T A ⇒ Δ
 
 postulate ⊃-gen₁ : ∀ {V} {Γ : Context V} {φ} {ψ} → Γ ⊢ φ ⊃ ψ ∶ ty Ω → Γ ⊢ φ ∶ ty Ω
 
@@ -223,16 +226,16 @@ postulate typeof'-up : ∀ {V} {Γ : Context V} {A} {x} → typeof' (↑ x) (Γ 
 pathsub↑-typed : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {A} {Δ} → 
   τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → valid Δ → pathsub↑ τ ∶ sub↖ ρ ∼ sub↗ σ ∶ Γ ,T A ⇒ Δ ,T  A ,T  A ,E var x₁ ≡〈 A 〉 var x₀
 pathsub↑-typed _ validΔ x₀ = varR x₀ (valid-addpath validΔ)
-pathsub↑-typed {U} {Γ = Γ} {A} τ∶ρ∼σ validΔ (↑ x) = change-type (Weakening (Weakening (Weakening (τ∶ρ∼σ x) (ctxTR validΔ) upRep-typed) 
+pathsub↑-typed {U} {Γ = Γ} {A} τ∶ρ∼σ validΔ (↑ x) = change-type (weakening (weakening (weakening (τ∶ρ∼σ x) (ctxTR validΔ) upRep-typed) 
                                                                            (ctxTR (ctxTR validΔ)) upRep-typed) 
                                                                 (valid-addpath validΔ) upRep-typed) 
                                                     (cong₃ _≡〈_〉_ refl (sym (typeof'-up {U} {Γ = Γ} {A} {x = x})) refl)
 
 postulate sub↖-decomp : ∀ {U} {V} {C} {K} (M : Subexpression (U , -Term) C K) {ρ : Sub U V} → 
-                     M ⟦ Sub↑ _ ρ ⟧ 〈 Rep↑ _ upRep 〉 〈 Rep↑ _ upRep 〉 〈 Rep↑ _ upRep 〉 ⟦ x₀:= var x₂ ⟧ ≡ M ⟦ sub↖ ρ ⟧
+                     M ⟦ sub↑ _ ρ ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 ⟦ x₀:= var x₂ ⟧ ≡ M ⟦ sub↖ ρ ⟧
 
 postulate sub↗-decomp : ∀ {U} {V} {C} {K} (M : Subexpression (U , -Term) C K) {ρ : Sub U V} → 
-                     M ⟦ Sub↑ _ ρ ⟧ 〈 Rep↑ _ upRep 〉 〈 Rep↑ _ upRep 〉 〈 Rep↑ _ upRep 〉 ⟦ x₀:= var x₁ ⟧ ≡ M ⟦ sub↗ ρ ⟧
+                     M ⟦ sub↑ _ ρ ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 ⟦ x₀:= var x₁ ⟧ ≡ M ⟦ sub↗ ρ ⟧
 \end{code}
 }
 
@@ -242,7 +245,7 @@ then $\Gamma \vdash M \{ \tau : \sigma \sim \rho \} : M [ \sigma ] =_A M [ \rho 
 \end{corollary}
 
 \begin{code}
-Path-Substitution : ∀ {U} {V} {Γ : Context U} {Δ : Context V} 
+path-substitution : ∀ {U} {V} {Γ : Context U} {Δ : Context V} 
   {ρ} {σ} {τ} {M} {A} →
   (Γ ⊢ M ∶ A) → (τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ) →
   (ρ ∶ Γ ⇒ Δ) → (σ ∶ Γ ⇒ Δ) → 
@@ -252,29 +255,29 @@ Path-Substitution : ∀ {U} {V} {Γ : Context U} {Δ : Context V}
 
 \AgdaHide{
 \begin{code}
-Path-Substitution (varR x validΓ) τ∶ρ∼σ _ _ _ = τ∶ρ∼σ x
-Path-Substitution (⊥R validΓ) _ _ _ validΔ = refR (⊥R validΔ)
-Path-Substitution (⊃R Γ⊢φ∶Ω Γ⊢ψ∶Ω) τ∶ρ∼σ ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ = ⊃*R (Path-Substitution Γ⊢φ∶Ω τ∶ρ∼σ ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ) (Path-Substitution Γ⊢ψ∶Ω τ∶ρ∼σ ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ)
-Path-Substitution (appR {A = A} Γ⊢M∶A⇛B Γ⊢N∶A) τ∶σ∼σ' ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ = 
-  app*R (Substitution Γ⊢N∶A validΔ ρ∶Γ⇒Δ) (Substitution Γ⊢N∶A validΔ σ∶Γ⇒Δ)
-  (Path-Substitution Γ⊢M∶A⇛B τ∶σ∼σ' ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ) (Path-Substitution Γ⊢N∶A τ∶σ∼σ' ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ)
-Path-Substitution {U} {V} {Γ} {Δ} {ρ} {σ} {τ} (ΛR .{U} .{Γ} {A} {M} {B} Γ,A⊢M∶B) τ∶σ∼σ' ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ = 
+path-substitution (varR x validΓ) τ∶ρ∼σ _ _ _ = τ∶ρ∼σ x
+path-substitution (⊥R validΓ) _ _ _ validΔ = refR (⊥R validΔ)
+path-substitution (⊃R Γ⊢φ∶Ω Γ⊢ψ∶Ω) τ∶ρ∼σ ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ = ⊃*R (path-substitution Γ⊢φ∶Ω τ∶ρ∼σ ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ) (path-substitution Γ⊢ψ∶Ω τ∶ρ∼σ ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ)
+path-substitution (appR {A = A} Γ⊢M∶A⇛B Γ⊢N∶A) τ∶σ∼σ' ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ = 
+  app*R (substitution Γ⊢N∶A validΔ ρ∶Γ⇒Δ) (substitution Γ⊢N∶A validΔ σ∶Γ⇒Δ)
+  (path-substitution Γ⊢M∶A⇛B τ∶σ∼σ' ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ) (path-substitution Γ⊢N∶A τ∶σ∼σ' ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ)
+path-substitution {U} {V} {Γ} {Δ} {ρ} {σ} {τ} (ΛR .{U} .{Γ} {A} {M} {B} Γ,A⊢M∶B) τ∶σ∼σ' ρ∶Γ⇒Δ σ∶Γ⇒Δ validΔ = 
   let ΔAAE = Δ ,T A ,T A ,E var x₁ ≡〈 A 〉 var x₀ in
   let validΔAA  : valid (Δ ,T A ,T A)
       validΔAA = ctxTR (ctxTR validΔ) in
   let validΔAAE : valid ΔAAE
       validΔAAE = ctxER (varR x₁ validΔAA) (varR x₀ validΔAA) in
   let Mσ-typed : ∀ {σ} {x} → σ ∶ Γ ⇒ Δ → typeof x ΔAAE ≡ ty A → ΔAAE ⊢ appT ((ΛT A M) ⟦ σ ⟧ ⇑ ⇑ ⇑) (var x) ∶ ty B
-      Mσ-typed = λ {σ} {x} σ∶Γ⇒Δ x∶A∈ΔAAE → appR (ΛR (Weakening (Weakening (Weakening (Substitution Γ,A⊢M∶B (ctxTR validΔ) (Sub↑-typed σ∶Γ⇒Δ)) 
-                                                                                      (ctxTR (ctxTR validΔ)) (Rep↑-typed upRep-typed)) 
-                                                                           (ctxTR (ctxTR (ctxTR validΔ))) (Rep↑-typed upRep-typed)) 
-                                                                (ctxTR validΔAAE) (Rep↑-typed upRep-typed))) 
+      Mσ-typed = λ {σ} {x} σ∶Γ⇒Δ x∶A∈ΔAAE → appR (ΛR (weakening (weakening (weakening (substitution Γ,A⊢M∶B (ctxTR validΔ) (sub↑-typed σ∶Γ⇒Δ)) 
+                                                                                      (ctxTR (ctxTR validΔ)) (rep↑-typed upRep-typed)) 
+                                                                           (ctxTR (ctxTR (ctxTR validΔ))) (rep↑-typed upRep-typed)) 
+                                                                (ctxTR validΔAAE) (rep↑-typed upRep-typed))) 
                                                      (change-type (varR x validΔAAE) x∶A∈ΔAAE) in
   let step1 : Δ ,T A ,T A ,E var x₁ ≡〈 A 〉 var x₀ ⊢ 
               M ⟦⟦ pathsub↑ τ ∶ sub↖ ρ ∼ sub↗ σ ⟧⟧ ∶ 
               appT ((ΛT A M) ⟦ ρ ⟧ ⇑ ⇑ ⇑) (var x₂) ≡〈 B 〉 appT ((ΛT A M) ⟦ σ ⟧ ⇑ ⇑ ⇑) (var x₁)
       step1 = convER 
-               (Path-Substitution Γ,A⊢M∶B 
+               (path-substitution Γ,A⊢M∶B 
                  (pathsub↑-typed τ∶σ∼σ' validΔ) (sub↖-typed ρ∶Γ⇒Δ) (sub↗-typed σ∶Γ⇒Δ) 
                  validΔAAE)
                  (Mσ-typed ρ∶Γ⇒Δ refl)
@@ -294,7 +297,7 @@ postulate compRP-typed : ∀ {U} {V} {W} {ρ : Rep V W} {τ : PathSub U V} {σ �
                            ρ •RP τ ∶ ρ •RS σ ∼ ρ •RS σ' ∶ Γ ⇒ Θ
 
 postulate pathsub↑-compRP : ∀ {U} {V} {W} {ρ : Rep V W} {τ : PathSub U V} →
-                          pathsub↑ (ρ •RP τ) ∼∼ Rep↑ -Path (Rep↑ -Term (Rep↑ -Term ρ)) •RP pathsub↑ τ
+                          pathsub↑ (ρ •RP τ) ∼∼ rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) •RP pathsub↑ τ
 
 extendPS : ∀ {U} {V} → PathSub U V → Path V → PathSub (U , -Term) V
 extendPS τ P x₀ = P
@@ -305,7 +308,7 @@ postulate extendPS-typed : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {Δ} {P
                            extendPS τ P ∶ extendSub ρ M ∼ extendSub σ N ∶ Γ ,T A ⇒ Δ
 
 postulate pathsub-extendPS : ∀ {U} {V} M {τ} {P : Path V} {N : Term V} {σ : Sub U V} {N' : Term V} {σ'} →
-                           M ⟦⟦ extendPS τ P ∶ x₀:= N • Sub↑ -Term σ ∼ x₀:= N' • Sub↑ -Term σ' ⟧⟧
+                           M ⟦⟦ extendPS τ P ∶ x₀:= N • sub↑ -Term σ ∼ x₀:= N' • sub↑ -Term σ' ⟧⟧
                            ≡ M ⟦⟦ pathsub↑ τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧ ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (P ⇑ ⇑) ⟧
 
 postulate pathsub-compRP : ∀ {U} {V} {W} M {ρ : Rep V W} {τ : PathSub U V} {σ σ' : Sub U V} →
