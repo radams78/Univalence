@@ -40,14 +40,14 @@ Substitution is a pre-family with lifting.
 rep2sub : ∀ {U} {V} → Rep U V → Sub U V
 rep2sub ρ K x = var (ρ K x)
 
-Rep↑-is-Sub↑ : ∀ {U} {V} {ρ : Rep U V} {K} → 
-  rep2sub (Rep↑ K ρ) ∼ Sub↑ K (rep2sub ρ)
+rep↑-is-sub↑ : ∀ {U} {V} {ρ : Rep U V} {K} → 
+  rep2sub (rep↑ K ρ) ∼ sub↑ K (rep2sub ρ)
 \end{code}
 
 \AgdaHide{
 \begin{code}
-Rep↑-is-Sub↑ x₀ = refl
-Rep↑-is-Sub↑ (↑ _) = refl
+rep↑-is-sub↑ x₀ = refl
+rep↑-is-sub↑ (↑ _) = refl
 \end{code}
 }
 
@@ -71,11 +71,11 @@ liftOp'-is-liftOp' : ∀ {U} {V} {ρ : Rep U V} {A} →
 liftOp'-is-liftOp' {ρ = ρ} {A = []} = ∼-refl {σ = rep2sub ρ}
 liftOp'-is-liftOp' {U} {V} {ρ} {K ∷ A} = let open EqReasoning (OP _ _) in 
   begin
-    rep2sub (liftOp'R A (Rep↑ K ρ))
+    rep2sub (liftOp'R A (rep↑ K ρ))
   ≈⟨ liftOp'-is-liftOp' {A = A} ⟩
-    liftOp' A (rep2sub (Rep↑ K ρ))
-  ≈⟨ liftOp'-cong A Rep↑-is-Sub↑ ⟩
-    liftOp' A (Sub↑ K (rep2sub ρ))
+    liftOp' A (rep2sub (rep↑ K ρ))
+  ≈⟨ liftOp'-cong A rep↑-is-sub↑ ⟩
+    liftOp' A (sub↑ K (rep2sub ρ))
   ∎
 \end{code}
 }

@@ -16,8 +16,8 @@ It is now easy to show that substitution forms a pre-family with lifting.  If $\
 \sigma(x) \langle \uparrow \rangle \equiv (\sigma , K)(x) [ \uparrow ]$.
 
 \begin{code}
-proto-substitution : LiftFamily
-proto-substitution = record { 
+SubLF : LiftFamily
+SubLF = record { 
   preOpFamily = pre-substitution ; 
   lifting = SUB↑ ; 
   isLiftFamily = record { 

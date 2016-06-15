@@ -129,6 +129,9 @@ extendSub σ M _ (↑ x) = σ _ x
 
 postulate extendSub-typed : ∀ {U} {V} {σ : Sub U V} {M : Term V} {Γ} {Δ} {A} →
                           σ ∶ Γ ⇒ Δ → Δ ⊢ M ∶ ty A → extendSub σ M ∶ Γ ,T A ⇒ Δ
+                                                                              
+postulate extendSub-decomp : ∀ {U} {V} {σ : Sub U V} {M : Term V} {C} {K} (E : Subexpression (U , -Term) C K) →
+                           E ⟦ sub↑ -Term σ ⟧ ⟦ x₀:= M ⟧ ≡ E ⟦ extendSub σ M ⟧
 
 postulate ⊃-gen₁ : ∀ {V} {Γ : Context V} {φ} {ψ} → Γ ⊢ φ ⊃ ψ ∶ ty Ω → Γ ⊢ φ ∶ ty Ω
 

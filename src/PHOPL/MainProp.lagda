@@ -195,20 +195,35 @@ computable-path-substitution U V τ σ σ' Γ Δ ._ ._ σ∶Γ⇒CΔ σ'∶Γ⇒
       validΔAA = ctxTR validΔA in
   let validapΔ : valid (addpath Δ A)
       validapΔ = valid-addpath validΔ in
+  let σ∶Γ⇒Δ : σ ∶ Γ ⇒ Δ
+      σ∶Γ⇒Δ = subC-typed σ∶Γ⇒CΔ in
+  let σ'∶Γ⇒Δ : σ' ∶ Γ ⇒ Δ
+      σ'∶Γ⇒Δ = subC-typed σ'∶Γ⇒CΔ in
+  let σ↑∶ΓA⇒ΔA : sub↑ -Term σ ∶ Γ ,T A ⇒ Δ ,T A
+      σ↑∶ΓA⇒ΔA = sub↑-typed σ∶Γ⇒Δ in
+  let σ'↑∶ΓA⇒ΔA : sub↑ -Term σ' ∶ Γ ,T A ⇒ Δ ,T A
+      σ'↑∶ΓA⇒ΔA = sub↑-typed σ'∶Γ⇒Δ in
+  let ΔA⊢Mσ∶B : Δ ,T A ⊢ M ⟦ sub↑ -Term σ ⟧ ∶ ty B
+      ΔA⊢Mσ∶B = substitution Γ,A⊢M∶B validΔA σ↑∶ΓA⇒ΔA in
+  let ΔA⊢Mσ'∶B : Δ ,T A ⊢ M ⟦ sub↑ -Term σ' ⟧ ∶ ty B
+      ΔA⊢Mσ'∶B = substitution Γ,A⊢M∶B validΔA σ'↑∶ΓA⇒ΔA in
+  let τ↑∶σ↖∼σ'↗ : pathsub↑ τ ∶ sub↖ σ ∼ sub↗ σ' ∶ Γ ,T A ⇒ addpath Δ A
+      τ↑∶σ↖∼σ'↗ = pathsub↑-typed (pathsubC-typed σ σ' τ∶σ∼σ') validΔ in
+  let σ↖∶ΓA⇒apΔ : sub↖ σ ∶ Γ ,T A ⇒ addpath Δ A
+      σ↖∶ΓA⇒apΔ = sub↖-typed σ∶Γ⇒Δ in
+  let σ'↗∶ΓA⇒apΔ : sub↗ σ' ∶ Γ ,T A ⇒ addpath Δ A
+      σ'↗∶ΓA⇒apΔ = sub↗-typed σ'∶Γ⇒Δ in
+  let Mτ∶Mσ∼Mσ' : addpath Δ A ⊢ M ⟦⟦ pathsub↑ τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧ ∶ M ⟦ sub↖ σ ⟧ ≡〈 B 〉 M ⟦ sub↗ σ' ⟧
+      Mτ∶Mσ∼Mσ' = path-substitution Γ,A⊢M∶B τ↑∶σ↖∼σ'↗ σ↖∶ΓA⇒apΔ σ'↗∶ΓA⇒apΔ (valid-addpath validΔ) in
   func-EE 
-  (lllR (convER 
-    (path-substitution Γ,A⊢M∶B (pathsub↑-typed (pathsubC-typed τ∶σ∼σ') validΔ) 
-    (sub↖-typed (subC-typed σ∶Γ⇒CΔ)) (sub↗-typed (subC-typed σ'∶Γ⇒CΔ)) 
-    (valid-addpath validΔ)) (appR 
-      (ΛR (weakening (weakening (weakening (substitution Γ,A⊢M∶B 
-                                                         validΔA 
-                                                         (sub↑-typed (subC-typed σ∶Γ⇒CΔ))) 
+  (lllR (convER Mτ∶Mσ∼Mσ'
+    (appR 
+      (ΛR (weakening (weakening (weakening ΔA⊢Mσ∶B
                                            validΔAA (rep↑-typed upRep-typed)) 
                                 (ctxTR validΔAA) (rep↑-typed upRep-typed)) 
                      (ctxTR validapΔ) (rep↑-typed upRep-typed))) 
       (varR x₂ validapΔ))
-    (appR (ΛR (weakening (weakening (weakening (substitution Γ,A⊢M∶B validΔA 
-                                                             (sub↑-typed (subC-typed σ'∶Γ⇒CΔ))) 
+    (appR (ΛR (weakening (weakening (weakening ΔA⊢Mσ'∶B
                                                validΔAA (rep↑-typed upRep-typed)) 
                                     (ctxTR validΔAA) (rep↑-typed upRep-typed)) 
                          (ctxTR validapΔ) (rep↑-typed upRep-typed))) 
@@ -229,22 +244,86 @@ computable-path-substitution U V τ σ σ' Γ Δ ._ ._ σ∶Γ⇒CΔ σ'∶Γ⇒
                                     ,, var x₁ ,, out))
                                   (sub↗-decomp M) βT)))))) 
    (λ W Θ N N' Q ρ ρ∶Δ⇒RΘ N∈EΘA N'∈EΘA Q∈EΘN≡N' → 
+   let validΘ : valid Θ
+       validΘ = Context-Validity (E'-typed N∈EΘA) in
+   let validΘA : valid (Θ ,T A)
+       validΘA = ctxTR validΘ in
+   let validΘAA : valid (Θ ,T A ,T A)
+       validΘAA = ctxTR validΘA in
+   let validapΘ : valid (addpath Θ A)
+       validapΘ = valid-addpath validΘ in
+   let ρ↑∶ΔA⇒ΘA : rep↑ -Term ρ ∶ Δ ,T A ⇒R Θ ,T A
+       ρ↑∶ΔA⇒ΘA = rep↑-typed ρ∶Δ⇒RΘ in
+   let Θ⊢ΛM∶A⇛B : Θ ⊢ ΛT A (M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term ρ 〉) ∶ ty (A ⇛ B)
+       Θ⊢ΛM∶A⇛B = ΛR (weakening ΔA⊢Mσ∶B validΘA ρ↑∶ΔA⇒ΘA) in
+   let Θ⊢N∶A : Θ ⊢ N ∶ ty A
+       Θ⊢N∶A = E-typed N∈EΘA in
+   let Θ⊢N'∶A : Θ ⊢ N' ∶ ty A
+       Θ⊢N'∶A = E-typed N'∈EΘA in
+   let ΘA⊢Mσ'∶B : Θ ,T A ⊢ M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ -Term ρ 〉 ∶ ty B
+       ΘA⊢Mσ'∶B = weakening ΔA⊢Mσ'∶B validΘA ρ↑∶ΔA⇒ΘA in
    expand-EE (conv-EE
      (computable-path-substitution (U , -Term) W (extendPS (ρ •RP τ) Q) (extendSub (ρ •RS σ) N) (extendSub (ρ •RS σ') N') (Γ ,T A) Θ M (ty B) 
      (extendSubC (compRSC ρ∶Δ⇒RΘ σ∶Γ⇒CΔ) N∈EΘA) 
      (extendSubC (compRSC ρ∶Δ⇒RΘ σ'∶Γ⇒CΔ) N'∈EΘA) 
-     (extendPSC (compRPC τ∶σ∼σ' ρ∶Δ⇒RΘ) Q∈EΘN≡N') Γ,A⊢M∶B (Context-Validity (E'-typed N∈EΘA)))
+     (extendPSC (compRPC {σ = σ} {σ' = σ'} τ∶σ∼σ' ρ∶Δ⇒RΘ) Q∈EΘN≡N') Γ,A⊢M∶B validΘ)
      (sym-conv (osr-conv (redex 
        (subst
           (R -appTerm (ΛT A ((M ⟦ sub↑ _ σ ⟧) 〈 rep↑ _ ρ 〉) ,, N ,, out)) 
-          {!!}
+          (let open ≡-Reasoning in 
+          begin
+            M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term ρ 〉 ⟦ x₀:= N ⟧
+          ≡⟨⟨ sub-congl (sub-compRS M) ⟩⟩
+            M ⟦ rep↑ -Term ρ •RS sub↑ -Term σ ⟧ ⟦ x₀:= N ⟧
+          ≡⟨⟨ sub-congl (sub-congr M sub↑-compRS) ⟩⟩
+            M ⟦ sub↑ -Term (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧
+          ≡⟨ extendSub-decomp M ⟩
+            M ⟦ extendSub (ρ •RS σ) N ⟧
+          ∎)
           βT)))) 
      (sym-conv (osr-conv (redex 
        (subst
           (R -appTerm (ΛT A ((M ⟦ sub↑ _ σ' ⟧) 〈 rep↑ _ ρ 〉) ,, N' ,, out)) 
-          {!!}
+          (let open ≡-Reasoning in 
+          begin
+            M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ -Term ρ 〉 ⟦ x₀:= N' ⟧
+          ≡⟨⟨ sub-congl (sub-compRS M) ⟩⟩
+            M ⟦ rep↑ -Term ρ •RS sub↑ -Term σ' ⟧ ⟦ x₀:= N' ⟧
+          ≡⟨⟨ sub-congl (sub-congr M sub↑-compRS) ⟩⟩
+            M ⟦ sub↑ -Term (ρ •RS σ') ⟧ ⟦ x₀:= N' ⟧
+          ≡⟨ extendSub-decomp M ⟩
+            M ⟦ extendSub (ρ •RS σ') N' ⟧
+          ∎)
           βT)))) 
-     {!!} {!!}) {!!} (subst (key-redex _) {!!} (βEkr {!!} {!!} {!!})))
+     (appR Θ⊢ΛM∶A⇛B Θ⊢N∶A) 
+     (appR (ΛR ΘA⊢Mσ'∶B) Θ⊢N'∶A)) 
+     (app*R Θ⊢N∶A Θ⊢N'∶A (lllR (convER 
+       (weakening Mτ∶Mσ∼Mσ' (valid-addpath validΘ) (rep↑-typed (rep↑-typed (rep↑-typed ρ∶Δ⇒RΘ)))) 
+       (appR (weakening (weakening (weakening Θ⊢ΛM∶A⇛B validΘA upRep-typed) validΘAA upRep-typed) validapΘ upRep-typed) 
+         (varR x₂ validapΘ)) 
+       (appR (ΛR (weakening (weakening (weakening ΘA⊢Mσ'∶B validΘAA (rep↑-typed upRep-typed)) (ctxTR validΘAA) (rep↑-typed upRep-typed)) (ctxTR validapΘ) 
+         (rep↑-typed upRep-typed))) (varR x₁ validapΘ)) 
+       (sym-conv (subst (_≃_ (appT (ΛT A (M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term ρ 〉) ⇑ ⇑ ⇑) (var x₂))) 
+         (let open ≡-Reasoning in 
+         begin
+           M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term ρ 〉 〈 rep↑ -Term upRep 〉 〈 rep↑ -Term upRep 〉 〈 rep↑ -Term upRep 〉 ⟦ x₀:= var x₂ ⟧
+         ≡⟨⟨ {!!} ⟩⟩
+           M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term upRep •R rep↑ -Term upRep •R rep↑ -Term upRep •R rep↑ -Term ρ 〉 ⟦ x₀:= var x₂ ⟧
+         ≡⟨⟨ {!!} ⟩⟩
+           M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term (upRep •R upRep •R upRep •R ρ) 〉 ⟦ x₀:= var x₂ ⟧ 
+         ≡⟨ {!!} ⟩
+           M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term (rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) •R upRep •R upRep •R upRep) 〉 ⟦ x₀:= var x₂ ⟧ 
+         ≡⟨ {!!} ⟩
+           M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term (rep↑ -Path (rep↑ -Term (rep↑ -Term ρ))) •R rep↑ -Term upRep •R rep↑ -Term upRep •R rep↑ -Term upRep 〉 ⟦ x₀:= var x₂ ⟧ 
+         ≡⟨ {!!} ⟩
+           M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ -Term (rep↑ -Path (rep↑ -Term (rep↑ -Term ρ))) 〉 ⟦ x₀:= var x₂ ⟧
+         ≡⟨⟨ compRS-botsub (M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉) ⟩⟩
+           M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 ⟦ x₀:= var x₂ ⟧ 〈 rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) 〉
+         ≡⟨ rep-congl (sub↖-decomp M) ⟩
+           M ⟦ sub↖ σ ⟧ 〈 rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) 〉
+         ∎) 
+         (osr-conv (redex βT)))) {!!})) (EE-typed Q∈EΘN≡N')) 
+     (subst (key-redex _) {!!} (βEkr {!!} {!!} {!!})))
 \end{code}
 }
 

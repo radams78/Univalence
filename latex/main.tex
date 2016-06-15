@@ -253,29 +253,6 @@ Follow the progress here: \url{www.github.com/radams78/Univalence}
 
 \section{About the Formalization}
 
-\begin{frame}
-\frametitle{About the Formalization}
-This work is being formalized in Agda (work in progress).
-\pause
-
-It will involve several systems and reduction relations.
-
-I want to prove only once:
-\pause
-\begin{itemize}[<+->]
-\item
-$M[x:=N][y:=P] \equiv M[y:=P[x:=N]][x:=N]$
-\item
-If $M \twoheadrightarrow N$ then $M[x:=P] \twoheadrightarrow N[x:=P]$
-\item
-If $M[x:=P]$ is SN then $M$ is SN.
-\item
-Etc.
-\end{itemize}
-\pause
-The formalization includes a general notion of `grammar' and `reduction relation'.  (To do: general notion of derivation rules.)
-\end{frame}
-
 \input{Prelims.tex}
 \mode<all>{\input{Grammar/Taxonomy.tex}}
 \mode<all>{\input{Grammar/Base.tex}}

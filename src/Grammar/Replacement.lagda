@@ -24,9 +24,9 @@ and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
 Rep : Alphabet → Alphabet → Set
 Rep U V = ∀ K → Var U K → Var V K
 
-Rep↑ : ∀ {U} {V} K → Rep U V → Rep (U , K) (V , K)
-Rep↑ _ _ _ x₀ = x₀
-Rep↑ _ ρ K (↑ x) = ↑ (ρ K x)
+rep↑ : ∀ {U} {V} K → Rep U V → Rep (U , K) (V , K)
+rep↑ _ _ _ x₀ = x₀
+rep↑ _ ρ K (↑ x) = ↑ (ρ K x)
 
 upRep : ∀ {V} {K} → Rep V (V , K)
 upRep _ = ↑
@@ -46,14 +46,14 @@ pre-replacement = record {
 _∼R_ : ∀ {U} {V} → Rep U V → Rep U V → Set
 _∼R_ = PreOpFamily._∼op_ pre-replacement
 
-Rep↑-cong : ∀ {U} {V} {K} {ρ ρ' : Rep U V} → 
-  ρ ∼R ρ' → Rep↑ K ρ ∼R Rep↑ K ρ'
+rep↑-cong : ∀ {U} {V} {K} {ρ ρ' : Rep U V} → 
+  ρ ∼R ρ' → rep↑ K ρ ∼R rep↑ K ρ'
 \end{code}
 
 \AgdaHide{
 \begin{code}
-Rep↑-cong ρ-is-ρ' x₀ = refl
-Rep↑-cong ρ-is-ρ' (↑ x) = cong (var ∘ ↑) (var-inj (ρ-is-ρ' x))
+rep↑-cong ρ-is-ρ' x₀ = refl
+rep↑-cong ρ-is-ρ' (↑ x) = cong (var ∘ ↑) (var-inj (ρ-is-ρ' x))
 \end{code}
 }
 
@@ -62,8 +62,8 @@ proto-replacement : LiftFamily
 proto-replacement = record { 
   preOpFamily = pre-replacement ; 
   lifting = record { 
-    liftOp = Rep↑ ; 
-    liftOp-cong = Rep↑-cong } ; 
+    liftOp = rep↑ ; 
+    liftOp-cong = rep↑-cong } ; 
   isLiftFamily = record { 
     liftOp-x₀ = refl ; 
     liftOp-↑ = λ _ → refl } }
@@ -77,14 +77,14 @@ infixl 75 _•R_
 _•R_ : ∀ {U} {V} {W} → Rep V W → Rep U V → Rep U W
 (ρ' •R ρ) K x = ρ' K (ρ K x)
 
-Rep↑-comp : ∀ {U} {V} {W} {K} {ρ' : Rep V W} {ρ : Rep U V} → 
-  Rep↑ K (ρ' •R ρ) ∼R Rep↑ K ρ' •R Rep↑ K ρ
+rep↑-comp : ∀ {U} {V} {W} {K} {ρ' : Rep V W} {ρ : Rep U V} → 
+  rep↑ K (ρ' •R ρ) ∼R rep↑ K ρ' •R rep↑ K ρ
 \end{code}
 
 \AgdaHide{
 \begin{code}
-Rep↑-comp x₀ = refl
-Rep↑-comp (↑ _) = refl
+rep↑-comp x₀ = refl
+rep↑-comp (↑ _) = refl
 \end{code}
 }
 
@@ -95,7 +95,7 @@ replacement = record {
   isOpFamily = record { 
     _∘_ = _•R_ ; 
     apV-comp = refl ; 
-    liftOp-comp = Rep↑-comp } }
+    liftOp-comp = rep↑-comp } }
 \end{code}
 
 \AgdaHide{
@@ -105,8 +105,8 @@ open OpFamily replacement public using ()
            ap-congr to rep-congl;
            ap-idOp to rep-idOp;
            ap-circ to rep-comp;
-           liftOp-idOp to Rep↑-idOp;
-           liftOp-up' to Rep↑-upRep)
+           liftOp-idOp to rep↑-idOp;
+           liftOp-up' to rep↑-upRep)
 \end{code}
 }
 
@@ -150,24 +150,24 @@ magic-unique' E {ρ} = let open ≡-Reasoning in
     E 〈 magic 〉
   ∎
 
-Rep↑-upRep₂ : ∀ {U} {V} {C} {K} {L} {M} (E : Subexpression U C M) {σ : Rep U V} → E ⇑ ⇑ 〈 Rep↑ K (Rep↑ L σ) 〉 ≡ E 〈 σ 〉 ⇑ ⇑
-Rep↑-upRep₂ {U} {V} {C} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
+rep↑-upRep₂ : ∀ {U} {V} {C} {K} {L} {M} (E : Subexpression U C M) {σ : Rep U V} → E ⇑ ⇑ 〈 rep↑ K (rep↑ L σ) 〉 ≡ E 〈 σ 〉 ⇑ ⇑
+rep↑-upRep₂ {U} {V} {C} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
   begin
-    E ⇑ ⇑ 〈 Rep↑ K (Rep↑ L σ) 〉
-  ≡⟨ Rep↑-upRep (E ⇑) ⟩
-    E ⇑ 〈 Rep↑ L σ 〉 ⇑
-  ≡⟨ rep-congl (Rep↑-upRep E) ⟩
+    E ⇑ ⇑ 〈 rep↑ K (rep↑ L σ) 〉
+  ≡⟨ rep↑-upRep (E ⇑) ⟩
+    E ⇑ 〈 rep↑ L σ 〉 ⇑
+  ≡⟨ rep-congl (rep↑-upRep E) ⟩
     E 〈 σ 〉 ⇑ ⇑
   ∎
 
-Rep↑-upRep₃ : ∀ {U} {V} {C} {K} {L} {M} {N} (E : Subexpression U C N) {σ : Rep U V} → 
-  E ⇑ ⇑ ⇑ 〈 Rep↑ K (Rep↑ L (Rep↑ M σ)) 〉 ≡ E 〈 σ 〉 ⇑ ⇑ ⇑
-Rep↑-upRep₃ {U} {V} {C} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
+rep↑-upRep₃ : ∀ {U} {V} {C} {K} {L} {M} {N} (E : Subexpression U C N) {σ : Rep U V} → 
+  E ⇑ ⇑ ⇑ 〈 rep↑ K (rep↑ L (rep↑ M σ)) 〉 ≡ E 〈 σ 〉 ⇑ ⇑ ⇑
+rep↑-upRep₃ {U} {V} {C} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
   begin
-    E ⇑ ⇑ ⇑ 〈 Rep↑ K (Rep↑ L (Rep↑ M σ)) 〉
-  ≡⟨ Rep↑-upRep₂ (E ⇑) ⟩
-    E ⇑ 〈 Rep↑ M σ 〉 ⇑ ⇑
-  ≡⟨ rep-congl (rep-congl (Rep↑-upRep E)) ⟩
+    E ⇑ ⇑ ⇑ 〈 rep↑ K (rep↑ L (rep↑ M σ)) 〉
+  ≡⟨ rep↑-upRep₂ (E ⇑) ⟩
+    E ⇑ 〈 rep↑ M σ 〉 ⇑ ⇑
+  ≡⟨ rep-congl (rep-congl (rep↑-upRep E)) ⟩
     E 〈 σ 〉 ⇑ ⇑ ⇑
   ∎
 \end{code}

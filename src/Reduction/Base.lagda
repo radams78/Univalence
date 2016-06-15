@@ -250,7 +250,7 @@ If $E \rightarrow_R F$ then $[x := E] \twoheadrightarrow_R [x := F]$.
 
 \begin{code}
 botsub-red : ∀ {V} {K} {E F : Expression V (varKind K)} → 
-  E ⇒ F → _↠s_ substitution (x₀:= E) (x₀:= F)
+  E ⇒ F → _↠s_ SUB (x₀:= E) (x₀:= F)
 \end{code}
 
 \AgdaHide{

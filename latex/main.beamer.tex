@@ -129,6 +129,29 @@ For the future: universal quantification, natural numbers, inductive types, path
 
 \section{About the Formalization}
 
+\begin{frame}
+\frametitle{About the Formalization}
+This work is being formalized in Agda (work in progress).
+\pause
+
+It will involve several systems and reduction relations.
+
+I want to prove only once:
+\pause
+\begin{itemize}[<+->]
+\item
+$M[x:=N][y:=P] \equiv M[y:=P[x:=N]][x:=N]$
+\item
+If $M \twoheadrightarrow N$ then $M[x:=P] \twoheadrightarrow N[x:=P]$
+\item
+If $M[x:=P]$ is SN then $M$ is SN.
+\item
+Etc.
+\end{itemize}
+\pause
+The formalization includes a general notion of `grammar' and `reduction relation'.  (To do: general notion of derivation rules.)
+\end{frame}
+
 \begin{frame}[fragile]
 \frametitle{Grammars}
 Example: Simply-typed lambda calculus
@@ -177,14 +200,14 @@ A \emph{taxonomy } consists of:
 \item a set of \emph{expression kinds};
 \item a subset of expression kinds, called the \emph{variable kinds}.  We refer to the other expession kinds as \emph{non-variable kinds}.
 \end{itemize}
-{\tiny
 \ExecuteMetaData[Grammar/Taxonomy.tex]{Taxonomy}
-}
 \end{frame}
 
 \begin{frame}[fragile]
 We can now define the set of expressions over a grammar:
+\small{
 \ExecuteMetaData[Grammar/Base.tex]{Expression}
+}
 \end{frame}
 
 \section{Predicative Higher-Order Propositional Logic}
@@ -338,6 +361,25 @@ If $P \not\equiv \reff{-}$, then $\reff{\lambda x:A.M}_{N,N'} P \rhd M \{ x := P
 \end{itemize}
 \end{frame}
 
+\begin{frame}[fragile]
+\frametitle{Confluence}
+
+\begin{theorem}[Local Confluence]
+The reduction relation $\rightarrow$ is locally confluent.  That is, if $E \rightarrow F$ and $E \rightarrow G$, then there
+exists $H$ such that $F \twoheadrightarrow H$ and $G \twoheadrightarrow H$.
+\end{theorem}
+
+\begin{proof}
+Case analysis on $E \rightarrow F$ and $E \rightarrow G$.  There are no critical pairs.
+\end{proof}
+
+\ExecuteMetaData[PHOPL/Red]{Local-Confluent}
+
+\begin{corollary}[Newman's Lemma]
+Every strongly normalizing term is confluent, hence has a unique normal form.
+\end{corollary}
+\end{frame}
+
 \section{Strong Normalization}
 
 \begin{frame}
@@ -395,6 +437,28 @@ E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \
 & \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (Q \in E_\Delta(N =_A N')). \\
 & P_{NN'}Q \in E_\Delta(MN =_B M'N') \}
 \end{align*}
+\end{frame}
+
+\begin{frame}
+\frametitle{The Main Theorem}
+
+\begin{theorem}
+Let $\sigma$ be a substitution such that, for all $x : A \in \Gamma$, we have $\sigma(x) \in E_\Delta(A)$.
+Then, if $\Gamma \vdash M : A$, then $M [ \sigma ] \in E_\Delta(A)$.
+\end{theorem}
+
+\ExecuteMetaData[PHOPL/MainProp]{Computable-Sub}
+
+\begin{corollary}[Strong Normalization]
+Every well-typed term, proof and path is strongly normalizing.
+\end{corollary}
+
+\ExecuteMetaData[PHOPL/MainProp]{Strong-Normalization}
+
+\begin{corollary}[Consistency]
+There is no proof $\delta$ such that $\vdash \delta : \bot$.
+\end{corollary}
+\ExecuteMetaData[PHOPL/MainProp]{Consistency}
 \end{frame}
 
 \begin{frame}
