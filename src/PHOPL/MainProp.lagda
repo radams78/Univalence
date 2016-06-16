@@ -307,23 +307,54 @@ computable-path-substitution U V τ σ σ' Γ Δ ._ ._ σ∶Γ⇒CΔ σ'∶Γ⇒
          (let open ≡-Reasoning in 
          begin
            M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term ρ 〉 〈 rep↑ -Term upRep 〉 〈 rep↑ -Term upRep 〉 〈 rep↑ -Term upRep 〉 ⟦ x₀:= var x₂ ⟧
-         ≡⟨⟨ {!!} ⟩⟩
+         ≡⟨⟨ sub-congl (rep-comp₄ (M ⟦ sub↑ -Term σ ⟧)) ⟩⟩
            M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term upRep •R rep↑ -Term upRep •R rep↑ -Term upRep •R rep↑ -Term ρ 〉 ⟦ x₀:= var x₂ ⟧
-         ≡⟨⟨ {!!} ⟩⟩
+         ≡⟨⟨ sub-congl (rep-congr (M ⟦ sub↑ -Term σ ⟧) rep↑-comp₄) ⟩⟩
            M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term (upRep •R upRep •R upRep •R ρ) 〉 ⟦ x₀:= var x₂ ⟧ 
-         ≡⟨ {!!} ⟩
+         ≡⟨ sub-congl (rep-congr (M ⟦ sub↑ -Term σ ⟧) (rep↑-cong (rep↑-upRep₄' ρ))) ⟩
            M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term (rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) •R upRep •R upRep •R upRep) 〉 ⟦ x₀:= var x₂ ⟧ 
-         ≡⟨ {!!} ⟩
+         ≡⟨ sub-congl (rep-congr (M ⟦ sub↑ -Term σ ⟧) rep↑-comp₄) ⟩
            M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term (rep↑ -Path (rep↑ -Term (rep↑ -Term ρ))) •R rep↑ -Term upRep •R rep↑ -Term upRep •R rep↑ -Term upRep 〉 ⟦ x₀:= var x₂ ⟧ 
-         ≡⟨ {!!} ⟩
+         ≡⟨ sub-congl (rep-comp₄ (M ⟦ sub↑ -Term σ ⟧)) ⟩
            M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ -Term (rep↑ -Path (rep↑ -Term (rep↑ -Term ρ))) 〉 ⟦ x₀:= var x₂ ⟧
          ≡⟨⟨ compRS-botsub (M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉) ⟩⟩
            M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 ⟦ x₀:= var x₂ ⟧ 〈 rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) 〉
          ≡⟨ rep-congl (sub↖-decomp M) ⟩
            M ⟦ sub↖ σ ⟧ 〈 rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) 〉
          ∎) 
-         (osr-conv (redex βT)))) {!!})) (EE-typed Q∈EΘN≡N')) 
-     (subst (key-redex _) {!!} (βEkr {!!} {!!} {!!})))
+         (osr-conv (redex βT)))) 
+         (sym-conv (subst (_≃_ (appT (ΛT A (M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ -Term ρ 〉) ⇑ ⇑ ⇑) (var x₁))) 
+         (let open ≡-Reasoning in 
+         begin
+           M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ -Term ρ 〉 〈 rep↑ -Term upRep 〉 〈 rep↑ -Term upRep 〉 〈 rep↑ -Term upRep 〉 ⟦ x₀:= var x₁ ⟧
+         ≡⟨⟨ sub-congl (rep-comp₄ (M ⟦ sub↑ -Term σ' ⟧)) ⟩⟩
+           M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ -Term upRep •R rep↑ -Term upRep •R rep↑ -Term upRep •R rep↑ -Term ρ 〉 ⟦ x₀:= var x₁ ⟧
+         ≡⟨⟨ sub-congl (rep-congr (M ⟦ sub↑ -Term σ' ⟧) rep↑-comp₄) ⟩⟩
+           M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ -Term (upRep •R upRep •R upRep •R ρ) 〉 ⟦ x₀:= var x₁ ⟧ 
+         ≡⟨ sub-congl (rep-congr (M ⟦ sub↑ -Term σ' ⟧) (rep↑-cong (rep↑-upRep₄' ρ))) ⟩
+           M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ -Term (rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) •R upRep •R upRep •R upRep) 〉 ⟦ x₀:= var x₁ ⟧ 
+         ≡⟨ sub-congl (rep-congr (M ⟦ sub↑ -Term σ' ⟧) rep↑-comp₄) ⟩
+           M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ -Term (rep↑ -Path (rep↑ -Term (rep↑ -Term ρ))) •R rep↑ -Term upRep •R rep↑ -Term upRep •R rep↑ -Term upRep 〉 ⟦ x₀:= var x₁ ⟧ 
+         ≡⟨ sub-congl (rep-comp₄ (M ⟦ sub↑ -Term σ' ⟧)) ⟩
+           M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ -Term (rep↑ -Path (rep↑ -Term (rep↑ -Term ρ))) 〉 ⟦ x₀:= var x₁ ⟧
+         ≡⟨⟨ compRS-botsub (M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉) ⟩⟩
+           M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 ⟦ x₀:= var x₁ ⟧ 〈 rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) 〉
+         ≡⟨ rep-congl (sub↗-decomp M) ⟩
+           M ⟦ sub↗ σ' ⟧ 〈 rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) 〉
+         ∎) 
+         (osr-conv (redex βT)))))) --TODO Duplication
+         (EE-typed Q∈EΘN≡N')) 
+     (subst (key-redex _) 
+     (let open ≡-Reasoning in 
+     begin
+       M ⟦⟦ pathsub↑ τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧ 〈 rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) 〉 ⟦ x₂:= N ,x₁:= N' ,x₀:= Q ⟧
+     ≡⟨⟨ sub-congl (pathsub-compRP M) ⟩⟩
+       M ⟦⟦ rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) •RP pathsub↑ τ ∶ rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) •RS sub↖ σ ∼ rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) •RS sub↗ σ' ⟧⟧ ⟦ x₂:= N ,x₁:= N' ,x₀:= Q ⟧
+     ≡⟨⟨ sub-congl (pathsub-cong M pathsub↑-compRP sub↖-compRP sub↗-compRP) ⟩⟩
+       M ⟦⟦ pathsub↑ (ρ •RP τ) ∶ sub↖ (ρ •RS σ) ∼ sub↗ (ρ •RS σ') ⟧⟧ ⟦ x₂:= N ,x₁:= N' ,x₀:= Q ⟧
+     ≡⟨⟨ pathsub-extendPS M ⟩⟩
+       M ⟦⟦ extendPS (ρ •RP τ) Q ∶ extendSub (ρ •RS σ) N ∼ extendSub (ρ •RS σ') N' ⟧⟧
+     ∎) (βEkr (E'-SN N∈EΘA) (E'-SN N'∈EΘA) (E'-SN Q∈EΘN≡N'))))
 \end{code}
 }
 

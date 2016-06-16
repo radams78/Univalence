@@ -274,6 +274,14 @@ where $\phi [ \sigma ]$ is the result of substituting $\sigma(x)$ for every term
 \>[10]\AgdaIndent{26}{}\<[26]%
 \>[26]\AgdaBound{σ} \AgdaPostulate{∶} \AgdaBound{Γ} \AgdaPostulate{⇒} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{Δ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{A} \AgdaSymbol{→} \AgdaFunction{extendSub} \AgdaBound{σ} \AgdaBound{M} \AgdaPostulate{∶} \AgdaBound{Γ} \AgdaFunction{,T} \AgdaBound{A} \AgdaPostulate{⇒} \AgdaBound{Δ}\<%
 \\
+\>[26]\AgdaIndent{78}{}\<[78]%
+\>[78]\<%
+\\
+\>\AgdaKeyword{postulate} \AgdaPostulate{extendSub-decomp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{E} \AgdaSymbol{:} \AgdaDatatype{Subexpression} \AgdaSymbol{(}\AgdaBound{U} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Term}\AgdaSymbol{)} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{27}{}\<[27]%
+\>[27]\AgdaBound{E} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{M} \AgdaFunction{⟧} \AgdaDatatype{≡} \AgdaBound{E} \AgdaFunction{⟦} \AgdaFunction{extendSub} \AgdaBound{σ} \AgdaBound{M} \AgdaFunction{⟧}\<%
+\\
 %
 \\
 \>\AgdaKeyword{postulate} \AgdaPostulate{⊃-gen₁} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ψ}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{φ} \AgdaFunction{⊃} \AgdaBound{ψ} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaInductiveConstructor{Ω} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{φ} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaInductiveConstructor{Ω}\<%

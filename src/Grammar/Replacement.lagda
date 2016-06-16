@@ -85,6 +85,9 @@ rep↑-comp : ∀ {U} {V} {W} {K} {ρ' : Rep V W} {ρ : Rep U V} →
 \begin{code}
 rep↑-comp x₀ = refl
 rep↑-comp (↑ _) = refl
+
+postulate rep↑-comp₄ : ∀ {U} {V1} {V2} {V3} {V4} {K} {ρ1 : Rep U V1} {ρ2 : Rep V1 V2} {ρ3 : Rep V2 V3} {ρ4 : Rep V3 V4} →
+                       rep↑ K (ρ4 •R ρ3 •R ρ2 •R ρ1) ∼R rep↑ K ρ4 •R rep↑ K ρ3 •R rep↑ K ρ2 •R rep↑ K ρ1
 \end{code}
 }
 
@@ -107,6 +110,11 @@ open OpFamily replacement public using ()
            ap-circ to rep-comp;
            liftOp-idOp to rep↑-idOp;
            liftOp-up' to rep↑-upRep)
+
+postulate rep-comp₄ : ∀ {U} {V1} {V2} {V3} {V4} 
+                      {ρ1 : Rep U V1} {ρ2 : Rep V1 V2} {ρ3 : Rep V2 V3} {ρ4 : Rep V3 V4} 
+                      {C} {K} (E : Subexpression U C K) →
+                      E 〈 ρ4 •R ρ3 •R ρ2 •R ρ1 〉 ≡ E 〈 ρ1 〉 〈 ρ2 〉 〈 ρ3 〉 〈 ρ4 〉
 \end{code}
 }
 
@@ -170,5 +178,7 @@ rep↑-upRep₃ {U} {V} {C} {K} {L} {M} E {σ} = let open ≡-Reasoning in
   ≡⟨ rep-congl (rep-congl (rep↑-upRep E)) ⟩
     E 〈 σ 〉 ⇑ ⇑ ⇑
   ∎
+
+postulate rep↑-upRep₄' : ∀ {U} {V} (ρ : Rep U V) {K1} {K2} {K3} → upRep •R upRep •R upRep •R ρ ∼R rep↑ K1 (rep↑ K2 (rep↑ K3 ρ)) •R upRep •R upRep •R upRep
 \end{code}
 }
