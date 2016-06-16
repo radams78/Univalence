@@ -648,10 +648,10 @@ then $\Gamma \vdash M \{ \tau : \sigma \sim \rho \} : M [ \sigma ] =_A M [ \rho 
 \>\AgdaKeyword{postulate} \AgdaPostulate{pathsub-extendPS} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{M} \AgdaSymbol{\{}\AgdaBound{τ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaSymbol{:} \AgdaFunction{Path} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N'} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ'}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[26]\AgdaIndent{27}{}\<[27]%
-\>[27]\AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaFunction{extendPS} \AgdaBound{τ} \AgdaBound{P} \AgdaFunction{∶} \AgdaFunction{x₀:=} \AgdaBound{N} \AgdaFunction{•} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{∼} \AgdaFunction{x₀:=} \AgdaBound{N'} \AgdaFunction{•} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧⟧}\<%
+\>[27]\AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaFunction{extendPS} \AgdaBound{τ} \AgdaBound{P} \AgdaFunction{∶} \AgdaFunction{extendSub} \AgdaBound{σ} \AgdaBound{N} \AgdaFunction{∼} \AgdaFunction{extendSub} \AgdaBound{σ'} \AgdaBound{N'} \AgdaFunction{⟧⟧}\<%
 \\
 \>[26]\AgdaIndent{27}{}\<[27]%
-\>[27]\AgdaDatatype{≡} \AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaFunction{pathsub↑} \AgdaBound{τ} \AgdaFunction{∶} \AgdaFunction{sub↖} \AgdaBound{σ} \AgdaFunction{∼} \AgdaFunction{sub↗} \AgdaBound{σ'} \AgdaFunction{⟧⟧} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{N} \AgdaFunction{•} \AgdaFunction{x₀:=} \AgdaSymbol{(}\AgdaBound{N'} \AgdaFunction{⇑}\AgdaSymbol{)} \AgdaFunction{•} \AgdaFunction{x₀:=} \AgdaSymbol{(}\AgdaBound{P} \AgdaFunction{⇑} \AgdaFunction{⇑}\AgdaSymbol{)} \AgdaFunction{⟧}\<%
+\>[27]\AgdaDatatype{≡} \AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaFunction{pathsub↑} \AgdaBound{τ} \AgdaFunction{∶} \AgdaFunction{sub↖} \AgdaBound{σ} \AgdaFunction{∼} \AgdaFunction{sub↗} \AgdaBound{σ'} \AgdaFunction{⟧⟧} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{N} \AgdaFunction{,x₁:=} \AgdaBound{N'} \AgdaFunction{,x₀:=} \AgdaBound{P} \AgdaFunction{⟧}\<%
 \\
 %
 \\
@@ -660,7 +660,19 @@ then $\Gamma \vdash M \{ \tau : \sigma \sim \rho \} : M [ \sigma ] =_A M [ \rho 
 \>[0]\AgdaIndent{25}{}\<[25]%
 \>[25]\AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaBound{ρ} \AgdaFunction{•RP} \AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{ρ} \AgdaFunction{•RS} \AgdaBound{σ} \AgdaFunction{∼} \AgdaBound{ρ} \AgdaFunction{•RS} \AgdaBound{σ'} \AgdaFunction{⟧⟧} \AgdaDatatype{≡} \AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{σ} \AgdaFunction{∼} \AgdaBound{σ'} \AgdaFunction{⟧⟧} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\<%
 \\
-\>\<%
+%
+\\
+\>\AgdaKeyword{postulate} \AgdaPostulate{sub↖-compRP} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{22}{}\<[22]%
+\>[22]\AgdaFunction{sub↖} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaFunction{•RS} \AgdaBound{σ}\AgdaSymbol{)} \AgdaFunction{∼} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•RS} \AgdaFunction{sub↖} \AgdaBound{σ}\<%
+\\
+%
+\\
+\>\AgdaKeyword{postulate} \AgdaPostulate{sub↗-compRP} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{22}{}\<[22]%
+\>[22]\AgdaFunction{sub↗} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaFunction{•RS} \AgdaBound{σ}\AgdaSymbol{)} \AgdaFunction{∼} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•RS} \AgdaFunction{sub↗} \AgdaBound{σ}\<%
 \end{code}
 }
 

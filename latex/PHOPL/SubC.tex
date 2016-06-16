@@ -66,10 +66,10 @@ iff, for all $x : A \in \Gamma$, we have $\sigma(x) \in E_\Delta(A)$; and, for a
 \\
 %
 \\
-\>\AgdaKeyword{postulate} \AgdaPostulate{Sub↑C} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\>\AgdaKeyword{postulate} \AgdaPostulate{sub↑C} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[17]\AgdaIndent{20}{}\<[20]%
-\>[20]\AgdaBound{σ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒C} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaFunction{Sub↑} \AgdaBound{K} \AgdaBound{σ} \AgdaFunction{∶} \AgdaSymbol{(}\AgdaBound{Γ} \AgdaInductiveConstructor{,} \AgdaBound{A}\AgdaSymbol{)} \AgdaFunction{⇒C} \AgdaSymbol{(}\AgdaBound{Δ} \AgdaInductiveConstructor{,} \AgdaBound{A} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)}\<%
+\>[20]\AgdaBound{σ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒C} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaFunction{sub↑} \AgdaBound{K} \AgdaBound{σ} \AgdaFunction{∶} \AgdaSymbol{(}\AgdaBound{Γ} \AgdaInductiveConstructor{,} \AgdaBound{A}\AgdaSymbol{)} \AgdaFunction{⇒C} \AgdaSymbol{(}\AgdaBound{Δ} \AgdaInductiveConstructor{,} \AgdaBound{A} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)}\<%
 \\
 %
 \\
@@ -92,11 +92,23 @@ iff, for all $x : A \in \Gamma$, we have $\sigma(x) \in E_\Delta(A)$; and, for a
 \>[20]\AgdaIndent{21}{}\<[21]%
 \>[21]\AgdaFunction{EE} \AgdaBound{Γ} \AgdaBound{E} \AgdaBound{P} \AgdaSymbol{→} \AgdaFunction{x₀:=} \AgdaBound{P} \AgdaFunction{∶} \AgdaSymbol{(}\AgdaBound{Γ} \AgdaFunction{,E} \AgdaBound{E}\AgdaSymbol{)} \AgdaFunction{⇒C} \AgdaBound{Γ}\<%
 \\
+\>\AgdaComment{--TODO Common pattern}\<%
+\\
+%
+\\
+\>\AgdaKeyword{postulate} \AgdaPostulate{botsub₃C} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{19}{}\<[19]%
+\>[19]\AgdaFunction{E} \AgdaBound{Γ} \AgdaBound{A} \AgdaBound{M} \AgdaSymbol{→} \AgdaFunction{E} \AgdaBound{Γ} \AgdaBound{A} \AgdaBound{N} \AgdaSymbol{→} \AgdaFunction{EE} \AgdaBound{Γ} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{N}\AgdaSymbol{)} \AgdaBound{P} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{19}{}\<[19]%
+\>[19]\AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{M} \AgdaFunction{,x₁:=} \AgdaBound{N} \AgdaFunction{,x₀:=} \AgdaBound{P}\AgdaSymbol{)} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{,T} \AgdaBound{A} \AgdaFunction{,T} \AgdaBound{A} \AgdaFunction{,E} \AgdaInductiveConstructor{var} \AgdaFunction{x₁} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaInductiveConstructor{var} \AgdaInductiveConstructor{x₀} \AgdaFunction{⇒C} \AgdaBound{Γ}\<%
+\\
 %
 \\
 \>\AgdaKeyword{postulate} \AgdaPostulate{subC-typed} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
-\>[20]\AgdaIndent{21}{}\<[21]%
+\>[19]\AgdaIndent{21}{}\<[21]%
 \>[21]\AgdaBound{σ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒C} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{σ} \AgdaPostulate{∶} \AgdaBound{Γ} \AgdaPostulate{⇒} \AgdaBound{Δ}\<%
 \\
 %
@@ -127,22 +139,22 @@ Let us say that a path substitution $\tau : \sigma \sim \rho : \Gamma \rightarro
 \\
 %
 \\
-\>\AgdaKeyword{postulate} \AgdaPostulate{extendPS-typedC} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{τ} \AgdaSymbol{:} \AgdaFunction{PathSub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A} \AgdaSymbol{:} \AgdaDatatype{Type}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Q} \AgdaSymbol{:} \AgdaFunction{Path} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N} \AgdaBound{N'} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\>\AgdaKeyword{postulate} \AgdaPostulate{extendPSC} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{τ} \AgdaSymbol{:} \AgdaFunction{PathSub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A} \AgdaSymbol{:} \AgdaDatatype{Type}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Q} \AgdaSymbol{:} \AgdaFunction{Path} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N} \AgdaBound{N'} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[22]\AgdaIndent{25}{}\<[25]%
-\>[25]\AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{ρ} \AgdaFunction{∼} \AgdaBound{σ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒C} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaFunction{EE} \AgdaBound{Δ} \AgdaSymbol{(}\AgdaBound{N} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{N'}\AgdaSymbol{)} \AgdaBound{Q} \AgdaSymbol{→} \AgdaFunction{extendPS} \AgdaBound{τ} \AgdaBound{Q} \AgdaFunction{∶} \AgdaFunction{x₀:=} \AgdaBound{N} \AgdaFunction{•} \AgdaFunction{Sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{∼} \AgdaFunction{x₀:=} \AgdaBound{N'} \AgdaFunction{•} \AgdaFunction{Sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{,T} \AgdaBound{A} \AgdaFunction{⇒C} \AgdaBound{Δ}\<%
+\>[25]\AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{ρ} \AgdaFunction{∼} \AgdaBound{σ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒C} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaFunction{EE} \AgdaBound{Δ} \AgdaSymbol{(}\AgdaBound{N} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{N'}\AgdaSymbol{)} \AgdaBound{Q} \AgdaSymbol{→} \AgdaFunction{extendPS} \AgdaBound{τ} \AgdaBound{Q} \AgdaFunction{∶} \AgdaFunction{extendSub} \AgdaBound{ρ} \AgdaBound{N} \AgdaFunction{∼} \AgdaFunction{extendSub} \AgdaBound{σ} \AgdaBound{N'} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{,T} \AgdaBound{A} \AgdaFunction{⇒C} \AgdaBound{Δ}\<%
 \\
 %
 \\
-\>\AgdaKeyword{postulate} \AgdaPostulate{compRP-typedC} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{τ} \AgdaSymbol{:} \AgdaFunction{PathSub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ'}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Θ}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\>\AgdaKeyword{postulate} \AgdaPostulate{compRPC} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{τ} \AgdaSymbol{:} \AgdaFunction{PathSub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ'}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Θ}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[22]\AgdaIndent{25}{}\<[25]%
 \>[25]\AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{σ} \AgdaFunction{∼} \AgdaBound{σ'} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒C} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{ρ} \AgdaPostulate{∶} \AgdaBound{Δ} \AgdaPostulate{⇒R} \AgdaBound{Θ} \AgdaSymbol{→} \AgdaBound{ρ} \AgdaFunction{•RP} \AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{ρ} \AgdaFunction{•RS} \AgdaBound{σ} \AgdaFunction{∼} \AgdaBound{ρ} \AgdaFunction{•RS} \AgdaBound{σ'} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒C} \AgdaBound{Θ}\<%
 \\
 %
 \\
-\>\AgdaKeyword{postulate} \AgdaPostulate{pathsubC-typed} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{τ} \AgdaSymbol{:} \AgdaFunction{PathSub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}} \AgdaSymbol{→} \<[73]%
-\>[73]\<%
+\>\AgdaKeyword{postulate} \AgdaPostulate{pathsubC-typed} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{τ} \AgdaSymbol{:} \AgdaFunction{PathSub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{ρ} \AgdaBound{σ} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}} \AgdaSymbol{→} \<[69]%
+\>[69]\<%
 \\
 \>[0]\AgdaIndent{21}{}\<[21]%
 \>[21]\AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{ρ} \AgdaFunction{∼} \AgdaBound{σ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒C} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{ρ} \AgdaFunction{∼} \AgdaBound{σ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒} \AgdaBound{Δ}\<%
@@ -160,5 +172,12 @@ Let us say that a path substitution $\tau : \sigma \sim \rho : \Gamma \rightarro
 \\
 \>[21]\AgdaIndent{26}{}\<[26]%
 \>[26]\AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{ρ} \AgdaFunction{∼} \AgdaBound{σ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒C} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{σ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒C} \AgdaBound{Δ}\<%
+\\
+%
+\\
+\>\AgdaKeyword{postulate} \AgdaPostulate{extendSubC} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[21]\AgdaIndent{26}{}\<[26]%
+\>[26]\AgdaBound{σ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒C} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaFunction{E} \AgdaBound{Δ} \AgdaBound{A} \AgdaBound{M} \AgdaSymbol{→} \AgdaFunction{extendSub} \AgdaBound{σ} \AgdaBound{M} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{,T} \AgdaBound{A} \AgdaFunction{⇒C} \AgdaBound{Δ}\<%
 \end{code}
 }

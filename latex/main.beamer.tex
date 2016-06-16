@@ -447,19 +447,78 @@ Let $\sigma$ be a substitution such that, for all $x : A \in \Gamma$, we have $\
 Then, if $\Gamma \vdash M : A$, then $M [ \sigma ] \in E_\Delta(A)$.
 \end{theorem}
 
+\small{
 \ExecuteMetaData[PHOPL/MainProp]{Computable-Sub}
+}
 
 \begin{corollary}[Strong Normalization]
 Every well-typed term, proof and path is strongly normalizing.
 \end{corollary}
 
+\small{
 \ExecuteMetaData[PHOPL/MainProp]{Strong-Normalization}
+}
 
 \begin{corollary}[Consistency]
 There is no proof $\delta$ such that $\vdash \delta : \bot$.
 \end{corollary}
-\ExecuteMetaData[PHOPL/MainProp]{Consistency}
 \end{frame}
+
+\section{The System $\lambda o i$}
+
+\begin{frame}
+\frametitle{Internal Equality}
+We place the propositions $M =_A N$ inside $\Omega$,
+so we can form (and prove!)
+
+\[ \mathsf{sym} : M =_A N \supset N =_A M , \quad
+\mathsf{trans} : M =_A N \supset N =_A P \supset M =_A P \]
+
+\[ \infer{\Gamma \vdash M =_A N : \Omega}{\Gamma \vdash M : A \quad \Gamma \vdash N : A} \]
+\[ \infer{\Gamma \vdash \delta =^*_A \epsilon : (M =_A N) =_\Omega (M' =_A N')}
+{\Gamma \vdash \delta : M =_A M' \quad \Gamma \vdash \epsilon : N =_A N'} \]
+
+New reductions include:
+
+\begin{align*}
+& \reff{\phi} =^*_\Omega \univ{\psi}{\chi}{\delta}{\epsilon} \\ \rhd 
+  \mathsf{univ}_{\phi =_\Omega \psi,\phi =_\Omega \chi}
+& \left( \lambda p:\phi =_\psi. \univ{\phi}{\chi}{\lambda q:\phi.\delta (p^+ q)}
+    {\lambda q : \chi. p^- (\epsilon q)}, \right. \\ 
+&  \left. \lambda p:\phi =_\Omega \chi. \univ{\phi}{\psi}{\lambda q:\phi. \epsilon (p^+ q)}
+    {\lambda q : \psi. p^- (\delta q)} \right) \\
+\end{align*}
+\end{frame}
+
+\section{Conclusion}
+
+\begin{frame}
+\frametitle{Conclusion}
+\begin{itemize}[<+->]
+\item
+We have shown two systems that each have all these properties:
+\begin{itemize}
+\item
+Univalence
+\item
+Strong Normalization
+\item
+Confluence of typed terms
+\item
+Canonicity
+\end{itemize}
+\item
+So it is possible!
+\item
+The simplicity is due to the separation between terms and proofs.
+\item
+For the future: extract a normalizer.  Universal quantification.
+\item
+Follow the progress here: \url{www.github.com/radams78/Univalence}
+\end{itemize}
+\end{frame}
+
+\appendix
 
 \begin{frame}
 \frametitle{Reference}

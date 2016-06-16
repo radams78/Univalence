@@ -160,7 +160,7 @@ syntax is formed by extending the grammar of $\lambda o$ with
 The rules of deduction of $\lambda o i$ are those of Figures \ref{fig:lambdao} and \ref{fig:lambdaoe} with one modification and two additions.  The introduction rule for $\triplelambda$ is changed to %TODO Give it a name
 \[ \infer{\Gamma \vdash \triplelambda^{FG} e : x =_A y . \delta : F =_{A \rightarrow B} G}
 {\Gamma, x : A, y : A, e : x =_A y \vdash \delta : F x =_B G y} \]
-and we add the reduction rules:
+and we add the rules:
 \[ \infer{\Gamma \vdash M =_A N : \Omega}{\Gamma \vdash M : A \quad \Gamma \vdash N : A} \]
 \[ \infer{\Gamma \vdash \delta =^*_A \epsilon : (M =_A N) =_\Omega (M' =_A N')}
 {\Gamma \vdash \delta : M =_A M' \quad \Gamma \vdash \epsilon : N =_A N'} \]
@@ -213,34 +213,6 @@ The reduction relation is that of $\lambda o e$ together with the following clau
 & \left. \left. \trans{p_{xy} e}{\sym{Q \{e := \reff{y} : y \sim y \}}} \right) \right)
 \end{align*}
 %TODO Define sym, trans
-
-\section{Conclusion}
-
-\begin{frame}
-\frametitle{Conclusion}
-\begin{itemize}[<+->]
-\item
-We have shown two systems that each have all these properties:
-\begin{itemize}
-\item
-Univalence
-\item
-Strong Normalization
-\item
-Confluence of typed terms
-\item
-Canonicity
-\end{itemize}
-\item
-So it is possible!
-\item
-The simplicity is due to the separation between terms and proofs.
-\item
-For the future: extract a normalizer.  Universal quantification.
-\item
-Follow the progress here: \url{www.github.com/radams78/Univalence}
-\end{itemize}
-\end{frame}
 
 \todos
 
