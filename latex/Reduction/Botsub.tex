@@ -1,0 +1,32 @@
+\begin{code}%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar.Base}\<%
+\\
+\>\AgdaKeyword{module} \AgdaModule{Reduction.Botsub} \AgdaSymbol{(}\AgdaBound{G} \AgdaSymbol{:} \AgdaRecord{Grammar}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{R} \AgdaSymbol{:} \AgdaFunction{Grammar.Reduction} \AgdaBound{G}\AgdaSymbol{)} \AgdaKeyword{where}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar} \AgdaBound{G}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Reduction.Base} \AgdaBound{G} \AgdaBound{R}\<%
+\\
+%
+\\
+\>\AgdaFunction{botsub₃-red} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K1}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K2}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K3}\AgdaSymbol{\}} \<[35]%
+\>[35]\<%
+\\
+\>[0]\AgdaIndent{14}{}\<[14]%
+\>[14]\AgdaSymbol{\{}\AgdaBound{M1} \AgdaBound{M1'} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K1}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{M2} \AgdaBound{M2'} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K2}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{M3} \AgdaBound{M3'} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K3}\AgdaSymbol{)\}} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{14}{}\<[14]%
+\>[14]\AgdaBound{M1} \AgdaDatatype{↠} \AgdaBound{M1'} \AgdaSymbol{→} \AgdaBound{M2} \AgdaDatatype{↠} \AgdaBound{M2'} \AgdaSymbol{→} \AgdaBound{M3} \AgdaDatatype{↠} \AgdaBound{M3'} \AgdaSymbol{→} \AgdaFunction{\_↠s\_} \AgdaFunction{SUB} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{M1} \AgdaFunction{,x₁:=} \AgdaBound{M2} \AgdaFunction{,x₀:=} \AgdaBound{M3}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{M1'} \AgdaFunction{,x₁:=} \AgdaBound{M2'} \AgdaFunction{,x₀:=} \AgdaBound{M3'}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{botsub₃-red} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaBound{M3↠M3'} \AgdaSymbol{\_} \AgdaInductiveConstructor{x₀} \AgdaSymbol{=} \AgdaBound{M3↠M3'}\<%
+\\
+\>\AgdaFunction{botsub₃-red} \AgdaSymbol{\_} \AgdaBound{M2↠M2'} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaInductiveConstructor{x₀}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaBound{M2↠M2'}\<%
+\\
+\>\AgdaFunction{botsub₃-red} \AgdaBound{M1↠M1'} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaInductiveConstructor{x₀}\AgdaSymbol{))} \AgdaSymbol{=} \AgdaBound{M1↠M1'}\<%
+\\
+\>\AgdaFunction{botsub₃-red} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaSymbol{\_)))} \AgdaSymbol{=} \AgdaInductiveConstructor{ref}\<%
+\\
+%
+\\
+\>\AgdaComment{--TODO General botsub n}\<%
+\end{code}

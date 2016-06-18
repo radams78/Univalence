@@ -1,0 +1,261 @@
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bbm}
+\usepackage[greek,english]{babel}
+\usepackage{framed}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage{autofe}
+\usepackage{proof}
+\usepackage{stmaryrd}
+\usepackage{textalpha}
+\usepackage{todo}
+
+
+\DeclareUnicodeCharacter{8598}{\ensuremath{\nwarrow}}
+\DeclareUnicodeCharacter{8599}{\ensuremath{\nearrow}}
+\DeclareUnicodeCharacter{8608}{\ensuremath{\twoheadrightarrow}}
+\DeclareUnicodeCharacter{8657}{\ensuremath{\Uparrow}}
+\DeclareUnicodeCharacter{8667}{\ensuremath{\Rrightarrow}}
+\DeclareUnicodeCharacter{8718}{\ensuremath{\qed}}
+\DeclareUnicodeCharacter{8759}{\ensuremath{::}}
+\DeclareUnicodeCharacter{8988}{\ensuremath{\ulcorner}}
+\DeclareUnicodeCharacter{8989}{\ensuremath{\urcorner}}
+\DeclareUnicodeCharacter{8803}{\ensuremath{\overline{\equiv}}}
+\DeclareUnicodeCharacter{9001}{\ensuremath{\langle}}
+\DeclareUnicodeCharacter{9002}{\ensuremath{\rangle}}
+\DeclareUnicodeCharacter{9655}{\ensuremath{\rhd}}
+\DeclareUnicodeCharacter{10214}{\ensuremath{[}}
+\DeclareUnicodeCharacter{10215}{\ensuremath{]}}
+\DeclareUnicodeCharacter{10219}{\ensuremath{\rangle\rangle}}
+
+
+\newtheorem{prop}[theorem]{Proposition}
+\newtheorem{lm}[theorem]{Lemma}
+
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\eqdef}{\mathrel{\smash{\stackrel{\text{def}}{=}}}}
+\newcommand{\AgdaHide}[1]{}
+\newcommand{\isotoid}{\ensuremath{isotoid}}
+\newcommand{\vald}{\ensuremath{\ \mathrm{valid}}}
+\newcommand{\reff}[1]{\ensuremath{\mathsf{ref} \left( {#1} \right)}}
+\newcommand{\univ}[4]{\ensuremath{\mathsf{univ}_{{#1} , {#2}} \left( {#3} , {#4} \right)}}
+\newcommand{\triplelambda}{\ensuremath{\lambda \!\! \lambda \!\! \lambda}}
+\newcommand{\SN}{\ensuremath{\mathbf{SN}}}
+\newcommand{\dom}{\ensuremath{\operatorname{dom}}}
+\newcommand{\sym}[1]{\ensuremath{\mathsf{sym} \left( {#1} \right)}}
+\newcommand{\trans}[2]{\ensuremath{\mathsf{trans} \left( {#1} , {#2} \right)}}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+According to the traditional approach to type theory \todo{Citation}, a type theory should have the
+following properties in order to enjoy a good meaning explanation:
+\begin{itemize}
+\item \textbf{Confluence} --- The reduction relation should be confluent.
+\item \textbf{Strong Normalization} --- Every reduction strategy should terminate.
+\item \textbf{Canonicity} --- Hence every well-typed term of type $A$ reduces to a unique canonical form of $A$.  (For example,
+every closed term of type $\mathbb{N}$ reduces to a unique \emph{numeral} --- a term formed by applying $\mathrm{suc}$ some
+finite number of times to 0.)
+\end{itemize}
+
+The \emph{univalence axiom} of Homotopy Type theory (HoTT) \todo{Citation} breaks the property of canonicity.  It postulates a
+constant
+\[ \isotoid : A \simeq B \rightarrow A = B \]
+that is an inverse to the canonical function $A = B \rightarrow A \simeq B$.  When a computation reaches a point
+where we eliminate a path (proof of equality) formed by $\isotoid$, it gets 'stuck'.
+
+As possible solutions to this problem, we may try to do with a weaker property than canonicity, such as \emph{propositional canonicity}.
+We may attempt to prove that every closed term of type $\mathbb{N}$ is \emph{propositionally} equal to a numeral.  (This is known as
+\emph{Voevodsky's Conecture} \todo{Cite}.)  Or we may attempt to change the definition of equality to make $\isotoid$ definable (\cite{Polonsky14a}), or
+shift to an entirely different type theory such as Cubical Type Theory \todo{Cite}.
+
+We could also try a more conservative approach, and simply attempt to find a reduction relation for a type theory involving $\isotoid$ that satisfies
+all three of the properties above.  There seems to be no reason \emph{a priori} to believe this is not possible, but it is difficult to do because
+the full Homotopy Type Theory is a complex and interdependent system.  We can tackle the problem by adding univalence to a much simpler system, finding
+a well-behaved reduction relation, then doing the same for more and more complex systems, gradually approaching the full strength of HoTT.
+
+In this paper, we present a system we call $\lambda o e$, or predicative higher-order propositional logic.  It is a type theory with two universes: the universe $\Omega$
+of \emph{propositions}, and the universe $U$ of \emph{types}.  The propositions are closed under $\supset$ (implication) and include $\bot$ (falsehood), and an equality proposition $M =_A N$ for
+any type $A : U$ and terms $M : A$ and $N : A$.  The types include $\Omega$ itself and are closed under $\rightarrow$ (non-dependent function type).
+
+There are two canonical forms for proofs of $M =_A N$.  For any term $M : A$, we have $\reff{M} : M =_A M$.  We also add univalence for this system, in this form:
+if $\delta : \phi \supset \psi$ and $\epsilon : \psi \supset\phi$, then $\univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi$.  We present a reduction relation for this system, and prove it satisfies confluence, strong normalization and canonicity. \todo{Cross-reference lemma numbers.}  The reduction relation does not necessarily satisfy confluence on raw terms, but it does satisfy local confluence.  Hence, as
+every typed term is strongly normalizing, we know by Newman's Lemma that the reduction is confluent on the typed terms.
+
+For the future, we wish to expand the system with universal quantification, and expand it to a 2-dimensional system (with equations between proofs).
+
+\todo{Elimination of the false proposition?}
+
+\section{Predicative Higher-Order Propositional Logic}
+
+We call the following type theory $\lambda o$, or \emph{predicative higher-order propositional logic}.  Its
+syntax is given by the grammar:
+
+\[
+\begin{array}{lrcl}
+\text{Type} & A & ::= & \Omega \mid A \rightarrow A \\
+\text{Term} & M, \phi & ::= & x \mid \bot \mid \phi \supset\phi \mid \lambda x:A.M \mid MM \\
+\text{Proof} & \delta & ::= & p \mid \lambda x:\phi.\delta \mid \delta \delta
+\end{array}
+\]
+where $p$ is a \emph{proof variable} and $x$ is a \emph{term variable}.
+Its rules of deduction are given in Figure \ref{fig:lambdao}
+
+\begin{figure}
+\begin{framed}
+\[ \infer{\langle \rangle \vald}{} \qquad
+\infer{\Gamma, x : A \vald}{\Gamma \vald} \qquad 
+\infer{\Gamma, p : \phi \vald}{\Gamma \vdash \phi : \Omega} \]
+\[ \infer[(x : A \in \Gamma)]{\Gamma \vdash x : A}{\Gamma \vald} \qquad
+\infer[(p : \phi \in \Gamma)]{\Gamma \vdash p : \phi}{\Gamma \vald} \]
+\[ \infer{\Gamma \vdash \bot : \Omega}{\Gamma \vald} \qquad
+\infer{\Gamma \vdash \phi \rightarrow \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} \]
+\[ \infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \qquad
+\infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \rightarrow \psi \quad \Gamma \vdash \epsilon : \phi} \]
+\[ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \qquad
+\infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \rightarrow \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
+\[ \infer[(\phi \simeq \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
+\end{framed}
+\caption{Rules of Deduction of $\lambda o$}
+\label{fig:lambdao}
+\end{figure}
+
+\section{Extensional Equality}
+
+We extend the system to a type theory $\lambda o e$, or predicative higher-order propositional logic with extensional equality.
+
+\input{PHOPL/Grammar.tex}
+\input{PHOPL/PathSub.tex}
+\input{PHOPL/Red.tex}
+\input{PHOPL/Rules.tex}
+\input{PHOPL/Meta.tex}
+
+\subsection{Strong Normalization Proof}
+
+\input{PHOPL/Computable.tex}
+\input{PHOPL/SubC.tex}
+\input{PHOPL/MainProp.tex}
+
+%TODO Canonicity
+
+\section{$\lambda o i$}
+
+We further extend the system so that the equations are elements of $\Omega$.  This allows us, for example,
+to form propositions of the form $M =_A N \supset N =_A M$.
+
+The system $\lambda o i$ ($\lambda o$ with \emph{internal} equality) is defined as follows.  The
+syntax is formed by extending the grammar of $\lambda o$ with
+\[
+\begin{array}{lrcl}
+\text{Term} & M, \phi & ::= & \cdots \mid M =_A M \\
+\text{Proof} & \delta & ::= & \cdots \mid \reff{M} \mid \delta \supset^* \delta \mid \univ{\phi}{\phi}{\delta}{\delta} \mid \triplelambda^{MM} e : x =_A x . \delta \mid \delta_{MM} \delta\\
+& & & \quad \mid \delta =^*_A \delta \mid \delta^+ \mid \delta^-
+\end{array}
+\]
+
+The rules of deduction of $\lambda o i$ are those of Figures \ref{fig:lambdao} and \ref{fig:lambdaoe} with one modification and two additions.  The introduction rule for $\triplelambda$ is changed to %TODO Give it a name
+\[ \infer{\Gamma \vdash \triplelambda^{FG} e : x =_A y . \delta : F =_{A \rightarrow B} G}
+{\Gamma, x : A, y : A, e : x =_A y \vdash \delta : F x =_B G y} \]
+and we add the rules:
+\[ \infer{\Gamma \vdash M =_A N : \Omega}{\Gamma \vdash M : A \quad \Gamma \vdash N : A} \]
+\[ \infer{\Gamma \vdash \delta =^*_A \epsilon : (M =_A N) =_\Omega (M' =_A N')}
+{\Gamma \vdash \delta : M =_A M' \quad \Gamma \vdash \epsilon : N =_A N'} \]
+
+The reduction relation is that of $\lambda o e$ together with the following clauses:
+
+\begin{align*}
+\reff{M} =^*_A \reff{N} & \rhd \reff{M =_A N} \\
+\reff{\phi} =^*_\Omega \univ{\psi}{\chi}{\delta}{\epsilon} & \rhd 
+  \mathsf{univ}_{\phi =_\Omega \psi,\phi =_\Omega \chi} \\
+&  \left( \lambda p:\phi =_\psi. \univ{\phi}{\chi}{\lambda q:\phi.\delta (p^+ q)}
+    {\lambda q : \chi. p^- (\epsilon q)}, \right. \\
+& 
+  \left. \lambda p:\phi =_\Omega \chi. \univ{\phi}{\psi}{\lambda q:\phi. \epsilon (p^+ q)}
+    {\lambda q : \psi. p^- (\delta q)} \right) \\
+ \univ{\phi}{\psi}{\delta}{\epsilon} =^*_\Omega \reff{\chi} & \rhd
+  \mathsf{univ}_{\phi =_\Omega \chi, \psi =_\Omega \chi} \\
+&    \left( \lambda p:\phi = \chi . \univ{\psi}{\chi}{\lambda q:\psi. p^+ (\epsilon q)}
+      {\lambda q:\chi. \delta (p^- q)}, \right. \\
+&    \left. \lambda p:\psi =_\Omega \chi. \univ{\phi}{\chi}{\lambda q:\phi. p^+ (\delta q)}
+      {\lambda q:\chi. \epsilon (p^- q)} \right) \\
+\lefteqn{\univ{\phi}{\psi}{\delta}{\epsilon} =^*_\Omega \univ{\phi'}{\psi'}{\delta'}{\epsilon'}} \\
+& \rhd
+\mathsf{univ}_{\phi =_\Omega \phi', \psi =_\Omega \psi'} \\
+& \left( \lambda p:\phi = \phi'. \univ{\psi}{\psi'}{\lambda q:\psi. \delta' (p^+ (\epsilon q))}{\lambda q:\psi' . \delta (p^-(\epsilon' q))}, \right. \\
+& \left. \lambda p:\psi=_\Omega \psi' . \univ{\phi}{\phi'}{\lambda q:\phi. \epsilon' (p^+ (\delta q))}{\lambda q:\phi' . \epsilon (p^- (\delta' q))} \right) \\
+\lefteqn{\reff{F} =^*_{A \rightarrow B} \triplelambda^{G G'} e:x =_A y. P} \\
+& \rhd
+\mathsf{univ}_{F =_{A \rightarrow B} G, F =_{A \rightarrow B} G'} \\
+& \left( \lambda p : F =_{A \rightarrow B} G. \triplelambda^{F G'} e : x =_A y. 
+\trans{p_{xx} \reff{x}}{P}, \right. \\
+& \left. \lambda p : F =_{A \rightarrow B} G'. \triplelambda^{F G} e : x =_A y.
+\trans{p_{xy} e}{\sym{P}} \right) \\
+\lefteqn{\triplelambda^{F F'} e : x =_A y. P =^*_{A \rightarrow B} \reff{G}} \\
+ & \rhd
+\mathsf{univ}_{F =_{A \rightarrow B} G,F' =_{A \rightarrow B} G} \\
+& \left( \lambda p : F =_{A \rightarrow B} G .
+\triplelambda^{F' G} e : x =_A y. \right. \\
+& \trans{\sym{P\{e := \reff{x} : x \sim x\}}}
+{p_{xy}e}, \\
+& \left. \lambda p:F'=_{A \rightarrow B} G. \triplelambda^{FG} e : x =_A y.
+\trans{P}{p_{yy} \reff{y}} \right) \\
+\lefteqn{\triplelambda^{F F'} e : x =_A y. P =^*_{A \rightarrow B} \triplelambda^{G G'} e : x =_A y . Q} \\
+& \rhd 
+\mathsf{univ}_{F =_{A \rightarrow B} G,F' =_{A \rightarrow B} G'} \\
+& \left( \lambda p : F =_{A \rightarrow B} G . \triplelambda^{F' G'} e : x =_A y. \right. \\
+& \trans{\sym{P\{e := \reff{x} : x \sim x}}{\trans{p_{xx} \reff{x}}{Q}} , \\
+& \lambda p : F' =_{A \rightarrow B} G' . \triplelambda^{FG} e : x =_A y. \\
+& \mathsf{trans} \left( P \{ e := \reff{x} : x \sim x \} , \right. \\
+& \left. \left. \trans{p_{xy} e}{\sym{Q \{e := \reff{y} : y \sim y \}}} \right) \right)
+\end{align*}
+%TODO Define sym, trans
+
+\todos
+
+\begin{frame}
+\frametitle{Bibliography}
+\bibliography{type}
+\end{frame}
+
+\appendix
+
+\section{About the Formalization}
+
+\input{Prelims.tex}
+\mode<all>{\input{Grammar/Taxonomy.tex}}
+\mode<all>{\input{Grammar/Base.tex}}
+
+We define the operations of replacement and substitution on
+expressions.  
+
+\input{Grammar/Substitution/PreOpFamily.tex}
+\input{Grammar/Substitution/OpFamily.tex}
+
+The details are given in Appendix \ref{appendix:repsub}.
+
+\input{Grammar/Context.tex}
+\input{Reduction/Base.tex}
+\input{Reduction/SN.tex}
+%\input{PL/Grammar.tex}
+%\input{PL/Rules.tex}
+%\input{PL/Computable.tex}
+
+\section{Replacement and Substitution}
+\label{appendix:repsub}
+
+\input{Grammar/OpFamily/PreOpFamily.tex}
+\input{Grammar/OpFamily/Lifting.tex}
+\input{Grammar/OpFamily/LiftFamily.tex}
+\input{Grammar/OpFamily/Composition.tex}
+\input{Grammar/OpFamily/OpFamily.tex}
+\input{Grammar/Replacement.tex}
+\input{Grammar/Substitution/Lifting.tex}
+\input{Grammar/Substitution/RepSub.tex}
+\input{Grammar/Substitution/LiftFamily.tex}
+\input{Grammar/Substitution/Botsub.tex}
+
+\end{document}

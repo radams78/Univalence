@@ -1,0 +1,25 @@
+\documentclass{article}
+\bibliographystyle{plain}
+
+\usepackage[envcountsect]{beamerarticle}
+\usepackage{comment}
+
+\title{A Strongly Normalizing Computation Rule for Univalence in Higher-Order Propositional Logic}
+\author{Robin Adams \and Marc Bezem \and Thierry Coquand}
+
+\setjobnamebeamerversion{main.beamer}
+\newcommand{\url}[1]{\texttt{#1}}
+
+\newif\ifagda
+\agdafalse
+% Set to true to produce literate Agda document
+
+\ifagda
+\usepackage{fancyvrb}
+\DefineVerbatimEnvironment{code}{Verbatim}{fontsize=\footnotesize}
+\else
+\excludecomment{code}
+\fi
+
+\input{main.tex}
+

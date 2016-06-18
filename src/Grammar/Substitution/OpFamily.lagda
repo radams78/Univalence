@@ -1,0 +1,197 @@
+\AgdaHide{
+\begin{code}
+open import Grammar.Base
+
+module Grammar.Substitution.OpFamily (G : Grammar) where
+open import Prelims
+open Grammar G
+open import Grammar.OpFamily G
+open import Grammar.Replacement G
+open import Grammar.Substitution.PreOpFamily G
+open import Grammar.Substitution.Lifting G
+open import Grammar.Substitution.LiftFamily G
+open import Grammar.Substitution.RepSub G
+\end{code}
+}
+
+We now define two compositions $\bullet_1 : \mathrm{replacement} ; \mathrm{substitution} \rightarrow \mathrm{substitution}$ and $\bullet_2 : \mathrm{substitution};\mathrm{replacement} \rightarrow \mathrm{substitution}$.
+
+\begin{code}
+infixl 60 _•RS_
+_•RS_ : ∀ {U} {V} {W} → Rep V W → Sub U V → Sub U W
+(ρ •RS σ) K x = (σ K x) 〈 ρ 〉
+
+sub↑-compRS : ∀ {U} {V} {W} {K} {ρ : Rep V W} {σ : Sub U V} → sub↑ K (ρ •RS σ) ∼ rep↑ K ρ •RS sub↑ K σ
+\end{code}
+
+\AgdaHide{
+\begin{code}
+sub↑-compRS {K = K} x₀ = refl
+sub↑-compRS {U} {V} {W} {K} {ρ} {σ} {L} (↑ x) = let open ≡-Reasoning {A = Expression (W , K) (varKind L)} in 
+  begin 
+    (σ L x) 〈 ρ 〉 〈 upRep 〉
+  ≡⟨⟨ rep-comp (σ L x) ⟩⟩
+    (σ L x) 〈 upRep •R ρ 〉
+  ≡⟨⟩
+    (σ L x) 〈 rep↑ K ρ •R upRep 〉
+  ≡⟨ rep-comp (σ L x) ⟩
+    (σ L x) 〈 upRep 〉 〈 rep↑ K ρ 〉
+  ∎
+\end{code}
+}
+
+\begin{code}
+--TODO Version of composition that takes OpFamilies
+COMPRS : Composition proto-replacement SubLF SubLF
+COMPRS = record { 
+  circ = _•RS_ ; 
+  liftOp-circ = sub↑-compRS ; 
+  apV-circ = refl }
+
+sub-compRS : ∀ {U} {V} {W} {C} {K} 
+  (E : Subexpression U C K) {ρ : Rep V W} {σ : Sub U V} →
+  E ⟦ ρ •RS σ ⟧ ≡ E ⟦ σ ⟧ 〈 ρ 〉
+sub-compRS E = Composition.ap-circ COMPRS E
+
+infixl 60 _•SR_
+_•SR_ : ∀ {U} {V} {W} → Sub V W → Rep U V → Sub U W
+(σ •SR ρ) K x = σ K (ρ K x)
+
+sub↑-compSR : ∀ {U} {V} {W} {K} {σ : Sub V W} {ρ : Rep U V} → 
+  sub↑ K (σ •SR ρ) ∼ sub↑ K σ •SR rep↑ K ρ
+\end{code}
+
+\AgdaHide{
+\begin{code}
+sub↑-compSR {K = K} x₀ = refl
+sub↑-compSR (↑ x) = refl
+\end{code}
+}
+
+\begin{code}
+--TODO Rename proto-replacement to RepLF
+COMPSR : Composition SubLF proto-replacement SubLF
+COMPSR = record { 
+  circ = _•SR_ ; 
+  liftOp-circ = sub↑-compSR ; 
+  apV-circ = refl }
+
+sub-compSR : ∀ {U} {V} {W} {C} {K} 
+  (E : Subexpression U C K) {σ : Sub V W} {ρ : Rep U V} → 
+  E ⟦ σ •SR ρ ⟧ ≡ E 〈 ρ 〉 ⟦ σ ⟧
+\end{code}
+
+\AgdaHide{
+\begin{code}
+sub-compSR E = Composition.ap-circ COMPSR E
+\end{code}
+}
+
+\begin{code}
+sub↑-upRep : ∀ {U} {V} {C} {K} {L} (E : Subexpression U C K) {σ : Sub U V} →
+  E 〈 upRep 〉 ⟦ sub↑ L σ ⟧ ≡ E ⟦ σ ⟧ 〈 upRep 〉
+\end{code}
+
+\AgdaHide{
+\begin{code}
+sub↑-upRep E = liftOp-up-mixed COMPSR COMPRS (λ {_} {_} {_} {_} {E} → sym (up-is-up' {E = E})) {E}
+\end{code}
+}
+
+Composition is defined by $(\sigma \circ \rho)(x) \equiv \rho(x) [ \sigma ]$.
+
+\begin{code}
+infixl 60 _•_
+_•_ : ∀ {U} {V} {W} → Sub V W → Sub U V → Sub U W
+(σ • ρ) K x = ρ K x ⟦ σ ⟧
+\end{code}
+
+Using the fact that $\bullet_1$ and $\bullet_2$ are compositions, we are
+able to prove that this is a composition $\mathrm{substitution} ; \mathrm{substitution} \rightarrow \mathrm{substitution}$, and hence that substitution is a family of operations.
+
+\begin{code}
+sub↑-comp : ∀ {U} {V} {W} {ρ : Sub U V} {σ : Sub V W} {K} → 
+  sub↑ K (σ • ρ) ∼ sub↑ K σ • sub↑ K ρ
+\end{code}
+
+\AgdaHide{
+\begin{code}
+sub↑-comp x₀ = refl
+sub↑-comp {W = W} {ρ = ρ} {σ = σ} {K = K} {L} (↑ x) = sym (sub↑-upRep (ρ L x))
+
+sub↑-upRep₂ : ∀ {U} {V} {C} {K} {L} {M} (E : Subexpression U C M) {σ : Sub U V} → E ⇑ ⇑ ⟦ sub↑ K (sub↑ L σ) ⟧ ≡ E ⟦ σ ⟧ ⇑ ⇑
+sub↑-upRep₂ {U} {V} {C} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
+  begin
+    E ⇑ ⇑ ⟦ sub↑ K (sub↑ L σ) ⟧
+  ≡⟨ sub↑-upRep (E ⇑) ⟩
+    E ⇑ ⟦ sub↑ L σ ⟧ ⇑
+  ≡⟨ rep-congl (sub↑-upRep E) ⟩
+    E ⟦ σ ⟧ ⇑ ⇑
+  ∎
+
+sub↑-upRep₃ : ∀ {U} {V} {C} {K} {L} {M} {N} (E : Subexpression U C N) {σ : Sub U V} → E ⇑ ⇑ ⇑ ⟦ sub↑ K (sub↑ L (sub↑ M σ)) ⟧ ≡ E ⟦ σ ⟧ ⇑ ⇑ ⇑
+sub↑-upRep₃ {U} {V} {C} {K} {L} {M} {N} E {σ} = let open ≡-Reasoning in 
+  begin
+    E ⇑ ⇑ ⇑ ⟦ sub↑ K (sub↑ L (sub↑ M σ)) ⟧
+  ≡⟨ sub↑-upRep₂ (E ⇑) ⟩
+    E ⇑ ⟦ sub↑ M σ ⟧ ⇑ ⇑
+  ≡⟨ rep-congl (rep-congl (sub↑-upRep E)) ⟩
+    E ⟦ σ ⟧ ⇑ ⇑ ⇑
+  ∎
+
+rep↑-sub↑-upRep₃ : ∀ {U} {V} {W} {K1} {K2} {K3} {C} {K4} 
+                   (M : Subexpression U C K4)
+                   (σ : Sub U V) (ρ : Rep V W) →
+                    M ⇑ ⇑ ⇑ ⟦ sub↑ K1 (sub↑ K2 (sub↑ K3 σ)) ⟧ 〈 rep↑ K1 (rep↑ K2 (rep↑ K3 ρ)) 〉
+                    ≡ M ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑
+rep↑-sub↑-upRep₃ M σ ρ = trans (rep-congl (sub↑-upRep₃ M {σ})) (rep↑-upRep₃ (M ⟦ σ ⟧))
+
+assocRSSR : ∀ {U} {V} {W} {X} {ρ : Sub W X} {σ : Rep V W} {τ : Sub U V} →
+            ρ • (σ •RS τ) ∼ (ρ •SR σ) • τ
+assocRSSR {ρ = ρ} {σ} {τ} x = sym (sub-compSR (τ _ x))
+\end{code}
+}
+
+\begin{code}
+SUB : OpFamily
+SUB = record { 
+  liftFamily = SubLF;
+  isOpFamily = record { 
+    _∘_ = _•_ ; 
+    liftOp-comp = sub↑-comp ; 
+    apV-comp = refl } 
+  }
+\end{code}
+
+\AgdaHide{
+\begin{code}
+open OpFamily SUB using (comp-congl;comp-congr)
+  renaming (liftOp-idOp to sub↑-idOp;
+           ap-idOp to sub-idOp;
+           ap-congl to sub-congr;
+           ap-congr to sub-congl;
+           unitl to sub-unitl;
+           unitr to sub-unitr;
+           ∼-sym to sub-sym;
+           ∼-trans to sub-trans;
+           assoc to sub-assoc)
+  public
+\end{code}
+}
+
+\begin{frame}[fragile]
+\frametitle{Metatheorems}
+We can now prove general results such as:
+
+\begin{code}
+sub-comp : ∀ {U} {V} {W} {C} {K}
+  (E : Subexpression U C K) {σ : Sub V W} {ρ : Sub U V} →
+  E ⟦ σ • ρ ⟧ ≡ E ⟦ ρ ⟧ ⟦ σ ⟧
+\end{code}
+\end{frame}
+
+\AgdaHide{
+\begin{code}
+sub-comp = OpFamily.ap-circ SUB
+\end{code}
+}
