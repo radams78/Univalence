@@ -68,7 +68,7 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
 }
 
 \begin{code}
-  liftOp'-circ : ∀ {U V W} A {σ ρ} → 
+{-  liftOp'-circ : ∀ {U V W} A {σ ρ} → 
     _∼op_ H (liftOp' H A (circ {U} {V} {W} σ ρ)) 
       (circ (liftOp' F A σ) (liftOp' G A ρ))
 \end{code}
@@ -83,7 +83,7 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
       liftOp' H A (circ (liftOp F K σ) (liftOp G K ρ))
     ≈⟨ liftOp'-circ A ⟩
       circ (liftOp' F A (liftOp F K σ)) (liftOp' G A (liftOp G K ρ))
-    ∎
+    ∎ -}
 
   postulate liftOp''-circ : ∀ {U V W K} A {σ ρ} → 
                           _∼op_ H (liftOp'' H {K = K} A (circ {U} {V} {W} σ ρ)) 

@@ -31,7 +31,7 @@ record Taxonomy : Set₁ where
   data ExpressionKind : Set where
     varKind : VarKind → ExpressionKind
     nonVarKind : NonVarKind → ExpressionKind
---TODO: Maybe get rid of NonVarKind, and just have parent : VarKind -> Set?
+--TODO: Maybe get rid of NonVarKind?
 \end{code}
 %</Taxonomy>
 
@@ -52,10 +52,6 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
 
 \AgdaHide{
 \begin{code}
-  extend : Alphabet → List VarKind → Alphabet
-  extend A [] = A
-  extend A (K ∷ KK) = extend (A , K) KK
-
   snoc-extend : Alphabet → snocList VarKind → Alphabet
   snoc-extend A [] = A
   snoc-extend A (KK snoc K) = snoc-extend A KK , K

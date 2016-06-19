@@ -47,7 +47,7 @@ A \emph{taxononmy} consists of:
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaInductiveConstructor{nonVarKind} \AgdaSymbol{:} \AgdaField{NonVarKind} \AgdaSymbol{→} \AgdaDatatype{ExpressionKind}\<%
 \\
-\>\AgdaComment{--TODO: Maybe get rid of NonVarKind, and just have parent : VarKind -> Set?}\<%
+\>\AgdaComment{--TODO: Maybe get rid of NonVarKind?}\<%
 \end{code}
 %</Taxonomy>
 
@@ -75,17 +75,6 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
 
 \AgdaHide{
 \begin{code}%
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{extend} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaDatatype{List} \AgdaField{VarKind} \AgdaSymbol{→} \AgdaDatatype{Alphabet}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{extend} \AgdaBound{A} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaBound{A}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{extend} \AgdaBound{A} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{∷} \AgdaBound{KK}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{extend} \AgdaSymbol{(}\AgdaBound{A} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{)} \AgdaBound{KK}\<%
-\\
-%
-\\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{snoc-extend} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaDatatype{snocList} \AgdaField{VarKind} \AgdaSymbol{→} \AgdaDatatype{Alphabet}\<%
 \\

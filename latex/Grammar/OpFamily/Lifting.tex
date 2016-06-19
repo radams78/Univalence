@@ -44,14 +44,9 @@ Given an operation $\sigma : U \rightarrow V$ and a list of variable kinds $A \e
 the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \cdots ) , A_n)$.
 
 \begin{code}%
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{A} \AgdaSymbol{→} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Op} \AgdaSymbol{(}\AgdaFunction{extend} \AgdaBound{U} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{extend} \AgdaBound{V} \AgdaBound{A}\AgdaSymbol{)}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'} \AgdaInductiveConstructor{[]} \AgdaBound{σ} \AgdaSymbol{=} \AgdaBound{σ}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{∷} \AgdaBound{A}\AgdaSymbol{)} \AgdaBound{σ} \AgdaSymbol{=} \AgdaFunction{liftOp'} \AgdaBound{A} \AgdaSymbol{(}\AgdaField{liftOp} \AgdaBound{K} \AgdaBound{σ}\AgdaSymbol{)}\<%
+\>\AgdaComment{\{-  liftOp' : ∀ \{U\} \{V\} A → Op U V → Op (extend U A) (extend V A)\<\\
+\>  liftOp' [] σ = σ\<\\
+\>  liftOp' (K ∷ A) σ = liftOp' A (liftOp K σ) -\}}\<%
 \\
 %
 \\
@@ -66,21 +61,16 @@ the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \c
 \\
 %
 \\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'-cong} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{A} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \<[46]%
-\>[46]\<%
-\\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaBound{ρ} \AgdaFunction{∼op} \AgdaBound{σ} \AgdaSymbol{→} \AgdaFunction{liftOp'} \AgdaBound{A} \AgdaBound{ρ} \AgdaFunction{∼op} \AgdaFunction{liftOp'} \AgdaBound{A} \AgdaBound{σ}\<%
+\>\AgdaComment{\{-  liftOp'-cong : ∀ \{U\} \{V\} A \{ρ σ : Op U V\} → \<\\
+\>    ρ ∼op σ → liftOp' A ρ ∼op liftOp' A σ\<\\
+\>}\<%
 \end{code}
 
 \AgdaHide{
 \begin{code}%
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'-cong} \AgdaInductiveConstructor{[]} \AgdaBound{ρ-is-σ} \AgdaSymbol{=} \AgdaBound{ρ-is-σ}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'-cong} \AgdaSymbol{(\_} \AgdaInductiveConstructor{∷} \AgdaBound{A}\AgdaSymbol{)} \AgdaBound{ρ-is-σ} \AgdaSymbol{=} \AgdaFunction{liftOp'-cong} \AgdaBound{A} \AgdaSymbol{(}\AgdaField{liftOp-cong} \AgdaBound{ρ-is-σ}\AgdaSymbol{)}\<%
+\>\AgdaComment{\<\\
+\>  liftOp'-cong [] ρ-is-σ = ρ-is-σ\<\\
+\>  liftOp'-cong (\_ ∷ A) ρ-is-σ = liftOp'-cong A (liftOp-cong ρ-is-σ) -\}}\<%
 \\
 %
 \\

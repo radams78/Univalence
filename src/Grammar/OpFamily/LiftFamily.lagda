@@ -85,7 +85,7 @@ $E[\id{V}] \equiv E$
 }
  
 \begin{code}      
-  liftOp'-idOp : ∀ {V} A → 
+{-  liftOp'-idOp : ∀ {V} A → 
     liftOp' A (idOp V) ∼op idOp (extend V A)
 \end{code}
 
@@ -99,7 +99,7 @@ $E[\id{V}] \equiv E$
       liftOp' A (idOp (V , K))
     ≈⟨ liftOp'-idOp A ⟩
       idOp (extend (V , K) A)
-    ∎
+    ∎ -}
 
   postulate liftOp''-idOp : ∀ {V} {K} A → 
                           liftOp'' {K = K} A (idOp V) ∼op idOp (dom V A)

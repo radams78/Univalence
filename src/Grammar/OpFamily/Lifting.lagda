@@ -27,22 +27,22 @@ Given an operation $\sigma : U \rightarrow V$ and a list of variable kinds $A \e
 the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \cdots ) , A_n)$.
 
 \begin{code}
-  liftOp' : ∀ {U} {V} A → Op U V → Op (extend U A) (extend V A)
+{-  liftOp' : ∀ {U} {V} A → Op U V → Op (extend U A) (extend V A)
   liftOp' [] σ = σ
-  liftOp' (K ∷ A) σ = liftOp' A (liftOp K σ)
+  liftOp' (K ∷ A) σ = liftOp' A (liftOp K σ) -}
 
   liftOp'' : ∀ {U} {V} {K} A → Op U V → Op (dom U {K} A) (dom V A)
   liftOp'' (_ ✧) σ = σ
   liftOp'' (K abs A) σ = liftOp'' A (liftOp K σ)
 
-  liftOp'-cong : ∀ {U} {V} A {ρ σ : Op U V} → 
+{-  liftOp'-cong : ∀ {U} {V} A {ρ σ : Op U V} → 
     ρ ∼op σ → liftOp' A ρ ∼op liftOp' A σ
 \end{code}
 
 \AgdaHide{
 \begin{code}
   liftOp'-cong [] ρ-is-σ = ρ-is-σ
-  liftOp'-cong (_ ∷ A) ρ-is-σ = liftOp'-cong A (liftOp-cong ρ-is-σ)
+  liftOp'-cong (_ ∷ A) ρ-is-σ = liftOp'-cong A (liftOp-cong ρ-is-σ) -}
 
   postulate liftOp''-cong : ∀ {U} {V} {K} A {ρ σ : Op U V} → 
                           ρ ∼op σ → liftOp'' {K = K} A ρ ∼op liftOp'' A σ

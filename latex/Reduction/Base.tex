@@ -317,21 +317,16 @@ $E[\rho] \twoheadrightarrow_R E[\sigma]$ for all $K$, $A$, $E$.
 }
 
 \begin{code}%
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'-red} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{respects'} \AgdaSymbol{→} \<[55]%
-\>[55]\<%
-\\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaBound{ρ} \AgdaFunction{↠s} \AgdaBound{σ} \AgdaSymbol{→} \AgdaFunction{liftOp'} \AgdaBound{A} \AgdaBound{ρ} \AgdaFunction{↠s} \AgdaFunction{liftOp'} \AgdaBound{A} \AgdaBound{σ}\<%
+\>\AgdaComment{\{-  liftOp'-red : ∀ \{U V A\} \{ρ σ : Op U V\} → respects' → \<\\
+\>    ρ ↠s σ → liftOp' A ρ ↠s liftOp' A σ\<\\
+\>}\<%
 \end{code}
 
 \AgdaHide{
 \begin{code}%
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'-red} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{\_} \AgdaBound{ρ↠σ} \AgdaSymbol{=} \AgdaBound{ρ↠σ}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'-red} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{∷} \AgdaBound{A}\AgdaSymbol{)\}} \AgdaBound{hyp} \AgdaBound{ρ↠σ} \AgdaSymbol{=} \AgdaFunction{liftOp'-red} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaBound{A}\AgdaSymbol{\}} \AgdaBound{hyp} \AgdaSymbol{(}\AgdaFunction{liftOp-red} \AgdaBound{hyp} \AgdaBound{ρ↠σ}\AgdaSymbol{)}\<%
+\>\AgdaComment{\<\\
+\>  liftOp'-red \{A = []\} \_ ρ↠σ = ρ↠σ\<\\
+\>  liftOp'-red \{A = (K ∷ A)\} hyp ρ↠σ = liftOp'-red \{A = A\} hyp (liftOp-red hyp ρ↠σ) -\}}\<%
 \\
 %
 \\

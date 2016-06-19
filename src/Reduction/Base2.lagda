@@ -188,14 +188,14 @@ $E[\rho] \twoheadrightarrow_R E[\sigma]$ for all $K$, $A$, $E$.
 }
 
 \begin{code}
-  liftOp'-red : ∀ {U V A} {ρ σ : Op U V} → respects' → 
+{-  liftOp'-red : ∀ {U V A} {ρ σ : Op U V} → respects' → 
     ρ ↠s σ → liftOp' A ρ ↠s liftOp' A σ
 \end{code}
 
 \AgdaHide{
 \begin{code}
   liftOp'-red {A = []} _ ρ↠σ = ρ↠σ
-  liftOp'-red {A = (K ∷ A)} hyp ρ↠σ = liftOp'-red {A = A} hyp (liftOp-red hyp ρ↠σ)
+  liftOp'-red {A = (K ∷ A)} hyp ρ↠σ = liftOp'-red {A = A} hyp (liftOp-red hyp ρ↠σ) -}
 
   postulate liftOp''-red : ∀ {U V K A} {ρ σ : Op U V} → respects' → 
                            ρ ↠s σ → liftOp'' {K = K} A ρ ↠s liftOp'' A σ

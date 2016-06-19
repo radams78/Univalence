@@ -117,47 +117,24 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
 }
 
 \begin{code}%
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'-circ} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaBound{A} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{→} \<[37]%
-\>[37]\<%
-\\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{\_∼op\_} \AgdaBound{H} \AgdaSymbol{(}\AgdaFunction{liftOp'} \AgdaBound{H} \AgdaBound{A} \AgdaSymbol{(}\AgdaField{circ} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaBound{σ} \AgdaBound{ρ}\AgdaSymbol{))} \<[49]%
-\>[49]\<%
-\\
-\>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaSymbol{(}\AgdaField{circ} \AgdaSymbol{(}\AgdaFunction{liftOp'} \AgdaBound{F} \AgdaBound{A} \AgdaBound{σ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{liftOp'} \AgdaBound{G} \AgdaBound{A} \AgdaBound{ρ}\AgdaSymbol{))}\<%
+\>\AgdaComment{\{-  liftOp'-circ : ∀ \{U V W\} A \{σ ρ\} → \<\\
+\>    \_∼op\_ H (liftOp' H A (circ \{U\} \{V\} \{W\} σ ρ)) \<\\
+\>      (circ (liftOp' F A σ) (liftOp' G A ρ))\<\\
+\>}\<%
 \end{code}
 
 \AgdaHide{
 \begin{code}%
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'-circ} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaFunction{∼-refl} \AgdaBound{H}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'-circ} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{∷} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{σ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{EqReasoning} \AgdaSymbol{(}\AgdaFunction{OP} \AgdaBound{H} \AgdaSymbol{\_} \AgdaSymbol{\_)} \AgdaKeyword{in} \<[80]%
-\>[80]\<%
-\\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{begin}\<%
-\\
-\>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{liftOp'} \AgdaBound{H} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{H} \AgdaBound{K} \AgdaSymbol{(}\AgdaField{circ} \AgdaBound{σ} \AgdaBound{ρ}\AgdaSymbol{))}\<%
-\\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≈⟨} \AgdaFunction{liftOp'-cong} \AgdaBound{H} \AgdaBound{A} \AgdaField{liftOp-circ} \AgdaFunction{⟩}\<%
-\\
-\>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{liftOp'} \AgdaBound{H} \AgdaBound{A} \AgdaSymbol{(}\AgdaField{circ} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{F} \AgdaBound{K} \AgdaBound{σ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{G} \AgdaBound{K} \AgdaBound{ρ}\AgdaSymbol{))}\<%
-\\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≈⟨} \AgdaFunction{liftOp'-circ} \AgdaBound{A} \AgdaFunction{⟩}\<%
-\\
-\>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaField{circ} \AgdaSymbol{(}\AgdaFunction{liftOp'} \AgdaBound{F} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{F} \AgdaBound{K} \AgdaBound{σ}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{liftOp'} \AgdaBound{G} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{G} \AgdaBound{K} \AgdaBound{ρ}\AgdaSymbol{))}\<%
-\\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{∎}\<%
+\>\AgdaComment{\<\\
+\>  liftOp'-circ [] = ∼-refl H\<\\
+\>  liftOp'-circ \{U\} \{V\} \{W\} (K ∷ A) \{σ\} \{ρ\} = let open EqReasoning (OP H \_ \_) in \<\\
+\>    begin\<\\
+\>      liftOp' H A (liftOp H K (circ σ ρ))\<\\
+\>    ≈⟨ liftOp'-cong H A liftOp-circ ⟩\<\\
+\>      liftOp' H A (circ (liftOp F K σ) (liftOp G K ρ))\<\\
+\>    ≈⟨ liftOp'-circ A ⟩\<\\
+\>      circ (liftOp' F A (liftOp F K σ)) (liftOp' G A (liftOp G K ρ))\<\\
+\>    ∎ -\}}\<%
 \\
 %
 \\
