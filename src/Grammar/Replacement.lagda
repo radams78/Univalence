@@ -21,7 +21,7 @@ function application, the identity function and function composition.  The succe
 and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
 
 \begin{code}
-Rep : Alphabet → Alphabet → Set
+Rep : Alphabet VarKind → Alphabet VarKind → Set
 Rep U V = ∀ K → Var U K → Var V K
 
 rep↑ : ∀ {U} {V} K → Rep U V → Rep (U , K) (V , K)

@@ -85,9 +85,9 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
       circ (liftOp' F A (liftOp F K σ)) (liftOp' G A (liftOp G K ρ))
     ∎ -}
 
-  postulate liftOp''-circ : ∀ {U V W K} A {σ ρ} → 
-                          _∼op_ H (liftOp'' H {K = K} A (circ {U} {V} {W} σ ρ)) 
-                          (circ (liftOp'' F A σ) (liftOp'' G A ρ))
+  postulate liftOp'''-circ : ∀ {U V W} A {σ ρ} → 
+                          _∼op_ H (liftOp''' H A (circ {U} {V} {W} σ ρ)) 
+                          (circ (liftOp''' F A σ) (liftOp''' G A ρ))
 \end{code}
 }
 
@@ -104,11 +104,11 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
   ap-circ (_,,_ {A = A} E E') {σ} {ρ} = cong₂ _,,_
     (let open ≡-Reasoning in 
     begin
-      ap H (liftOp'' H A (circ σ ρ)) E
-    ≡⟨ ap-congl H E (liftOp''-circ A) ⟩
-      ap H (circ (liftOp'' F A σ) (liftOp'' G A ρ)) E
+      ap H (liftOp''' H A (circ σ ρ)) E
+    ≡⟨ ap-congl H E (liftOp'''-circ A) ⟩
+      ap H (circ (liftOp''' F A σ) (liftOp''' G A ρ)) E
     ≡⟨ ap-circ E ⟩
-      ap F (liftOp'' F A σ) (ap G (liftOp'' G A ρ) E)
+      ap F (liftOp''' F A σ) (ap G (liftOp''' G A ρ) E)
     ∎) 
     (ap-circ E')
 

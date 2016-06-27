@@ -10,6 +10,9 @@ module Prelims where
 open import Relation.Binary public hiding (_⇒_)
 import Relation.Binary.EqReasoning
 open import Relation.Binary.PropositionalEquality public using (_≡_;refl;sym;trans;cong;cong₂;subst;subst₂)
+open import Data.List
+open import Prelims.Alphabet public
+open import Prelims.PiExp public
 
 module EqReasoning {s₁ s₂} (S : Setoid s₁ s₂) where
   open Setoid S using (_≈_)
@@ -45,10 +48,5 @@ subst₄ : ∀ {A1 A2 A3 A4 : Set} (P : A1 → A2 -> A3 -> A4  → Set)
          a1 ≡ a1' -> a2 ≡ a2' -> a3 ≡ a3' -> a4 ≡ a4' ->
          P a1 a2 a3 a4 -> P a1' a2' a3' a4'
 subst₄ _ refl refl refl refl Paaaa = Paaaa
-
-infixl 20 _snoc_
-data snocList (A : Set) : Set where
-  [] : snocList A
-  _snoc_ : snocList A → A → snocList A
 \end{code}
 }

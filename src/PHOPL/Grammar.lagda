@@ -51,20 +51,20 @@ module PHOPLgrammar where
 
   data PHOPLcon : ∀ {K : ExpressionKind} → Kind (-Constructor K) → Set where
     -ty : Type → PHOPLcon (nonVarKind -Type ●)
-    -appProof : PHOPLcon (varKind -Proof ✧ ⟶ varKind -Proof ✧ ⟶ varKind -Proof ●)
-    -lamProof : PHOPLcon (varKind -Term ✧ ⟶ (-Proof abs varKind -Proof ✧) ⟶ varKind -Proof ●)
+    -appProof : PHOPLcon (varKind -Proof ♣ ⟶ varKind -Proof ♣ ⟶ varKind -Proof ●)
+    -lamProof : PHOPLcon (varKind -Term ♣ ⟶ (-Proof ⟶ varKind -Proof ♣) ⟶ varKind -Proof ●)
     -bot : PHOPLcon (varKind -Term ●)
-    -imp : PHOPLcon (varKind -Term ✧ ⟶ varKind -Term ✧ ⟶ varKind -Term ●) 
-    -appTerm : PHOPLcon (varKind -Term ✧ ⟶ varKind -Term ✧ ⟶ varKind -Term ●)
-    -lamTerm : Type → PHOPLcon ((-Term abs varKind -Term ✧) ⟶ varKind -Term ●)
-    -ref : PHOPLcon (varKind -Term ✧ ⟶ varKind -Path ●)
-    -imp* : PHOPLcon (varKind -Path ✧ ⟶ varKind -Path ✧ ⟶ varKind -Path ●)
-    -univ : PHOPLcon (varKind -Term ✧ ⟶ varKind -Term ✧ ⟶ varKind -Proof ✧ ⟶ varKind -Proof ✧ ⟶ varKind -Path ●)
-    -lll : Type → PHOPLcon (-Term abs -Term abs -Path abs varKind -Path ✧ ⟶ varKind -Path ●)
-    -app* : PHOPLcon (varKind -Term ✧ ⟶ varKind -Term ✧ ⟶ varKind -Path ✧ ⟶ varKind -Path ✧ ⟶ varKind -Path ●)
-    -plus : PHOPLcon (varKind -Path ✧ ⟶ varKind -Proof ●)
-    -minus : PHOPLcon (varKind -Path ✧ ⟶ varKind -Proof ●)
-    -eq : Type → PHOPLcon (varKind -Term ✧ ⟶ varKind -Term ✧ ⟶ nonVarKind -Equation ●)
+    -imp : PHOPLcon (varKind -Term ♣ ⟶ varKind -Term ♣ ⟶ varKind -Term ●) 
+    -appTerm : PHOPLcon (varKind -Term ♣ ⟶ varKind -Term ♣ ⟶ varKind -Term ●)
+    -lamTerm : Type → PHOPLcon ((-Term ⟶ varKind -Term ♣) ⟶ varKind -Term ●)
+    -ref : PHOPLcon (varKind -Term ♣ ⟶ varKind -Path ●)
+    -imp* : PHOPLcon (varKind -Path ♣ ⟶ varKind -Path ♣ ⟶ varKind -Path ●)
+    -univ : PHOPLcon (varKind -Term ♣ ⟶ varKind -Term ♣ ⟶ varKind -Proof ♣ ⟶ varKind -Proof ♣ ⟶ varKind -Path ●)
+    -lll : Type → PHOPLcon ((-Term ⟶ -Term ⟶ -Path ⟶ varKind -Path ♣) ⟶ varKind -Path ●)
+    -app* : PHOPLcon (varKind -Term ♣ ⟶ varKind -Term ♣ ⟶ varKind -Path ♣ ⟶ varKind -Path ♣ ⟶ varKind -Path ●)
+    -plus : PHOPLcon (varKind -Path ♣ ⟶ varKind -Proof ●)
+    -minus : PHOPLcon (varKind -Path ♣ ⟶ varKind -Proof ●)
+    -eq : Type → PHOPLcon (varKind -Term ♣ ⟶ varKind -Term ♣ ⟶ nonVarKind -Equation ●)
 
   PHOPLparent : PHOPLVarKind → ExpressionKind
   PHOPLparent -Proof = varKind -Term

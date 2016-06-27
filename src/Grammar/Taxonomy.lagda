@@ -31,59 +31,12 @@ record Taxonomy : Set₁ where
   data ExpressionKind : Set where
     varKind : VarKind → ExpressionKind
     nonVarKind : NonVarKind → ExpressionKind
+
+  AbstractionKind : Set
+  AbstractionKind = PiExp VarKind ExpressionKind
 --TODO: Maybe get rid of NonVarKind?
 \end{code}
 %</Taxonomy>
-
-\begin{frame}[fragile]
-\frametitle{Alphabets}
-An \emph{alphabet} $A$ consists of a finite set of \emph{variables},
-\mode<article>{to each of which is assigned a variable kind $K$.
-Let $\emptyset$ be the empty alphabet, and $(A , K)$ be the result of extending the alphabet $A$ with one
-fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of all variables in $A$ of kind $K$.}
-\mode<beamer>{each with a variable kind.}
-
-\begin{code}
-  infixl 55 _,_
-  data Alphabet : Set where
-    ∅ : Alphabet
-    _,_ : Alphabet → VarKind → Alphabet
-\end{code}
-
-\AgdaHide{
-\begin{code}
-  snoc-extend : Alphabet → snocList VarKind → Alphabet
-  snoc-extend A [] = A
-  snoc-extend A (KK snoc K) = snoc-extend A KK , K
-\end{code}
-}
-
-\begin{code}
-  data Var : Alphabet → VarKind → Set where
-    x₀ : ∀ {V} {K} → Var (V , K) K
-    ↑ : ∀ {V} {K} {L} → Var V L → Var (V , K) L
-\end{code}
-
-\AgdaHide{
-\begin{code}
-  x₁ : ∀ {V} {K} {L} → Var (V , K , L) K
-\end{code}
-}
-
-\begin{code}
-  x₁ = ↑ x₀
-\end{code}
-
-\AgdaHide{
-\begin{code}
-  x₂ : ∀ {V} {K} {L} {L'} → Var (V , K , L , L') K
-\end{code}
-}
-
-\begin{code}
-  x₂ = ↑ x₁
-\end{code}
-\end{frame}
 
 A constructor $c$ of kind (\ref{eq:conkind}) is a constructor that takes $m$ arguments of kind $B_1$, \ldots, $B_m$, and binds $r_i$ variables in its $i$th argument of kind $A_{ij}$,
 producing an expression of kind $C$.  We write this expression as
@@ -103,25 +56,13 @@ We formalise this as follows.  First, we construct the sets of expression kinds 
 There are two \emph{classes} of kinds: expression kinds and constructor kinds.
 
 \begin{code}
-  infix 22 _✧
-  infixr 21 _abs_
-  data AbstractionKind : ExpressionKind → Set where
-    _✧ : ∀ K → AbstractionKind K
-    _abs_ : ∀ {K} → VarKind → AbstractionKind K → AbstractionKind K
-
-  infix 22 _●
-  infixr 20 _⟶_
-  data ConstructorKind : ExpressionKind → Set where
-    _● : ∀ K → ConstructorKind K
-    _⟶_ : ∀ {L} {K} → AbstractionKind L → ConstructorKind K → ConstructorKind K
-
   data KindClass : Set where
     -Expression : KindClass
-    -Constructor : ExpressionKind → KindClass
+    -Constructor : KindClass
 
   Kind : KindClass → Set
   Kind -Expression = ExpressionKind
-  Kind (-Constructor K) = ConstructorKind K
+  Kind -Constructor = List AbstractionKind
 \end{code}
 \end{frame}
 %TODO Colours in Agda code?

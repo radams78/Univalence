@@ -101,8 +101,8 @@ $E[\id{V}] \equiv E$
       idOp (extend (V , K) A)
     ∎ -}
 
-  postulate liftOp''-idOp : ∀ {V} {K} A → 
-                          liftOp'' {K = K} A (idOp V) ∼op idOp (dom V A)
+  postulate liftOp'''-idOp : ∀ {V} A → 
+                           liftOp''' A (idOp V) ∼op idOp (dom V A)
 \end{code}
 }
 
@@ -116,6 +116,6 @@ $E[\id{V}] \equiv E$
   ap-idOp {E = var x} = apV-idOp x
   ap-idOp {E = app c EE} = cong (app c) ap-idOp
   ap-idOp {E = out} = refl
-  ap-idOp {E = _,,_ {A = A} E F} = cong₂ _,,_ (trans (ap-congl E (liftOp''-idOp A)) ap-idOp) ap-idOp
+  ap-idOp {E = _,,_ {A = A} E F} = cong₂ _,,_ (trans (ap-congl E (liftOp'''-idOp A)) ap-idOp) ap-idOp
 \end{code}
 }

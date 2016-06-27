@@ -6,6 +6,7 @@ module Grammar.Context (G : Grammar) where
 
 open import Data.Nat
 open import Data.Fin
+open import Prelims
 open Grammar G
 open import Grammar.Replacement G
 \end{code}
@@ -22,7 +23,7 @@ The \emph{domain} of this context is the alphabet $\{ x_1, \ldots, x_n \}$.
 
 \begin{code}
 infixl 55 _,_
-data Context : Alphabet → Set where
+data Context : Alphabet VarKind → Set where
   〈〉 : Context ∅
   _,_ : ∀ {V} {K} → Context V → Expression V (parent K) → 
     Context (V , K)

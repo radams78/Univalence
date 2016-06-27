@@ -21,10 +21,10 @@ $(V , K) \Rightarrow V$:
 
 \AgdaHide{
 \begin{code}
-botsub : ∀ {V} {A} → ExpList V A → Sub (snoc-extend V A) V
-botsub {A = []} _ _ x = var x
-botsub {A = _ snoc _} (_ snoc E) _ x₀ = E
-botsub {A = _ snoc _} (EE snoc _) L (↑ x) = botsub EE L x
+botsub : ∀ {V} {A} → ExpList V A → Sub (V ⊎ A) V
+botsub {A = ∅} _ _ x = var x
+botsub {A = _ , _} (_ snoc E) _ x₀ = E
+botsub {A = _ , _} (EE snoc _) L (↑ x) = botsub EE L x
 \end{code}
 }
 

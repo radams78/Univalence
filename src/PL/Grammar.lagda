@@ -39,10 +39,10 @@ module PLgrammar where
   prp = nonVarKind -prp
 
   data PLCon : ∀ {K : ExpressionKind} → Kind (-Constructor K) → Set where
-    -app : PLCon (proof ✧ ⟶ proof ✧ ⟶ proof ●)
-    -lam : PLCon (prp ✧ ⟶ (-proof abs proof ✧) ⟶ proof ●)
+    -app : PLCon (proof ♣ ⟶ proof ♣ ⟶ proof ●)
+    -lam : PLCon (prp ♣ ⟶ (-proof ⟶ proof ♣) ⟶ proof ●)
     -bot : PLCon (prp ●)
-    -imp : PLCon (prp ✧ ⟶ prp ✧ ⟶ prp ●)
+    -imp : PLCon (prp ♣ ⟶ prp ♣ ⟶ prp ●)
 
   PLparent : VarKind → ExpressionKind
   PLparent -proof = prp

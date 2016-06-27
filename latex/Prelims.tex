@@ -15,6 +15,12 @@ Test
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Relation.Binary.PropositionalEquality} \AgdaKeyword{public} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaDatatype{\_≡\_}\AgdaSymbol{;}\AgdaInductiveConstructor{refl}\AgdaSymbol{;}\AgdaFunction{sym}\AgdaSymbol{;}\AgdaFunction{trans}\AgdaSymbol{;}\AgdaFunction{cong}\AgdaSymbol{;}\AgdaFunction{cong₂}\AgdaSymbol{;}\AgdaFunction{subst}\AgdaSymbol{;}\AgdaFunction{subst₂}\AgdaSymbol{)}\<%
 \\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.List}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims.Alphabet} \AgdaKeyword{public}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims.PiExp} \AgdaKeyword{public}\<%
+\\
 %
 \\
 \>\AgdaKeyword{module} \AgdaModule{EqReasoning} \AgdaSymbol{\{}\AgdaBound{s₁} \AgdaBound{s₂}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{S} \AgdaSymbol{:} \AgdaRecord{Setoid} \AgdaBound{s₁} \AgdaBound{s₂}\AgdaSymbol{)} \AgdaKeyword{where}\<%
@@ -102,17 +108,5 @@ Test
 \>[9]\AgdaBound{P} \AgdaBound{a1} \AgdaBound{a2} \AgdaBound{a3} \AgdaBound{a4} \AgdaSymbol{->} \AgdaBound{P} \AgdaBound{a1'} \AgdaBound{a2'} \AgdaBound{a3'} \AgdaBound{a4'}\<%
 \\
 \>\AgdaFunction{subst₄} \AgdaSymbol{\_} \AgdaInductiveConstructor{refl} \AgdaInductiveConstructor{refl} \AgdaInductiveConstructor{refl} \AgdaInductiveConstructor{refl} \AgdaBound{Paaaa} \AgdaSymbol{=} \AgdaBound{Paaaa}\<%
-\\
-%
-\\
-\>\AgdaKeyword{infixl} \AgdaNumber{20} \AgdaFixityOp{\_snoc\_}\<%
-\\
-\>\AgdaKeyword{data} \AgdaDatatype{snocList} \AgdaSymbol{(}\AgdaBound{A} \AgdaSymbol{:} \AgdaPrimitiveType{Set}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaInductiveConstructor{[]} \AgdaSymbol{:} \AgdaDatatype{snocList} \AgdaBound{A}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaInductiveConstructor{\_snoc\_} \AgdaSymbol{:} \AgdaDatatype{snocList} \AgdaBound{A} \AgdaSymbol{→} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{snocList} \AgdaBound{A}\<%
 \end{code}
 }

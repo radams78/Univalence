@@ -139,15 +139,15 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
 %
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{postulate} \AgdaPostulate{liftOp''-circ} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W} \AgdaBound{K}\AgdaSymbol{\}} \AgdaBound{A} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{→} \<[50]%
-\>[50]\<%
+\>[2]\AgdaKeyword{postulate} \AgdaPostulate{liftOp'''-circ} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaBound{A} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{→} \<[49]%
+\>[49]\<%
 \\
 \>[2]\AgdaIndent{26}{}\<[26]%
-\>[26]\AgdaFunction{\_∼op\_} \AgdaBound{H} \AgdaSymbol{(}\AgdaFunction{liftOp''} \AgdaBound{H} \AgdaSymbol{\{}\AgdaArgument{K} \AgdaSymbol{=} \AgdaBound{K}\AgdaSymbol{\}} \AgdaBound{A} \AgdaSymbol{(}\AgdaField{circ} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaBound{σ} \AgdaBound{ρ}\AgdaSymbol{))} \<[80]%
-\>[80]\<%
+\>[26]\AgdaFunction{\_∼op\_} \AgdaBound{H} \AgdaSymbol{(}\AgdaFunction{liftOp'''} \AgdaBound{H} \AgdaBound{A} \AgdaSymbol{(}\AgdaField{circ} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaBound{σ} \AgdaBound{ρ}\AgdaSymbol{))} \<[73]%
+\>[73]\<%
 \\
 \>[2]\AgdaIndent{26}{}\<[26]%
-\>[26]\AgdaSymbol{(}\AgdaField{circ} \AgdaSymbol{(}\AgdaFunction{liftOp''} \AgdaBound{F} \AgdaBound{A} \AgdaBound{σ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{liftOp''} \AgdaBound{G} \AgdaBound{A} \AgdaBound{ρ}\AgdaSymbol{))}\<%
+\>[26]\AgdaSymbol{(}\AgdaField{circ} \AgdaSymbol{(}\AgdaFunction{liftOp'''} \AgdaBound{F} \AgdaBound{A} \AgdaBound{σ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{liftOp'''} \AgdaBound{G} \AgdaBound{A} \AgdaBound{ρ}\AgdaSymbol{))}\<%
 \end{code}
 }
 
@@ -182,19 +182,19 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
 \>[4]\AgdaFunction{begin}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{ap} \AgdaBound{H} \AgdaSymbol{(}\AgdaFunction{liftOp''} \AgdaBound{H} \AgdaBound{A} \AgdaSymbol{(}\AgdaField{circ} \AgdaBound{σ} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaBound{E}\<%
+\>[6]\AgdaFunction{ap} \AgdaBound{H} \AgdaSymbol{(}\AgdaFunction{liftOp'''} \AgdaBound{H} \AgdaBound{A} \AgdaSymbol{(}\AgdaField{circ} \AgdaBound{σ} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaBound{E}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≡⟨} \AgdaFunction{ap-congl} \AgdaBound{H} \AgdaBound{E} \AgdaSymbol{(}\AgdaPostulate{liftOp''-circ} \AgdaBound{A}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
+\>[4]\AgdaFunction{≡⟨} \AgdaFunction{ap-congl} \AgdaBound{H} \AgdaBound{E} \AgdaSymbol{(}\AgdaPostulate{liftOp'''-circ} \AgdaBound{A}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{ap} \AgdaBound{H} \AgdaSymbol{(}\AgdaField{circ} \AgdaSymbol{(}\AgdaFunction{liftOp''} \AgdaBound{F} \AgdaBound{A} \AgdaBound{σ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{liftOp''} \AgdaBound{G} \AgdaBound{A} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaBound{E}\<%
+\>[6]\AgdaFunction{ap} \AgdaBound{H} \AgdaSymbol{(}\AgdaField{circ} \AgdaSymbol{(}\AgdaFunction{liftOp'''} \AgdaBound{F} \AgdaBound{A} \AgdaBound{σ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{liftOp'''} \AgdaBound{G} \AgdaBound{A} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaBound{E}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaFunction{≡⟨} \AgdaFunction{ap-circ} \AgdaBound{E} \AgdaFunction{⟩}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{ap} \AgdaBound{F} \AgdaSymbol{(}\AgdaFunction{liftOp''} \AgdaBound{F} \AgdaBound{A} \AgdaBound{σ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{ap} \AgdaBound{G} \AgdaSymbol{(}\AgdaFunction{liftOp''} \AgdaBound{G} \AgdaBound{A} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{E}\AgdaSymbol{)}\<%
+\>[6]\AgdaFunction{ap} \AgdaBound{F} \AgdaSymbol{(}\AgdaFunction{liftOp'''} \AgdaBound{F} \AgdaBound{A} \AgdaBound{σ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{ap} \AgdaBound{G} \AgdaSymbol{(}\AgdaFunction{liftOp'''} \AgdaBound{G} \AgdaBound{A} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{E}\AgdaSymbol{)}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaFunction{∎}\AgdaSymbol{)} \<[7]%

@@ -21,7 +21,7 @@ A \emph{substitution} $\sigma$ from alphabet $U$ to alphabet $V$, $\sigma : U \R
 \mode<beamer>{A \emph{substitution} between alphabets $U$ and $V$ maps variables of $U$ to expressions of $V$.}
 
 \begin{code}
-Sub : Alphabet → Alphabet → Set
+Sub : Alphabet VarKind → Alphabet VarKind → Set
 Sub U V = ∀ K → Var U K → Expression V (varKind K)
 \end{code}
 

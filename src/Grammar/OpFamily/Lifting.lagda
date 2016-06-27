@@ -31,9 +31,11 @@ the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \c
   liftOp' [] σ = σ
   liftOp' (K ∷ A) σ = liftOp' A (liftOp K σ) -}
 
-  liftOp'' : ∀ {U} {V} {K} A → Op U V → Op (dom U {K} A) (dom V A)
-  liftOp'' (_ ✧) σ = σ
-  liftOp'' (K abs A) σ = liftOp'' A (liftOp K σ)
+  liftOp'' : ∀ {U} {V} A → Op U V → Op (extend U A) (extend V A)
+  liftOp'' [] σ = σ
+  liftOp'' (K ∷ A) σ = liftOp'' A (liftOp K σ)
+
+  postulate liftOp''' : ∀ {U} {V} A → Op U V → Op (dom {VarKind} {ExpressionKind} U A) (dom V A)
 
 {-  liftOp'-cong : ∀ {U} {V} A {ρ σ : Op U V} → 
     ρ ∼op σ → liftOp' A ρ ∼op liftOp' A σ
@@ -44,8 +46,11 @@ the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \c
   liftOp'-cong [] ρ-is-σ = ρ-is-σ
   liftOp'-cong (_ ∷ A) ρ-is-σ = liftOp'-cong A (liftOp-cong ρ-is-σ) -}
 
-  postulate liftOp''-cong : ∀ {U} {V} {K} A {ρ σ : Op U V} → 
-                          ρ ∼op σ → liftOp'' {K = K} A ρ ∼op liftOp'' A σ
+  postulate liftOp''-cong : ∀ {U} {V} A {ρ σ : Op U V} → 
+                          ρ ∼op σ → liftOp'' A ρ ∼op liftOp'' A σ
+
+  postulate liftOp'''-cong : ∀ {U} {V} A {ρ σ : Op U V} → 
+                           ρ ∼op σ → liftOp''' A ρ ∼op liftOp''' A σ
 \end{code}
 }
 
@@ -57,7 +62,7 @@ This allows us to define the action of \emph{application} $E[\sigma]$:
   ap ρ (var x) = apV ρ x
   ap ρ (app c EE) = app c (ap ρ EE)
   ap _ out = out
-  ap ρ (_,,_ {A = A} E EE) = ap (liftOp'' A ρ) E ,, ap ρ EE
+  ap ρ (_,,_ {A = A} E EE) = ap (liftOp''' A ρ) E ,, ap ρ EE
 \end{code}
 
 We prove that application respects $\sim$.
@@ -73,8 +78,8 @@ We prove that application respects $\sim$.
   ap-congl (var x) ρ-is-σ = ρ-is-σ x
   ap-congl (app c E) ρ-is-σ = cong (app c) (ap-congl E ρ-is-σ)
   ap-congl out _ = refl
-  ap-congl (_,,_ {L = L} {A = A} E F) ρ-is-σ = 
-    cong₂ _,,_ (ap-congl E (liftOp''-cong A ρ-is-σ)) (ap-congl F ρ-is-σ)
+  ap-congl (_,,_ {A = A} E F) ρ-is-σ = 
+    cong₂ _,,_ (ap-congl E (liftOp'''-cong A ρ-is-σ)) (ap-congl F ρ-is-σ)
 
   ap-congr : ∀ {U} {V} {C} {K}
     {σ : Op U V} {E F : Subexpression U C K} →

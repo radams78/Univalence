@@ -24,7 +24,7 @@
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaField{Constructor} \<[19]%
-\>[19]\AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{ConstructorKind} \AgdaBound{K} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\>[19]\AgdaSymbol{:} \AgdaRecord{Pi} \AgdaSymbol{(}\AgdaRecord{Pi} \AgdaFunction{VarKind}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaField{parent} \<[19]%
@@ -63,13 +63,10 @@
 \>[2]\AgdaFunction{VExpression} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaFunction{VarKind} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{dom} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{AbstractionKind} \AgdaBound{K} \AgdaSymbol{→} \AgdaDatatype{Alphabet}\<%
+\>[2]\AgdaFunction{Abstraction} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaRecord{Pi} \AgdaFunction{VarKind} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{Abstraction} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{AbstractionKind} \AgdaBound{K} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{Body} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{ConstructorKind} \AgdaBound{K} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\>[2]\AgdaFunction{Body} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaDatatype{List} \AgdaSymbol{(}\AgdaRecord{Pi} \AgdaFunction{VarKind}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
 \\
 %
 \\
@@ -80,16 +77,10 @@
 \>[2]\AgdaFunction{VExpression} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{=} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{dom} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{✧}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaBound{V}\<%
+\>[2]\AgdaFunction{Abstraction} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{AA} \AgdaInductiveConstructor{⟶} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{Expression} \AgdaSymbol{(}\AgdaFunction{extend} \AgdaBound{V} \AgdaBound{AA}\AgdaSymbol{)} \AgdaBound{K}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{dom} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{abs} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{dom} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{)} \AgdaBound{A}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{Abstraction} \AgdaBound{V} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaBound{A} \AgdaSymbol{=} \AgdaFunction{Expression} \AgdaSymbol{(}\AgdaFunction{dom} \AgdaBound{V} \AgdaBound{A}\AgdaSymbol{)} \AgdaBound{K}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{Body} \AgdaBound{V} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaBound{C} \AgdaSymbol{=} \AgdaDatatype{Subexpression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{-Constructor} \AgdaBound{K}\AgdaSymbol{)} \AgdaBound{C}\<%
+\>[2]\AgdaFunction{Body} \AgdaBound{V} \AgdaBound{AA} \AgdaSymbol{=} \AgdaDatatype{Subexpression} \AgdaBound{V} \AgdaInductiveConstructor{-Constructor} \AgdaBound{AA}\<%
 \\
 %
 \\
@@ -103,13 +94,13 @@
 \>[4]\AgdaInductiveConstructor{var} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Var} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{→} \AgdaFunction{VExpression} \AgdaBound{V} \AgdaBound{K}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{app} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Constructor} \AgdaBound{C} \AgdaSymbol{→} \AgdaFunction{Body} \AgdaBound{V} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaBound{C} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K}\<%
+\>[4]\AgdaInductiveConstructor{app} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{AA}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Constructor} \AgdaSymbol{(}\AgdaBound{AA} \AgdaInductiveConstructor{⟶} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaFunction{Body} \AgdaBound{V} \AgdaBound{AA} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{out} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Body} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{●}\AgdaSymbol{)}\<%
+\>[4]\AgdaInductiveConstructor{out} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Body} \AgdaBound{V} \AgdaInductiveConstructor{[]}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{\_,,\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Abstraction} \AgdaBound{V} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaBound{A} \AgdaSymbol{→} \AgdaFunction{Body} \AgdaBound{V} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaBound{C} \AgdaSymbol{→} \AgdaFunction{Body} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{A} \AgdaInductiveConstructor{⟶} \AgdaBound{C}\AgdaSymbol{)}\<%
+\>[4]\AgdaInductiveConstructor{\_,,\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{AA}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Abstraction} \AgdaBound{V} \AgdaBound{A} \AgdaSymbol{→} \AgdaFunction{Body} \AgdaBound{V} \AgdaBound{AA} \AgdaSymbol{→} \AgdaFunction{Body} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{A} \AgdaInductiveConstructor{∷} \AgdaBound{AA}\AgdaSymbol{)}\<%
 \end{code}
 %</Expression>
 
@@ -142,11 +133,7 @@
 \>[2]\AgdaFunction{Reduction} \AgdaSymbol{:} \AgdaPrimitiveType{Set₁}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{Reduction} \AgdaSymbol{=} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{→} \<[30]%
-\>[30]\<%
-\\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{Constructor} \AgdaBound{C} \AgdaSymbol{→} \AgdaFunction{Body} \AgdaBound{V} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaBound{C} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\>[2]\AgdaFunction{Reduction} \AgdaSymbol{=} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{AA}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Constructor} \AgdaSymbol{(}\AgdaBound{AA} \AgdaInductiveConstructor{⟶} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaFunction{Body} \AgdaBound{V} \AgdaBound{AA} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
 \\
 \>\AgdaComment{--TODO Delete}\<%
 \end{code}

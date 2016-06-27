@@ -74,16 +74,16 @@ The syntax of the system called \emph{propositional logic} is given by the follo
 \>[2]\AgdaKeyword{data} \AgdaDatatype{PLCon} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K} \AgdaSymbol{:} \AgdaDatatype{ExpressionKind}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Kind} \AgdaSymbol{(}\AgdaInductiveConstructor{-Constructor} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-app} \AgdaSymbol{:} \AgdaDatatype{PLCon} \AgdaSymbol{(}\AgdaFunction{proof} \AgdaInductiveConstructor{✧} \AgdaInductiveConstructor{⟶} \AgdaFunction{proof} \AgdaInductiveConstructor{✧} \AgdaInductiveConstructor{⟶} \AgdaFunction{proof} \AgdaInductiveConstructor{●}\AgdaSymbol{)}\<%
+\>[4]\AgdaInductiveConstructor{-app} \AgdaSymbol{:} \AgdaDatatype{PLCon} \AgdaSymbol{(}\AgdaFunction{proof} \AgdaFunction{♣} \AgdaInductiveConstructor{⟶} \AgdaFunction{proof} \AgdaFunction{♣} \AgdaInductiveConstructor{⟶} \AgdaFunction{proof} \AgdaInductiveConstructor{●}\AgdaSymbol{)}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-lam} \AgdaSymbol{:} \AgdaDatatype{PLCon} \AgdaSymbol{(}\AgdaFunction{prp} \AgdaInductiveConstructor{✧} \AgdaInductiveConstructor{⟶} \AgdaSymbol{(}\AgdaInductiveConstructor{-proof} \AgdaInductiveConstructor{abs} \AgdaFunction{proof} \AgdaInductiveConstructor{✧}\AgdaSymbol{)} \AgdaInductiveConstructor{⟶} \AgdaFunction{proof} \AgdaInductiveConstructor{●}\AgdaSymbol{)}\<%
+\>[4]\AgdaInductiveConstructor{-lam} \AgdaSymbol{:} \AgdaDatatype{PLCon} \AgdaSymbol{(}\AgdaFunction{prp} \AgdaFunction{♣} \AgdaInductiveConstructor{⟶} \AgdaSymbol{(}\AgdaInductiveConstructor{-proof} \AgdaInductiveConstructor{⟶} \AgdaFunction{proof} \AgdaFunction{♣}\AgdaSymbol{)} \AgdaInductiveConstructor{⟶} \AgdaFunction{proof} \AgdaInductiveConstructor{●}\AgdaSymbol{)}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaInductiveConstructor{-bot} \AgdaSymbol{:} \AgdaDatatype{PLCon} \AgdaSymbol{(}\AgdaFunction{prp} \AgdaInductiveConstructor{●}\AgdaSymbol{)}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-imp} \AgdaSymbol{:} \AgdaDatatype{PLCon} \AgdaSymbol{(}\AgdaFunction{prp} \AgdaInductiveConstructor{✧} \AgdaInductiveConstructor{⟶} \AgdaFunction{prp} \AgdaInductiveConstructor{✧} \AgdaInductiveConstructor{⟶} \AgdaFunction{prp} \AgdaInductiveConstructor{●}\AgdaSymbol{)}\<%
+\>[4]\AgdaInductiveConstructor{-imp} \AgdaSymbol{:} \AgdaDatatype{PLCon} \AgdaSymbol{(}\AgdaFunction{prp} \AgdaFunction{♣} \AgdaInductiveConstructor{⟶} \AgdaFunction{prp} \AgdaFunction{♣} \AgdaInductiveConstructor{⟶} \AgdaFunction{prp} \AgdaInductiveConstructor{●}\AgdaSymbol{)}\<%
 \\
 %
 \\

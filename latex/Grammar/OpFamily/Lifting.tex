@@ -51,13 +51,18 @@ the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \c
 %
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp''} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaBound{A} \AgdaSymbol{→} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Op} \AgdaSymbol{(}\AgdaFunction{dom} \AgdaBound{U} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{dom} \AgdaBound{V} \AgdaBound{A}\AgdaSymbol{)}\<%
+\>[2]\AgdaFunction{liftOp''} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{A} \AgdaSymbol{→} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Op} \AgdaSymbol{(}\AgdaFunction{extend} \AgdaBound{U} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{extend} \AgdaBound{V} \AgdaBound{A}\AgdaSymbol{)}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp''} \AgdaSymbol{(\_} \AgdaInductiveConstructor{✧}\AgdaSymbol{)} \AgdaBound{σ} \AgdaSymbol{=} \AgdaBound{σ}\<%
+\>[2]\AgdaFunction{liftOp''} \AgdaInductiveConstructor{[]} \AgdaBound{σ} \AgdaSymbol{=} \AgdaBound{σ}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp''} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{abs} \AgdaBound{A}\AgdaSymbol{)} \AgdaBound{σ} \AgdaSymbol{=} \AgdaFunction{liftOp''} \AgdaBound{A} \AgdaSymbol{(}\AgdaField{liftOp} \AgdaBound{K} \AgdaBound{σ}\AgdaSymbol{)}\<%
+\>[2]\AgdaFunction{liftOp''} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{∷} \AgdaBound{A}\AgdaSymbol{)} \AgdaBound{σ} \AgdaSymbol{=} \AgdaFunction{liftOp''} \AgdaBound{A} \AgdaSymbol{(}\AgdaField{liftOp} \AgdaBound{K} \AgdaBound{σ}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{postulate} \AgdaPostulate{liftOp'''} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{A} \AgdaSymbol{→} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Op} \AgdaSymbol{(}\AgdaFunction{dom'} \AgdaBound{U} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{dom'} \AgdaBound{V} \AgdaBound{A}\AgdaSymbol{)}\<%
 \\
 %
 \\
@@ -75,11 +80,20 @@ the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \c
 %
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{postulate} \AgdaPostulate{liftOp''-cong} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaBound{A} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \<[61]%
-\>[61]\<%
+\>[2]\AgdaKeyword{postulate} \AgdaPostulate{liftOp''-cong} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{A} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \<[57]%
+\>[57]\<%
 \\
 \>[2]\AgdaIndent{26}{}\<[26]%
-\>[26]\AgdaBound{ρ} \AgdaFunction{∼op} \AgdaBound{σ} \AgdaSymbol{→} \AgdaFunction{liftOp''} \AgdaSymbol{\{}\AgdaArgument{K} \AgdaSymbol{=} \AgdaBound{K}\AgdaSymbol{\}} \AgdaBound{A} \AgdaBound{ρ} \AgdaFunction{∼op} \AgdaFunction{liftOp''} \AgdaBound{A} \AgdaBound{σ}\<%
+\>[26]\AgdaBound{ρ} \AgdaFunction{∼op} \AgdaBound{σ} \AgdaSymbol{→} \AgdaFunction{liftOp''} \AgdaBound{A} \AgdaBound{ρ} \AgdaFunction{∼op} \AgdaFunction{liftOp''} \AgdaBound{A} \AgdaBound{σ}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{postulate} \AgdaPostulate{liftOp'''-cong} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{A} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \<[58]%
+\>[58]\<%
+\\
+\>[2]\AgdaIndent{27}{}\<[27]%
+\>[27]\AgdaBound{ρ} \AgdaFunction{∼op} \AgdaBound{σ} \AgdaSymbol{→} \AgdaPostulate{liftOp'''} \AgdaBound{A} \AgdaBound{ρ} \AgdaFunction{∼op} \AgdaPostulate{liftOp'''} \AgdaBound{A} \AgdaBound{σ}\<%
 \end{code}
 }
 
@@ -103,7 +117,7 @@ This allows us to define the action of \emph{application} $E[\sigma]$:
 \>[2]\AgdaFunction{ap} \AgdaSymbol{\_} \AgdaInductiveConstructor{out} \AgdaSymbol{=} \AgdaInductiveConstructor{out}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{ap} \AgdaBound{ρ} \AgdaSymbol{(}\AgdaInductiveConstructor{\_,,\_} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaBound{A}\AgdaSymbol{\}} \AgdaBound{E} \AgdaBound{EE}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{ap} \AgdaSymbol{(}\AgdaFunction{liftOp''} \AgdaBound{A} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{E} \AgdaInductiveConstructor{,,} \AgdaFunction{ap} \AgdaBound{ρ} \AgdaBound{EE}\<%
+\>[2]\AgdaFunction{ap} \AgdaBound{ρ} \AgdaSymbol{(}\AgdaInductiveConstructor{\_,,\_} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaBound{A}\AgdaSymbol{\}} \AgdaBound{E} \AgdaBound{EE}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{ap} \AgdaSymbol{(}\AgdaPostulate{liftOp'''} \AgdaBound{A} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{E} \AgdaInductiveConstructor{,,} \AgdaFunction{ap} \AgdaBound{ρ} \AgdaBound{EE}\<%
 \end{code}
 
 We prove that application respects $\sim$.
@@ -132,11 +146,11 @@ We prove that application respects $\sim$.
 \>[2]\AgdaFunction{ap-congl} \AgdaInductiveConstructor{out} \AgdaSymbol{\_} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{ap-congl} \AgdaSymbol{(}\AgdaInductiveConstructor{\_,,\_} \AgdaSymbol{\{}\AgdaArgument{L} \AgdaSymbol{=} \AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaBound{A}\AgdaSymbol{\}} \AgdaBound{E} \AgdaBound{F}\AgdaSymbol{)} \AgdaBound{ρ-is-σ} \AgdaSymbol{=} \<[47]%
-\>[47]\<%
+\>[2]\AgdaFunction{ap-congl} \AgdaSymbol{(}\AgdaInductiveConstructor{\_,,\_} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaBound{A}\AgdaSymbol{\}} \AgdaBound{E} \AgdaBound{F}\AgdaSymbol{)} \AgdaBound{ρ-is-σ} \AgdaSymbol{=} \<[39]%
+\>[39]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{cong₂} \AgdaInductiveConstructor{\_,,\_} \AgdaSymbol{(}\AgdaFunction{ap-congl} \AgdaBound{E} \AgdaSymbol{(}\AgdaPostulate{liftOp''-cong} \AgdaBound{A} \AgdaBound{ρ-is-σ}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{ap-congl} \AgdaBound{F} \AgdaBound{ρ-is-σ}\AgdaSymbol{)}\<%
+\>[4]\AgdaFunction{cong₂} \AgdaInductiveConstructor{\_,,\_} \AgdaSymbol{(}\AgdaFunction{ap-congl} \AgdaBound{E} \AgdaSymbol{(}\AgdaPostulate{liftOp'''-cong} \AgdaBound{A} \AgdaBound{ρ-is-σ}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{ap-congl} \AgdaBound{F} \AgdaBound{ρ-is-σ}\AgdaSymbol{)}\<%
 \\
 %
 \\
