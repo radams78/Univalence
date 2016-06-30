@@ -54,19 +54,19 @@ y \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef \reff{y} \\
 \\
 %
 \\
-\>\AgdaFunction{pathsub↑} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{PathSub} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{PathSub} \AgdaSymbol{(}\AgdaBound{U} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Term}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Path}\AgdaSymbol{)}\<%
+\>\AgdaFunction{liftPathSub} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{PathSub} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{PathSub} \AgdaSymbol{(}\AgdaBound{U} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Term}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Path}\AgdaSymbol{)}\<%
 \\
-\>\AgdaFunction{pathsub↑} \AgdaBound{τ} \AgdaInductiveConstructor{x₀} \AgdaSymbol{=} \AgdaInductiveConstructor{var} \AgdaInductiveConstructor{x₀}\<%
+\>\AgdaFunction{liftPathSub} \AgdaBound{τ} \AgdaInductiveConstructor{x₀} \AgdaSymbol{=} \AgdaInductiveConstructor{var} \AgdaInductiveConstructor{x₀}\<%
 \\
-\>\AgdaFunction{pathsub↑} \AgdaBound{τ} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaBound{x}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaBound{τ} \AgdaBound{x} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑}\<%
+\>\AgdaFunction{liftPathSub} \AgdaBound{τ} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaBound{x}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaBound{τ} \AgdaBound{x} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑}\<%
 \\
 %
 \\
-\>\AgdaFunction{pathsub↑-cong} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{τ} \AgdaBound{τ'} \AgdaSymbol{:} \AgdaFunction{PathSub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{τ} \AgdaFunction{∼∼} \AgdaBound{τ'} \AgdaSymbol{→} \AgdaFunction{pathsub↑} \AgdaBound{τ} \AgdaFunction{∼∼} \AgdaFunction{pathsub↑} \AgdaBound{τ'}\<%
+\>\AgdaFunction{liftPathSub-cong} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{τ} \AgdaBound{τ'} \AgdaSymbol{:} \AgdaFunction{PathSub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{τ} \AgdaFunction{∼∼} \AgdaBound{τ'} \AgdaSymbol{→} \AgdaFunction{liftPathSub} \AgdaBound{τ} \AgdaFunction{∼∼} \AgdaFunction{liftPathSub} \AgdaBound{τ'}\<%
 \\
-\>\AgdaFunction{pathsub↑-cong} \AgdaSymbol{\_} \AgdaInductiveConstructor{x₀} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\>\AgdaFunction{liftPathSub-cong} \AgdaSymbol{\_} \AgdaInductiveConstructor{x₀} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
 \\
-\>\AgdaFunction{pathsub↑-cong} \AgdaBound{τ∼∼τ'} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaBound{x}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{rep-congl} \AgdaSymbol{(}\AgdaFunction{rep-congl} \AgdaSymbol{(}\AgdaFunction{rep-congl} \AgdaSymbol{(}\AgdaBound{τ∼∼τ'} \AgdaBound{x}\AgdaSymbol{)))}\<%
+\>\AgdaFunction{liftPathSub-cong} \AgdaBound{τ∼∼τ'} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaBound{x}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{rep-congl} \AgdaSymbol{(}\AgdaFunction{rep-congl} \AgdaSymbol{(}\AgdaFunction{rep-congl} \AgdaSymbol{(}\AgdaBound{τ∼∼τ'} \AgdaBound{x}\AgdaSymbol{)))}\<%
 \\
 %
 \\
@@ -91,7 +91,7 @@ y \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef \reff{y} \\
 \\
 \>\AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-appTerm} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{,,} \AgdaBound{N} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{)} \AgdaFunction{⟦⟦} \AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{ρ} \AgdaFunction{∼} \AgdaBound{σ} \AgdaFunction{⟧⟧} \AgdaSymbol{=} \AgdaFunction{app*} \AgdaSymbol{(}\AgdaBound{N} \AgdaFunction{⟦} \AgdaBound{ρ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{N} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{ρ} \AgdaFunction{∼} \AgdaBound{σ} \AgdaFunction{⟧⟧}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{N} \AgdaFunction{⟦⟦} \AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{ρ} \AgdaFunction{∼} \AgdaBound{σ} \AgdaFunction{⟧⟧}\AgdaSymbol{)}\<%
 \\
-\>\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-lamTerm} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{)} \AgdaFunction{⟦⟦} \AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{ρ} \AgdaFunction{∼} \AgdaBound{σ} \AgdaFunction{⟧⟧} \AgdaSymbol{=} \AgdaFunction{λλλ} \AgdaBound{A} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaFunction{pathsub↑} \AgdaBound{τ} \AgdaFunction{∶} \AgdaFunction{sub↖} \AgdaBound{ρ} \AgdaFunction{∼} \AgdaFunction{sub↗} \AgdaBound{σ} \AgdaFunction{⟧⟧}\AgdaSymbol{)}\<%
+\>\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-lamTerm} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{)} \AgdaFunction{⟦⟦} \AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{ρ} \AgdaFunction{∼} \AgdaBound{σ} \AgdaFunction{⟧⟧} \AgdaSymbol{=} \AgdaFunction{λλλ} \AgdaBound{A} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaFunction{liftPathSub} \AgdaBound{τ} \AgdaFunction{∶} \AgdaFunction{sub↖} \AgdaBound{ρ} \AgdaFunction{∼} \AgdaFunction{sub↗} \AgdaBound{σ} \AgdaFunction{⟧⟧}\AgdaSymbol{)}\<%
 \end{code}
 
 \AgdaHide{
@@ -133,8 +133,8 @@ y \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef \reff{y} \\
 \>[61]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{cong} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{pathsub-cong} \AgdaBound{M} \AgdaSymbol{(}\AgdaFunction{pathsub↑-cong} \AgdaBound{τ∼∼τ'}\AgdaSymbol{)} \<[53]%
-\>[53]\<%
+\>[2]\AgdaFunction{cong} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{pathsub-cong} \AgdaBound{M} \AgdaSymbol{(}\AgdaFunction{liftPathSub-cong} \AgdaBound{τ∼∼τ'}\AgdaSymbol{)} \<[56]%
+\>[56]\<%
 \\
 \>[2]\AgdaIndent{15}{}\<[15]%
 \>[15]\AgdaSymbol{(}\AgdaPostulate{sub↖-cong} \AgdaBound{ρ∼ρ'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{sub↗-cong} \AgdaBound{σ∼σ'}\AgdaSymbol{))}\<%

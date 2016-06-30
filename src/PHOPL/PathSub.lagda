@@ -42,13 +42,13 @@ _∼∼_ : ∀ {U} {V} → PathSub U V → PathSub U V → Set
 ∼∼-refl : ∀ {U} {V} {τ : PathSub U V} → τ ∼∼ τ
 ∼∼-refl _ = refl
 
-pathsub↑ : ∀ {U} {V} → PathSub U V → PathSub (U , -Term) (V , -Term , -Term , -Path)
-pathsub↑ τ x₀ = var x₀
-pathsub↑ τ (↑ x) = τ x ⇑ ⇑ ⇑
+liftPathSub : ∀ {U} {V} → PathSub U V → PathSub (U , -Term) (V , -Term , -Term , -Path)
+liftPathSub τ x₀ = var x₀
+liftPathSub τ (↑ x) = τ x ⇑ ⇑ ⇑
 
-pathsub↑-cong : ∀ {U} {V} {τ τ' : PathSub U V} → τ ∼∼ τ' → pathsub↑ τ ∼∼ pathsub↑ τ'
-pathsub↑-cong _ x₀ = refl
-pathsub↑-cong τ∼∼τ' (↑ x) = rep-congl (rep-congl (rep-congl (τ∼∼τ' x)))
+liftPathSub-cong : ∀ {U} {V} {τ τ' : PathSub U V} → τ ∼∼ τ' → liftPathSub τ ∼∼ liftPathSub τ'
+liftPathSub-cong _ x₀ = refl
+liftPathSub-cong τ∼∼τ' (↑ x) = rep-congl (rep-congl (rep-congl (τ∼∼τ' x)))
 
 infix 70 _⟦⟦_∶_∼_⟧⟧
 \end{code}
@@ -61,7 +61,7 @@ var x ⟦⟦ τ ∶ _ ∼ _ ⟧⟧ = τ x
 app -bot out ⟦⟦ τ ∶ _ ∼ _ ⟧⟧ = reff ⊥
 app -imp (φ ,, ψ ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = φ ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ ⊃* ψ ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧
 app -appTerm (M ,, N ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = app* (N ⟦ ρ ⟧) (N ⟦ σ ⟧) (M ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧) (N ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧)
-app (-lamTerm A) (M ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = λλλ A (M ⟦⟦ pathsub↑ τ ∶ sub↖ ρ ∼ sub↗ σ ⟧⟧)
+app (-lamTerm A) (M ,, out) ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ = λλλ A (M ⟦⟦ liftPathSub τ ∶ sub↖ ρ ∼ sub↗ σ ⟧⟧)
 \end{code}
 
 \AgdaHide{
@@ -78,7 +78,7 @@ pathsub-cong (app -appTerm (M ,, N ,, out)) τ∼∼τ' ρ∼ρ' σ∼σ' =
              (pathsub-cong M τ∼∼τ' ρ∼ρ' σ∼σ') 
              (pathsub-cong N τ∼∼τ' ρ∼ρ' σ∼σ')
 pathsub-cong (app (-lamTerm A) (M ,, out)) τ∼∼τ' ρ∼ρ' σ∼σ' = 
-  cong (λλλ A) (pathsub-cong M (pathsub↑-cong τ∼∼τ') 
+  cong (λλλ A) (pathsub-cong M (liftPathSub-cong τ∼∼τ') 
                (sub↖-cong ρ∼ρ') (sub↗-cong σ∼σ'))
 
 x₀::= : ∀ {V} → Path V → PathSub (V , -Term) V
