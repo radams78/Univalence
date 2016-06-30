@@ -146,7 +146,7 @@ It is easy to check that $\beta$-reduction respects and creates replacement, and
 \AgdaHide{
 \begin{code}
 β-respects-rep (βI {δ = δ}) = 
-  subst (β -app _) (sym (compRS-botsub δ)) βI
+  subst (β -app _) (sym (compRS-botSub δ)) βI
 \end{code}
 }
 
@@ -162,7 +162,7 @@ It is easy to check that $\beta$-reduction respects and creates replacement, and
   (app -lam (_ ,, δ ,, out) ,, (ε ,, out)) βI = record { 
   created = δ ⟦ x₀:= ε ⟧ ; 
   red-created = βI ; 
-  ap-created = compRS-botsub δ }
+  ap-created = compRS-botSub δ }
 β-creates-rep {c = -lam} _ ()
 β-creates-rep {c = -bot} _ ()
 β-creates-rep {c = -imp} _ ()
@@ -170,13 +170,13 @@ It is easy to check that $\beta$-reduction respects and creates replacement, and
 }
 
 \begin{code}
-β-respects-sub : respects' substitution
+β-respects-sub : respects' SUB
 \end{code}
 
 \AgdaHide{
 \begin{code}
 β-respects-sub {σ = σ} (βI {φ} {δ} {ε}) = subst
-  (β -app _) (sym (comp-botsub δ)) βI
+  (β -app _) (sym (comp-botSub δ)) βI
 
 prop-not-reduce : ∀ {P} {φ ψ : Prp P} → φ ⇒ ψ → ⊥
 prop-not-reduce (redex ())

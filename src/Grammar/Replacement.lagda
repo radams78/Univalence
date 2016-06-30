@@ -24,9 +24,9 @@ and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
 Rep : Alphabet → Alphabet → Set
 Rep U V = ∀ K → Var U K → Var V K
 
-rep↑ : ∀ {U} {V} K → Rep U V → Rep (U , K) (V , K)
-rep↑ _ _ _ x₀ = x₀
-rep↑ _ ρ K (↑ x) = ↑ (ρ K x)
+liftRep : ∀ {U} {V} K → Rep U V → Rep (U , K) (V , K)
+liftRep _ _ _ x₀ = x₀
+liftRep _ ρ K (↑ x) = ↑ (ρ K x)
 
 upRep : ∀ {V} {K} → Rep V (V , K)
 upRep _ = ↑
@@ -46,14 +46,14 @@ pre-replacement = record {
 _∼R_ : ∀ {U} {V} → Rep U V → Rep U V → Set
 _∼R_ = PreOpFamily._∼op_ pre-replacement
 
-rep↑-cong : ∀ {U} {V} {K} {ρ ρ' : Rep U V} → 
-  ρ ∼R ρ' → rep↑ K ρ ∼R rep↑ K ρ'
+liftRep-cong : ∀ {U} {V} {K} {ρ ρ' : Rep U V} → 
+  ρ ∼R ρ' → liftRep K ρ ∼R liftRep K ρ'
 \end{code}
 
 \AgdaHide{
 \begin{code}
-rep↑-cong ρ-is-ρ' x₀ = refl
-rep↑-cong ρ-is-ρ' (↑ x) = cong (var ∘ ↑) (var-inj (ρ-is-ρ' x))
+liftRep-cong ρ-is-ρ' x₀ = refl
+liftRep-cong ρ-is-ρ' (↑ x) = cong (var ∘ ↑) (var-inj (ρ-is-ρ' x))
 \end{code}
 }
 
@@ -62,8 +62,8 @@ proto-replacement : LiftFamily
 proto-replacement = record { 
   preOpFamily = pre-replacement ; 
   lifting = record { 
-    liftOp = rep↑ ; 
-    liftOp-cong = rep↑-cong } ; 
+    liftOp = liftRep ; 
+    liftOp-cong = liftRep-cong } ; 
   isLiftFamily = record { 
     liftOp-x₀ = refl ; 
     liftOp-↑ = λ _ → refl } }
@@ -77,17 +77,17 @@ infixl 75 _•R_
 _•R_ : ∀ {U} {V} {W} → Rep V W → Rep U V → Rep U W
 (ρ' •R ρ) K x = ρ' K (ρ K x)
 
-rep↑-comp : ∀ {U} {V} {W} {K} {ρ' : Rep V W} {ρ : Rep U V} → 
-  rep↑ K (ρ' •R ρ) ∼R rep↑ K ρ' •R rep↑ K ρ
+liftRep-comp : ∀ {U} {V} {W} {K} {ρ' : Rep V W} {ρ : Rep U V} → 
+  liftRep K (ρ' •R ρ) ∼R liftRep K ρ' •R liftRep K ρ
 \end{code}
 
 \AgdaHide{
 \begin{code}
-rep↑-comp x₀ = refl
-rep↑-comp (↑ _) = refl
+liftRep-comp x₀ = refl
+liftRep-comp (↑ _) = refl
 
-postulate rep↑-comp₄ : ∀ {U} {V1} {V2} {V3} {V4} {K} {ρ1 : Rep U V1} {ρ2 : Rep V1 V2} {ρ3 : Rep V2 V3} {ρ4 : Rep V3 V4} →
-                       rep↑ K (ρ4 •R ρ3 •R ρ2 •R ρ1) ∼R rep↑ K ρ4 •R rep↑ K ρ3 •R rep↑ K ρ2 •R rep↑ K ρ1
+postulate liftRep-comp₄ : ∀ {U} {V1} {V2} {V3} {V4} {K} {ρ1 : Rep U V1} {ρ2 : Rep V1 V2} {ρ3 : Rep V2 V3} {ρ4 : Rep V3 V4} →
+                       liftRep K (ρ4 •R ρ3 •R ρ2 •R ρ1) ∼R liftRep K ρ4 •R liftRep K ρ3 •R liftRep K ρ2 •R liftRep K ρ1
 \end{code}
 }
 
@@ -98,7 +98,7 @@ replacement = record {
   isOpFamily = record { 
     _∘_ = _•R_ ; 
     apV-comp = refl ; 
-    liftOp-comp = rep↑-comp } }
+    liftOp-comp = liftRep-comp } }
 \end{code}
 
 \AgdaHide{
@@ -108,8 +108,8 @@ open OpFamily replacement public using ()
            ap-congr to rep-congl;
            ap-idOp to rep-idOp;
            ap-circ to rep-comp;
-           liftOp-idOp to rep↑-idOp;
-           liftOp-up' to rep↑-upRep)
+           liftOp-idOp to liftRep-idOp;
+           liftOp-up' to liftRep-upRep)
 
 postulate rep-comp₄ : ∀ {U} {V1} {V2} {V3} {V4} 
                       {ρ1 : Rep U V1} {ρ2 : Rep V1 V2} {ρ3 : Rep V2 V3} {ρ4 : Rep V3 V4} 
@@ -158,27 +158,27 @@ magic-unique' E {ρ} = let open ≡-Reasoning in
     E 〈 magic 〉
   ∎
 
-rep↑-upRep₂ : ∀ {U} {V} {C} {K} {L} {M} (E : Subexpression U C M) {σ : Rep U V} → E ⇑ ⇑ 〈 rep↑ K (rep↑ L σ) 〉 ≡ E 〈 σ 〉 ⇑ ⇑
-rep↑-upRep₂ {U} {V} {C} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
+liftRep-upRep₂ : ∀ {U} {V} {C} {K} {L} {M} (E : Subexpression U C M) {σ : Rep U V} → E ⇑ ⇑ 〈 liftRep K (liftRep L σ) 〉 ≡ E 〈 σ 〉 ⇑ ⇑
+liftRep-upRep₂ {U} {V} {C} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
   begin
-    E ⇑ ⇑ 〈 rep↑ K (rep↑ L σ) 〉
-  ≡⟨ rep↑-upRep (E ⇑) ⟩
-    E ⇑ 〈 rep↑ L σ 〉 ⇑
-  ≡⟨ rep-congl (rep↑-upRep E) ⟩
+    E ⇑ ⇑ 〈 liftRep K (liftRep L σ) 〉
+  ≡⟨ liftRep-upRep (E ⇑) ⟩
+    E ⇑ 〈 liftRep L σ 〉 ⇑
+  ≡⟨ rep-congl (liftRep-upRep E) ⟩
     E 〈 σ 〉 ⇑ ⇑
   ∎
 
-rep↑-upRep₃ : ∀ {U} {V} {C} {K} {L} {M} {N} (E : Subexpression U C N) {σ : Rep U V} → 
-  E ⇑ ⇑ ⇑ 〈 rep↑ K (rep↑ L (rep↑ M σ)) 〉 ≡ E 〈 σ 〉 ⇑ ⇑ ⇑
-rep↑-upRep₃ {U} {V} {C} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
+liftRep-upRep₃ : ∀ {U} {V} {C} {K} {L} {M} {N} (E : Subexpression U C N) {σ : Rep U V} → 
+  E ⇑ ⇑ ⇑ 〈 liftRep K (liftRep L (liftRep M σ)) 〉 ≡ E 〈 σ 〉 ⇑ ⇑ ⇑
+liftRep-upRep₃ {U} {V} {C} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
   begin
-    E ⇑ ⇑ ⇑ 〈 rep↑ K (rep↑ L (rep↑ M σ)) 〉
-  ≡⟨ rep↑-upRep₂ (E ⇑) ⟩
-    E ⇑ 〈 rep↑ M σ 〉 ⇑ ⇑
-  ≡⟨ rep-congl (rep-congl (rep↑-upRep E)) ⟩
+    E ⇑ ⇑ ⇑ 〈 liftRep K (liftRep L (liftRep M σ)) 〉
+  ≡⟨ liftRep-upRep₂ (E ⇑) ⟩
+    E ⇑ 〈 liftRep M σ 〉 ⇑ ⇑
+  ≡⟨ rep-congl (rep-congl (liftRep-upRep E)) ⟩
     E 〈 σ 〉 ⇑ ⇑ ⇑
   ∎
 
-postulate rep↑-upRep₄' : ∀ {U} {V} (ρ : Rep U V) {K1} {K2} {K3} → upRep •R upRep •R upRep •R ρ ∼R rep↑ K1 (rep↑ K2 (rep↑ K3 ρ)) •R upRep •R upRep •R upRep
+postulate liftRep-upRep₄' : ∀ {U} {V} (ρ : Rep U V) {K1} {K2} {K3} → upRep •R upRep •R upRep •R ρ ∼R liftRep K1 (liftRep K2 (liftRep K3 ρ)) •R upRep •R upRep •R upRep
 \end{code}
 }

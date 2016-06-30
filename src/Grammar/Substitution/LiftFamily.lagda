@@ -19,7 +19,7 @@ It is now easy to show that substitution forms a pre-family with lifting.  If $\
 SubLF : LiftFamily
 SubLF = record { 
   preOpFamily = pre-substitution ; 
-  lifting = SUB↑ ; 
+  lifting = LIFTSUB ; 
   isLiftFamily = record { 
     liftOp-x₀ = refl ; 
     liftOp-↑ = λ {_} {_} {_} {_} {σ} x → rep-is-sub (σ _ x) }}

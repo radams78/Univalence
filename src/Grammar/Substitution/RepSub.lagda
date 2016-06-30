@@ -12,7 +12,7 @@ open import Grammar.Substitution.Lifting G
 
 open OpFamily replacement using () renaming (liftOp' to liftOp'R)
 open PreOpFamily pre-substitution
-open Lifting SUB↑
+open Lifting LIFTSUB
 \end{code}
 
 We can consider replacement to be a special case of substitution.  That is,
@@ -40,14 +40,14 @@ Substitution is a pre-family with lifting.
 rep2sub : ∀ {U} {V} → Rep U V → Sub U V
 rep2sub ρ K x = var (ρ K x)
 
-rep↑-is-sub↑ : ∀ {U} {V} {ρ : Rep U V} {K} → 
-  rep2sub (rep↑ K ρ) ∼ sub↑ K (rep2sub ρ)
+liftRep-is-liftSub : ∀ {U} {V} {ρ : Rep U V} {K} → 
+  rep2sub (liftRep K ρ) ∼ liftSub K (rep2sub ρ)
 \end{code}
 
 \AgdaHide{
 \begin{code}
-rep↑-is-sub↑ x₀ = refl
-rep↑-is-sub↑ (↑ _) = refl
+liftRep-is-liftSub x₀ = refl
+liftRep-is-liftSub (↑ _) = refl
 \end{code}
 }
 
@@ -71,11 +71,11 @@ liftOp'-is-liftOp' : ∀ {U} {V} {ρ : Rep U V} {A} →
 liftOp'-is-liftOp' {ρ = ρ} {A = []} = ∼-refl {σ = rep2sub ρ}
 liftOp'-is-liftOp' {U} {V} {ρ} {K ∷ A} = let open EqReasoning (OP _ _) in 
   begin
-    rep2sub (liftOp'R A (rep↑ K ρ))
+    rep2sub (liftOp'R A (liftRep K ρ))
   ≈⟨ liftOp'-is-liftOp' {A = A} ⟩
-    liftOp' A (rep2sub (rep↑ K ρ))
-  ≈⟨ liftOp'-cong A rep↑-is-sub↑ ⟩
-    liftOp' A (sub↑ K (rep2sub ρ))
+    liftOp' A (rep2sub (liftRep K ρ))
+  ≈⟨ liftOp'-cong A liftRep-is-liftSub ⟩
+    liftOp' A (liftSub K (rep2sub ρ))
   ∎
 \end{code}
 }

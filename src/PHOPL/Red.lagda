@@ -30,7 +30,7 @@ Let $\rhd$ be the relation consisting of the following pairs:
 \end{align*}
 \begin{align*}
 \reff{\phi} \supset^* \reff{\psi} & \rhd \reff{\phi \supset \psi} \\
-\reff{M} \reff{N} & \rhd \reff{MN} \\
+\reff{M}_{N_1N_2} \reff{N} & \rhd \reff{MN} \\
 (\triplelambda e:x =_A y. P)_{MN}Q & \rhd P[x:=M, y:=N, e:=Q] \\
 \text{If $P$ does not have the form } \reff{-}, \text{ then } \\ \reff{\lambda x:A.M}_{N,N'} P & \rhd M \{ x := P : N ∼ N' \}
 \end{align*}

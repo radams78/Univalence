@@ -298,7 +298,7 @@ It is easy to check that $\beta$-reduction respects and creates replacement, and
 \>[30]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{subst} \AgdaSymbol{(}\AgdaDatatype{β} \AgdaInductiveConstructor{-app} \AgdaSymbol{\_)} \AgdaSymbol{(}\AgdaFunction{sym} \AgdaSymbol{(}\AgdaFunction{compRS-botsub} \AgdaBound{δ}\AgdaSymbol{))} \AgdaInductiveConstructor{βI}\<%
+\>[2]\AgdaFunction{subst} \AgdaSymbol{(}\AgdaDatatype{β} \AgdaInductiveConstructor{-app} \AgdaSymbol{\_)} \AgdaSymbol{(}\AgdaFunction{sym} \AgdaSymbol{(}\AgdaFunction{compRS-botSub} \AgdaBound{δ}\AgdaSymbol{))} \AgdaInductiveConstructor{βI}\<%
 \end{code}
 }
 
@@ -328,7 +328,7 @@ It is easy to check that $\beta$-reduction respects and creates replacement, and
 \>[21]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaField{ap-created} \AgdaSymbol{=} \AgdaFunction{compRS-botsub} \AgdaBound{δ} \AgdaSymbol{\}}\<%
+\>[2]\AgdaField{ap-created} \AgdaSymbol{=} \AgdaFunction{compRS-botSub} \AgdaBound{δ} \AgdaSymbol{\}}\<%
 \\
 \>\AgdaFunction{β-creates-rep} \AgdaSymbol{\{}\AgdaArgument{c} \AgdaSymbol{=} \AgdaInductiveConstructor{-lam}\AgdaSymbol{\}} \AgdaSymbol{\_} \AgdaSymbol{()}\<%
 \\
@@ -339,7 +339,7 @@ It is easy to check that $\beta$-reduction respects and creates replacement, and
 }
 
 \begin{code}%
-\>\AgdaFunction{β-respects-sub} \AgdaSymbol{:} \AgdaFunction{respects'} \AgdaFunction{substitution}\<%
+\>\AgdaFunction{β-respects-sub} \AgdaSymbol{:} \AgdaFunction{respects'} \AgdaFunction{SUB}\<%
 \end{code}
 
 \AgdaHide{
@@ -347,7 +347,7 @@ It is easy to check that $\beta$-reduction respects and creates replacement, and
 \>\AgdaFunction{β-respects-sub} \AgdaSymbol{\{}\AgdaArgument{σ} \AgdaSymbol{=} \AgdaBound{σ}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{βI} \AgdaSymbol{\{}\AgdaBound{φ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ε}\AgdaSymbol{\})} \AgdaSymbol{=} \AgdaFunction{subst}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaSymbol{(}\AgdaDatatype{β} \AgdaInductiveConstructor{-app} \AgdaSymbol{\_)} \AgdaSymbol{(}\AgdaFunction{sym} \AgdaSymbol{(}\AgdaFunction{comp-botsub} \AgdaBound{δ}\AgdaSymbol{))} \AgdaInductiveConstructor{βI}\<%
+\>[2]\AgdaSymbol{(}\AgdaDatatype{β} \AgdaInductiveConstructor{-app} \AgdaSymbol{\_)} \AgdaSymbol{(}\AgdaFunction{sym} \AgdaSymbol{(}\AgdaFunction{comp-botSub} \AgdaBound{δ}\AgdaSymbol{))} \AgdaInductiveConstructor{βI}\<%
 \\
 %
 \\

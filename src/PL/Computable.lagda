@@ -79,8 +79,8 @@ C-osr : ∀ {P} {Γ : Context P} φ {δ} {ε} → C Γ φ δ → δ ⇒ ε → C
 
 \AgdaHide{
 \begin{code}
-C-osr (app -bot out) (Γ⊢δ∶x₀ ,p SNδ) δ→ε = (SR Γ⊢δ∶x₀ δ→ε) ,p (SNred SNδ (osr-red δ→ε))
-C-osr {Γ = Γ} (app -imp (_,,_ φ (_,,_ ψ out))) {δ = δ} (Γ⊢δ∶φ⇒ψ ,p Cδ) δ→δ' = SR Γ⊢δ∶φ⇒ψ δ→δ' ,p 
+C-osr (app -bot out) (Γ⊢δ∶x₀ ,p SNδ) δ→ε = (subject-reduction Γ⊢δ∶x₀ δ→ε) ,p (SNred SNδ (osr-red δ→ε))
+C-osr {Γ = Γ} (app -imp (_,,_ φ (_,,_ ψ out))) {δ = δ} (Γ⊢δ∶φ⇒ψ ,p Cδ) δ→δ' = subject-reduction Γ⊢δ∶φ⇒ψ δ→δ' ,p 
   (λ Q ρ ε ρ∶Γ→Δ ε∈Cφ → C-osr ψ (Cδ Q ρ ε ρ∶Γ→Δ ε∈Cφ) (app (appl (respects-osr replacement β-respects-rep δ→δ'))))
 
 C-red : ∀ {P} {Γ : Context P} φ {δ} {ε} → C Γ φ δ → δ ↠ ε → C Γ φ ε
@@ -177,14 +177,14 @@ WTEaux {Γ = Γ} {φ = φ} ψ Γ,p∶φ⊢δ∶ψ Γ⊢ε∶φ δ[p∶=ε]∈CΓ
   (appNeutral _ _) 
   (λ χ Λφδε⇒χ → red-β-redex (C Γ ψ) Λφδε⇒χ δ[p∶=ε]∈CΓψ
     (λ δ' δ⇒δ' → WTEaux ψ
-      (SR Γ,p∶φ⊢δ∶ψ δ⇒δ') 
+      (subject-reduction Γ,p∶φ⊢δ∶ψ δ⇒δ') 
       Γ⊢ε∶φ 
-      (C-osr ψ δ[p∶=ε]∈CΓψ (respects-osr substitution β-respects-sub δ⇒δ')) 
+      (C-osr ψ δ[p∶=ε]∈CΓψ (respects-osr SUB β-respects-sub δ⇒δ')) 
       (SNδ δ' δ⇒δ') (SNI ε SNε)) 
     (λ ε' ε⇒ε' → WTEaux ψ
     Γ,p∶φ⊢δ∶ψ 
-    (SR Γ⊢ε∶φ ε⇒ε') 
-    (C-red ψ {δ ⟦ x₀:= ε ⟧} {δ ⟦ x₀:= ε' ⟧} δ[p∶=ε]∈CΓψ (apredl substitution {E = δ} β-respects-sub (botsub-red ε⇒ε'))) 
+    (subject-reduction Γ⊢ε∶φ ε⇒ε') 
+    (C-red ψ {δ ⟦ x₀:= ε ⟧} {δ ⟦ x₀:= ε' ⟧} δ[p∶=ε]∈CΓψ (apredl SUB {E = δ} β-respects-sub (botsub-red ε⇒ε'))) 
     (SNI δ SNδ) (SNε _ ε⇒ε')))
 \end{code}
 }
@@ -200,7 +200,7 @@ WTE : ∀ {P} {Γ : Context P} {φ} {δ} {ψ} {ε} →
 
 \AgdaHide{
 \begin{code}
-WTE {ψ = ψ} Γ,p∶φ⊢δ∶ψ Γ⊢ε∶φ δ[p∶=ε]∈CΓψ = WTEaux ψ Γ,p∶φ⊢δ∶ψ Γ⊢ε∶φ δ[p∶=ε]∈CΓψ (SNap' {substitution} β-respects-sub (CsubSN ψ δ[p∶=ε]∈CΓψ))
+WTE {ψ = ψ} Γ,p∶φ⊢δ∶ψ Γ⊢ε∶φ δ[p∶=ε]∈CΓψ = WTEaux ψ Γ,p∶φ⊢δ∶ψ Γ⊢ε∶φ δ[p∶=ε]∈CΓψ (SNap' {SUB} β-respects-sub (CsubSN ψ δ[p∶=ε]∈CΓψ))
 \end{code}
 }
 
@@ -237,31 +237,31 @@ SNmainlemma {P} {Q} {Γ} {σ = σ} {Δ} (Λ {φ = φ} {δ} {ψ} Γ,φ⊢δ∶ψ)
         (C-typed {φ = close (typeof x Γ)} (hyp x))
   in
   subst (λ A → Δ ⊢ (ΛP φ δ) ⟦ σ ⟧ ∶ A) (close-magic' {φ = φ ⇛ ψ})
-  (Λ {Γ = Δ} {φ = φ ⟦ σ ⟧} {δ = δ ⟦ Sub↑ -proof σ ⟧} {ψ = ψ ⟦ σ ⟧} 
-    (subst (λ A → (Δ ,P (φ ⟦ σ ⟧)) ⊢ δ ⟦ Sub↑ -proof σ ⟧ ∶ A) 
+  (Λ {Γ = Δ} {φ = φ ⟦ σ ⟧} {δ = δ ⟦ liftSub -proof σ ⟧} {ψ = ψ ⟦ σ ⟧} 
+    (subst (λ A → (Δ ,P (φ ⟦ σ ⟧)) ⊢ δ ⟦ liftSub -proof σ ⟧ ∶ A) 
     (let open ≡-Reasoning in 
     begin
-      ψ 〈 upRep 〉 ⟦ Sub↑ -proof σ ⟧
+      ψ 〈 upRep 〉 ⟦ liftSub -proof σ ⟧
     ≡⟨⟨ sub-compSR ψ ⟩⟩
-      ψ ⟦ Sub↑ -proof σ •SR upRep ⟧
+      ψ ⟦ liftSub -proof σ •SR upRep ⟧
     ≡⟨⟩
       ψ ⟦ upRep •RS σ ⟧
     ≡⟨ sub-compRS ψ ⟩
       ψ ⟦ σ ⟧ 〈 upRep 〉
     ∎)
-  (Substitution Γ,φ⊢δ∶ψ (Sub↑-typed (λ x → 
+  (substitution Γ,φ⊢δ∶ψ (liftSub-typed (λ x → 
     subst (λ A → Δ ⊢ σ _ x ∶ A) (sym (close-magic' {φ = typeof x Γ})) (C-typed {Γ = Δ} {φ = close (typeof x Γ)} (hyp x)))))))
   ,p (λ R {Θ} ρ ε ρ∶Δ→Θ ε∈CΘφ → WTE {ψ = close ψ} 
        (change-type 
          (let open ≡-Reasoning in 
          begin
-           ψ 〈 upRep 〉 ⟦ Sub↑ -proof σ ⟧ 〈 Rep↑ -proof ρ 〉
+           ψ 〈 upRep 〉 ⟦ liftSub -proof σ ⟧ 〈 liftRep -proof ρ 〉
          ≡⟨⟨ close-magic ⟩⟩
-           close (ψ 〈 upRep 〉 ⟦ Sub↑ -proof σ ⟧ 〈 Rep↑ -proof ρ 〉) 〈 magic 〉
-         ≡⟨ cong (λ E → E 〈 magic 〉) (trans (trans (close-rep (ψ 〈 upRep 〉 ⟦ Sub↑ -proof σ ⟧)) (close-sub (ψ 〈 upRep 〉))) (close-rep ψ)) ⟩
+           close (ψ 〈 upRep 〉 ⟦ liftSub -proof σ ⟧ 〈 liftRep -proof ρ 〉) 〈 magic 〉
+         ≡⟨ cong (λ E → E 〈 magic 〉) (trans (trans (close-rep (ψ 〈 upRep 〉 ⟦ liftSub -proof σ ⟧)) (close-sub (ψ 〈 upRep 〉))) (close-rep ψ)) ⟩
            close ψ 〈 magic 〉
          ∎)
-         (Weakening (Substitution Γ,φ⊢δ∶ψ (Sub↑-typed σ∶Γ⇒Δ)) (Rep↑-typed ρ∶Δ→Θ))) 
+         (Weakening (substitution Γ,φ⊢δ∶ψ (liftSub-typed σ∶Γ⇒Δ)) (liftRep-typed ρ∶Δ→Θ))) 
        (change-type 
          (let open ≡-Reasoning in 
          begin
@@ -278,18 +278,18 @@ SNmainlemma {P} {Q} {Γ} {σ = σ} {Δ} (Λ {φ = φ} {δ} {ψ} Γ,φ⊢δ∶ψ)
          (close-rep ψ)
          (let open ≡-Reasoning in 
          begin
-           δ ⟦ x₀:= ε •SR Rep↑ -proof ρ • Sub↑ -proof σ ⟧
+           δ ⟦ x₀:= ε •SR liftRep -proof ρ • liftSub -proof σ ⟧
          ≡⟨ sub-comp δ ⟩
-           δ ⟦ Sub↑ -proof σ ⟧ ⟦ x₀:= ε •SR Rep↑ -proof ρ ⟧
-         ≡⟨ sub-compSR (δ ⟦ Sub↑ -proof σ ⟧) ⟩
-           δ ⟦ Sub↑ -proof σ ⟧ 〈 Rep↑ -proof ρ 〉 ⟦ x₀:= ε ⟧
+           δ ⟦ liftSub -proof σ ⟧ ⟦ x₀:= ε •SR liftRep -proof ρ ⟧
+         ≡⟨ sub-compSR (δ ⟦ liftSub -proof σ ⟧) ⟩
+           δ ⟦ liftSub -proof σ ⟧ 〈 liftRep -proof ρ 〉 ⟦ x₀:= ε ⟧
          ∎)
-         (SNmainlemma {σ = x₀:= ε •SR Rep↑ -proof ρ • Sub↑ -proof σ} Γ,φ⊢δ∶ψ (λ x → aux x ε∈CΘφ ρ∶Δ→Θ))) 
+         (SNmainlemma {σ = x₀:= ε •SR liftRep -proof ρ • liftSub -proof σ} Γ,φ⊢δ∶ψ (λ x → aux x ε∈CΘφ ρ∶Δ→Θ))) 
        (CsubSN (close φ) ε∈CΘφ)) where
     aux : ∀ {R} {Θ : Context R} {ρ} {ε} x → 
       C Θ (close φ) ε →
       ρ ∶ Δ ⇒R Θ → 
-      C Θ (close (typeof {K = -proof} x (Γ ,P φ))) ((x₀:= ε •SR Rep↑ -proof ρ • Sub↑ -proof σ) -proof x)
+      C Θ (close (typeof {K = -proof} x (Γ ,P φ))) ((x₀:= ε •SR liftRep -proof ρ • liftSub -proof σ) -proof x)
     aux {Θ = Θ} {ε = ε} x₀ ε∈CΘφ _ = subst (λ P₁ → C Θ P₁ ε) 
       (let open ≡-Reasoning in
       begin
@@ -309,12 +309,12 @@ SNmainlemma {P} {Q} {Γ} {σ = σ} {Δ} (Λ {φ = φ} {δ} {ψ} Γ,φ⊢δ∶ψ)
       (let open ≡-Reasoning in
       begin
         σ -proof x 〈 ρ 〉
-      ≡⟨⟨ botsub-upRep _ ⟩⟩
+      ≡⟨⟨ botSub-upRep _ ⟩⟩
         σ -proof x 〈 ρ 〉 〈 upRep 〉 ⟦ x₀:= ε ⟧
-      ≡⟨⟨ cong (λ E → E ⟦ x₀:= ε ⟧) (Rep↑-upRep (σ -proof x)) ⟩⟩
-        σ -proof x 〈 upRep 〉 〈 Rep↑ -proof ρ 〉 ⟦ x₀:= ε ⟧
+      ≡⟨⟨ cong (λ E → E ⟦ x₀:= ε ⟧) (liftRep-upRep (σ -proof x)) ⟩⟩
+        σ -proof x 〈 upRep 〉 〈 liftRep -proof ρ 〉 ⟦ x₀:= ε ⟧
       ≡⟨⟨ sub-compSR (σ -proof x 〈 upRep 〉) ⟩⟩
-        (σ -proof x 〈 upRep 〉) ⟦ x₀:= ε •SR Rep↑ -proof ρ ⟧
+        (σ -proof x 〈 upRep 〉) ⟦ x₀:= ε •SR liftRep -proof ρ ⟧
       ∎) 
       (C-rep {φ = close (typeof x Γ)} (hyp x) ρ:Δ→Θ)
 \end{code}

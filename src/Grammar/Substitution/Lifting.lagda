@@ -12,24 +12,24 @@ open import Grammar.Substitution.PreOpFamily G
 }
 
 \begin{code}
-sub↑ : ∀ {U} {V} K → Sub U V → Sub (U , K) (V , K)
-sub↑ _ _ _ x₀ = var x₀
-sub↑ _ σ K (↑ x) = (σ K x) 〈 upRep 〉
+liftSub : ∀ {U} {V} K → Sub U V → Sub (U , K) (V , K)
+liftSub _ _ _ x₀ = var x₀
+liftSub _ σ K (↑ x) = (σ K x) 〈 upRep 〉
 
-sub↑-cong : ∀ {U} {V} {K} {σ σ' : Sub U V} → 
-  σ ∼ σ' → sub↑ K σ ∼ sub↑ K σ'
+liftSub-cong : ∀ {U} {V} {K} {σ σ' : Sub U V} → 
+  σ ∼ σ' → liftSub K σ ∼ liftSub K σ'
 \end{code}
 
 \AgdaHide{
 \begin{code}
-sub↑-cong {K = K} σ-is-σ' x₀ = refl
-sub↑-cong σ-is-σ' (↑ x) = cong (λ E → E 〈 upRep 〉) (σ-is-σ' x)
+liftSub-cong {K = K} σ-is-σ' x₀ = refl
+liftSub-cong σ-is-σ' (↑ x) = cong (λ E → E 〈 upRep 〉) (σ-is-σ' x)
 \end{code}
 }
 
 \begin{code}
-SUB↑ : Lifting pre-substitution
-SUB↑ = record { liftOp = sub↑ ; liftOp-cong = sub↑-cong }
+LIFTSUB : Lifting pre-substitution
+LIFTSUB = record { liftOp = liftSub ; liftOp-cong = liftSub-cong }
 \end{code}
     
 Then, given an expression $E$ of kind $K$ over $U$, we write $E[\sigma]$ for the application of $\sigma$ to $E$, which is the result of substituting $\sigma(x)$ for $x$ for each variable in $E$, avoiding capture.
@@ -38,5 +38,5 @@ Then, given an expression $E$ of kind $K$ over $U$, we write $E[\sigma]$ for the
 infix 70 _⟦_⟧
 _⟦_⟧ : ∀ {U} {V} {C} {K} → 
   Subexpression U C K → Sub U V → Subexpression V C K
-E ⟦ σ ⟧ = Lifting.ap SUB↑ σ E
+E ⟦ σ ⟧ = Lifting.ap LIFTSUB σ E
 \end{code}

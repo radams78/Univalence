@@ -25,7 +25,7 @@
 \\
 \>\AgdaKeyword{open} \AgdaModule{PreOpFamily} \AgdaFunction{pre-substitution}\<%
 \\
-\>\AgdaKeyword{open} \AgdaModule{Lifting} \AgdaFunction{SUB↑}\<%
+\>\AgdaKeyword{open} \AgdaModule{Lifting} \AgdaFunction{LIFTSUB}\<%
 \end{code}
 
 We can consider replacement to be a special case of substitution.  That is,
@@ -56,18 +56,18 @@ Substitution is a pre-family with lifting.
 \\
 %
 \\
-\>\AgdaFunction{rep↑-is-sub↑} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \<[45]%
-\>[45]\<%
+\>\AgdaFunction{liftRep-is-liftSub} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \<[51]%
+\>[51]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{rep2sub} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaBound{K} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaFunction{∼} \AgdaFunction{sub↑} \AgdaBound{K} \AgdaSymbol{(}\AgdaFunction{rep2sub} \AgdaBound{ρ}\AgdaSymbol{)}\<%
+\>[2]\AgdaFunction{rep2sub} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaBound{K} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaFunction{∼} \AgdaFunction{liftSub} \AgdaBound{K} \AgdaSymbol{(}\AgdaFunction{rep2sub} \AgdaBound{ρ}\AgdaSymbol{)}\<%
 \end{code}
 
 \AgdaHide{
 \begin{code}%
-\>\AgdaFunction{rep↑-is-sub↑} \AgdaInductiveConstructor{x₀} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\>\AgdaFunction{liftRep-is-liftSub} \AgdaInductiveConstructor{x₀} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
 \\
-\>\AgdaFunction{rep↑-is-sub↑} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaSymbol{\_)} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\>\AgdaFunction{liftRep-is-liftSub} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaSymbol{\_)} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
 \end{code}
 }
 
@@ -101,19 +101,19 @@ Substitution is a pre-family with lifting.
 \>[2]\AgdaFunction{begin}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{rep2sub} \AgdaSymbol{(}\AgdaFunction{liftOp'R} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaBound{K} \AgdaBound{ρ}\AgdaSymbol{))}\<%
+\>[4]\AgdaFunction{rep2sub} \AgdaSymbol{(}\AgdaFunction{liftOp'R} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaBound{K} \AgdaBound{ρ}\AgdaSymbol{))}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{≈⟨} \AgdaFunction{liftOp'-is-liftOp'} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaBound{A}\AgdaSymbol{\}} \AgdaFunction{⟩}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{liftOp'} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{rep2sub} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaBound{K} \AgdaBound{ρ}\AgdaSymbol{))}\<%
+\>[4]\AgdaFunction{liftOp'} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{rep2sub} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaBound{K} \AgdaBound{ρ}\AgdaSymbol{))}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{≈⟨} \AgdaFunction{liftOp'-cong} \AgdaBound{A} \AgdaFunction{rep↑-is-sub↑} \AgdaFunction{⟩}\<%
+\>[2]\AgdaFunction{≈⟨} \AgdaFunction{liftOp'-cong} \AgdaBound{A} \AgdaFunction{liftRep-is-liftSub} \AgdaFunction{⟩}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{liftOp'} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaBound{K} \AgdaSymbol{(}\AgdaFunction{rep2sub} \AgdaBound{ρ}\AgdaSymbol{))}\<%
+\>[4]\AgdaFunction{liftOp'} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaBound{K} \AgdaSymbol{(}\AgdaFunction{rep2sub} \AgdaBound{ρ}\AgdaSymbol{))}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{∎}\<%

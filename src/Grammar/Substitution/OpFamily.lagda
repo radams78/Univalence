@@ -21,21 +21,21 @@ infixl 60 _•RS_
 _•RS_ : ∀ {U} {V} {W} → Rep V W → Sub U V → Sub U W
 (ρ •RS σ) K x = (σ K x) 〈 ρ 〉
 
-sub↑-compRS : ∀ {U} {V} {W} {K} {ρ : Rep V W} {σ : Sub U V} → sub↑ K (ρ •RS σ) ∼ rep↑ K ρ •RS sub↑ K σ
+liftSub-compRS : ∀ {U} {V} {W} {K} {ρ : Rep V W} {σ : Sub U V} → liftSub K (ρ •RS σ) ∼ liftRep K ρ •RS liftSub K σ
 \end{code}
 
 \AgdaHide{
 \begin{code}
-sub↑-compRS {K = K} x₀ = refl
-sub↑-compRS {U} {V} {W} {K} {ρ} {σ} {L} (↑ x) = let open ≡-Reasoning {A = Expression (W , K) (varKind L)} in 
+liftSub-compRS {K = K} x₀ = refl
+liftSub-compRS {U} {V} {W} {K} {ρ} {σ} {L} (↑ x) = let open ≡-Reasoning {A = Expression (W , K) (varKind L)} in 
   begin 
     (σ L x) 〈 ρ 〉 〈 upRep 〉
   ≡⟨⟨ rep-comp (σ L x) ⟩⟩
     (σ L x) 〈 upRep •R ρ 〉
   ≡⟨⟩
-    (σ L x) 〈 rep↑ K ρ •R upRep 〉
+    (σ L x) 〈 liftRep K ρ •R upRep 〉
   ≡⟨ rep-comp (σ L x) ⟩
-    (σ L x) 〈 upRep 〉 〈 rep↑ K ρ 〉
+    (σ L x) 〈 upRep 〉 〈 liftRep K ρ 〉
   ∎
 \end{code}
 }
@@ -45,7 +45,7 @@ sub↑-compRS {U} {V} {W} {K} {ρ} {σ} {L} (↑ x) = let open ≡-Reasoning {A 
 COMPRS : Composition proto-replacement SubLF SubLF
 COMPRS = record { 
   circ = _•RS_ ; 
-  liftOp-circ = sub↑-compRS ; 
+  liftOp-circ = liftSub-compRS ; 
   apV-circ = refl }
 
 sub-compRS : ∀ {U} {V} {W} {C} {K} 
@@ -57,14 +57,14 @@ infixl 60 _•SR_
 _•SR_ : ∀ {U} {V} {W} → Sub V W → Rep U V → Sub U W
 (σ •SR ρ) K x = σ K (ρ K x)
 
-sub↑-compSR : ∀ {U} {V} {W} {K} {σ : Sub V W} {ρ : Rep U V} → 
-  sub↑ K (σ •SR ρ) ∼ sub↑ K σ •SR rep↑ K ρ
+liftSub-compSR : ∀ {U} {V} {W} {K} {σ : Sub V W} {ρ : Rep U V} → 
+  liftSub K (σ •SR ρ) ∼ liftSub K σ •SR liftRep K ρ
 \end{code}
 
 \AgdaHide{
 \begin{code}
-sub↑-compSR {K = K} x₀ = refl
-sub↑-compSR (↑ x) = refl
+liftSub-compSR {K = K} x₀ = refl
+liftSub-compSR (↑ x) = refl
 \end{code}
 }
 
@@ -73,7 +73,7 @@ sub↑-compSR (↑ x) = refl
 COMPSR : Composition SubLF proto-replacement SubLF
 COMPSR = record { 
   circ = _•SR_ ; 
-  liftOp-circ = sub↑-compSR ; 
+  liftOp-circ = liftSub-compSR ; 
   apV-circ = refl }
 
 sub-compSR : ∀ {U} {V} {W} {C} {K} 
@@ -88,13 +88,13 @@ sub-compSR E = Composition.ap-circ COMPSR E
 }
 
 \begin{code}
-sub↑-upRep : ∀ {U} {V} {C} {K} {L} (E : Subexpression U C K) {σ : Sub U V} →
-  E 〈 upRep 〉 ⟦ sub↑ L σ ⟧ ≡ E ⟦ σ ⟧ 〈 upRep 〉
+liftSub-upRep : ∀ {U} {V} {C} {K} {L} (E : Subexpression U C K) {σ : Sub U V} →
+  E 〈 upRep 〉 ⟦ liftSub L σ ⟧ ≡ E ⟦ σ ⟧ 〈 upRep 〉
 \end{code}
 
 \AgdaHide{
 \begin{code}
-sub↑-upRep E = liftOp-up-mixed COMPSR COMPRS (λ {_} {_} {_} {_} {E} → sym (up-is-up' {E = E})) {E}
+liftSub-upRep E = liftOp-up-mixed COMPSR COMPRS (λ {_} {_} {_} {_} {E} → sym (up-is-up' {E = E})) {E}
 \end{code}
 }
 
@@ -110,41 +110,41 @@ Using the fact that $\bullet_1$ and $\bullet_2$ are compositions, we are
 able to prove that this is a composition $\mathrm{substitution} ; \mathrm{substitution} \rightarrow \mathrm{substitution}$, and hence that substitution is a family of operations.
 
 \begin{code}
-sub↑-comp : ∀ {U} {V} {W} {ρ : Sub U V} {σ : Sub V W} {K} → 
-  sub↑ K (σ • ρ) ∼ sub↑ K σ • sub↑ K ρ
+liftSub-comp : ∀ {U} {V} {W} {ρ : Sub U V} {σ : Sub V W} {K} → 
+  liftSub K (σ • ρ) ∼ liftSub K σ • liftSub K ρ
 \end{code}
 
 \AgdaHide{
 \begin{code}
-sub↑-comp x₀ = refl
-sub↑-comp {W = W} {ρ = ρ} {σ = σ} {K = K} {L} (↑ x) = sym (sub↑-upRep (ρ L x))
+liftSub-comp x₀ = refl
+liftSub-comp {W = W} {ρ = ρ} {σ = σ} {K = K} {L} (↑ x) = sym (liftSub-upRep (ρ L x))
 
-sub↑-upRep₂ : ∀ {U} {V} {C} {K} {L} {M} (E : Subexpression U C M) {σ : Sub U V} → E ⇑ ⇑ ⟦ sub↑ K (sub↑ L σ) ⟧ ≡ E ⟦ σ ⟧ ⇑ ⇑
-sub↑-upRep₂ {U} {V} {C} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
+liftSub-upRep₂ : ∀ {U} {V} {C} {K} {L} {M} (E : Subexpression U C M) {σ : Sub U V} → E ⇑ ⇑ ⟦ liftSub K (liftSub L σ) ⟧ ≡ E ⟦ σ ⟧ ⇑ ⇑
+liftSub-upRep₂ {U} {V} {C} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
   begin
-    E ⇑ ⇑ ⟦ sub↑ K (sub↑ L σ) ⟧
-  ≡⟨ sub↑-upRep (E ⇑) ⟩
-    E ⇑ ⟦ sub↑ L σ ⟧ ⇑
-  ≡⟨ rep-congl (sub↑-upRep E) ⟩
+    E ⇑ ⇑ ⟦ liftSub K (liftSub L σ) ⟧
+  ≡⟨ liftSub-upRep (E ⇑) ⟩
+    E ⇑ ⟦ liftSub L σ ⟧ ⇑
+  ≡⟨ rep-congl (liftSub-upRep E) ⟩
     E ⟦ σ ⟧ ⇑ ⇑
   ∎
 
-sub↑-upRep₃ : ∀ {U} {V} {C} {K} {L} {M} {N} (E : Subexpression U C N) {σ : Sub U V} → E ⇑ ⇑ ⇑ ⟦ sub↑ K (sub↑ L (sub↑ M σ)) ⟧ ≡ E ⟦ σ ⟧ ⇑ ⇑ ⇑
-sub↑-upRep₃ {U} {V} {C} {K} {L} {M} {N} E {σ} = let open ≡-Reasoning in 
+liftSub-upRep₃ : ∀ {U} {V} {C} {K} {L} {M} {N} (E : Subexpression U C N) {σ : Sub U V} → E ⇑ ⇑ ⇑ ⟦ liftSub K (liftSub L (liftSub M σ)) ⟧ ≡ E ⟦ σ ⟧ ⇑ ⇑ ⇑
+liftSub-upRep₃ {U} {V} {C} {K} {L} {M} {N} E {σ} = let open ≡-Reasoning in 
   begin
-    E ⇑ ⇑ ⇑ ⟦ sub↑ K (sub↑ L (sub↑ M σ)) ⟧
-  ≡⟨ sub↑-upRep₂ (E ⇑) ⟩
-    E ⇑ ⟦ sub↑ M σ ⟧ ⇑ ⇑
-  ≡⟨ rep-congl (rep-congl (sub↑-upRep E)) ⟩
+    E ⇑ ⇑ ⇑ ⟦ liftSub K (liftSub L (liftSub M σ)) ⟧
+  ≡⟨ liftSub-upRep₂ (E ⇑) ⟩
+    E ⇑ ⟦ liftSub M σ ⟧ ⇑ ⇑
+  ≡⟨ rep-congl (rep-congl (liftSub-upRep E)) ⟩
     E ⟦ σ ⟧ ⇑ ⇑ ⇑
   ∎
 
-rep↑-sub↑-upRep₃ : ∀ {U} {V} {W} {K1} {K2} {K3} {C} {K4} 
+liftRep-liftSub-upRep₃ : ∀ {U} {V} {W} {K1} {K2} {K3} {C} {K4} 
                    (M : Subexpression U C K4)
                    (σ : Sub U V) (ρ : Rep V W) →
-                    M ⇑ ⇑ ⇑ ⟦ sub↑ K1 (sub↑ K2 (sub↑ K3 σ)) ⟧ 〈 rep↑ K1 (rep↑ K2 (rep↑ K3 ρ)) 〉
+                    M ⇑ ⇑ ⇑ ⟦ liftSub K1 (liftSub K2 (liftSub K3 σ)) ⟧ 〈 liftRep K1 (liftRep K2 (liftRep K3 ρ)) 〉
                     ≡ M ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑
-rep↑-sub↑-upRep₃ M σ ρ = trans (rep-congl (sub↑-upRep₃ M {σ})) (rep↑-upRep₃ (M ⟦ σ ⟧))
+liftRep-liftSub-upRep₃ M σ ρ = trans (rep-congl (liftSub-upRep₃ M {σ})) (liftRep-upRep₃ (M ⟦ σ ⟧))
 
 assocRSSR : ∀ {U} {V} {W} {X} {ρ : Sub W X} {σ : Rep V W} {τ : Sub U V} →
             ρ • (σ •RS τ) ∼ (ρ •SR σ) • τ
@@ -158,7 +158,7 @@ SUB = record {
   liftFamily = SubLF;
   isOpFamily = record { 
     _∘_ = _•_ ; 
-    liftOp-comp = sub↑-comp ; 
+    liftOp-comp = liftSub-comp ; 
     apV-comp = refl } 
   }
 \end{code}
@@ -166,7 +166,7 @@ SUB = record {
 \AgdaHide{
 \begin{code}
 open OpFamily SUB using (comp-congl;comp-congr)
-  renaming (liftOp-idOp to sub↑-idOp;
+  renaming (liftOp-idOp to liftSub-idOp;
            ap-idOp to sub-idOp;
            ap-congl to sub-congr;
            ap-congr to sub-congl;
