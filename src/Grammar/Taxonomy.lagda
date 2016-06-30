@@ -7,6 +7,7 @@
 \AgdaHide{
 \begin{code}
 module Grammar.Taxonomy where
+open import Data.Empty
 open import Data.List public
 open import Prelims
 \end{code}
@@ -56,13 +57,39 @@ We formalise this as follows.  First, we construct the sets of expression kinds 
 There are two \emph{classes} of kinds: expression kinds and constructor kinds.
 
 \begin{code}
+  data Abstractable : Set where
+    -Var : Abstractable
+    -Abs : Abstractable
+
+  Dom : Abstractable → Set
+  Dom -Var = ⊥
+  Dom -Abs = VarKind
+
+  Cod : Abstractable → Set
+  Cod -Var = VarKind
+  Cod -Abs = ExpressionKind
+
+  toExp : ∀ {A} → Cod A → ExpressionKind
+  toExp { -Var} = varKind
+  toExp { -Abs} x = x
+
+  AKind : Abstractable → Set
+  AKind A = PiExp (Dom A) (Cod A)
+
   data KindClass : Set where
     -Expression : KindClass
-    -Constructor : KindClass
+    -List : Abstractable → KindClass
+
+  -Abstraction : KindClass --TODO Rename
+  -Abstraction = -List -Var
+
+  -Constructor : KindClass
+  -Constructor = -List -Abs
 
   Kind : KindClass → Set
   Kind -Expression = ExpressionKind
-  Kind -Constructor = List AbstractionKind
+  Kind (-List A) = List (AKind A)
+--TODO Rename
 \end{code}
 \end{frame}
 %TODO Colours in Agda code?

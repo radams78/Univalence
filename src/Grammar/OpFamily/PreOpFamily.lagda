@@ -65,9 +65,9 @@ record PreOpFamily : Set₂ where
     Op : Alphabet VarKind → Alphabet VarKind → Set
     apV : ∀ {U} {V} {K} → Op U V → Var U K → VExpression V K
     up : ∀ {V} {K} → Op V (V , K)
-    apV-up : ∀ {V} {K} {L} {x : Var V K} → apV (up {K = L}) x ≡ var (↑ (liftVar x)) []
+    apV-up : ∀ {V} {K} {L} {x : Var V K} → apV (up {K = L}) x ≡ var (↑ x)
     idOp : ∀ V → Op V V
-    apV-idOp : ∀ {V} {K} (x : Var V K) → apV (idOp V) x ≡ var (liftVar x) []
+    apV-idOp : ∀ {V} {K} (x : Var V K) → apV (idOp V) x ≡ var x
 \end{code}
 
 This allows us to define the relation $\sim$, and prove it is an equivalence relation:

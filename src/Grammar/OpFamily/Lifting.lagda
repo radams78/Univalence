@@ -57,12 +57,19 @@ the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \c
 This allows us to define the action of \emph{application} $E[\sigma]$:
 
 \begin{code}
+  apV2 : ∀ {U} {V} {A} → Op U V → Var (liftAlphabet U) A → Abstraction V A
+  apV2 {∅} _ ()
+  apV2 {_ , _} σ x₀ = apV σ x₀
+  apV2 {U , _} σ (↑ x) = {!apV2 {U} σ x!}
+
   ap : ∀ {U} {V} {C} {K} → 
     Op U V → Subexpression U C K → Subexpression V C K
-  ap ρ (var x) = apV ρ x
-  ap ρ (app c EE) = app c (ap ρ EE)
-  ap _ out = out
-  ap ρ (_,,_ {A = A} E EE) = ap (liftOp''' A ρ) E ,, ap ρ EE
+  ap {∅} _ (var2 () _)
+  ap {U , K} ρ (var2 x₀ []) = apV ρ x₀
+  ap {U , K} ρ (var2 (↑ x) EE) = {!ap {U} ρ (var2 x EE)!}
+  ap ρ (Grammar.app x E) = {!!}
+  ap ρ Grammar.[] = {!!}
+  ap ρ (E Grammar.∷ E₁) = {!!}
 \end{code}
 
 We prove that application respects $\sim$.
@@ -75,11 +82,10 @@ We prove that application respects $\sim$.
 
 \AgdaHide{
 \begin{code}
-  ap-congl (var x) ρ-is-σ = ρ-is-σ x
-  ap-congl (app c E) ρ-is-σ = cong (app c) (ap-congl E ρ-is-σ)
-  ap-congl out _ = refl
-  ap-congl (_,,_ {A = A} E F) ρ-is-σ = 
-    cong₂ _,,_ (ap-congl E (liftOp'''-cong A ρ-is-σ)) (ap-congl F ρ-is-σ)
+  ap-congl (var2 x EE) ρ-is-σ = {!!}
+  ap-congl (app c E) ρ-is-σ = {!!}
+  ap-congl [] _ = {!!}
+  ap-congl (_∷_ E F) ρ-is-σ = {!!}
 
   ap-congr : ∀ {U} {V} {C} {K}
     {σ : Op U V} {E F : Subexpression U C K} →

@@ -54,9 +54,14 @@ record Grammar : Set₁ where
   liftAlphabet ∅ = ∅
   liftAlphabet (V , A) = liftAlphabet V , VK2AK A
 
-  liftVar : ∀ {V : Alphabet VarKind} {K : VarKind} → Var V K → Var (liftAlphabet V) (VK2AK K)
+  liftVar : ∀ {V K} → Var V K → Var (liftAlphabet V) (VK2AK K)
   liftVar x₀ = x₀
   liftVar (↑ x) = ↑ (liftVar x)
+
+  lowerVar : ∀ {V K} → Var (liftAlphabet V) (VK2AK K) → Var V K
+  lowerVar {∅} ()
+  lowerVar {_ , _} x₀ = x₀
+  lowerVar {_ , _} (↑ x) = ↑ (lowerVar x)
 
   ↑-inj : ∀ {S} {V : Alphabet S} {K} {L} {x y : Var V L} → ↑ {A = S} {K = K} {L = L} x ≡ ↑ y → x ≡ y
   ↑-inj refl = refl
@@ -67,17 +72,21 @@ record Grammar : Set₁ where
   liftVar-inj {x = ↑ x} {x₀} ()
   liftVar-inj {x = ↑ x} {↑ y} x₁ = cong ↑ (liftVar-inj (↑-inj x₁))
 
+  data Subexpressionn A : Alphabet (AKind A) → ∀ C → Kind C → Set where
+    var : ∀ {V} {AA} {K} → Var V (AA ⟶ K) → Subexpressionn A V (-List A) AA → Subexpressionn A V -Expression (toExp K)
+
   data Subexpression2 : Alphabet AbstractionKind → ∀ C → Kind C → Set where
-    var2 : ∀ {V} {AA} {K} → Var V (AA ⟶ K) → Subexpression2 V -Constructor (map VK2AK AA) → Subexpression2 V -Expression K
+    var2 : ∀ {V} {AA} {K} → Var V (AA ⟶ K) → Subexpression2 V -Abstraction AA → Subexpression2 V -Expression K
     app : ∀ {V} {AA} {K} → Constructor (AA ⟶ K) → Subexpression2 V -Constructor AA → Subexpression2 V -Expression K
+    []1 : ∀ {V} → Subexpression2 V -Abstraction []
+    _∷1_ : ∀ {V} {K} {AA} → Subexpression2 V -Expression (varKind K) → Subexpression2 V -Abstraction (K ∷ AA)
     []  : ∀ {V} → Subexpression2 V -Constructor []
     _∷_ : ∀ {V} {BB} {K} {AA} → Subexpression2 (extend V (map VK2AK BB)) -Expression K → Subexpression2 V -Constructor AA → 
       Subexpression2 V -Constructor (BB ⟶ K ∷ AA)
 
-  var2-inj : ∀ {V} {AA} {K} {x y : Var V (AA ⟶ K)} {EE} {FF} → var2 x EE ≡ var2 y FF → x ≡ y
+{-  var2-inj : ∀ {V} {AA} {K} {x y : Var V (AA ⟶ K)} {EE} {FF} → var2 x EE ≡ var2 y FF → x ≡ y
   var2-inj refl = refl
 
-  Subexpression : Alphabet VarKind → ∀ C → Kind C → Set
   Subexpression V = Subexpression2 (liftAlphabet V)
 
   Expression : Alphabet VarKind → ExpressionKind → Set
@@ -104,7 +113,7 @@ record Grammar : Set₁ where
     _snoc_ : ∀ {A} {K} → ExpList V A → Expression V (varKind K) → ExpList V (A , K)
 
   Reduction : Set₁
-  Reduction = ∀ {V} {AA} {K} → Constructor (AA ⟶ K) → Body V AA → Expression V K → Set
+  Reduction = ∀ {V} {AA} {K} → Constructor (AA ⟶ K) → Body V AA → Expression V K → Set -}
 --TODO Delete
 \end{code}
 }
