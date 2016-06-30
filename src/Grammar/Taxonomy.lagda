@@ -103,14 +103,12 @@ We formalise this as follows.  First, we construct the sets of expression kinds 
 There are two \emph{classes} of kinds: expression kinds and constructor kinds.
 
 \begin{code}
-  infix 22 _✧
-  infixr 21 _abs_
-  data AbstractionKind : ExpressionKind → Set where
-    _✧ : ∀ K → AbstractionKind K
-    _abs_ : ∀ {K} → VarKind → AbstractionKind K → AbstractionKind K
-
   infix 22 _●
   infixr 20 _⟶_
+  data AbstractionKind : ExpressionKind → Set where
+    _● : ∀ K → AbstractionKind K
+    _⟶_ : ∀ {K} → VarKind → AbstractionKind K → AbstractionKind K
+
   data ConstructorKind : ExpressionKind → Set where
     _● : ∀ K → ConstructorKind K
     _⟶_ : ∀ {L} {K} → AbstractionKind L → ConstructorKind K → ConstructorKind K

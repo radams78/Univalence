@@ -33,8 +33,8 @@ record Grammar : Set₁ where
 
   Expression V K = Subexpression V -Expression K
   VExpression V K = Expression V (varKind K)
-  dom V (K ✧) = V
-  dom V (K abs A) = dom (V , K) A
+  dom V (K ●) = V
+  dom V (K ⟶ A) = dom (V , K) A
   Abstraction V {K} A = Expression (dom V A) K
   Body V {K} C = Subexpression V (-Constructor K) C
 

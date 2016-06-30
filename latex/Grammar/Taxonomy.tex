@@ -141,27 +141,21 @@ There are two \emph{classes} of kinds: expression kinds and constructor kinds.
 
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{infix} \AgdaNumber{22} \AgdaFixityOp{\_✧}\<%
+\>[2]\AgdaKeyword{infix} \AgdaNumber{22} \AgdaFixityOp{\_●}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{infixr} \AgdaNumber{21} \AgdaFixityOp{\_abs\_}\<%
+\>[2]\AgdaKeyword{infixr} \AgdaNumber{20} \AgdaFixityOp{\_⟶\_}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{data} \AgdaDatatype{AbstractionKind} \AgdaSymbol{:} \AgdaDatatype{ExpressionKind} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{\_✧} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaBound{K} \AgdaSymbol{→} \AgdaDatatype{AbstractionKind} \AgdaBound{K}\<%
+\>[4]\AgdaInductiveConstructor{\_●} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaBound{K} \AgdaSymbol{→} \AgdaDatatype{AbstractionKind} \AgdaBound{K}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{\_abs\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaField{VarKind} \AgdaSymbol{→} \AgdaDatatype{AbstractionKind} \AgdaBound{K} \AgdaSymbol{→} \AgdaDatatype{AbstractionKind} \AgdaBound{K}\<%
+\>[4]\AgdaInductiveConstructor{\_⟶\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaField{VarKind} \AgdaSymbol{→} \AgdaDatatype{AbstractionKind} \AgdaBound{K} \AgdaSymbol{→} \AgdaDatatype{AbstractionKind} \AgdaBound{K}\<%
 \\
 %
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{infix} \AgdaNumber{22} \AgdaFixityOp{\_●}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{infixr} \AgdaNumber{20} \AgdaFixityOp{\_⟶\_}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{data} \AgdaDatatype{ConstructorKind} \AgdaSymbol{:} \AgdaDatatype{ExpressionKind} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%

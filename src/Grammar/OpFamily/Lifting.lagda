@@ -32,8 +32,8 @@ the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \c
   liftOp' (K ∷ A) σ = liftOp' A (liftOp K σ) -}
 
   liftOp'' : ∀ {U} {V} {K} A → Op U V → Op (dom U {K} A) (dom V A)
-  liftOp'' (_ ✧) σ = σ
-  liftOp'' (K abs A) σ = liftOp'' A (liftOp K σ)
+  liftOp'' (_ ●) σ = σ
+  liftOp'' (K ⟶ A) σ = liftOp'' A (liftOp K σ)
 
 {-  liftOp'-cong : ∀ {U} {V} A {ρ σ : Op U V} → 
     ρ ∼op σ → liftOp' A ρ ∼op liftOp' A σ
