@@ -20,7 +20,7 @@ postulate subrepsub : ∀ {U} {V} {W} {X} {K} (M : Expression U K) {σ₁ : Sub 
                     M ⟦ σ₃ •SR σ₂ • σ₁ ⟧ ≡ M ⟦ σ₁ ⟧ 〈 σ₂ 〉 ⟦ σ₃ ⟧
 
 postulate subrepbotsub-up : ∀ {U} {V} {W} {K} {L} (M : Expression U K) {N : Expression W (varKind L)} {σ : Sub U V} {ρ : Rep V W} →
-                            M ⇑ ⟦ x₀:= N •SR rep↑ _ ρ • sub↑ _ σ ⟧ ≡ M ⟦ σ ⟧ 〈 ρ 〉
+                            M ⇑ ⟦ x₀:= N •SR liftRep _ ρ • liftSub _ σ ⟧ ≡ M ⟦ σ ⟧ 〈 ρ 〉
 
 postulate ΛR' : ∀ {V} {Γ : Context V} {φ} {δ} {ψ} → Γ ,P φ ⊢ δ ∶ ψ ⇑ → Γ ⊢ ΛP φ δ ∶ ψ
 \end{code}

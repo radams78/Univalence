@@ -19,15 +19,17 @@ The rules of deduction of $\lambda o e$ are those of $\lambda o$ (Figure \ref{fi
 \infer[(e : M =_A N \in \Gamma)]{\Gamma \vdash e : M =_A N}{\Gamma \vald} \]
 \[ \infer{\Gamma \vdash \reff{M} : M =_A M}{\Gamma \vdash M : A}
 \qquad
-\infer{\Gamma \vdash P \supset Q : \phi \supset \psi =_\Omega \phi' \supset \psi'}{\Gamma \vdash P : \phi =_\Omega \phi' \quad \Gamma \vdash Q : \psi =_\Omega \psi'} \]
+\infer{\Gamma \vdash P \supset^* Q : \phi \supset \psi =_\Omega \phi' \supset \psi'}{\Gamma \vdash P : \phi =_\Omega \phi' \quad \Gamma \vdash Q : \psi =_\Omega \psi'} \]
 \[ \infer{\Gamma \vdash \univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi}{\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \psi \supset \phi} 
 \qquad
 \infer{\Gamma \vdash P^+ : \phi \supset \psi}{\Gamma \vdash P : \phi =_\Omega \psi}
 \qquad
 \infer{\Gamma \vdash P^- : \psi \supset \phi}{\Gamma \vdash P : \psi =_\Omega \psi} \]
-\[ \infer{\Gamma \vdash \triplelambda e : x =_A y . P : M =_{A \rightarrow B} N}{\Gamma, x : A, y : A, e : x =_A y \vdash M x =_B N y} \]
+\[ \infer{\Gamma \vdash \triplelambda e : x =_A y . P : M =_{A \rightarrow B} N}{\Gamma, x : A, y : A, e : x =_A y \vdash M x =_B N y \quad \Gamma \vdash M : A \rightarrow B \quad
+\Gamma \vdash N : A \rightarrow B} \]
 \[ \infer{\Gamma \vdash PQ : MN =_B M' N'}{\Gamma \vdash P : M =_{A \rightarrow B} M' \quad \Gamma \vdash Q : N =_A N'} \]
-\[ \infer[(M \simeq M', N \simeq N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
+\[ \infer[(M \rightarrow M', N \rightarrow N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
+\[ \infer[(M' \rightarrow M, N' \rightarrow N)]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
 \end{framed}
 \caption{Rules of Deduction of $\lambda oe$}
 \label{fig:lambdaoe}

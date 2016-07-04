@@ -39,6 +39,7 @@
 Our main theorem is as follows.
 
 \begin{theorem}$ $
+\label{theorem:mainprop}
 \begin{enumerate}
 \item
 If $\Gamma \vdash M : A$, and $\sigma : \Gamma \rightarrow \Delta$ is computable,
@@ -99,20 +100,20 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[4]\AgdaKeyword{let} \AgdaBound{MN∈EΘB} \AgdaSymbol{=} \AgdaFunction{subst} \AgdaSymbol{(}\AgdaFunction{E} \AgdaBound{Θ} \AgdaBound{B}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{subrepsub} \AgdaBound{M}\AgdaSymbol{)}\<%
 \\
 \>[4]\AgdaIndent{17}{}\<[17]%
-\>[17]\AgdaSymbol{(}\AgdaFunction{Computable-Sub} \AgdaSymbol{(}\AgdaFunction{x₀:=} \AgdaBound{N} \AgdaFunction{•SR} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaBound{ρ} \AgdaFunction{•} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{)} \<[70]%
-\>[70]\<%
+\>[17]\AgdaSymbol{(}\AgdaFunction{Computable-Sub} \AgdaSymbol{(}\AgdaFunction{x₀:=} \AgdaBound{N} \AgdaFunction{•SR} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaBound{ρ} \AgdaFunction{•} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{)} \<[76]%
+\>[76]\<%
 \\
 \>[4]\AgdaIndent{17}{}\<[17]%
 \>[17]\AgdaSymbol{(}\AgdaPostulate{compC} \AgdaSymbol{(}\AgdaPostulate{compSRC} \AgdaSymbol{(}\AgdaPostulate{botsubC} \AgdaBound{N∈EΘA}\AgdaSymbol{)} \<[49]%
 \>[49]\<%
 \\
 \>[17]\AgdaIndent{24}{}\<[24]%
-\>[24]\AgdaSymbol{(}\AgdaPostulate{rep↑-typed} \AgdaBound{ρ∶Δ⇒Θ}\AgdaSymbol{))} \<[44]%
-\>[44]\<%
+\>[24]\AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaBound{ρ∶Δ⇒Θ}\AgdaSymbol{))} \<[47]%
+\>[47]\<%
 \\
 \>[0]\AgdaIndent{17}{}\<[17]%
-\>[17]\AgdaSymbol{(}\AgdaPostulate{sub↑C} \AgdaBound{σ∶Γ⇒Δ}\AgdaSymbol{))} \<[32]%
-\>[32]\<%
+\>[17]\AgdaSymbol{(}\AgdaPostulate{liftSubC} \AgdaBound{σ∶Γ⇒Δ}\AgdaSymbol{))} \<[35]%
+\>[35]\<%
 \\
 \>[0]\AgdaIndent{17}{}\<[17]%
 \>[17]\AgdaBound{Γ,A⊢M∶B} \AgdaBound{validΘ}\AgdaSymbol{)} \AgdaKeyword{in}\<%
@@ -121,16 +122,16 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[4]\AgdaPostulate{expand-E} \AgdaBound{MN∈EΘB}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaSymbol{(}\AgdaInductiveConstructor{appR} \AgdaSymbol{(}\AgdaInductiveConstructor{ΛR} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaSymbol{(}\AgdaPostulate{substitution} \AgdaBound{Γ,A⊢M∶B} \AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validΔ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{sub↑-typed} \AgdaSymbol{(}\AgdaPostulate{subC-typed} \AgdaBound{σ∶Γ⇒Δ}\AgdaSymbol{)))} \<[97]%
-\>[97]\<%
+\>[6]\AgdaSymbol{(}\AgdaInductiveConstructor{appR} \AgdaSymbol{(}\AgdaInductiveConstructor{ΛR} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaSymbol{(}\AgdaPostulate{substitution} \AgdaBound{Γ,A⊢M∶B} \AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validΔ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{liftSub-typed} \AgdaSymbol{(}\AgdaPostulate{subC-typed} \AgdaBound{σ∶Γ⇒Δ}\AgdaSymbol{)))} \<[100]%
+\>[100]\<%
 \\
 \>[6]\AgdaIndent{54}{}\<[54]%
 \>[54]\AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validΘ}\AgdaSymbol{)} \<[69]%
 \>[69]\<%
 \\
 \>[0]\AgdaIndent{41}{}\<[41]%
-\>[41]\AgdaSymbol{(}\AgdaPostulate{rep↑-typed} \AgdaBound{ρ∶Δ⇒Θ}\AgdaSymbol{)))} \<[62]%
-\>[62]\<%
+\>[41]\AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaBound{ρ∶Δ⇒Θ}\AgdaSymbol{)))} \<[65]%
+\>[65]\<%
 \\
 \>[0]\AgdaIndent{16}{}\<[16]%
 \>[16]\AgdaSymbol{(}\AgdaFunction{E-typed} \AgdaBound{N∈EΘA}\AgdaSymbol{))} \<[33]%
@@ -167,29 +168,29 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[35]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaKeyword{let} \AgdaBound{δε∈EΘψ} \AgdaSymbol{:} \AgdaFunction{EP} \AgdaBound{Θ} \AgdaSymbol{(}\AgdaBound{ψ} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{δ} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaSymbol{\_} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{ε} \AgdaFunction{⟧}\AgdaSymbol{)}\<%
+\>[4]\AgdaKeyword{let} \AgdaBound{δε∈EΘψ} \AgdaSymbol{:} \AgdaFunction{EP} \AgdaBound{Θ} \AgdaSymbol{(}\AgdaBound{ψ} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{δ} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaSymbol{\_} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{ε} \AgdaFunction{⟧}\AgdaSymbol{)}\<%
 \\
 \>[4]\AgdaIndent{8}{}\<[8]%
 \>[8]\AgdaBound{δε∈EΘψ} \AgdaSymbol{=} \AgdaFunction{subst₂} \AgdaSymbol{(}\AgdaFunction{EP} \AgdaBound{Θ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{subrepbotsub-up} \AgdaBound{ψ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{subrepsub} \AgdaBound{δ}\AgdaSymbol{)} \<[65]%
 \>[65]\<%
 \\
 \>[8]\AgdaIndent{17}{}\<[17]%
-\>[17]\AgdaSymbol{(}\AgdaFunction{Computable-Sub} \AgdaSymbol{(}\AgdaFunction{x₀:=} \AgdaBound{ε} \AgdaFunction{•SR} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaBound{ρ} \AgdaFunction{•} \AgdaFunction{sub↑} \AgdaSymbol{\_} \AgdaBound{σ}\AgdaSymbol{)} \<[66]%
-\>[66]\<%
+\>[17]\AgdaSymbol{(}\AgdaFunction{Computable-Sub} \AgdaSymbol{(}\AgdaFunction{x₀:=} \AgdaBound{ε} \AgdaFunction{•SR} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaBound{ρ} \AgdaFunction{•} \AgdaFunction{liftSub} \AgdaSymbol{\_} \AgdaBound{σ}\AgdaSymbol{)} \<[72]%
+\>[72]\<%
 \\
 \>[8]\AgdaIndent{17}{}\<[17]%
 \>[17]\AgdaSymbol{(}\AgdaPostulate{compC} \AgdaSymbol{(}\AgdaPostulate{compSRC} \AgdaSymbol{(}\AgdaPostulate{botsubCP} \AgdaBound{ε∈EΔφ}\AgdaSymbol{)} \<[50]%
 \>[50]\<%
 \\
 \>[17]\AgdaIndent{24}{}\<[24]%
-\>[24]\AgdaSymbol{(}\AgdaPostulate{rep↑-typed} \AgdaBound{ρ∶Δ⇒Θ}\AgdaSymbol{))} \<[44]%
-\>[44]\<%
+\>[24]\AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaBound{ρ∶Δ⇒Θ}\AgdaSymbol{))} \<[47]%
+\>[47]\<%
 \\
 \>[0]\AgdaIndent{17}{}\<[17]%
-\>[17]\AgdaSymbol{(}\AgdaPostulate{sub↑C} \AgdaBound{σ∶Γ⇒Δ}\AgdaSymbol{))} \AgdaBound{Γ,φ⊢δ∶ψ} \AgdaSymbol{(}\AgdaFunction{Context-Validity} \AgdaSymbol{(}\AgdaFunction{EP-typed} \AgdaBound{ε∈EΔφ}\AgdaSymbol{)))} \AgdaKeyword{in}\<%
+\>[17]\AgdaSymbol{(}\AgdaPostulate{liftSubC} \AgdaBound{σ∶Γ⇒Δ}\AgdaSymbol{))} \AgdaBound{Γ,φ⊢δ∶ψ} \AgdaSymbol{(}\AgdaFunction{context-validity} \AgdaSymbol{(}\AgdaFunction{EP-typed} \AgdaBound{ε∈EΔφ}\AgdaSymbol{)))} \AgdaKeyword{in}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{expand-EP} \AgdaBound{δε∈EΘψ} \AgdaSymbol{(}\AgdaInductiveConstructor{appPR} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaBound{Δ⊢Λφδσ∶φ⊃ψ} \AgdaSymbol{(}\AgdaFunction{Context-Validity} \AgdaSymbol{(}\AgdaFunction{EP-typed} \AgdaBound{ε∈EΔφ}\AgdaSymbol{))} \AgdaBound{ρ∶Δ⇒Θ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{EP-typed} \AgdaBound{ε∈EΔφ}\AgdaSymbol{))}\<%
+\>[4]\AgdaFunction{expand-EP} \AgdaBound{δε∈EΘψ} \AgdaSymbol{(}\AgdaInductiveConstructor{appPR} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaBound{Δ⊢Λφδσ∶φ⊃ψ} \AgdaSymbol{(}\AgdaFunction{context-validity} \AgdaSymbol{(}\AgdaFunction{EP-typed} \AgdaBound{ε∈EΔφ}\AgdaSymbol{))} \AgdaBound{ρ∶Δ⇒Θ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{EP-typed} \AgdaBound{ε∈EΔφ}\AgdaSymbol{))}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
 \>[6]\AgdaSymbol{(}\AgdaInductiveConstructor{βPkr} \AgdaSymbol{(}\AgdaFunction{SNrep} \AgdaPostulate{R-creates-rep} \AgdaSymbol{(}\AgdaFunction{E-SN} \AgdaInductiveConstructor{Ω} \AgdaSymbol{(}\AgdaFunction{Computable-Sub} \AgdaBound{σ} \AgdaBound{σ∶Γ⇒Δ} \AgdaBound{Γ⊢φ∶Ω} \AgdaBound{validΔ}\AgdaSymbol{)))} \AgdaSymbol{(}\AgdaFunction{EP-SN} \AgdaBound{ε∈EΔφ}\AgdaSymbol{)))}\<%
@@ -223,7 +224,7 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[7]\AgdaBound{validΔAA} \AgdaSymbol{=} \AgdaInductiveConstructor{ctxTR} \AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validΔ}\AgdaSymbol{)} \AgdaKeyword{in}\<%
 \\
 \>[0]\AgdaIndent{3}{}\<[3]%
-\>[3]\AgdaKeyword{let} \AgdaBound{ΔAAE⊢P∶Mx≡Ny} \AgdaSymbol{:} \AgdaFunction{addpath} \AgdaBound{Δ} \AgdaBound{A} \AgdaDatatype{⊢} \AgdaBound{P} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{))} \AgdaFunction{⟧} \AgdaDatatype{∶} \AgdaFunction{appT} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaFunction{x₂}\AgdaSymbol{)} \AgdaFunction{≡〈} \AgdaBound{B} \AgdaFunction{〉} \AgdaFunction{appT} \AgdaSymbol{(}\AgdaBound{N} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaFunction{x₁}\AgdaSymbol{)}\<%
+\>[3]\AgdaKeyword{let} \AgdaBound{ΔAAE⊢P∶Mx≡Ny} \AgdaSymbol{:} \AgdaFunction{addpath} \AgdaBound{Δ} \AgdaBound{A} \AgdaDatatype{⊢} \AgdaBound{P} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{))} \AgdaFunction{⟧} \AgdaDatatype{∶} \AgdaFunction{appT} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaFunction{x₂}\AgdaSymbol{)} \AgdaFunction{≡〈} \AgdaBound{B} \AgdaFunction{〉} \AgdaFunction{appT} \AgdaSymbol{(}\AgdaBound{N} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaFunction{x₁}\AgdaSymbol{)}\<%
 \\
 \>[3]\AgdaIndent{7}{}\<[7]%
 \>[7]\AgdaBound{ΔAAE⊢P∶Mx≡Ny} \AgdaSymbol{=} \AgdaPostulate{change-type} \<[34]%
@@ -234,11 +235,11 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[72]\<%
 \\
 \>[22]\AgdaIndent{24}{}\<[24]%
-\>[24]\AgdaSymbol{(}\AgdaPostulate{sub↑-typed} \AgdaSymbol{(}\AgdaPostulate{sub↑-typed} \AgdaSymbol{(}\AgdaPostulate{sub↑-typed} \AgdaSymbol{(}\AgdaPostulate{subC-typed} \AgdaBound{σ∶Γ⇒Δ}\AgdaSymbol{)))))} \<[83]%
-\>[83]\<%
+\>[24]\AgdaSymbol{(}\AgdaPostulate{liftSub-typed} \AgdaSymbol{(}\AgdaPostulate{liftSub-typed} \AgdaSymbol{(}\AgdaPostulate{liftSub-typed} \AgdaSymbol{(}\AgdaPostulate{subC-typed} \AgdaBound{σ∶Γ⇒Δ}\AgdaSymbol{)))))} \<[92]%
+\>[92]\<%
 \\
 \>[0]\AgdaIndent{22}{}\<[22]%
-\>[22]\AgdaSymbol{(}\AgdaFunction{cong₂} \AgdaSymbol{(λ} \AgdaBound{x} \AgdaBound{y} \AgdaSymbol{→} \AgdaFunction{appT} \AgdaBound{x} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaFunction{x₂}\AgdaSymbol{)} \AgdaFunction{≡〈} \AgdaBound{B} \AgdaFunction{〉} \AgdaFunction{appT} \AgdaBound{y} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaFunction{x₁}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{sub↑-upRep₃} \AgdaBound{M}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{sub↑-upRep₃} \AgdaBound{N}\AgdaSymbol{))} \AgdaKeyword{in}\<%
+\>[22]\AgdaSymbol{(}\AgdaFunction{cong₂} \AgdaSymbol{(λ} \AgdaBound{x} \AgdaBound{y} \AgdaSymbol{→} \AgdaFunction{appT} \AgdaBound{x} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaFunction{x₂}\AgdaSymbol{)} \AgdaFunction{≡〈} \AgdaBound{B} \AgdaFunction{〉} \AgdaFunction{appT} \AgdaBound{y} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaFunction{x₁}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{liftSub-upRep₃} \AgdaBound{M}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{liftSub-upRep₃} \AgdaBound{N}\AgdaSymbol{))} \AgdaKeyword{in}\<%
 \\
 \>[0]\AgdaIndent{3}{}\<[3]%
 \>[3]\AgdaPostulate{func-EE} \<[11]%
@@ -255,13 +256,13 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[5]\AgdaKeyword{let} \AgdaBound{validΘ} \AgdaSymbol{:} \AgdaDatatype{valid} \AgdaBound{Θ}\<%
 \\
 \>[5]\AgdaIndent{9}{}\<[9]%
-\>[9]\AgdaBound{validΘ} \AgdaSymbol{=} \AgdaFunction{Context-Validity} \AgdaSymbol{(}\AgdaFunction{E'-typed} \AgdaBound{L∈EΘA}\AgdaSymbol{)} \AgdaKeyword{in}\<%
+\>[9]\AgdaBound{validΘ} \AgdaSymbol{=} \AgdaFunction{context-validity} \AgdaSymbol{(}\AgdaFunction{E'-typed} \AgdaBound{L∈EΘA}\AgdaSymbol{)} \AgdaKeyword{in}\<%
 \\
 \>[0]\AgdaIndent{5}{}\<[5]%
-\>[5]\AgdaKeyword{let} \AgdaBound{rep↑ρ∶apΔ⇒RapΘ} \AgdaSymbol{:} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaPostulate{∶} \AgdaFunction{addpath} \AgdaBound{Δ} \AgdaBound{A} \AgdaPostulate{⇒R} \AgdaFunction{addpath} \AgdaBound{Θ} \AgdaBound{A}\<%
+\>[5]\AgdaKeyword{let} \AgdaBound{liftRepρ∶apΔ⇒RapΘ} \AgdaSymbol{:} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaPostulate{∶} \AgdaFunction{addpath} \AgdaBound{Δ} \AgdaBound{A} \AgdaPostulate{⇒R} \AgdaFunction{addpath} \AgdaBound{Θ} \AgdaBound{A}\<%
 \\
 \>[5]\AgdaIndent{9}{}\<[9]%
-\>[9]\AgdaBound{rep↑ρ∶apΔ⇒RapΘ} \AgdaSymbol{=} \AgdaPostulate{rep↑-typed} \AgdaSymbol{(}\AgdaPostulate{rep↑-typed} \AgdaSymbol{(}\AgdaPostulate{rep↑-typed} \AgdaBound{ρ∶Δ⇒RΘ}\AgdaSymbol{))} \AgdaKeyword{in} \AgdaComment{--TODO General lemma}\<%
+\>[9]\AgdaBound{liftRepρ∶apΔ⇒RapΘ} \AgdaSymbol{=} \AgdaPostulate{liftRep-typed} \AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaBound{ρ∶Δ⇒RΘ}\AgdaSymbol{))} \AgdaKeyword{in} \AgdaComment{--TODO General lemma}\<%
 \\
 \>[0]\AgdaIndent{5}{}\<[5]%
 \>[5]\AgdaPostulate{expand-EE} \<[15]%
@@ -283,34 +284,34 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[11]\AgdaFunction{begin}\<%
 \\
 \>[11]\AgdaIndent{13}{}\<[13]%
-\>[13]\AgdaBound{M} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⟦} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q}\AgdaSymbol{)} \AgdaFunction{•SR} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{))} \AgdaFunction{⟧}\<%
+\>[13]\AgdaBound{M} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⟦} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q}\AgdaSymbol{)} \AgdaFunction{•SR} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{))} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{11}{}\<[11]%
 \>[11]\AgdaFunction{≡⟨} \AgdaFunction{sub-comp} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
 \\
 \>[11]\AgdaIndent{13}{}\<[13]%
-\>[13]\AgdaBound{M} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{))} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q}\AgdaSymbol{)} \AgdaFunction{•SR} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{⟧}\<%
+\>[13]\AgdaBound{M} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{))} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q}\AgdaSymbol{)} \AgdaFunction{•SR} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{sub↑-upRep₃} \AgdaBound{M}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
+\>[11]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{liftSub-upRep₃} \AgdaBound{M}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
 \\
 \>[11]\AgdaIndent{13}{}\<[13]%
-\>[13]\AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⟦} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q}\AgdaSymbol{)} \AgdaFunction{•SR} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{⟧}\<%
+\>[13]\AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⟦} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q}\AgdaSymbol{)} \AgdaFunction{•SR} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{11}{}\<[11]%
 \>[11]\AgdaFunction{≡⟨} \AgdaFunction{sub-compSR} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
 \\
 \>[11]\AgdaIndent{13}{}\<[13]%
-\>[13]\AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q} \AgdaFunction{⟧}\<%
+\>[13]\AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep↑-upRep₃} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{))} \AgdaFunction{⟩}\<%
+\>[11]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{liftRep-upRep₃} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{))} \AgdaFunction{⟩}\<%
 \\
 \>[11]\AgdaIndent{13}{}\<[13]%
 \>[13]\AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaFunction{≡⟨} \AgdaFunction{botsub-upRep₃} \AgdaFunction{⟩}\<%
+\>[11]\AgdaFunction{≡⟨} \AgdaFunction{botSub-upRep₃} \AgdaFunction{⟩}\<%
 \\
 \>[11]\AgdaIndent{13}{}\<[13]%
 \>[13]\AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\<%
@@ -327,34 +328,34 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[11]\AgdaFunction{begin}\<%
 \\
 \>[11]\AgdaIndent{13}{}\<[13]%
-\>[13]\AgdaBound{N} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⟦} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q}\AgdaSymbol{)} \AgdaFunction{•SR} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{))} \AgdaFunction{⟧}\<%
+\>[13]\AgdaBound{N} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⟦} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q}\AgdaSymbol{)} \AgdaFunction{•SR} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{))} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{11}{}\<[11]%
 \>[11]\AgdaFunction{≡⟨} \AgdaFunction{sub-comp} \AgdaSymbol{(}\AgdaBound{N} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
 \\
 \>[11]\AgdaIndent{13}{}\<[13]%
-\>[13]\AgdaBound{N} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{))} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q}\AgdaSymbol{)} \AgdaFunction{•SR} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{⟧}\<%
+\>[13]\AgdaBound{N} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{))} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q}\AgdaSymbol{)} \AgdaFunction{•SR} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{sub↑-upRep₃} \AgdaBound{N}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
+\>[11]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{liftSub-upRep₃} \AgdaBound{N}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
 \\
 \>[11]\AgdaIndent{13}{}\<[13]%
-\>[13]\AgdaBound{N} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⟦} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q}\AgdaSymbol{)} \AgdaFunction{•SR} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{⟧}\<%
+\>[13]\AgdaBound{N} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⟦} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q}\AgdaSymbol{)} \AgdaFunction{•SR} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{11}{}\<[11]%
 \>[11]\AgdaFunction{≡⟨} \AgdaFunction{sub-compSR} \AgdaSymbol{(}\AgdaBound{N} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
 \\
 \>[11]\AgdaIndent{13}{}\<[13]%
-\>[13]\AgdaBound{N} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q} \AgdaFunction{⟧}\<%
+\>[13]\AgdaBound{N} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep↑-upRep₃} \AgdaSymbol{(}\AgdaBound{N} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{))} \AgdaFunction{⟩}\<%
+\>[11]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{liftRep-upRep₃} \AgdaSymbol{(}\AgdaBound{N} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{))} \AgdaFunction{⟩}\<%
 \\
 \>[11]\AgdaIndent{13}{}\<[13]%
 \>[13]\AgdaBound{N} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaFunction{≡⟨} \AgdaFunction{botsub-upRep₃} \AgdaFunction{⟩}\<%
+\>[11]\AgdaFunction{≡⟨} \AgdaFunction{botSub-upRep₃} \AgdaFunction{⟩}\<%
 \\
 \>[11]\AgdaIndent{13}{}\<[13]%
 \>[13]\AgdaBound{N} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\<%
@@ -370,19 +371,19 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[11]\AgdaFunction{begin}\<%
 \\
 \>[11]\AgdaIndent{13}{}\<[13]%
-\>[13]\AgdaBound{P} \AgdaFunction{⟦} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q}\AgdaSymbol{)} \AgdaFunction{•SR} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{))} \AgdaFunction{⟧}\<%
+\>[13]\AgdaBound{P} \AgdaFunction{⟦} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q}\AgdaSymbol{)} \AgdaFunction{•SR} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{))} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{11}{}\<[11]%
 \>[11]\AgdaFunction{≡⟨} \AgdaFunction{sub-comp} \AgdaBound{P} \AgdaFunction{⟩}\<%
 \\
 \>[11]\AgdaIndent{13}{}\<[13]%
-\>[13]\AgdaBound{P} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{))} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q}\AgdaSymbol{)} \AgdaFunction{•SR} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{⟧}\<%
+\>[13]\AgdaBound{P} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{))} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q}\AgdaSymbol{)} \AgdaFunction{•SR} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaFunction{≡⟨} \AgdaFunction{sub-compSR} \AgdaSymbol{(}\AgdaBound{P} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{))} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
+\>[11]\AgdaFunction{≡⟨} \AgdaFunction{sub-compSR} \AgdaSymbol{(}\AgdaBound{P} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{))} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
 \\
 \>[11]\AgdaIndent{13}{}\<[13]%
-\>[13]\AgdaBound{P} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{))} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q} \AgdaFunction{⟧}\<%
+\>[13]\AgdaBound{P} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{))} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{11}{}\<[11]%
 \>[11]\AgdaFunction{∎}\AgdaSymbol{)} \<[14]%
@@ -397,12 +398,12 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[42]\<%
 \\
 \>[11]\AgdaIndent{13}{}\<[13]%
-\>[13]\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•} \<[54]%
-\>[54]\<%
+\>[13]\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•} \<[63]%
+\>[63]\<%
 \\
 \>[11]\AgdaIndent{13}{}\<[13]%
-\>[13]\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{)))} \<[53]%
-\>[53]\<%
+\>[13]\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ}\AgdaSymbol{)))} \<[62]%
+\>[62]\<%
 \\
 \>[0]\AgdaIndent{11}{}\<[11]%
 \>[11]\AgdaSymbol{(}\AgdaPostulate{compC} \AgdaSymbol{(}\AgdaPostulate{compSRC} \<[27]%
@@ -413,11 +414,11 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[51]\<%
 \\
 \>[11]\AgdaIndent{18}{}\<[18]%
-\>[18]\AgdaBound{rep↑ρ∶apΔ⇒RapΘ}\AgdaSymbol{)}\<%
+\>[18]\AgdaBound{liftRepρ∶apΔ⇒RapΘ}\AgdaSymbol{)}\<%
 \\
 \>[0]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaSymbol{(}\AgdaPostulate{sub↑C} \AgdaSymbol{(}\AgdaPostulate{sub↑C} \AgdaSymbol{(}\AgdaPostulate{sub↑C} \AgdaBound{σ∶Γ⇒Δ}\AgdaSymbol{))))} \<[42]%
-\>[42]\<%
+\>[11]\AgdaSymbol{(}\AgdaPostulate{liftSubC} \AgdaSymbol{(}\AgdaPostulate{liftSubC} \AgdaSymbol{(}\AgdaPostulate{liftSubC} \AgdaBound{σ∶Γ⇒Δ}\AgdaSymbol{))))} \<[51]%
+\>[51]\<%
 \\
 \>[0]\AgdaIndent{11}{}\<[11]%
 \>[11]\AgdaBound{ΓAAe⊢P∶Mx≡Ny} \<[24]%
@@ -435,15 +436,15 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[75]\<%
 \\
 \>[9]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaBound{rep↑ρ∶apΔ⇒RapΘ}\AgdaSymbol{)} \<[27]%
-\>[27]\<%
+\>[11]\AgdaBound{liftRepρ∶apΔ⇒RapΘ}\AgdaSymbol{)} \<[30]%
+\>[30]\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
 \>[9]\AgdaSymbol{(}\AgdaFunction{cong₂} \AgdaSymbol{(λ} \AgdaBound{x} \AgdaBound{y} \AgdaSymbol{→} \AgdaFunction{appT} \AgdaBound{x} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaFunction{x₂}\AgdaSymbol{)} \AgdaFunction{≡〈} \AgdaBound{B} \AgdaFunction{〉} \AgdaFunction{appT} \AgdaBound{y} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaFunction{x₁}\AgdaSymbol{))} \<[65]%
 \>[65]\<%
 \\
 \>[9]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaSymbol{(}\AgdaFunction{rep↑-upRep₃} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{rep↑-upRep₃} \AgdaSymbol{(}\AgdaBound{N} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)))))}\<%
+\>[11]\AgdaSymbol{(}\AgdaFunction{liftRep-upRep₃} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{liftRep-upRep₃} \AgdaSymbol{(}\AgdaBound{N} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)))))}\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
 \>[9]\AgdaSymbol{(}\AgdaFunction{EE-typed} \AgdaBound{Q∈EΘL≡L'}\AgdaSymbol{))} \<[30]%
@@ -555,34 +556,34 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[6]\AgdaBound{σ'∶Γ⇒Δ} \AgdaSymbol{=} \AgdaPostulate{subC-typed} \AgdaBound{σ'∶Γ⇒CΔ} \AgdaKeyword{in}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{let} \AgdaBound{σ↑∶ΓA⇒ΔA} \AgdaSymbol{:} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaPostulate{∶} \AgdaBound{Γ} \AgdaFunction{,T} \AgdaBound{A} \AgdaPostulate{⇒} \AgdaBound{Δ} \AgdaFunction{,T} \AgdaBound{A}\<%
+\>[2]\AgdaKeyword{let} \AgdaBound{σ↑∶ΓA⇒ΔA} \AgdaSymbol{:} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaPostulate{∶} \AgdaBound{Γ} \AgdaFunction{,T} \AgdaBound{A} \AgdaPostulate{⇒} \AgdaBound{Δ} \AgdaFunction{,T} \AgdaBound{A}\<%
 \\
 \>[2]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaBound{σ↑∶ΓA⇒ΔA} \AgdaSymbol{=} \AgdaPostulate{sub↑-typed} \AgdaBound{σ∶Γ⇒Δ} \AgdaKeyword{in}\<%
+\>[6]\AgdaBound{σ↑∶ΓA⇒ΔA} \AgdaSymbol{=} \AgdaPostulate{liftSub-typed} \AgdaBound{σ∶Γ⇒Δ} \AgdaKeyword{in}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{let} \AgdaBound{σ'↑∶ΓA⇒ΔA} \AgdaSymbol{:} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaPostulate{∶} \AgdaBound{Γ} \AgdaFunction{,T} \AgdaBound{A} \AgdaPostulate{⇒} \AgdaBound{Δ} \AgdaFunction{,T} \AgdaBound{A}\<%
+\>[2]\AgdaKeyword{let} \AgdaBound{σ'↑∶ΓA⇒ΔA} \AgdaSymbol{:} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaPostulate{∶} \AgdaBound{Γ} \AgdaFunction{,T} \AgdaBound{A} \AgdaPostulate{⇒} \AgdaBound{Δ} \AgdaFunction{,T} \AgdaBound{A}\<%
 \\
 \>[2]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaBound{σ'↑∶ΓA⇒ΔA} \AgdaSymbol{=} \AgdaPostulate{sub↑-typed} \AgdaBound{σ'∶Γ⇒Δ} \AgdaKeyword{in}\<%
+\>[6]\AgdaBound{σ'↑∶ΓA⇒ΔA} \AgdaSymbol{=} \AgdaPostulate{liftSub-typed} \AgdaBound{σ'∶Γ⇒Δ} \AgdaKeyword{in}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{let} \AgdaBound{ΔA⊢Mσ∶B} \AgdaSymbol{:} \AgdaBound{Δ} \AgdaFunction{,T} \AgdaBound{A} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{B}\<%
+\>[2]\AgdaKeyword{let} \AgdaBound{ΔA⊢Mσ∶B} \AgdaSymbol{:} \AgdaBound{Δ} \AgdaFunction{,T} \AgdaBound{A} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{B}\<%
 \\
 \>[2]\AgdaIndent{6}{}\<[6]%
 \>[6]\AgdaBound{ΔA⊢Mσ∶B} \AgdaSymbol{=} \AgdaPostulate{substitution} \AgdaBound{Γ,A⊢M∶B} \AgdaBound{validΔA} \AgdaBound{σ↑∶ΓA⇒ΔA} \AgdaKeyword{in}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{let} \AgdaBound{ΔA⊢Mσ'∶B} \AgdaSymbol{:} \AgdaBound{Δ} \AgdaFunction{,T} \AgdaBound{A} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{B}\<%
+\>[2]\AgdaKeyword{let} \AgdaBound{ΔA⊢Mσ'∶B} \AgdaSymbol{:} \AgdaBound{Δ} \AgdaFunction{,T} \AgdaBound{A} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{B}\<%
 \\
 \>[2]\AgdaIndent{6}{}\<[6]%
 \>[6]\AgdaBound{ΔA⊢Mσ'∶B} \AgdaSymbol{=} \AgdaPostulate{substitution} \AgdaBound{Γ,A⊢M∶B} \AgdaBound{validΔA} \AgdaBound{σ'↑∶ΓA⇒ΔA} \AgdaKeyword{in}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{let} \AgdaBound{τ↑∶σ↖∼σ'↗} \AgdaSymbol{:} \AgdaFunction{pathsub↑} \AgdaBound{τ} \AgdaFunction{∶} \AgdaFunction{sub↖} \AgdaBound{σ} \AgdaFunction{∼} \AgdaFunction{sub↗} \AgdaBound{σ'} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{,T} \AgdaBound{A} \AgdaFunction{⇒} \AgdaFunction{addpath} \AgdaBound{Δ} \AgdaBound{A}\<%
+\>[2]\AgdaKeyword{let} \AgdaBound{τ↑∶σ↖∼σ'↗} \AgdaSymbol{:} \AgdaFunction{liftPathSub} \AgdaBound{τ} \AgdaFunction{∶} \AgdaFunction{sub↖} \AgdaBound{σ} \AgdaFunction{∼} \AgdaFunction{sub↗} \AgdaBound{σ'} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{,T} \AgdaBound{A} \AgdaFunction{⇒} \AgdaFunction{addpath} \AgdaBound{Δ} \AgdaBound{A}\<%
 \\
 \>[2]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaBound{τ↑∶σ↖∼σ'↗} \AgdaSymbol{=} \AgdaFunction{pathsub↑-typed} \AgdaSymbol{(}\AgdaPostulate{pathsubC-typed} \AgdaBound{σ} \AgdaBound{σ'} \AgdaBound{τ∶σ∼σ'}\AgdaSymbol{)} \AgdaBound{validΔ} \AgdaKeyword{in}\<%
+\>[6]\AgdaBound{τ↑∶σ↖∼σ'↗} \AgdaSymbol{=} \AgdaFunction{liftPathSub-typed} \AgdaSymbol{(}\AgdaPostulate{pathsubC-typed} \AgdaBound{σ} \AgdaBound{σ'} \AgdaBound{τ∶σ∼σ'}\AgdaSymbol{)} \AgdaBound{validΔ} \AgdaKeyword{in}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{let} \AgdaBound{σ↖∶ΓA⇒apΔ} \AgdaSymbol{:} \AgdaFunction{sub↖} \AgdaBound{σ} \AgdaPostulate{∶} \AgdaBound{Γ} \AgdaFunction{,T} \AgdaBound{A} \AgdaPostulate{⇒} \AgdaFunction{addpath} \AgdaBound{Δ} \AgdaBound{A}\<%
@@ -597,7 +598,7 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[6]\AgdaBound{σ'↗∶ΓA⇒apΔ} \AgdaSymbol{=} \AgdaPostulate{sub↗-typed} \AgdaBound{σ'∶Γ⇒Δ} \AgdaKeyword{in}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{let} \AgdaBound{Mτ∶Mσ∼Mσ'} \AgdaSymbol{:} \AgdaFunction{addpath} \AgdaBound{Δ} \AgdaBound{A} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaFunction{pathsub↑} \AgdaBound{τ} \AgdaFunction{∶} \AgdaFunction{sub↖} \AgdaBound{σ} \AgdaFunction{∼} \AgdaFunction{sub↗} \AgdaBound{σ'} \AgdaFunction{⟧⟧} \AgdaDatatype{∶} \AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↖} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{≡〈} \AgdaBound{B} \AgdaFunction{〉} \AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↗} \AgdaBound{σ'} \AgdaFunction{⟧}\<%
+\>[2]\AgdaKeyword{let} \AgdaBound{Mτ∶Mσ∼Mσ'} \AgdaSymbol{:} \AgdaFunction{addpath} \AgdaBound{Δ} \AgdaBound{A} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaFunction{liftPathSub} \AgdaBound{τ} \AgdaFunction{∶} \AgdaFunction{sub↖} \AgdaBound{σ} \AgdaFunction{∼} \AgdaFunction{sub↗} \AgdaBound{σ'} \AgdaFunction{⟧⟧} \AgdaDatatype{∶} \AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↖} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{≡〈} \AgdaBound{B} \AgdaFunction{〉} \AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↗} \AgdaBound{σ'} \AgdaFunction{⟧}\<%
 \\
 \>[2]\AgdaIndent{6}{}\<[6]%
 \>[6]\AgdaBound{Mτ∶Mσ∼Mσ'} \AgdaSymbol{=} \AgdaFunction{path-substitution} \AgdaBound{Γ,A⊢M∶B} \AgdaBound{τ↑∶σ↖∼σ'↗} \AgdaBound{σ↖∶ΓA⇒apΔ} \AgdaBound{σ'↗∶ΓA⇒apΔ} \AgdaSymbol{(}\AgdaFunction{valid-addpath} \AgdaBound{validΔ}\AgdaSymbol{)} \AgdaKeyword{in}\<%
@@ -617,16 +618,16 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[6]\AgdaSymbol{(}\AgdaInductiveConstructor{ΛR} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaBound{ΔA⊢Mσ∶B}\<%
 \\
 \>[6]\AgdaIndent{43}{}\<[43]%
-\>[43]\AgdaBound{validΔAA} \AgdaSymbol{(}\AgdaPostulate{rep↑-typed} \AgdaPostulate{upRep-typed}\AgdaSymbol{))} \<[78]%
-\>[78]\<%
+\>[43]\AgdaBound{validΔAA} \AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaPostulate{upRep-typed}\AgdaSymbol{))} \<[81]%
+\>[81]\<%
 \\
 \>[0]\AgdaIndent{32}{}\<[32]%
-\>[32]\AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validΔAA}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{rep↑-typed} \AgdaPostulate{upRep-typed}\AgdaSymbol{))} \<[75]%
-\>[75]\<%
+\>[32]\AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validΔAA}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaPostulate{upRep-typed}\AgdaSymbol{))} \<[78]%
+\>[78]\<%
 \\
 \>[0]\AgdaIndent{21}{}\<[21]%
-\>[21]\AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validapΔ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{rep↑-typed} \AgdaPostulate{upRep-typed}\AgdaSymbol{)))} \<[65]%
-\>[65]\<%
+\>[21]\AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validapΔ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaPostulate{upRep-typed}\AgdaSymbol{)))} \<[68]%
+\>[68]\<%
 \\
 \>[0]\AgdaIndent{6}{}\<[6]%
 \>[6]\AgdaSymbol{(}\AgdaInductiveConstructor{varR} \AgdaFunction{x₂} \AgdaBound{validapΔ}\AgdaSymbol{))}\<%
@@ -635,16 +636,16 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[4]\AgdaSymbol{(}\AgdaInductiveConstructor{appR} \AgdaSymbol{(}\AgdaInductiveConstructor{ΛR} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaBound{ΔA⊢Mσ'∶B}\<%
 \\
 \>[4]\AgdaIndent{47}{}\<[47]%
-\>[47]\AgdaBound{validΔAA} \AgdaSymbol{(}\AgdaPostulate{rep↑-typed} \AgdaPostulate{upRep-typed}\AgdaSymbol{))} \<[82]%
-\>[82]\<%
+\>[47]\AgdaBound{validΔAA} \AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaPostulate{upRep-typed}\AgdaSymbol{))} \<[85]%
+\>[85]\<%
 \\
 \>[0]\AgdaIndent{36}{}\<[36]%
-\>[36]\AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validΔAA}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{rep↑-typed} \AgdaPostulate{upRep-typed}\AgdaSymbol{))} \<[79]%
-\>[79]\<%
+\>[36]\AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validΔAA}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaPostulate{upRep-typed}\AgdaSymbol{))} \<[82]%
+\>[82]\<%
 \\
 \>[0]\AgdaIndent{25}{}\<[25]%
-\>[25]\AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validapΔ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{rep↑-typed} \AgdaPostulate{upRep-typed}\AgdaSymbol{)))} \<[69]%
-\>[69]\<%
+\>[25]\AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validapΔ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaPostulate{upRep-typed}\AgdaSymbol{)))} \<[72]%
+\>[72]\<%
 \\
 \>[0]\AgdaIndent{14}{}\<[14]%
 \>[14]\AgdaSymbol{(}\AgdaInductiveConstructor{varR} \AgdaFunction{x₁} \AgdaBound{validapΔ}\AgdaSymbol{))} \<[34]%
@@ -660,10 +661,10 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[35]\AgdaSymbol{(}\AgdaFunction{ΛT} \AgdaBound{A}\<%
 \\
 \>[35]\AgdaIndent{36}{}\<[36]%
-\>[36]\AgdaSymbol{((((}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉}\AgdaSymbol{)}\<%
+\>[36]\AgdaSymbol{((((}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉}\AgdaSymbol{)}\<%
 \\
 \>[36]\AgdaIndent{37}{}\<[37]%
-\>[37]\AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉}\AgdaSymbol{)}\<%
+\>[37]\AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉}\AgdaSymbol{)}\<%
 \\
 \>[0]\AgdaIndent{36}{}\<[36]%
 \>[36]\AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{var} \AgdaFunction{x₂} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{))}\<%
@@ -682,13 +683,13 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[35]\AgdaSymbol{(}\AgdaFunction{ΛT} \AgdaBound{A}\<%
 \\
 \>[35]\AgdaIndent{36}{}\<[36]%
-\>[36]\AgdaSymbol{((((}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep}\<%
+\>[36]\AgdaSymbol{((((}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep}\<%
 \\
 \>[36]\AgdaIndent{38}{}\<[38]%
 \>[38]\AgdaFunction{〉}\AgdaSymbol{)}\<%
 \\
 \>[0]\AgdaIndent{37}{}\<[37]%
-\>[37]\AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉}\AgdaSymbol{)}\<%
+\>[37]\AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉}\AgdaSymbol{)}\<%
 \\
 \>[0]\AgdaIndent{36}{}\<[36]%
 \>[36]\AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{var} \AgdaFunction{x₁} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{))}\<%
@@ -705,7 +706,7 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[3]\AgdaKeyword{let} \AgdaBound{validΘ} \AgdaSymbol{:} \AgdaDatatype{valid} \AgdaBound{Θ}\<%
 \\
 \>[3]\AgdaIndent{7}{}\<[7]%
-\>[7]\AgdaBound{validΘ} \AgdaSymbol{=} \AgdaFunction{Context-Validity} \AgdaSymbol{(}\AgdaFunction{E'-typed} \AgdaBound{N∈EΘA}\AgdaSymbol{)} \AgdaKeyword{in}\<%
+\>[7]\AgdaBound{validΘ} \AgdaSymbol{=} \AgdaFunction{context-validity} \AgdaSymbol{(}\AgdaFunction{E'-typed} \AgdaBound{N∈EΘA}\AgdaSymbol{)} \AgdaKeyword{in}\<%
 \\
 \>[0]\AgdaIndent{3}{}\<[3]%
 \>[3]\AgdaKeyword{let} \AgdaBound{validΘA} \AgdaSymbol{:} \AgdaDatatype{valid} \AgdaSymbol{(}\AgdaBound{Θ} \AgdaFunction{,T} \AgdaBound{A}\AgdaSymbol{)}\<%
@@ -726,13 +727,13 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[7]\AgdaBound{validapΘ} \AgdaSymbol{=} \AgdaFunction{valid-addpath} \AgdaBound{validΘ} \AgdaKeyword{in}\<%
 \\
 \>[0]\AgdaIndent{3}{}\<[3]%
-\>[3]\AgdaKeyword{let} \AgdaBound{ρ↑∶ΔA⇒ΘA} \AgdaSymbol{:} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaPostulate{∶} \AgdaBound{Δ} \AgdaFunction{,T} \AgdaBound{A} \AgdaPostulate{⇒R} \AgdaBound{Θ} \AgdaFunction{,T} \AgdaBound{A}\<%
+\>[3]\AgdaKeyword{let} \AgdaBound{ρ↑∶ΔA⇒ΘA} \AgdaSymbol{:} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaPostulate{∶} \AgdaBound{Δ} \AgdaFunction{,T} \AgdaBound{A} \AgdaPostulate{⇒R} \AgdaBound{Θ} \AgdaFunction{,T} \AgdaBound{A}\<%
 \\
 \>[3]\AgdaIndent{7}{}\<[7]%
-\>[7]\AgdaBound{ρ↑∶ΔA⇒ΘA} \AgdaSymbol{=} \AgdaPostulate{rep↑-typed} \AgdaBound{ρ∶Δ⇒RΘ} \AgdaKeyword{in}\<%
+\>[7]\AgdaBound{ρ↑∶ΔA⇒ΘA} \AgdaSymbol{=} \AgdaPostulate{liftRep-typed} \AgdaBound{ρ∶Δ⇒RΘ} \AgdaKeyword{in}\<%
 \\
 \>[0]\AgdaIndent{3}{}\<[3]%
-\>[3]\AgdaKeyword{let} \AgdaBound{Θ⊢ΛM∶A⇛B} \AgdaSymbol{:} \AgdaBound{Θ} \AgdaDatatype{⊢} \AgdaFunction{ΛT} \AgdaBound{A} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaSymbol{(}\AgdaBound{A} \AgdaInductiveConstructor{⇛} \AgdaBound{B}\AgdaSymbol{)}\<%
+\>[3]\AgdaKeyword{let} \AgdaBound{Θ⊢ΛM∶A⇛B} \AgdaSymbol{:} \AgdaBound{Θ} \AgdaDatatype{⊢} \AgdaFunction{ΛT} \AgdaBound{A} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaSymbol{(}\AgdaBound{A} \AgdaInductiveConstructor{⇛} \AgdaBound{B}\AgdaSymbol{)}\<%
 \\
 \>[3]\AgdaIndent{7}{}\<[7]%
 \>[7]\AgdaBound{Θ⊢ΛM∶A⇛B} \AgdaSymbol{=} \AgdaInductiveConstructor{ΛR} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaBound{ΔA⊢Mσ∶B} \AgdaBound{validΘA} \AgdaBound{ρ↑∶ΔA⇒ΘA}\AgdaSymbol{)} \AgdaKeyword{in}\<%
@@ -750,7 +751,7 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[7]\AgdaBound{Θ⊢N'∶A} \AgdaSymbol{=} \AgdaFunction{E-typed} \AgdaBound{N'∈EΘA} \AgdaKeyword{in}\<%
 \\
 \>[0]\AgdaIndent{3}{}\<[3]%
-\>[3]\AgdaKeyword{let} \AgdaBound{ΘA⊢Mσ'∶B} \AgdaSymbol{:} \AgdaBound{Θ} \AgdaFunction{,T} \AgdaBound{A} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{B}\<%
+\>[3]\AgdaKeyword{let} \AgdaBound{ΘA⊢Mσ'∶B} \AgdaSymbol{:} \AgdaBound{Θ} \AgdaFunction{,T} \AgdaBound{A} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{B}\<%
 \\
 \>[3]\AgdaIndent{7}{}\<[7]%
 \>[7]\AgdaBound{ΘA⊢Mσ'∶B} \AgdaSymbol{=} \AgdaPostulate{weakening} \AgdaBound{ΔA⊢Mσ'∶B} \AgdaBound{validΘA} \AgdaBound{ρ↑∶ΔA⇒ΘA} \AgdaKeyword{in}\<%
@@ -781,8 +782,8 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[7]\AgdaSymbol{(}\AgdaFunction{subst}\<%
 \\
 \>[7]\AgdaIndent{10}{}\<[10]%
-\>[10]\AgdaSymbol{(}\AgdaDatatype{R} \AgdaInductiveConstructor{-appTerm} \AgdaSymbol{(}\AgdaFunction{ΛT} \AgdaBound{A} \AgdaSymbol{((}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaSymbol{\_} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaInductiveConstructor{,,} \AgdaBound{N} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{))} \<[74]%
-\>[74]\<%
+\>[10]\AgdaSymbol{(}\AgdaDatatype{R} \AgdaInductiveConstructor{-appTerm} \AgdaSymbol{(}\AgdaFunction{ΛT} \AgdaBound{A} \AgdaSymbol{((}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaSymbol{\_} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaInductiveConstructor{,,} \AgdaBound{N} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{))} \<[80]%
+\>[80]\<%
 \\
 \>[7]\AgdaIndent{10}{}\<[10]%
 \>[10]\AgdaSymbol{(}\AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{≡-Reasoning} \AgdaKeyword{in} \<[35]%
@@ -792,19 +793,19 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[10]\AgdaFunction{begin}\<%
 \\
 \>[10]\AgdaIndent{12}{}\<[12]%
-\>[12]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{N} \AgdaFunction{⟧}\<%
+\>[12]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{N} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{10}{}\<[10]%
 \>[10]\AgdaFunction{≡⟨⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{sub-compRS} \AgdaBound{M}\AgdaSymbol{)} \AgdaFunction{⟩⟩}\<%
 \\
 \>[10]\AgdaIndent{12}{}\<[12]%
-\>[12]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{•RS} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{N} \AgdaFunction{⟧}\<%
+\>[12]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{•RS} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{N} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{10}{}\<[10]%
-\>[10]\AgdaFunction{≡⟨⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{sub-congr} \AgdaBound{M} \AgdaFunction{sub↑-compRS}\AgdaSymbol{)} \AgdaFunction{⟩⟩}\<%
+\>[10]\AgdaFunction{≡⟨⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{sub-congr} \AgdaBound{M} \AgdaFunction{liftSub-compRS}\AgdaSymbol{)} \AgdaFunction{⟩⟩}\<%
 \\
 \>[10]\AgdaIndent{12}{}\<[12]%
-\>[12]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaFunction{•RS} \AgdaBound{σ}\AgdaSymbol{)} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{N} \AgdaFunction{⟧}\<%
+\>[12]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaFunction{•RS} \AgdaBound{σ}\AgdaSymbol{)} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{N} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{10}{}\<[10]%
 \>[10]\AgdaFunction{≡⟨} \AgdaPostulate{extendSub-decomp} \AgdaBound{M} \AgdaFunction{⟩}\<%
@@ -827,8 +828,8 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[7]\AgdaSymbol{(}\AgdaFunction{subst}\<%
 \\
 \>[7]\AgdaIndent{10}{}\<[10]%
-\>[10]\AgdaSymbol{(}\AgdaDatatype{R} \AgdaInductiveConstructor{-appTerm} \AgdaSymbol{(}\AgdaFunction{ΛT} \AgdaBound{A} \AgdaSymbol{((}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaSymbol{\_} \AgdaBound{σ'} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaInductiveConstructor{,,} \AgdaBound{N'} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{))} \<[76]%
-\>[76]\<%
+\>[10]\AgdaSymbol{(}\AgdaDatatype{R} \AgdaInductiveConstructor{-appTerm} \AgdaSymbol{(}\AgdaFunction{ΛT} \AgdaBound{A} \AgdaSymbol{((}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaSymbol{\_} \AgdaBound{σ'} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaInductiveConstructor{,,} \AgdaBound{N'} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{))} \<[82]%
+\>[82]\<%
 \\
 \>[7]\AgdaIndent{10}{}\<[10]%
 \>[10]\AgdaSymbol{(}\AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{≡-Reasoning} \AgdaKeyword{in} \<[35]%
@@ -838,19 +839,19 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[10]\AgdaFunction{begin}\<%
 \\
 \>[10]\AgdaIndent{12}{}\<[12]%
-\>[12]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{N'} \AgdaFunction{⟧}\<%
+\>[12]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{N'} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{10}{}\<[10]%
 \>[10]\AgdaFunction{≡⟨⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{sub-compRS} \AgdaBound{M}\AgdaSymbol{)} \AgdaFunction{⟩⟩}\<%
 \\
 \>[10]\AgdaIndent{12}{}\<[12]%
-\>[12]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{•RS} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{N'} \AgdaFunction{⟧}\<%
+\>[12]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{•RS} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{N'} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{10}{}\<[10]%
-\>[10]\AgdaFunction{≡⟨⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{sub-congr} \AgdaBound{M} \AgdaFunction{sub↑-compRS}\AgdaSymbol{)} \AgdaFunction{⟩⟩}\<%
+\>[10]\AgdaFunction{≡⟨⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{sub-congr} \AgdaBound{M} \AgdaFunction{liftSub-compRS}\AgdaSymbol{)} \AgdaFunction{⟩⟩}\<%
 \\
 \>[10]\AgdaIndent{12}{}\<[12]%
-\>[12]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaFunction{•RS} \AgdaBound{σ'}\AgdaSymbol{)} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{N'} \AgdaFunction{⟧}\<%
+\>[12]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaFunction{•RS} \AgdaBound{σ'}\AgdaSymbol{)} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{N'} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{10}{}\<[10]%
 \>[10]\AgdaFunction{≡⟨} \AgdaPostulate{extendSub-decomp} \AgdaBound{M} \AgdaFunction{⟩}\<%
@@ -878,8 +879,8 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[39]\<%
 \\
 \>[5]\AgdaIndent{7}{}\<[7]%
-\>[7]\AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaBound{Mτ∶Mσ∼Mσ'} \AgdaSymbol{(}\AgdaFunction{valid-addpath} \AgdaBound{validΘ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{rep↑-typed} \AgdaSymbol{(}\AgdaPostulate{rep↑-typed} \AgdaSymbol{(}\AgdaPostulate{rep↑-typed} \AgdaBound{ρ∶Δ⇒RΘ}\AgdaSymbol{))))} \<[98]%
-\>[98]\<%
+\>[7]\AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaBound{Mτ∶Mσ∼Mσ'} \AgdaSymbol{(}\AgdaFunction{valid-addpath} \AgdaBound{validΘ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaBound{ρ∶Δ⇒RΘ}\AgdaSymbol{))))} \<[107]%
+\>[107]\<%
 \\
 \>[5]\AgdaIndent{7}{}\<[7]%
 \>[7]\AgdaSymbol{(}\AgdaInductiveConstructor{appR} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaBound{Θ⊢ΛM∶A⇛B} \AgdaBound{validΘA} \AgdaPostulate{upRep-typed}\AgdaSymbol{)} \AgdaBound{validΘAA} \AgdaPostulate{upRep-typed}\AgdaSymbol{)} \AgdaBound{validapΘ} \AgdaPostulate{upRep-typed}\AgdaSymbol{)} \<[120]%
@@ -890,16 +891,16 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[29]\<%
 \\
 \>[0]\AgdaIndent{7}{}\<[7]%
-\>[7]\AgdaSymbol{(}\AgdaInductiveConstructor{appR} \AgdaSymbol{(}\AgdaInductiveConstructor{ΛR} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaBound{ΘA⊢Mσ'∶B} \AgdaBound{validΘAA} \AgdaSymbol{(}\AgdaPostulate{rep↑-typed} \AgdaPostulate{upRep-typed}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validΘAA}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{rep↑-typed} \AgdaPostulate{upRep-typed}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validapΘ}\AgdaSymbol{)} \<[154]%
-\>[154]\<%
+\>[7]\AgdaSymbol{(}\AgdaInductiveConstructor{appR} \AgdaSymbol{(}\AgdaInductiveConstructor{ΛR} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaBound{ΘA⊢Mσ'∶B} \AgdaBound{validΘAA} \AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaPostulate{upRep-typed}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validΘAA}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaPostulate{upRep-typed}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validapΘ}\AgdaSymbol{)} \<[160]%
+\>[160]\<%
 \\
 \>[7]\AgdaIndent{9}{}\<[9]%
-\>[9]\AgdaSymbol{(}\AgdaPostulate{rep↑-typed} \AgdaPostulate{upRep-typed}\AgdaSymbol{)))} \AgdaSymbol{(}\AgdaInductiveConstructor{varR} \AgdaFunction{x₁} \AgdaBound{validapΘ}\AgdaSymbol{))} \<[56]%
-\>[56]\<%
+\>[9]\AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaPostulate{upRep-typed}\AgdaSymbol{)))} \AgdaSymbol{(}\AgdaInductiveConstructor{varR} \AgdaFunction{x₁} \AgdaBound{validapΘ}\AgdaSymbol{))} \<[59]%
+\>[59]\<%
 \\
 \>[0]\AgdaIndent{7}{}\<[7]%
-\>[7]\AgdaSymbol{(}\AgdaInductiveConstructor{sym-conv} \AgdaSymbol{(}\AgdaFunction{subst} \AgdaSymbol{(}\AgdaDatatype{\_≃\_} \AgdaSymbol{(}\AgdaFunction{appT} \AgdaSymbol{(}\AgdaFunction{ΛT} \AgdaBound{A} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaFunction{x₂}\AgdaSymbol{)))} \<[97]%
-\>[97]\<%
+\>[7]\AgdaSymbol{(}\AgdaInductiveConstructor{sym-conv} \AgdaSymbol{(}\AgdaFunction{subst} \AgdaSymbol{(}\AgdaDatatype{\_≃\_} \AgdaSymbol{(}\AgdaFunction{appT} \AgdaSymbol{(}\AgdaFunction{ΛT} \AgdaBound{A} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaFunction{x₂}\AgdaSymbol{)))} \<[103]%
+\>[103]\<%
 \\
 \>[7]\AgdaIndent{9}{}\<[9]%
 \>[9]\AgdaSymbol{(}\AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{≡-Reasoning} \AgdaKeyword{in} \<[34]%
@@ -909,52 +910,52 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[9]\AgdaFunction{begin}\<%
 \\
 \>[9]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₂} \AgdaFunction{⟧}\<%
+\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₂} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
-\>[9]\AgdaFunction{≡⟨⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-comp₄} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{))} \AgdaFunction{⟩⟩}\<%
+\>[9]\AgdaFunction{≡⟨⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-comp₄} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{))} \AgdaFunction{⟩⟩}\<%
 \\
 \>[9]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₂} \AgdaFunction{⟧}\<%
+\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₂} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
-\>[9]\AgdaFunction{≡⟨⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-congr} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{rep↑-comp₄}\AgdaSymbol{)} \AgdaFunction{⟩⟩}\<%
+\>[9]\AgdaFunction{≡⟨⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-congr} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{liftRep-comp₄}\AgdaSymbol{)} \AgdaFunction{⟩⟩}\<%
 \\
 \>[9]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₂} \AgdaFunction{⟧} \<[92]%
-\>[92]\<%
+\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₂} \AgdaFunction{⟧} \<[98]%
+\>[98]\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
-\>[9]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-congr} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{rep↑-cong} \AgdaSymbol{(}\AgdaFunction{rep↑-upRep₄'} \AgdaBound{ρ}\AgdaSymbol{)))} \AgdaFunction{⟩}\<%
+\>[9]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-congr} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{liftRep-cong} \AgdaSymbol{(}\AgdaFunction{liftRep-upRep₄'} \AgdaBound{ρ}\AgdaSymbol{)))} \AgdaFunction{⟩}\<%
 \\
 \>[9]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•R} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{upRep}\AgdaSymbol{)} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₂} \AgdaFunction{⟧} \<[129]%
-\>[129]\<%
+\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•R} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{upRep}\AgdaSymbol{)} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₂} \AgdaFunction{⟧} \<[144]%
+\>[144]\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
-\>[9]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-congr} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{rep↑-comp₄}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
+\>[9]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-congr} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{liftRep-comp₄}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
 \\
 \>[9]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{)))} \AgdaFunction{•R} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₂} \AgdaFunction{⟧} \<[162]%
-\>[162]\<%
+\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{)))} \AgdaFunction{•R} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₂} \AgdaFunction{⟧} \<[186]%
+\>[186]\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
-\>[9]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-comp₄} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{))} \AgdaFunction{⟩}\<%
+\>[9]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-comp₄} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{))} \AgdaFunction{⟩}\<%
 \\
 \>[9]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{)))} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₂} \AgdaFunction{⟧}\<%
+\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{)))} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₂} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
-\>[9]\AgdaFunction{≡⟨⟨} \AgdaFunction{compRS-botsub} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaFunction{⟩⟩}\<%
+\>[9]\AgdaFunction{≡⟨⟨} \AgdaFunction{compRS-botSub} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaFunction{⟩⟩}\<%
 \\
 \>[9]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₂} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{〉}\<%
+\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₂} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{〉}\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
 \>[9]\AgdaFunction{≡⟨} \AgdaFunction{rep-congl} \AgdaSymbol{(}\AgdaPostulate{sub↖-decomp} \AgdaBound{M}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
 \\
 \>[9]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↖} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{〉}\<%
+\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↖} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{〉}\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
 \>[9]\AgdaFunction{∎}\AgdaSymbol{)} \<[12]%
@@ -965,8 +966,8 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[33]\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
-\>[9]\AgdaSymbol{(}\AgdaInductiveConstructor{sym-conv} \AgdaSymbol{(}\AgdaFunction{subst} \AgdaSymbol{(}\AgdaDatatype{\_≃\_} \AgdaSymbol{(}\AgdaFunction{appT} \AgdaSymbol{(}\AgdaFunction{ΛT} \AgdaBound{A} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaFunction{x₁}\AgdaSymbol{)))} \<[100]%
-\>[100]\<%
+\>[9]\AgdaSymbol{(}\AgdaInductiveConstructor{sym-conv} \AgdaSymbol{(}\AgdaFunction{subst} \AgdaSymbol{(}\AgdaDatatype{\_≃\_} \AgdaSymbol{(}\AgdaFunction{appT} \AgdaSymbol{(}\AgdaFunction{ΛT} \AgdaBound{A} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaFunction{x₁}\AgdaSymbol{)))} \<[106]%
+\>[106]\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
 \>[9]\AgdaSymbol{(}\AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{≡-Reasoning} \AgdaKeyword{in} \<[34]%
@@ -976,52 +977,52 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[9]\AgdaFunction{begin}\<%
 \\
 \>[9]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₁} \AgdaFunction{⟧}\<%
+\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₁} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
-\>[9]\AgdaFunction{≡⟨⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-comp₄} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧}\AgdaSymbol{))} \AgdaFunction{⟩⟩}\<%
+\>[9]\AgdaFunction{≡⟨⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-comp₄} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧}\AgdaSymbol{))} \AgdaFunction{⟩⟩}\<%
 \\
 \>[9]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₁} \AgdaFunction{⟧}\<%
+\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₁} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
-\>[9]\AgdaFunction{≡⟨⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-congr} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{rep↑-comp₄}\AgdaSymbol{)} \AgdaFunction{⟩⟩}\<%
+\>[9]\AgdaFunction{≡⟨⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-congr} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{liftRep-comp₄}\AgdaSymbol{)} \AgdaFunction{⟩⟩}\<%
 \\
 \>[9]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₁} \AgdaFunction{⟧} \<[93]%
-\>[93]\<%
+\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₁} \AgdaFunction{⟧} \<[99]%
+\>[99]\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
-\>[9]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-congr} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{rep↑-cong} \AgdaSymbol{(}\AgdaFunction{rep↑-upRep₄'} \AgdaBound{ρ}\AgdaSymbol{)))} \AgdaFunction{⟩}\<%
+\>[9]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-congr} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{liftRep-cong} \AgdaSymbol{(}\AgdaFunction{liftRep-upRep₄'} \AgdaBound{ρ}\AgdaSymbol{)))} \AgdaFunction{⟩}\<%
 \\
 \>[9]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•R} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{upRep}\AgdaSymbol{)} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₁} \AgdaFunction{⟧} \<[130]%
-\>[130]\<%
+\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•R} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{upRep}\AgdaSymbol{)} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₁} \AgdaFunction{⟧} \<[145]%
+\>[145]\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
-\>[9]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-congr} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{rep↑-comp₄}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
+\>[9]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-congr} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{liftRep-comp₄}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
 \\
 \>[9]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{)))} \AgdaFunction{•R} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₁} \AgdaFunction{⟧} \<[163]%
-\>[163]\<%
+\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{)))} \AgdaFunction{•R} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{•R} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₁} \AgdaFunction{⟧} \<[187]%
+\>[187]\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
-\>[9]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-comp₄} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧}\AgdaSymbol{))} \AgdaFunction{⟩}\<%
+\>[9]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{rep-comp₄} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧}\AgdaSymbol{))} \AgdaFunction{⟩}\<%
 \\
 \>[9]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{)))} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₁} \AgdaFunction{⟧}\<%
+\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{)))} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₁} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
-\>[9]\AgdaFunction{≡⟨⟨} \AgdaFunction{compRS-botsub} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaFunction{⟩⟩}\<%
+\>[9]\AgdaFunction{≡⟨⟨} \AgdaFunction{compRS-botSub} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaFunction{⟩⟩}\<%
 \\
 \>[9]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↑} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₁} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{〉}\<%
+\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-Term} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaFunction{upRep} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaInductiveConstructor{var} \AgdaFunction{x₁} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{〉}\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
 \>[9]\AgdaFunction{≡⟨} \AgdaFunction{rep-congl} \AgdaSymbol{(}\AgdaPostulate{sub↗-decomp} \AgdaBound{M}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
 \\
 \>[9]\AgdaIndent{11}{}\<[11]%
-\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↗} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{〉}\<%
+\>[11]\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{sub↗} \AgdaBound{σ'} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{〉}\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
 \>[9]\AgdaFunction{∎}\AgdaSymbol{)} \<[12]%
@@ -1046,19 +1047,19 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \>[5]\AgdaFunction{begin}\<%
 \\
 \>[5]\AgdaIndent{7}{}\<[7]%
-\>[7]\AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaFunction{pathsub↑} \AgdaBound{τ} \AgdaFunction{∶} \AgdaFunction{sub↖} \AgdaBound{σ} \AgdaFunction{∼} \AgdaFunction{sub↗} \AgdaBound{σ'} \AgdaFunction{⟧⟧} \AgdaFunction{〈} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{N} \AgdaFunction{,x₁:=} \AgdaBound{N'} \AgdaFunction{,x₀:=} \AgdaBound{Q} \AgdaFunction{⟧}\<%
+\>[7]\AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaFunction{liftPathSub} \AgdaBound{τ} \AgdaFunction{∶} \AgdaFunction{sub↖} \AgdaBound{σ} \AgdaFunction{∼} \AgdaFunction{sub↗} \AgdaBound{σ'} \AgdaFunction{⟧⟧} \AgdaFunction{〈} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{〉} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{N} \AgdaFunction{,x₁:=} \AgdaBound{N'} \AgdaFunction{,x₀:=} \AgdaBound{Q} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{5}{}\<[5]%
 \>[5]\AgdaFunction{≡⟨⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaPostulate{pathsub-compRP} \AgdaBound{M}\AgdaSymbol{)} \AgdaFunction{⟩⟩}\<%
 \\
 \>[5]\AgdaIndent{7}{}\<[7]%
-\>[7]\AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•RP} \AgdaFunction{pathsub↑} \AgdaBound{τ} \AgdaFunction{∶} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•RS} \AgdaFunction{sub↖} \AgdaBound{σ} \AgdaFunction{∼} \AgdaFunction{rep↑} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{rep↑} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•RS} \AgdaFunction{sub↗} \AgdaBound{σ'} \AgdaFunction{⟧⟧} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{N} \AgdaFunction{,x₁:=} \AgdaBound{N'} \AgdaFunction{,x₀:=} \AgdaBound{Q} \AgdaFunction{⟧}\<%
+\>[7]\AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•RP} \AgdaFunction{liftPathSub} \AgdaBound{τ} \AgdaFunction{∶} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•RS} \AgdaFunction{sub↖} \AgdaBound{σ} \AgdaFunction{∼} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•RS} \AgdaFunction{sub↗} \AgdaBound{σ'} \AgdaFunction{⟧⟧} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{N} \AgdaFunction{,x₁:=} \AgdaBound{N'} \AgdaFunction{,x₀:=} \AgdaBound{Q} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{5}{}\<[5]%
-\>[5]\AgdaFunction{≡⟨⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{pathsub-cong} \AgdaBound{M} \AgdaPostulate{pathsub↑-compRP} \AgdaPostulate{sub↖-compRP} \AgdaPostulate{sub↗-compRP}\AgdaSymbol{)} \AgdaFunction{⟩⟩}\<%
+\>[5]\AgdaFunction{≡⟨⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{pathsub-cong} \AgdaBound{M} \AgdaPostulate{liftPathSub-compRP} \AgdaPostulate{sub↖-compRP} \AgdaPostulate{sub↗-compRP}\AgdaSymbol{)} \AgdaFunction{⟩⟩}\<%
 \\
 \>[5]\AgdaIndent{7}{}\<[7]%
-\>[7]\AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaFunction{pathsub↑} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaFunction{•RP} \AgdaBound{τ}\AgdaSymbol{)} \AgdaFunction{∶} \AgdaFunction{sub↖} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaFunction{•RS} \AgdaBound{σ}\AgdaSymbol{)} \AgdaFunction{∼} \AgdaFunction{sub↗} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaFunction{•RS} \AgdaBound{σ'}\AgdaSymbol{)} \AgdaFunction{⟧⟧} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{N} \AgdaFunction{,x₁:=} \AgdaBound{N'} \AgdaFunction{,x₀:=} \AgdaBound{Q} \AgdaFunction{⟧}\<%
+\>[7]\AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaFunction{liftPathSub} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaFunction{•RP} \AgdaBound{τ}\AgdaSymbol{)} \AgdaFunction{∶} \AgdaFunction{sub↖} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaFunction{•RS} \AgdaBound{σ}\AgdaSymbol{)} \AgdaFunction{∼} \AgdaFunction{sub↗} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaFunction{•RS} \AgdaBound{σ'}\AgdaSymbol{)} \AgdaFunction{⟧⟧} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{N} \AgdaFunction{,x₁:=} \AgdaBound{N'} \AgdaFunction{,x₀:=} \AgdaBound{Q} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{5}{}\<[5]%
 \>[5]\AgdaFunction{≡⟨⟨} \AgdaPostulate{pathsub-extendPS} \AgdaBound{M} \AgdaFunction{⟩⟩}\<%
@@ -1099,35 +1100,35 @@ as required.
 \>  let sub↗σ'-typed : sub↗ σ' ∶ Γ ,T A ⇒ addpath Δ A\<\\
 \>      sub↗σ'-typed = sub↗-typed σ'∶Γ⇒Δ in\<\\
 \>  func-EE (lllR (convER (Path-substitution Γ,A⊢M∶B\<\\
-\>                             (pathsub↑-typed (pathsubC-typed \{τ = τ\} \{σ\} \{σ = σ'\} \{Γ\} \{Δ\} τ∶σ∼σ')) sub↖σ-typed sub↗σ'-typed\<\\
+\>                             (liftPathSub-typed (pathsubC-typed \{τ = τ\} \{σ\} \{σ = σ'\} \{Γ\} \{Δ\} τ∶σ∼σ')) sub↖σ-typed sub↗σ'-typed\<\\
 \>                             validΔAAE)\<\\
-\>                             (appR (ΛR (weakening \{ρ = rep↑ \_ upRep\}\<\\
-\>                                           \{M = ((M ⟦ sub↑ \_ σ ⟧) 〈 rep↑ \_ upRep 〉) 〈 rep↑ \_ upRep 〉\} \<\\
-\>                                        (weakening \{ρ = rep↑ \_ upRep\}\<\\
-\>                                           \{M = (M ⟦ sub↑ \_ σ ⟧) 〈 rep↑ \_ upRep 〉\} \<\\
-\>                                        (weakening \{ρ = rep↑ \_ upRep\} \{M = M ⟦ sub↑ \_ σ ⟧\} \<\\
-\>                                        (substitution \{σ = sub↑ -Term σ\} \{M = M\} Γ,A⊢M∶B (ctxTR validΔ) \<\\
-\>                                          (sub↑-typed (subC-typed σ∶Γ⇒CΔ))) (ctxTR (ctxTR validΔ)) (rep↑-typed upRep-typed)) \<\\
+\>                             (appR (ΛR (weakening \{ρ = liftRep \_ upRep\}\<\\
+\>                                           \{M = ((M ⟦ liftSub \_ σ ⟧) 〈 liftRep \_ upRep 〉) 〈 liftRep \_ upRep 〉\} \<\\
+\>                                        (weakening \{ρ = liftRep \_ upRep\}\<\\
+\>                                           \{M = (M ⟦ liftSub \_ σ ⟧) 〈 liftRep \_ upRep 〉\} \<\\
+\>                                        (weakening \{ρ = liftRep \_ upRep\} \{M = M ⟦ liftSub \_ σ ⟧\} \<\\
+\>                                        (substitution \{σ = liftSub -Term σ\} \{M = M\} Γ,A⊢M∶B (ctxTR validΔ) \<\\
+\>                                          (liftSub-typed (subC-typed σ∶Γ⇒CΔ))) (ctxTR (ctxTR validΔ)) (liftRep-typed upRep-typed)) \<\\
 \>                                        (ctxTR (ctxTR (ctxTR validΔ))) \<\\
-\>                                        (rep↑-typed upRep-typed)) \<\\
+\>                                        (liftRep-typed upRep-typed)) \<\\
 \>                           (ctxTR (ctxER (varR (↑ x₀) (ctxTR (ctxTR validΔ))) (varR x₀ (ctxTR (ctxTR validΔ))))) \<\\
-\>                           (rep↑-typed upRep-typed))) \<\\
+\>                           (liftRep-typed upRep-typed))) \<\\
 \>                           (varR x₂ (ctxER ((varR (↑ x₀) (ctxTR (ctxTR validΔ)))) (varR x₀ (ctxTR (ctxTR validΔ))))))  \<\\
-\>                              (let stepA : addpath Δ A ,T A ⊢ M ⟦ sub↑ \_ σ' ⟧ 〈 rep↑ \_ upRep 〉 〈 rep↑ \_ upRep 〉 〈 rep↑ \_ upRep 〉 ∶ ty B\<\\
-\>                                   stepA = weakening \{U = V , -Term , -Term , -Term\} \{V = V , -Term , -Term , -Path , -Term\} \{ρ = rep↑ \_ upRep\} \{Γ = Δ , ty A , ty A , ty A\} \{M = M ⟦ sub↑ \_ σ' ⟧ 〈 rep↑ \_ upRep 〉 〈 rep↑ \_ upRep 〉\} \<\\
-\>                                      (weakening \{ρ = rep↑ \_ upRep\} \{Γ = Δ , ty A , ty A\}\<\\
-\>                                         \{M = (M ⟦ sub↑ \_ σ' ⟧) 〈 rep↑ \_ upRep 〉\} \<\\
-\>                                      (weakening \{ρ = rep↑ \_ upRep\} \{M = M ⟦ sub↑ \_ σ' ⟧\} \<\\
-\>                                      (substitution \{σ = sub↑ \_ σ'\} \{M = M\} \<\\
+\>                              (let stepA : addpath Δ A ,T A ⊢ M ⟦ liftSub \_ σ' ⟧ 〈 liftRep \_ upRep 〉 〈 liftRep \_ upRep 〉 〈 liftRep \_ upRep 〉 ∶ ty B\<\\
+\>                                   stepA = weakening \{U = V , -Term , -Term , -Term\} \{V = V , -Term , -Term , -Path , -Term\} \{ρ = liftRep \_ upRep\} \{Γ = Δ , ty A , ty A , ty A\} \{M = M ⟦ liftSub \_ σ' ⟧ 〈 liftRep \_ upRep 〉 〈 liftRep \_ upRep 〉\} \<\\
+\>                                      (weakening \{ρ = liftRep \_ upRep\} \{Γ = Δ , ty A , ty A\}\<\\
+\>                                         \{M = (M ⟦ liftSub \_ σ' ⟧) 〈 liftRep \_ upRep 〉\} \<\\
+\>                                      (weakening \{ρ = liftRep \_ upRep\} \{M = M ⟦ liftSub \_ σ' ⟧\} \<\\
+\>                                      (substitution \{σ = liftSub \_ σ'\} \{M = M\} \<\\
 \>                                      Γ,A⊢M∶B \<\\
 \>                                      (ctxTR validΔ) \<\\
-\>                                      (sub↑-typed σ'∶Γ⇒Δ))\<\\
+\>                                      (liftSub-typed σ'∶Γ⇒Δ))\<\\
 \>                                      validΔAA \<\\
-\>                                      (rep↑-typed upRep-typed)) \<\\
+\>                                      (liftRep-typed upRep-typed)) \<\\
 \>                                      (ctxTR validΔAA) \<\\
-\>                                      (rep↑-typed upRep-typed))\<\\
+\>                                      (liftRep-typed upRep-typed))\<\\
 \>                                      (ctxTR validΔAAE)\<\\
-\>                                      (rep↑-typed upRep-typed) in\<\\
+\>                                      (liftRep-typed upRep-typed) in\<\\
 \>                              let stepB : addpath Δ A ⊢ (ΛT A M) ⟦ σ' ⟧ ⇑ ⇑ ⇑ ∶ ty (A ⇛ B)\<\\
 \>                                  stepB = ΛR stepA in\<\\
 \>                              let stepC : addpath Δ A ⊢ var x₁ ∶ ty A\<\\
@@ -1136,74 +1137,74 @@ as required.
 \>                                  stepD = appR stepB stepC in\<\\
 \>                              stepD)\<\\
 \>                        (sym-conv (osr-conv (subst (λ a → appT ((ΛT A M ⟦ σ ⟧) ⇑ ⇑ ⇑) (var x₂) ⇒ a) (let open ≡-Reasoning in\<\\
-\>                           M ⟦ sub↑ \_ σ ⟧ 〈 rep↑ \_ upRep 〉 〈 rep↑ \_ upRep 〉 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₂) ⟧\<\\
-\>                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ \_ σ ⟧ 〈 rep↑ \_ upRep 〉 〈 rep↑ \_ upRep 〉) ⟩⟩\<\\
-\>                           M ⟦ sub↑ \_ σ ⟧ 〈 rep↑ \_ upRep 〉 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₂) •SR rep↑ \_ upRep ⟧\<\\
-\>                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ \_ σ ⟧ 〈 rep↑ \_ upRep 〉) ⟩⟩\<\\
-\>                           M ⟦ sub↑ \_ σ ⟧ 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₂) •SR rep↑ \_ upRep •SR rep↑ \_ upRep ⟧\<\\
-\>                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ \_ σ ⟧) ⟩⟩\<\\
-\>                           M ⟦ sub↑ \_ σ ⟧ ⟦ x₀:= (var x₂) •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ upRep ⟧\<\\
+\>                           M ⟦ liftSub \_ σ ⟧ 〈 liftRep \_ upRep 〉 〈 liftRep \_ upRep 〉 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₂) ⟧\<\\
+\>                         ≡⟨⟨ sub-compSR (M ⟦ liftSub \_ σ ⟧ 〈 liftRep \_ upRep 〉 〈 liftRep \_ upRep 〉) ⟩⟩\<\\
+\>                           M ⟦ liftSub \_ σ ⟧ 〈 liftRep \_ upRep 〉 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₂) •SR liftRep \_ upRep ⟧\<\\
+\>                         ≡⟨⟨ sub-compSR (M ⟦ liftSub \_ σ ⟧ 〈 liftRep \_ upRep 〉) ⟩⟩\<\\
+\>                           M ⟦ liftSub \_ σ ⟧ 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₂) •SR liftRep \_ upRep •SR liftRep \_ upRep ⟧\<\\
+\>                         ≡⟨⟨ sub-compSR (M ⟦ liftSub \_ σ ⟧) ⟩⟩\<\\
+\>                           M ⟦ liftSub \_ σ ⟧ ⟦ x₀:= (var x₂) •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ upRep ⟧\<\\
 \>                         ≡⟨⟨ sub-comp M ⟩⟩\<\\
-\>                           M ⟦ x₀:= (var x₂) •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ upRep • sub↑ \_ σ ⟧\<\\
+\>                           M ⟦ x₀:= (var x₂) •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ upRep • liftSub \_ σ ⟧\<\\
 \>                         ≡⟨ sub-congr M aux₃ ⟩\<\\
 \>                           M ⟦ sub↖ σ ⟧\<\\
 \>                           ∎) (redex ?)))) \<\\
 \>                         (sym-conv (osr-conv (subst (λ a → appT ((ΛT A M ⟦ σ' ⟧) ⇑ ⇑ ⇑) (var x₁) ⇒ a) \<\\
 \>                         (let open ≡-Reasoning in\<\\
-\>                           M ⟦ sub↑ \_ σ' ⟧ 〈 rep↑ \_ upRep 〉 〈 rep↑ \_ upRep 〉 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₁) ⟧\<\\
-\>                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ \_ σ' ⟧ 〈 rep↑ \_ upRep 〉 〈 rep↑ \_ upRep 〉) ⟩⟩\<\\
-\>                           M ⟦ sub↑ \_ σ' ⟧ 〈 rep↑ \_ upRep 〉 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₁) •SR rep↑ \_ upRep ⟧\<\\
-\>                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ \_ σ' ⟧ 〈 rep↑ \_ upRep 〉) ⟩⟩\<\\
-\>                           M ⟦ sub↑ \_ σ' ⟧ 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₁) •SR rep↑ \_ upRep •SR rep↑ \_ upRep ⟧\<\\
-\>                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ \_ σ' ⟧) ⟩⟩\<\\
-\>                           M ⟦ sub↑ \_ σ' ⟧ ⟦ x₀:= (var x₁) •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ upRep ⟧\<\\
+\>                           M ⟦ liftSub \_ σ' ⟧ 〈 liftRep \_ upRep 〉 〈 liftRep \_ upRep 〉 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₁) ⟧\<\\
+\>                         ≡⟨⟨ sub-compSR (M ⟦ liftSub \_ σ' ⟧ 〈 liftRep \_ upRep 〉 〈 liftRep \_ upRep 〉) ⟩⟩\<\\
+\>                           M ⟦ liftSub \_ σ' ⟧ 〈 liftRep \_ upRep 〉 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₁) •SR liftRep \_ upRep ⟧\<\\
+\>                         ≡⟨⟨ sub-compSR (M ⟦ liftSub \_ σ' ⟧ 〈 liftRep \_ upRep 〉) ⟩⟩\<\\
+\>                           M ⟦ liftSub \_ σ' ⟧ 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₁) •SR liftRep \_ upRep •SR liftRep \_ upRep ⟧\<\\
+\>                         ≡⟨⟨ sub-compSR (M ⟦ liftSub \_ σ' ⟧) ⟩⟩\<\\
+\>                           M ⟦ liftSub \_ σ' ⟧ ⟦ x₀:= (var x₁) •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ upRep ⟧\<\\
 \>                         ≡⟨⟨ sub-comp M ⟩⟩\<\\
-\>                           M ⟦ x₀:= (var x₁) •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ upRep • sub↑ \_ σ' ⟧\<\\
+\>                           M ⟦ x₀:= (var x₁) •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ upRep • liftSub \_ σ' ⟧\<\\
 \>                         ≡⟨ sub-congr M aux₄ ⟩\<\\
 \>                           M ⟦ sub↗ σ' ⟧\<\\
 \>                           ∎) \<\\
 \>                         (redex ?))))))\<\\
 \>    (λ W Θ N N' Q ρ ρ∶Δ⇒Θ N∈EΘA N'∈EΘA Q∈EΘN≡N' → \<\\
 \>    let validΘ : valid Θ\<\\
-\>        validΘ = Context-Validity (E-typed N∈EΘA) in\<\\
+\>        validΘ = context-validity (E-typed N∈EΘA) in\<\\
 \>    let σ₁ : Sub (U , -Term) W\<\\
-\>        σ₁ = x₀:= N •SR rep↑ -Term ρ • sub↑ -Term σ in\<\\
+\>        σ₁ = x₀:= N •SR liftRep -Term ρ • liftSub -Term σ in\<\\
 \>    let σ₁∶Γ,A⇒Θ : σ₁ ∶ Γ ,T A ⇒C Θ\<\\
-\>        σ₁∶Γ,A⇒Θ = compC (compSRC (botsubC N∈EΘA) (rep↑-typed ρ∶Δ⇒Θ)) (sub↑C σ∶Γ⇒CΔ) in\<\\
+\>        σ₁∶Γ,A⇒Θ = compC (compSRC (botsubC N∈EΘA) (liftRep-typed ρ∶Δ⇒Θ)) (liftSubC σ∶Γ⇒CΔ) in\<\\
 \>    let σ₂ : Sub (U , -Term) W\<\\
-\>        σ₂ = x₀:= N' •SR rep↑ -Term ρ • sub↑ -Term σ' in\<\\
+\>        σ₂ = x₀:= N' •SR liftRep -Term ρ • liftSub -Term σ' in\<\\
 \>    let σ₂∶Γ,A⇒Θ : σ₂ ∶ Γ ,T A ⇒C Θ\<\\
-\>        σ₂∶Γ,A⇒Θ = compC (compSRC (botsubC N'∈EΘA) (rep↑-typed ρ∶Δ⇒Θ)) (sub↑C σ'∶Γ⇒CΔ) in --REFACTOR Common pattern\<\\
-\>    let ρ' = rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) in\<\\
-\>    let step1 : x₀:= N • sub↑ -Term (ρ •RS σ) ∼ σ₁\<\\
-\>        step1 = sub-trans (comp-congr sub↑-compRS) \<\\
-\>                  (assocRSSR \{ρ = x₀:= N\} \{σ = rep↑ -Term ρ\} \{τ = sub↑ -Term σ\}) in\<\\
-\>    let step2 : x₀:= N' • sub↑ -Term (ρ •RS σ') ∼ σ₂\<\\
-\>        step2 = sub-trans (comp-congr sub↑-compRS) \<\\
-\>                  (assocRSSR \{ρ = x₀:= N'\} \{σ = rep↑ -Term ρ\} \{τ = sub↑ -Term σ'\}) in\<\\
-\>    let sub-rep-comp : ∀ (σ : Sub U V) (N : Term W) → M ⟦ x₀:= N •SR rep↑ \_ ρ • sub↑ \_ σ ⟧ ≡ M ⟦ sub↑ \_ σ ⟧ 〈 rep↑ \_ ρ 〉 ⟦ x₀:= N ⟧\<\\
+\>        σ₂∶Γ,A⇒Θ = compC (compSRC (botsubC N'∈EΘA) (liftRep-typed ρ∶Δ⇒Θ)) (liftSubC σ'∶Γ⇒CΔ) in --REFACTOR Common pattern\<\\
+\>    let ρ' = liftRep -Path (liftRep -Term (liftRep -Term ρ)) in\<\\
+\>    let step1 : x₀:= N • liftSub -Term (ρ •RS σ) ∼ σ₁\<\\
+\>        step1 = sub-trans (comp-congr liftSub-compRS) \<\\
+\>                  (assocRSSR \{ρ = x₀:= N\} \{σ = liftRep -Term ρ\} \{τ = liftSub -Term σ\}) in\<\\
+\>    let step2 : x₀:= N' • liftSub -Term (ρ •RS σ') ∼ σ₂\<\\
+\>        step2 = sub-trans (comp-congr liftSub-compRS) \<\\
+\>                  (assocRSSR \{ρ = x₀:= N'\} \{σ = liftRep -Term ρ\} \{τ = liftSub -Term σ'\}) in\<\\
+\>    let sub-rep-comp : ∀ (σ : Sub U V) (N : Term W) → M ⟦ x₀:= N •SR liftRep \_ ρ • liftSub \_ σ ⟧ ≡ M ⟦ liftSub \_ σ ⟧ 〈 liftRep \_ ρ 〉 ⟦ x₀:= N ⟧\<\\
 \>        sub-rep-comp σ N = let open ≡-Reasoning in\<\\
 \>             begin\<\\
-\>               M ⟦ x₀:= N •SR rep↑ -Term ρ • sub↑ -Term σ ⟧\<\\
+\>               M ⟦ x₀:= N •SR liftRep -Term ρ • liftSub -Term σ ⟧\<\\
 \>             ≡⟨ sub-comp M ⟩\<\\
-\>               M ⟦ sub↑ -Term σ ⟧ ⟦ x₀:= N •SR rep↑ -Term ρ ⟧\<\\
-\>             ≡⟨ sub-compSR (M ⟦ sub↑ -Term σ ⟧) ⟩\<\\
-\>               M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term ρ 〉 ⟦ x₀:= N ⟧\<\\
+\>               M ⟦ liftSub -Term σ ⟧ ⟦ x₀:= N •SR liftRep -Term ρ ⟧\<\\
+\>             ≡⟨ sub-compSR (M ⟦ liftSub -Term σ ⟧) ⟩\<\\
+\>               M ⟦ liftSub -Term σ ⟧ 〈 liftRep -Term ρ 〉 ⟦ x₀:= N ⟧\<\\
 \>             ∎ in\<\\
 \>    let ih : EE Θ (M ⟦ σ₁ ⟧ ≡〈 B 〉 M ⟦ σ₂ ⟧) \<\\
 \>                  (M ⟦⟦ extendPS (ρ •RP τ) Q ∶ σ₁ ∼ σ₂ ⟧⟧)\<\\
 \>        ih = (computable-path-substitution (U , -Term) W (extendPS (ρ •RP τ) Q) σ₁ σ₂ (Γ ,T A) Θ \_ \_ σ₁∶Γ,A⇒Θ σ₂∶Γ,A⇒Θ\<\\
-\>             (change-ends \{σ = x₀:= N' • sub↑ -Term (ρ •RS σ')\} \{σ' = σ₂\} (extendPS-typedC (compRP-typedC \{ρ = ρ\} \{τ\} \{σ\} \{σ'\} τ∶σ∼σ' ρ∶Δ⇒Θ) \<\\
+\>             (change-ends \{σ = x₀:= N' • liftSub -Term (ρ •RS σ')\} \{σ' = σ₂\} (extendPS-typedC (compRP-typedC \{ρ = ρ\} \{τ\} \{σ\} \{σ'\} τ∶σ∼σ' ρ∶Δ⇒Θ) \<\\
 \>               Q∈EΘN≡N')\<\\
 \>                 step1 step2) Γ,A⊢M∶B validΘ) in\<\\
-\>    let Δ,A⊢Mσ∶B : Δ ,T A ⊢ M ⟦ sub↑ \_ σ ⟧ ∶ ty B\<\\
-\>        Δ,A⊢Mσ∶B = substitution Γ,A⊢M∶B (ctxTR validΔ) (sub↑-typed σ∶Γ⇒Δ) in\<\\
-\>    let Δ,A⊢Mσ'∶B : Δ ,T A ⊢ M ⟦ sub↑ \_ σ' ⟧ ∶ ty B\<\\
-\>        Δ,A⊢Mσ'∶B = substitution Γ,A⊢M∶B (ctxTR validΔ) (sub↑-typed σ'∶Γ⇒Δ) in\<\\
-\>    let Θ,A⊢Mσ∶B : Θ ,T A ⊢ M ⟦ sub↑ \_ σ ⟧ 〈 rep↑ \_ ρ 〉 ∶ ty B\<\\
-\>        Θ,A⊢Mσ∶B = weakening Δ,A⊢Mσ∶B (ctxTR validΘ) (rep↑-typed ρ∶Δ⇒Θ) in\<\\
-\>    let Θ,A⊢Mσ'∶B : Θ ,T A ⊢ M ⟦ sub↑ \_ σ' ⟧ 〈 rep↑ \_ ρ 〉 ∶ ty B\<\\
-\>        Θ,A⊢Mσ'∶B = weakening Δ,A⊢Mσ'∶B (ctxTR validΘ) (rep↑-typed ρ∶Δ⇒Θ) in --TODO Common pattern\<\\
+\>    let Δ,A⊢Mσ∶B : Δ ,T A ⊢ M ⟦ liftSub \_ σ ⟧ ∶ ty B\<\\
+\>        Δ,A⊢Mσ∶B = substitution Γ,A⊢M∶B (ctxTR validΔ) (liftSub-typed σ∶Γ⇒Δ) in\<\\
+\>    let Δ,A⊢Mσ'∶B : Δ ,T A ⊢ M ⟦ liftSub \_ σ' ⟧ ∶ ty B\<\\
+\>        Δ,A⊢Mσ'∶B = substitution Γ,A⊢M∶B (ctxTR validΔ) (liftSub-typed σ'∶Γ⇒Δ) in\<\\
+\>    let Θ,A⊢Mσ∶B : Θ ,T A ⊢ M ⟦ liftSub \_ σ ⟧ 〈 liftRep \_ ρ 〉 ∶ ty B\<\\
+\>        Θ,A⊢Mσ∶B = weakening Δ,A⊢Mσ∶B (ctxTR validΘ) (liftRep-typed ρ∶Δ⇒Θ) in\<\\
+\>    let Θ,A⊢Mσ'∶B : Θ ,T A ⊢ M ⟦ liftSub \_ σ' ⟧ 〈 liftRep \_ ρ 〉 ∶ ty B\<\\
+\>        Θ,A⊢Mσ'∶B = weakening Δ,A⊢Mσ'∶B (ctxTR validΘ) (liftRep-typed ρ∶Δ⇒Θ) in --TODO Common pattern\<\\
 \>    let Θ⊢N∶A : Θ ⊢ N ∶ ty A\<\\
 \>        Θ⊢N∶A = E-typed N∈EΘA in\<\\
 \>    let Θ⊢N'∶A : Θ ⊢ N' ∶ ty A\<\\
@@ -1214,191 +1215,191 @@ as required.
 \>            M ⟦⟦ extendPS (ρ •RP τ) Q ∶ σ₁ ∼\<\\
 \>                 σSR ⟧⟧\<\\
 \>          ≡⟨⟨ pathsub-cong M ∼∼-refl step1 step2 ⟩⟩\<\\
-\>            M ⟦⟦ extendPS (ρ •RP τ) Q ∶ x₀:= N • sub↑ -Term (ρ •RS σ) ∼\<\\
-\>                 x₀:= N' • sub↑ -Term (ρ •RS σ') ⟧⟧\<\\
+\>            M ⟦⟦ extendPS (ρ •RP τ) Q ∶ x₀:= N • liftSub -Term (ρ •RS σ) ∼\<\\
+\>                 x₀:= N' • liftSub -Term (ρ •RS σ') ⟧⟧\<\\
 \>          ≡⟨ pathsub-extendPS M ⟩\<\\
-\>            M ⟦⟦ pathsub↑ (ρ •RP τ) ∶ sub↖ (ρ •RS σ) ∼ sub↗ (ρ •RS σ') ⟧⟧ ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧\<\\
-\>          ≡⟨ sub-congl (pathsub-cong M pathsub↑-compRP sub↖-comp₁ sub↗-comp₁) ⟩\<\\
-\>            M ⟦⟦ ρ' •RP pathsub↑ τ ∶ ρ' •RS sub↖ σ ∼ ρ' •RS sub↗ σ' ⟧⟧ ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧\<\\
+\>            M ⟦⟦ liftPathSub (ρ •RP τ) ∶ sub↖ (ρ •RS σ) ∼ sub↗ (ρ •RS σ') ⟧⟧ ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧\<\\
+\>          ≡⟨ sub-congl (pathsub-cong M liftPathSub-compRP sub↖-comp₁ sub↗-comp₁) ⟩\<\\
+\>            M ⟦⟦ ρ' •RP liftPathSub τ ∶ ρ' •RS sub↖ σ ∼ ρ' •RS sub↗ σ' ⟧⟧ ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧\<\\
 \>          ≡⟨ sub-congl (pathsub-compRP M) ⟩\<\\
-\>            (M ⟦⟦ pathsub↑ τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧) 〈 ρ' 〉 ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧\<\\
+\>            (M ⟦⟦ liftPathSub τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧) 〈 ρ' 〉 ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧\<\\
 \>          ∎) ih) \<\\
 \>          (sym-conv (osr-conv (subst (λ a → appT ((ΛT A M) ⟦ σ ⟧ 〈 ρ 〉) N ⇒ a) (sym (sub-rep-comp σ N)) (redex ?)))) \<\\
 \>          (sym-conv (osr-conv (subst (λ a → appT ((ΛT A M) ⟦ σ' ⟧ 〈 ρ 〉) N' ⇒ a) (sym (sub-rep-comp σ' N')) (redex ?)))) --REFACTOR Duplication\<\\
 \>          (appR (ΛR Θ,A⊢Mσ∶B) Θ⊢N∶A) \<\\
 \>          (appR (ΛR Θ,A⊢Mσ'∶B) (E-typed N'∈EΘA)))\<\\
 \>        (let step3 : addpath Δ A ⊢\<\\
-\>                         M ⟦⟦ pathsub↑ τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧\<\\
+\>                         M ⟦⟦ liftPathSub τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧\<\\
 \>                         ∶ M ⟦ sub↖ σ ⟧ ≡〈 B 〉 M ⟦ sub↗ σ' ⟧\<\\
-\>             step3 = Path-substitution Γ,A⊢M∶B (pathsub↑-typed (pathsubC-typed \{τ = τ\} \{σ\} \{σ'\} \{Γ\} \{Δ\} τ∶σ∼σ')) \<\\
+\>             step3 = Path-substitution Γ,A⊢M∶B (liftPathSub-typed (pathsubC-typed \{τ = τ\} \{σ\} \{σ'\} \{Γ\} \{Δ\} τ∶σ∼σ')) \<\\
 \>                     sub↖σ-typed sub↗σ'-typed validΔAAE in\<\\
 \>        let step4 : addpath Θ A ⊢\<\\
-\>                    M ⟦⟦ pathsub↑ τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧ 〈 ρ' 〉\<\\
+\>                    M ⟦⟦ liftPathSub τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧ 〈 ρ' 〉\<\\
 \>                  ∶ M ⟦ sub↖ σ ⟧ 〈 ρ' 〉 ≡〈 B 〉 M ⟦ sub↗ σ' ⟧ 〈 ρ' 〉\<\\
 \>            step4 = weakening step3 \<\\
 \>                    (ctxER (varR x₁ (ctxTR (ctxTR validΘ)))\<\\
 \>                    (varR x₀ (ctxTR (ctxTR validΘ))))\<\\
-\>                    (rep↑-typed (rep↑-typed (rep↑-typed ρ∶Δ⇒Θ))) in\<\\
+\>                    (liftRep-typed (liftRep-typed (liftRep-typed ρ∶Δ⇒Θ))) in\<\\
 \>        let step5 : ∀ σ x → σ ∶ Γ ⇒ Δ → typeof x (addpath Θ A) ≡ ty A → addpath Θ A ⊢\<\\
 \>                    appT ((ΛT A M) ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑) (var x) ∶ ty B\<\\
 \>            step5 σ x σ∶Γ⇒Θ x∶A∈ΘA = appR \<\\
 \>                           (ΛR (subst (λ a → addpath Θ A ,T A ⊢ a ∶ ty B) \<\\
-\>                           (trans (sub-compRS M) (trans (rep-comp (M ⟦ sub↑ \_ σ ⟧))\<\\
-\>                           (trans (rep-comp (M ⟦ sub↑ \_ σ ⟧ 〈 rep↑ \_ ρ 〉)) \<\\
-\>                             (rep-comp (M ⟦ sub↑ \_ σ ⟧ 〈 rep↑ \_ ρ 〉 〈 rep↑ \_ upRep 〉)))))\<\\
-\>                         (substitution \{σ = rep↑ \_ upRep •R rep↑ \_ upRep •R rep↑ \_ upRep •R rep↑ \_ ρ •RS sub↑ \_ σ\} Γ,A⊢M∶B \<\\
+\>                           (trans (sub-compRS M) (trans (rep-comp (M ⟦ liftSub \_ σ ⟧))\<\\
+\>                           (trans (rep-comp (M ⟦ liftSub \_ σ ⟧ 〈 liftRep \_ ρ 〉)) \<\\
+\>                             (rep-comp (M ⟦ liftSub \_ σ ⟧ 〈 liftRep \_ ρ 〉 〈 liftRep \_ upRep 〉)))))\<\\
+\>                         (substitution \{σ = liftRep \_ upRep •R liftRep \_ upRep •R liftRep \_ upRep •R liftRep \_ ρ •RS liftSub \_ σ\} Γ,A⊢M∶B \<\\
 \>                         (ctxTR (ctxER (varR x₁ (ctxTR (ctxTR validΘ))) (varR x₀ (ctxTR (ctxTR validΘ)))))\<\\
 \>                         (compRS-typed\<\\
-\>                            \{ρ = rep↑ \_ upRep •R rep↑ \_ upRep •R rep↑ \_ upRep •R rep↑ \_ ρ\}\<\\
-\>                            \{σ = sub↑ \_ σ\} \<\\
-\>                            (compR-typed \{ρ = rep↑ \_ upRep •R rep↑ \_ upRep •R rep↑ \_ upRep\}\<\\
-\>                              \{σ = rep↑ \_ ρ\}\<\\
-\>                              (compR-typed \{ρ = rep↑ \_ upRep •R rep↑ \_ upRep\} \{σ = rep↑ \_ upRep\}\<\\
-\>                                (compR-typed \{ρ = rep↑ \_ upRep\} \{σ = rep↑ \_ upRep\} (rep↑-typed upRep-typed) (rep↑-typed upRep-typed)) (rep↑-typed upRep-typed)) \<\\
-\>                            (rep↑-typed ρ∶Δ⇒Θ))\<\\
-\>                         (sub↑-typed σ∶Γ⇒Θ)))))\<\\
+\>                            \{ρ = liftRep \_ upRep •R liftRep \_ upRep •R liftRep \_ upRep •R liftRep \_ ρ\}\<\\
+\>                            \{σ = liftSub \_ σ\} \<\\
+\>                            (compR-typed \{ρ = liftRep \_ upRep •R liftRep \_ upRep •R liftRep \_ upRep\}\<\\
+\>                              \{σ = liftRep \_ ρ\}\<\\
+\>                              (compR-typed \{ρ = liftRep \_ upRep •R liftRep \_ upRep\} \{σ = liftRep \_ upRep\}\<\\
+\>                                (compR-typed \{ρ = liftRep \_ upRep\} \{σ = liftRep \_ upRep\} (liftRep-typed upRep-typed) (liftRep-typed upRep-typed)) (liftRep-typed upRep-typed)) \<\\
+\>                            (liftRep-typed ρ∶Δ⇒Θ))\<\\
+\>                         (liftSub-typed σ∶Γ⇒Θ)))))\<\\
 \>                         (change-type (varR x (ctxER (varR x₁ (ctxTR (ctxTR validΘ))) (varR x₀ (ctxTR (ctxTR validΘ))))) x∶A∈ΘA) in --TODO Extract last line as lemma\<\\
 \>             let step6 : addpath Θ A ⊢\<\\
-\>                         M ⟦⟦ pathsub↑ τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧ 〈 ρ' 〉\<\\
+\>                         M ⟦⟦ liftPathSub τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧ 〈 ρ' 〉\<\\
 \>                         ∶ appT ((ΛT A M) ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑) (var x₂) ≡〈 B 〉 appT ((ΛT A M) ⟦ σ' ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑) (var x₁)\<\\
 \>                 step6 = convER step4 (step5 σ x₂ σ∶Γ⇒Δ refl) (step5 σ' x₁ σ'∶Γ⇒Δ refl)\<\\
 \>                         (subst (λ a → a ≃ appT (((ΛT A M ⟦ σ ⟧) 〈 ρ 〉) ⇑ ⇑ ⇑) (var x₂)) \<\\
 \>                         (let open ≡-Reasoning in\<\\
-\>                           M ⟦ sub↑ \_ σ ⟧ 〈 rep↑ \_ ρ 〉 〈 rep↑ \_ upRep 〉 〈 rep↑ \_ upRep 〉 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₂) ⟧\<\\
-\>                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ \_ σ ⟧ 〈 rep↑ \_ ρ 〉 〈 rep↑ \_ upRep 〉 〈 rep↑ \_ upRep 〉) ⟩⟩\<\\
-\>                           M ⟦ sub↑ \_ σ ⟧ 〈 rep↑ \_ ρ 〉 〈 rep↑ \_ upRep 〉 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₂) •SR rep↑ \_ upRep ⟧\<\\
-\>                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ \_ σ ⟧ 〈 rep↑ \_ ρ 〉 〈 rep↑ \_ upRep 〉) ⟩⟩\<\\
-\>                           M ⟦ sub↑ \_ σ ⟧ 〈 rep↑ \_ ρ 〉 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₂) •SR rep↑ \_ upRep •SR rep↑ \_ upRep ⟧\<\\
-\>                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ \_ σ ⟧ 〈 rep↑ \_ ρ 〉) ⟩⟩\<\\
-\>                           M ⟦ sub↑ \_ σ ⟧ 〈 rep↑ \_ ρ 〉 ⟦ x₀:= (var x₂) •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ upRep ⟧\<\\
-\>                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ \_ σ ⟧) ⟩⟩\<\\
-\>                           M ⟦ sub↑ \_ σ ⟧ ⟦ x₀:= (var x₂) •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ ρ ⟧\<\\
+\>                           M ⟦ liftSub \_ σ ⟧ 〈 liftRep \_ ρ 〉 〈 liftRep \_ upRep 〉 〈 liftRep \_ upRep 〉 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₂) ⟧\<\\
+\>                         ≡⟨⟨ sub-compSR (M ⟦ liftSub \_ σ ⟧ 〈 liftRep \_ ρ 〉 〈 liftRep \_ upRep 〉 〈 liftRep \_ upRep 〉) ⟩⟩\<\\
+\>                           M ⟦ liftSub \_ σ ⟧ 〈 liftRep \_ ρ 〉 〈 liftRep \_ upRep 〉 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₂) •SR liftRep \_ upRep ⟧\<\\
+\>                         ≡⟨⟨ sub-compSR (M ⟦ liftSub \_ σ ⟧ 〈 liftRep \_ ρ 〉 〈 liftRep \_ upRep 〉) ⟩⟩\<\\
+\>                           M ⟦ liftSub \_ σ ⟧ 〈 liftRep \_ ρ 〉 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₂) •SR liftRep \_ upRep •SR liftRep \_ upRep ⟧\<\\
+\>                         ≡⟨⟨ sub-compSR (M ⟦ liftSub \_ σ ⟧ 〈 liftRep \_ ρ 〉) ⟩⟩\<\\
+\>                           M ⟦ liftSub \_ σ ⟧ 〈 liftRep \_ ρ 〉 ⟦ x₀:= (var x₂) •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ upRep ⟧\<\\
+\>                         ≡⟨⟨ sub-compSR (M ⟦ liftSub \_ σ ⟧) ⟩⟩\<\\
+\>                           M ⟦ liftSub \_ σ ⟧ ⟦ x₀:= (var x₂) •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ ρ ⟧\<\\
 \>                         ≡⟨⟨ sub-comp M ⟩⟩\<\\
-\>                           M ⟦ x₀:= (var x₂) •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ ρ • sub↑ \_ σ ⟧\<\\
+\>                           M ⟦ x₀:= (var x₂) •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ ρ • liftSub \_ σ ⟧\<\\
 \>                         ≡⟨ sub-congr M aux ⟩\<\\
-\>                           M ⟦ rep↑ \_ (rep↑ \_ (rep↑ \_ ρ)) •RS sub↖ σ ⟧\<\\
+\>                           M ⟦ liftRep \_ (liftRep \_ (liftRep \_ ρ)) •RS sub↖ σ ⟧\<\\
 \>                         ≡⟨ sub-compRS M ⟩ \<\\
-\>                           M ⟦ sub↖ σ ⟧ 〈 rep↑ \_ (rep↑ \_ (rep↑ \_ ρ)) 〉\<\\
+\>                           M ⟦ sub↖ σ ⟧ 〈 liftRep \_ (liftRep \_ (liftRep \_ ρ)) 〉\<\\
 \>                           ∎)\<\\
 \>                           (sym-conv (osr-conv (redex ?)))) \<\\
 \>                         (subst (λ a → a ≃ appT (((ΛT A M ⟦ σ' ⟧) 〈 ρ 〉) ⇑ ⇑ ⇑) (var x₁)) \<\\
 \>                           (let open ≡-Reasoning in \<\\
-\>                           M ⟦ sub↑ \_ σ' ⟧ 〈 rep↑ \_ ρ 〉 〈 rep↑ \_ upRep 〉 〈 rep↑ \_ upRep 〉 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₁) ⟧\<\\
-\>                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ \_ σ' ⟧ 〈 rep↑ \_ ρ 〉 〈 rep↑ \_ upRep 〉 〈 rep↑ \_ upRep 〉) ⟩⟩\<\\
-\>                           M ⟦ sub↑ \_ σ' ⟧ 〈 rep↑ \_ ρ 〉 〈 rep↑ \_ upRep 〉 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₁) •SR rep↑ \_ upRep ⟧\<\\
-\>                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ \_ σ' ⟧ 〈 rep↑ \_ ρ 〉 〈 rep↑ \_ upRep 〉) ⟩⟩\<\\
-\>                           M ⟦ sub↑ \_ σ' ⟧ 〈 rep↑ \_ ρ 〉 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₁) •SR rep↑ \_ upRep •SR rep↑ \_ upRep ⟧\<\\
-\>                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ \_ σ' ⟧ 〈 rep↑ \_ ρ 〉) ⟩⟩\<\\
-\>                           M ⟦ sub↑ \_ σ' ⟧ 〈 rep↑ \_ ρ 〉 ⟦ x₀:= (var x₁) •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ upRep ⟧\<\\
-\>                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ \_ σ' ⟧) ⟩⟩\<\\
-\>                           M ⟦ sub↑ \_ σ' ⟧ ⟦ x₀:= (var x₁) •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ ρ ⟧\<\\
+\>                           M ⟦ liftSub \_ σ' ⟧ 〈 liftRep \_ ρ 〉 〈 liftRep \_ upRep 〉 〈 liftRep \_ upRep 〉 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₁) ⟧\<\\
+\>                         ≡⟨⟨ sub-compSR (M ⟦ liftSub \_ σ' ⟧ 〈 liftRep \_ ρ 〉 〈 liftRep \_ upRep 〉 〈 liftRep \_ upRep 〉) ⟩⟩\<\\
+\>                           M ⟦ liftSub \_ σ' ⟧ 〈 liftRep \_ ρ 〉 〈 liftRep \_ upRep 〉 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₁) •SR liftRep \_ upRep ⟧\<\\
+\>                         ≡⟨⟨ sub-compSR (M ⟦ liftSub \_ σ' ⟧ 〈 liftRep \_ ρ 〉 〈 liftRep \_ upRep 〉) ⟩⟩\<\\
+\>                           M ⟦ liftSub \_ σ' ⟧ 〈 liftRep \_ ρ 〉 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₁) •SR liftRep \_ upRep •SR liftRep \_ upRep ⟧\<\\
+\>                         ≡⟨⟨ sub-compSR (M ⟦ liftSub \_ σ' ⟧ 〈 liftRep \_ ρ 〉) ⟩⟩\<\\
+\>                           M ⟦ liftSub \_ σ' ⟧ 〈 liftRep \_ ρ 〉 ⟦ x₀:= (var x₁) •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ upRep ⟧\<\\
+\>                         ≡⟨⟨ sub-compSR (M ⟦ liftSub \_ σ' ⟧) ⟩⟩\<\\
+\>                           M ⟦ liftSub \_ σ' ⟧ ⟦ x₀:= (var x₁) •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ ρ ⟧\<\\
 \>                         ≡⟨⟨ sub-comp M ⟩⟩\<\\
-\>                           M ⟦ x₀:= (var x₁) •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ ρ • sub↑ \_ σ' ⟧\<\\
+\>                           M ⟦ x₀:= (var x₁) •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ ρ • liftSub \_ σ' ⟧\<\\
 \>                         ≡⟨ sub-congr M aux₂ ⟩\<\\
-\>                           M ⟦ rep↑ \_ (rep↑ \_ (rep↑ \_ ρ)) •RS sub↗ σ' ⟧\<\\
+\>                           M ⟦ liftRep \_ (liftRep \_ (liftRep \_ ρ)) •RS sub↗ σ' ⟧\<\\
 \>                         ≡⟨ sub-compRS M ⟩ \<\\
-\>                           M ⟦ sub↗ σ' ⟧ 〈 rep↑ \_ (rep↑ \_ (rep↑ \_ ρ)) 〉\<\\
+\>                           M ⟦ sub↗ σ' ⟧ 〈 liftRep \_ (liftRep \_ (liftRep \_ ρ)) 〉\<\\
 \>                           ∎)\<\\
 \>                           (sym-conv (osr-conv (redex ?)))) in\<\\
 \>      app*R (E-typed N∈EΘA) (E-typed N'∈EΘA) \<\\
 \>      (lllR step6) (EE-typed Q∈EΘN≡N'))\<\\
 \>      ?) where\<\\
 \>    aux : ∀ \{U\} \{V\} \{W\} \{ρ : Rep V W\} \{σ : Sub U V\} → \<\\
-\>        x₀:= (var x₂) •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ ρ • sub↑ \_ σ ∼ rep↑ \_ (rep↑ \_ (rep↑ \_ ρ)) •RS sub↖ σ\<\\
+\>        x₀:= (var x₂) •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ ρ • liftSub \_ σ ∼ liftRep \_ (liftRep \_ (liftRep \_ ρ)) •RS sub↖ σ\<\\
 \>    aux x₀ = refl\<\\
 \>    aux \{ρ = ρ\} \{σ\} (↑ x) = let open ≡-Reasoning in \<\\
 \>      begin\<\\
-\>        σ \_ x ⇑ ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep •SR rep↑ -Term upRep •SR\<\\
-\>       rep↑ -Term upRep\<\\
-\>       •SR rep↑ -Term ρ ⟧\<\\
+\>        σ \_ x ⇑ ⟦ x₀:= (var x₂) •SR liftRep -Term upRep •SR liftRep -Term upRep •SR\<\\
+\>       liftRep -Term upRep\<\\
+\>       •SR liftRep -Term ρ ⟧\<\\
 \>      ≡⟨ sub-compSR (σ \_ x ⇑) ⟩\<\\
-\>        σ \_ x ⇑ 〈 rep↑ \_ ρ 〉 ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧\<\\
-\>      ≡⟨ sub-congl (rep↑-upRep (σ \_ x)) ⟩\<\\
-\>        σ \_ x 〈 ρ 〉 ⇑ ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧\<\\
+\>        σ \_ x ⇑ 〈 liftRep \_ ρ 〉 ⟦ x₀:= (var x₂) •SR liftRep -Term upRep •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧\<\\
+\>      ≡⟨ sub-congl (liftRep-upRep (σ \_ x)) ⟩\<\\
+\>        σ \_ x 〈 ρ 〉 ⇑ ⟦ x₀:= (var x₂) •SR liftRep -Term upRep •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧\<\\
 \>      ≡⟨ sub-compSR (σ \_ x 〈 ρ 〉 ⇑) ⟩\<\\
-\>        σ \_ x 〈 ρ 〉 ⇑ 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧\<\\
-\>      ≡⟨ sub-congl (rep↑-upRep (σ \_ x 〈 ρ 〉)) ⟩\<\\
-\>        σ \_ x 〈 ρ 〉 ⇑ ⇑ ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧\<\\
+\>        σ \_ x 〈 ρ 〉 ⇑ 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₂) •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧\<\\
+\>      ≡⟨ sub-congl (liftRep-upRep (σ \_ x 〈 ρ 〉)) ⟩\<\\
+\>        σ \_ x 〈 ρ 〉 ⇑ ⇑ ⟦ x₀:= (var x₂) •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧\<\\
 \>      ≡⟨ sub-compSR (σ \_ x 〈 ρ 〉 ⇑ ⇑) ⟩\<\\
-\>        σ \_ x 〈 ρ 〉 ⇑ ⇑ 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep ⟧\<\\
-\>      ≡⟨ sub-congl (rep↑-upRep (σ \_ x 〈 ρ 〉 ⇑)) ⟩\<\\
-\>        σ \_ x 〈 ρ 〉 ⇑ ⇑ ⇑ ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep ⟧\<\\
+\>        σ \_ x 〈 ρ 〉 ⇑ ⇑ 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₂) •SR liftRep -Term upRep ⟧\<\\
+\>      ≡⟨ sub-congl (liftRep-upRep (σ \_ x 〈 ρ 〉 ⇑)) ⟩\<\\
+\>        σ \_ x 〈 ρ 〉 ⇑ ⇑ ⇑ ⟦ x₀:= (var x₂) •SR liftRep -Term upRep ⟧\<\\
 \>      ≡⟨ sub-compSR (σ \_ x 〈 ρ 〉 ⇑ ⇑ ⇑) ⟩\<\\
-\>        σ \_ x 〈 ρ 〉 ⇑ ⇑ ⇑ 〈 rep↑ -Term upRep 〉 ⟦ x₀:= (var x₂) ⟧\<\\
-\>      ≡⟨ sub-congl (rep↑-upRep (σ \_ x 〈 ρ 〉 ⇑ ⇑)) ⟩\<\\
+\>        σ \_ x 〈 ρ 〉 ⇑ ⇑ ⇑ 〈 liftRep -Term upRep 〉 ⟦ x₀:= (var x₂) ⟧\<\\
+\>      ≡⟨ sub-congl (liftRep-upRep (σ \_ x 〈 ρ 〉 ⇑ ⇑)) ⟩\<\\
 \>        σ \_ x 〈 ρ 〉 ⇑ ⇑ ⇑ ⇑ ⟦ x₀:= (var x₂) ⟧\<\\
 \>      ≡⟨ botsub-upRep (σ \_ x 〈 ρ 〉 ⇑ ⇑ ⇑) ⟩\<\\
 \>        σ \_ x 〈 ρ 〉 ⇑ ⇑ ⇑\<\\
-\>      ≡⟨⟨ rep↑-upRep₃ (σ \_ x) ⟩⟩\<\\
-\>        σ \_ x ⇑ ⇑ ⇑ 〈 rep↑ \_ (rep↑ \_ (rep↑ \_ ρ)) 〉\<\\
+\>      ≡⟨⟨ liftRep-upRep₃ (σ \_ x) ⟩⟩\<\\
+\>        σ \_ x ⇑ ⇑ ⇑ 〈 liftRep \_ (liftRep \_ (liftRep \_ ρ)) 〉\<\\
 \>      ∎\<\\
 \>    aux₂ : ∀ \{U\} \{V\} \{W\} \{ρ : Rep V W\} \{σ : Sub U V\} → \<\\
-\>        x₀:= (var x₁) •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ ρ • sub↑ \_ σ ∼ rep↑ \_ (rep↑ \_ (rep↑ \_ ρ)) •RS sub↗ σ\<\\
+\>        x₀:= (var x₁) •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ ρ • liftSub \_ σ ∼ liftRep \_ (liftRep \_ (liftRep \_ ρ)) •RS sub↗ σ\<\\
 \>    aux₂ x₀ = refl\<\\
 \>    aux₂ \{ρ = ρ\} \{σ\} (↑ x) = let open ≡-Reasoning in \<\\
 \>      begin\<\\
-\>        σ \_ x ⇑ ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep •SR rep↑ -Term upRep •SR\<\\
-\>       rep↑ -Term upRep\<\\
-\>       •SR rep↑ -Term ρ ⟧\<\\
+\>        σ \_ x ⇑ ⟦ x₀:= (var x₁) •SR liftRep -Term upRep •SR liftRep -Term upRep •SR\<\\
+\>       liftRep -Term upRep\<\\
+\>       •SR liftRep -Term ρ ⟧\<\\
 \>      ≡⟨ sub-compSR (σ \_ x ⇑) ⟩\<\\
-\>        σ \_ x ⇑ 〈 rep↑ \_ ρ 〉 ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧\<\\
-\>      ≡⟨ sub-congl (rep↑-upRep (σ \_ x)) ⟩\<\\
-\>        σ \_ x 〈 ρ 〉 ⇑ ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧\<\\
+\>        σ \_ x ⇑ 〈 liftRep \_ ρ 〉 ⟦ x₀:= (var x₁) •SR liftRep -Term upRep •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧\<\\
+\>      ≡⟨ sub-congl (liftRep-upRep (σ \_ x)) ⟩\<\\
+\>        σ \_ x 〈 ρ 〉 ⇑ ⟦ x₀:= (var x₁) •SR liftRep -Term upRep •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧\<\\
 \>      ≡⟨ sub-compSR (σ \_ x 〈 ρ 〉 ⇑) ⟩\<\\
-\>        σ \_ x 〈 ρ 〉 ⇑ 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧\<\\
-\>      ≡⟨ sub-congl (rep↑-upRep (σ \_ x 〈 ρ 〉)) ⟩\<\\
-\>        σ \_ x 〈 ρ 〉 ⇑ ⇑ ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧\<\\
+\>        σ \_ x 〈 ρ 〉 ⇑ 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₁) •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧\<\\
+\>      ≡⟨ sub-congl (liftRep-upRep (σ \_ x 〈 ρ 〉)) ⟩\<\\
+\>        σ \_ x 〈 ρ 〉 ⇑ ⇑ ⟦ x₀:= (var x₁) •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧\<\\
 \>      ≡⟨ sub-compSR (σ \_ x 〈 ρ 〉 ⇑ ⇑) ⟩\<\\
-\>        σ \_ x 〈 ρ 〉 ⇑ ⇑ 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep ⟧\<\\
-\>      ≡⟨ sub-congl (rep↑-upRep (σ \_ x 〈 ρ 〉 ⇑)) ⟩\<\\
-\>        σ \_ x 〈 ρ 〉 ⇑ ⇑ ⇑ ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep ⟧\<\\
+\>        σ \_ x 〈 ρ 〉 ⇑ ⇑ 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₁) •SR liftRep -Term upRep ⟧\<\\
+\>      ≡⟨ sub-congl (liftRep-upRep (σ \_ x 〈 ρ 〉 ⇑)) ⟩\<\\
+\>        σ \_ x 〈 ρ 〉 ⇑ ⇑ ⇑ ⟦ x₀:= (var x₁) •SR liftRep -Term upRep ⟧\<\\
 \>      ≡⟨ sub-compSR (σ \_ x 〈 ρ 〉 ⇑ ⇑ ⇑) ⟩\<\\
-\>        σ \_ x 〈 ρ 〉 ⇑ ⇑ ⇑ 〈 rep↑ -Term upRep 〉 ⟦ x₀:= (var x₁) ⟧\<\\
-\>      ≡⟨ sub-congl (rep↑-upRep (σ \_ x 〈 ρ 〉 ⇑ ⇑)) ⟩\<\\
+\>        σ \_ x 〈 ρ 〉 ⇑ ⇑ ⇑ 〈 liftRep -Term upRep 〉 ⟦ x₀:= (var x₁) ⟧\<\\
+\>      ≡⟨ sub-congl (liftRep-upRep (σ \_ x 〈 ρ 〉 ⇑ ⇑)) ⟩\<\\
 \>        σ \_ x 〈 ρ 〉 ⇑ ⇑ ⇑ ⇑ ⟦ x₀:= (var x₁) ⟧\<\\
 \>      ≡⟨ botsub-upRep (σ \_ x 〈 ρ 〉 ⇑ ⇑ ⇑) ⟩\<\\
 \>        σ \_ x 〈 ρ 〉 ⇑ ⇑ ⇑\<\\
-\>      ≡⟨⟨ rep↑-upRep₃ (σ \_ x) ⟩⟩\<\\
-\>        σ \_ x ⇑ ⇑ ⇑ 〈 rep↑ \_ (rep↑ \_ (rep↑ \_ ρ)) 〉\<\\
+\>      ≡⟨⟨ liftRep-upRep₃ (σ \_ x) ⟩⟩\<\\
+\>        σ \_ x ⇑ ⇑ ⇑ 〈 liftRep \_ (liftRep \_ (liftRep \_ ρ)) 〉\<\\
 \>      ∎\<\\
 \>    aux₃ : ∀ \{U\} \{V\} \{σ : Sub U V\} → \<\\
-\>        x₀:= (var x₂) •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ upRep • sub↑ \_ σ ∼ sub↖ σ\<\\
+\>        x₀:= (var x₂) •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ upRep • liftSub \_ σ ∼ sub↖ σ\<\\
 \>    aux₃ x₀ = refl\<\\
 \>    aux₃ \{σ = σ\} (↑ x) = let open ≡-Reasoning in \<\\
 \>      begin\<\\
-\>        σ \_ x ⇑ ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧\<\\
+\>        σ \_ x ⇑ ⟦ x₀:= (var x₂) •SR liftRep -Term upRep •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧\<\\
 \>      ≡⟨ sub-compSR (σ \_ x ⇑) ⟩\<\\
-\>        σ \_ x ⇑ 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧\<\\
-\>      ≡⟨ sub-congl (rep↑-upRep (σ \_ x)) ⟩\<\\
-\>        σ \_ x ⇑ ⇑ ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧\<\\
+\>        σ \_ x ⇑ 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₂) •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧\<\\
+\>      ≡⟨ sub-congl (liftRep-upRep (σ \_ x)) ⟩\<\\
+\>        σ \_ x ⇑ ⇑ ⟦ x₀:= (var x₂) •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧\<\\
 \>      ≡⟨ sub-compSR (σ \_ x  ⇑ ⇑) ⟩\<\\
-\>        σ \_ x  ⇑ ⇑ 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep ⟧\<\\
-\>      ≡⟨ sub-congl (rep↑-upRep (σ \_ x  ⇑)) ⟩\<\\
-\>        σ \_ x  ⇑ ⇑ ⇑ ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep ⟧\<\\
+\>        σ \_ x  ⇑ ⇑ 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₂) •SR liftRep -Term upRep ⟧\<\\
+\>      ≡⟨ sub-congl (liftRep-upRep (σ \_ x  ⇑)) ⟩\<\\
+\>        σ \_ x  ⇑ ⇑ ⇑ ⟦ x₀:= (var x₂) •SR liftRep -Term upRep ⟧\<\\
 \>      ≡⟨ sub-compSR (σ \_ x  ⇑ ⇑ ⇑) ⟩\<\\
-\>        σ \_ x  ⇑ ⇑ ⇑ 〈 rep↑ -Term upRep 〉 ⟦ x₀:= (var x₂) ⟧\<\\
-\>      ≡⟨ sub-congl (rep↑-upRep (σ \_ x  ⇑ ⇑)) ⟩\<\\
+\>        σ \_ x  ⇑ ⇑ ⇑ 〈 liftRep -Term upRep 〉 ⟦ x₀:= (var x₂) ⟧\<\\
+\>      ≡⟨ sub-congl (liftRep-upRep (σ \_ x  ⇑ ⇑)) ⟩\<\\
 \>        σ \_ x  ⇑ ⇑ ⇑ ⇑ ⟦ x₀:= (var x₂) ⟧\<\\
 \>      ≡⟨ botsub-upRep (σ \_ x  ⇑ ⇑ ⇑) ⟩\<\\
 \>        σ \_ x  ⇑ ⇑ ⇑\<\\
 \>      ∎\<\\
 \>    aux₄ : ∀ \{U\} \{V\} \{σ : Sub U V\} → \<\\
-\>        x₀:= (var x₁) •SR rep↑ \_ upRep •SR rep↑ \_ upRep •SR rep↑ \_ upRep • sub↑ \_ σ ∼ sub↗ σ\<\\
+\>        x₀:= (var x₁) •SR liftRep \_ upRep •SR liftRep \_ upRep •SR liftRep \_ upRep • liftSub \_ σ ∼ sub↗ σ\<\\
 \>    aux₄ x₀ = refl\<\\
 \>    aux₄ \{σ = σ\} (↑ x) = let open ≡-Reasoning in \<\\
 \>      begin\<\\
-\>        σ \_ x ⇑ ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧\<\\
+\>        σ \_ x ⇑ ⟦ x₀:= (var x₁) •SR liftRep -Term upRep •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧\<\\
 \>      ≡⟨ sub-compSR (σ \_ x  ⇑) ⟩\<\\
-\>        σ \_ x  ⇑ 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧\<\\
-\>      ≡⟨ sub-congl (rep↑-upRep (σ \_ x )) ⟩\<\\
-\>        σ \_ x  ⇑ ⇑ ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧\<\\
+\>        σ \_ x  ⇑ 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₁) •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧\<\\
+\>      ≡⟨ sub-congl (liftRep-upRep (σ \_ x )) ⟩\<\\
+\>        σ \_ x  ⇑ ⇑ ⟦ x₀:= (var x₁) •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧\<\\
 \>      ≡⟨ sub-compSR (σ \_ x  ⇑ ⇑) ⟩\<\\
-\>        σ \_ x  ⇑ ⇑ 〈 rep↑ \_ upRep 〉 ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep ⟧\<\\
-\>      ≡⟨ sub-congl (rep↑-upRep (σ \_ x  ⇑)) ⟩\<\\
-\>        σ \_ x  ⇑ ⇑ ⇑ ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep ⟧\<\\
+\>        σ \_ x  ⇑ ⇑ 〈 liftRep \_ upRep 〉 ⟦ x₀:= (var x₁) •SR liftRep -Term upRep ⟧\<\\
+\>      ≡⟨ sub-congl (liftRep-upRep (σ \_ x  ⇑)) ⟩\<\\
+\>        σ \_ x  ⇑ ⇑ ⇑ ⟦ x₀:= (var x₁) •SR liftRep -Term upRep ⟧\<\\
 \>      ≡⟨ sub-compSR (σ \_ x  ⇑ ⇑ ⇑) ⟩\<\\
-\>        σ \_ x  ⇑ ⇑ ⇑ 〈 rep↑ -Term upRep 〉 ⟦ x₀:= (var x₁) ⟧\<\\
-\>      ≡⟨ sub-congl (rep↑-upRep (σ \_ x  ⇑ ⇑)) ⟩\<\\
+\>        σ \_ x  ⇑ ⇑ ⇑ 〈 liftRep -Term upRep 〉 ⟦ x₀:= (var x₁) ⟧\<\\
+\>      ≡⟨ sub-congl (liftRep-upRep (σ \_ x  ⇑ ⇑)) ⟩\<\\
 \>        σ \_ x  ⇑ ⇑ ⇑ ⇑ ⟦ x₀:= (var x₁) ⟧\<\\
 \>      ≡⟨ botsub-upRep (σ \_ x  ⇑ ⇑ ⇑) ⟩\<\\
 \>        σ \_ x  ⇑ ⇑ ⇑\<\\
@@ -1434,7 +1435,7 @@ by Lemma \ref{lm:var-compute}.
 \>[2]\AgdaSymbol{(}\AgdaFunction{subst} \AgdaSymbol{(}\AgdaRecord{E'} \AgdaBound{Γ} \AgdaSymbol{\_)} \AgdaFunction{sub-idOp}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaSymbol{(}\AgdaFunction{Computable-Sub} \AgdaSymbol{(}\AgdaFunction{idSub} \AgdaBound{V}\AgdaSymbol{)} \AgdaFunction{idSubC} \AgdaBound{Γ⊢M∶A} \AgdaSymbol{(}\AgdaFunction{Context-Validity} \AgdaBound{Γ⊢M∶A}\AgdaSymbol{)))}\<%
+\>[2]\AgdaSymbol{(}\AgdaFunction{Computable-Sub} \AgdaSymbol{(}\AgdaFunction{idSub} \AgdaBound{V}\AgdaSymbol{)} \AgdaFunction{idSubC} \AgdaBound{Γ⊢M∶A} \AgdaSymbol{(}\AgdaFunction{context-validity} \AgdaBound{Γ⊢M∶A}\AgdaSymbol{)))}\<%
 \end{code}
 }
 

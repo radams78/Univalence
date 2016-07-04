@@ -29,7 +29,7 @@ E_\Gamma(A \rightarrow B) \eqdef & \{ M \mid \Gamma \vdash M : A \rightarrow B, 
 E_\Gamma(\bot) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
 E_\Gamma(\phi \rightarrow \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \rightarrow \psi, \\
 & \forall (\Delta \supseteq \Gamma)(\epsilon \in E_\Delta(\phi)). \delta \epsilon \in E_\Gamma(\psi) \} \\
-E_\Gamma(\phi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
+E_\Gamma(\phi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi, \delta \in \SN \} \\
 & \qquad (\phi \text{ neutral}) \\
 E_\Gamma(\phi) & \eqdef E_\Gamma(nf(\phi)) \\
 & \qquad (\phi \mbox{ a normalizable term of type $\Omega$}) \\
@@ -129,7 +129,7 @@ conv-computeE {Γ = Γ} {M = M} {M' = M'} {A = Ω} {N' = N'} {P} (S ,p T ,p φ ,
             (sym (decode-rep φ)) 
             (weakening 
               (Subject-Reduction 
-                Γ⊢M∶A M↠φ) (Context-Validity Δ⊢ε∶φ'ρ) ρ∶Γ⇒RΔ) in
+                Γ⊢M∶A M↠φ) (context-validity Δ⊢ε∶φ'ρ) ρ∶Γ⇒RΔ) in
       let step1a : decode-Prop (lrep ρ φ') ≃ decode-Prop (lrep ρ φ)
           step1a = subst₂ _≃_ (sym (trans (decode-rep φ') (rep-congl φ'≡Q))) (sym (decode-rep φ)) (conv-rep {M = Q} {N = decode-Prop φ} 
             (sym-conv (red-conv φ↠Q))) in 
@@ -147,7 +147,7 @@ conv-computeE {Γ = Γ} {M = M} {M' = M'} {A = Ω} {N' = N'} {P} (S ,p T ,p φ ,
                 (weakening 
                   (subst (λ x → Γ ⊢ x ∶ ty Ω) (sym ψ'≡R) 
                   (Subject-Reduction Γ⊢N'∶A N'↠R)) 
-                (Context-Validity Δ⊢ε∶φ'ρ) 
+                (context-validity Δ⊢ε∶φ'ρ) 
                 ρ∶Γ⇒RΔ) in
       conv-computeP {L = lrep ρ ψ} {M = lrep ρ ψ'} step4 (sym-conv step5) step6) ,p 
     (    (λ Δ {ρ} {ε} ρ∶Γ⇒RΔ Δ⊢ε∶ψ'ρ computeε → 
@@ -156,7 +156,7 @@ conv-computeE {Γ = Γ} {M = M} {M' = M'} {A = Ω} {N' = N'} {P} (S ,p T ,p φ ,
             (sym (decode-rep ψ)) 
             (weakening 
               (Subject-Reduction 
-                Γ⊢N∶A N↠ψ) (Context-Validity Δ⊢ε∶ψ'ρ) ρ∶Γ⇒RΔ) in
+                Γ⊢N∶A N↠ψ) (context-validity Δ⊢ε∶ψ'ρ) ρ∶Γ⇒RΔ) in
       let step1a : decode-Prop (lrep ρ ψ') ≃ decode-Prop (lrep ρ ψ)
           step1a = subst₂ _≃_ (sym (trans (decode-rep ψ') (rep-congl ψ'≡R))) (sym (decode-rep ψ)) (conv-rep {M = R} {N = decode-Prop ψ} 
             (sym-conv (red-conv ψ↠R))) in 
@@ -174,18 +174,18 @@ conv-computeE {Γ = Γ} {M = M} {M' = M'} {A = Ω} {N' = N'} {P} (S ,p T ,p φ ,
                 (weakening 
                   (subst (λ x → Γ ⊢ x ∶ ty Ω) (sym φ'≡Q) 
                   (Subject-Reduction Γ⊢M'∶A M'↠Q)) 
-                (Context-Validity Δ⊢ε∶ψ'ρ) 
+                (context-validity Δ⊢ε∶ψ'ρ) 
                 ρ∶Γ⇒RΔ) in
       conv-computeP {L = lrep ρ φ} {M = lrep ρ φ'} step4 (sym-conv step5) step6))
 conv-computeE {A = A ⇛ B} computeP Γ⊢M∶A Γ⊢N∶A Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N' Δ ρ∶Γ⇒RΔ Δ⊢Q∶N≡N' computeQ = 
   conv-computeE {A = B} 
   (computeP Δ ρ∶Γ⇒RΔ Δ⊢Q∶N≡N' computeQ) 
-    (appR (weakening Γ⊢M∶A (Context-Validity Δ⊢Q∶N≡N') ρ∶Γ⇒RΔ) 
+    (appR (weakening Γ⊢M∶A (context-validity Δ⊢Q∶N≡N') ρ∶Γ⇒RΔ) 
       (Equation-Validity₁ Δ⊢Q∶N≡N')) 
-    (appR (weakening Γ⊢N∶A (Context-Validity Δ⊢Q∶N≡N') ρ∶Γ⇒RΔ) 
+    (appR (weakening Γ⊢N∶A (context-validity Δ⊢Q∶N≡N') ρ∶Γ⇒RΔ) 
       (Equation-Validity₂ Δ⊢Q∶N≡N'))
-    (appR (weakening Γ⊢M'∶A (Context-Validity Δ⊢Q∶N≡N') ρ∶Γ⇒RΔ) (Equation-Validity₁ Δ⊢Q∶N≡N')) 
-    (appR (weakening Γ⊢N'∶A (Context-Validity Δ⊢Q∶N≡N') ρ∶Γ⇒RΔ) (Equation-Validity₂ Δ⊢Q∶N≡N')) 
+    (appR (weakening Γ⊢M'∶A (context-validity Δ⊢Q∶N≡N') ρ∶Γ⇒RΔ) (Equation-Validity₁ Δ⊢Q∶N≡N')) 
+    (appR (weakening Γ⊢N'∶A (context-validity Δ⊢Q∶N≡N') ρ∶Γ⇒RΔ) (Equation-Validity₂ Δ⊢Q∶N≡N')) 
     (appT-convl (conv-rep M≃M')) (appT-convl (conv-rep N≃N'))
 --TODO Common pattern
 
@@ -199,25 +199,25 @@ expand-computeT {A = A ⇛ B} {M} {M'} (computeM'app ,p computeM'eq) Γ⊢M∶A�
     let computeM'N : computeT Δ B (appT (M' 〈 ρ 〉) N)
         computeM'N = computeM'app Δ ρ∶Γ⇒Δ Δ⊢N∶A computeN
     in expand-computeT computeM'N 
-       (appR (weakening Γ⊢M∶A⇛B (Context-Validity Δ⊢N∶A) ρ∶Γ⇒Δ) Δ⊢N∶A) 
+       (appR (weakening Γ⊢M∶A⇛B (context-validity Δ⊢N∶A) ρ∶Γ⇒Δ) Δ⊢N∶A) 
              (appTkr (key-redex-rep M▷M'))) ,p 
   (λ Δ ρ∶Γ⇒Δ Δ⊢P∶N≡N' computeN computeN' computeP₁ → 
     expand-computeE 
       (conv-computeE 
         (computeM'eq Δ ρ∶Γ⇒Δ Δ⊢P∶N≡N' computeN computeN' computeP₁) 
         (appR (weakening (Subject-Reduction Γ⊢M∶A⇛B (key-redex-red M▷M')) 
-                         (Context-Validity Δ⊢P∶N≡N') ρ∶Γ⇒Δ) 
+                         (context-validity Δ⊢P∶N≡N') ρ∶Γ⇒Δ) 
               (Equation-Validity₁ Δ⊢P∶N≡N')) 
         (appR (weakening (Subject-Reduction Γ⊢M∶A⇛B (key-redex-red M▷M')) 
-                         (Context-Validity Δ⊢P∶N≡N') ρ∶Γ⇒Δ) 
+                         (context-validity Δ⊢P∶N≡N') ρ∶Γ⇒Δ) 
               (Equation-Validity₂ Δ⊢P∶N≡N')) 
-        (appR (weakening Γ⊢M∶A⇛B (Context-Validity Δ⊢P∶N≡N') ρ∶Γ⇒Δ) 
+        (appR (weakening Γ⊢M∶A⇛B (context-validity Δ⊢P∶N≡N') ρ∶Γ⇒Δ) 
               (Equation-Validity₁ Δ⊢P∶N≡N')) 
-        (appR (weakening Γ⊢M∶A⇛B (Context-Validity Δ⊢P∶N≡N') ρ∶Γ⇒Δ) 
+        (appR (weakening Γ⊢M∶A⇛B (context-validity Δ⊢P∶N≡N') ρ∶Γ⇒Δ) 
               (Equation-Validity₂ Δ⊢P∶N≡N')) 
         (sym-conv (appT-convl (red-conv (red-rep (key-redex-red M▷M'))))) 
         (sym-conv (appT-convl (red-conv (red-rep (key-redex-red M▷M')))))) 
-      (⋆-typed (weakening Γ⊢M∶A⇛B (Context-Validity Δ⊢P∶N≡N') ρ∶Γ⇒Δ) 
+      (⋆-typed (weakening Γ⊢M∶A⇛B (context-validity Δ⊢P∶N≡N') ρ∶Γ⇒Δ) 
         Δ⊢P∶N≡N') 
       (key-redex-⋆ (key-redex-rep M▷M')))
 
@@ -412,8 +412,8 @@ func-EP {δ = δ} {φ = φ} {ψ = ψ} hyp Γ⊢δ∶φ⊃ψ = let Γ⊢φ⊃ψ�
                       (λ W Δ ρ ε ρ∶Γ⇒Δ Δ⊢ε∶φ computeε →
                       let φρ↠φ' : φ 〈 ρ 〉 ↠ cp2term φ'
                           φρ↠φ' = subst (λ x → (φ 〈 ρ 〉) ↠ x) (closed-rep φ') (respects-red (respects-osr replacement β-respects-rep) (red-NF Γ⊢φ∶Ω)) in
-                      let ε∈EΔψ = hyp W Δ ρ ε (Context-Validity Δ⊢ε∶φ) ρ∶Γ⇒Δ        
-                                  ((convR Δ⊢ε∶φ (weakening Γ⊢φ∶Ω (Context-Validity Δ⊢ε∶φ) ρ∶Γ⇒Δ) (sym-conv (red-conv φρ↠φ')) ) ,p φ' ,p φρ↠φ' ,p computeε ) in 
+                      let ε∈EΔψ = hyp W Δ ρ ε (context-validity Δ⊢ε∶φ) ρ∶Γ⇒Δ        
+                                  ((convR Δ⊢ε∶φ (weakening Γ⊢φ∶Ω (context-validity Δ⊢ε∶φ) ρ∶Γ⇒Δ) (sym-conv (red-conv φρ↠φ')) ) ,p φ' ,p φρ↠φ' ,p computeε ) in 
                       let ψ' = proj₁ (proj₂ ε∈EΔψ) in 
                       let ψρ↠ψ' : ψ 〈 ρ 〉 ↠ cp2term ψ'
                           ψρ↠ψ' = proj₁ (proj₂ (proj₂ ε∈EΔψ)) in 
@@ -441,23 +441,23 @@ expand-compute : ∀ {V} {Γ : Context V} {A : closed-prop} {δ ε : Proof V} �
                 compute Γ A ε → valid Γ → key-redex δ ε → compute Γ A δ
 expand-compute {A = ⊥C} computeε validΓ δ▷ε = key-redex-SN δ▷ε (compute-SN computeε validΓ)
 expand-compute {A = A ⊃C B} computeε validΓ δ▷ε W Δ ρ χ ρ∶Γ⇒RΔ Δ⊢χ∶A computeχ = 
-  expand-compute (computeε W Δ ρ χ ρ∶Γ⇒RΔ Δ⊢χ∶A computeχ) (Context-Validity Δ⊢χ∶A)
+  expand-compute (computeε W Δ ρ χ ρ∶Γ⇒RΔ Δ⊢χ∶A computeχ) (context-validity Δ⊢χ∶A)
       (appPkr (key-redex-rep δ▷ε)) 
 
-expand-EP (Γ⊢ε∶φ ,p φ' ,p φ↠φ' ,p computeε) Γ⊢δ∶φ δ▷ε = Γ⊢δ∶φ ,p φ' ,p φ↠φ' ,p expand-compute computeε (Context-Validity Γ⊢δ∶φ) δ▷ε
+expand-EP (Γ⊢ε∶φ ,p φ' ,p φ↠φ' ,p computeε) Γ⊢δ∶φ δ▷ε = Γ⊢δ∶φ ,p φ' ,p φ↠φ' ,p expand-compute computeε (context-validity Γ⊢δ∶φ) δ▷ε
 
 expand-computeE : ∀ {V} {Γ : Context V} {A} {M} {N} {P} {Q} →
   computeE Γ M A N Q → Γ ⊢ P ∶ M ≡〈 A 〉 N → key-redex P Q → computeE Γ M A N P
 expand-computeE {A = Ω} ((_ ,p M⊃Nnf ,p M⊃N↠M⊃Nnf ,p computeQ+) ,p (_ ,p N⊃Mnf ,p N⊃M↠N⊃Mnf ,p computeQ-)) Γ⊢P∶M≡N P▷Q = 
   ((plusR Γ⊢P∶M≡N) ,p M⊃Nnf ,p M⊃N↠M⊃Nnf ,p expand-compute computeQ+ 
-    (Context-Validity Γ⊢P∶M≡N) (pluskr P▷Q)) ,p 
+    (context-validity Γ⊢P∶M≡N) (pluskr P▷Q)) ,p 
   (minusR Γ⊢P∶M≡N) ,p N⊃Mnf ,p N⊃M↠N⊃Mnf ,p expand-compute computeQ- 
-    (Context-Validity Γ⊢P∶M≡N) (minuskr P▷Q)
+    (context-validity Γ⊢P∶M≡N) (minuskr P▷Q)
 expand-computeE {A = A ⇛ B} {M} {M'} computeQ Γ⊢P∶M≡M' P▷Q = 
   λ W Δ ρ N N' R ρ∶Γ⇒Δ Δ⊢R∶N≡N' N∈EΔA N'∈EΔA computeR → 
   expand-computeE (computeQ W Δ ρ N N' R ρ∶Γ⇒Δ Δ⊢R∶N≡N' N∈EΔA N'∈EΔA computeR) 
   (app*R (E-typed N∈EΔA) (E-typed N'∈EΔA) 
-    (weakening Γ⊢P∶M≡M' (Context-Validity Δ⊢R∶N≡N') ρ∶Γ⇒Δ)
+    (weakening Γ⊢P∶M≡M' (context-validity Δ⊢R∶N≡N') ρ∶Γ⇒Δ)
     Δ⊢R∶N≡N')
   (app*kr (key-redex-rep P▷Q))
 
@@ -471,7 +471,7 @@ ref-compute {Γ = Γ} {M = φ} {A = Ω} φ∈EΓΩ =
   (minusR (refR Γ⊢φ∶Ω))
 ref-compute {A = A ⇛ B} (Γ⊢M∶A⇛B ,p computeM ,p compute-eqM) = λ W Δ ρ N N' Q ρ∶Γ⇒Δ Δ⊢Q∶N≡N' N∈EΔA N'∈EΔA computeQ → 
   expand-computeE (compute-eqM W Δ ρ N N' Q ρ∶Γ⇒Δ N∈EΔA N'∈EΔA computeQ Δ⊢Q∶N≡N') 
-    (app*R (E-typed N∈EΔA) (E-typed N'∈EΔA) (refR (weakening Γ⊢M∶A⇛B (Context-Validity Δ⊢Q∶N≡N') ρ∶Γ⇒Δ)) 
+    (app*R (E-typed N∈EΔA) (E-typed N'∈EΔA) (refR (weakening Γ⊢M∶A⇛B (context-validity Δ⊢Q∶N≡N') ρ∶Γ⇒Δ)) 
       Δ⊢Q∶N≡N') app*-ref
 
 postulate Neutral-E : ∀ {V} {Γ : Context V} {A} {M} → Neutral M → Γ ⊢ M ∶ ty A → E Γ A M
@@ -503,7 +503,7 @@ E-SN {V} {Γ} (A ⇛ B) {M} (Γ⊢M∶A⇛B ,p computeM ,p computeMpath) =
   let SNMx : SN (appT (M ⇑) (var x₀))
       SNMx = E-SN B 
              (computeM (V , -Term) (Γ ,T A) upRep (var x₀) upRep-typed 
-             (var-E' {A = A} (Γ ,T A) x₀ (ctxTR (Context-Validity Γ⊢M∶A⇛B)) refl)) 
+             (var-E' {A = A} (Γ ,T A) x₀ (ctxTR (context-validity Γ⊢M∶A⇛B)) refl)) 
   in SNap' {Ops = replacement} {σ = upRep} R-respects-replacement (SNsubbodyl (SNsubexp SNMx)) 
 
 {- Neutral-E {A = Ω} neutralM Γ⊢M∶A = record { 
@@ -512,9 +512,9 @@ E-SN {V} {Γ} (A ⇛ B) {M} (Γ⊢M∶A⇛B ,p computeM ,p computeMpath) =
 Neutral-E {A = A ⇛ B} {M} neutralM Γ⊢M∶A⇛B = 
   Γ⊢M∶A⇛B ,p 
   (λ W Δ ρ N ρ∶Γ⇒Δ N∈EΔA → Neutral-E {A = B} (app (Neutral-rep M ρ neutralM) (E-SN A N∈EΔA)) 
-    (appR (weakening Γ⊢M∶A⇛B (Context-Validity (E-typed N∈EΔA)) ρ∶Γ⇒Δ) (E-typed N∈EΔA))) ,p 
+    (appR (weakening Γ⊢M∶A⇛B (context-validity (E-typed N∈EΔA)) ρ∶Γ⇒Δ) (E-typed N∈EΔA))) ,p 
   (λ W Δ ρ N N' P ρ∶Γ⇒Δ N∈EΔA N'∈EΔA computeP Δ⊢P∶N≡N' → 
-    let validΔ = Context-Validity (E-typed N∈EΔA) in
+    let validΔ = context-validity (E-typed N∈EΔA) in
     Neutral-computeE (Neutral-⋆ (Neutral-rep M ρ neutralM) (computeE-SN computeP validΔ) (E-SN A N∈EΔA) (E-SN A N'∈EΔA)) 
     (⋆-typed (weakening Γ⊢M∶A⇛B validΔ ρ∶Γ⇒Δ) Δ⊢P∶N≡N')) -}
 
@@ -545,7 +545,7 @@ appP-EP {V} {Γ} {ε = ε} {φ} {ψ = ψ} (Γ⊢δ∶φ⊃ψ ,p (φ' ⊃C ψ') ,
   (appPR Γ⊢δ∶φ⊃ψ Γ⊢ε∶φ) ,p ψ' ,p ⊃-inj₂ φ⊃ψ↠φ'⊃ψ' ,p 
   subst (λ x → compute Γ ψ' (appP x ε)) rep-idOp 
   (computeδ V Γ (idRep V) ε idRep-typed 
-    (convR Γ⊢ε∶φ (cp-typed φ' (Context-Validity Γ⊢ε∶φ)) (red-conv (⊃-inj₁ φ⊃ψ↠φ'⊃ψ')))
+    (convR Γ⊢ε∶φ (cp-typed φ' (context-validity Γ⊢ε∶φ)) (red-conv (⊃-inj₁ φ⊃ψ↠φ'⊃ψ')))
   (subst (λ x → compute Γ x ε) (confluent φ↠φ'' (⊃-inj₁ φ⊃ψ↠φ'⊃ψ')) computeε))
 
 conv-EP φ≃ψ (Γ⊢δ∶φ ,p φ' ,p φ↠φ' ,p computeδ) Γ⊢ψ∶Ω = convR Γ⊢δ∶φ Γ⊢ψ∶Ω φ≃ψ ,p φ' ,p confluent₂ {χ = φ'} φ≃ψ φ↠φ' ,p computeδ
@@ -644,13 +644,13 @@ conv-computeE {M = M} {M'} {N} {N'} {A = A ⇛ B} computeP M≃M' N≃N' Γ⊢M'
   (computeP W Δ ρ L L' Q ρ∶Γ⇒RΔ Δ⊢Q∶L≡L' L∈EΔA L'∈EΔA computeQ) 
   (appT-respects-convl (respects-conv (respects-osr replacement β-respects-rep) M≃M')) 
   (appT-respects-convl (respects-conv (respects-osr replacement β-respects-rep) N≃N')) 
-  (appR (weakening Γ⊢M'∶A⇛B (Context-Validity Δ⊢Q∶L≡L') ρ∶Γ⇒RΔ) (E-typed {W} {Γ = Δ} {A = A} {L} L∈EΔA)) 
-  (appR (weakening Γ⊢N'∶A⇛B (Context-Validity Δ⊢Q∶L≡L') ρ∶Γ⇒RΔ) (E-typed L'∈EΔA)) 
+  (appR (weakening Γ⊢M'∶A⇛B (context-validity Δ⊢Q∶L≡L') ρ∶Γ⇒RΔ) (E-typed {W} {Γ = Δ} {A = A} {L} L∈EΔA)) 
+  (appR (weakening Γ⊢N'∶A⇛B (context-validity Δ⊢Q∶L≡L') ρ∶Γ⇒RΔ) (E-typed L'∈EΔA)) 
 --REFACTOR Duplication
 
 conv-EE (Γ⊢P∶M≡N ,p computeP) M≃M' N≃N' Γ⊢M'∶A Γ⊢N'∶A = convER Γ⊢P∶M≡N Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N' ,p conv-computeE computeP M≃M' N≃N' Γ⊢M'∶A Γ⊢N'∶A
 --REFACTOR Duplication                      
                  
-EE-SN (app (-eq _) (_ ,, _ ,, out)) (Γ⊢P∶E ,p computeP) = computeE-SN computeP (Context-Validity Γ⊢P∶E) -}
+EE-SN (app (-eq _) (_ ,, _ ,, out)) (Γ⊢P∶E ,p computeP) = computeE-SN computeP (context-validity Γ⊢P∶E) -}
 \end{code}
 }

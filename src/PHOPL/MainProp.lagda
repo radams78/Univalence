@@ -23,6 +23,7 @@ open import PHOPL.KeyRedex
 Our main theorem is as follows.
 
 \begin{theorem}$ $
+\label{theorem:mainprop}
 \begin{enumerate}
 \item
 If $\Gamma \vdash M : A$, and $\sigma : \Gamma \rightarrow \Delta$ is computable,
@@ -59,15 +60,15 @@ Computable-Sub {V = V} σ {Δ = Δ} σ∶Γ⇒Δ (appR Γ⊢M∶A⇛B Γ⊢N∶A
 Computable-Sub σ σ∶Γ⇒Δ (ΛR {M = M} {B} Γ,A⊢M∶B) validΔ = 
   func-E (λ _ Θ ρ N validΘ ρ∶Δ⇒Θ N∈EΘA → 
     let MN∈EΘB = subst (E Θ B) (subrepsub M)
-                 (Computable-Sub (x₀:= N •SR rep↑ _ ρ • sub↑ -Term σ) 
+                 (Computable-Sub (x₀:= N •SR liftRep _ ρ • liftSub -Term σ) 
                  (compC (compSRC (botsubC N∈EΘA) 
-                        (rep↑-typed ρ∶Δ⇒Θ)) 
-                 (sub↑C σ∶Γ⇒Δ)) 
+                        (liftRep-typed ρ∶Δ⇒Θ)) 
+                 (liftSubC σ∶Γ⇒Δ)) 
                  Γ,A⊢M∶B validΘ) in
     expand-E MN∈EΘB
-      (appR (ΛR (weakening (substitution Γ,A⊢M∶B (ctxTR validΔ) (sub↑-typed (subC-typed σ∶Γ⇒Δ))) 
+      (appR (ΛR (weakening (substitution Γ,A⊢M∶B (ctxTR validΔ) (liftSub-typed (subC-typed σ∶Γ⇒Δ))) 
                                                       (ctxTR validΘ) 
-                                         (rep↑-typed ρ∶Δ⇒Θ))) 
+                                         (liftRep-typed ρ∶Δ⇒Θ))) 
                 (E-typed N∈EΘA)) 
       (βTkr (SNap' {Ops = SUB} R-respects-sub (E-SN B MN∈EΘB))))
 Computable-Sub σ σ∶Γ⇒Δ (⊥R _) validΔ = ⊥-E validΔ
@@ -79,13 +80,13 @@ Computable-Sub σ {Γ = Γ} {Δ = Δ} σ∶Γ⇒Δ (ΛPR {δ = δ} {φ} {ψ} Γ�
   let Δ⊢Λφδσ∶φ⊃ψ : Δ ⊢ (ΛP φ δ) ⟦ σ ⟧ ∶ φ ⟦ σ ⟧ ⊃ ψ ⟦ σ ⟧
       Δ⊢Λφδσ∶φ⊃ψ = substitution {A = φ ⊃ ψ} (ΛPR Γ⊢φ∶Ω Γ,φ⊢δ∶ψ) validΔ (subC-typed σ∶Γ⇒Δ) in
   func-EP (λ W Θ ρ ε ρ∶Δ⇒Θ ε∈EΔφ → 
-    let δε∈EΘψ : EP Θ (ψ ⟦ σ ⟧ 〈 ρ 〉) (δ ⟦ sub↑ _ σ ⟧ 〈 rep↑ _ ρ 〉 ⟦ x₀:= ε ⟧)
+    let δε∈EΘψ : EP Θ (ψ ⟦ σ ⟧ 〈 ρ 〉) (δ ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 ⟦ x₀:= ε ⟧)
         δε∈EΘψ = subst₂ (EP Θ) (subrepbotsub-up ψ) (subrepsub δ) 
-                 (Computable-Sub (x₀:= ε •SR rep↑ _ ρ • sub↑ _ σ) 
+                 (Computable-Sub (x₀:= ε •SR liftRep _ ρ • liftSub _ σ) 
                  (compC (compSRC (botsubCP ε∈EΔφ) 
-                        (rep↑-typed ρ∶Δ⇒Θ)) 
-                 (sub↑C σ∶Γ⇒Δ)) Γ,φ⊢δ∶ψ (Context-Validity (EP-typed ε∈EΔφ))) in
-    expand-EP δε∈EΘψ (appPR (weakening Δ⊢Λφδσ∶φ⊃ψ (Context-Validity (EP-typed ε∈EΔφ)) ρ∶Δ⇒Θ) (EP-typed ε∈EΔφ))
+                        (liftRep-typed ρ∶Δ⇒Θ)) 
+                 (liftSubC σ∶Γ⇒Δ)) Γ,φ⊢δ∶ψ (context-validity (EP-typed ε∈EΔφ))) in
+    expand-EP δε∈EΘψ (appPR (weakening Δ⊢Λφδσ∶φ⊃ψ (context-validity (EP-typed ε∈EΔφ)) ρ∶Δ⇒Θ) (EP-typed ε∈EΔφ))
       (βPkr (SNrep R-creates-rep (E-SN Ω (Computable-Sub σ σ∶Γ⇒Δ Γ⊢φ∶Ω validΔ))) (EP-SN ε∈EΔφ)))
   Δ⊢Λφδσ∶φ⊃ψ
 Computable-Sub σ σ∶Γ⇒Δ (convR Γ⊢δ∶φ Γ⊢ψ∶Ω φ≃ψ) validΔ = conv-E' (respects-conv (respects-osr SUB R-respects-sub) φ≃ψ) 
@@ -98,72 +99,72 @@ Computable-Sub σ σ∶Γ⇒Δ (minusR Γ⊢P∶φ≡ψ) validΔ = minus-EP (Com
 Computable-Sub σ {Δ = Δ} σ∶Γ⇒Δ (lllR {A = A} {B = B} {M = M} {N = N} {P = P} ΓAAe⊢P∶Mx≡Ny) validΔ = 
    let validΔAA : valid (Δ ,T A ,T A)
        validΔAA = ctxTR (ctxTR validΔ) in
-   let ΔAAE⊢P∶Mx≡Ny : addpath Δ A ⊢ P ⟦ sub↑ -Path (sub↑ -Term (sub↑ -Term σ)) ⟧ ∶ appT (M ⟦ σ ⟧ ⇑ ⇑ ⇑) (var x₂) ≡〈 B 〉 appT (N ⟦ σ ⟧ ⇑ ⇑ ⇑) (var x₁)
+   let ΔAAE⊢P∶Mx≡Ny : addpath Δ A ⊢ P ⟦ liftSub -Path (liftSub -Term (liftSub -Term σ)) ⟧ ∶ appT (M ⟦ σ ⟧ ⇑ ⇑ ⇑) (var x₂) ≡〈 B 〉 appT (N ⟦ σ ⟧ ⇑ ⇑ ⇑) (var x₁)
        ΔAAE⊢P∶Mx≡Ny = change-type 
                       (substitution ΓAAe⊢P∶Mx≡Ny (valid-addpath validΔ) 
-                        (sub↑-typed (sub↑-typed (sub↑-typed (subC-typed σ∶Γ⇒Δ))))) 
-                      (cong₂ (λ x y → appT x (var x₂) ≡〈 B 〉 appT y (var x₁)) (sub↑-upRep₃ M) (sub↑-upRep₃ N)) in
+                        (liftSub-typed (liftSub-typed (liftSub-typed (subC-typed σ∶Γ⇒Δ))))) 
+                      (cong₂ (λ x y → appT x (var x₂) ≡〈 B 〉 appT y (var x₁)) (liftSub-upRep₃ M) (liftSub-upRep₃ N)) in
    func-EE 
    (lllR ΔAAE⊢P∶Mx≡Ny)
    (λ V Θ L L' Q ρ ρ∶Δ⇒RΘ L∈EΘA L'∈EΘA Q∈EΘL≡L' → 
      let validΘ : valid Θ
-         validΘ = Context-Validity (E'-typed L∈EΘA) in
-     let rep↑ρ∶apΔ⇒RapΘ : rep↑ _ (rep↑ _ (rep↑ _ ρ)) ∶ addpath Δ A ⇒R addpath Θ A
-         rep↑ρ∶apΔ⇒RapΘ = rep↑-typed (rep↑-typed (rep↑-typed ρ∶Δ⇒RΘ)) in --TODO General lemma
+         validΘ = context-validity (E'-typed L∈EΘA) in
+     let liftRepρ∶apΔ⇒RapΘ : liftRep _ (liftRep _ (liftRep _ ρ)) ∶ addpath Δ A ⇒R addpath Θ A
+         liftRepρ∶apΔ⇒RapΘ = liftRep-typed (liftRep-typed (liftRep-typed ρ∶Δ⇒RΘ)) in --TODO General lemma
      expand-EE 
        (subst₂ (EE Θ) 
          (cong₂ (λ x y → appT x L ≡〈 B 〉 appT y L') 
            (let open ≡-Reasoning in 
            begin
-             M ⇑ ⇑ ⇑ ⟦ (x₂:= L ,x₁:= L' ,x₀:= Q) •SR rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) • sub↑ -Path (sub↑ -Term (sub↑ -Term σ)) ⟧
+             M ⇑ ⇑ ⇑ ⟦ (x₂:= L ,x₁:= L' ,x₀:= Q) •SR liftRep -Path (liftRep -Term (liftRep -Term ρ)) • liftSub -Path (liftSub -Term (liftSub -Term σ)) ⟧
            ≡⟨ sub-comp (M ⇑ ⇑ ⇑) ⟩
-             M ⇑ ⇑ ⇑ ⟦ sub↑ -Path (sub↑ -Term (sub↑ -Term σ)) ⟧ ⟦ (x₂:= L ,x₁:= L' ,x₀:= Q) •SR rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) ⟧
-           ≡⟨ sub-congl (sub↑-upRep₃ M) ⟩
-             M ⟦ σ ⟧ ⇑ ⇑ ⇑ ⟦ (x₂:= L ,x₁:= L' ,x₀:= Q) •SR rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) ⟧
+             M ⇑ ⇑ ⇑ ⟦ liftSub -Path (liftSub -Term (liftSub -Term σ)) ⟧ ⟦ (x₂:= L ,x₁:= L' ,x₀:= Q) •SR liftRep -Path (liftRep -Term (liftRep -Term ρ)) ⟧
+           ≡⟨ sub-congl (liftSub-upRep₃ M) ⟩
+             M ⟦ σ ⟧ ⇑ ⇑ ⇑ ⟦ (x₂:= L ,x₁:= L' ,x₀:= Q) •SR liftRep -Path (liftRep -Term (liftRep -Term ρ)) ⟧
            ≡⟨ sub-compSR (M ⟦ σ ⟧ ⇑ ⇑ ⇑) ⟩
-             M ⟦ σ ⟧ ⇑ ⇑ ⇑ 〈 rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) 〉 ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧
-           ≡⟨ sub-congl (rep↑-upRep₃ (M ⟦ σ ⟧)) ⟩
+             M ⟦ σ ⟧ ⇑ ⇑ ⇑ 〈 liftRep -Path (liftRep -Term (liftRep -Term ρ)) 〉 ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧
+           ≡⟨ sub-congl (liftRep-upRep₃ (M ⟦ σ ⟧)) ⟩
              M ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑ ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧
-           ≡⟨ botsub-upRep₃ ⟩
+           ≡⟨ botSub-upRep₃ ⟩
              M ⟦ σ ⟧ 〈 ρ 〉
            ∎) 
            (let open ≡-Reasoning in 
            begin
-             N ⇑ ⇑ ⇑ ⟦ (x₂:= L ,x₁:= L' ,x₀:= Q) •SR rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) • sub↑ -Path (sub↑ -Term (sub↑ -Term σ)) ⟧
+             N ⇑ ⇑ ⇑ ⟦ (x₂:= L ,x₁:= L' ,x₀:= Q) •SR liftRep -Path (liftRep -Term (liftRep -Term ρ)) • liftSub -Path (liftSub -Term (liftSub -Term σ)) ⟧
            ≡⟨ sub-comp (N ⇑ ⇑ ⇑) ⟩
-             N ⇑ ⇑ ⇑ ⟦ sub↑ -Path (sub↑ -Term (sub↑ -Term σ)) ⟧ ⟦ (x₂:= L ,x₁:= L' ,x₀:= Q) •SR rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) ⟧
-           ≡⟨ sub-congl (sub↑-upRep₃ N) ⟩
-             N ⟦ σ ⟧ ⇑ ⇑ ⇑ ⟦ (x₂:= L ,x₁:= L' ,x₀:= Q) •SR rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) ⟧
+             N ⇑ ⇑ ⇑ ⟦ liftSub -Path (liftSub -Term (liftSub -Term σ)) ⟧ ⟦ (x₂:= L ,x₁:= L' ,x₀:= Q) •SR liftRep -Path (liftRep -Term (liftRep -Term ρ)) ⟧
+           ≡⟨ sub-congl (liftSub-upRep₃ N) ⟩
+             N ⟦ σ ⟧ ⇑ ⇑ ⇑ ⟦ (x₂:= L ,x₁:= L' ,x₀:= Q) •SR liftRep -Path (liftRep -Term (liftRep -Term ρ)) ⟧
            ≡⟨ sub-compSR (N ⟦ σ ⟧ ⇑ ⇑ ⇑) ⟩
-             N ⟦ σ ⟧ ⇑ ⇑ ⇑ 〈 rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) 〉 ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧
-           ≡⟨ sub-congl (rep↑-upRep₃ (N ⟦ σ ⟧)) ⟩
+             N ⟦ σ ⟧ ⇑ ⇑ ⇑ 〈 liftRep -Path (liftRep -Term (liftRep -Term ρ)) 〉 ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧
+           ≡⟨ sub-congl (liftRep-upRep₃ (N ⟦ σ ⟧)) ⟩
              N ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑ ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧
-           ≡⟨ botsub-upRep₃ ⟩
+           ≡⟨ botSub-upRep₃ ⟩
              N ⟦ σ ⟧ 〈 ρ 〉
            ∎)) --TODO Common pattern
            (let open ≡-Reasoning in 
            begin
-             P ⟦ (x₂:= L ,x₁:= L' ,x₀:= Q) •SR rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) • sub↑ -Path (sub↑ -Term (sub↑ -Term σ)) ⟧
+             P ⟦ (x₂:= L ,x₁:= L' ,x₀:= Q) •SR liftRep -Path (liftRep -Term (liftRep -Term ρ)) • liftSub -Path (liftSub -Term (liftSub -Term σ)) ⟧
            ≡⟨ sub-comp P ⟩
-             P ⟦ sub↑ -Path (sub↑ -Term (sub↑ -Term σ)) ⟧ ⟦ (x₂:= L ,x₁:= L' ,x₀:= Q) •SR rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) ⟧
-           ≡⟨ sub-compSR (P ⟦ sub↑ -Path (sub↑ -Term (sub↑ -Term σ)) ⟧) ⟩
-             P ⟦ sub↑ -Path (sub↑ -Term (sub↑ -Term σ)) ⟧ 〈 rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) 〉 ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧
+             P ⟦ liftSub -Path (liftSub -Term (liftSub -Term σ)) ⟧ ⟦ (x₂:= L ,x₁:= L' ,x₀:= Q) •SR liftRep -Path (liftRep -Term (liftRep -Term ρ)) ⟧
+           ≡⟨ sub-compSR (P ⟦ liftSub -Path (liftSub -Term (liftSub -Term σ)) ⟧) ⟩
+             P ⟦ liftSub -Path (liftSub -Term (liftSub -Term σ)) ⟧ 〈 liftRep -Path (liftRep -Term (liftRep -Term ρ)) 〉 ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧
            ∎) 
          (Computable-Sub 
            ((x₂:= L ,x₁:= L' ,x₀:= Q) •SR 
-             rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) • 
-             sub↑ -Path (sub↑ -Term (sub↑ -Term σ))) 
+             liftRep -Path (liftRep -Term (liftRep -Term ρ)) • 
+             liftSub -Path (liftSub -Term (liftSub -Term σ))) 
            (compC (compSRC 
                   (botsub₃C L∈EΘA L'∈EΘA Q∈EΘL≡L') 
-                  rep↑ρ∶apΔ⇒RapΘ)
-           (sub↑C (sub↑C (sub↑C σ∶Γ⇒Δ)))) 
+                  liftRepρ∶apΔ⇒RapΘ)
+           (liftSubC (liftSubC (liftSubC σ∶Γ⇒Δ)))) 
            ΓAAe⊢P∶Mx≡Ny 
            validΘ))
        (app*R (E-typed L∈EΘA) (E-typed L'∈EΘA) 
          (lllR (change-type (weakening ΔAAE⊢P∶Mx≡Ny (valid-addpath validΘ) 
-           rep↑ρ∶apΔ⇒RapΘ) 
+           liftRepρ∶apΔ⇒RapΘ) 
          (cong₂ (λ x y → appT x (var x₂) ≡〈 B 〉 appT y (var x₁)) 
-           (rep↑-upRep₃ (M ⟦ σ ⟧)) (rep↑-upRep₃ (N ⟦ σ ⟧)))))
+           (liftRep-upRep₃ (M ⟦ σ ⟧)) (liftRep-upRep₃ (N ⟦ σ ⟧)))))
          (EE-typed Q∈EΘL≡L')) 
        (βEkr (E'-SN L∈EΘA) (E'-SN L'∈EΘA) (E'-SN Q∈EΘL≡L')))
 Computable-Sub σ σ∶Γ⇒Δ (app*R Γ⊢N∶A Γ⊢N'∶A Γ⊢P∶M≡M' Γ⊢Q∶N≡N') validΔ = 
@@ -199,68 +200,68 @@ computable-path-substitution U V τ σ σ' Γ Δ ._ ._ σ∶Γ⇒CΔ σ'∶Γ⇒
       σ∶Γ⇒Δ = subC-typed σ∶Γ⇒CΔ in
   let σ'∶Γ⇒Δ : σ' ∶ Γ ⇒ Δ
       σ'∶Γ⇒Δ = subC-typed σ'∶Γ⇒CΔ in
-  let σ↑∶ΓA⇒ΔA : sub↑ -Term σ ∶ Γ ,T A ⇒ Δ ,T A
-      σ↑∶ΓA⇒ΔA = sub↑-typed σ∶Γ⇒Δ in
-  let σ'↑∶ΓA⇒ΔA : sub↑ -Term σ' ∶ Γ ,T A ⇒ Δ ,T A
-      σ'↑∶ΓA⇒ΔA = sub↑-typed σ'∶Γ⇒Δ in
-  let ΔA⊢Mσ∶B : Δ ,T A ⊢ M ⟦ sub↑ -Term σ ⟧ ∶ ty B
+  let σ↑∶ΓA⇒ΔA : liftSub -Term σ ∶ Γ ,T A ⇒ Δ ,T A
+      σ↑∶ΓA⇒ΔA = liftSub-typed σ∶Γ⇒Δ in
+  let σ'↑∶ΓA⇒ΔA : liftSub -Term σ' ∶ Γ ,T A ⇒ Δ ,T A
+      σ'↑∶ΓA⇒ΔA = liftSub-typed σ'∶Γ⇒Δ in
+  let ΔA⊢Mσ∶B : Δ ,T A ⊢ M ⟦ liftSub -Term σ ⟧ ∶ ty B
       ΔA⊢Mσ∶B = substitution Γ,A⊢M∶B validΔA σ↑∶ΓA⇒ΔA in
-  let ΔA⊢Mσ'∶B : Δ ,T A ⊢ M ⟦ sub↑ -Term σ' ⟧ ∶ ty B
+  let ΔA⊢Mσ'∶B : Δ ,T A ⊢ M ⟦ liftSub -Term σ' ⟧ ∶ ty B
       ΔA⊢Mσ'∶B = substitution Γ,A⊢M∶B validΔA σ'↑∶ΓA⇒ΔA in
-  let τ↑∶σ↖∼σ'↗ : pathsub↑ τ ∶ sub↖ σ ∼ sub↗ σ' ∶ Γ ,T A ⇒ addpath Δ A
-      τ↑∶σ↖∼σ'↗ = pathsub↑-typed (pathsubC-typed σ σ' τ∶σ∼σ') validΔ in
+  let τ↑∶σ↖∼σ'↗ : liftPathSub τ ∶ sub↖ σ ∼ sub↗ σ' ∶ Γ ,T A ⇒ addpath Δ A
+      τ↑∶σ↖∼σ'↗ = liftPathSub-typed (pathsubC-typed σ σ' τ∶σ∼σ') validΔ in
   let σ↖∶ΓA⇒apΔ : sub↖ σ ∶ Γ ,T A ⇒ addpath Δ A
       σ↖∶ΓA⇒apΔ = sub↖-typed σ∶Γ⇒Δ in
   let σ'↗∶ΓA⇒apΔ : sub↗ σ' ∶ Γ ,T A ⇒ addpath Δ A
       σ'↗∶ΓA⇒apΔ = sub↗-typed σ'∶Γ⇒Δ in
-  let Mτ∶Mσ∼Mσ' : addpath Δ A ⊢ M ⟦⟦ pathsub↑ τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧ ∶ M ⟦ sub↖ σ ⟧ ≡〈 B 〉 M ⟦ sub↗ σ' ⟧
+  let Mτ∶Mσ∼Mσ' : addpath Δ A ⊢ M ⟦⟦ liftPathSub τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧ ∶ M ⟦ sub↖ σ ⟧ ≡〈 B 〉 M ⟦ sub↗ σ' ⟧
       Mτ∶Mσ∼Mσ' = path-substitution Γ,A⊢M∶B τ↑∶σ↖∼σ'↗ σ↖∶ΓA⇒apΔ σ'↗∶ΓA⇒apΔ (valid-addpath validΔ) in
   func-EE 
   (lllR (convER Mτ∶Mσ∼Mσ'
     (appR 
       (ΛR (weakening (weakening (weakening ΔA⊢Mσ∶B
-                                           validΔAA (rep↑-typed upRep-typed)) 
-                                (ctxTR validΔAA) (rep↑-typed upRep-typed)) 
-                     (ctxTR validapΔ) (rep↑-typed upRep-typed))) 
+                                           validΔAA (liftRep-typed upRep-typed)) 
+                                (ctxTR validΔAA) (liftRep-typed upRep-typed)) 
+                     (ctxTR validapΔ) (liftRep-typed upRep-typed))) 
       (varR x₂ validapΔ))
     (appR (ΛR (weakening (weakening (weakening ΔA⊢Mσ'∶B
-                                               validΔAA (rep↑-typed upRep-typed)) 
-                                    (ctxTR validΔAA) (rep↑-typed upRep-typed)) 
-                         (ctxTR validapΔ) (rep↑-typed upRep-typed))) 
+                                               validΔAA (liftRep-typed upRep-typed)) 
+                                    (ctxTR validΔAA) (liftRep-typed upRep-typed)) 
+                         (ctxTR validapΔ) (liftRep-typed upRep-typed))) 
               (varR x₁ validapΔ)) 
     (sym-conv (osr-conv (redex (subst
                                   (R -appTerm
                                    (ΛT A
-                                    ((((M ⟦ sub↑ -Term σ ⟧) 〈 rep↑ -Term upRep 〉) 〈 rep↑ -Term upRep 〉)
-                                     〈 rep↑ -Term upRep 〉)
+                                    ((((M ⟦ liftSub -Term σ ⟧) 〈 liftRep -Term upRep 〉) 〈 liftRep -Term upRep 〉)
+                                     〈 liftRep -Term upRep 〉)
                                     ,, var x₂ ,, out))
                                   (sub↖-decomp M) βT)))) 
     (sym-conv (osr-conv (redex (subst
                                   (R -appTerm
                                    (ΛT A
-                                    ((((M ⟦ sub↑ -Term σ' ⟧) 〈 rep↑ -Term upRep 〉) 〈 rep↑ -Term upRep
+                                    ((((M ⟦ liftSub -Term σ' ⟧) 〈 liftRep -Term upRep 〉) 〈 liftRep -Term upRep
                                       〉)
-                                     〈 rep↑ -Term upRep 〉)
+                                     〈 liftRep -Term upRep 〉)
                                     ,, var x₁ ,, out))
                                   (sub↗-decomp M) βT)))))) 
    (λ W Θ N N' Q ρ ρ∶Δ⇒RΘ N∈EΘA N'∈EΘA Q∈EΘN≡N' → 
    let validΘ : valid Θ
-       validΘ = Context-Validity (E'-typed N∈EΘA) in
+       validΘ = context-validity (E'-typed N∈EΘA) in
    let validΘA : valid (Θ ,T A)
        validΘA = ctxTR validΘ in
    let validΘAA : valid (Θ ,T A ,T A)
        validΘAA = ctxTR validΘA in
    let validapΘ : valid (addpath Θ A)
        validapΘ = valid-addpath validΘ in
-   let ρ↑∶ΔA⇒ΘA : rep↑ -Term ρ ∶ Δ ,T A ⇒R Θ ,T A
-       ρ↑∶ΔA⇒ΘA = rep↑-typed ρ∶Δ⇒RΘ in
-   let Θ⊢ΛM∶A⇛B : Θ ⊢ ΛT A (M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term ρ 〉) ∶ ty (A ⇛ B)
+   let ρ↑∶ΔA⇒ΘA : liftRep -Term ρ ∶ Δ ,T A ⇒R Θ ,T A
+       ρ↑∶ΔA⇒ΘA = liftRep-typed ρ∶Δ⇒RΘ in
+   let Θ⊢ΛM∶A⇛B : Θ ⊢ ΛT A (M ⟦ liftSub -Term σ ⟧ 〈 liftRep -Term ρ 〉) ∶ ty (A ⇛ B)
        Θ⊢ΛM∶A⇛B = ΛR (weakening ΔA⊢Mσ∶B validΘA ρ↑∶ΔA⇒ΘA) in
    let Θ⊢N∶A : Θ ⊢ N ∶ ty A
        Θ⊢N∶A = E-typed N∈EΘA in
    let Θ⊢N'∶A : Θ ⊢ N' ∶ ty A
        Θ⊢N'∶A = E-typed N'∈EΘA in
-   let ΘA⊢Mσ'∶B : Θ ,T A ⊢ M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ -Term ρ 〉 ∶ ty B
+   let ΘA⊢Mσ'∶B : Θ ,T A ⊢ M ⟦ liftSub -Term σ' ⟧ 〈 liftRep -Term ρ 〉 ∶ ty B
        ΘA⊢Mσ'∶B = weakening ΔA⊢Mσ'∶B validΘA ρ↑∶ΔA⇒ΘA in
    expand-EE (conv-EE
      (computable-path-substitution (U , -Term) W (extendPS (ρ •RP τ) Q) (extendSub (ρ •RS σ) N) (extendSub (ρ •RS σ') N') (Γ ,T A) Θ M (ty B) 
@@ -269,28 +270,28 @@ computable-path-substitution U V τ σ σ' Γ Δ ._ ._ σ∶Γ⇒CΔ σ'∶Γ⇒
      (extendPSC (compRPC {σ = σ} {σ' = σ'} τ∶σ∼σ' ρ∶Δ⇒RΘ) Q∈EΘN≡N') Γ,A⊢M∶B validΘ)
      (sym-conv (osr-conv (redex 
        (subst
-          (R -appTerm (ΛT A ((M ⟦ sub↑ _ σ ⟧) 〈 rep↑ _ ρ 〉) ,, N ,, out)) 
+          (R -appTerm (ΛT A ((M ⟦ liftSub _ σ ⟧) 〈 liftRep _ ρ 〉) ,, N ,, out)) 
           (let open ≡-Reasoning in 
           begin
-            M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term ρ 〉 ⟦ x₀:= N ⟧
+            M ⟦ liftSub -Term σ ⟧ 〈 liftRep -Term ρ 〉 ⟦ x₀:= N ⟧
           ≡⟨⟨ sub-congl (sub-compRS M) ⟩⟩
-            M ⟦ rep↑ -Term ρ •RS sub↑ -Term σ ⟧ ⟦ x₀:= N ⟧
-          ≡⟨⟨ sub-congl (sub-congr M sub↑-compRS) ⟩⟩
-            M ⟦ sub↑ -Term (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧
+            M ⟦ liftRep -Term ρ •RS liftSub -Term σ ⟧ ⟦ x₀:= N ⟧
+          ≡⟨⟨ sub-congl (sub-congr M liftSub-compRS) ⟩⟩
+            M ⟦ liftSub -Term (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧
           ≡⟨ extendSub-decomp M ⟩
             M ⟦ extendSub (ρ •RS σ) N ⟧
           ∎)
           βT)))) 
      (sym-conv (osr-conv (redex 
        (subst
-          (R -appTerm (ΛT A ((M ⟦ sub↑ _ σ' ⟧) 〈 rep↑ _ ρ 〉) ,, N' ,, out)) 
+          (R -appTerm (ΛT A ((M ⟦ liftSub _ σ' ⟧) 〈 liftRep _ ρ 〉) ,, N' ,, out)) 
           (let open ≡-Reasoning in 
           begin
-            M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ -Term ρ 〉 ⟦ x₀:= N' ⟧
+            M ⟦ liftSub -Term σ' ⟧ 〈 liftRep -Term ρ 〉 ⟦ x₀:= N' ⟧
           ≡⟨⟨ sub-congl (sub-compRS M) ⟩⟩
-            M ⟦ rep↑ -Term ρ •RS sub↑ -Term σ' ⟧ ⟦ x₀:= N' ⟧
-          ≡⟨⟨ sub-congl (sub-congr M sub↑-compRS) ⟩⟩
-            M ⟦ sub↑ -Term (ρ •RS σ') ⟧ ⟦ x₀:= N' ⟧
+            M ⟦ liftRep -Term ρ •RS liftSub -Term σ' ⟧ ⟦ x₀:= N' ⟧
+          ≡⟨⟨ sub-congl (sub-congr M liftSub-compRS) ⟩⟩
+            M ⟦ liftSub -Term (ρ •RS σ') ⟧ ⟦ x₀:= N' ⟧
           ≡⟨ extendSub-decomp M ⟩
             M ⟦ extendSub (ρ •RS σ') N' ⟧
           ∎)
@@ -298,60 +299,60 @@ computable-path-substitution U V τ σ σ' Γ Δ ._ ._ σ∶Γ⇒CΔ σ'∶Γ⇒
      (appR Θ⊢ΛM∶A⇛B Θ⊢N∶A) 
      (appR (ΛR ΘA⊢Mσ'∶B) Θ⊢N'∶A)) 
      (app*R Θ⊢N∶A Θ⊢N'∶A (lllR (convER 
-       (weakening Mτ∶Mσ∼Mσ' (valid-addpath validΘ) (rep↑-typed (rep↑-typed (rep↑-typed ρ∶Δ⇒RΘ)))) 
+       (weakening Mτ∶Mσ∼Mσ' (valid-addpath validΘ) (liftRep-typed (liftRep-typed (liftRep-typed ρ∶Δ⇒RΘ)))) 
        (appR (weakening (weakening (weakening Θ⊢ΛM∶A⇛B validΘA upRep-typed) validΘAA upRep-typed) validapΘ upRep-typed) 
          (varR x₂ validapΘ)) 
-       (appR (ΛR (weakening (weakening (weakening ΘA⊢Mσ'∶B validΘAA (rep↑-typed upRep-typed)) (ctxTR validΘAA) (rep↑-typed upRep-typed)) (ctxTR validapΘ) 
-         (rep↑-typed upRep-typed))) (varR x₁ validapΘ)) 
-       (sym-conv (subst (_≃_ (appT (ΛT A (M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term ρ 〉) ⇑ ⇑ ⇑) (var x₂))) 
+       (appR (ΛR (weakening (weakening (weakening ΘA⊢Mσ'∶B validΘAA (liftRep-typed upRep-typed)) (ctxTR validΘAA) (liftRep-typed upRep-typed)) (ctxTR validapΘ) 
+         (liftRep-typed upRep-typed))) (varR x₁ validapΘ)) 
+       (sym-conv (subst (_≃_ (appT (ΛT A (M ⟦ liftSub -Term σ ⟧ 〈 liftRep -Term ρ 〉) ⇑ ⇑ ⇑) (var x₂))) 
          (let open ≡-Reasoning in 
          begin
-           M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term ρ 〉 〈 rep↑ -Term upRep 〉 〈 rep↑ -Term upRep 〉 〈 rep↑ -Term upRep 〉 ⟦ x₀:= var x₂ ⟧
-         ≡⟨⟨ sub-congl (rep-comp₄ (M ⟦ sub↑ -Term σ ⟧)) ⟩⟩
-           M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term upRep •R rep↑ -Term upRep •R rep↑ -Term upRep •R rep↑ -Term ρ 〉 ⟦ x₀:= var x₂ ⟧
-         ≡⟨⟨ sub-congl (rep-congr (M ⟦ sub↑ -Term σ ⟧) rep↑-comp₄) ⟩⟩
-           M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term (upRep •R upRep •R upRep •R ρ) 〉 ⟦ x₀:= var x₂ ⟧ 
-         ≡⟨ sub-congl (rep-congr (M ⟦ sub↑ -Term σ ⟧) (rep↑-cong (rep↑-upRep₄' ρ))) ⟩
-           M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term (rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) •R upRep •R upRep •R upRep) 〉 ⟦ x₀:= var x₂ ⟧ 
-         ≡⟨ sub-congl (rep-congr (M ⟦ sub↑ -Term σ ⟧) rep↑-comp₄) ⟩
-           M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term (rep↑ -Path (rep↑ -Term (rep↑ -Term ρ))) •R rep↑ -Term upRep •R rep↑ -Term upRep •R rep↑ -Term upRep 〉 ⟦ x₀:= var x₂ ⟧ 
-         ≡⟨ sub-congl (rep-comp₄ (M ⟦ sub↑ -Term σ ⟧)) ⟩
-           M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ -Term (rep↑ -Path (rep↑ -Term (rep↑ -Term ρ))) 〉 ⟦ x₀:= var x₂ ⟧
-         ≡⟨⟨ compRS-botsub (M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉) ⟩⟩
-           M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 ⟦ x₀:= var x₂ ⟧ 〈 rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) 〉
+           M ⟦ liftSub -Term σ ⟧ 〈 liftRep -Term ρ 〉 〈 liftRep -Term upRep 〉 〈 liftRep -Term upRep 〉 〈 liftRep -Term upRep 〉 ⟦ x₀:= var x₂ ⟧
+         ≡⟨⟨ sub-congl (rep-comp₄ (M ⟦ liftSub -Term σ ⟧)) ⟩⟩
+           M ⟦ liftSub -Term σ ⟧ 〈 liftRep -Term upRep •R liftRep -Term upRep •R liftRep -Term upRep •R liftRep -Term ρ 〉 ⟦ x₀:= var x₂ ⟧
+         ≡⟨⟨ sub-congl (rep-congr (M ⟦ liftSub -Term σ ⟧) liftRep-comp₄) ⟩⟩
+           M ⟦ liftSub -Term σ ⟧ 〈 liftRep -Term (upRep •R upRep •R upRep •R ρ) 〉 ⟦ x₀:= var x₂ ⟧ 
+         ≡⟨ sub-congl (rep-congr (M ⟦ liftSub -Term σ ⟧) (liftRep-cong (liftRep-upRep₄' ρ))) ⟩
+           M ⟦ liftSub -Term σ ⟧ 〈 liftRep -Term (liftRep -Path (liftRep -Term (liftRep -Term ρ)) •R upRep •R upRep •R upRep) 〉 ⟦ x₀:= var x₂ ⟧ 
+         ≡⟨ sub-congl (rep-congr (M ⟦ liftSub -Term σ ⟧) liftRep-comp₄) ⟩
+           M ⟦ liftSub -Term σ ⟧ 〈 liftRep -Term (liftRep -Path (liftRep -Term (liftRep -Term ρ))) •R liftRep -Term upRep •R liftRep -Term upRep •R liftRep -Term upRep 〉 ⟦ x₀:= var x₂ ⟧ 
+         ≡⟨ sub-congl (rep-comp₄ (M ⟦ liftSub -Term σ ⟧)) ⟩
+           M ⟦ liftSub -Term σ ⟧ 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 〈 liftRep -Term (liftRep -Path (liftRep -Term (liftRep -Term ρ))) 〉 ⟦ x₀:= var x₂ ⟧
+         ≡⟨⟨ compRS-botSub (M ⟦ liftSub -Term σ ⟧ 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉) ⟩⟩
+           M ⟦ liftSub -Term σ ⟧ 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 ⟦ x₀:= var x₂ ⟧ 〈 liftRep -Path (liftRep -Term (liftRep -Term ρ)) 〉
          ≡⟨ rep-congl (sub↖-decomp M) ⟩
-           M ⟦ sub↖ σ ⟧ 〈 rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) 〉
+           M ⟦ sub↖ σ ⟧ 〈 liftRep -Path (liftRep -Term (liftRep -Term ρ)) 〉
          ∎) 
          (osr-conv (redex βT)))) 
-         (sym-conv (subst (_≃_ (appT (ΛT A (M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ -Term ρ 〉) ⇑ ⇑ ⇑) (var x₁))) 
+         (sym-conv (subst (_≃_ (appT (ΛT A (M ⟦ liftSub -Term σ' ⟧ 〈 liftRep -Term ρ 〉) ⇑ ⇑ ⇑) (var x₁))) 
          (let open ≡-Reasoning in 
          begin
-           M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ -Term ρ 〉 〈 rep↑ -Term upRep 〉 〈 rep↑ -Term upRep 〉 〈 rep↑ -Term upRep 〉 ⟦ x₀:= var x₁ ⟧
-         ≡⟨⟨ sub-congl (rep-comp₄ (M ⟦ sub↑ -Term σ' ⟧)) ⟩⟩
-           M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ -Term upRep •R rep↑ -Term upRep •R rep↑ -Term upRep •R rep↑ -Term ρ 〉 ⟦ x₀:= var x₁ ⟧
-         ≡⟨⟨ sub-congl (rep-congr (M ⟦ sub↑ -Term σ' ⟧) rep↑-comp₄) ⟩⟩
-           M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ -Term (upRep •R upRep •R upRep •R ρ) 〉 ⟦ x₀:= var x₁ ⟧ 
-         ≡⟨ sub-congl (rep-congr (M ⟦ sub↑ -Term σ' ⟧) (rep↑-cong (rep↑-upRep₄' ρ))) ⟩
-           M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ -Term (rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) •R upRep •R upRep •R upRep) 〉 ⟦ x₀:= var x₁ ⟧ 
-         ≡⟨ sub-congl (rep-congr (M ⟦ sub↑ -Term σ' ⟧) rep↑-comp₄) ⟩
-           M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ -Term (rep↑ -Path (rep↑ -Term (rep↑ -Term ρ))) •R rep↑ -Term upRep •R rep↑ -Term upRep •R rep↑ -Term upRep 〉 ⟦ x₀:= var x₁ ⟧ 
-         ≡⟨ sub-congl (rep-comp₄ (M ⟦ sub↑ -Term σ' ⟧)) ⟩
-           M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ -Term (rep↑ -Path (rep↑ -Term (rep↑ -Term ρ))) 〉 ⟦ x₀:= var x₁ ⟧
-         ≡⟨⟨ compRS-botsub (M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉) ⟩⟩
-           M ⟦ sub↑ -Term σ' ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 ⟦ x₀:= var x₁ ⟧ 〈 rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) 〉
+           M ⟦ liftSub -Term σ' ⟧ 〈 liftRep -Term ρ 〉 〈 liftRep -Term upRep 〉 〈 liftRep -Term upRep 〉 〈 liftRep -Term upRep 〉 ⟦ x₀:= var x₁ ⟧
+         ≡⟨⟨ sub-congl (rep-comp₄ (M ⟦ liftSub -Term σ' ⟧)) ⟩⟩
+           M ⟦ liftSub -Term σ' ⟧ 〈 liftRep -Term upRep •R liftRep -Term upRep •R liftRep -Term upRep •R liftRep -Term ρ 〉 ⟦ x₀:= var x₁ ⟧
+         ≡⟨⟨ sub-congl (rep-congr (M ⟦ liftSub -Term σ' ⟧) liftRep-comp₄) ⟩⟩
+           M ⟦ liftSub -Term σ' ⟧ 〈 liftRep -Term (upRep •R upRep •R upRep •R ρ) 〉 ⟦ x₀:= var x₁ ⟧ 
+         ≡⟨ sub-congl (rep-congr (M ⟦ liftSub -Term σ' ⟧) (liftRep-cong (liftRep-upRep₄' ρ))) ⟩
+           M ⟦ liftSub -Term σ' ⟧ 〈 liftRep -Term (liftRep -Path (liftRep -Term (liftRep -Term ρ)) •R upRep •R upRep •R upRep) 〉 ⟦ x₀:= var x₁ ⟧ 
+         ≡⟨ sub-congl (rep-congr (M ⟦ liftSub -Term σ' ⟧) liftRep-comp₄) ⟩
+           M ⟦ liftSub -Term σ' ⟧ 〈 liftRep -Term (liftRep -Path (liftRep -Term (liftRep -Term ρ))) •R liftRep -Term upRep •R liftRep -Term upRep •R liftRep -Term upRep 〉 ⟦ x₀:= var x₁ ⟧ 
+         ≡⟨ sub-congl (rep-comp₄ (M ⟦ liftSub -Term σ' ⟧)) ⟩
+           M ⟦ liftSub -Term σ' ⟧ 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 〈 liftRep -Term (liftRep -Path (liftRep -Term (liftRep -Term ρ))) 〉 ⟦ x₀:= var x₁ ⟧
+         ≡⟨⟨ compRS-botSub (M ⟦ liftSub -Term σ' ⟧ 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉) ⟩⟩
+           M ⟦ liftSub -Term σ' ⟧ 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 ⟦ x₀:= var x₁ ⟧ 〈 liftRep -Path (liftRep -Term (liftRep -Term ρ)) 〉
          ≡⟨ rep-congl (sub↗-decomp M) ⟩
-           M ⟦ sub↗ σ' ⟧ 〈 rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) 〉
+           M ⟦ sub↗ σ' ⟧ 〈 liftRep -Path (liftRep -Term (liftRep -Term ρ)) 〉
          ∎) 
          (osr-conv (redex βT)))))) --TODO Duplication
          (EE-typed Q∈EΘN≡N')) 
      (subst (key-redex _) 
      (let open ≡-Reasoning in 
      begin
-       M ⟦⟦ pathsub↑ τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧ 〈 rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) 〉 ⟦ x₂:= N ,x₁:= N' ,x₀:= Q ⟧
+       M ⟦⟦ liftPathSub τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧ 〈 liftRep -Path (liftRep -Term (liftRep -Term ρ)) 〉 ⟦ x₂:= N ,x₁:= N' ,x₀:= Q ⟧
      ≡⟨⟨ sub-congl (pathsub-compRP M) ⟩⟩
-       M ⟦⟦ rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) •RP pathsub↑ τ ∶ rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) •RS sub↖ σ ∼ rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) •RS sub↗ σ' ⟧⟧ ⟦ x₂:= N ,x₁:= N' ,x₀:= Q ⟧
-     ≡⟨⟨ sub-congl (pathsub-cong M pathsub↑-compRP sub↖-compRP sub↗-compRP) ⟩⟩
-       M ⟦⟦ pathsub↑ (ρ •RP τ) ∶ sub↖ (ρ •RS σ) ∼ sub↗ (ρ •RS σ') ⟧⟧ ⟦ x₂:= N ,x₁:= N' ,x₀:= Q ⟧
+       M ⟦⟦ liftRep -Path (liftRep -Term (liftRep -Term ρ)) •RP liftPathSub τ ∶ liftRep -Path (liftRep -Term (liftRep -Term ρ)) •RS sub↖ σ ∼ liftRep -Path (liftRep -Term (liftRep -Term ρ)) •RS sub↗ σ' ⟧⟧ ⟦ x₂:= N ,x₁:= N' ,x₀:= Q ⟧
+     ≡⟨⟨ sub-congl (pathsub-cong M liftPathSub-compRP sub↖-compRP sub↗-compRP) ⟩⟩
+       M ⟦⟦ liftPathSub (ρ •RP τ) ∶ sub↖ (ρ •RS σ) ∼ sub↗ (ρ •RS σ') ⟧⟧ ⟦ x₂:= N ,x₁:= N' ,x₀:= Q ⟧
      ≡⟨⟨ pathsub-extendPS M ⟩⟩
        M ⟦⟦ extendPS (ρ •RP τ) Q ∶ extendSub (ρ •RS σ) N ∼ extendSub (ρ •RS σ') N' ⟧⟧
      ∎) (βEkr (E'-SN N∈EΘA) (E'-SN N'∈EΘA) (E'-SN Q∈EΘN≡N'))))
@@ -386,35 +387,35 @@ as required.
   let sub↗σ'-typed : sub↗ σ' ∶ Γ ,T A ⇒ addpath Δ A
       sub↗σ'-typed = sub↗-typed σ'∶Γ⇒Δ in
   func-EE (lllR (convER (Path-substitution Γ,A⊢M∶B
-                             (pathsub↑-typed (pathsubC-typed {τ = τ} {σ} {σ = σ'} {Γ} {Δ} τ∶σ∼σ')) sub↖σ-typed sub↗σ'-typed
+                             (liftPathSub-typed (pathsubC-typed {τ = τ} {σ} {σ = σ'} {Γ} {Δ} τ∶σ∼σ')) sub↖σ-typed sub↗σ'-typed
                              validΔAAE)
-                             (appR (ΛR (weakening {ρ = rep↑ _ upRep}
-                                           {M = ((M ⟦ sub↑ _ σ ⟧) 〈 rep↑ _ upRep 〉) 〈 rep↑ _ upRep 〉} 
-                                        (weakening {ρ = rep↑ _ upRep}
-                                           {M = (M ⟦ sub↑ _ σ ⟧) 〈 rep↑ _ upRep 〉} 
-                                        (weakening {ρ = rep↑ _ upRep} {M = M ⟦ sub↑ _ σ ⟧} 
-                                        (substitution {σ = sub↑ -Term σ} {M = M} Γ,A⊢M∶B (ctxTR validΔ) 
-                                          (sub↑-typed (subC-typed σ∶Γ⇒CΔ))) (ctxTR (ctxTR validΔ)) (rep↑-typed upRep-typed)) 
+                             (appR (ΛR (weakening {ρ = liftRep _ upRep}
+                                           {M = ((M ⟦ liftSub _ σ ⟧) 〈 liftRep _ upRep 〉) 〈 liftRep _ upRep 〉} 
+                                        (weakening {ρ = liftRep _ upRep}
+                                           {M = (M ⟦ liftSub _ σ ⟧) 〈 liftRep _ upRep 〉} 
+                                        (weakening {ρ = liftRep _ upRep} {M = M ⟦ liftSub _ σ ⟧} 
+                                        (substitution {σ = liftSub -Term σ} {M = M} Γ,A⊢M∶B (ctxTR validΔ) 
+                                          (liftSub-typed (subC-typed σ∶Γ⇒CΔ))) (ctxTR (ctxTR validΔ)) (liftRep-typed upRep-typed)) 
                                         (ctxTR (ctxTR (ctxTR validΔ))) 
-                                        (rep↑-typed upRep-typed)) 
+                                        (liftRep-typed upRep-typed)) 
                            (ctxTR (ctxER (varR (↑ x₀) (ctxTR (ctxTR validΔ))) (varR x₀ (ctxTR (ctxTR validΔ))))) 
-                           (rep↑-typed upRep-typed))) 
+                           (liftRep-typed upRep-typed))) 
                            (varR x₂ (ctxER ((varR (↑ x₀) (ctxTR (ctxTR validΔ)))) (varR x₀ (ctxTR (ctxTR validΔ))))))  
-                              (let stepA : addpath Δ A ,T A ⊢ M ⟦ sub↑ _ σ' ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 ∶ ty B
-                                   stepA = weakening {U = V , -Term , -Term , -Term} {V = V , -Term , -Term , -Path , -Term} {ρ = rep↑ _ upRep} {Γ = Δ , ty A , ty A , ty A} {M = M ⟦ sub↑ _ σ' ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉} 
-                                      (weakening {ρ = rep↑ _ upRep} {Γ = Δ , ty A , ty A}
-                                         {M = (M ⟦ sub↑ _ σ' ⟧) 〈 rep↑ _ upRep 〉} 
-                                      (weakening {ρ = rep↑ _ upRep} {M = M ⟦ sub↑ _ σ' ⟧} 
-                                      (substitution {σ = sub↑ _ σ'} {M = M} 
+                              (let stepA : addpath Δ A ,T A ⊢ M ⟦ liftSub _ σ' ⟧ 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 ∶ ty B
+                                   stepA = weakening {U = V , -Term , -Term , -Term} {V = V , -Term , -Term , -Path , -Term} {ρ = liftRep _ upRep} {Γ = Δ , ty A , ty A , ty A} {M = M ⟦ liftSub _ σ' ⟧ 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉} 
+                                      (weakening {ρ = liftRep _ upRep} {Γ = Δ , ty A , ty A}
+                                         {M = (M ⟦ liftSub _ σ' ⟧) 〈 liftRep _ upRep 〉} 
+                                      (weakening {ρ = liftRep _ upRep} {M = M ⟦ liftSub _ σ' ⟧} 
+                                      (substitution {σ = liftSub _ σ'} {M = M} 
                                       Γ,A⊢M∶B 
                                       (ctxTR validΔ) 
-                                      (sub↑-typed σ'∶Γ⇒Δ))
+                                      (liftSub-typed σ'∶Γ⇒Δ))
                                       validΔAA 
-                                      (rep↑-typed upRep-typed)) 
+                                      (liftRep-typed upRep-typed)) 
                                       (ctxTR validΔAA) 
-                                      (rep↑-typed upRep-typed))
+                                      (liftRep-typed upRep-typed))
                                       (ctxTR validΔAAE)
-                                      (rep↑-typed upRep-typed) in
+                                      (liftRep-typed upRep-typed) in
                               let stepB : addpath Δ A ⊢ (ΛT A M) ⟦ σ' ⟧ ⇑ ⇑ ⇑ ∶ ty (A ⇛ B)
                                   stepB = ΛR stepA in
                               let stepC : addpath Δ A ⊢ var x₁ ∶ ty A
@@ -423,74 +424,74 @@ as required.
                                   stepD = appR stepB stepC in
                               stepD)
                         (sym-conv (osr-conv (subst (λ a → appT ((ΛT A M ⟦ σ ⟧) ⇑ ⇑ ⇑) (var x₂) ⇒ a) (let open ≡-Reasoning in
-                           M ⟦ sub↑ _ σ ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₂) ⟧
-                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ _ σ ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉) ⟩⟩
-                           M ⟦ sub↑ _ σ ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₂) •SR rep↑ _ upRep ⟧
-                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ _ σ ⟧ 〈 rep↑ _ upRep 〉) ⟩⟩
-                           M ⟦ sub↑ _ σ ⟧ 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₂) •SR rep↑ _ upRep •SR rep↑ _ upRep ⟧
-                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ _ σ ⟧) ⟩⟩
-                           M ⟦ sub↑ _ σ ⟧ ⟦ x₀:= (var x₂) •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ upRep ⟧
+                           M ⟦ liftSub _ σ ⟧ 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₂) ⟧
+                         ≡⟨⟨ sub-compSR (M ⟦ liftSub _ σ ⟧ 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉) ⟩⟩
+                           M ⟦ liftSub _ σ ⟧ 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₂) •SR liftRep _ upRep ⟧
+                         ≡⟨⟨ sub-compSR (M ⟦ liftSub _ σ ⟧ 〈 liftRep _ upRep 〉) ⟩⟩
+                           M ⟦ liftSub _ σ ⟧ 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₂) •SR liftRep _ upRep •SR liftRep _ upRep ⟧
+                         ≡⟨⟨ sub-compSR (M ⟦ liftSub _ σ ⟧) ⟩⟩
+                           M ⟦ liftSub _ σ ⟧ ⟦ x₀:= (var x₂) •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ upRep ⟧
                          ≡⟨⟨ sub-comp M ⟩⟩
-                           M ⟦ x₀:= (var x₂) •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ upRep • sub↑ _ σ ⟧
+                           M ⟦ x₀:= (var x₂) •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ upRep • liftSub _ σ ⟧
                          ≡⟨ sub-congr M aux₃ ⟩
                            M ⟦ sub↖ σ ⟧
                            ∎) (redex ?)))) 
                          (sym-conv (osr-conv (subst (λ a → appT ((ΛT A M ⟦ σ' ⟧) ⇑ ⇑ ⇑) (var x₁) ⇒ a) 
                          (let open ≡-Reasoning in
-                           M ⟦ sub↑ _ σ' ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₁) ⟧
-                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ _ σ' ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉) ⟩⟩
-                           M ⟦ sub↑ _ σ' ⟧ 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₁) •SR rep↑ _ upRep ⟧
-                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ _ σ' ⟧ 〈 rep↑ _ upRep 〉) ⟩⟩
-                           M ⟦ sub↑ _ σ' ⟧ 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₁) •SR rep↑ _ upRep •SR rep↑ _ upRep ⟧
-                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ _ σ' ⟧) ⟩⟩
-                           M ⟦ sub↑ _ σ' ⟧ ⟦ x₀:= (var x₁) •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ upRep ⟧
+                           M ⟦ liftSub _ σ' ⟧ 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₁) ⟧
+                         ≡⟨⟨ sub-compSR (M ⟦ liftSub _ σ' ⟧ 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉) ⟩⟩
+                           M ⟦ liftSub _ σ' ⟧ 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₁) •SR liftRep _ upRep ⟧
+                         ≡⟨⟨ sub-compSR (M ⟦ liftSub _ σ' ⟧ 〈 liftRep _ upRep 〉) ⟩⟩
+                           M ⟦ liftSub _ σ' ⟧ 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₁) •SR liftRep _ upRep •SR liftRep _ upRep ⟧
+                         ≡⟨⟨ sub-compSR (M ⟦ liftSub _ σ' ⟧) ⟩⟩
+                           M ⟦ liftSub _ σ' ⟧ ⟦ x₀:= (var x₁) •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ upRep ⟧
                          ≡⟨⟨ sub-comp M ⟩⟩
-                           M ⟦ x₀:= (var x₁) •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ upRep • sub↑ _ σ' ⟧
+                           M ⟦ x₀:= (var x₁) •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ upRep • liftSub _ σ' ⟧
                          ≡⟨ sub-congr M aux₄ ⟩
                            M ⟦ sub↗ σ' ⟧
                            ∎) 
                          (redex ?))))))
     (λ W Θ N N' Q ρ ρ∶Δ⇒Θ N∈EΘA N'∈EΘA Q∈EΘN≡N' → 
     let validΘ : valid Θ
-        validΘ = Context-Validity (E-typed N∈EΘA) in
+        validΘ = context-validity (E-typed N∈EΘA) in
     let σ₁ : Sub (U , -Term) W
-        σ₁ = x₀:= N •SR rep↑ -Term ρ • sub↑ -Term σ in
+        σ₁ = x₀:= N •SR liftRep -Term ρ • liftSub -Term σ in
     let σ₁∶Γ,A⇒Θ : σ₁ ∶ Γ ,T A ⇒C Θ
-        σ₁∶Γ,A⇒Θ = compC (compSRC (botsubC N∈EΘA) (rep↑-typed ρ∶Δ⇒Θ)) (sub↑C σ∶Γ⇒CΔ) in
+        σ₁∶Γ,A⇒Θ = compC (compSRC (botsubC N∈EΘA) (liftRep-typed ρ∶Δ⇒Θ)) (liftSubC σ∶Γ⇒CΔ) in
     let σ₂ : Sub (U , -Term) W
-        σ₂ = x₀:= N' •SR rep↑ -Term ρ • sub↑ -Term σ' in
+        σ₂ = x₀:= N' •SR liftRep -Term ρ • liftSub -Term σ' in
     let σ₂∶Γ,A⇒Θ : σ₂ ∶ Γ ,T A ⇒C Θ
-        σ₂∶Γ,A⇒Θ = compC (compSRC (botsubC N'∈EΘA) (rep↑-typed ρ∶Δ⇒Θ)) (sub↑C σ'∶Γ⇒CΔ) in --REFACTOR Common pattern
-    let ρ' = rep↑ -Path (rep↑ -Term (rep↑ -Term ρ)) in
-    let step1 : x₀:= N • sub↑ -Term (ρ •RS σ) ∼ σ₁
-        step1 = sub-trans (comp-congr sub↑-compRS) 
-                  (assocRSSR {ρ = x₀:= N} {σ = rep↑ -Term ρ} {τ = sub↑ -Term σ}) in
-    let step2 : x₀:= N' • sub↑ -Term (ρ •RS σ') ∼ σ₂
-        step2 = sub-trans (comp-congr sub↑-compRS) 
-                  (assocRSSR {ρ = x₀:= N'} {σ = rep↑ -Term ρ} {τ = sub↑ -Term σ'}) in
-    let sub-rep-comp : ∀ (σ : Sub U V) (N : Term W) → M ⟦ x₀:= N •SR rep↑ _ ρ • sub↑ _ σ ⟧ ≡ M ⟦ sub↑ _ σ ⟧ 〈 rep↑ _ ρ 〉 ⟦ x₀:= N ⟧
+        σ₂∶Γ,A⇒Θ = compC (compSRC (botsubC N'∈EΘA) (liftRep-typed ρ∶Δ⇒Θ)) (liftSubC σ'∶Γ⇒CΔ) in --REFACTOR Common pattern
+    let ρ' = liftRep -Path (liftRep -Term (liftRep -Term ρ)) in
+    let step1 : x₀:= N • liftSub -Term (ρ •RS σ) ∼ σ₁
+        step1 = sub-trans (comp-congr liftSub-compRS) 
+                  (assocRSSR {ρ = x₀:= N} {σ = liftRep -Term ρ} {τ = liftSub -Term σ}) in
+    let step2 : x₀:= N' • liftSub -Term (ρ •RS σ') ∼ σ₂
+        step2 = sub-trans (comp-congr liftSub-compRS) 
+                  (assocRSSR {ρ = x₀:= N'} {σ = liftRep -Term ρ} {τ = liftSub -Term σ'}) in
+    let sub-rep-comp : ∀ (σ : Sub U V) (N : Term W) → M ⟦ x₀:= N •SR liftRep _ ρ • liftSub _ σ ⟧ ≡ M ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 ⟦ x₀:= N ⟧
         sub-rep-comp σ N = let open ≡-Reasoning in
              begin
-               M ⟦ x₀:= N •SR rep↑ -Term ρ • sub↑ -Term σ ⟧
+               M ⟦ x₀:= N •SR liftRep -Term ρ • liftSub -Term σ ⟧
              ≡⟨ sub-comp M ⟩
-               M ⟦ sub↑ -Term σ ⟧ ⟦ x₀:= N •SR rep↑ -Term ρ ⟧
-             ≡⟨ sub-compSR (M ⟦ sub↑ -Term σ ⟧) ⟩
-               M ⟦ sub↑ -Term σ ⟧ 〈 rep↑ -Term ρ 〉 ⟦ x₀:= N ⟧
+               M ⟦ liftSub -Term σ ⟧ ⟦ x₀:= N •SR liftRep -Term ρ ⟧
+             ≡⟨ sub-compSR (M ⟦ liftSub -Term σ ⟧) ⟩
+               M ⟦ liftSub -Term σ ⟧ 〈 liftRep -Term ρ 〉 ⟦ x₀:= N ⟧
              ∎ in
     let ih : EE Θ (M ⟦ σ₁ ⟧ ≡〈 B 〉 M ⟦ σ₂ ⟧) 
                   (M ⟦⟦ extendPS (ρ •RP τ) Q ∶ σ₁ ∼ σ₂ ⟧⟧)
         ih = (computable-path-substitution (U , -Term) W (extendPS (ρ •RP τ) Q) σ₁ σ₂ (Γ ,T A) Θ _ _ σ₁∶Γ,A⇒Θ σ₂∶Γ,A⇒Θ
-             (change-ends {σ = x₀:= N' • sub↑ -Term (ρ •RS σ')} {σ' = σ₂} (extendPS-typedC (compRP-typedC {ρ = ρ} {τ} {σ} {σ'} τ∶σ∼σ' ρ∶Δ⇒Θ) 
+             (change-ends {σ = x₀:= N' • liftSub -Term (ρ •RS σ')} {σ' = σ₂} (extendPS-typedC (compRP-typedC {ρ = ρ} {τ} {σ} {σ'} τ∶σ∼σ' ρ∶Δ⇒Θ) 
                Q∈EΘN≡N')
                  step1 step2) Γ,A⊢M∶B validΘ) in
-    let Δ,A⊢Mσ∶B : Δ ,T A ⊢ M ⟦ sub↑ _ σ ⟧ ∶ ty B
-        Δ,A⊢Mσ∶B = substitution Γ,A⊢M∶B (ctxTR validΔ) (sub↑-typed σ∶Γ⇒Δ) in
-    let Δ,A⊢Mσ'∶B : Δ ,T A ⊢ M ⟦ sub↑ _ σ' ⟧ ∶ ty B
-        Δ,A⊢Mσ'∶B = substitution Γ,A⊢M∶B (ctxTR validΔ) (sub↑-typed σ'∶Γ⇒Δ) in
-    let Θ,A⊢Mσ∶B : Θ ,T A ⊢ M ⟦ sub↑ _ σ ⟧ 〈 rep↑ _ ρ 〉 ∶ ty B
-        Θ,A⊢Mσ∶B = weakening Δ,A⊢Mσ∶B (ctxTR validΘ) (rep↑-typed ρ∶Δ⇒Θ) in
-    let Θ,A⊢Mσ'∶B : Θ ,T A ⊢ M ⟦ sub↑ _ σ' ⟧ 〈 rep↑ _ ρ 〉 ∶ ty B
-        Θ,A⊢Mσ'∶B = weakening Δ,A⊢Mσ'∶B (ctxTR validΘ) (rep↑-typed ρ∶Δ⇒Θ) in --TODO Common pattern
+    let Δ,A⊢Mσ∶B : Δ ,T A ⊢ M ⟦ liftSub _ σ ⟧ ∶ ty B
+        Δ,A⊢Mσ∶B = substitution Γ,A⊢M∶B (ctxTR validΔ) (liftSub-typed σ∶Γ⇒Δ) in
+    let Δ,A⊢Mσ'∶B : Δ ,T A ⊢ M ⟦ liftSub _ σ' ⟧ ∶ ty B
+        Δ,A⊢Mσ'∶B = substitution Γ,A⊢M∶B (ctxTR validΔ) (liftSub-typed σ'∶Γ⇒Δ) in
+    let Θ,A⊢Mσ∶B : Θ ,T A ⊢ M ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 ∶ ty B
+        Θ,A⊢Mσ∶B = weakening Δ,A⊢Mσ∶B (ctxTR validΘ) (liftRep-typed ρ∶Δ⇒Θ) in
+    let Θ,A⊢Mσ'∶B : Θ ,T A ⊢ M ⟦ liftSub _ σ' ⟧ 〈 liftRep _ ρ 〉 ∶ ty B
+        Θ,A⊢Mσ'∶B = weakening Δ,A⊢Mσ'∶B (ctxTR validΘ) (liftRep-typed ρ∶Δ⇒Θ) in --TODO Common pattern
     let Θ⊢N∶A : Θ ⊢ N ∶ ty A
         Θ⊢N∶A = E-typed N∈EΘA in
     let Θ⊢N'∶A : Θ ⊢ N' ∶ ty A
@@ -501,191 +502,191 @@ as required.
             M ⟦⟦ extendPS (ρ •RP τ) Q ∶ σ₁ ∼
                  σSR ⟧⟧
           ≡⟨⟨ pathsub-cong M ∼∼-refl step1 step2 ⟩⟩
-            M ⟦⟦ extendPS (ρ •RP τ) Q ∶ x₀:= N • sub↑ -Term (ρ •RS σ) ∼
-                 x₀:= N' • sub↑ -Term (ρ •RS σ') ⟧⟧
+            M ⟦⟦ extendPS (ρ •RP τ) Q ∶ x₀:= N • liftSub -Term (ρ •RS σ) ∼
+                 x₀:= N' • liftSub -Term (ρ •RS σ') ⟧⟧
           ≡⟨ pathsub-extendPS M ⟩
-            M ⟦⟦ pathsub↑ (ρ •RP τ) ∶ sub↖ (ρ •RS σ) ∼ sub↗ (ρ •RS σ') ⟧⟧ ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧
-          ≡⟨ sub-congl (pathsub-cong M pathsub↑-compRP sub↖-comp₁ sub↗-comp₁) ⟩
-            M ⟦⟦ ρ' •RP pathsub↑ τ ∶ ρ' •RS sub↖ σ ∼ ρ' •RS sub↗ σ' ⟧⟧ ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧
+            M ⟦⟦ liftPathSub (ρ •RP τ) ∶ sub↖ (ρ •RS σ) ∼ sub↗ (ρ •RS σ') ⟧⟧ ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧
+          ≡⟨ sub-congl (pathsub-cong M liftPathSub-compRP sub↖-comp₁ sub↗-comp₁) ⟩
+            M ⟦⟦ ρ' •RP liftPathSub τ ∶ ρ' •RS sub↖ σ ∼ ρ' •RS sub↗ σ' ⟧⟧ ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧
           ≡⟨ sub-congl (pathsub-compRP M) ⟩
-            (M ⟦⟦ pathsub↑ τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧) 〈 ρ' 〉 ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧
+            (M ⟦⟦ liftPathSub τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧) 〈 ρ' 〉 ⟦ x₀:= N • x₀:= (N' ⇑) • x₀:= (Q ⇑ ⇑) ⟧
           ∎) ih) 
           (sym-conv (osr-conv (subst (λ a → appT ((ΛT A M) ⟦ σ ⟧ 〈 ρ 〉) N ⇒ a) (sym (sub-rep-comp σ N)) (redex ?)))) 
           (sym-conv (osr-conv (subst (λ a → appT ((ΛT A M) ⟦ σ' ⟧ 〈 ρ 〉) N' ⇒ a) (sym (sub-rep-comp σ' N')) (redex ?)))) --REFACTOR Duplication
           (appR (ΛR Θ,A⊢Mσ∶B) Θ⊢N∶A) 
           (appR (ΛR Θ,A⊢Mσ'∶B) (E-typed N'∈EΘA)))
         (let step3 : addpath Δ A ⊢
-                         M ⟦⟦ pathsub↑ τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧
+                         M ⟦⟦ liftPathSub τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧
                          ∶ M ⟦ sub↖ σ ⟧ ≡〈 B 〉 M ⟦ sub↗ σ' ⟧
-             step3 = Path-substitution Γ,A⊢M∶B (pathsub↑-typed (pathsubC-typed {τ = τ} {σ} {σ'} {Γ} {Δ} τ∶σ∼σ')) 
+             step3 = Path-substitution Γ,A⊢M∶B (liftPathSub-typed (pathsubC-typed {τ = τ} {σ} {σ'} {Γ} {Δ} τ∶σ∼σ')) 
                      sub↖σ-typed sub↗σ'-typed validΔAAE in
         let step4 : addpath Θ A ⊢
-                    M ⟦⟦ pathsub↑ τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧ 〈 ρ' 〉
+                    M ⟦⟦ liftPathSub τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧ 〈 ρ' 〉
                   ∶ M ⟦ sub↖ σ ⟧ 〈 ρ' 〉 ≡〈 B 〉 M ⟦ sub↗ σ' ⟧ 〈 ρ' 〉
             step4 = weakening step3 
                     (ctxER (varR x₁ (ctxTR (ctxTR validΘ)))
                     (varR x₀ (ctxTR (ctxTR validΘ))))
-                    (rep↑-typed (rep↑-typed (rep↑-typed ρ∶Δ⇒Θ))) in
+                    (liftRep-typed (liftRep-typed (liftRep-typed ρ∶Δ⇒Θ))) in
         let step5 : ∀ σ x → σ ∶ Γ ⇒ Δ → typeof x (addpath Θ A) ≡ ty A → addpath Θ A ⊢
                     appT ((ΛT A M) ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑) (var x) ∶ ty B
             step5 σ x σ∶Γ⇒Θ x∶A∈ΘA = appR 
                            (ΛR (subst (λ a → addpath Θ A ,T A ⊢ a ∶ ty B) 
-                           (trans (sub-compRS M) (trans (rep-comp (M ⟦ sub↑ _ σ ⟧))
-                           (trans (rep-comp (M ⟦ sub↑ _ σ ⟧ 〈 rep↑ _ ρ 〉)) 
-                             (rep-comp (M ⟦ sub↑ _ σ ⟧ 〈 rep↑ _ ρ 〉 〈 rep↑ _ upRep 〉)))))
-                         (substitution {σ = rep↑ _ upRep •R rep↑ _ upRep •R rep↑ _ upRep •R rep↑ _ ρ •RS sub↑ _ σ} Γ,A⊢M∶B 
+                           (trans (sub-compRS M) (trans (rep-comp (M ⟦ liftSub _ σ ⟧))
+                           (trans (rep-comp (M ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉)) 
+                             (rep-comp (M ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 〈 liftRep _ upRep 〉)))))
+                         (substitution {σ = liftRep _ upRep •R liftRep _ upRep •R liftRep _ upRep •R liftRep _ ρ •RS liftSub _ σ} Γ,A⊢M∶B 
                          (ctxTR (ctxER (varR x₁ (ctxTR (ctxTR validΘ))) (varR x₀ (ctxTR (ctxTR validΘ)))))
                          (compRS-typed
-                            {ρ = rep↑ _ upRep •R rep↑ _ upRep •R rep↑ _ upRep •R rep↑ _ ρ}
-                            {σ = sub↑ _ σ} 
-                            (compR-typed {ρ = rep↑ _ upRep •R rep↑ _ upRep •R rep↑ _ upRep}
-                              {σ = rep↑ _ ρ}
-                              (compR-typed {ρ = rep↑ _ upRep •R rep↑ _ upRep} {σ = rep↑ _ upRep}
-                                (compR-typed {ρ = rep↑ _ upRep} {σ = rep↑ _ upRep} (rep↑-typed upRep-typed) (rep↑-typed upRep-typed)) (rep↑-typed upRep-typed)) 
-                            (rep↑-typed ρ∶Δ⇒Θ))
-                         (sub↑-typed σ∶Γ⇒Θ)))))
+                            {ρ = liftRep _ upRep •R liftRep _ upRep •R liftRep _ upRep •R liftRep _ ρ}
+                            {σ = liftSub _ σ} 
+                            (compR-typed {ρ = liftRep _ upRep •R liftRep _ upRep •R liftRep _ upRep}
+                              {σ = liftRep _ ρ}
+                              (compR-typed {ρ = liftRep _ upRep •R liftRep _ upRep} {σ = liftRep _ upRep}
+                                (compR-typed {ρ = liftRep _ upRep} {σ = liftRep _ upRep} (liftRep-typed upRep-typed) (liftRep-typed upRep-typed)) (liftRep-typed upRep-typed)) 
+                            (liftRep-typed ρ∶Δ⇒Θ))
+                         (liftSub-typed σ∶Γ⇒Θ)))))
                          (change-type (varR x (ctxER (varR x₁ (ctxTR (ctxTR validΘ))) (varR x₀ (ctxTR (ctxTR validΘ))))) x∶A∈ΘA) in --TODO Extract last line as lemma
              let step6 : addpath Θ A ⊢
-                         M ⟦⟦ pathsub↑ τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧ 〈 ρ' 〉
+                         M ⟦⟦ liftPathSub τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧ 〈 ρ' 〉
                          ∶ appT ((ΛT A M) ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑) (var x₂) ≡〈 B 〉 appT ((ΛT A M) ⟦ σ' ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑) (var x₁)
                  step6 = convER step4 (step5 σ x₂ σ∶Γ⇒Δ refl) (step5 σ' x₁ σ'∶Γ⇒Δ refl)
                          (subst (λ a → a ≃ appT (((ΛT A M ⟦ σ ⟧) 〈 ρ 〉) ⇑ ⇑ ⇑) (var x₂)) 
                          (let open ≡-Reasoning in
-                           M ⟦ sub↑ _ σ ⟧ 〈 rep↑ _ ρ 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₂) ⟧
-                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ _ σ ⟧ 〈 rep↑ _ ρ 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉) ⟩⟩
-                           M ⟦ sub↑ _ σ ⟧ 〈 rep↑ _ ρ 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₂) •SR rep↑ _ upRep ⟧
-                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ _ σ ⟧ 〈 rep↑ _ ρ 〉 〈 rep↑ _ upRep 〉) ⟩⟩
-                           M ⟦ sub↑ _ σ ⟧ 〈 rep↑ _ ρ 〉 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₂) •SR rep↑ _ upRep •SR rep↑ _ upRep ⟧
-                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ _ σ ⟧ 〈 rep↑ _ ρ 〉) ⟩⟩
-                           M ⟦ sub↑ _ σ ⟧ 〈 rep↑ _ ρ 〉 ⟦ x₀:= (var x₂) •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ upRep ⟧
-                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ _ σ ⟧) ⟩⟩
-                           M ⟦ sub↑ _ σ ⟧ ⟦ x₀:= (var x₂) •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ ρ ⟧
+                           M ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₂) ⟧
+                         ≡⟨⟨ sub-compSR (M ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉) ⟩⟩
+                           M ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₂) •SR liftRep _ upRep ⟧
+                         ≡⟨⟨ sub-compSR (M ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 〈 liftRep _ upRep 〉) ⟩⟩
+                           M ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₂) •SR liftRep _ upRep •SR liftRep _ upRep ⟧
+                         ≡⟨⟨ sub-compSR (M ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉) ⟩⟩
+                           M ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 ⟦ x₀:= (var x₂) •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ upRep ⟧
+                         ≡⟨⟨ sub-compSR (M ⟦ liftSub _ σ ⟧) ⟩⟩
+                           M ⟦ liftSub _ σ ⟧ ⟦ x₀:= (var x₂) •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ ρ ⟧
                          ≡⟨⟨ sub-comp M ⟩⟩
-                           M ⟦ x₀:= (var x₂) •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ ρ • sub↑ _ σ ⟧
+                           M ⟦ x₀:= (var x₂) •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ ρ • liftSub _ σ ⟧
                          ≡⟨ sub-congr M aux ⟩
-                           M ⟦ rep↑ _ (rep↑ _ (rep↑ _ ρ)) •RS sub↖ σ ⟧
+                           M ⟦ liftRep _ (liftRep _ (liftRep _ ρ)) •RS sub↖ σ ⟧
                          ≡⟨ sub-compRS M ⟩ 
-                           M ⟦ sub↖ σ ⟧ 〈 rep↑ _ (rep↑ _ (rep↑ _ ρ)) 〉
+                           M ⟦ sub↖ σ ⟧ 〈 liftRep _ (liftRep _ (liftRep _ ρ)) 〉
                            ∎)
                            (sym-conv (osr-conv (redex ?)))) 
                          (subst (λ a → a ≃ appT (((ΛT A M ⟦ σ' ⟧) 〈 ρ 〉) ⇑ ⇑ ⇑) (var x₁)) 
                            (let open ≡-Reasoning in 
-                           M ⟦ sub↑ _ σ' ⟧ 〈 rep↑ _ ρ 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₁) ⟧
-                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ _ σ' ⟧ 〈 rep↑ _ ρ 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉) ⟩⟩
-                           M ⟦ sub↑ _ σ' ⟧ 〈 rep↑ _ ρ 〉 〈 rep↑ _ upRep 〉 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₁) •SR rep↑ _ upRep ⟧
-                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ _ σ' ⟧ 〈 rep↑ _ ρ 〉 〈 rep↑ _ upRep 〉) ⟩⟩
-                           M ⟦ sub↑ _ σ' ⟧ 〈 rep↑ _ ρ 〉 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₁) •SR rep↑ _ upRep •SR rep↑ _ upRep ⟧
-                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ _ σ' ⟧ 〈 rep↑ _ ρ 〉) ⟩⟩
-                           M ⟦ sub↑ _ σ' ⟧ 〈 rep↑ _ ρ 〉 ⟦ x₀:= (var x₁) •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ upRep ⟧
-                         ≡⟨⟨ sub-compSR (M ⟦ sub↑ _ σ' ⟧) ⟩⟩
-                           M ⟦ sub↑ _ σ' ⟧ ⟦ x₀:= (var x₁) •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ ρ ⟧
+                           M ⟦ liftSub _ σ' ⟧ 〈 liftRep _ ρ 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₁) ⟧
+                         ≡⟨⟨ sub-compSR (M ⟦ liftSub _ σ' ⟧ 〈 liftRep _ ρ 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉) ⟩⟩
+                           M ⟦ liftSub _ σ' ⟧ 〈 liftRep _ ρ 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₁) •SR liftRep _ upRep ⟧
+                         ≡⟨⟨ sub-compSR (M ⟦ liftSub _ σ' ⟧ 〈 liftRep _ ρ 〉 〈 liftRep _ upRep 〉) ⟩⟩
+                           M ⟦ liftSub _ σ' ⟧ 〈 liftRep _ ρ 〉 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₁) •SR liftRep _ upRep •SR liftRep _ upRep ⟧
+                         ≡⟨⟨ sub-compSR (M ⟦ liftSub _ σ' ⟧ 〈 liftRep _ ρ 〉) ⟩⟩
+                           M ⟦ liftSub _ σ' ⟧ 〈 liftRep _ ρ 〉 ⟦ x₀:= (var x₁) •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ upRep ⟧
+                         ≡⟨⟨ sub-compSR (M ⟦ liftSub _ σ' ⟧) ⟩⟩
+                           M ⟦ liftSub _ σ' ⟧ ⟦ x₀:= (var x₁) •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ ρ ⟧
                          ≡⟨⟨ sub-comp M ⟩⟩
-                           M ⟦ x₀:= (var x₁) •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ ρ • sub↑ _ σ' ⟧
+                           M ⟦ x₀:= (var x₁) •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ ρ • liftSub _ σ' ⟧
                          ≡⟨ sub-congr M aux₂ ⟩
-                           M ⟦ rep↑ _ (rep↑ _ (rep↑ _ ρ)) •RS sub↗ σ' ⟧
+                           M ⟦ liftRep _ (liftRep _ (liftRep _ ρ)) •RS sub↗ σ' ⟧
                          ≡⟨ sub-compRS M ⟩ 
-                           M ⟦ sub↗ σ' ⟧ 〈 rep↑ _ (rep↑ _ (rep↑ _ ρ)) 〉
+                           M ⟦ sub↗ σ' ⟧ 〈 liftRep _ (liftRep _ (liftRep _ ρ)) 〉
                            ∎)
                            (sym-conv (osr-conv (redex ?)))) in
       app*R (E-typed N∈EΘA) (E-typed N'∈EΘA) 
       (lllR step6) (EE-typed Q∈EΘN≡N'))
       ?) where
     aux : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} → 
-        x₀:= (var x₂) •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ ρ • sub↑ _ σ ∼ rep↑ _ (rep↑ _ (rep↑ _ ρ)) •RS sub↖ σ
+        x₀:= (var x₂) •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ ρ • liftSub _ σ ∼ liftRep _ (liftRep _ (liftRep _ ρ)) •RS sub↖ σ
     aux x₀ = refl
     aux {ρ = ρ} {σ} (↑ x) = let open ≡-Reasoning in 
       begin
-        σ _ x ⇑ ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep •SR rep↑ -Term upRep •SR
-       rep↑ -Term upRep
-       •SR rep↑ -Term ρ ⟧
+        σ _ x ⇑ ⟦ x₀:= (var x₂) •SR liftRep -Term upRep •SR liftRep -Term upRep •SR
+       liftRep -Term upRep
+       •SR liftRep -Term ρ ⟧
       ≡⟨ sub-compSR (σ _ x ⇑) ⟩
-        σ _ x ⇑ 〈 rep↑ _ ρ 〉 ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧
-      ≡⟨ sub-congl (rep↑-upRep (σ _ x)) ⟩
-        σ _ x 〈 ρ 〉 ⇑ ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧
+        σ _ x ⇑ 〈 liftRep _ ρ 〉 ⟦ x₀:= (var x₂) •SR liftRep -Term upRep •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧
+      ≡⟨ sub-congl (liftRep-upRep (σ _ x)) ⟩
+        σ _ x 〈 ρ 〉 ⇑ ⟦ x₀:= (var x₂) •SR liftRep -Term upRep •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧
       ≡⟨ sub-compSR (σ _ x 〈 ρ 〉 ⇑) ⟩
-        σ _ x 〈 ρ 〉 ⇑ 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧
-      ≡⟨ sub-congl (rep↑-upRep (σ _ x 〈 ρ 〉)) ⟩
-        σ _ x 〈 ρ 〉 ⇑ ⇑ ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧
+        σ _ x 〈 ρ 〉 ⇑ 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₂) •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧
+      ≡⟨ sub-congl (liftRep-upRep (σ _ x 〈 ρ 〉)) ⟩
+        σ _ x 〈 ρ 〉 ⇑ ⇑ ⟦ x₀:= (var x₂) •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧
       ≡⟨ sub-compSR (σ _ x 〈 ρ 〉 ⇑ ⇑) ⟩
-        σ _ x 〈 ρ 〉 ⇑ ⇑ 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep ⟧
-      ≡⟨ sub-congl (rep↑-upRep (σ _ x 〈 ρ 〉 ⇑)) ⟩
-        σ _ x 〈 ρ 〉 ⇑ ⇑ ⇑ ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep ⟧
+        σ _ x 〈 ρ 〉 ⇑ ⇑ 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₂) •SR liftRep -Term upRep ⟧
+      ≡⟨ sub-congl (liftRep-upRep (σ _ x 〈 ρ 〉 ⇑)) ⟩
+        σ _ x 〈 ρ 〉 ⇑ ⇑ ⇑ ⟦ x₀:= (var x₂) •SR liftRep -Term upRep ⟧
       ≡⟨ sub-compSR (σ _ x 〈 ρ 〉 ⇑ ⇑ ⇑) ⟩
-        σ _ x 〈 ρ 〉 ⇑ ⇑ ⇑ 〈 rep↑ -Term upRep 〉 ⟦ x₀:= (var x₂) ⟧
-      ≡⟨ sub-congl (rep↑-upRep (σ _ x 〈 ρ 〉 ⇑ ⇑)) ⟩
+        σ _ x 〈 ρ 〉 ⇑ ⇑ ⇑ 〈 liftRep -Term upRep 〉 ⟦ x₀:= (var x₂) ⟧
+      ≡⟨ sub-congl (liftRep-upRep (σ _ x 〈 ρ 〉 ⇑ ⇑)) ⟩
         σ _ x 〈 ρ 〉 ⇑ ⇑ ⇑ ⇑ ⟦ x₀:= (var x₂) ⟧
       ≡⟨ botsub-upRep (σ _ x 〈 ρ 〉 ⇑ ⇑ ⇑) ⟩
         σ _ x 〈 ρ 〉 ⇑ ⇑ ⇑
-      ≡⟨⟨ rep↑-upRep₃ (σ _ x) ⟩⟩
-        σ _ x ⇑ ⇑ ⇑ 〈 rep↑ _ (rep↑ _ (rep↑ _ ρ)) 〉
+      ≡⟨⟨ liftRep-upRep₃ (σ _ x) ⟩⟩
+        σ _ x ⇑ ⇑ ⇑ 〈 liftRep _ (liftRep _ (liftRep _ ρ)) 〉
       ∎
     aux₂ : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} → 
-        x₀:= (var x₁) •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ ρ • sub↑ _ σ ∼ rep↑ _ (rep↑ _ (rep↑ _ ρ)) •RS sub↗ σ
+        x₀:= (var x₁) •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ ρ • liftSub _ σ ∼ liftRep _ (liftRep _ (liftRep _ ρ)) •RS sub↗ σ
     aux₂ x₀ = refl
     aux₂ {ρ = ρ} {σ} (↑ x) = let open ≡-Reasoning in 
       begin
-        σ _ x ⇑ ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep •SR rep↑ -Term upRep •SR
-       rep↑ -Term upRep
-       •SR rep↑ -Term ρ ⟧
+        σ _ x ⇑ ⟦ x₀:= (var x₁) •SR liftRep -Term upRep •SR liftRep -Term upRep •SR
+       liftRep -Term upRep
+       •SR liftRep -Term ρ ⟧
       ≡⟨ sub-compSR (σ _ x ⇑) ⟩
-        σ _ x ⇑ 〈 rep↑ _ ρ 〉 ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧
-      ≡⟨ sub-congl (rep↑-upRep (σ _ x)) ⟩
-        σ _ x 〈 ρ 〉 ⇑ ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧
+        σ _ x ⇑ 〈 liftRep _ ρ 〉 ⟦ x₀:= (var x₁) •SR liftRep -Term upRep •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧
+      ≡⟨ sub-congl (liftRep-upRep (σ _ x)) ⟩
+        σ _ x 〈 ρ 〉 ⇑ ⟦ x₀:= (var x₁) •SR liftRep -Term upRep •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧
       ≡⟨ sub-compSR (σ _ x 〈 ρ 〉 ⇑) ⟩
-        σ _ x 〈 ρ 〉 ⇑ 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧
-      ≡⟨ sub-congl (rep↑-upRep (σ _ x 〈 ρ 〉)) ⟩
-        σ _ x 〈 ρ 〉 ⇑ ⇑ ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧
+        σ _ x 〈 ρ 〉 ⇑ 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₁) •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧
+      ≡⟨ sub-congl (liftRep-upRep (σ _ x 〈 ρ 〉)) ⟩
+        σ _ x 〈 ρ 〉 ⇑ ⇑ ⟦ x₀:= (var x₁) •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧
       ≡⟨ sub-compSR (σ _ x 〈 ρ 〉 ⇑ ⇑) ⟩
-        σ _ x 〈 ρ 〉 ⇑ ⇑ 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep ⟧
-      ≡⟨ sub-congl (rep↑-upRep (σ _ x 〈 ρ 〉 ⇑)) ⟩
-        σ _ x 〈 ρ 〉 ⇑ ⇑ ⇑ ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep ⟧
+        σ _ x 〈 ρ 〉 ⇑ ⇑ 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₁) •SR liftRep -Term upRep ⟧
+      ≡⟨ sub-congl (liftRep-upRep (σ _ x 〈 ρ 〉 ⇑)) ⟩
+        σ _ x 〈 ρ 〉 ⇑ ⇑ ⇑ ⟦ x₀:= (var x₁) •SR liftRep -Term upRep ⟧
       ≡⟨ sub-compSR (σ _ x 〈 ρ 〉 ⇑ ⇑ ⇑) ⟩
-        σ _ x 〈 ρ 〉 ⇑ ⇑ ⇑ 〈 rep↑ -Term upRep 〉 ⟦ x₀:= (var x₁) ⟧
-      ≡⟨ sub-congl (rep↑-upRep (σ _ x 〈 ρ 〉 ⇑ ⇑)) ⟩
+        σ _ x 〈 ρ 〉 ⇑ ⇑ ⇑ 〈 liftRep -Term upRep 〉 ⟦ x₀:= (var x₁) ⟧
+      ≡⟨ sub-congl (liftRep-upRep (σ _ x 〈 ρ 〉 ⇑ ⇑)) ⟩
         σ _ x 〈 ρ 〉 ⇑ ⇑ ⇑ ⇑ ⟦ x₀:= (var x₁) ⟧
       ≡⟨ botsub-upRep (σ _ x 〈 ρ 〉 ⇑ ⇑ ⇑) ⟩
         σ _ x 〈 ρ 〉 ⇑ ⇑ ⇑
-      ≡⟨⟨ rep↑-upRep₃ (σ _ x) ⟩⟩
-        σ _ x ⇑ ⇑ ⇑ 〈 rep↑ _ (rep↑ _ (rep↑ _ ρ)) 〉
+      ≡⟨⟨ liftRep-upRep₃ (σ _ x) ⟩⟩
+        σ _ x ⇑ ⇑ ⇑ 〈 liftRep _ (liftRep _ (liftRep _ ρ)) 〉
       ∎
     aux₃ : ∀ {U} {V} {σ : Sub U V} → 
-        x₀:= (var x₂) •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ upRep • sub↑ _ σ ∼ sub↖ σ
+        x₀:= (var x₂) •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ upRep • liftSub _ σ ∼ sub↖ σ
     aux₃ x₀ = refl
     aux₃ {σ = σ} (↑ x) = let open ≡-Reasoning in 
       begin
-        σ _ x ⇑ ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧
+        σ _ x ⇑ ⟦ x₀:= (var x₂) •SR liftRep -Term upRep •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧
       ≡⟨ sub-compSR (σ _ x ⇑) ⟩
-        σ _ x ⇑ 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧
-      ≡⟨ sub-congl (rep↑-upRep (σ _ x)) ⟩
-        σ _ x ⇑ ⇑ ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧
+        σ _ x ⇑ 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₂) •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧
+      ≡⟨ sub-congl (liftRep-upRep (σ _ x)) ⟩
+        σ _ x ⇑ ⇑ ⟦ x₀:= (var x₂) •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧
       ≡⟨ sub-compSR (σ _ x  ⇑ ⇑) ⟩
-        σ _ x  ⇑ ⇑ 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep ⟧
-      ≡⟨ sub-congl (rep↑-upRep (σ _ x  ⇑)) ⟩
-        σ _ x  ⇑ ⇑ ⇑ ⟦ x₀:= (var x₂) •SR rep↑ -Term upRep ⟧
+        σ _ x  ⇑ ⇑ 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₂) •SR liftRep -Term upRep ⟧
+      ≡⟨ sub-congl (liftRep-upRep (σ _ x  ⇑)) ⟩
+        σ _ x  ⇑ ⇑ ⇑ ⟦ x₀:= (var x₂) •SR liftRep -Term upRep ⟧
       ≡⟨ sub-compSR (σ _ x  ⇑ ⇑ ⇑) ⟩
-        σ _ x  ⇑ ⇑ ⇑ 〈 rep↑ -Term upRep 〉 ⟦ x₀:= (var x₂) ⟧
-      ≡⟨ sub-congl (rep↑-upRep (σ _ x  ⇑ ⇑)) ⟩
+        σ _ x  ⇑ ⇑ ⇑ 〈 liftRep -Term upRep 〉 ⟦ x₀:= (var x₂) ⟧
+      ≡⟨ sub-congl (liftRep-upRep (σ _ x  ⇑ ⇑)) ⟩
         σ _ x  ⇑ ⇑ ⇑ ⇑ ⟦ x₀:= (var x₂) ⟧
       ≡⟨ botsub-upRep (σ _ x  ⇑ ⇑ ⇑) ⟩
         σ _ x  ⇑ ⇑ ⇑
       ∎
     aux₄ : ∀ {U} {V} {σ : Sub U V} → 
-        x₀:= (var x₁) •SR rep↑ _ upRep •SR rep↑ _ upRep •SR rep↑ _ upRep • sub↑ _ σ ∼ sub↗ σ
+        x₀:= (var x₁) •SR liftRep _ upRep •SR liftRep _ upRep •SR liftRep _ upRep • liftSub _ σ ∼ sub↗ σ
     aux₄ x₀ = refl
     aux₄ {σ = σ} (↑ x) = let open ≡-Reasoning in 
       begin
-        σ _ x ⇑ ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧
+        σ _ x ⇑ ⟦ x₀:= (var x₁) •SR liftRep -Term upRep •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧
       ≡⟨ sub-compSR (σ _ x  ⇑) ⟩
-        σ _ x  ⇑ 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧
-      ≡⟨ sub-congl (rep↑-upRep (σ _ x )) ⟩
-        σ _ x  ⇑ ⇑ ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep •SR rep↑ -Term upRep ⟧
+        σ _ x  ⇑ 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₁) •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧
+      ≡⟨ sub-congl (liftRep-upRep (σ _ x )) ⟩
+        σ _ x  ⇑ ⇑ ⟦ x₀:= (var x₁) •SR liftRep -Term upRep •SR liftRep -Term upRep ⟧
       ≡⟨ sub-compSR (σ _ x  ⇑ ⇑) ⟩
-        σ _ x  ⇑ ⇑ 〈 rep↑ _ upRep 〉 ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep ⟧
-      ≡⟨ sub-congl (rep↑-upRep (σ _ x  ⇑)) ⟩
-        σ _ x  ⇑ ⇑ ⇑ ⟦ x₀:= (var x₁) •SR rep↑ -Term upRep ⟧
+        σ _ x  ⇑ ⇑ 〈 liftRep _ upRep 〉 ⟦ x₀:= (var x₁) •SR liftRep -Term upRep ⟧
+      ≡⟨ sub-congl (liftRep-upRep (σ _ x  ⇑)) ⟩
+        σ _ x  ⇑ ⇑ ⇑ ⟦ x₀:= (var x₁) •SR liftRep -Term upRep ⟧
       ≡⟨ sub-compSR (σ _ x  ⇑ ⇑ ⇑) ⟩
-        σ _ x  ⇑ ⇑ ⇑ 〈 rep↑ -Term upRep 〉 ⟦ x₀:= (var x₁) ⟧
-      ≡⟨ sub-congl (rep↑-upRep (σ _ x  ⇑ ⇑)) ⟩
+        σ _ x  ⇑ ⇑ ⇑ 〈 liftRep -Term upRep 〉 ⟦ x₀:= (var x₁) ⟧
+      ≡⟨ sub-congl (liftRep-upRep (σ _ x  ⇑ ⇑)) ⟩
         σ _ x  ⇑ ⇑ ⇑ ⇑ ⟦ x₀:= (var x₁) ⟧
       ≡⟨ botsub-upRep (σ _ x  ⇑ ⇑ ⇑) ⟩
         σ _ x  ⇑ ⇑ ⇑
@@ -713,7 +714,7 @@ Strong-Normalization : ∀ V K (Γ : Context V)
 \begin{code}
 Strong-Normalization V K Γ M A Γ⊢M∶A = E'-SN 
   (subst (E' Γ _) sub-idOp
-  (Computable-Sub (idSub V) idSubC Γ⊢M∶A (Context-Validity Γ⊢M∶A)))
+  (Computable-Sub (idSub V) idSubC Γ⊢M∶A (context-validity Γ⊢M∶A)))
 \end{code}
 }
 

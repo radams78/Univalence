@@ -99,7 +99,7 @@ syntax is given by the grammar:
 \begin{array}{lrcl}
 \text{Type} & A & ::= & \Omega \mid A \rightarrow A \\
 \text{Term} & M, \phi & ::= & x \mid \bot \mid \phi \supset\phi \mid \lambda x:A.M \mid MM \\
-\text{Proof} & \delta & ::= & p \mid \lambda x:\phi.\delta \mid \delta \delta
+\text{Proof} & \delta & ::= & p \mid \lambda p:\phi.\delta \mid \delta \delta
 \end{array}
 \]
 where $p$ is a \emph{proof variable} and $x$ is a \emph{term variable}.
@@ -113,16 +113,18 @@ Its rules of deduction are given in Figure \ref{fig:lambdao}
 \[ \infer[(x : A \in \Gamma)]{\Gamma \vdash x : A}{\Gamma \vald} \qquad
 \infer[(p : \phi \in \Gamma)]{\Gamma \vdash p : \phi}{\Gamma \vald} \]
 \[ \infer{\Gamma \vdash \bot : \Omega}{\Gamma \vald} \qquad
-\infer{\Gamma \vdash \phi \rightarrow \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} \]
+\infer{\Gamma \vdash \phi \supset \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} \]
 \[ \infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \qquad
-\infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \rightarrow \psi \quad \Gamma \vdash \epsilon : \phi} \]
+\infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \phi} \]
 \[ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \qquad
-\infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \rightarrow \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
-\[ \infer[(\phi \simeq \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
+\infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \supset \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
+\[ \infer[(\phi \rightarrow \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
+\[ \infer[(\psi \rightarrow \phi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
 \end{framed}
 \caption{Rules of Deduction of $\lambda o$}
 \label{fig:lambdao}
 \end{figure}
+\todo{Can we remove the side-condition on the reduction rule?}
 
 \section{Extensional Equality}
 

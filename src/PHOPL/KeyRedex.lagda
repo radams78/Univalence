@@ -27,13 +27,13 @@ key-redex-SN {M = M} {N} SNN = SNE (λ N → ∀ {M} → key-redex M N → SN M)
 key-redex-rep : ∀ {U} {V} {K} {M N : Expression U K} {ρ : Rep U V} →
   key-redex M N → key-redex (M 〈 ρ 〉) (N 〈 ρ 〉)
 key-redex-rep {ρ = ρ} (βTkr {A} {M} {N} SNM) = 
-  subst (key-redex (appT (ΛT A M) N 〈 ρ 〉)) (sym (compRS-botsub M)) 
+  subst (key-redex (appT (ΛT A M) N 〈 ρ 〉)) (sym (compRS-botSub M)) 
     (βTkr (SNrep R-creates-rep SNM))
 key-redex-rep {ρ = ρ} (βPkr {φ} {δ} {ε} SNφ SNε) = 
-  subst (key-redex ((appP (ΛP φ δ) ε) 〈 ρ 〉)) (sym (compRS-botsub δ)) 
+  subst (key-redex ((appP (ΛP φ δ) ε) 〈 ρ 〉)) (sym (compRS-botSub δ)) 
     (βPkr (SNrep R-creates-rep SNφ) (SNrep R-creates-rep SNε))
 key-redex-rep {ρ = ρ} (βEkr {N} {N'} {A} {P} {Q} SNN SNN' SNQ) = 
-  subst (key-redex (app* N N' (λλλ A P) Q 〈 ρ 〉)) (botsub₃-rep↑₃ P)
+  subst (key-redex (app* N N' (λλλ A P) Q 〈 ρ 〉)) (botSub₃-liftRep₃ P)
     (βEkr (SNrep R-creates-rep SNN) (SNrep R-creates-rep SNN') (SNrep R-creates-rep SNQ))
 key-redex-rep {ρ = ρ} (appTkr M▷N) = appTkr (key-redex-rep M▷N)
 --REFACTOR Common pattern

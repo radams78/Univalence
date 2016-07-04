@@ -7,7 +7,29 @@ open import PHOPL.Grammar
 open import PHOPL.Red
 open import PHOPL.Rules
 open import PHOPL.PathSub
+\end{code}
+}
 
+\subsection{Metatheorems}
+
+\begin{lemma}[Context Validity]
+$ $
+\begin{enumerate}
+\item
+Every derivation of $\Gamma, \Theta \vdash \mathcal{J}$ has a subderivation of $\Gamma \vald$.
+\item
+Every derivation of $\Gamma, p : \phi, \Theta \vdash \mathcal{J}$ has a subderivation of $\Gamma \vdash \phi : \Omega$.
+\item
+Every derivation of $\Gamma, e : M =_A N \vdash \mathcal{J}$ has subderivations of $\Gamma \vdash M : A$ and $\Gamma \vdash N : A$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Part 1 is proven by induction on derivations.  Parts 2 and 3 follow by inversion.
+\end{proof}
+
+\AgdaHide{
+\begin{code}
 context-validity : ∀ {V} {Γ} {K} {M : Expression V (varKind K)} {A} →
                    Γ ⊢ M ∶ A → valid Γ
 context-validity'' : ∀ {V} {Γ : Context V} {A} → valid (addpath Γ A) → valid Γ
@@ -32,8 +54,25 @@ context-validity (app*R Γ⊢N∶A _ _ _) = context-validity Γ⊢N∶A
 context-validity (convER Γ⊢P∶M≡N _ _ _ _) = context-validity Γ⊢P∶M≡N
 
 context-validity'' (ctxER (varR .(↑ x₀) (ctxTR (ctxTR validΓ))) _) = validΓ
+\end{code}
+}
 
+\begin{lemma}[Type Validity]
+$ $
+\begin{enumerate}
+\item
+If $\Gamma \vdash \delta : \phi$ then $\Gamma \vdash \phi : \Omega$.
+\item
+If $\Gamma \vdash P : M =_A N$ then $\Gamma \vdash M : A$ and $\Gamma \vdash N : A$.
+\end{enumerate}
+\end{lemma}
 
+\begin{proof}
+Induction on derivations.
+\end{proof}
+
+\AgdaHide{
+\begin{code}
 postulate Prop-Validity : ∀ {V} {Γ : Context V} {δ : Proof V} {φ : Term V} → 
                         Γ ⊢ δ ∶ φ → Γ ⊢ φ ∶ ty Ω
 
@@ -51,29 +90,49 @@ postulate liftRep-typed : ∀ {U} {V} {ρ : Rep U V} {K} {Γ} {Δ} {A} →
 
 postulate compR-typed : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Rep U V} {Γ} {Δ} {Θ : Context W} →
                         ρ ∶ Δ ⇒R Θ → σ ∶ Γ ⇒R Δ → ρ •R σ ∶ Γ ⇒R Θ
+\end{code}
+}
 
+\begin{theorem}[Weakening]
+If $\Gamma \vdash \mathcal{J}$, $\Gamma \subseteq \Theta$ and $\Theta \vald$ then $\Theta \vdash \mathcal{J}$.
+\end{theorem}
+
+\begin{proof}
+Induction on derivations.
+\end{proof}
+
+\AgdaHide{
+\begin{code}
 postulate weakening : ∀ {U} {V} {ρ : Rep U V} {K}
                     {Γ : Context U} {M : Expression U (varKind K)} {A} {Δ} →
                     Γ ⊢ M ∶ A → valid Δ → ρ ∶ Γ ⇒R Δ → Δ ⊢ M 〈 ρ 〉 ∶ A 〈 ρ 〉
 \end{code}
 }
 
-\subsection{Metatheorems}
-
-Let $\Gamma$ and $\Delta$ be contexts.  A \emph{substitution} $\sigma : \Gamma \Rightarrow \Delta$
-is a function mapping a term $\sigma(x)$ to every term variable $x \in \dom \Gamma$, and a proof $\sigma(p)$ to
-every proof variable $p \in \dom \Gamma$, such that:
+Let $\Gamma$ and $\Theta$ be contexts.  A \emph{substitution} $\sigma : \Gamma \Rightarrow \Theta$
+is a function mapping a term $\sigma(x)$ to every term variable $x \in \dom \Gamma$, a proof $\sigma(p)$ to
+every proof variable $p \in \dom \Gamma$, and a path $\sigma(e)$ to every path variable $e \in \dom \Gamma$, such that:
 \begin{itemize}
 \item
-for every term variable $x : A \in \Gamma$, we have $\Delta \vdash \sigma(x) : A$;
+for every term variable $x : A \in \Gamma$, we have $\Theta \vdash \sigma(x) : A$;
 \item
-for every proof variable $p : \phi \in \Gamma$, we have $\Delta \vdash \sigma(p) : \phi [ \sigma ]$
+for every proof variable $p : \phi \in \Gamma$, we have $\Theta \vdash \sigma(p) : \phi [ \sigma ]$;
+\item
+for every path variable $e : M =_A N \in \Gamma$, we have $\Theta \vdash \sigma(e) : M [ \sigma ] =_A N [ \sigma ]$
 \end{itemize}
 where $\phi [ \sigma ]$ is the result of substituting $\sigma(x)$ for every term variable $x$ in $\phi$.
 
 \begin{code}
 postulate _∶_⇒_ : ∀ {U} {V} → Sub U V → Context U → Context V → Set
 \end{code}
+
+\begin{theorem}[Substitution]
+If $\Gamma \vdash \mathcal{J}$, $\sigma : \Gamma \Rightarrow \Theta$ and $\Theta \vald$, then $\Theta \vdash \mathcal{J} [\sigma]$.
+\end{theorem}
+
+\begin{proof}
+Induction on derivations.
+\end{proof}
 
 \AgdaHide{
 \begin{code}
@@ -147,10 +206,63 @@ postulate sub↗-typed : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {A} → σ ∶ Γ 
 \end{code}
 }
 
-\begin{theorem}[Subject Reduction]
-Let $E$ be a path (proof, term) and $A$ an equation (term, type).
-If $\Gamma \vdash E : A$ and $E \twoheadrightarrow F$ then $\Gamma \vdash F : A$.
-\end{theorem}
+We introduce the following notion, which will be needed in the proof of Theorem \ref{theorem:mainprop}.  Given a derivation $\Delta$,
+we say that $\Gamma \vdash M \simeq_\Delta N : A$ iff there exists a sequence of terms $M_1$, \ldots, $N_n$ ($n \geq 1$) such
+that the following conditions hold:
+\begin{itemize}
+\item
+$M \equiv M_1$ and $N \equiv M_n$
+\item
+for $1 \leq i < n$, either $M_i \rightarrow M_{i+1}$ or $M_{i+1} \rightarrow M_i$
+\item
+for $1 \leq i \leq n$, the derivation $\Delta$ contains a subderivation of $\Gamma \vdash M_i : A$.
+\end{itemize}
+
+\begin{lemma}[Generation]
+$ $
+\begin{enumerate}
+\item
+If $\Gamma \vdash x : A$ then $x : A \in \Gamma$.
+\item
+If $\Gamma \vdash \bot : A$ then $A \equiv \Omega$.
+\item
+If $\Gamma \vdash \phi \supset \psi : A$ then $\Gamma \vdash \phi : \Omega$, $\Gamma \vdash \psi : \Omega$ and $A \equiv \Omega$.
+\item
+If $\Gamma \vdash \lambda x:A.M : B$ then there exists $C$ such that $\Gamma, x : A \vdash M : C$ and $B \equiv A \rightarrow C$.
+\item
+If $\Gamma \vdash MN : A$ then there exists $B$ such that $\Gamma \vdash M : B \rightarrow A$ and $\Gamma \vdash N : B$.
+\item
+For any derivation $\Delta$ of $\Gamma \vdash p : \phi$, there exists $\psi$ such that $p : \psi \in \Gamma$ and $\Delta \vdash \phi \simeq_\Delta \psi : \Omega$.
+\item
+For any derivation $\Delta$ of $\Gamma \vdash \lambda p:\phi.\delta : \psi$, there exists $\chi$ such that $\Gamma, p : \phi \vdash \delta : \chi$ and $\Gamma \vdash \psi \simeq_\Omega \phi \supset \chi : \Omega$.
+\item
+If $\Gamma \vdash \delta \epsilon : \phi$ then there exists $\psi$ such that $\Gamma \vdash \delta : \psi \supset \phi$ and $\Gamma \vdash \epsilon : \psi$.
+\item
+For any derivation $\Delta$ of $\Gamma \vdash e : M =_A N$, there exist $M'$, $N'$ such that $e : M' =_A N' \in \Gamma$ and $\Gamma \vdash M \simeq_\Omega M' : A$, $\Gamma \vdash N \simeq_\Delta N' : A$.
+\item
+For any derivation $\Delta$ of $\Gamma \vdash \reff{M} : N =_A P$, we have $\Gamma \vdash M : A$ and $\Gamma \vdash M \simeq_\Delta N \simeq_\Delta P : A$.
+\item
+For any derivation $\Delta$ of $\Gamma \vdash P \supset^* Q : \phi =_A \psi$, there exist $\phi_1$, $\phi_2$, $\psi_1$, $\psi_2$ such that
+$\Gamma \vdash P : \phi_1 =_\Omega \psi_1$, $\Gamma \vdash Q : \phi_2 =_\Omega \psi_2$, $\Gamma \vdash \phi \simeq_\Delta \phi_1 \supset \psi_1 : \Omega$, $\Gamma \vdash \psi \simeq_\Delta \phi_2 \supset \psi_2 : \Omega$, and $A \equiv \Omega$.
+\item
+For any derivation $\Delta$ of $\Gamma \vdash \univ{\phi}{\psi}{P}{Q} : \chi =_A \theta$, we have $\Gamma \vdash P : \phi \supset \psi$, $\Gamma \vdash Q : \psi \supset \phi$,
+$\Gamma \vdash \chi \simeq_\Delta \phi : \Omega$, $\Gamma \vdash \theta \simeq_\Delta \psi : \Omega$ and $A \equiv \Omega$.
+\item
+If $\Gamma \vdash \triplelambda e : x =_A y. P : M =_B N$ then there exists $C$ such that $\Gamma, x : A, y : A, e : x =_A y \vdash P : M x =_C N y$
+and $B \equiv A \rightarrow C$.
+\item
+For any derivation $\Delta$ of $\Gamma \vdash P_{M M'} Q : N =_A N'$, there exist $B$, $F$ and $G$ such that $\Gamma \vdash P : F =_{B \rightarrow A} G$, $\Gamma \vdash Q : M =_B M'$, $\Gamma \vdash N \simeq_\Delta F M : A$
+and $\Gamma \vdash N' \simeq_\Delta G M' : A$.
+\item
+For any derivation $\Delta$ of $\Gamma \vdash P^+ : \phi$, there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\Gamma \vdash \phi \simeq_\Delta \psi \supset \chi : \Omega$.
+\item
+For any derivation $\Delta$ of $\Gamma \vdash P^- : \phi$, there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\Gamma \vdash \phi \simeq_\Delta \chi \supset \psi : \Omega$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Induction on derivations.
+\end{proof}
 
 \AgdaHide{
 \begin{code}
@@ -158,7 +270,34 @@ postulate Generation-ΛP : ∀ {V} {Γ : Context V} {φ} {δ} {ε} {ψ} →
                           Γ ⊢ appP (ΛP φ δ) ε ∶ ψ →
                           Σ[ χ ∈ Term V ] 
                           (ψ ≃ φ ⊃ χ × Γ ,P φ ⊢ δ ∶ χ ⇑)
+\end{code}
+}
 
+\begin{theorem}[Subject Reduction]
+Let $s$ be a path (proof, term) and $S$ an equation (term, type).
+Suppose $\Gamma \vdash s : S$ and $s \twoheadrightarrow s'$.
+Suppose further that, for every judgement $\Gamma \vdash t : T$ in $\Delta$ except
+possibly the conclusion, the expression $t$ is confluent.  Then $\Gamma \vdash s : S$.
+\end{theorem}
+
+\begin{proof}
+It is sufficient to prove the case where $s \rightarrow s'$.  The proof is by
+induction on the relation $s \rightarrow F$, making use of the Generation Lemma.  We
+deal here with the case $(\lambda p:\phi.\delta) \epsilon \rightarrow \delta[p:=\epsilon]$.
+
+Let $\Delta$ be a derivation of $\Gamma \vdash (\lambda p:\phi.\delta)\epsilon : \psi$.
+Then, by Generation, we have $\Gamma, p : \phi \vdash \delta : \chi$ and $\Gamma
+\vdash \epsilon : \theta$, where $\Gamma \vdash \phi \supset \chi \simeq_\Delta \theta \supset \psi$.  By hypothesis, every term in the sequence of conversions from $\phi$ to $\chi$
+is confluent, hence $\phi \supset \chi$ and $\theta \supset \psi$ have a common reduct,
+which must be of the form $\alpha \supset \beta$.  It follows that $\phi \simeq \theta$
+and $\chi \simeq \psi$.  
+
+Hence we have $\Gamma, p : \phi \vdash \delta : \psi$ and $\Gamma \vdash \epsilon : \phi$,
+and so $\Gamma \vdash \delta[p:=\epsilon] : \psi$ as required.
+\end{proof}
+
+\AgdaHide{
+\begin{code}
 postulate Subject-Reduction-R : ∀ {V} {K} {C} 
                               {c : Constructor C} {E : Body V C} {F : Expression V (varKind K)} {Γ} {A} →
                               Γ ⊢ (app c E) ∶ A → R c E F → Γ ⊢ F ∶ A
@@ -206,11 +345,11 @@ If $\Gamma, x : A \vdash M : B$ and $\Gamma \vdash P : N =_A N'$ then
 $\Gamma \vdash M \{ x := P : N ∼ N' \} : M [ x:= N ] =_B M [ x:= N' ]$.
 \end{prop}
 
-Given substitutions $\sigma, \rho : \Gamma \rightarrow \Delta$, a \emph{path substitution} $\tau : \sigma \sim \rho$
+Given substitutions $\sigma, \rho : \Gamma \rightarrow \Theta$, a \emph{path substitution} $\tau : \sigma \sim \rho$
 is a function mapping every term variable $x \in \Gamma$ to a path $\tau(x)$ such that:
 \begin{itemize}
 \item
-if $x : A \in \Gamma$ then $\Delta \vdash \tau(x) : \sigma(x) =_A \rho(x)$.
+if $x : A \in \Gamma$ then $\Theta \vdash \tau(x) : \sigma(x) =_A \rho(x)$.
 \end{itemize}
 
 \begin{code}
@@ -243,7 +382,7 @@ postulate sub↗-decomp : ∀ {U} {V} {C} {K} (M : Subexpression (U , -Term) C K
 }
 
 \begin{corollary}
-If $\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$ and $\Gamma \vdash M : A$,
+If $\tau : \sigma \sim \rho : \Gamma \rightarrow \Theta$ and $\Gamma \vdash M : A$,
 then $\Gamma \vdash M \{ \tau : \sigma \sim \rho \} : M [ \sigma ] =_A M [ \rho ]$.
 \end{corollary}
 

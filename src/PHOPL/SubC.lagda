@@ -38,8 +38,8 @@ postulate compRSC : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} {Γ} {Δ} {Θ}
 postulate compSRC : ∀ {U} {V} {W} {σ : Sub V W} {ρ : Rep U V} {Γ} {Δ} {Θ} →
                  σ ∶ Δ ⇒C Θ → ρ ∶ Γ ⇒R Δ → σ •SR ρ ∶ Γ ⇒C Θ
 
-postulate sub↑C : ∀ {U} {V} {σ : Sub U V} {K} {Γ} {Δ} {A} →
-                    σ ∶ Γ ⇒C Δ → sub↑ K σ ∶ (Γ , A) ⇒C (Δ , A ⟦ σ ⟧)
+postulate liftSubC : ∀ {U} {V} {σ : Sub U V} {K} {Γ} {Δ} {A} →
+                    σ ∶ Γ ⇒C Δ → liftSub K σ ∶ (Γ , A) ⇒C (Δ , A ⟦ σ ⟧)
 
 postulate botsubC : ∀ {V} {Γ : Context V} {M} {A} →
                     E Γ A M → x₀:= M ∶ (Γ ,T A) ⇒C Γ
