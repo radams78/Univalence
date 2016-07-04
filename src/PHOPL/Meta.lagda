@@ -7,6 +7,9 @@ open import PHOPL.Grammar
 open import PHOPL.Red
 open import PHOPL.Rules
 open import PHOPL.PathSub
+
+valid-addpath : ∀ {V} {Γ : Context V} {A} → valid Γ → valid (addpath Γ A)
+valid-addpath validΓ = ctxER (varR x₁ (ctxTR (ctxTR validΓ))) (varR x₀ (ctxTR (ctxTR validΓ)))
 \end{code}
 }
 
@@ -273,73 +276,6 @@ postulate Generation-ΛP : ∀ {V} {Γ : Context V} {φ} {δ} {ε} {ψ} →
 \end{code}
 }
 
-\begin{theorem}[Subject Reduction]
-Let $s$ be a path (proof, term) and $S$ an equation (term, type).
-Suppose $\Gamma \vdash s : S$ and $s \twoheadrightarrow s'$.
-Suppose further that, for every judgement $\Gamma \vdash t : T$ in $\Delta$ except
-possibly the conclusion, the expression $t$ is confluent.  Then $\Gamma \vdash s : S$.
-\end{theorem}
-
-\begin{proof}
-It is sufficient to prove the case where $s \rightarrow s'$.  The proof is by
-induction on the relation $s \rightarrow F$, making use of the Generation Lemma.  We
-deal here with the case $(\lambda p:\phi.\delta) \epsilon \rightarrow \delta[p:=\epsilon]$.
-
-Let $\Delta$ be a derivation of $\Gamma \vdash (\lambda p:\phi.\delta)\epsilon : \psi$.
-Then, by Generation, we have $\Gamma, p : \phi \vdash \delta : \chi$ and $\Gamma
-\vdash \epsilon : \theta$, where $\Gamma \vdash \phi \supset \chi \simeq_\Delta \theta \supset \psi$.  By hypothesis, every term in the sequence of conversions from $\phi$ to $\chi$
-is confluent, hence $\phi \supset \chi$ and $\theta \supset \psi$ have a common reduct,
-which must be of the form $\alpha \supset \beta$.  It follows that $\phi \simeq \theta$
-and $\chi \simeq \psi$.  
-
-Hence we have $\Gamma, p : \phi \vdash \delta : \psi$ and $\Gamma \vdash \epsilon : \phi$,
-and so $\Gamma \vdash \delta[p:=\epsilon] : \psi$ as required.
-\end{proof}
-
-\AgdaHide{
-\begin{code}
-postulate Subject-Reduction-R : ∀ {V} {K} {C} 
-                              {c : Constructor C} {E : Body V C} {F : Expression V (varKind K)} {Γ} {A} →
-                              Γ ⊢ (app c E) ∶ A → R c E F → Γ ⊢ F ∶ A
-
-{-Subject-Reduction-R : ∀ {V} {K} {C} 
-  {c : Constructor C} {E : Body V C} {F : Expression V (varKind K)} {Γ} {A} →
-  Γ ⊢ (app c E) ∶ A → R c E F → Γ ⊢ F ∶ A
-Subject-Reduction-R Γ⊢ΛPφδε∶A βR =
-  let (χ ,p A≃φ⊃χ ,p Γ,φ⊢δ∶χ) = Generation-ΛP Γ⊢ΛPφδε∶A in {!!}
-Subject-Reduction-R Γ⊢cE∶A βE = {!!}
-Subject-Reduction-R Γ⊢cE∶A plus-ref = {!!}
-Subject-Reduction-R Γ⊢cE∶A minus-ref = {!!}
-Subject-Reduction-R Γ⊢cE∶A plus-univ = {!!}
-Subject-Reduction-R Γ⊢cE∶A minus-univ = {!!}
-Subject-Reduction-R Γ⊢cE∶A ref⊃*univ = {!!}
-Subject-Reduction-R Γ⊢cE∶A univ⊃*ref = {!!}
-Subject-Reduction-R Γ⊢cE∶A univ⊃*univ = {!!}
-Subject-Reduction-R Γ⊢cE∶A ref⊃*ref = {!!}
-Subject-Reduction-R Γ⊢cE∶A refref = {!!}
-Subject-Reduction-R Γ⊢cE∶A lllred = {!!}
-Subject-Reduction-R Γ⊢cE∶A reflamvar = {!!}
-Subject-Reduction-R Γ⊢cE∶A reflam⊃* = {!!}
-Subject-Reduction-R Γ⊢cE∶A reflamuniv = {!!}
-Subject-Reduction-R Γ⊢cE∶A reflamλλλ = {!!} -}
-\end{code}
-}
-
-\begin{code}
-postulate Subject-Reduction : ∀ {V} {K} {Γ}
-                            {E F : Expression V (varKind K)} {A} → 
-                            (Γ ⊢ E ∶ A) → (E ↠ F) → (Γ ⊢ F ∶ A)
-
-postulate Equation-Validity₁ : ∀ {V} {Γ : Context V} {P : Path V} {M} {A} {N} →
-                             Γ ⊢ P ∶ M ≡〈 A 〉 N → Γ ⊢ M ∶ ty A
-
-postulate Equation-Validity₂ : ∀ {V} {Γ : Context V} {P : Path V} {M} {A} {N} →
-                             Γ ⊢ P ∶ M ≡〈 A 〉 N → Γ ⊢ N ∶ ty A
-
-valid-addpath : ∀ {V} {Γ : Context V} {A} → valid Γ → valid (addpath Γ A)
-valid-addpath validΓ = ctxER (varR x₁ (ctxTR (ctxTR validΓ))) (varR x₀ (ctxTR (ctxTR validΓ)))
-\end{code}
-
 \begin{prop}[Path Substitution]
 If $\Gamma, x : A \vdash M : B$ and $\Gamma \vdash P : N =_A N'$ then
 $\Gamma \vdash M \{ x := P : N ∼ N' \} : M [ x:= N ] =_B M [ x:= N' ]$.
@@ -472,5 +408,69 @@ If $\Gamma \vdash M : A \rightarrow B$ and $\Gamma \vdash P : N =_A N'$ then $\G
 \begin{code}
 postulate ⋆-typed : ∀ {V} {M : Term V} {P N N' Γ A B} → 
                   Γ ⊢ M ∶ ty (A ⇛ B) → Γ ⊢ P ∶ N ≡〈 A 〉 N' → Γ ⊢ M ⋆[ P ∶ N ∼ N' ] ∶ appT M N ≡〈 B 〉 appT M N'
+\end{code}
+
+\begin{theorem}[Subject Reduction]
+Let $s$ be a path (proof, term) and $S$ an equation (term, type).
+Suppose $\Gamma \vdash s : S$ and $s \twoheadrightarrow s'$.
+Suppose further that, for every judgement $\Gamma \vdash t : T$ in $\Delta$ except
+possibly the conclusion, the expression $t$ is confluent.  Then $\Gamma \vdash s : S$.
+\end{theorem}
+
+\begin{proof}
+It is sufficient to prove the case where $s \rightarrow s'$.  The proof is by
+induction on the relation $s \rightarrow s'$, making use of the Generation Lemma.  We
+deal here with the case $(\lambda p:\phi.\delta) \epsilon \rightarrow \delta[p:=\epsilon]$.
+
+Let $\Delta$ be a derivation of $\Gamma \vdash (\lambda p:\phi.\delta)\epsilon : \psi$.
+Then, by Generation, we have $\Gamma, p : \phi \vdash \delta : \chi$ and $\Gamma
+\vdash \epsilon : \theta$, where $\Gamma \vdash \phi \supset \chi \simeq_\Delta \theta \supset \psi$.  By hypothesis, every term in the sequence of conversions from $\phi$ to $\chi$
+is confluent, hence $\phi \supset \chi$ and $\theta \supset \psi$ have a common reduct,
+which must be of the form $\alpha \supset \beta$.  It follows that $\phi \simeq \theta$
+and $\chi \simeq \psi$.  
+
+Hence we have $\Gamma, p : \phi \vdash \delta : \psi$ and $\Gamma \vdash \epsilon : \phi$,
+and so $\Gamma \vdash \delta[p:=\epsilon] : \psi$ as required.
+\end{proof}
+
+\AgdaHide{
+\begin{code}
+postulate Subject-Reduction-R : ∀ {V} {K} {C} 
+                              {c : Constructor C} {E : Body V C} {F : Expression V (varKind K)} {Γ} {A} →
+                              Γ ⊢ (app c E) ∶ A → R c E F → Γ ⊢ F ∶ A
+
+{-Subject-Reduction-R : ∀ {V} {K} {C} 
+  {c : Constructor C} {E : Body V C} {F : Expression V (varKind K)} {Γ} {A} →
+  Γ ⊢ (app c E) ∶ A → R c E F → Γ ⊢ F ∶ A
+Subject-Reduction-R Γ⊢ΛPφδε∶A βR =
+  let (χ ,p A≃φ⊃χ ,p Γ,φ⊢δ∶χ) = Generation-ΛP Γ⊢ΛPφδε∶A in {!!}
+Subject-Reduction-R Γ⊢cE∶A βE = {!!}
+Subject-Reduction-R Γ⊢cE∶A plus-ref = {!!}
+Subject-Reduction-R Γ⊢cE∶A minus-ref = {!!}
+Subject-Reduction-R Γ⊢cE∶A plus-univ = {!!}
+Subject-Reduction-R Γ⊢cE∶A minus-univ = {!!}
+Subject-Reduction-R Γ⊢cE∶A ref⊃*univ = {!!}
+Subject-Reduction-R Γ⊢cE∶A univ⊃*ref = {!!}
+Subject-Reduction-R Γ⊢cE∶A univ⊃*univ = {!!}
+Subject-Reduction-R Γ⊢cE∶A ref⊃*ref = {!!}
+Subject-Reduction-R Γ⊢cE∶A refref = {!!}
+Subject-Reduction-R Γ⊢cE∶A lllred = {!!}
+Subject-Reduction-R Γ⊢cE∶A reflamvar = {!!}
+Subject-Reduction-R Γ⊢cE∶A reflam⊃* = {!!}
+Subject-Reduction-R Γ⊢cE∶A reflamuniv = {!!}
+Subject-Reduction-R Γ⊢cE∶A reflamλλλ = {!!} -}
+\end{code}
+}
+
+\begin{code}
+postulate Subject-Reduction : ∀ {V} {K} {Γ}
+                            {E F : Expression V (varKind K)} {A} → 
+                            (Γ ⊢ E ∶ A) → (E ↠ F) → (Γ ⊢ F ∶ A)
+
+postulate Equation-Validity₁ : ∀ {V} {Γ : Context V} {P : Path V} {M} {A} {N} →
+                             Γ ⊢ P ∶ M ≡〈 A 〉 N → Γ ⊢ M ∶ ty A
+
+postulate Equation-Validity₂ : ∀ {V} {Γ : Context V} {P : Path V} {M} {A} {N} →
+                             Γ ⊢ P ∶ M ≡〈 A 〉 N → Γ ⊢ N ∶ ty A
 \end{code}
 

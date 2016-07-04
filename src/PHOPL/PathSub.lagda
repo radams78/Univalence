@@ -87,13 +87,9 @@ x₀::= : ∀ {V} → Path V → PathSub (V , -Term) V
 \end{code}
 }
 
-We define $M * P \eqdef \{ P / x \} (M x)$.  Thus, if $P : N =_A N'$
-then $M * P : M N =_B M N'$ (Corollary \ref{cor:pathsub}).
-
 \AgdaHide{
 \begin{code}
 _⋆[_∶_∼_] : ∀ {V} → Term V → Path V → Term V → Term V → Path V
---M ⋆[ P ∶ N ∼ N' ] = (appT (M ⇑) (var x₀)) ⟦⟦ x₀::= P ∶ x₀:= N ∼ x₀:= N' ⟧⟧
 M ⋆[ P ∶ N ∼ N' ] = app* N N' (reff M) P
 \end{code}
 }

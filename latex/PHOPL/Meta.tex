@@ -13,6 +13,12 @@
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Rules}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.PathSub}\<%
+\\
+%
+\\
+\>\AgdaFunction{valid-addpath} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{valid} \AgdaBound{Γ} \AgdaSymbol{→} \AgdaDatatype{valid} \AgdaSymbol{(}\AgdaFunction{addpath} \AgdaBound{Γ} \AgdaBound{A}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{valid-addpath} \AgdaBound{validΓ} \AgdaSymbol{=} \AgdaInductiveConstructor{ctxER} \AgdaSymbol{(}\AgdaInductiveConstructor{varR} \AgdaFunction{x₁} \AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validΓ}\AgdaSymbol{)))} \AgdaSymbol{(}\AgdaInductiveConstructor{varR} \AgdaInductiveConstructor{x₀} \AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validΓ}\AgdaSymbol{)))}\<%
 \end{code}
 }
 
@@ -435,96 +441,6 @@ Induction on derivations.
 \end{code}
 }
 
-\begin{theorem}[Subject Reduction]
-Let $s$ be a path (proof, term) and $S$ an equation (term, type).
-Suppose $\Gamma \vdash s : S$ and $s \twoheadrightarrow s'$.
-Suppose further that, for every judgement $\Gamma \vdash t : T$ in $\Delta$ except
-possibly the conclusion, the expression $t$ is confluent.  Then $\Gamma \vdash s : S$.
-\end{theorem}
-
-\begin{proof}
-It is sufficient to prove the case where $s \rightarrow s'$.  The proof is by
-induction on the relation $s \rightarrow F$, making use of the Generation Lemma.  We
-deal here with the case $(\lambda p:\phi.\delta) \epsilon \rightarrow \delta[p:=\epsilon]$.
-
-Let $\Delta$ be a derivation of $\Gamma \vdash (\lambda p:\phi.\delta)\epsilon : \psi$.
-Then, by Generation, we have $\Gamma, p : \phi \vdash \delta : \chi$ and $\Gamma
-\vdash \epsilon : \theta$, where $\Gamma \vdash \phi \supset \chi \simeq_\Delta \theta \supset \psi$.  By hypothesis, every term in the sequence of conversions from $\phi$ to $\chi$
-is confluent, hence $\phi \supset \chi$ and $\theta \supset \psi$ have a common reduct,
-which must be of the form $\alpha \supset \beta$.  It follows that $\phi \simeq \theta$
-and $\chi \simeq \psi$.  
-
-Hence we have $\Gamma, p : \phi \vdash \delta : \psi$ and $\Gamma \vdash \epsilon : \phi$,
-and so $\Gamma \vdash \delta[p:=\epsilon] : \psi$ as required.
-\end{proof}
-
-\AgdaHide{
-\begin{code}%
-\>\AgdaKeyword{postulate} \AgdaPostulate{Subject-Reduction-R} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \<[46]%
-\>[46]\<%
-\\
-\>[26]\AgdaIndent{30}{}\<[30]%
-\>[30]\AgdaSymbol{\{}\AgdaBound{c} \AgdaSymbol{:} \AgdaFunction{Constructor} \AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{E} \AgdaSymbol{:} \AgdaFunction{Body} \AgdaBound{V} \AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{F} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
-\\
-\>[26]\AgdaIndent{30}{}\<[30]%
-\>[30]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaBound{c} \AgdaBound{E}\AgdaSymbol{)} \AgdaDatatype{∶} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{R} \AgdaBound{c} \AgdaBound{E} \AgdaBound{F} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{F} \AgdaDatatype{∶} \AgdaBound{A}\<%
-\\
-%
-\\
-\>\AgdaComment{\{-Subject-Reduction-R : ∀ \{V\} \{K\} \{C\} \<\\
-\>  \{c : Constructor C\} \{E : Body V C\} \{F : Expression V (varKind K)\} \{Γ\} \{A\} →\<\\
-\>  Γ ⊢ (app c E) ∶ A → R c E F → Γ ⊢ F ∶ A\<\\
-\>Subject-Reduction-R Γ⊢ΛPφδε∶A βR =\<\\
-\>  let (χ ,p A≃φ⊃χ ,p Γ,φ⊢δ∶χ) = Generation-ΛP Γ⊢ΛPφδε∶A in \{!!\}\<\\
-\>Subject-Reduction-R Γ⊢cE∶A βE = \{!!\}\<\\
-\>Subject-Reduction-R Γ⊢cE∶A plus-ref = \{!!\}\<\\
-\>Subject-Reduction-R Γ⊢cE∶A minus-ref = \{!!\}\<\\
-\>Subject-Reduction-R Γ⊢cE∶A plus-univ = \{!!\}\<\\
-\>Subject-Reduction-R Γ⊢cE∶A minus-univ = \{!!\}\<\\
-\>Subject-Reduction-R Γ⊢cE∶A ref⊃*univ = \{!!\}\<\\
-\>Subject-Reduction-R Γ⊢cE∶A univ⊃*ref = \{!!\}\<\\
-\>Subject-Reduction-R Γ⊢cE∶A univ⊃*univ = \{!!\}\<\\
-\>Subject-Reduction-R Γ⊢cE∶A ref⊃*ref = \{!!\}\<\\
-\>Subject-Reduction-R Γ⊢cE∶A refref = \{!!\}\<\\
-\>Subject-Reduction-R Γ⊢cE∶A lllred = \{!!\}\<\\
-\>Subject-Reduction-R Γ⊢cE∶A reflamvar = \{!!\}\<\\
-\>Subject-Reduction-R Γ⊢cE∶A reflam⊃* = \{!!\}\<\\
-\>Subject-Reduction-R Γ⊢cE∶A reflamuniv = \{!!\}\<\\
-\>Subject-Reduction-R Γ⊢cE∶A reflamλλλ = \{!!\} -\}}\<%
-\end{code}
-}
-
-\begin{code}%
-\>\AgdaKeyword{postulate} \AgdaPostulate{Subject-Reduction} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}}\<%
-\\
-\>[0]\AgdaIndent{28}{}\<[28]%
-\>[28]\AgdaSymbol{\{}\AgdaBound{E} \AgdaBound{F} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{→} \<[67]%
-\>[67]\<%
-\\
-\>[0]\AgdaIndent{28}{}\<[28]%
-\>[28]\AgdaSymbol{(}\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{E} \AgdaDatatype{∶} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaSymbol{(}\AgdaBound{E} \AgdaDatatype{↠} \AgdaBound{F}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaSymbol{(}\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{F} \AgdaDatatype{∶} \AgdaBound{A}\AgdaSymbol{)}\<%
-\\
-%
-\\
-\>\AgdaKeyword{postulate} \AgdaPostulate{Equation-Validity₁} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaSymbol{:} \AgdaFunction{Path} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
-\\
-\>[28]\AgdaIndent{29}{}\<[29]%
-\>[29]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{P} \AgdaDatatype{∶} \AgdaBound{M} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{N} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{A}\<%
-\\
-%
-\\
-\>\AgdaKeyword{postulate} \AgdaPostulate{Equation-Validity₂} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaSymbol{:} \AgdaFunction{Path} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
-\\
-\>[28]\AgdaIndent{29}{}\<[29]%
-\>[29]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{P} \AgdaDatatype{∶} \AgdaBound{M} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{N} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{N} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{A}\<%
-\\
-%
-\\
-\>\AgdaFunction{valid-addpath} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{valid} \AgdaBound{Γ} \AgdaSymbol{→} \AgdaDatatype{valid} \AgdaSymbol{(}\AgdaFunction{addpath} \AgdaBound{Γ} \AgdaBound{A}\AgdaSymbol{)}\<%
-\\
-\>\AgdaFunction{valid-addpath} \AgdaBound{validΓ} \AgdaSymbol{=} \AgdaInductiveConstructor{ctxER} \AgdaSymbol{(}\AgdaInductiveConstructor{varR} \AgdaFunction{x₁} \AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validΓ}\AgdaSymbol{)))} \AgdaSymbol{(}\AgdaInductiveConstructor{varR} \AgdaInductiveConstructor{x₀} \AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validΓ}\AgdaSymbol{)))}\<%
-\end{code}
-
 \begin{prop}[Path Substitution]
 If $\Gamma, x : A \vdash M : B$ and $\Gamma \vdash P : N =_A N'$ then
 $\Gamma \vdash M \{ x := P : N ∼ N' \} : M [ x:= N ] =_B M [ x:= N' ]$.
@@ -817,5 +733,89 @@ If $\Gamma \vdash M : A \rightarrow B$ and $\Gamma \vdash P : N =_A N'$ then $\G
 \\
 \>[0]\AgdaIndent{18}{}\<[18]%
 \>[18]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaSymbol{(}\AgdaBound{A} \AgdaInductiveConstructor{⇛} \AgdaBound{B}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{P} \AgdaDatatype{∶} \AgdaBound{N} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{N'} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaFunction{⋆[} \AgdaBound{P} \AgdaFunction{∶} \AgdaBound{N} \AgdaFunction{∼} \AgdaBound{N'} \AgdaFunction{]} \AgdaDatatype{∶} \AgdaFunction{appT} \AgdaBound{M} \AgdaBound{N} \AgdaFunction{≡〈} \AgdaBound{B} \AgdaFunction{〉} \AgdaFunction{appT} \AgdaBound{M} \AgdaBound{N'}\<%
+\end{code}
+
+\begin{theorem}[Subject Reduction]
+Let $s$ be a path (proof, term) and $S$ an equation (term, type).
+Suppose $\Gamma \vdash s : S$ and $s \twoheadrightarrow s'$.
+Suppose further that, for every judgement $\Gamma \vdash t : T$ in $\Delta$ except
+possibly the conclusion, the expression $t$ is confluent.  Then $\Gamma \vdash s : S$.
+\end{theorem}
+
+\begin{proof}
+It is sufficient to prove the case where $s \rightarrow s'$.  The proof is by
+induction on the relation $s \rightarrow s'$, making use of the Generation Lemma.  We
+deal here with the case $(\lambda p:\phi.\delta) \epsilon \rightarrow \delta[p:=\epsilon]$.
+
+Let $\Delta$ be a derivation of $\Gamma \vdash (\lambda p:\phi.\delta)\epsilon : \psi$.
+Then, by Generation, we have $\Gamma, p : \phi \vdash \delta : \chi$ and $\Gamma
+\vdash \epsilon : \theta$, where $\Gamma \vdash \phi \supset \chi \simeq_\Delta \theta \supset \psi$.  By hypothesis, every term in the sequence of conversions from $\phi$ to $\chi$
+is confluent, hence $\phi \supset \chi$ and $\theta \supset \psi$ have a common reduct,
+which must be of the form $\alpha \supset \beta$.  It follows that $\phi \simeq \theta$
+and $\chi \simeq \psi$.  
+
+Hence we have $\Gamma, p : \phi \vdash \delta : \psi$ and $\Gamma \vdash \epsilon : \phi$,
+and so $\Gamma \vdash \delta[p:=\epsilon] : \psi$ as required.
+\end{proof}
+
+\AgdaHide{
+\begin{code}%
+\>\AgdaKeyword{postulate} \AgdaPostulate{Subject-Reduction-R} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \<[46]%
+\>[46]\<%
+\\
+\>[18]\AgdaIndent{30}{}\<[30]%
+\>[30]\AgdaSymbol{\{}\AgdaBound{c} \AgdaSymbol{:} \AgdaFunction{Constructor} \AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{E} \AgdaSymbol{:} \AgdaFunction{Body} \AgdaBound{V} \AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{F} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[18]\AgdaIndent{30}{}\<[30]%
+\>[30]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaBound{c} \AgdaBound{E}\AgdaSymbol{)} \AgdaDatatype{∶} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{R} \AgdaBound{c} \AgdaBound{E} \AgdaBound{F} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{F} \AgdaDatatype{∶} \AgdaBound{A}\<%
+\\
+%
+\\
+\>\AgdaComment{\{-Subject-Reduction-R : ∀ \{V\} \{K\} \{C\} \<\\
+\>  \{c : Constructor C\} \{E : Body V C\} \{F : Expression V (varKind K)\} \{Γ\} \{A\} →\<\\
+\>  Γ ⊢ (app c E) ∶ A → R c E F → Γ ⊢ F ∶ A\<\\
+\>Subject-Reduction-R Γ⊢ΛPφδε∶A βR =\<\\
+\>  let (χ ,p A≃φ⊃χ ,p Γ,φ⊢δ∶χ) = Generation-ΛP Γ⊢ΛPφδε∶A in \{!!\}\<\\
+\>Subject-Reduction-R Γ⊢cE∶A βE = \{!!\}\<\\
+\>Subject-Reduction-R Γ⊢cE∶A plus-ref = \{!!\}\<\\
+\>Subject-Reduction-R Γ⊢cE∶A minus-ref = \{!!\}\<\\
+\>Subject-Reduction-R Γ⊢cE∶A plus-univ = \{!!\}\<\\
+\>Subject-Reduction-R Γ⊢cE∶A minus-univ = \{!!\}\<\\
+\>Subject-Reduction-R Γ⊢cE∶A ref⊃*univ = \{!!\}\<\\
+\>Subject-Reduction-R Γ⊢cE∶A univ⊃*ref = \{!!\}\<\\
+\>Subject-Reduction-R Γ⊢cE∶A univ⊃*univ = \{!!\}\<\\
+\>Subject-Reduction-R Γ⊢cE∶A ref⊃*ref = \{!!\}\<\\
+\>Subject-Reduction-R Γ⊢cE∶A refref = \{!!\}\<\\
+\>Subject-Reduction-R Γ⊢cE∶A lllred = \{!!\}\<\\
+\>Subject-Reduction-R Γ⊢cE∶A reflamvar = \{!!\}\<\\
+\>Subject-Reduction-R Γ⊢cE∶A reflam⊃* = \{!!\}\<\\
+\>Subject-Reduction-R Γ⊢cE∶A reflamuniv = \{!!\}\<\\
+\>Subject-Reduction-R Γ⊢cE∶A reflamλλλ = \{!!\} -\}}\<%
+\end{code}
+}
+
+\begin{code}%
+\>\AgdaKeyword{postulate} \AgdaPostulate{Subject-Reduction} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}}\<%
+\\
+\>[0]\AgdaIndent{28}{}\<[28]%
+\>[28]\AgdaSymbol{\{}\AgdaBound{E} \AgdaBound{F} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{→} \<[67]%
+\>[67]\<%
+\\
+\>[0]\AgdaIndent{28}{}\<[28]%
+\>[28]\AgdaSymbol{(}\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{E} \AgdaDatatype{∶} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaSymbol{(}\AgdaBound{E} \AgdaDatatype{↠} \AgdaBound{F}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaSymbol{(}\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{F} \AgdaDatatype{∶} \AgdaBound{A}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaKeyword{postulate} \AgdaPostulate{Equation-Validity₁} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaSymbol{:} \AgdaFunction{Path} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[28]\AgdaIndent{29}{}\<[29]%
+\>[29]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{P} \AgdaDatatype{∶} \AgdaBound{M} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{N} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{A}\<%
+\\
+%
+\\
+\>\AgdaKeyword{postulate} \AgdaPostulate{Equation-Validity₂} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaSymbol{:} \AgdaFunction{Path} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[28]\AgdaIndent{29}{}\<[29]%
+\>[29]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{P} \AgdaDatatype{∶} \AgdaBound{M} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{N} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{N} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{A}\<%
 \end{code}
 

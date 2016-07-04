@@ -149,14 +149,9 @@ y \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef \reff{y} \\
 \end{code}
 }
 
-We define $M * P \eqdef \{ P / x \} (M x)$.  Thus, if $P : N =_A N'$
-then $M * P : M N =_B M N'$ (Corollary \ref{cor:pathsub}).
-
 \AgdaHide{
 \begin{code}%
 \>\AgdaFunction{\_⋆[\_∶\_∼\_]} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Path} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Path} \AgdaBound{V}\<%
-\\
-\>\AgdaComment{--M ⋆[ P ∶ N ∼ N' ] = (appT (M ⇑) (var x₀)) ⟦⟦ x₀::= P ∶ x₀:= N ∼ x₀:= N' ⟧⟧}\<%
 \\
 \>\AgdaBound{M} \AgdaFunction{⋆[} \AgdaBound{P} \AgdaFunction{∶} \AgdaBound{N} \AgdaFunction{∼} \AgdaBound{N'} \AgdaFunction{]} \AgdaSymbol{=} \AgdaFunction{app*} \AgdaBound{N} \AgdaBound{N'} \AgdaSymbol{(}\AgdaFunction{reff} \AgdaBound{M}\AgdaSymbol{)} \AgdaBound{P}\<%
 \end{code}
