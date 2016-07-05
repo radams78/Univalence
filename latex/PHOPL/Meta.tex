@@ -441,11 +441,6 @@ Induction on derivations.
 \end{code}
 }
 
-\begin{prop}[Path Substitution]
-If $\Gamma, x : A \vdash M : B$ and $\Gamma \vdash P : N =_A N'$ then
-$\Gamma \vdash M \{ x := P : N ∼ N' \} : M [ x:= N ] =_B M [ x:= N' ]$.
-\end{prop}
-
 Given substitutions $\sigma, \rho : \Gamma \rightarrow \Theta$, a \emph{path substitution} $\tau : \sigma \sim \rho$
 is a function mapping every term variable $x \in \Gamma$ to a path $\tau(x)$ such that:
 \begin{itemize}
@@ -516,10 +511,14 @@ if $x : A \in \Gamma$ then $\Theta \vdash \tau(x) : \sigma(x) =_A \rho(x)$.
 \end{code}
 }
 
-\begin{corollary}
+\begin{prop}[Path Substitution]
 If $\tau : \sigma \sim \rho : \Gamma \rightarrow \Theta$ and $\Gamma \vdash M : A$,
-then $\Gamma \vdash M \{ \tau : \sigma \sim \rho \} : M [ \sigma ] =_A M [ \rho ]$.
-\end{corollary}
+then $\Theta \vdash M \{ \tau : \sigma \sim \rho \} : M [ \sigma ] =_A M [ \rho ]$.
+\end{prop}
+
+\begin{proof}
+Induction on derivations.
+\end{proof}
 
 \begin{code}%
 \>\AgdaFunction{path-substitution} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \<[62]%
@@ -719,21 +718,16 @@ then $\Gamma \vdash M \{ \tau : \sigma \sim \rho \} : M [ \sigma ] =_A M [ \rho 
 \\
 \>[0]\AgdaIndent{22}{}\<[22]%
 \>[22]\AgdaFunction{sub↗} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaFunction{•RS} \AgdaBound{σ}\AgdaSymbol{)} \AgdaFunction{∼} \AgdaFunction{liftRep} \AgdaInductiveConstructor{-Path} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaSymbol{(}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-Term} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaFunction{•RS} \AgdaFunction{sub↗} \AgdaBound{σ}\<%
-\end{code}
-}
-
-\begin{corollary}
-\label{cor:pathsub}
-If $\Gamma \vdash M : A \rightarrow B$ and $\Gamma \vdash P : N =_A N'$ then $\Gamma \vdash M * P : M N =_B M N'$.
-\end{corollary}
-
-\begin{code}%
+\\
+%
+\\
 \>\AgdaKeyword{postulate} \AgdaPostulate{⋆-typed} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaBound{N} \AgdaBound{N'} \AgdaBound{Γ} \AgdaBound{A} \AgdaBound{B}\AgdaSymbol{\}} \AgdaSymbol{→} \<[56]%
 \>[56]\<%
 \\
 \>[0]\AgdaIndent{18}{}\<[18]%
 \>[18]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaSymbol{(}\AgdaBound{A} \AgdaInductiveConstructor{⇛} \AgdaBound{B}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{P} \AgdaDatatype{∶} \AgdaBound{N} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{N'} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaFunction{⋆[} \AgdaBound{P} \AgdaFunction{∶} \AgdaBound{N} \AgdaFunction{∼} \AgdaBound{N'} \AgdaFunction{]} \AgdaDatatype{∶} \AgdaFunction{appT} \AgdaBound{M} \AgdaBound{N} \AgdaFunction{≡〈} \AgdaBound{B} \AgdaFunction{〉} \AgdaFunction{appT} \AgdaBound{M} \AgdaBound{N'}\<%
 \end{code}
+}
 
 \begin{theorem}[Subject Reduction]
 Let $s$ be a path (proof, term) and $S$ an equation (term, type).

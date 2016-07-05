@@ -38,7 +38,7 @@ E_\Gamma(A \rightarrow B) \eqdef & \{ M \mid \Gamma \vdash M : A \rightarrow B, 
 & \quad \quad \reff{M}_{N N'} P \in E_\Gamma(MN =_B MN') \} \\
 \\
 E_\Gamma(\bot) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
-E_\Gamma(\phi \rightarrow \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \rightarrow \psi, \\
+E_\Gamma(\phi \supset \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \rightarrow \psi, \\
 & \forall (\Delta \supseteq \Gamma)(\epsilon \in E_\Delta(\phi)). \delta \epsilon \in E_\Gamma(\psi) \} \\
 E_\Gamma(\phi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi, \delta \in \SN \} \\
 & \qquad (\phi \text{ neutral}) \\
@@ -633,9 +633,12 @@ E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \
 
 \begin{lm}
 \label{lm:expand-compute}
-Suppose $P[x:=N, y:=N', e:=Q] \in E_\Gamma(M =_A M')$.  Suppose also $\Gamma \vdash (\triplelambda e:x=_By.P)_{N N'} Q : M =_A M'$,
-and $N$, $N'$ and $Q$ are all strongly normalizing.  Then $(\triplelambda e:x=_By.P)_{N N'} Q \in E_\Gamma(M =_A M')$.
+If $s \kr t$, $t \in E_\Gamma(T)$, and $\Gamma \vdash s : T$, then $M \in E_\Gamma(T)$.
 \end{lm}
+
+\begin{proof}
+The proof is by induction on $T$.  The cases where $T$ is $\Omega$, $\bot$ or a neutral term make use of Lemma \ref{lm:krsn}.  For the case of a proposition $\phi \supset \psi$, let $\epsilon \in E_\Gamma(\phi)$.  Then $s' \epsilon \in E_\Gamma(\psi)$, hence $s \epsilon \in E_\Gamma(\psi)$ as required.  The other cases are similar.
+\end{proof}
 
 \begin{code}%
 \>\AgdaFunction{expand-compute} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaFunction{parent} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{N} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{→}\<%

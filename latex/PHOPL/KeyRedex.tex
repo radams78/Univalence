@@ -1,7 +1,10 @@
+\AgdaHide{
 \begin{code}%
 \>\AgdaKeyword{module} \AgdaModule{PHOPL.KeyRedex} \AgdaKeyword{where}\<%
 \\
 %
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Sum}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Product} \AgdaKeyword{renaming} \AgdaSymbol{(}\AgdaInductiveConstructor{\_,\_} \AgdaSymbol{to} \AgdaInductiveConstructor{\_,p\_}\AgdaSymbol{)}\<%
 \\
@@ -12,9 +15,17 @@
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.PathSub}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Red}\<%
-\\
-%
-\\
+\end{code}
+}
+
+We define the relation $\kr$ between expressions as follows.  If $M \kr N$, we say that $M$ has a \emph{key redex} with \emph{reduct} $N$.
+
+\[ \infer{(\lambda x:A.M)N \kr M[x:= N]}{M \text{ is strongly normalising}} \]
+\[ \infer{(\lambda p:\phi.\delta)\epsilon \kr \delta[p:= \epsilon]}{\phi, \epsilon \text{ are strongly normalising}} \]
+\[ \infer{(\triplelambda e:x =_A y.P)_{N N'} Q \kr P[x:= N, y:= N', e:= Q]}{N, N', Q \text{ are strongly normalising} \quad P \text{ is in normal form}} \]
+\[ \infer{MP \kr NP}{M \kr N} \qquad \infer{\delta \epsilon \kr \delta' \epsilon}{\delta \kr \delta'} \]
+
+\begin{code}%
 \>\AgdaKeyword{data} \AgdaDatatype{key-redex} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
@@ -31,38 +42,12 @@
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaInductiveConstructor{appTkr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{N} \AgdaBound{P} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{key-redex} \AgdaBound{M} \AgdaBound{N} \AgdaSymbol{→} \AgdaDatatype{key-redex} \AgdaSymbol{(}\AgdaFunction{appT} \AgdaBound{M} \AgdaBound{P}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{appT} \AgdaBound{N} \AgdaBound{P}\AgdaSymbol{)}\<%
-\\
-%
-\\
-\>\AgdaKeyword{postulate} \AgdaPostulate{key-redex-confluent} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{N} \AgdaBound{P} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
-\\
-\>[2]\AgdaIndent{30}{}\<[30]%
-\>[30]\AgdaDatatype{key-redex} \AgdaBound{M} \AgdaBound{N} \AgdaSymbol{→} \AgdaBound{M} \AgdaDatatype{⇒} \AgdaBound{P} \AgdaSymbol{→} \AgdaFunction{Σ[} \AgdaBound{Q} \AgdaFunction{∈} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K} \AgdaFunction{]} \AgdaDatatype{key-redex} \AgdaBound{P} \AgdaBound{Q} \AgdaFunction{×} \AgdaBound{N} \AgdaDatatype{↠⁺} \AgdaBound{Q}\<%
-\\
-%
-\\
-\>\AgdaFunction{key-redex-SN} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{N} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{N} \AgdaSymbol{→} \AgdaDatatype{key-redex} \AgdaBound{M} \AgdaBound{N} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{M}\<%
-\\
-\>\AgdaFunction{key-redex-SN} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaBound{SNN} \AgdaSymbol{=} \AgdaPostulate{SNE} \AgdaSymbol{(λ} \AgdaBound{N} \AgdaSymbol{→} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{key-redex} \AgdaBound{M} \AgdaBound{N} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{M}\AgdaSymbol{)} \<[72]%
-\>[72]\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaSymbol{(λ} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaBound{SNN} \AgdaBound{ih} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaBound{M▷N} \AgdaSymbol{→} \AgdaInductiveConstructor{SNI} \AgdaBound{M} \AgdaSymbol{(λ} \AgdaBound{M'} \AgdaBound{M⇒M'} \AgdaSymbol{→} \<[45]%
-\>[45]\<%
-\\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaKeyword{let} \AgdaSymbol{(}\AgdaBound{P} \AgdaInductiveConstructor{,p} \AgdaBound{M'▷P} \AgdaInductiveConstructor{,p} \AgdaBound{N↠⁺P}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaPostulate{key-redex-confluent} \AgdaBound{M▷N} \AgdaBound{M⇒M'} \AgdaKeyword{in} \<[62]%
-\>[62]\<%
-\\
-\>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaBound{ih} \AgdaBound{P} \AgdaBound{N↠⁺P} \AgdaBound{M'▷P}\AgdaSymbol{))} \<[23]%
-\>[23]\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaBound{SNN}\<%
-\\
-%
-\\
+\end{code}
+
+Clearly, if $M \kr N$, then $M \rightarrow N$.  We also have the following properties.
+
+\AgdaHide{
+\begin{code}%
 \>\AgdaFunction{key-redex-rep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{N} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{U} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
@@ -112,3 +97,4 @@
 \>[4]\AgdaIndent{24}{}\<[24]%
 \>[24]\AgdaDatatype{key-redex} \AgdaBound{M} \AgdaBound{M'} \AgdaSymbol{→} \AgdaDatatype{key-redex} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⋆[} \AgdaBound{P} \AgdaFunction{∶} \AgdaBound{N} \AgdaFunction{∼} \AgdaBound{N'} \AgdaFunction{]}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{M'} \AgdaFunction{⋆[} \AgdaBound{P} \AgdaFunction{∶} \AgdaBound{N} \AgdaFunction{∼} \AgdaBound{N'} \AgdaFunction{]}\AgdaSymbol{)}\<%
 \end{code}
+}

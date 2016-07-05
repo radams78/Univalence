@@ -27,7 +27,7 @@ E_\Gamma(A \rightarrow B) \eqdef & \{ M \mid \Gamma \vdash M : A \rightarrow B, 
 & \quad \quad \reff{M}_{N N'} P \in E_\Gamma(MN =_B MN') \} \\
 \\
 E_\Gamma(\bot) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
-E_\Gamma(\phi \rightarrow \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \rightarrow \psi, \\
+E_\Gamma(\phi \supset \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \rightarrow \psi, \\
 & \forall (\Delta \supseteq \Gamma)(\epsilon \in E_\Delta(\phi)). \delta \epsilon \in E_\Gamma(\psi) \} \\
 E_\Gamma(\phi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi, \delta \in \SN \} \\
 & \qquad (\phi \text{ neutral}) \\
@@ -192,14 +192,15 @@ conv-computeE {A = A ⇛ B} computeP Γ⊢M∶A Γ⊢N∶A Γ⊢M'∶A Γ⊢N'�
 postulate expand-computeE : ∀ {V} {Γ : Context V} {M} {A} {N} {P} {Q} →
                           computeE Γ M A N Q → Γ ⊢ P ∶ M ≡〈 A 〉 N → key-redex P Q → computeE Γ M A N P
 
-expand-computeT : ∀ {V} {Γ : Context V} {A} {M} {N} → computeT Γ A N → Γ ⊢ M ∶ ty A → key-redex M N → computeT Γ A M
-expand-computeT {A = Ω} computeψ _ φ▷ψ = key-redex-SN computeψ φ▷ψ
-expand-computeT {A = A ⇛ B} {M} {M'} (computeM'app ,p computeM'eq) Γ⊢M∶A⇛B M▷M' = 
+expand-computeT : ∀ {V} {Γ : Context V} {A} {M} {N} → computeT Γ A N → Γ ⊢ M ∶ ty A → SN M → key-redex M N → computeT Γ A M
+expand-computeT {A = Ω} computeψ _ SNM φ▷ψ = SNM
+expand-computeT {A = A ⇛ B} {M} {M'} (computeM'app ,p computeM'eq) Γ⊢M∶A⇛B SNM M▷M' = 
   (λ Δ {ρ} {N} ρ∶Γ⇒Δ Δ⊢N∶A computeN → 
     let computeM'N : computeT Δ B (appT (M' 〈 ρ 〉) N)
         computeM'N = computeM'app Δ ρ∶Γ⇒Δ Δ⊢N∶A computeN
     in expand-computeT computeM'N 
-       (appR (weakening Γ⊢M∶A⇛B (context-validity Δ⊢N∶A) ρ∶Γ⇒Δ) Δ⊢N∶A) 
+       (appR (weakening Γ⊢M∶A⇛B (context-validity Δ⊢N∶A) ρ∶Γ⇒Δ) Δ⊢N∶A)
+       {!!}
              (appTkr (key-redex-rep M▷M'))) ,p 
   (λ Δ ρ∶Γ⇒Δ Δ⊢P∶N≡N' computeN computeN' computeP₁ → 
     expand-computeE 
@@ -233,20 +234,23 @@ postulate expand-computeP : ∀ {V} {Γ : Context V} {S} {L : Leaves V S} {δ ε
 
 \begin{lm}
 \label{lm:expand-compute}
-Suppose $P[x:=N, y:=N', e:=Q] \in E_\Gamma(M =_A M')$.  Suppose also $\Gamma \vdash (\triplelambda e:x=_By.P)_{N N'} Q : M =_A M'$,
-and $N$, $N'$ and $Q$ are all strongly normalizing.  Then $(\triplelambda e:x=_By.P)_{N N'} Q \in E_\Gamma(M =_A M')$.
+If $s \kr t$, $t \in E_\Gamma(T)$, and $\Gamma \vdash s : T$, then $M \in E_\Gamma(T)$.
 \end{lm}
+
+\begin{proof}
+The proof is by induction on $T$.  The cases where $T$ is $\Omega$, $\bot$ or a neutral term make use of Lemma \ref{lm:krsn}.  For the case of a proposition $\phi \supset \psi$, let $\epsilon \in E_\Gamma(\phi)$.  Then $s' \epsilon \in E_\Gamma(\psi)$, hence $s \epsilon \in E_\Gamma(\psi)$ as required.  The other cases are similar.
+\end{proof}
 
 \begin{code}
 expand-compute : ∀ {V} {K} {Γ : Context V} {A : Expression V (parent K)} {M N : Expression V (varKind K)} →
-  compute Γ A N → Γ ⊢ M ∶ A → key-redex M N → compute Γ A M
+  compute Γ A N → Γ ⊢ M ∶ A → SN M → key-redex M N → compute Γ A M
 \end{code}
 
 \AgdaHide{
 \begin{code}
 expand-compute {K = -Term} {A = app (-ty A) out} = expand-computeT {A = A}
-expand-compute {K = -Proof} (S ,p ψ ,p φ↠ψ ,p computeε) Γ⊢δ∶φ δ▷ε = (S ,p ψ ,p φ↠ψ ,p expand-computeP {S = S} computeε (Type-Reduction Γ⊢δ∶φ φ↠ψ) δ▷ε)
-expand-compute {K = -Path} {A = app (-eq A) (M ,, N ,, out)} computeQ Γ⊢P∶M≡N P▷Q = expand-computeE computeQ Γ⊢P∶M≡N P▷Q
+expand-compute {K = -Proof} (S ,p ψ ,p φ↠ψ ,p computeε) Γ⊢δ∶φ SNδ δ▷ε = (S ,p ψ ,p φ↠ψ ,p expand-computeP {S = S} computeε (Type-Reduction Γ⊢δ∶φ φ↠ψ) δ▷ε)
+expand-compute {K = -Path} {A = app (-eq A) (M ,, N ,, out)} computeQ Γ⊢P∶M≡N SNP P▷Q = expand-computeE computeQ Γ⊢P∶M≡N P▷Q
 
 record E' {V} {K} (Γ : Context V) (A : Expression V (parent K)) (E : Expression V (varKind K)) : Set where
   constructor E'I
@@ -269,8 +273,8 @@ E'-typed : ∀ {V} {K} {Γ : Context V} {A} {M : Expression V (varKind K)} →
 E'-typed = E'.typed
 
 expand-E' : ∀ {V} {K} {Γ} {A} {M N : Expression V (varKind K)} →
-            E' Γ A N → Γ ⊢ M ∶ A → key-redex M N → E' Γ A M
-expand-E' N∈EΓA Γ⊢M∶A M▷N = E'I Γ⊢M∶A (expand-compute (E'.computable N∈EΓA) Γ⊢M∶A M▷N)
+            E' Γ A N → Γ ⊢ M ∶ A → SN M → key-redex M N → E' Γ A M
+expand-E' N∈EΓA Γ⊢M∶A SNM M▷N = E'I Γ⊢M∶A (expand-compute (E'.computable N∈EΓA) Γ⊢M∶A SNM M▷N)
 
 postulate expand-E : ∀ {V} {Γ : Context V} {A : Type} {M N : Term V} →
                    E Γ A N → Γ ⊢ M ∶ ty A → key-redex M N → E Γ A M
@@ -283,7 +287,6 @@ postulate func-E : ∀ {U} {Γ : Context U} {M : Term U} {A} {B} →
 
 \begin{lm}$ $
 \label{lm:conv-compute}
-\begin{enumerate}
 \item
 If $\delta \in E_\Gamma(\phi)$, $\Gamma \vdash \psi : \Omega$ and $\phi \simeq \psi$, then $\delta \in E_\Gamma(\psi)$.
 \item
@@ -291,6 +294,10 @@ If $P \in E_\Gamma(M =_A N)$, $\Gamma \vdash M' : A$, $\Gamma \vdash N' : A$, $M
 then $P \in E_\Gamma(M' =_A N')$.
 \end{enumerate}
 \end{lm}
+
+\begin{proof}
+
+\end{proof}
 
 \begin{code}
 postulate conv-E' : ∀ {V} {K} {Γ} {A} {B} {M : Expression V (varKind K)} →
@@ -337,7 +344,7 @@ postulate minus-EP : ∀ {V} {Γ : Context V} {P : Path V} {φ ψ : Term V} →
                    EE Γ (φ ≡〈 Ω 〉 ψ) P → EP Γ (ψ ⊃ φ) (minus P)
 
 expand-EP : ∀ {V} {Γ : Context V} {φ : Term V} {δ ε : Proof V} →
-            EP Γ φ ε → Γ ⊢ δ ∶ φ → key-redex δ ε → EP Γ φ δ
+            EP Γ φ ε → Γ ⊢ δ ∶ φ → SN δ → key-redex δ ε → EP Γ φ δ
 expand-EP = expand-E'
 
 postulate func-EP : ∀ {U} {Γ : Context U} {δ : Proof U} {φ} {ψ} →

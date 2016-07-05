@@ -276,11 +276,6 @@ postulate Generation-ΛP : ∀ {V} {Γ : Context V} {φ} {δ} {ε} {ψ} →
 \end{code}
 }
 
-\begin{prop}[Path Substitution]
-If $\Gamma, x : A \vdash M : B$ and $\Gamma \vdash P : N =_A N'$ then
-$\Gamma \vdash M \{ x := P : N ∼ N' \} : M [ x:= N ] =_B M [ x:= N' ]$.
-\end{prop}
-
 Given substitutions $\sigma, \rho : \Gamma \rightarrow \Theta$, a \emph{path substitution} $\tau : \sigma \sim \rho$
 is a function mapping every term variable $x \in \Gamma$ to a path $\tau(x)$ such that:
 \begin{itemize}
@@ -317,10 +312,14 @@ postulate sub↗-decomp : ∀ {U} {V} {C} {K} (M : Subexpression (U , -Term) C K
 \end{code}
 }
 
-\begin{corollary}
+\begin{prop}[Path Substitution]
 If $\tau : \sigma \sim \rho : \Gamma \rightarrow \Theta$ and $\Gamma \vdash M : A$,
-then $\Gamma \vdash M \{ \tau : \sigma \sim \rho \} : M [ \sigma ] =_A M [ \rho ]$.
-\end{corollary}
+then $\Theta \vdash M \{ \tau : \sigma \sim \rho \} : M [ \sigma ] =_A M [ \rho ]$.
+\end{prop}
+
+\begin{proof}
+Induction on derivations.
+\end{proof}
 
 \begin{code}
 path-substitution : ∀ {U} {V} {Γ : Context U} {Δ : Context V} 
@@ -397,18 +396,11 @@ postulate sub↖-compRP : ∀ {U} {V} {W} {σ : Sub U V} {ρ : Rep V W} →
 
 postulate sub↗-compRP : ∀ {U} {V} {W} {σ : Sub U V} {ρ : Rep V W} →
                       sub↗ (ρ •RS σ) ∼ liftRep -Path (liftRep -Term (liftRep -Term ρ)) •RS sub↗ σ
-\end{code}
-}
 
-\begin{corollary}
-\label{cor:pathsub}
-If $\Gamma \vdash M : A \rightarrow B$ and $\Gamma \vdash P : N =_A N'$ then $\Gamma \vdash M * P : M N =_B M N'$.
-\end{corollary}
-
-\begin{code}
 postulate ⋆-typed : ∀ {V} {M : Term V} {P N N' Γ A B} → 
                   Γ ⊢ M ∶ ty (A ⇛ B) → Γ ⊢ P ∶ N ≡〈 A 〉 N' → Γ ⊢ M ⋆[ P ∶ N ∼ N' ] ∶ appT M N ≡〈 B 〉 appT M N'
 \end{code}
+}
 
 \begin{theorem}[Subject Reduction]
 Let $s$ be a path (proof, term) and $S$ an equation (term, type).

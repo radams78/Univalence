@@ -45,6 +45,7 @@
 \newcommand{\dom}{\ensuremath{\operatorname{dom}}}
 \newcommand{\sym}[1]{\ensuremath{\mathsf{sym} \left( {#1} \right)}}
 \newcommand{\trans}[2]{\ensuremath{\mathsf{trans} \left( {#1} , {#2} \right)}}
+\newcommand{\kr}{\mathop{\rhd \!\!\! \rhd}}
 
 \begin{document}
 
@@ -138,6 +139,7 @@ We extend the system to a type theory $\lambda o e$, or predicative higher-order
 
 \subsection{Strong Normalization Proof}
 
+\input{PHOPL/KeyRedex.tex}
 \input{PHOPL/Computable.tex}
 \input{PHOPL/SubC.tex}
 \input{PHOPL/MainProp.tex}
