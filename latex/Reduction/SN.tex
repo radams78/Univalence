@@ -67,30 +67,30 @@ If $E$ is strongly normalizable and $E \twoheadrightarrow_R F$ then $F$ is stron
 }
 
 \begin{code}%
-\>\AgdaFunction{SNsubbodyl} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{K} \AgdaBound{A} \AgdaBound{L} \AgdaBound{C} \AgdaBound{M} \AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{→} \<[33]%
-\>[33]\<%
+\>\AgdaFunction{SNsubbodyl} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{K} \AgdaBound{A} \AgdaBound{L} \AgdaBound{M} \AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{→} \<[31]%
+\>[31]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaDatatype{SN} \AgdaSymbol{(}\AgdaInductiveConstructor{\_,,\_} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaBound{M} \AgdaBound{N}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{M}\<%
+\>[2]\AgdaDatatype{SN} \AgdaSymbol{(}\AgdaInductiveConstructor{\_,,\_} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaBound{M} \AgdaBound{N}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{M}\<%
 \end{code}
 
 \AgdaHide{
 \begin{code}%
-\>\AgdaFunction{SNsubbodyl} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{.(}\AgdaInductiveConstructor{\_,,\_} \AgdaBound{M} \AgdaBound{N}\AgdaSymbol{)} \AgdaBound{SNM}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{SNI} \AgdaBound{M} \AgdaSymbol{(λ} \AgdaBound{M'} \AgdaBound{M⇒M'} \AgdaSymbol{→} \AgdaFunction{SNsubbodyl} \AgdaSymbol{(}\AgdaBound{SNM} \AgdaSymbol{(}\AgdaInductiveConstructor{\_,,\_} \AgdaBound{M'} \AgdaBound{N}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaBound{M⇒M'}\AgdaSymbol{)))}\<%
+\>\AgdaFunction{SNsubbodyl} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{.(}\AgdaInductiveConstructor{\_,,\_} \AgdaBound{M} \AgdaBound{N}\AgdaSymbol{)} \AgdaBound{SNM}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{SNI} \AgdaBound{M} \AgdaSymbol{(λ} \AgdaBound{M'} \AgdaBound{M⇒M'} \AgdaSymbol{→} \AgdaFunction{SNsubbodyl} \AgdaSymbol{(}\AgdaBound{SNM} \AgdaSymbol{(}\AgdaInductiveConstructor{\_,,\_} \AgdaBound{M'} \AgdaBound{N}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaBound{M⇒M'}\AgdaSymbol{)))}\<%
 \end{code}
 }
 
 \begin{code}%
-\>\AgdaFunction{SNsubbodyr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{K} \AgdaBound{A} \AgdaBound{L} \AgdaBound{C} \AgdaBound{M} \AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{→} \<[33]%
-\>[33]\<%
+\>\AgdaFunction{SNsubbodyr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{K} \AgdaBound{A} \AgdaBound{L} \AgdaBound{M} \AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{→} \<[31]%
+\>[31]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaDatatype{SN} \AgdaSymbol{(}\AgdaInductiveConstructor{\_,,\_} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaBound{M} \AgdaBound{N}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{N}\<%
+\>[2]\AgdaDatatype{SN} \AgdaSymbol{(}\AgdaInductiveConstructor{\_,,\_} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaBound{M} \AgdaBound{N}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{N}\<%
 \end{code}
 
 \AgdaHide{
 \begin{code}%
-\>\AgdaFunction{SNsubbodyr} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{.(}\AgdaInductiveConstructor{\_,,\_} \AgdaBound{M} \AgdaBound{N}\AgdaSymbol{)} \AgdaBound{SNN}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{SNI} \AgdaBound{N} \AgdaSymbol{(λ} \AgdaBound{N'} \AgdaBound{N⇒N'} \AgdaSymbol{→} \AgdaFunction{SNsubbodyr} \AgdaSymbol{(}\AgdaBound{SNN} \AgdaSymbol{(}\AgdaInductiveConstructor{\_,,\_} \AgdaBound{M} \AgdaBound{N'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaBound{N⇒N'}\AgdaSymbol{)))}\<%
+\>\AgdaFunction{SNsubbodyr} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{.(}\AgdaInductiveConstructor{\_,,\_} \AgdaBound{M} \AgdaBound{N}\AgdaSymbol{)} \AgdaBound{SNN}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{SNI} \AgdaBound{N} \AgdaSymbol{(λ} \AgdaBound{N'} \AgdaBound{N⇒N'} \AgdaSymbol{→} \AgdaFunction{SNsubbodyr} \AgdaSymbol{(}\AgdaBound{SNN} \AgdaSymbol{(}\AgdaInductiveConstructor{\_,,\_} \AgdaBound{M} \AgdaBound{N'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaBound{N⇒N'}\AgdaSymbol{)))}\<%
 \end{code}
 }
 

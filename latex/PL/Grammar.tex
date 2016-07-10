@@ -74,16 +74,16 @@ The syntax of the system called \emph{propositional logic} is given by the follo
 \>[2]\AgdaKeyword{data} \AgdaDatatype{PLCon} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K} \AgdaSymbol{:} \AgdaDatatype{ExpressionKind}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Kind} \AgdaSymbol{(}\AgdaInductiveConstructor{-Constructor} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-app} \AgdaSymbol{:} \AgdaDatatype{PLCon} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaInductiveConstructor{[]} \AgdaFunction{proof} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaInductiveConstructor{[]} \AgdaFunction{proof} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaFunction{proof}\AgdaSymbol{)))}\<%
+\>[4]\AgdaInductiveConstructor{-app} \AgdaSymbol{:} \AgdaDatatype{PLCon} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaFunction{proof}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaFunction{proof}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaFunction{proof}\AgdaSymbol{)))}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-lam} \AgdaSymbol{:} \AgdaDatatype{PLCon} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaInductiveConstructor{[]} \AgdaFunction{prp} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaFunction{[} \AgdaInductiveConstructor{-proof} \AgdaFunction{]} \AgdaFunction{proof} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaFunction{proof}\AgdaSymbol{)))}\<%
+\>[4]\AgdaInductiveConstructor{-lam} \AgdaSymbol{:} \AgdaDatatype{PLCon} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaFunction{prp}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaInductiveConstructor{-proof} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaFunction{proof}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaFunction{proof}\AgdaSymbol{)))}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaInductiveConstructor{-bot} \AgdaSymbol{:} \AgdaDatatype{PLCon} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaFunction{prp}\AgdaSymbol{)}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-imp} \AgdaSymbol{:} \AgdaDatatype{PLCon} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaInductiveConstructor{[]} \AgdaFunction{prp} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaInductiveConstructor{[]} \AgdaFunction{prp} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaFunction{prp}\AgdaSymbol{)))}\<%
+\>[4]\AgdaInductiveConstructor{-imp} \AgdaSymbol{:} \AgdaDatatype{PLCon} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaFunction{prp}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaFunction{prp}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaFunction{prp}\AgdaSymbol{)))}\<%
 \\
 %
 \\
@@ -191,7 +191,7 @@ The syntax of the system called \emph{propositional logic} is given by the follo
 \>[4]\AgdaSymbol{(}\AgdaFunction{close} \AgdaBound{φ}\AgdaSymbol{)} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{•SR} \AgdaFunction{magic} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{≡⟨} \AgdaFunction{sub-congr} \AgdaSymbol{(}\AgdaFunction{close} \AgdaBound{φ}\AgdaSymbol{)} \AgdaSymbol{(λ} \AgdaSymbol{())} \AgdaFunction{⟩}\<%
+\>[2]\AgdaFunction{≡⟨} \AgdaFunction{sub-congr} \AgdaSymbol{(λ} \AgdaSymbol{())} \AgdaSymbol{(}\AgdaFunction{close} \AgdaBound{φ}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaSymbol{(}\AgdaFunction{close} \AgdaBound{φ}\AgdaSymbol{)} \AgdaFunction{⟦} \AgdaFunction{rep2sub} \AgdaFunction{magic} \AgdaFunction{⟧}\<%

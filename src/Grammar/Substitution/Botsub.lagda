@@ -66,7 +66,7 @@ botSub-up {F} {V} {K} {C} {L} {E} circ {E'} = let open ≡-Reasoning in
     ap F (up F) E' ⟦ x₀:= E ⟧
   ≡⟨⟨ Composition.ap-circ circ E' ⟩⟩
     E' ⟦ Composition.circ circ (x₀:= E) (up F) ⟧
-  ≡⟨ sub-congr E' (botSub-up' circ) ⟩
+  ≡⟨ sub-congr (botSub-up' circ) E' ⟩
     E' ⟦ idSub V ⟧
   ≡⟨ sub-idOp ⟩
     E'
@@ -94,7 +94,7 @@ circ-botSub' {F} {U} {V} {K} {E} circ₁ circ₂ {σ} (↑ x) = let open ≡-Rea
     apV F σ x
   ≡⟨⟨ sub-idOp ⟩⟩
     apV F σ x ⟦ idSub V ⟧
-  ≡⟨⟨ sub-congr (apV F σ x) (botSub-up' circ₂) ⟩⟩
+  ≡⟨⟨ sub-congr (botSub-up' circ₂) (apV F σ x) ⟩⟩
     apV F σ x ⟦ Composition.circ circ₂ (x₀:= (ap F σ E)) (up F) ⟧
   ≡⟨ Composition.ap-circ circ₂ (apV F σ x) ⟩
     ap F (up F) (apV F σ x) ⟦ x₀:= (ap F σ E) ⟧
@@ -178,7 +178,7 @@ botSub₃-liftRep₃ {M2 = M2} {M1} {M0} {ρ} N = let open ≡-Reasoning in
                 N 〈 liftRep _ (liftRep _ (liftRep _ ρ)) 〉 ⟦ x₂:= M2 〈 ρ 〉 ,x₁:= M1 〈 ρ 〉 ,x₀:= M0 〈 ρ 〉 ⟧
               ≡⟨⟨ sub-compSR N ⟩⟩
                 N ⟦ (x₂:= M2 〈 ρ 〉 ,x₁:= M1 〈 ρ 〉 ,x₀:= M0 〈 ρ 〉) •SR liftRep _ (liftRep _ (liftRep _ ρ)) ⟧
-              ≡⟨ sub-congr N botSub₃-liftRep₃' ⟩
+              ≡⟨ sub-congr botSub₃-liftRep₃' N ⟩
                 N ⟦ ρ •RS (x₂:= M2 ,x₁:= M1 ,x₀:= M0) ⟧
               ≡⟨ sub-compRS N ⟩
                 N ⟦ x₂:= M2 ,x₁:= M1 ,x₀:= M0 ⟧ 〈 ρ 〉

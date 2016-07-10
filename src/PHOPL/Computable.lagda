@@ -192,8 +192,8 @@ conv-computeE {A = A ⇛ B} computeP Γ⊢M∶A Γ⊢N∶A Γ⊢M'∶A Γ⊢N'�
 postulate expand-computeE : ∀ {V} {Γ : Context V} {M} {A} {N} {P} {Q} →
                           computeE Γ M A N Q → Γ ⊢ P ∶ M ≡〈 A 〉 N → key-redex P Q → computeE Γ M A N P
 
-expand-computeT : ∀ {V} {Γ : Context V} {A} {M} {N} → computeT Γ A N → Γ ⊢ M ∶ ty A → SN M → key-redex M N → computeT Γ A M
-expand-computeT {A = Ω} computeψ _ SNM φ▷ψ = SNM
+postulate expand-computeT : ∀ {V} {Γ : Context V} {A} {M} {N} → computeT Γ A N → Γ ⊢ M ∶ ty A → SN M → key-redex M N → computeT Γ A M
+{- expand-computeT {A = Ω} computeψ _ SNM φ▷ψ = SNM
 expand-computeT {A = A ⇛ B} {M} {M'} (computeM'app ,p computeM'eq) Γ⊢M∶A⇛B SNM M▷M' = 
   (λ Δ {ρ} {N} ρ∶Γ⇒Δ Δ⊢N∶A computeN → 
     let computeM'N : computeT Δ B (appT (M' 〈 ρ 〉) N)
@@ -220,7 +220,7 @@ expand-computeT {A = A ⇛ B} {M} {M'} (computeM'app ,p computeM'eq) Γ⊢M∶A�
         (sym-conv (appT-convl (red-conv (red-rep (key-redex-red M▷M')))))) 
       (⋆-typed (weakening Γ⊢M∶A⇛B (context-validity Δ⊢P∶N≡N') ρ∶Γ⇒Δ) 
         Δ⊢P∶N≡N') 
-      (key-redex-⋆ (key-redex-rep M▷M')))
+      (key-redex-⋆ (key-redex-rep M▷M'))) -}
 
 compute : ∀ {V} {K} → Context V → Expression V (parent K) → Expression V (varKind K) → Set
 compute {K = -Term} Γ (app (-ty A) out) M = computeT Γ A M
@@ -287,6 +287,7 @@ postulate func-E : ∀ {U} {Γ : Context U} {M : Term U} {A} {B} →
 
 \begin{lm}$ $
 \label{lm:conv-compute}
+\begin{enumerate}
 \item
 If $\delta \in E_\Gamma(\phi)$, $\Gamma \vdash \psi : \Omega$ and $\phi \simeq \psi$, then $\delta \in E_\Gamma(\psi)$.
 \item

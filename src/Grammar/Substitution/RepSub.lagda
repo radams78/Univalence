@@ -68,8 +68,8 @@ liftOp'-is-liftOp' : ∀ {U} {V} {ρ : Rep U V} {A} →
 
 \AgdaHide{
 \begin{code}
-liftOp'-is-liftOp' {ρ = ρ} {A = []} = ∼-refl {σ = rep2sub ρ}
-liftOp'-is-liftOp' {U} {V} {ρ} {K ∷ A} = let open EqReasoning (OP _ _) in 
+liftOp'-is-liftOp' {ρ = ρ} {A = out _} = ∼-refl {σ = rep2sub ρ}
+liftOp'-is-liftOp' {U} {V} {ρ} {Π K A} = let open EqReasoning (OP _ _) in 
   begin
     rep2sub (liftOp'R A (liftRep K ρ))
   ≈⟨ liftOp'-is-liftOp' {A = A} ⟩
@@ -90,13 +90,13 @@ rep-is-sub : ∀ {U} {V} {K} {C} (E : Subexpression U K C) {ρ : Rep U V} →
 rep-is-sub (var _) = refl
 rep-is-sub (app c E) = cong (app c) (rep-is-sub E)
 rep-is-sub out = refl
-rep-is-sub {U} {V} (_,,_ {A = A} {L = L} E F) {ρ} = cong₂ _,,_ 
-  (let open ≡-Reasoning {A = Expression (extend V A) L} in
+rep-is-sub {U} {V} (_,,_ {A = A} E F) {ρ} = cong₂ _,,_ 
+  (let open ≡-Reasoning {A = Subexpression (dom V A) _ _} in
   begin 
     E 〈 liftOp'R A ρ 〉
   ≡⟨ rep-is-sub E ⟩
     E ⟦ (λ K x → var (liftOp'R A ρ K x)) ⟧ 
-  ≡⟨ ap-congl E (liftOp'-is-liftOp' {A = A}) ⟩
+  ≡⟨ ap-congl (liftOp'-is-liftOp' {A = A}) E ⟩
     E ⟦ liftOp' A (λ K x → var (ρ K x)) ⟧
   ∎)
   (rep-is-sub F)

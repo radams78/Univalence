@@ -73,16 +73,12 @@ We formalize this definition in stages.  First, we define a \emph{pre-family of 
 \>[4]\AgdaField{Op} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaField{apV} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaField{Op} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Var} \AgdaBound{U} \AgdaBound{K} \AgdaSymbol{→} \<[45]%
-\>[45]\<%
+\>[4]\AgdaField{apV} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaField{Op} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Var} \AgdaBound{U} \AgdaBound{K} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)}\<%
 \\
-\>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)}\<%
-\\
-\>[0]\AgdaIndent{4}{}\<[4]%
+\>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaField{up} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaField{Op} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{)}\<%
 \\
-\>[0]\AgdaIndent{4}{}\<[4]%
+\>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaField{apV-up} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{x} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{V} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \<[43]%
 \>[43]\<%
 \\
@@ -134,8 +130,7 @@ This allows us to define the relation $\sim$, and prove it is an equivalence rel
 %
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{OP} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \<[30]%
-\>[30]\AgdaRecord{Setoid} \AgdaSymbol{\_} \AgdaSymbol{\_}\<%
+\>[2]\AgdaFunction{OP} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaRecord{Setoid} \AgdaSymbol{\_} \AgdaSymbol{\_}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{OP} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{} \<[20]%
@@ -164,4 +159,3 @@ This allows us to define the relation $\sim$, and prove it is an equivalence rel
 \>[5]\AgdaIndent{7}{}\<[7]%
 \>[7]\AgdaField{trans} \AgdaSymbol{=} \AgdaFunction{∼-trans} \AgdaSymbol{\}} \AgdaSymbol{\}}\<%
 \end{code}
-

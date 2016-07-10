@@ -29,6 +29,7 @@ data key-redex {V} : ∀ {K} → Expression V K → Expression V K → Set where
 
 Clearly, if $M \kr N$, then $M \rightarrow N$.  We also have the following properties.
 
+\begin{lm}
 \label{lm:krsn}
 If $M \kr N$ and $M \twoheadrightarrow P$, then there exists $Q$ such that $N \twoheadrightarrow Q$, and either $P \kr Q$ or $P \equiv Q$.
 \end{lm}

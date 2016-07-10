@@ -168,7 +168,7 @@ WTEaux {Γ = Γ} {φ = φ} ψ Γ,p∶φ⊢δ∶ψ Γ⊢ε∶φ δ[p∶=ε]∈CΓ
     (let open ≡-Reasoning in 
     begin
       ψ 〈 magic 〉
-    ≡⟨ rep-congr ψ (λ ()) ⟩
+    ≡⟨ rep-congr (λ ()) ψ ⟩
       ψ 〈 upRep •R magic 〉
     ≡⟨ rep-comp ψ ⟩
       ψ 〈 magic 〉 〈 upRep 〉

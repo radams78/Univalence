@@ -110,12 +110,20 @@ There are two \emph{classes} of kinds: expression kinds and constructor kinds.
     -Expression : KindClass
     -Constructor : ExpressionKind → KindClass
 
-  data Kind : KindClass → Set where
+  data AbstractionKind : Set where
+    out : ExpressionKind → AbstractionKind
+    Π : VarKind → AbstractionKind → AbstractionKind
+
+  data Kind : KindClass → Set
+  ConstructorKind : ExpressionKind → Set
+
+  ConstructorKind K = Kind (-Constructor K)
+
+  data Kind where
     base : ExpressionKind → Kind -Expression
 
-    out  : ∀ K → Kind (-Constructor K)
-    Π    : ∀ {K} → List VarKind → ExpressionKind → 
-           Kind (-Constructor K) → Kind (-Constructor K)
+    out  : ∀ K → ConstructorKind K
+    Π    : ∀ {K} → AbstractionKind → ConstructorKind K → ConstructorKind K
 \end{code}
 \end{frame}
 %TODO Colours in Agda code?

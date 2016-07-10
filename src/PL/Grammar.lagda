@@ -39,10 +39,10 @@ module PLgrammar where
   prp = nonVarKind -prp
 
   data PLCon : ∀ {K : ExpressionKind} → Kind (-Constructor K) → Set where
-    -app : PLCon (Π [] proof (Π [] proof (out proof)))
-    -lam : PLCon (Π [] prp (Π [ -proof ] proof (out proof)))
+    -app : PLCon (Π (out proof) (Π (out proof) (out proof)))
+    -lam : PLCon (Π (out prp) (Π (Π -proof (out proof)) (out proof)))
     -bot : PLCon (out prp)
-    -imp : PLCon (Π [] prp (Π [] prp (out prp)))
+    -imp : PLCon (Π (out prp) (Π (out prp) (out prp)))
 
   PLparent : VarKind → ExpressionKind
   PLparent -proof = prp
@@ -88,7 +88,7 @@ close-magic' {P} {Q} {φ} {σ} =
     close φ 〈 magic 〉 ⟦ σ ⟧
   ≡⟨⟨ sub-compSR (close φ) ⟩⟩
     (close φ) ⟦ σ •SR magic ⟧
-  ≡⟨ sub-congr (close φ) (λ ()) ⟩
+  ≡⟨ sub-congr (λ ()) (close φ) ⟩
     (close φ) ⟦ rep2sub magic ⟧
   ≡⟨⟨ rep-is-sub (close φ) ⟩⟩
     (close φ) 〈 magic 〉
