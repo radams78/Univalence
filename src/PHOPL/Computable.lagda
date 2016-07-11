@@ -267,7 +267,32 @@ postulate func-E : ∀ {U} {Γ : Context U} {M : Term U} {A} {B} →
 \end{code}
 }
 
+\begin{lm}$ $
+\label{lm:conv-compute}
+\begin{enumerate}
+\item
+If $\delta \in E_\Gamma(\phi)$, $\Gamma \vdash \psi : \Omega$ and $\phi \simeq \psi$, then $\delta \in E_\Gamma(\psi)$.
+\item
+If $P \in E_\Gamma(M =_A N)$, $\Gamma \vdash M' : A$, $\Gamma \vdash N' : A$, $M \simeq M'$ and $N \simeq N'$,
+then $P \in E_\Gamma(M' =_A N')$.
+\end{enumerate}
+\end{lm}
+
+\begin{proof}
+From the definition of $E_\Gamma(T)$ and confluence.
+\end{proof}
+
 \begin{lm}
+\label{lm:Egen}
+If $\reff{M} \in E_\Gamma(N =_A N')$ then $M \in E_\Gamma(A)$ and $M \simeq_\beta N \simeq_\beta N'$.
+\end{lm}
+
+\begin{proof}
+%TODO
+\end{proof}
+
+\begin{lm}
+\label{lm:LM0}
 Let $\Gamma, x : A \vdash M : B$ and let $N \in E_\Gamma(A)$.  If $\reff{M[x:=N]} \in E_\Gamma(L =_B L')$, then
 $\reff{(\lambda x:A.M)N} \in E_\Gamma(L =_B L')$.
 \end{lm}
@@ -283,7 +308,7 @@ then $\reff{((\lambda x:A.M)N N_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots
 The proof is by induction on the type $D$.
 
 If $D \equiv \Omega$: it is easy to verify that \\
-$\Gamma \vdash (\lambda x:A.M)N N_1 \cdots N_m)_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n : L =_{D} L'$ using
+$\Gamma \vdash (\lambda x:A.M)N N_1 \cdots N_m)_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n : L =_{\Omega} L'$ using
 Generation.  Lemma \ref{lm:SN}.\ref{lm:SN2} gives that $(\lambda x:A.M)N N_1 \cdots N_m)_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n \in \SN$.
 
 If $D \equiv C_{n+1} \rightarrow E$: let $L_{n+1}, L_{n+1}' \in E_\Gamma(C_{n+1})$ and $P_{n+1} \in E_{\Gamma}(L_{n+1} =_{C_{n+1}} L_{n+1}')$.  Then
@@ -299,21 +324,72 @@ Let $\Gamma, x : A \vdash M : B$ and let $N \in E_\Gamma(A)$.  If $M[x:=N] \in E
 \end{lm}
 
 \begin{proof}
+We prove the following stronger statement:
+
+Suppose $\Gamma, x : A \vdash M : B_1 \rightarrow \cdots \rightarrow B_n \rightarrow C$.  Let $N \in E_\Gamma(A)$ and $N_i \in E_\Gamma(B_i)$.  If
+$M[x:=N]N_1 \cdots N_n \in E_\Gamma(C)$ then $(\lambda x:A.M)NN_1 \cdots N_n \in E_\Gamma(C)$.
+
+The proof is by induction on the type $C$.
+
+If $C \equiv \Omega$: it is easy to verify that $\Gamma \vdash (\lambda x:A.M)NN_1 \cdots N_n : \Omega$.  Lemma \ref{lm:SN}.\ref{lm:SN1}
+gives that $(\lambda x:A.M)NN_1 \cdots N_n \in \SN$.
+
+If $C \equiv B_{n+1} \rightarrow D$: let $N_{n+1} \in E_{\Gamma}(B_{n+1})$.  Then
+\begin{align*}
+M[x:=N]\vec{N} N_{n+1} & \in E_\Gamma(C) \\
+\therefore (\lambda x:A.M)N \vec{N} N_{n+1} & \in E_\Gamma(C)
+\end{align*}
+by the induction hypothesis, as required.
+
+Now let $N_{n+1}, N_{n+1}' \in E_\Gamma(B_{n+1})$ and $P \in E_\Gamma(N_{n+1} =_{B_{n+1}} N_{n+1}')$.  Then
+\begin{align*}
+\reff{M[x:=N]\vec{N}}_{N_{n+1} N_{n+1}'} P & \in E_\Gamma(M[x:=N] \vec{N} N_{n+1} =_C M[x:=N] \vec{N} N_{n+1}') \\
+\therefore \reff{(\lambda x:A.M)N \vec{N}}_{N_{n+1} N_{n+1}'} P & \in E_\Gamma(M[x:=N] \vec{N} N_{n+1} =_C M[x:=N] \vec{N} N_{n+1}')
+\end{align*}
+by the proof of Lemma \ref{lm:LM0}
+\[ \therefore \reff{(\lambda x:A.M)N \vec{N}}_{N_{n+1} N_{n+1}'} P \in E_\Gamma((\lambda x:A.M)N \vec{N} N_{n+1} =_C (\lambda x:A.M)N \vec{N} N_{n+1}') \]
+by Lemma \ref{lm:conv-compute}.
 \end{proof}
 
-\begin{lm}$ $
-\label{lm:conv-compute}
-\begin{enumerate}
-\item
-If $\delta \in E_\Gamma(\phi)$, $\Gamma \vdash \psi : \Omega$ and $\phi \simeq \psi$, then $\delta \in E_\Gamma(\psi)$.
-\item
-If $P \in E_\Gamma(M =_A N)$, $\Gamma \vdash M' : A$, $\Gamma \vdash N' : A$, $M \simeq M'$ and $N \simeq N'$,
-then $P \in E_\Gamma(M' =_A N')$.
-\end{enumerate}
+\begin{lm}
+Let $\Gamma, x : A \vdash M : B$.  Let $N, N_1, N_2 \in E_\Gamma(A)$, and $N \simeq_\beta N_1 \simeq_\beta N_2$.  If $M[x:=N] \in E_\Gamma(B)$,
+then $\reff{\lambda x:A.M}_{N_1 N_2} \reff{N} \in E_\Gamma((\lambda x:A.M)N_1 =_B (\lambda x:A.M) N_2)$.
 \end{lm}
 
 \begin{proof}
+We prove the following stronger statement.
 
+Suppose $\Gamma, x : A \vdash M : B_1 \rightarrow \cdots \rightarrow B_n \rightarrow C$ and $N, N_1, N_2 \in E_\Gamma(A)$,
+$L_i, L_i' \in E_\Gamma(B_i)$ and $P_i \in E_\Gamma(L_i =_{B_i} L_i')$ for all $i$.  If $M[x:=N] \in E_\Gamma(B_1 \rightarrow \cdots \rightarrow B_n \rightarrow C)$,
+then $\reff{\lambda x:A.M}_{N_1 N_2} \reff{N}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in E_\Gamma((\lambda x:A.M) N_1 L_1 \cdots L_n =_C (\lambda x:A.M) N_2 L_1' \cdots L_n')$.
+
+The proof is by induction on the type $C$.
+
+If $C \equiv \Omega$: it is easy to verify that $\Gamma \vdash \reff{\lambda x:A.M}_{N_1 N_2} \reff{N}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n : (\lambda x:A.M) N_1 L_1 \cdots L_n =_C (\lambda x:A.M) N_2 L_1' \cdots L_n'$.  Lemma \ref{lm:SN}.\ref{lm:SN4} gives that $(\lambda x:A.M) N_1 L_1 \cdots L_n =_C (\lambda x:A.M) N_2 L_1' \cdots L_n' \in \SN$.
+
+If $C \equiv B_{n+1} \rightarrow D$: let $L_{n+1}, L_{n+1}' \in E_\Gamma(B_{n+1})$ and $P_{n+1} \in E_\Gamma(L_{n+1} =_{B_{n+1}} L_{n+1}')$.  Then
+\[ \reff{\lambda x:A.M}_{N_1 N_2} \reff{N}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} (P_n)_{L_{n+1} L_{n+1}'} P_{n+1} \in E_\Gamma((\lambda x:A.M) N_1 L_1 \cdots L_n L_{n+1} =_C (\lambda x:A.M) N_2 L_1' \cdots L_n'
+L_{n+1}') \]
+by the induction hypothesis, as required.
+\end{proof}
+
+\begin{lm}
+Let $\Gamma, x : A \vdash M : B$.  Let $N, N' \in E_\Gamma(A)$, $P \in E_\Gamma(N =_A N')$, and suppose:
+\begin{enumerate}
+\item
+$M\{x:=P:N \sim N'\} \in E_\Gamma(M[x:=N] =_B M[x:=N'])$
+\item
+for all $L \in E_\Gamma(A)$, we have $M[x:=L] \in E_\Gamma(B)$.
+\end{enumerate}
+Then $\reff{\lambda x:A.M}_{N N'} P \in E_\Gamma((\lambda x:A.M)N =_B (\lambda x:A.M) N')$.
+\end{lm}
+
+\begin{proof}
+The proof is by induction on the type $B$.
+
+If $B \equiv \Omega$: it is easy to verify that $\Gamma \vdash \reff{\lambda x:A.M}_{N N'} P : (\lambda x:A.M)N =_B (\lambda x:A.M) N'$.  It remains to show that $\reff{\lambda x:A.M}_{N N'} P \in \SN$.
+
+If $P$ does not have the form $\reff{-}$, this follows from Lemma \ref{lm:SN}.\ref{lm:SN3}.  If $P \equiv \reff{L}$, then we have $L \in E_\Gamma(A)$ and %TODO
 \end{proof}
 
 \begin{code}
