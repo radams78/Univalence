@@ -63,8 +63,7 @@ We formalize this definition in stages.  First, we define a \emph{pre-family of 
 record PreOpFamily : Set₂ where
   field
     Op : Alphabet → Alphabet → Set
-    apV : ∀ {U} {V} {K} → Op U V → Var U K → 
-      Expression V (varKind K)
+    apV : ∀ {U} {V} {K} → Op U V → Var U K → Expression V (varKind K)
     up : ∀ {V} {K} → Op V (V , K)
     apV-up : ∀ {V} {K} {L} {x : Var V K} → 
       apV (up {K = L}) x ≡ var (↑ x)
@@ -87,7 +86,7 @@ This allows us to define the relation $\sim$, and prove it is an equivalence rel
   ∼-trans : ∀ {U} {V} {ρ σ τ : Op U V} → ρ ∼op σ → σ ∼op τ → ρ ∼op τ
   ∼-trans ρ-is-σ σ-is-τ x = trans (ρ-is-σ x) (σ-is-τ x)
 
-  OP : Alphabet → Alphabet →  Setoid _ _
+  OP : Alphabet → Alphabet → Setoid _ _
   OP U V = record { 
      Carrier = Op U V ; 
      _≈_ = _∼op_ ; 
@@ -96,4 +95,3 @@ This allows us to define the relation $\sim$, and prove it is an equivalence rel
        sym = ∼-sym ; 
        trans = ∼-trans } }
 \end{code}
-

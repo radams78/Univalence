@@ -75,8 +75,8 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
 
 \AgdaHide{
 \begin{code}
-  liftOp'-circ [] = ∼-refl H
-  liftOp'-circ {U} {V} {W} (K ∷ A) {σ} {ρ} = let open EqReasoning (OP H _ _) in 
+  liftOp'-circ (out _) = ∼-refl H
+  liftOp'-circ {U} {V} {W} (Π K A) {σ} {ρ} = let open EqReasoning (OP H _ _) in 
     begin
       liftOp' H A (liftOp H K (circ σ ρ))
     ≈⟨ liftOp'-cong H A liftOp-circ ⟩
@@ -101,7 +101,7 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
     (let open ≡-Reasoning in 
     begin
       ap H (liftOp' H A (circ σ ρ)) E
-    ≡⟨ ap-congl H E (liftOp'-circ A) ⟩
+    ≡⟨ ap-congl H (liftOp'-circ A) E ⟩
       ap H (circ (liftOp' F A σ) (liftOp' G A ρ)) E
     ≡⟨ ap-circ E ⟩
       ap F (liftOp' F A σ) (ap G (liftOp' G A ρ) E)
@@ -119,7 +119,7 @@ ap-circ-sim {F} {F'} {G} {G'} {H} circ₁ circ₂ {U} {V} {V'} {W} {σ} {ρ} {σ
     ap F σ (ap G ρ E)
   ≡⟨⟨ Composition.ap-circ circ₁ E {σ} {ρ} ⟩⟩
     ap H (Composition.circ circ₁ σ ρ) E
-  ≡⟨ ap-congl H E hyp ⟩
+  ≡⟨ ap-congl H hyp E ⟩
     ap H (Composition.circ circ₂ σ' ρ') E
   ≡⟨ Composition.ap-circ circ₂ E {σ'} {ρ'} ⟩
     ap F' σ' (ap G' ρ' E)

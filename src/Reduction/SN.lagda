@@ -49,24 +49,24 @@ SNsubexp {c = c} {E = E} (SNI .(app c E) SNcE) =
 }
 
 \begin{code}
-SNsubbodyl : ∀ {V K A L C M N} → 
-  SN (_,,_ {V} {K} {A} {L} {C} M N) → SN M
+SNsubbodyl : ∀ {V K A L M N} → 
+  SN (_,,_ {V} {K} {A} {L} M N) → SN M
 \end{code}
 
 \AgdaHide{
 \begin{code}
-SNsubbodyl {V} {K} {A} {L} {C} {M} {N} (SNI .(_,,_ M N) SNM) = SNI M (λ M' M⇒M' → SNsubbodyl (SNM (_,,_ M' N) (appl M⇒M')))
+SNsubbodyl {V} {K} {A} {L} {M} {N} (SNI .(_,,_ M N) SNM) = SNI M (λ M' M⇒M' → SNsubbodyl (SNM (_,,_ M' N) (appl M⇒M')))
 \end{code}
 }
 
 \begin{code}
-SNsubbodyr : ∀ {V K A L C M N} → 
-  SN (_,,_ {V} {K} {A} {L} {C} M N) → SN N
+SNsubbodyr : ∀ {V K A L M N} → 
+  SN (_,,_ {V} {K} {A} {L} M N) → SN N
 \end{code}
 
 \AgdaHide{
 \begin{code}
-SNsubbodyr {V} {K} {A} {L} {C} {M} {N} (SNI .(_,,_ M N) SNN) = SNI N (λ N' N⇒N' → SNsubbodyr (SNN (_,,_ M N') (appr N⇒N')))
+SNsubbodyr {V} {K} {A} {L} {M} {N} (SNI .(_,,_ M N) SNN) = SNI N (λ N' N⇒N' → SNsubbodyr (SNN (_,,_ M N') (appr N⇒N')))
 \end{code}
 }
 

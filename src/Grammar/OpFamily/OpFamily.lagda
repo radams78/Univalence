@@ -46,8 +46,18 @@ record OpFamily : Set₂ where
 
   open Composition COMP public
 
-  postulate comp-congl : ∀ {U} {V} {W} {σ σ' : Op V W} {ρ : Op U V} →
-                       σ ∼op σ' → σ ∘ ρ ∼op σ' ∘ ρ
+  comp-congl : ∀ {U} {V} {W} {σ σ' : Op V W} {ρ : Op U V} →
+    σ ∼op σ' → σ ∘ ρ ∼op σ' ∘ ρ
+  comp-congl {U} {V} {W} {σ} {σ'} {ρ} σ∼σ' x = let open ≡-Reasoning in 
+    begin
+      apV (σ ∘ ρ) x
+    ≡⟨ apV-comp ⟩
+      ap σ (apV ρ x)
+    ≡⟨ ap-congl σ∼σ' (apV ρ x) ⟩
+      ap σ' (apV ρ x)
+    ≡⟨⟨ apV-comp ⟩⟩
+      apV (σ' ∘ ρ) x
+    ∎
   postulate comp-congr : ∀ {U} {V} {W} {σ : Op V W} {ρ ρ' : Op U V} →
                        ρ ∼op ρ' → σ ∘ ρ ∼op σ ∘ ρ'
 \end{code}

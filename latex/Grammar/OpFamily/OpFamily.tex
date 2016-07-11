@@ -96,10 +96,41 @@ Finally. we can define: a \emph{family of operations} is a pre-family with lift 
 %
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{postulate} \AgdaPostulate{comp-congl} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaBound{σ'} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\>[2]\AgdaFunction{comp-congl} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaBound{σ'} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
-\>[2]\AgdaIndent{23}{}\<[23]%
-\>[23]\AgdaBound{σ} \AgdaFunction{∼op} \AgdaBound{σ'} \AgdaSymbol{→} \AgdaBound{σ} \AgdaFunction{∘} \AgdaBound{ρ} \AgdaFunction{∼op} \AgdaBound{σ'} \AgdaFunction{∘} \AgdaBound{ρ}\<%
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaBound{σ} \AgdaFunction{∼op} \AgdaBound{σ'} \AgdaSymbol{→} \AgdaBound{σ} \AgdaFunction{∘} \AgdaBound{ρ} \AgdaFunction{∼op} \AgdaBound{σ'} \AgdaFunction{∘} \AgdaBound{ρ}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{comp-congl} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ'}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaBound{σ∼σ'} \AgdaBound{x} \AgdaSymbol{=} \AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{≡-Reasoning} \AgdaKeyword{in} \<[71]%
+\>[71]\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{begin}\<%
+\\
+\>[4]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaFunction{apV} \AgdaSymbol{(}\AgdaBound{σ} \AgdaFunction{∘} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{x}\<%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{≡⟨} \AgdaFunction{apV-comp} \AgdaFunction{⟩}\<%
+\\
+\>[4]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaFunction{ap} \AgdaBound{σ} \AgdaSymbol{(}\AgdaFunction{apV} \AgdaBound{ρ} \AgdaBound{x}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{≡⟨} \AgdaFunction{ap-congl} \AgdaBound{σ∼σ'} \AgdaSymbol{(}\AgdaFunction{apV} \AgdaBound{ρ} \AgdaBound{x}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
+\\
+\>[4]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaFunction{ap} \AgdaBound{σ'} \AgdaSymbol{(}\AgdaFunction{apV} \AgdaBound{ρ} \AgdaBound{x}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{≡⟨⟨} \AgdaFunction{apV-comp} \AgdaFunction{⟩⟩}\<%
+\\
+\>[4]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaFunction{apV} \AgdaSymbol{(}\AgdaBound{σ'} \AgdaFunction{∘} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{x}\<%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{∎}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{postulate} \AgdaPostulate{comp-congr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaBound{ρ'} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%

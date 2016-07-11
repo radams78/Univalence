@@ -154,7 +154,7 @@ magic-unique' E {ρ} = let open ≡-Reasoning in
     E 〈 magic 〉 〈 ρ 〉
   ≡⟨⟨ rep-comp E ⟩⟩
     E 〈 ρ •R magic 〉
-  ≡⟨ rep-congr E (magic-unique {ρ = ρ •R magic}) ⟩
+  ≡⟨ rep-congr (magic-unique {ρ = ρ •R magic}) E ⟩
     E 〈 magic 〉
   ∎
 

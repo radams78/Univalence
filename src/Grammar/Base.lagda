@@ -10,7 +10,7 @@ module Grammar.Base where
 record IsGrammar (T : Taxonomy) : Set₁ where
   open Taxonomy T
   field
-    Constructor    : ∀ {K} → Kind (-Constructor K) → Set
+    Constructor    : ∀ {K} → ConstructorKind K → Set
     parent         : VarKind → ExpressionKind
 
 record Grammar : Set₁ where
@@ -26,20 +26,29 @@ record Grammar : Set₁ where
 \begin{code}
   data Subexpression : Alphabet → ∀ C → Kind C → Set
   Expression : Alphabet → ExpressionKind → Set
-  Body : Alphabet → ∀ {K} → Kind (-Constructor K) → Set
+  VExpression : Alphabet → VarKind → Set
+  dom : Alphabet → AbstractionKind → Alphabet
+  cod : AbstractionKind → ExpressionKind
+  Abstraction : Alphabet → AbstractionKind → Set
+  Body : Alphabet → ∀ {K} → ConstructorKind K → Set
 
   Expression V K = Subexpression V -Expression (base K)
+  VExpression V K = Expression V (varKind K)
+  dom V (out _) = V
+  dom V (Π K A) = dom (V , K) A
+  cod (out K) = K
+  cod (Π _ A) = cod A
+  Abstraction V A = Expression (dom V A) (cod A)
   Body V {K} C = Subexpression V (-Constructor K) C
 
   infixr 50 _,,_
   data Subexpression where
-    var : ∀ {V} {K} → Var V K → Expression V (varKind K)
+    var : ∀ {V} {K} → Var V K → VExpression V K
     app : ∀ {V} {K} {C} → Constructor C → Body V {K} C → 
       Expression V K
 
     out : ∀ {V} {K} → Body V (out K)
-    _,,_ : ∀ {V} {K} {A} {L} {C} → Expression (extend V A) L → 
-      Body V {K} C → Body V (Π A L C)
+    _,,_ : ∀ {V} {K} {A} {C} → Abstraction V A → Body V {K} C → Body V (Π A C)
 \end{code}
 %</Expression>
 

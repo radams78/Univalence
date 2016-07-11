@@ -194,9 +194,9 @@ conv-computeE {A = A ⇛ B} computeP Γ⊢M∶A Γ⊢N∶A Γ⊢M'∶A Γ⊢N'�
 postulate expand-computeE : ∀ {V} {Γ : Context V} {M} {A} {N} {P} {Q} →
                           computeE Γ M A N Q → Γ ⊢ P ∶ M ≡〈 A 〉 N → key-redex P Q → computeE Γ M A N P
 
-expand-computeT : ∀ {V} {Γ : Context V} {A} {M} {N} → computeT Γ A N → Γ ⊢ M ∶ ty A → SN M → key-redex M N → computeT Γ A M
-expand-computeT {A = Ω} computeψ _ SNM φ▷ψ = SNM
-expand-computeT {Γ = Γ} {A ⇛ B} {M} {M'} (computeM'app ,p computeM'eq) Γ⊢M∶A⇛B SNM M▷M' = 
+postulate expand-computeT : ∀ {V} {Γ : Context V} {A} {M} {N} → computeT Γ A N → Γ ⊢ M ∶ ty A → SN M → key-redex M N → computeT Γ A M
+{- expand-computeT {A = Ω} computeψ _ SNM φ▷ψ = SNM
+expand-computeT {A = A ⇛ B} {M} {M'} (computeM'app ,p computeM'eq) Γ⊢M∶A⇛B SNM M▷M' = 
   (λ Δ {ρ} {N} ρ∶Γ⇒Δ Δ⊢N∶A computeN → 
     let computeM'N : computeT Δ B (appT (M' 〈 ρ 〉) N)
         computeM'N = computeM'app Δ ρ∶Γ⇒Δ Δ⊢N∶A computeN in
@@ -231,7 +231,7 @@ expand-computeT {Γ = Γ} {A ⇛ B} {M} {M'} (computeM'app ,p computeM'eq) Γ⊢
         (appR Δ⊢Mρ∶A⇛B Δ⊢N'∶A)
         (M'ρX≃MρX N) (M'ρX≃MρX N'))
       (⋆-typed Δ⊢Mρ∶A⇛B Δ⊢P∶N≡N') 
-      (key-redex-⋆ (key-redex-rep M▷M')))
+      (key-redex-⋆ (key-redex-rep M▷M'))) -}
 
 compute : ∀ {V} {K} → Context V → Expression V (parent K) → Expression V (varKind K) → Set
 compute {K = -Term} Γ (app (-ty A) out) M = computeT Γ A M

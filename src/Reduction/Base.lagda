@@ -34,10 +34,10 @@ data _⇒_ {V} : ∀ {K} {C} →
   app : ∀ {K} {C : Kind (-Constructor K)} {c : Constructor C} 
     {E F : Subexpression V (-Constructor K) C} → 
     E ⇒ F → app c E ⇒ app c F
-  appl : ∀ {K A L C E E' F} → 
-    E ⇒ E' → _,,_ {V} {K} {A} {L} {C} E F ⇒ E' ,, F
-  appr : ∀ {K A L C E F F'} → 
-    F ⇒ F' → _,,_ {V} {K} {A} {L} {C} E F ⇒ E ,, F'
+  appl : ∀ {K A L E E' F} → 
+    E ⇒ E' → _,,_ {V} {K} {A} {L} E F ⇒ E' ,, F
+  appr : ∀ {K A L E F F'} → 
+    F ⇒ F' → _,,_ {V} {K} {A} {L} E F ⇒ E ,, F'
 
 data _↠⁺_ {V C K} (E : Subexpression V C K) : Subexpression V C K → Set where
   osr-red+ : ∀ {F} → E ⇒ F → E ↠⁺ F
@@ -192,8 +192,8 @@ $E[\rho] \twoheadrightarrow_R E[\sigma]$ for all $K$, $A$, $E$.
 
 \AgdaHide{
 \begin{code}
-  liftOp'-red {A = []} _ ρ↠σ = ρ↠σ
-  liftOp'-red {A = (K ∷ A)} hyp ρ↠σ = liftOp'-red {A = A} hyp (liftOp-red hyp ρ↠σ)
+  liftOp'-red {A = out _} _ ρ↠σ = ρ↠σ
+  liftOp'-red {A = (Π K A)} hyp ρ↠σ = liftOp'-red {A = A} hyp (liftOp-red hyp ρ↠σ)
 \end{code}
 }
 
