@@ -11,12 +11,18 @@ open import PHOPL.Red
 \end{code}
 }
 
+Let $\SN$ be the set of strongly normalizing terms.
+
 We define the relation $\kr$ between expressions as follows.  If $M \kr N$, we say that $M$ has a \emph{key redex} with \emph{reduct} $N$.
 
-\[ \infer{(\lambda x:A.M)N \kr M[x:= N]}{M \text{ is strongly normalising}} \]
-\[ \infer{(\lambda p:\phi.\delta)\epsilon \kr \delta[p:= \epsilon]}{\phi, \epsilon \text{ are strongly normalising}} \]
-\[ \infer{(\triplelambda e:x =_A y.P)_{N N'} Q \kr P[x:= N, y:= N', e:= Q]}{N, N', Q \text{ are strongly normalising} \quad P \text{ is in normal form}} \]
-\[ \infer{MP \kr NP}{M \kr N} \qquad \infer{\delta \epsilon \kr \delta' \epsilon}{\delta \kr \delta'} \]
+\[ \infer{(\lambda x:A.M)N \kr M[x:= N]}{N \in \SN} \]
+\[ \infer{(\lambda p:\phi.\delta)\epsilon \kr \delta[p:= \epsilon]}{\phi, \epsilon \in \SN} \]
+\[ \infer{(\triplelambda e:x =_A y.P)_{N N'} Q \kr P[x:= N, y:= N', e:= Q]}{N, N', Q \in \SN} \]
+\[ \infer{\reff{\lambda x:A.M}_{N N'} P \kr M\{ x:= P : N \sim N' \}}{P, N, N' \in \SN, P \not\equiv \reff{-}} \]
+\[ \infer{\reff{\lambda x:A.M}_{N_1 N_2} \ref{N} \kr \reff{M[x:=N]}}{N, N_1, N_2 \in \SN, N \simeq N_1 \simeq N_2} \]
+\[ \infer{\reff{M} \kr \reff{N}}{M \kr N} \]
+\[ \infer{ML \kr NL}{M \kr N} \qquad \infer{\delta \epsilon \kr \delta' \epsilon}{\delta \kr \delta'} \]
+\[ \infer{P_{L L'} Q \kr P'_{L L'} Q}{P \kr P'} \]
 
 \begin{code}
 data key-redex {V} : ∀ {K} → Expression V K → Expression V K → Set where
@@ -27,24 +33,7 @@ data key-redex {V} : ∀ {K} → Expression V K → Expression V K → Set where
   appTkr : ∀ {M N P : Term V} → key-redex M N → key-redex (appT M P) (appT N P)
 \end{code}
 
-Clearly, if $M \kr N$, then $M \rightarrow N$.  We also have the following properties.
-
-\begin{lm}
-\label{lm:krsn}
-If $M \kr N$ and $M \twoheadrightarrow P$, then there exists $Q$ such that $N \twoheadrightarrow Q$, and either $P \kr Q$ or $P \equiv Q$.
-\end{lm}
-
-\begin{proof}
-The proof is by induction on $M \kr N$.  All cases are simple.
-\end{proof}
-
-\begin{code}
-postulate key-redex-confluent : ∀ {V} {K} {M N P : Expression V K} →
-                              key-redex M N → M ⇒ P → Σ[ Q ∈ Expression V K ] (key-redex P Q ⊎ P ≡ Q) × (N ↠⁺ Q ⊎ N ≡ Q)
-
-postulate expand-lemma : ∀ {V} {M M' N : Term V} →
-                       SN M → key-redex M M' → SN (appT M' N) → SN (appT M N)
-\end{code}
+We have the following properties.
 
 \AgdaHide{
 \begin{code}
@@ -61,10 +50,33 @@ key-redex-rep {ρ = ρ} (βEkr {N} {N'} {A} {P} {Q} SNN SNN' SNQ) =
     (βEkr (SNrep R-creates-rep SNN) (SNrep R-creates-rep SNN') (SNrep R-creates-rep SNQ))
 key-redex-rep {ρ = ρ} (appTkr M▷N) = appTkr (key-redex-rep M▷N)
 --REFACTOR Common pattern
-
-postulate key-redex-red : ∀ {V} {K} {M N : Expression V K} → key-redex M N → M ↠ N
-
-postulate key-redex-⋆ : ∀ {V} {M M' N N' : Term V} {P} →
-                        key-redex M M' → key-redex (M ⋆[ P ∶ N ∼ N' ]) (M' ⋆[ P ∶ N ∼ N' ])
 \end{code}
 }
+
+\begin{lm}
+If $s \kr t \in \SN$ then $s \in \SN$.
+\end{lm}
+
+\begin{proof}
+The proof is by induction on $s \kr t$.  We deal with the following cases; the others are similar.
+
+\subparagraph{$(\lambda x:A.M)N \kr M[x:=N]$} where $N \in \SN$.
+
+We must show that, if $M[x:=N], N \in \SN$, then $(\lambda x:A.M)N \in \SN$.  The proof is by
+double induction on $N \in \SN$, then on $M[x:=N] \in \SN$.  The possible one-step reductions from $(\lambda x:A.M)N$ are:
+
+\begin{description}
+\item[$(\lambda x:A.M)N \rightarrow (\lambda x:A.M')N$, where $M \rightarrow M'$]  Then we have
+$M[x:=N] \rightarrow M'[x:=N]$, and we apply the secondary induction hypothesis.
+\item[$(\lambda x:A.M)N \rightarrow (\lambda x:A.M)N'$, where $N \rightarrow N'$]  Then we have $M[x:=N] \twoheadrightarrow M[x:=N']$ and
+$N \rightarrow N'$, and we apply the primary induction hypothesis.
+\item[$(\lambda x:A.M)N \rightarrow M{[x:=N]}$]  We have $M[x:=N] \in \SN$ by hypothesis.
+\end{description}
+
+\subparagraph{$P_{L L'} Q \kr P'_{L L'} Q$, where $P \kr P'$}  By case analysis, if $P_{L L'} Q$ is a redex then it is of the form $\reff{M}_{L L'} \reff{N}$.
+Therefore, the following are the possible one-step reductions from $P_{L L'} Q$:
+
+\begin{description}
+\item{$P_{L L'} Q \rightarrow P^\dagger_{L L'} Q$, where $P \rightarrow P^\dagger$}  
+\end{description}
+\end{proof}

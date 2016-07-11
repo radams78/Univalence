@@ -19,11 +19,11 @@ valid-addpath validΓ = ctxER (varR x₁ (ctxTR (ctxTR validΓ))) (varR x₀ (ct
 $ $
 \begin{enumerate}
 \item
-Every derivation of $\Gamma, \Theta \vdash \mathcal{J}$ has a subderivation of $\Gamma \vald$.
+Every derivation of $\Gamma, \Delta \vdash \mathcal{J}$ has a subderivation of $\Gamma \vald$.
 \item
-Every derivation of $\Gamma, p : \phi, \Theta \vdash \mathcal{J}$ has a subderivation of $\Gamma \vdash \phi : \Omega$.
+Every derivation of $\Gamma, p : \phi, \Delta \vdash \mathcal{J}$ has a subderivation of $\Gamma \vdash \phi : \Omega$.
 \item
-Every derivation of $\Gamma, e : M =_A N \vdash \mathcal{J}$ has subderivations of $\Gamma \vdash M : A$ and $\Gamma \vdash N : A$.
+Every derivation of $\Gamma, e : M =_A N, \Delta \vdash \mathcal{J}$ has subderivations of $\Gamma \vdash M : A$ and $\Gamma \vdash N : A$.
 \end{enumerate}
 \end{lemma}
 
@@ -60,6 +60,24 @@ context-validity'' (ctxER (varR .(↑ x₀) (ctxTR (ctxTR validΓ))) _) = valid�
 \end{code}
 }
 
+\begin{theorem}[Weakening]
+If $\Gamma \vdash \mathcal{J}$, $\Gamma \subseteq \Delta$ and $\Delta \vald$ then $\Delta \vdash \mathcal{J}$.
+\end{theorem}
+
+\begin{proof}
+Induction on derivations.
+\end{proof}
+
+\AgdaHide{
+\begin{code}
+postulate _∶_⇒R_ : ∀ {U} {V} → Rep U V → Context U → Context V → Set
+
+postulate weakening : ∀ {U} {V} {ρ : Rep U V} {K}
+                    {Γ : Context U} {M : Expression U (varKind K)} {A} {Δ} →
+                    Γ ⊢ M ∶ A → valid Δ → ρ ∶ Γ ⇒R Δ → Δ ⊢ M 〈 ρ 〉 ∶ A 〈 ρ 〉
+\end{code}
+}
+
 \begin{lemma}[Type Validity]
 $ $
 \begin{enumerate}
@@ -71,15 +89,13 @@ If $\Gamma \vdash P : M =_A N$ then $\Gamma \vdash M : A$ and $\Gamma \vdash N :
 \end{lemma}
 
 \begin{proof}
-Induction on derivations.
+Induction on derivations.  The cases where $\delta$ or $P$ is a variable use Context Validity.
 \end{proof}
 
 \AgdaHide{
 \begin{code}
 postulate Prop-Validity : ∀ {V} {Γ : Context V} {δ : Proof V} {φ : Term V} → 
                         Γ ⊢ δ ∶ φ → Γ ⊢ φ ∶ ty Ω
-
-postulate _∶_⇒R_ : ∀ {U} {V} → Rep U V → Context U → Context V → Set
 
 postulate change-codR : ∀ {U} {V} {ρ : Rep U V} {Γ : Context U} {Δ Δ' : Context V} →
                       ρ ∶ Γ ⇒R Δ → Δ ≡ Δ' → ρ ∶ Γ ⇒R Δ'
@@ -96,32 +112,16 @@ postulate compR-typed : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Rep U V} {Γ} {Δ} 
 \end{code}
 }
 
-\begin{theorem}[Weakening]
-If $\Gamma \vdash \mathcal{J}$, $\Gamma \subseteq \Theta$ and $\Theta \vald$ then $\Theta \vdash \mathcal{J}$.
-\end{theorem}
-
-\begin{proof}
-Induction on derivations.
-\end{proof}
-
-\AgdaHide{
-\begin{code}
-postulate weakening : ∀ {U} {V} {ρ : Rep U V} {K}
-                    {Γ : Context U} {M : Expression U (varKind K)} {A} {Δ} →
-                    Γ ⊢ M ∶ A → valid Δ → ρ ∶ Γ ⇒R Δ → Δ ⊢ M 〈 ρ 〉 ∶ A 〈 ρ 〉
-\end{code}
-}
-
-Let $\Gamma$ and $\Theta$ be contexts.  A \emph{substitution} $\sigma : \Gamma \Rightarrow \Theta$
+Let $\Gamma$ and $\Delta$ be contexts.  A \emph{substitution} $\sigma : \Gamma \Rightarrow \Delta$
 is a function mapping a term $\sigma(x)$ to every term variable $x \in \dom \Gamma$, a proof $\sigma(p)$ to
 every proof variable $p \in \dom \Gamma$, and a path $\sigma(e)$ to every path variable $e \in \dom \Gamma$, such that:
 \begin{itemize}
 \item
-for every term variable $x : A \in \Gamma$, we have $\Theta \vdash \sigma(x) : A$;
+for every term variable $x : A \in \Gamma$, we have $\Delta \vdash \sigma(x) : A$;
 \item
-for every proof variable $p : \phi \in \Gamma$, we have $\Theta \vdash \sigma(p) : \phi [ \sigma ]$;
+for every proof variable $p : \phi \in \Gamma$, we have $\Delta \vdash \sigma(p) : \phi [ \sigma ]$;
 \item
-for every path variable $e : M =_A N \in \Gamma$, we have $\Theta \vdash \sigma(e) : M [ \sigma ] =_A N [ \sigma ]$
+for every path variable $e : M =_A N \in \Gamma$, we have $\Delta \vdash \sigma(e) : M [ \sigma ] =_A N [ \sigma ]$
 \end{itemize}
 where $\phi [ \sigma ]$ is the result of substituting $\sigma(x)$ for every term variable $x$ in $\phi$.
 
@@ -130,7 +130,7 @@ postulate _∶_⇒_ : ∀ {U} {V} → Sub U V → Context U → Context V → Se
 \end{code}
 
 \begin{theorem}[Substitution]
-If $\Gamma \vdash \mathcal{J}$, $\sigma : \Gamma \Rightarrow \Theta$ and $\Theta \vald$, then $\Theta \vdash \mathcal{J} [\sigma]$.
+If $\Gamma \vdash \mathcal{J}$, $\sigma : \Gamma \Rightarrow \Delta$ and $\Delta \vald$, then $\Delta \vdash \mathcal{J} [\sigma]$.
 \end{theorem}
 
 \begin{proof}
@@ -264,11 +264,11 @@ postulate Generation-ΛP : ∀ {V} {Γ : Context V} {φ} {δ} {ε} {ψ} →
 \end{code}
 }
 
-Given substitutions $\sigma, \rho : \Gamma \rightarrow \Theta$, a \emph{path substitution} $\tau : \sigma \sim \rho$
+Given substitutions $\sigma, \rho : \Gamma \rightarrow \Delta$, a \emph{path substitution} $\tau : \sigma \sim \rho$
 is a function mapping every term variable $x \in \Gamma$ to a path $\tau(x)$ such that:
 \begin{itemize}
 \item
-if $x : A \in \Gamma$ then $\Theta \vdash \tau(x) : \sigma(x) =_A \rho(x)$.
+if $x : A \in \Gamma$ then $\Delta \vdash \tau(x) : \sigma(x) =_A \rho(x)$.
 \end{itemize}
 
 \begin{code}
@@ -301,8 +301,8 @@ postulate sub↗-decomp : ∀ {U} {V} {C} {K} (M : Subexpression (U , -Term) C K
 }
 
 \begin{prop}[Path Substitution]
-If $\tau : \sigma \sim \rho : \Gamma \rightarrow \Theta$ and $\Gamma \vdash M : A$,
-then $\Theta \vdash M \{ \tau : \sigma \sim \rho \} : M [ \sigma ] =_A M [ \rho ]$.
+If $\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$ and $\Gamma \vdash M : A$,
+then $\Delta \vdash M \{ \tau : \sigma \sim \rho \} : M [ \sigma ] =_A M [ \rho ]$.
 \end{prop}
 
 \begin{proof}

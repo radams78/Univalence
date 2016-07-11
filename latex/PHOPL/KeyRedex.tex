@@ -18,12 +18,18 @@
 \end{code}
 }
 
+Let $\SN$ be the set of strongly normalizing terms.
+
 We define the relation $\kr$ between expressions as follows.  If $M \kr N$, we say that $M$ has a \emph{key redex} with \emph{reduct} $N$.
 
-\[ \infer{(\lambda x:A.M)N \kr M[x:= N]}{M \text{ is strongly normalising}} \]
-\[ \infer{(\lambda p:\phi.\delta)\epsilon \kr \delta[p:= \epsilon]}{\phi, \epsilon \text{ are strongly normalising}} \]
-\[ \infer{(\triplelambda e:x =_A y.P)_{N N'} Q \kr P[x:= N, y:= N', e:= Q]}{N, N', Q \text{ are strongly normalising} \quad P \text{ is in normal form}} \]
-\[ \infer{MP \kr NP}{M \kr N} \qquad \infer{\delta \epsilon \kr \delta' \epsilon}{\delta \kr \delta'} \]
+\[ \infer{(\lambda x:A.M)N \kr M[x:= N]}{N \in \SN} \]
+\[ \infer{(\lambda p:\phi.\delta)\epsilon \kr \delta[p:= \epsilon]}{\phi, \epsilon \in \SN} \]
+\[ \infer{(\triplelambda e:x =_A y.P)_{N N'} Q \kr P[x:= N, y:= N', e:= Q]}{N, N', Q \in \SN} \]
+\[ \infer{\reff{\lambda x:A.M}_{N N'} P \kr M\{ x:= P : N \sim N' \}}{P, N, N' \in \SN, P \not\equiv \reff{-}} \]
+\[ \infer{\reff{\lambda x:A.M}_{N_1 N_2} \ref{N} \kr \reff{M[x:=N]}}{N, N_1, N_2 \in \SN, N \simeq N_1 \simeq N_2} \]
+\[ \infer{\reff{M} \kr \reff{N}}{M \kr N} \]
+\[ \infer{ML \kr NL}{M \kr N} \qquad \infer{\delta \epsilon \kr \delta' \epsilon}{\delta \kr \delta'} \]
+\[ \infer{P_{L L'} Q \kr P'_{L L'} Q}{P \kr P'} \]
 
 \begin{code}%
 \>\AgdaKeyword{data} \AgdaDatatype{key-redex} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
@@ -44,30 +50,7 @@ We define the relation $\kr$ between expressions as follows.  If $M \kr N$, we s
 \>[2]\AgdaInductiveConstructor{appTkr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{N} \AgdaBound{P} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{key-redex} \AgdaBound{M} \AgdaBound{N} \AgdaSymbol{→} \AgdaDatatype{key-redex} \AgdaSymbol{(}\AgdaFunction{appT} \AgdaBound{M} \AgdaBound{P}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{appT} \AgdaBound{N} \AgdaBound{P}\AgdaSymbol{)}\<%
 \end{code}
 
-Clearly, if $M \kr N$, then $M \rightarrow N$.  We also have the following properties.
-
-\begin{lm}
-\label{lm:krsn}
-If $M \kr N$ and $M \twoheadrightarrow P$, then there exists $Q$ such that $N \twoheadrightarrow Q$, and either $P \kr Q$ or $P \equiv Q$.
-\end{lm}
-
-\begin{proof}
-The proof is by induction on $M \kr N$.  All cases are simple.
-\end{proof}
-
-\begin{code}%
-\>\AgdaKeyword{postulate} \AgdaPostulate{key-redex-confluent} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{N} \AgdaBound{P} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
-\\
-\>[2]\AgdaIndent{30}{}\<[30]%
-\>[30]\AgdaDatatype{key-redex} \AgdaBound{M} \AgdaBound{N} \AgdaSymbol{→} \AgdaBound{M} \AgdaDatatype{⇒} \AgdaBound{P} \AgdaSymbol{→} \AgdaFunction{Σ[} \AgdaBound{Q} \AgdaFunction{∈} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K} \AgdaFunction{]} \AgdaSymbol{(}\AgdaDatatype{key-redex} \AgdaBound{P} \AgdaBound{Q} \AgdaDatatype{⊎} \AgdaBound{P} \AgdaDatatype{≡} \AgdaBound{Q}\AgdaSymbol{)} \AgdaFunction{×} \AgdaSymbol{(}\AgdaBound{N} \AgdaDatatype{↠⁺} \AgdaBound{Q} \AgdaDatatype{⊎} \AgdaBound{N} \AgdaDatatype{≡} \AgdaBound{Q}\AgdaSymbol{)}\<%
-\\
-%
-\\
-\>\AgdaKeyword{postulate} \AgdaPostulate{expand-lemma} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{M'} \AgdaBound{N} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
-\\
-\>[0]\AgdaIndent{23}{}\<[23]%
-\>[23]\AgdaDatatype{SN} \AgdaBound{M} \AgdaSymbol{→} \AgdaDatatype{key-redex} \AgdaBound{M} \AgdaBound{M'} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaSymbol{(}\AgdaFunction{appT} \AgdaBound{M'} \AgdaBound{N}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaSymbol{(}\AgdaFunction{appT} \AgdaBound{M} \AgdaBound{N}\AgdaSymbol{)}\<%
-\end{code}
+We have the following properties.
 
 \AgdaHide{
 \begin{code}%
@@ -108,16 +91,33 @@ The proof is by induction on $M \kr N$.  All cases are simple.
 \>\AgdaFunction{key-redex-rep} \AgdaSymbol{\{}\AgdaArgument{ρ} \AgdaSymbol{=} \AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{appTkr} \AgdaBound{M▷N}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{appTkr} \AgdaSymbol{(}\AgdaFunction{key-redex-rep} \AgdaBound{M▷N}\AgdaSymbol{)}\<%
 \\
 \>\AgdaComment{--REFACTOR Common pattern}\<%
-\\
-%
-\\
-\>\AgdaKeyword{postulate} \AgdaPostulate{key-redex-red} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{N} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{key-redex} \AgdaBound{M} \AgdaBound{N} \AgdaSymbol{→} \AgdaBound{M} \AgdaDatatype{↠} \AgdaBound{N}\<%
-\\
-%
-\\
-\>\AgdaKeyword{postulate} \AgdaPostulate{key-redex-⋆} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{M'} \AgdaBound{N} \AgdaBound{N'} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
-\\
-\>[4]\AgdaIndent{24}{}\<[24]%
-\>[24]\AgdaDatatype{key-redex} \AgdaBound{M} \AgdaBound{M'} \AgdaSymbol{→} \AgdaDatatype{key-redex} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⋆[} \AgdaBound{P} \AgdaFunction{∶} \AgdaBound{N} \AgdaFunction{∼} \AgdaBound{N'} \AgdaFunction{]}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{M'} \AgdaFunction{⋆[} \AgdaBound{P} \AgdaFunction{∶} \AgdaBound{N} \AgdaFunction{∼} \AgdaBound{N'} \AgdaFunction{]}\AgdaSymbol{)}\<%
 \end{code}
 }
+
+\begin{lm}
+If $s \kr t \in \SN$ then $s \in \SN$.
+\end{lm}
+
+\begin{proof}
+The proof is by induction on $s \kr t$.  We deal with the following cases; the others are similar.
+
+\subparagraph{$(\lambda x:A.M)N \kr M[x:=N]$} where $N \in \SN$.
+
+We must show that, if $M[x:=N], N \in \SN$, then $(\lambda x:A.M)N \in \SN$.  The proof is by
+double induction on $N \in \SN$, then on $M[x:=N] \in \SN$.  The possible one-step reductions from $(\lambda x:A.M)N$ are:
+
+\begin{description}
+\item[$(\lambda x:A.M)N \rightarrow (\lambda x:A.M')N$, where $M \rightarrow M'$]  Then we have
+$M[x:=N] \rightarrow M'[x:=N]$, and we apply the secondary induction hypothesis.
+\item[$(\lambda x:A.M)N \rightarrow (\lambda x:A.M)N'$, where $N \rightarrow N'$]  Then we have $M[x:=N] \twoheadrightarrow M[x:=N']$ and
+$N \rightarrow N'$, and we apply the primary induction hypothesis.
+\item[$(\lambda x:A.M)N \rightarrow M{[x:=N]}$]  We have $M[x:=N] \in \SN$ by hypothesis.
+\end{description}
+
+\subparagraph{$P_{L L'} Q \kr P'_{L L'} Q$, where $P \kr P'$}  By case analysis, if $P_{L L'} Q$ is a redex then it is of the form $\reff{M}_{L L'} \reff{N}$.
+Therefore, the following are the possible one-step reductions from $P_{L L'} Q$:
+
+\begin{description}
+\item{$P_{L L'} Q \rightarrow P^\dagger_{L L'} Q$, where $P \rightarrow P^\dagger$}  
+\end{description}
+\end{proof}

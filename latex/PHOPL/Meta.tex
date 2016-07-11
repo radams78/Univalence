@@ -28,11 +28,11 @@
 $ $
 \begin{enumerate}
 \item
-Every derivation of $\Gamma, \Theta \vdash \mathcal{J}$ has a subderivation of $\Gamma \vald$.
+Every derivation of $\Gamma, \Delta \vdash \mathcal{J}$ has a subderivation of $\Gamma \vald$.
 \item
-Every derivation of $\Gamma, p : \phi, \Theta \vdash \mathcal{J}$ has a subderivation of $\Gamma \vdash \phi : \Omega$.
+Every derivation of $\Gamma, p : \phi, \Delta \vdash \mathcal{J}$ has a subderivation of $\Gamma \vdash \phi : \Omega$.
 \item
-Every derivation of $\Gamma, e : M =_A N \vdash \mathcal{J}$ has subderivations of $\Gamma \vdash M : A$ and $\Gamma \vdash N : A$.
+Every derivation of $\Gamma, e : M =_A N, \Delta \vdash \mathcal{J}$ has subderivations of $\Gamma \vdash M : A$ and $\Gamma \vdash N : A$.
 \end{enumerate}
 \end{lemma}
 
@@ -93,6 +93,30 @@ Part 1 is proven by induction on derivations.  Parts 2 and 3 follow by inversion
 \end{code}
 }
 
+\begin{theorem}[Weakening]
+If $\Gamma \vdash \mathcal{J}$, $\Gamma \subseteq \Delta$ and $\Delta \vald$ then $\Delta \vdash \mathcal{J}$.
+\end{theorem}
+
+\begin{proof}
+Induction on derivations.
+\end{proof}
+
+\AgdaHide{
+\begin{code}%
+\>\AgdaKeyword{postulate} \AgdaPostulate{\_∶\_⇒R\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaBound{U} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaBound{V} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\\
+%
+\\
+\>\AgdaKeyword{postulate} \AgdaPostulate{weakening} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}}\<%
+\\
+\>[19]\AgdaIndent{20}{}\<[20]%
+\>[20]\AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{U} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[19]\AgdaIndent{20}{}\<[20]%
+\>[20]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{valid} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{ρ} \AgdaPostulate{∶} \AgdaBound{Γ} \AgdaPostulate{⇒R} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{Δ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaDatatype{∶} \AgdaBound{A} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\<%
+\end{code}
+}
+
 \begin{lemma}[Type Validity]
 $ $
 \begin{enumerate}
@@ -104,7 +128,7 @@ If $\Gamma \vdash P : M =_A N$ then $\Gamma \vdash M : A$ and $\Gamma \vdash N :
 \end{lemma}
 
 \begin{proof}
-Induction on derivations.
+Induction on derivations.  The cases where $\delta$ or $P$ is a variable use Context Validity.
 \end{proof}
 
 \AgdaHide{
@@ -112,12 +136,8 @@ Induction on derivations.
 \>\AgdaKeyword{postulate} \AgdaPostulate{Prop-Validity} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δ} \AgdaSymbol{:} \AgdaFunction{Proof} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \<[77]%
 \>[77]\<%
 \\
-\>[19]\AgdaIndent{24}{}\<[24]%
+\>[20]\AgdaIndent{24}{}\<[24]%
 \>[24]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{δ} \AgdaDatatype{∶} \AgdaBound{φ} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{φ} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaInductiveConstructor{Ω}\<%
-\\
-%
-\\
-\>\AgdaKeyword{postulate} \AgdaPostulate{\_∶\_⇒R\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaBound{U} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaBound{V} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
 \\
 %
 \\
@@ -150,36 +170,16 @@ Induction on derivations.
 \end{code}
 }
 
-\begin{theorem}[Weakening]
-If $\Gamma \vdash \mathcal{J}$, $\Gamma \subseteq \Theta$ and $\Theta \vald$ then $\Theta \vdash \mathcal{J}$.
-\end{theorem}
-
-\begin{proof}
-Induction on derivations.
-\end{proof}
-
-\AgdaHide{
-\begin{code}%
-\>\AgdaKeyword{postulate} \AgdaPostulate{weakening} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}}\<%
-\\
-\>[0]\AgdaIndent{20}{}\<[20]%
-\>[20]\AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{U} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
-\\
-\>[0]\AgdaIndent{20}{}\<[20]%
-\>[20]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{valid} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{ρ} \AgdaPostulate{∶} \AgdaBound{Γ} \AgdaPostulate{⇒R} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{Δ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaDatatype{∶} \AgdaBound{A} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\<%
-\end{code}
-}
-
-Let $\Gamma$ and $\Theta$ be contexts.  A \emph{substitution} $\sigma : \Gamma \Rightarrow \Theta$
+Let $\Gamma$ and $\Delta$ be contexts.  A \emph{substitution} $\sigma : \Gamma \Rightarrow \Delta$
 is a function mapping a term $\sigma(x)$ to every term variable $x \in \dom \Gamma$, a proof $\sigma(p)$ to
 every proof variable $p \in \dom \Gamma$, and a path $\sigma(e)$ to every path variable $e \in \dom \Gamma$, such that:
 \begin{itemize}
 \item
-for every term variable $x : A \in \Gamma$, we have $\Theta \vdash \sigma(x) : A$;
+for every term variable $x : A \in \Gamma$, we have $\Delta \vdash \sigma(x) : A$;
 \item
-for every proof variable $p : \phi \in \Gamma$, we have $\Theta \vdash \sigma(p) : \phi [ \sigma ]$;
+for every proof variable $p : \phi \in \Gamma$, we have $\Delta \vdash \sigma(p) : \phi [ \sigma ]$;
 \item
-for every path variable $e : M =_A N \in \Gamma$, we have $\Theta \vdash \sigma(e) : M [ \sigma ] =_A N [ \sigma ]$
+for every path variable $e : M =_A N \in \Gamma$, we have $\Delta \vdash \sigma(e) : M [ \sigma ] =_A N [ \sigma ]$
 \end{itemize}
 where $\phi [ \sigma ]$ is the result of substituting $\sigma(x)$ for every term variable $x$ in $\phi$.
 
@@ -188,7 +188,7 @@ where $\phi [ \sigma ]$ is the result of substituting $\sigma(x)$ for every term
 \end{code}
 
 \begin{theorem}[Substitution]
-If $\Gamma \vdash \mathcal{J}$, $\sigma : \Gamma \Rightarrow \Theta$ and $\Theta \vald$, then $\Theta \vdash \mathcal{J} [\sigma]$.
+If $\Gamma \vdash \mathcal{J}$, $\sigma : \Gamma \Rightarrow \Delta$ and $\Delta \vald$, then $\Delta \vdash \mathcal{J} [\sigma]$.
 \end{theorem}
 
 \begin{proof}
@@ -199,10 +199,10 @@ Induction on derivations.
 \begin{code}%
 \>\AgdaKeyword{postulate} \AgdaPostulate{substitution} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}}\<%
 \\
-\>[20]\AgdaIndent{23}{}\<[23]%
+\>[0]\AgdaIndent{23}{}\<[23]%
 \>[23]\AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{U} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
-\>[20]\AgdaIndent{23}{}\<[23]%
+\>[0]\AgdaIndent{23}{}\<[23]%
 \>[23]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{valid} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{σ} \AgdaPostulate{∶} \AgdaBound{Γ} \AgdaPostulate{⇒} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{Δ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaDatatype{∶} \AgdaBound{A} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\<%
 \\
 %
@@ -429,11 +429,11 @@ Induction on derivations.
 \end{code}
 }
 
-Given substitutions $\sigma, \rho : \Gamma \rightarrow \Theta$, a \emph{path substitution} $\tau : \sigma \sim \rho$
+Given substitutions $\sigma, \rho : \Gamma \rightarrow \Delta$, a \emph{path substitution} $\tau : \sigma \sim \rho$
 is a function mapping every term variable $x \in \Gamma$ to a path $\tau(x)$ such that:
 \begin{itemize}
 \item
-if $x : A \in \Gamma$ then $\Theta \vdash \tau(x) : \sigma(x) =_A \rho(x)$.
+if $x : A \in \Gamma$ then $\Delta \vdash \tau(x) : \sigma(x) =_A \rho(x)$.
 \end{itemize}
 
 \begin{code}%
@@ -500,8 +500,8 @@ if $x : A \in \Gamma$ then $\Theta \vdash \tau(x) : \sigma(x) =_A \rho(x)$.
 }
 
 \begin{prop}[Path Substitution]
-If $\tau : \sigma \sim \rho : \Gamma \rightarrow \Theta$ and $\Gamma \vdash M : A$,
-then $\Theta \vdash M \{ \tau : \sigma \sim \rho \} : M [ \sigma ] =_A M [ \rho ]$.
+If $\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$ and $\Gamma \vdash M : A$,
+then $\Delta \vdash M \{ \tau : \sigma \sim \rho \} : M [ \sigma ] =_A M [ \rho ]$.
 \end{prop}
 
 \begin{proof}

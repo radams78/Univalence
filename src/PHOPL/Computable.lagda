@@ -240,28 +240,6 @@ compute {K = -Path} Γ (app (-eq A) (M ,, N ,, out)) P = computeE Γ M A N P
 
 postulate expand-computeP : ∀ {V} {Γ : Context V} {S} {L : Leaves V S} {δ ε} →
                           computeP Γ L ε → Γ ⊢ δ ∶ decode-Prop L → key-redex δ ε → computeP Γ L δ
-\end{code}
-}
-
-\begin{lm}
-\label{lm:expand-compute}
-If $s \kr t$, $t \in E_\Gamma(T)$, and $\Gamma \vdash s : T$, then $M \in E_\Gamma(T)$.
-\end{lm}
-
-\begin{proof}
-The proof is by induction on $T$.  The cases where $T$ is $\Omega$, $\bot$ or a neutral term make use of Lemma \ref{lm:krsn}.  For the case of a proposition $\phi \supset \psi$, let $\epsilon \in E_\Gamma(\phi)$.  Then $s' \epsilon \in E_\Gamma(\psi)$, hence $s \epsilon \in E_\Gamma(\psi)$ as required.  The other cases are similar.
-\end{proof}
-
-\begin{code}
-expand-compute : ∀ {V} {K} {Γ : Context V} {A : Expression V (parent K)} {M N : Expression V (varKind K)} →
-  compute Γ A N → Γ ⊢ M ∶ A → SN M → key-redex M N → compute Γ A M
-\end{code}
-
-\AgdaHide{
-\begin{code}
-expand-compute {K = -Term} {A = app (-ty A) out} = expand-computeT {A = A}
-expand-compute {K = -Proof} (S ,p ψ ,p φ↠ψ ,p computeε) Γ⊢δ∶φ SNδ δ▷ε = (S ,p ψ ,p φ↠ψ ,p expand-computeP {S = S} computeε (Type-Reduction Γ⊢δ∶φ φ↠ψ) δ▷ε)
-expand-compute {K = -Path} {A = app (-eq A) (M ,, N ,, out)} computeQ Γ⊢P∶M≡N SNP P▷Q = expand-computeE computeQ Γ⊢P∶M≡N P▷Q
 
 record E' {V} {K} (Γ : Context V) (A : Expression V (parent K)) (E : Expression V (varKind K)) : Set where
   constructor E'I
@@ -283,18 +261,45 @@ E'-typed : ∀ {V} {K} {Γ : Context V} {A} {M : Expression V (varKind K)} →
            E' Γ A M → Γ ⊢ M ∶ A
 E'-typed = E'.typed
 
-expand-E' : ∀ {V} {K} {Γ} {A} {M N : Expression V (varKind K)} →
-            E' Γ A N → Γ ⊢ M ∶ A → SN M → key-redex M N → E' Γ A M
-expand-E' N∈EΓA Γ⊢M∶A SNM M▷N = E'I Γ⊢M∶A (expand-compute (E'.computable N∈EΓA) Γ⊢M∶A SNM M▷N)
-
-postulate expand-E : ∀ {V} {Γ : Context V} {A : Type} {M N : Term V} →
-                   E Γ A N → Γ ⊢ M ∶ ty A → key-redex M N → E Γ A M
-
 postulate func-E : ∀ {U} {Γ : Context U} {M : Term U} {A} {B} →
                    (∀ V Δ (ρ : Rep U V) (N : Term V) → valid Δ → ρ ∶ Γ ⇒R Δ → E Δ A N → E Δ B (appT (M 〈 ρ 〉) N)) →
                    E Γ (A ⇛ B) M
 \end{code}
 }
+
+\begin{lm}
+Let $\Gamma, x : A \vdash M : B$ and let $N \in E_\Gamma(A)$.  If $\reff{M[x:=N]} \in E_\Gamma(L =_B L')$, then
+$\reff{(\lambda x:A.M)N} \in E_\Gamma(L =_B L')$.
+\end{lm}
+
+\begin{proof}
+We prove the following stronger statement:
+
+Suppose $\Gamma, x : A \vdash M : B_1 \rightarrow \cdots \rightarrow B_m \rightarrow C_1 \rightarrow \cdots \rightarrow C_n \rightarrow D$.
+Let $N \in E_\Gamma(A)$, $N_i \in E_\Gamma(B_i)$, $L_j, L_j' \in E_\Gamma(C_j)$ and $P_j \in E_\Gamma(L_j =_{C_j} L_j')$ for all $i$, $j$.
+If $\reff{(M[x:=N] N_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n \in E_\Gamma(L =_{D} L')$,
+then $\reff{((\lambda x:A.M)N N_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n \in E_\Gamma(L =_{D} L')$.
+
+The proof is by induction on the type $D$.
+
+If $D \equiv \Omega$: it is easy to verify that \\
+$\Gamma \vdash (\lambda x:A.M)N N_1 \cdots N_m)_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n : L =_{D} L'$ using
+Generation.  Lemma \ref{lm:SN}.\ref{lm:SN2} gives that $(\lambda x:A.M)N N_1 \cdots N_m)_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n \in \SN$.
+
+If $D \equiv C_{n+1} \rightarrow E$: let $L_{n+1}, L_{n+1}' \in E_\Gamma(C_{n+1})$ and $P_{n+1} \in E_{\Gamma}(L_{n+1} =_{C_{n+1}} L_{n+1}')$.  Then
+\begin{align*}
+\reff{(M[x:=N] \vec{N}} \vec{P}_{L_{n+1} L_{n+1}'} P_{n+1} & \in E_\Gamma(L L_{n+1} =_{E} L' L_{n+1}') \\
+\therefore \reff{((\lambda x:A.M)N \vec{N}} \vec{P}_{L_{n+1} L_{n+1}'} P_{n+1} & \in E_\Gamma(L L_{n+1} =_{E} L' L_{n+1}')
+\end{align*}
+by the induction hypothesis, as required.
+\end{proof}
+
+\begin{lm}
+Let $\Gamma, x : A \vdash M : B$ and let $N \in E_\Gamma(A)$.  If $M[x:=N] \in E_\Gamma(B)$ then $(\lambda x:A.M)N \in E_\Gamma(B)$.
+\end{lm}
+
+\begin{proof}
+\end{proof}
 
 \begin{lm}$ $
 \label{lm:conv-compute}
@@ -355,10 +360,6 @@ postulate plus-EP : ∀ {V} {Γ : Context V} {P : Path V} {φ ψ : Term V} →
 postulate minus-EP : ∀ {V} {Γ : Context V} {P : Path V} {φ ψ : Term V} →
                    EE Γ (φ ≡〈 Ω 〉 ψ) P → EP Γ (ψ ⊃ φ) (minus P)
 
-expand-EP : ∀ {V} {Γ : Context V} {φ : Term V} {δ ε : Proof V} →
-            EP Γ φ ε → Γ ⊢ δ ∶ φ → SN δ → key-redex δ ε → EP Γ φ δ
-expand-EP = expand-E'
-
 postulate func-EP : ∀ {U} {Γ : Context U} {δ : Proof U} {φ} {ψ} →
                   (∀ V Δ (ρ : Rep U V) (ε : Proof V) → ρ ∶ Γ ⇒R Δ → EP Δ (φ 〈 ρ 〉) ε → EP Δ (ψ 〈 ρ 〉) (appP (δ 〈 ρ 〉) ε)) → 
                   Γ ⊢ δ ∶ φ ⊃ ψ → EP Γ (φ ⊃ ψ) δ
@@ -384,8 +385,6 @@ postulate app*-EE : ∀ {V} {Γ : Context V} {M} {M'} {N} {N'} {A} {B} {P} {Q} �
                   E Γ A N → E Γ A N' →
                   EE Γ (appT M N ≡〈 B 〉 appT M' N') (app* N N' P Q)
 
-postulate expand-EE : ∀ {V} {Γ : Context V} {A} {M N : Term V} {P Q} →
-                    EE Γ (M ≡〈 A 〉 N) Q → Γ ⊢ P ∶ M ≡〈 A 〉 N → key-redex P Q → EE Γ (M ≡〈 A 〉 N) P
 postulate func-EE : ∀ {U} {Γ : Context U} {A} {B} {M} {M'} {P} →
                   Γ ⊢ P ∶ M ≡〈 A ⇛ B 〉 M' →
                   (∀ V (Δ : Context V) (N N' : Term V) Q ρ → ρ ∶ Γ ⇒R Δ → 
@@ -454,42 +453,7 @@ postulate key-redex-SN : ∀ {V} {K} {E F : Expression V K} → key-redex E F �
 
 postulate key-redex-rep : ∀ {U} {V} {K} {ρ : Rep U V} {E F : Expression U K} → key-redex E F → key-redex (E 〈 ρ 〉) (F 〈 ρ 〉)
 
-expand-compute : ∀ {V} {Γ : Context V} {A : closed-prop} {δ ε : Proof V} →
-                compute Γ A ε → valid Γ → key-redex δ ε → compute Γ A δ
-expand-compute {A = ⊥C} computeε validΓ δ▷ε = key-redex-SN δ▷ε (compute-SN computeε validΓ)
-expand-compute {A = A ⊃C B} computeε validΓ δ▷ε W Δ ρ χ ρ∶Γ⇒RΔ Δ⊢χ∶A computeχ = 
-  expand-compute (computeε W Δ ρ χ ρ∶Γ⇒RΔ Δ⊢χ∶A computeχ) (context-validity Δ⊢χ∶A)
-      (appPkr (key-redex-rep δ▷ε)) 
-
-expand-EP (Γ⊢ε∶φ ,p φ' ,p φ↠φ' ,p computeε) Γ⊢δ∶φ δ▷ε = Γ⊢δ∶φ ,p φ' ,p φ↠φ' ,p expand-compute computeε (context-validity Γ⊢δ∶φ) δ▷ε
-
-expand-computeE : ∀ {V} {Γ : Context V} {A} {M} {N} {P} {Q} →
-  computeE Γ M A N Q → Γ ⊢ P ∶ M ≡〈 A 〉 N → key-redex P Q → computeE Γ M A N P
-expand-computeE {A = Ω} ((_ ,p M⊃Nnf ,p M⊃N↠M⊃Nnf ,p computeQ+) ,p (_ ,p N⊃Mnf ,p N⊃M↠N⊃Mnf ,p computeQ-)) Γ⊢P∶M≡N P▷Q = 
-  ((plusR Γ⊢P∶M≡N) ,p M⊃Nnf ,p M⊃N↠M⊃Nnf ,p expand-compute computeQ+ 
-    (context-validity Γ⊢P∶M≡N) (pluskr P▷Q)) ,p 
-  (minusR Γ⊢P∶M≡N) ,p N⊃Mnf ,p N⊃M↠N⊃Mnf ,p expand-compute computeQ- 
-    (context-validity Γ⊢P∶M≡N) (minuskr P▷Q)
-expand-computeE {A = A ⇛ B} {M} {M'} computeQ Γ⊢P∶M≡M' P▷Q = 
-  λ W Δ ρ N N' R ρ∶Γ⇒Δ Δ⊢R∶N≡N' N∈EΔA N'∈EΔA computeR → 
-  expand-computeE (computeQ W Δ ρ N N' R ρ∶Γ⇒Δ Δ⊢R∶N≡N' N∈EΔA N'∈EΔA computeR) 
-  (app*R (E-typed N∈EΔA) (E-typed N'∈EΔA) 
-    (weakening Γ⊢P∶M≡M' (context-validity Δ⊢R∶N≡N') ρ∶Γ⇒Δ)
-    Δ⊢R∶N≡N')
-  (app*kr (key-redex-rep P▷Q))
-
-ref-compute : ∀ {V} {Γ : Context V} {M : Term V} {A : Type} → E Γ A M → computeE Γ M A M (reff M)
-ref-compute {Γ = Γ} {M = φ} {A = Ω} φ∈EΓΩ = 
-  let Γ⊢φ∶Ω : Γ ⊢ φ ∶ ty Ω
-      Γ⊢φ∶Ω = E-typed φ∈EΓΩ in
-  (func-EP (λ V Δ ρ ε validΔ ρ∶Γ⇒Δ ε∈EΔφ → expand-EP ε∈EΔφ (appPR (plusR (refR (weakening Γ⊢φ∶Ω validΔ ρ∶Γ⇒Δ))) (EP-typed ε∈EΔφ)) plus-ref) 
-  (plusR (refR Γ⊢φ∶Ω))) ,p 
-  func-EP (λ V Δ ρ ε validΔ ρ∶Γ⇒Δ ε∈EΔφ → expand-EP ε∈EΔφ (appPR (minusR (refR (weakening Γ⊢φ∶Ω validΔ ρ∶Γ⇒Δ))) (EP-typed ε∈EΔφ)) minus-ref) 
-  (minusR (refR Γ⊢φ∶Ω))
-ref-compute {A = A ⇛ B} (Γ⊢M∶A⇛B ,p computeM ,p compute-eqM) = λ W Δ ρ N N' Q ρ∶Γ⇒Δ Δ⊢Q∶N≡N' N∈EΔA N'∈EΔA computeQ → 
-  expand-computeE (compute-eqM W Δ ρ N N' Q ρ∶Γ⇒Δ N∈EΔA N'∈EΔA computeQ Δ⊢Q∶N≡N') 
-    (app*R (E-typed N∈EΔA) (E-typed N'∈EΔA) (refR (weakening Γ⊢M∶A⇛B (context-validity Δ⊢Q∶N≡N') ρ∶Γ⇒Δ)) 
-      Δ⊢Q∶N≡N') app*-ref
+postulate ref-compute : ∀ {V} {Γ : Context V} {M : Term V} {A : Type} → E Γ A M → computeE Γ M A M (reff M)
 
 postulate Neutral-E : ∀ {V} {Γ : Context V} {A} {M} → Neutral M → Γ ⊢ M ∶ ty A → E Γ A M
 
