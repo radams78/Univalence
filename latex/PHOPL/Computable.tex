@@ -643,12 +643,62 @@ From the definition of $E_\Gamma(T)$ and confluence.
 \end{proof}
 
 \begin{lm}
+\label{lm:Eref}
+If $M \in E_\Gamma(A)$ then $\reff{M} \in E_\Gamma(M =_A M)$.
+\end{lm}
+
+\begin{proof}
+The proof is by induction on the type $A$.
+
+If $A \equiv \Omega$: we have $\Gamma \vdash M : A$, hence $\Gamma \vdash \reff{M} : M =_A M$.  Also,
+$M \in \SN$, so $\reff{M} \in \SN$.
+
+If $A \equiv B \rightarrow C$: again we have $\Gamma \vdash \reff{M} : M =_A M$.  Now, let $N, N' \in E_\Gamma(B)$
+and $P \in E_\Gamma(N =_B N')$.  Then $\reff{M}_{N N'} P \in E_\Gamma(MN =_C MN')$ as required.
+\end{proof}
+
+\begin{lm}
+\label{lm:Ered}
+If $\reff{M}_{N_1 N_2} \reff{N} \in E_\Gamma(L =_A L')$ then $\reff{MN} \in E_\Gamma(L =_A L')$.
+\end{lm}
+
+\begin{proof}
+We prove the following stronger statement:
+
+If $\reff{M}_{N_1 N_2} \reff{N}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in E_\Gamma(L =_A L')$ then
+$\reff{MN}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in E_\Gamma(L =_A L')$.
+
+The proof is by induction on the type $A$.
+
+If $A \equiv \Omega$: we have $\Gamma \vdash \reff{M}_{N_1 N_2} \reff{N} \vec{P} : L =_A L'$, hence $\Gamma \vdash \reff{MN} \vec{P} : L =_A L'$
+using Generation.  Also, $\reff{M}_{N_1 N_2} \reff{N} \vec{P} \in \SN$ hence $\reff{MN} \vec{P} \in \SN$ by Lemma \ref{lm:SNrefapp}.
+
+If $A \equiv B \rightarrow C$: we have $\Gamma \vdash \reff{MN} \vec{P} : L =_A L'$ as before.  Now, let $K_{n+1}, K_{n+1}' \in E_\Gamma(B)$
+and $P_{n+1} \in E_\Gamma(K_{n+1} =_B K_{n+1}')$.  Then we have
+\begin{align*}
+\reff{M}_{N_1 N_2} \reff{N} \vec{P}_{K_{n+1} K_{n+1}l} P_{n+1} & \in E_\Gamma(LK_{n+1} =_C L'K_{n+1}') \\
+\therefore \reff{MN} \vec{P}_{K_{n+1} K_{n+1}'} P_{n+1} & \in E_\Gamma(LK_{n+1} =_C L'K_{n+1}')
+\end{align*}
+by the induction hypothesis, as required.
+\end{proof}
+
+\begin{lm}
 \label{lm:Egen}
 If $\reff{M} \in E_\Gamma(N =_A N')$ then $M \in E_\Gamma(A)$ and $M \simeq_\beta N \simeq_\beta N'$.
 \end{lm}
 
 \begin{proof}
-%TODO
+The proof is by induction on the type $A$.
+
+If $A \equiv \Omega$: we have $\reff{M} \in \SN$, hence $M \in \SN$.  Also, we have $\Gamma \vdash M : A$ and $M \simeq_\beta N \simeq_\beta N'$
+by Generation.
+
+If $A \equiv B \rightarrow C$: we have $\Gamma \vdash M : A$ and $M \simeq_\beta N \simeq_\beta N'$ by Generation again.  Now, let $L \in E_\Gamma(B)$.
+Then $\reff{L} \in E_\Gamma(L =_B L)$ by Lemma \ref{lm:Eref}, and so $\reff{M}_{LL} \reff{L} \in E_\Gamma(NL =_C N'L)$.  Therefore,
+$\reff{ML} \in E_\Gamma(NL =_C N'L)$ by Lemma \ref{lm:Ered}.  Hence $ML \in E_\Gamma(C)$ by the induction hypothesis, as required.
+
+Now let $L, L' \in E_\Gamma(B)$ and $P \in E_\Gamma(L =_B L')$.  Then similarly $ML, ML' \in E_\Gamma(C)$, and also $\reff{M}_{L L'} P \in E_\Gamma(NL =_C N'L')$.  Hence $\reff{M}_{L L'} P \in E_\Gamma(ML =_C ML')$
+by Lemma \ref{lm:conv-compute}, as required.
 \end{proof}
 
 \begin{lm}

@@ -45,3 +45,13 @@ we reduce one of the $L_i$.
 \end{description}
 \end{proof}
 
+\begin{lemma}
+\label{lm:SNrefapp}
+If $\reff{M}_{N_1 N_2} \reff{N}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \reff{N} \in \SN$ then $\reff{MN}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in \SN$.
+\end{lemma}
+
+\begin{proof}
+The proof is by induction on the hypothesis.  These are the possible one-step reductions from $\reff{MN} \vec{P}$:
+
+%TODO Finish
+\end{proof}
