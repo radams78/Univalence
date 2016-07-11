@@ -104,6 +104,8 @@ computeE Γ M (A ⇛ B) M' P =
   (computeQ : computeE Δ N A N' Q) → computeE Δ (appT (M 〈 ρ 〉) N) B (appT (M' 〈 ρ 〉)  N') 
     (app* N N' (P 〈 ρ 〉) Q)
 
+postulate compute-SN : ∀ {V} {Γ : Context V} {A} {δ} → computeT Γ A δ → valid Γ → SN δ
+
 postulate decode-rep : ∀ {U} {V} {S} (L : Leaves U S) {ρ : Rep U V} →
                      decode-Prop (lrep ρ L) ≡ decode-Prop L 〈 ρ 〉
 
@@ -194,32 +196,41 @@ postulate expand-computeE : ∀ {V} {Γ : Context V} {M} {A} {N} {P} {Q} →
 
 expand-computeT : ∀ {V} {Γ : Context V} {A} {M} {N} → computeT Γ A N → Γ ⊢ M ∶ ty A → SN M → key-redex M N → computeT Γ A M
 expand-computeT {A = Ω} computeψ _ SNM φ▷ψ = SNM
-expand-computeT {A = A ⇛ B} {M} {M'} (computeM'app ,p computeM'eq) Γ⊢M∶A⇛B SNM M▷M' = 
+expand-computeT {Γ = Γ} {A ⇛ B} {M} {M'} (computeM'app ,p computeM'eq) Γ⊢M∶A⇛B SNM M▷M' = 
   (λ Δ {ρ} {N} ρ∶Γ⇒Δ Δ⊢N∶A computeN → 
     let computeM'N : computeT Δ B (appT (M' 〈 ρ 〉) N)
-        computeM'N = computeM'app Δ ρ∶Γ⇒Δ Δ⊢N∶A computeN
-    in expand-computeT computeM'N 
-       (appR (weakening Γ⊢M∶A⇛B (context-validity Δ⊢N∶A) ρ∶Γ⇒Δ) Δ⊢N∶A)
-       {!!}
-             (appTkr (key-redex-rep M▷M'))) ,p 
-  (λ Δ ρ∶Γ⇒Δ Δ⊢P∶N≡N' computeN computeN' computeP₁ → 
+        computeM'N = computeM'app Δ ρ∶Γ⇒Δ Δ⊢N∶A computeN in
+    let validΔ : valid Δ
+        validΔ = context-validity Δ⊢N∶A in
+    expand-computeT computeM'N 
+    (appR (weakening Γ⊢M∶A⇛B validΔ ρ∶Γ⇒Δ) Δ⊢N∶A)
+    (expand-lemma (SNrep R-creates-rep SNM) 
+         (key-redex-rep M▷M') (compute-SN computeM'N validΔ))
+         (appTkr (key-redex-rep M▷M'))) ,p 
+  (λ Δ {ρ} {N} {N'} ρ∶Γ⇒Δ Δ⊢P∶N≡N' computeN computeN' computeP₁ → 
+    let validΔ : valid Δ
+        validΔ = context-validity Δ⊢P∶N≡N' in
+    let Γ⊢M'∶A⇛B : Γ ⊢ M' ∶ ty (A ⇛ B)
+        Γ⊢M'∶A⇛B = Subject-Reduction Γ⊢M∶A⇛B (key-redex-red M▷M') in
+    let Δ⊢M'ρ∶A⇛B : Δ ⊢ M' 〈 ρ 〉 ∶ ty (A ⇛ B)
+        Δ⊢M'ρ∶A⇛B = weakening Γ⊢M'∶A⇛B validΔ ρ∶Γ⇒Δ in
+    let Δ⊢Mρ∶A⇛B : Δ ⊢ M 〈 ρ 〉 ∶ ty (A ⇛ B)
+        Δ⊢Mρ∶A⇛B = weakening Γ⊢M∶A⇛B validΔ ρ∶Γ⇒Δ in
+    let Δ⊢N∶A : Δ ⊢ N ∶ ty A
+        Δ⊢N∶A = Equation-Validity₁ Δ⊢P∶N≡N' in
+    let Δ⊢N'∶A : Δ ⊢ N' ∶ ty A
+        Δ⊢N'∶A = Equation-Validity₂ Δ⊢P∶N≡N' in
+    let M'ρX≃MρX : ∀ X → appT (M' 〈 ρ 〉) X ≃ appT (M 〈 ρ 〉) X
+        M'ρX≃MρX = λ _ → sym-conv (appT-convl (red-conv (red-rep (key-redex-red M▷M')))) in
     expand-computeE 
       (conv-computeE 
         (computeM'eq Δ ρ∶Γ⇒Δ Δ⊢P∶N≡N' computeN computeN' computeP₁) 
-        (appR (weakening (Subject-Reduction Γ⊢M∶A⇛B (key-redex-red M▷M')) 
-                         (context-validity Δ⊢P∶N≡N') ρ∶Γ⇒Δ) 
-              (Equation-Validity₁ Δ⊢P∶N≡N')) 
-        (appR (weakening (Subject-Reduction Γ⊢M∶A⇛B (key-redex-red M▷M')) 
-                         (context-validity Δ⊢P∶N≡N') ρ∶Γ⇒Δ) 
-              (Equation-Validity₂ Δ⊢P∶N≡N')) 
-        (appR (weakening Γ⊢M∶A⇛B (context-validity Δ⊢P∶N≡N') ρ∶Γ⇒Δ) 
-              (Equation-Validity₁ Δ⊢P∶N≡N')) 
-        (appR (weakening Γ⊢M∶A⇛B (context-validity Δ⊢P∶N≡N') ρ∶Γ⇒Δ) 
-              (Equation-Validity₂ Δ⊢P∶N≡N')) 
-        (sym-conv (appT-convl (red-conv (red-rep (key-redex-red M▷M'))))) 
-        (sym-conv (appT-convl (red-conv (red-rep (key-redex-red M▷M')))))) 
-      (⋆-typed (weakening Γ⊢M∶A⇛B (context-validity Δ⊢P∶N≡N') ρ∶Γ⇒Δ) 
-        Δ⊢P∶N≡N') 
+        (appR Δ⊢M'ρ∶A⇛B Δ⊢N∶A) 
+        (appR Δ⊢M'ρ∶A⇛B Δ⊢N'∶A)
+        (appR Δ⊢Mρ∶A⇛B Δ⊢N∶A) 
+        (appR Δ⊢Mρ∶A⇛B Δ⊢N'∶A)
+        (M'ρX≃MρX N) (M'ρX≃MρX N'))
+      (⋆-typed Δ⊢Mρ∶A⇛B Δ⊢P∶N≡N') 
       (key-redex-⋆ (key-redex-rep M▷M')))
 
 compute : ∀ {V} {K} → Context V → Expression V (parent K) → Expression V (varKind K) → Set
@@ -287,6 +298,7 @@ postulate func-E : ∀ {U} {Γ : Context U} {M : Term U} {A} {B} →
 
 \begin{lm}$ $
 \label{lm:conv-compute}
+\begin{enumerate}
 \item
 If $\delta \in E_\Gamma(\phi)$, $\Gamma \vdash \psi : \Omega$ and $\phi \simeq \psi$, then $\delta \in E_\Gamma(\psi)$.
 \item
@@ -396,8 +408,6 @@ EE-SN _ = E'-SN
 {-
 postulate Neutral-computeE : ∀ {V} {Γ : Context V} {M} {A} {N} {P : NeutralP V} →
                            Γ ⊢ decode P ∶ M ≡〈 A 〉 N → computeE Γ M A N (decode P)
-
-postulate compute-SN : ∀ {V} {Γ : Context V} {A} {δ} → compute Γ A δ → valid Γ → SN δ
 
 postulate NF : ∀ {V} {Γ} {φ : Term V} → Γ ⊢ φ ∶ ty Ω → closed-prop
 

@@ -32,6 +32,7 @@
 
 \newtheorem{prop}[theorem]{Proposition}
 \newtheorem{lm}[theorem]{Lemma}
+\newtheorem{cor}{Corollary}[theorem]
 
 \newcommand{\Set}{\mathbf{Set}}
 \newcommand{\eqdef}{\mathrel{\smash{\stackrel{\text{def}}{=}}}}
@@ -103,8 +104,8 @@ syntax is given by the grammar:
 \text{Proof} & \delta & ::= & p \mid \lambda p:\phi.\delta \mid \delta \delta
 \end{array}
 \]
-where $p$ is a \emph{proof variable} and $x$ is a \emph{term variable}.
-Its rules of deduction are given in Figure \ref{fig:lambdao}
+where $p$ is a \emph{proof variable} and $x$ is a \emph{term variable}.  We define the usual relation of $\beta$-reduction on these terms.
+The rules of deduction of $\lambda o$ are given in Figure \ref{fig:lambdao}
 
 \begin{figure}
 \begin{framed}
@@ -119,13 +120,11 @@ Its rules of deduction are given in Figure \ref{fig:lambdao}
 \infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \phi} \]
 \[ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \qquad
 \infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \supset \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
-\[ \infer[(\phi \rightarrow \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
-\[ \infer[(\psi \rightarrow \phi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
+\[ \infer[(\phi \simeq_\beta \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
 \end{framed}
 \caption{Rules of Deduction of $\lambda o$}
 \label{fig:lambdao}
 \end{figure}
-\todo{Can we remove the side-condition on the reduction rule?}
 
 \section{Extensional Equality}
 

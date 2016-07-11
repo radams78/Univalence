@@ -116,6 +116,9 @@ data redview {V} {C} {K} (E : Subexpression V C K) : Subexpression V C K → Set
 
 data SNview : ∀ {V} {C} {K} → Subexpression V C K → Set where
   SNviewI : ∀ {V} {C} {K} {E : Subexpression V C K} →
-    (∀ F → E ↠ F → SNview F) → SNview E
+    (∀ F → E ↠⁺ F → SNview F) → SNview E
+
+postulate SNtoSNview : ∀ {V} {C} {K} (M : Subexpression V C K) →
+                     SN M → SNview M
 \end{code}
 }

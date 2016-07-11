@@ -29,6 +29,7 @@ data key-redex {V} : ∀ {K} → Expression V K → Expression V K → Set where
 
 Clearly, if $M \kr N$, then $M \rightarrow N$.  We also have the following properties.
 
+\begin{lm}
 \label{lm:krsn}
 If $M \kr N$ and $M \twoheadrightarrow P$, then there exists $Q$ such that $N \twoheadrightarrow Q$, and either $P \kr Q$ or $P \equiv Q$.
 \end{lm}
@@ -39,7 +40,10 @@ The proof is by induction on $M \kr N$.  All cases are simple.
 
 \begin{code}
 postulate key-redex-confluent : ∀ {V} {K} {M N P : Expression V K} →
-                              key-redex M N → M ⇒ P → Σ[ Q ∈ Expression V K ] (key-redex P Q ⊎ P ≡ Q) × N ↠ Q
+                              key-redex M N → M ⇒ P → Σ[ Q ∈ Expression V K ] (key-redex P Q ⊎ P ≡ Q) × (N ↠⁺ Q ⊎ N ≡ Q)
+
+postulate expand-lemma : ∀ {V} {M M' N : Term V} →
+                       SN M → key-redex M M' → SN (appT M' N) → SN (appT M N)
 \end{code}
 
 \AgdaHide{

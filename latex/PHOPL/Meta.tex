@@ -367,18 +367,6 @@ Induction on derivations.
 \end{code}
 }
 
-We introduce the following notion, which will be needed in the proof of Theorem \ref{theorem:mainprop}.  Given a derivation $\Delta$,
-we say that $\Gamma \vdash M \simeq_\Delta N : A$ iff there exists a sequence of terms $M_1$, \ldots, $N_n$ ($n \geq 1$) such
-that the following conditions hold:
-\begin{itemize}
-\item
-$M \equiv M_1$ and $N \equiv M_n$
-\item
-for $1 \leq i < n$, either $M_i \rightarrow M_{i+1}$ or $M_{i+1} \rightarrow M_i$
-\item
-for $1 \leq i \leq n$, the derivation $\Delta$ contains a subderivation of $\Gamma \vdash M_i : A$.
-\end{itemize}
-
 \begin{lemma}[Generation]
 $ $
 \begin{enumerate}
@@ -393,31 +381,31 @@ If $\Gamma \vdash \lambda x:A.M : B$ then there exists $C$ such that $\Gamma, x 
 \item
 If $\Gamma \vdash MN : A$ then there exists $B$ such that $\Gamma \vdash M : B \rightarrow A$ and $\Gamma \vdash N : B$.
 \item
-For any derivation $\Delta$ of $\Gamma \vdash p : \phi$, there exists $\psi$ such that $p : \psi \in \Gamma$ and $\Delta \vdash \phi \simeq_\Delta \psi : \Omega$.
+If $\Gamma \vdash p : \phi$, then there exists $\psi$ such that $p : \psi \in \Gamma$ and $\phi \simeq_\beta \psi$.
 \item
-For any derivation $\Delta$ of $\Gamma \vdash \lambda p:\phi.\delta : \psi$, there exists $\chi$ such that $\Gamma, p : \phi \vdash \delta : \chi$ and $\Gamma \vdash \psi \simeq_\Omega \phi \supset \chi : \Omega$.
+If $\Gamma \vdash \lambda p:\phi.\delta : \psi$, then there exists $\chi$ such that $\Gamma, p : \phi \vdash \delta : \chi$ and $\psi \simeq_\beta \phi \supset \chi$.
 \item
 If $\Gamma \vdash \delta \epsilon : \phi$ then there exists $\psi$ such that $\Gamma \vdash \delta : \psi \supset \phi$ and $\Gamma \vdash \epsilon : \psi$.
 \item
-For any derivation $\Delta$ of $\Gamma \vdash e : M =_A N$, there exist $M'$, $N'$ such that $e : M' =_A N' \in \Gamma$ and $\Gamma \vdash M \simeq_\Omega M' : A$, $\Gamma \vdash N \simeq_\Delta N' : A$.
+If $\Gamma \vdash e : M =_A N$, then there exist $M'$, $N'$ such that $e : M' =_A N' \in \Gamma$ and $M \simeq_\beta M'$, $N \simeq_\beta N'$.
 \item
-For any derivation $\Delta$ of $\Gamma \vdash \reff{M} : N =_A P$, we have $\Gamma \vdash M : A$ and $\Gamma \vdash M \simeq_\Delta N \simeq_\Delta P : A$.
+If $\Gamma \vdash \reff{M} : N =_A P$, then we have $\Gamma \vdash M : A$ and $M \simeq_\beta N \simeq_\beta P$.
 \item
-For any derivation $\Delta$ of $\Gamma \vdash P \supset^* Q : \phi =_A \psi$, there exist $\phi_1$, $\phi_2$, $\psi_1$, $\psi_2$ such that
-$\Gamma \vdash P : \phi_1 =_\Omega \psi_1$, $\Gamma \vdash Q : \phi_2 =_\Omega \psi_2$, $\Gamma \vdash \phi \simeq_\Delta \phi_1 \supset \psi_1 : \Omega$, $\Gamma \vdash \psi \simeq_\Delta \phi_2 \supset \psi_2 : \Omega$, and $A \equiv \Omega$.
+If $\Gamma \vdash P \supset^* Q : \phi =_A \psi$, then there exist $\phi_1$, $\phi_2$, $\psi_1$, $\psi_2$ such that
+$\Gamma \vdash P : \phi_1 =_\Omega \psi_1$, $\Gamma \vdash Q : \phi_2 =_\Omega \psi_2$, $\phi \simeq_\beta \phi_1 \supset \psi_1$, $\psi \simeq_\beta \phi_2 \supset \psi_2$, and $A \equiv \Omega$.
 \item
-For any derivation $\Delta$ of $\Gamma \vdash \univ{\phi}{\psi}{P}{Q} : \chi =_A \theta$, we have $\Gamma \vdash P : \phi \supset \psi$, $\Gamma \vdash Q : \psi \supset \phi$,
+If $\Gamma \vdash \univ{\phi}{\psi}{P}{Q} : \chi =_A \theta$, then we have $\Gamma \vdash P : \phi \supset \psi$, $\Gamma \vdash Q : \psi \supset \phi$,
 $\Gamma \vdash \chi \simeq_\Delta \phi : \Omega$, $\Gamma \vdash \theta \simeq_\Delta \psi : \Omega$ and $A \equiv \Omega$.
 \item
 If $\Gamma \vdash \triplelambda e : x =_A y. P : M =_B N$ then there exists $C$ such that $\Gamma, x : A, y : A, e : x =_A y \vdash P : M x =_C N y$
 and $B \equiv A \rightarrow C$.
 \item
-For any derivation $\Delta$ of $\Gamma \vdash P_{M M'} Q : N =_A N'$, there exist $B$, $F$ and $G$ such that $\Gamma \vdash P : F =_{B \rightarrow A} G$, $\Gamma \vdash Q : M =_B M'$, $\Gamma \vdash N \simeq_\Delta F M : A$
-and $\Gamma \vdash N' \simeq_\Delta G M' : A$.
+If $\Gamma \vdash P_{M M'} Q : N =_A N'$, then there exist $B$, $F$ and $G$ such that $\Gamma \vdash P : F =_{B \rightarrow A} G$, $\Gamma \vdash Q : M =_B M'$, $N \simeq_\beta F M$
+and $N' \simeq_\beta G M'$.
 \item
-For any derivation $\Delta$ of $\Gamma \vdash P^+ : \phi$, there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\Gamma \vdash \phi \simeq_\Delta \psi \supset \chi : \Omega$.
+If $\Gamma \vdash P^+ : \phi$, then there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\phi \simeq_\beta \psi \supset \chi$.
 \item
-For any derivation $\Delta$ of $\Gamma \vdash P^- : \phi$, there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\Gamma \vdash \phi \simeq_\Delta \chi \supset \psi : \Omega$.
+If $\Gamma \vdash P^- : \phi$, there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\phi \simeq_\beta \chi \supset \psi$.
 \end{enumerate}
 \end{lemma}
 
@@ -730,26 +718,11 @@ Induction on derivations.
 }
 
 \begin{theorem}[Subject Reduction]
-Let $s$ be a path (proof, term) and $S$ an equation (term, type).
-Suppose $\Gamma \vdash s : S$ and $s \twoheadrightarrow s'$.
-Suppose further that, for every judgement $\Gamma \vdash t : T$ in $\Delta$ except
-possibly the conclusion, the expression $t$ is confluent.  Then $\Gamma \vdash s : S$.
+If $\Gamma \vdash s : T$ and $s \twoheadrightarrow t$ then $\Gamma \vdash t : T$.
 \end{theorem}
 
 \begin{proof}
-It is sufficient to prove the case where $s \rightarrow s'$.  The proof is by
-induction on the relation $s \rightarrow s'$, making use of the Generation Lemma.  We
-deal here with the case $(\lambda p:\phi.\delta) \epsilon \rightarrow \delta[p:=\epsilon]$.
-
-Let $\Delta$ be a derivation of $\Gamma \vdash (\lambda p:\phi.\delta)\epsilon : \psi$.
-Then, by Generation, we have $\Gamma, p : \phi \vdash \delta : \chi$ and $\Gamma
-\vdash \epsilon : \theta$, where $\Gamma \vdash \phi \supset \chi \simeq_\Delta \theta \supset \psi$.  By hypothesis, every term in the sequence of conversions from $\phi$ to $\chi$
-is confluent, hence $\phi \supset \chi$ and $\theta \supset \psi$ have a common reduct,
-which must be of the form $\alpha \supset \beta$.  It follows that $\phi \simeq \theta$
-and $\chi \simeq \psi$.  
-
-Hence we have $\Gamma, p : \phi \vdash \delta : \psi$ and $\Gamma \vdash \epsilon : \phi$,
-and so $\Gamma \vdash \delta[p:=\epsilon] : \psi$ as required.
+It is sufficient to prove the case $s \rightarrow t$.  The proof is by a case analysis on $s \rightarrow t$, using the Generation Lemma.
 \end{proof}
 
 \AgdaHide{

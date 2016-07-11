@@ -212,6 +212,10 @@ E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \
 \\
 %
 \\
+\>\AgdaKeyword{postulate} \AgdaPostulate{compute-SN} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{computeT} \AgdaBound{Γ} \AgdaBound{A} \AgdaBound{δ} \AgdaSymbol{→} \AgdaDatatype{valid} \AgdaBound{Γ} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{δ}\<%
+\\
+%
+\\
 \>\AgdaKeyword{postulate} \AgdaPostulate{decode-rep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{L} \AgdaSymbol{:} \AgdaDatatype{Leaves} \AgdaBound{U} \AgdaBound{S}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[4]\AgdaIndent{21}{}\<[21]%
@@ -508,12 +512,12 @@ E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \
 \\
 %
 \\
-\>\AgdaFunction{expand-computeT} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{computeT} \AgdaBound{Γ} \AgdaBound{A} \AgdaBound{N} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{key-redex} \AgdaBound{M} \AgdaBound{N} \AgdaSymbol{→} \AgdaFunction{computeT} \AgdaBound{Γ} \AgdaBound{A} \AgdaBound{M}\<%
+\>\AgdaFunction{expand-computeT} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{computeT} \AgdaBound{Γ} \AgdaBound{A} \AgdaBound{N} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{M} \AgdaSymbol{→} \AgdaDatatype{key-redex} \AgdaBound{M} \AgdaBound{N} \AgdaSymbol{→} \AgdaFunction{computeT} \AgdaBound{Γ} \AgdaBound{A} \AgdaBound{M}\<%
 \\
-\>\AgdaFunction{expand-computeT} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaInductiveConstructor{Ω}\AgdaSymbol{\}} \AgdaBound{computeψ} \AgdaSymbol{\_} \AgdaBound{φ▷ψ} \AgdaSymbol{=} \AgdaFunction{key-redex-SN} \AgdaBound{computeψ} \AgdaBound{φ▷ψ}\<%
+\>\AgdaFunction{expand-computeT} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaInductiveConstructor{Ω}\AgdaSymbol{\}} \AgdaBound{computeψ} \AgdaSymbol{\_} \AgdaBound{SNM} \AgdaBound{φ▷ψ} \AgdaSymbol{=} \AgdaBound{SNM}\<%
 \\
-\>\AgdaFunction{expand-computeT} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaBound{A} \AgdaInductiveConstructor{⇛} \AgdaBound{B}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M'}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{computeM'app} \AgdaInductiveConstructor{,p} \AgdaBound{computeM'eq}\AgdaSymbol{)} \AgdaBound{Γ⊢M∶A⇛B} \AgdaBound{M▷M'} \AgdaSymbol{=} \<[82]%
-\>[82]\<%
+\>\AgdaFunction{expand-computeT} \AgdaSymbol{\{}\AgdaArgument{Γ} \AgdaSymbol{=} \AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A} \AgdaInductiveConstructor{⇛} \AgdaBound{B}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M'}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{computeM'app} \AgdaInductiveConstructor{,p} \AgdaBound{computeM'eq}\AgdaSymbol{)} \AgdaBound{Γ⊢M∶A⇛B} \AgdaBound{SNM} \AgdaBound{M▷M'} \AgdaSymbol{=} \<[90]%
+\>[90]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaSymbol{(λ} \AgdaBound{Δ} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaBound{ρ∶Γ⇒Δ} \AgdaBound{Δ⊢N∶A} \AgdaBound{computeN} \AgdaSymbol{→} \<[38]%
@@ -523,25 +527,79 @@ E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \
 \>[4]\AgdaKeyword{let} \AgdaBound{computeM'N} \AgdaSymbol{:} \AgdaFunction{computeT} \AgdaBound{Δ} \AgdaBound{B} \AgdaSymbol{(}\AgdaFunction{appT} \AgdaSymbol{(}\AgdaBound{M'} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaBound{N}\AgdaSymbol{)}\<%
 \\
 \>[4]\AgdaIndent{8}{}\<[8]%
-\>[8]\AgdaBound{computeM'N} \AgdaSymbol{=} \AgdaBound{computeM'app} \AgdaBound{Δ} \AgdaBound{ρ∶Γ⇒Δ} \AgdaBound{Δ⊢N∶A} \AgdaBound{computeN}\<%
+\>[8]\AgdaBound{computeM'N} \AgdaSymbol{=} \AgdaBound{computeM'app} \AgdaBound{Δ} \AgdaBound{ρ∶Γ⇒Δ} \AgdaBound{Δ⊢N∶A} \AgdaBound{computeN} \AgdaKeyword{in}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaKeyword{in} \AgdaFunction{expand-computeT} \AgdaBound{computeM'N} \<[34]%
-\>[34]\<%
+\>[4]\AgdaKeyword{let} \AgdaBound{validΔ} \AgdaSymbol{:} \AgdaDatatype{valid} \AgdaBound{Δ}\<%
 \\
-\>[4]\AgdaIndent{7}{}\<[7]%
-\>[7]\AgdaSymbol{(}\AgdaInductiveConstructor{appR} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaBound{Γ⊢M∶A⇛B} \AgdaSymbol{(}\AgdaFunction{context-validity} \AgdaBound{Δ⊢N∶A}\AgdaSymbol{)} \AgdaBound{ρ∶Γ⇒Δ}\AgdaSymbol{)} \AgdaBound{Δ⊢N∶A}\AgdaSymbol{)} \<[71]%
-\>[71]\<%
+\>[4]\AgdaIndent{8}{}\<[8]%
+\>[8]\AgdaBound{validΔ} \AgdaSymbol{=} \AgdaFunction{context-validity} \AgdaBound{Δ⊢N∶A} \AgdaKeyword{in}\<%
 \\
-\>[7]\AgdaIndent{13}{}\<[13]%
-\>[13]\AgdaSymbol{(}\AgdaInductiveConstructor{appTkr} \AgdaSymbol{(}\AgdaFunction{key-redex-rep} \AgdaBound{M▷M'}\AgdaSymbol{)))} \AgdaInductiveConstructor{,p} \<[47]%
-\>[47]\<%
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{expand-computeT} \AgdaBound{computeM'N} \<[31]%
+\>[31]\<%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaSymbol{(}\AgdaInductiveConstructor{appR} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaBound{Γ⊢M∶A⇛B} \AgdaBound{validΔ} \AgdaBound{ρ∶Γ⇒Δ}\AgdaSymbol{)} \AgdaBound{Δ⊢N∶A}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaSymbol{(}\AgdaPostulate{expand-lemma} \AgdaSymbol{(}\AgdaFunction{SNrep} \AgdaPostulate{R-creates-rep} \AgdaBound{SNM}\AgdaSymbol{)} \<[44]%
+\>[44]\<%
+\\
+\>[4]\AgdaIndent{9}{}\<[9]%
+\>[9]\AgdaSymbol{(}\AgdaFunction{key-redex-rep} \AgdaBound{M▷M'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{compute-SN} \AgdaBound{computeM'N} \AgdaBound{validΔ}\AgdaSymbol{))}\<%
+\\
+\>[4]\AgdaIndent{9}{}\<[9]%
+\>[9]\AgdaSymbol{(}\AgdaInductiveConstructor{appTkr} \AgdaSymbol{(}\AgdaFunction{key-redex-rep} \AgdaBound{M▷M'}\AgdaSymbol{)))} \AgdaInductiveConstructor{,p} \<[43]%
+\>[43]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaSymbol{(λ} \AgdaBound{Δ} \AgdaBound{ρ∶Γ⇒Δ} \AgdaBound{Δ⊢P∶N≡N'} \AgdaBound{computeN} \AgdaBound{computeN'} \AgdaBound{computeP₁} \AgdaSymbol{→} \<[53]%
-\>[53]\<%
+\>[2]\AgdaSymbol{(λ} \AgdaBound{Δ} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N'}\AgdaSymbol{\}} \AgdaBound{ρ∶Γ⇒Δ} \AgdaBound{Δ⊢P∶N≡N'} \AgdaBound{computeN} \AgdaBound{computeN'} \AgdaBound{computeP₁} \AgdaSymbol{→} \<[66]%
+\>[66]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaKeyword{let} \AgdaBound{validΔ} \AgdaSymbol{:} \AgdaDatatype{valid} \AgdaBound{Δ}\<%
+\\
+\>[4]\AgdaIndent{8}{}\<[8]%
+\>[8]\AgdaBound{validΔ} \AgdaSymbol{=} \AgdaFunction{context-validity} \AgdaBound{Δ⊢P∶N≡N'} \AgdaKeyword{in}\<%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaKeyword{let} \AgdaBound{Γ⊢M'∶A⇛B} \AgdaSymbol{:} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M'} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaSymbol{(}\AgdaBound{A} \AgdaInductiveConstructor{⇛} \AgdaBound{B}\AgdaSymbol{)}\<%
+\\
+\>[4]\AgdaIndent{8}{}\<[8]%
+\>[8]\AgdaBound{Γ⊢M'∶A⇛B} \AgdaSymbol{=} \AgdaPostulate{Subject-Reduction} \AgdaBound{Γ⊢M∶A⇛B} \AgdaSymbol{(}\AgdaPostulate{key-redex-red} \AgdaBound{M▷M'}\AgdaSymbol{)} \AgdaKeyword{in}\<%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaKeyword{let} \AgdaBound{Δ⊢M'ρ∶A⇛B} \AgdaSymbol{:} \AgdaBound{Δ} \AgdaDatatype{⊢} \AgdaBound{M'} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaSymbol{(}\AgdaBound{A} \AgdaInductiveConstructor{⇛} \AgdaBound{B}\AgdaSymbol{)}\<%
+\\
+\>[4]\AgdaIndent{8}{}\<[8]%
+\>[8]\AgdaBound{Δ⊢M'ρ∶A⇛B} \AgdaSymbol{=} \AgdaPostulate{weakening} \AgdaBound{Γ⊢M'∶A⇛B} \AgdaBound{validΔ} \AgdaBound{ρ∶Γ⇒Δ} \AgdaKeyword{in}\<%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaKeyword{let} \AgdaBound{Δ⊢Mρ∶A⇛B} \AgdaSymbol{:} \AgdaBound{Δ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaSymbol{(}\AgdaBound{A} \AgdaInductiveConstructor{⇛} \AgdaBound{B}\AgdaSymbol{)}\<%
+\\
+\>[4]\AgdaIndent{8}{}\<[8]%
+\>[8]\AgdaBound{Δ⊢Mρ∶A⇛B} \AgdaSymbol{=} \AgdaPostulate{weakening} \AgdaBound{Γ⊢M∶A⇛B} \AgdaBound{validΔ} \AgdaBound{ρ∶Γ⇒Δ} \AgdaKeyword{in}\<%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaKeyword{let} \AgdaBound{Δ⊢N∶A} \AgdaSymbol{:} \AgdaBound{Δ} \AgdaDatatype{⊢} \AgdaBound{N} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{A}\<%
+\\
+\>[4]\AgdaIndent{8}{}\<[8]%
+\>[8]\AgdaBound{Δ⊢N∶A} \AgdaSymbol{=} \AgdaPostulate{Equation-Validity₁} \AgdaBound{Δ⊢P∶N≡N'} \AgdaKeyword{in}\<%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaKeyword{let} \AgdaBound{Δ⊢N'∶A} \AgdaSymbol{:} \AgdaBound{Δ} \AgdaDatatype{⊢} \AgdaBound{N'} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{A}\<%
+\\
+\>[4]\AgdaIndent{8}{}\<[8]%
+\>[8]\AgdaBound{Δ⊢N'∶A} \AgdaSymbol{=} \AgdaPostulate{Equation-Validity₂} \AgdaBound{Δ⊢P∶N≡N'} \AgdaKeyword{in}\<%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaKeyword{let} \AgdaBound{M'ρX≃MρX} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaBound{X} \AgdaSymbol{→} \AgdaFunction{appT} \AgdaSymbol{(}\AgdaBound{M'} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaBound{X} \AgdaDatatype{≃} \AgdaFunction{appT} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaBound{X}\<%
+\\
+\>[4]\AgdaIndent{8}{}\<[8]%
+\>[8]\AgdaBound{M'ρX≃MρX} \AgdaSymbol{=} \AgdaSymbol{λ} \AgdaBound{\_} \AgdaSymbol{→} \AgdaInductiveConstructor{sym-conv} \AgdaSymbol{(}\AgdaPostulate{appT-convl} \AgdaSymbol{(}\AgdaFunction{red-conv} \AgdaSymbol{(}\AgdaPostulate{red-rep} \AgdaSymbol{(}\AgdaPostulate{key-redex-red} \AgdaBound{M▷M'}\AgdaSymbol{))))} \AgdaKeyword{in}\<%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaPostulate{expand-computeE} \<[20]%
 \>[20]\<%
 \\
@@ -554,60 +612,25 @@ E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \
 \>[68]\<%
 \\
 \>[6]\AgdaIndent{8}{}\<[8]%
-\>[8]\AgdaSymbol{(}\AgdaInductiveConstructor{appR} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaSymbol{(}\AgdaPostulate{Subject-Reduction} \AgdaBound{Γ⊢M∶A⇛B} \AgdaSymbol{(}\AgdaPostulate{key-redex-red} \AgdaBound{M▷M'}\AgdaSymbol{))} \<[74]%
-\>[74]\<%
-\\
-\>[8]\AgdaIndent{25}{}\<[25]%
-\>[25]\AgdaSymbol{(}\AgdaFunction{context-validity} \AgdaBound{Δ⊢P∶N≡N'}\AgdaSymbol{)} \AgdaBound{ρ∶Γ⇒Δ}\AgdaSymbol{)} \<[60]%
-\>[60]\<%
-\\
-\>[0]\AgdaIndent{14}{}\<[14]%
-\>[14]\AgdaSymbol{(}\AgdaPostulate{Equation-Validity₁} \AgdaBound{Δ⊢P∶N≡N'}\AgdaSymbol{))} \<[45]%
-\>[45]\<%
-\\
-\>[0]\AgdaIndent{8}{}\<[8]%
-\>[8]\AgdaSymbol{(}\AgdaInductiveConstructor{appR} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaSymbol{(}\AgdaPostulate{Subject-Reduction} \AgdaBound{Γ⊢M∶A⇛B} \AgdaSymbol{(}\AgdaPostulate{key-redex-red} \AgdaBound{M▷M'}\AgdaSymbol{))} \<[74]%
-\>[74]\<%
-\\
-\>[8]\AgdaIndent{25}{}\<[25]%
-\>[25]\AgdaSymbol{(}\AgdaFunction{context-validity} \AgdaBound{Δ⊢P∶N≡N'}\AgdaSymbol{)} \AgdaBound{ρ∶Γ⇒Δ}\AgdaSymbol{)} \<[60]%
-\>[60]\<%
-\\
-\>[0]\AgdaIndent{14}{}\<[14]%
-\>[14]\AgdaSymbol{(}\AgdaPostulate{Equation-Validity₂} \AgdaBound{Δ⊢P∶N≡N'}\AgdaSymbol{))} \<[45]%
-\>[45]\<%
-\\
-\>[0]\AgdaIndent{8}{}\<[8]%
-\>[8]\AgdaSymbol{(}\AgdaInductiveConstructor{appR} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaBound{Γ⊢M∶A⇛B} \AgdaSymbol{(}\AgdaFunction{context-validity} \AgdaBound{Δ⊢P∶N≡N'}\AgdaSymbol{)} \AgdaBound{ρ∶Γ⇒Δ}\AgdaSymbol{)} \<[68]%
-\>[68]\<%
-\\
-\>[8]\AgdaIndent{14}{}\<[14]%
-\>[14]\AgdaSymbol{(}\AgdaPostulate{Equation-Validity₁} \AgdaBound{Δ⊢P∶N≡N'}\AgdaSymbol{))} \<[45]%
-\>[45]\<%
-\\
-\>[0]\AgdaIndent{8}{}\<[8]%
-\>[8]\AgdaSymbol{(}\AgdaInductiveConstructor{appR} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaBound{Γ⊢M∶A⇛B} \AgdaSymbol{(}\AgdaFunction{context-validity} \AgdaBound{Δ⊢P∶N≡N'}\AgdaSymbol{)} \AgdaBound{ρ∶Γ⇒Δ}\AgdaSymbol{)} \<[68]%
-\>[68]\<%
-\\
-\>[8]\AgdaIndent{14}{}\<[14]%
-\>[14]\AgdaSymbol{(}\AgdaPostulate{Equation-Validity₂} \AgdaBound{Δ⊢P∶N≡N'}\AgdaSymbol{))} \<[45]%
-\>[45]\<%
-\\
-\>[0]\AgdaIndent{8}{}\<[8]%
-\>[8]\AgdaSymbol{(}\AgdaInductiveConstructor{sym-conv} \AgdaSymbol{(}\AgdaPostulate{appT-convl} \AgdaSymbol{(}\AgdaFunction{red-conv} \AgdaSymbol{(}\AgdaPostulate{red-rep} \AgdaSymbol{(}\AgdaPostulate{key-redex-red} \AgdaBound{M▷M'}\AgdaSymbol{)))))} \<[74]%
-\>[74]\<%
-\\
-\>[0]\AgdaIndent{8}{}\<[8]%
-\>[8]\AgdaSymbol{(}\AgdaInductiveConstructor{sym-conv} \AgdaSymbol{(}\AgdaPostulate{appT-convl} \AgdaSymbol{(}\AgdaFunction{red-conv} \AgdaSymbol{(}\AgdaPostulate{red-rep} \AgdaSymbol{(}\AgdaPostulate{key-redex-red} \AgdaBound{M▷M'}\AgdaSymbol{))))))} \<[75]%
-\>[75]\<%
-\\
-\>[0]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaSymbol{(}\AgdaPostulate{⋆-typed} \AgdaSymbol{(}\AgdaPostulate{weakening} \AgdaBound{Γ⊢M∶A⇛B} \AgdaSymbol{(}\AgdaFunction{context-validity} \AgdaBound{Δ⊢P∶N≡N'}\AgdaSymbol{)} \AgdaBound{ρ∶Γ⇒Δ}\AgdaSymbol{)} \<[69]%
-\>[69]\<%
+\>[8]\AgdaSymbol{(}\AgdaInductiveConstructor{appR} \AgdaBound{Δ⊢M'ρ∶A⇛B} \AgdaBound{Δ⊢N∶A}\AgdaSymbol{)} \<[31]%
+\>[31]\<%
 \\
 \>[6]\AgdaIndent{8}{}\<[8]%
-\>[8]\AgdaBound{Δ⊢P∶N≡N'}\AgdaSymbol{)} \<[18]%
-\>[18]\<%
+\>[8]\AgdaSymbol{(}\AgdaInductiveConstructor{appR} \AgdaBound{Δ⊢M'ρ∶A⇛B} \AgdaBound{Δ⊢N'∶A}\AgdaSymbol{)}\<%
+\\
+\>[6]\AgdaIndent{8}{}\<[8]%
+\>[8]\AgdaSymbol{(}\AgdaInductiveConstructor{appR} \AgdaBound{Δ⊢Mρ∶A⇛B} \AgdaBound{Δ⊢N∶A}\AgdaSymbol{)} \<[30]%
+\>[30]\<%
+\\
+\>[6]\AgdaIndent{8}{}\<[8]%
+\>[8]\AgdaSymbol{(}\AgdaInductiveConstructor{appR} \AgdaBound{Δ⊢Mρ∶A⇛B} \AgdaBound{Δ⊢N'∶A}\AgdaSymbol{)}\<%
+\\
+\>[6]\AgdaIndent{8}{}\<[8]%
+\>[8]\AgdaSymbol{(}\AgdaBound{M'ρX≃MρX} \AgdaBound{N}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{M'ρX≃MρX} \AgdaBound{N'}\AgdaSymbol{))}\<%
+\\
+\>[0]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaSymbol{(}\AgdaPostulate{⋆-typed} \AgdaBound{Δ⊢Mρ∶A⇛B} \AgdaBound{Δ⊢P∶N≡N'}\AgdaSymbol{)} \<[34]%
+\>[34]\<%
 \\
 \>[0]\AgdaIndent{6}{}\<[6]%
 \>[6]\AgdaSymbol{(}\AgdaPostulate{key-redex-⋆} \AgdaSymbol{(}\AgdaFunction{key-redex-rep} \AgdaBound{M▷M'}\AgdaSymbol{)))}\<%
@@ -644,16 +667,16 @@ The proof is by induction on $T$.  The cases where $T$ is $\Omega$, $\bot$ or a 
 \>\AgdaFunction{expand-compute} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaFunction{parent} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{N} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{→}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{compute} \AgdaBound{Γ} \AgdaBound{A} \AgdaBound{N} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{key-redex} \AgdaBound{M} \AgdaBound{N} \AgdaSymbol{→} \AgdaFunction{compute} \AgdaBound{Γ} \AgdaBound{A} \AgdaBound{M}\<%
+\>[2]\AgdaFunction{compute} \AgdaBound{Γ} \AgdaBound{A} \AgdaBound{N} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{M} \AgdaSymbol{→} \AgdaDatatype{key-redex} \AgdaBound{M} \AgdaBound{N} \AgdaSymbol{→} \AgdaFunction{compute} \AgdaBound{Γ} \AgdaBound{A} \AgdaBound{M}\<%
 \end{code}
 
 \AgdaHide{
 \begin{code}%
 \>\AgdaFunction{expand-compute} \AgdaSymbol{\{}\AgdaArgument{K} \AgdaSymbol{=} \AgdaInductiveConstructor{-Term}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-ty} \AgdaBound{A}\AgdaSymbol{)} \AgdaInductiveConstructor{out}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{expand-computeT} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaBound{A}\AgdaSymbol{\}}\<%
 \\
-\>\AgdaFunction{expand-compute} \AgdaSymbol{\{}\AgdaArgument{K} \AgdaSymbol{=} \AgdaInductiveConstructor{-Proof}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{S} \AgdaInductiveConstructor{,p} \AgdaBound{ψ} \AgdaInductiveConstructor{,p} \AgdaBound{φ↠ψ} \AgdaInductiveConstructor{,p} \AgdaBound{computeε}\AgdaSymbol{)} \AgdaBound{Γ⊢δ∶φ} \AgdaBound{δ▷ε} \AgdaSymbol{=} \AgdaSymbol{(}\AgdaBound{S} \AgdaInductiveConstructor{,p} \AgdaBound{ψ} \AgdaInductiveConstructor{,p} \AgdaBound{φ↠ψ} \AgdaInductiveConstructor{,p} \AgdaPostulate{expand-computeP} \AgdaSymbol{\{}\AgdaArgument{S} \AgdaSymbol{=} \AgdaBound{S}\AgdaSymbol{\}} \AgdaBound{computeε} \AgdaSymbol{(}\AgdaPostulate{Type-Reduction} \AgdaBound{Γ⊢δ∶φ} \AgdaBound{φ↠ψ}\AgdaSymbol{)} \AgdaBound{δ▷ε}\AgdaSymbol{)}\<%
+\>\AgdaFunction{expand-compute} \AgdaSymbol{\{}\AgdaArgument{K} \AgdaSymbol{=} \AgdaInductiveConstructor{-Proof}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{S} \AgdaInductiveConstructor{,p} \AgdaBound{ψ} \AgdaInductiveConstructor{,p} \AgdaBound{φ↠ψ} \AgdaInductiveConstructor{,p} \AgdaBound{computeε}\AgdaSymbol{)} \AgdaBound{Γ⊢δ∶φ} \AgdaBound{SNδ} \AgdaBound{δ▷ε} \AgdaSymbol{=} \AgdaSymbol{(}\AgdaBound{S} \AgdaInductiveConstructor{,p} \AgdaBound{ψ} \AgdaInductiveConstructor{,p} \AgdaBound{φ↠ψ} \AgdaInductiveConstructor{,p} \AgdaPostulate{expand-computeP} \AgdaSymbol{\{}\AgdaArgument{S} \AgdaSymbol{=} \AgdaBound{S}\AgdaSymbol{\}} \AgdaBound{computeε} \AgdaSymbol{(}\AgdaPostulate{Type-Reduction} \AgdaBound{Γ⊢δ∶φ} \AgdaBound{φ↠ψ}\AgdaSymbol{)} \AgdaBound{δ▷ε}\AgdaSymbol{)}\<%
 \\
-\>\AgdaFunction{expand-compute} \AgdaSymbol{\{}\AgdaArgument{K} \AgdaSymbol{=} \AgdaInductiveConstructor{-Path}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-eq} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{,,} \AgdaBound{N} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{)\}} \AgdaBound{computeQ} \AgdaBound{Γ⊢P∶M≡N} \AgdaBound{P▷Q} \AgdaSymbol{=} \AgdaPostulate{expand-computeE} \AgdaBound{computeQ} \AgdaBound{Γ⊢P∶M≡N} \AgdaBound{P▷Q}\<%
+\>\AgdaFunction{expand-compute} \AgdaSymbol{\{}\AgdaArgument{K} \AgdaSymbol{=} \AgdaInductiveConstructor{-Path}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-eq} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{,,} \AgdaBound{N} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{)\}} \AgdaBound{computeQ} \AgdaBound{Γ⊢P∶M≡N} \AgdaBound{SNP} \AgdaBound{P▷Q} \AgdaSymbol{=} \AgdaPostulate{expand-computeE} \AgdaBound{computeQ} \AgdaBound{Γ⊢P∶M≡N} \AgdaBound{P▷Q}\<%
 \\
 %
 \\
@@ -706,9 +729,9 @@ The proof is by induction on $T$.  The cases where $T$ is $\Omega$, $\bot$ or a 
 \>\AgdaFunction{expand-E'} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{N} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{→}\<%
 \\
 \>[11]\AgdaIndent{12}{}\<[12]%
-\>[12]\AgdaRecord{E'} \AgdaBound{Γ} \AgdaBound{A} \AgdaBound{N} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{key-redex} \AgdaBound{M} \AgdaBound{N} \AgdaSymbol{→} \AgdaRecord{E'} \AgdaBound{Γ} \AgdaBound{A} \AgdaBound{M}\<%
+\>[12]\AgdaRecord{E'} \AgdaBound{Γ} \AgdaBound{A} \AgdaBound{N} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{M} \AgdaSymbol{→} \AgdaDatatype{key-redex} \AgdaBound{M} \AgdaBound{N} \AgdaSymbol{→} \AgdaRecord{E'} \AgdaBound{Γ} \AgdaBound{A} \AgdaBound{M}\<%
 \\
-\>\AgdaFunction{expand-E'} \AgdaBound{N∈EΓA} \AgdaBound{Γ⊢M∶A} \AgdaBound{M▷N} \AgdaSymbol{=} \AgdaInductiveConstructor{E'I} \AgdaBound{Γ⊢M∶A} \AgdaSymbol{(}\AgdaFunction{expand-compute} \AgdaSymbol{(}\AgdaField{E'.computable} \AgdaBound{N∈EΓA}\AgdaSymbol{)} \AgdaBound{Γ⊢M∶A} \AgdaBound{M▷N}\AgdaSymbol{)}\<%
+\>\AgdaFunction{expand-E'} \AgdaBound{N∈EΓA} \AgdaBound{Γ⊢M∶A} \AgdaBound{SNM} \AgdaBound{M▷N} \AgdaSymbol{=} \AgdaInductiveConstructor{E'I} \AgdaBound{Γ⊢M∶A} \AgdaSymbol{(}\AgdaFunction{expand-compute} \AgdaSymbol{(}\AgdaField{E'.computable} \AgdaBound{N∈EΓA}\AgdaSymbol{)} \AgdaBound{Γ⊢M∶A} \AgdaBound{SNM} \AgdaBound{M▷N}\AgdaSymbol{)}\<%
 \\
 %
 \\
@@ -739,6 +762,10 @@ If $P \in E_\Gamma(M =_A N)$, $\Gamma \vdash M' : A$, $\Gamma \vdash N' : A$, $M
 then $P \in E_\Gamma(M' =_A N')$.
 \end{enumerate}
 \end{lm}
+
+\begin{proof}
+
+\end{proof}
 
 \begin{code}%
 \>\AgdaKeyword{postulate} \AgdaPostulate{conv-E'} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{B}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{→}\<%
@@ -814,7 +841,7 @@ for proof variables and path variables.
 \>\AgdaFunction{expand-EP} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δ} \AgdaBound{ε} \AgdaSymbol{:} \AgdaFunction{Proof} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[0]\AgdaIndent{12}{}\<[12]%
-\>[12]\AgdaFunction{EP} \AgdaBound{Γ} \AgdaBound{φ} \AgdaBound{ε} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{δ} \AgdaDatatype{∶} \AgdaBound{φ} \AgdaSymbol{→} \AgdaDatatype{key-redex} \AgdaBound{δ} \AgdaBound{ε} \AgdaSymbol{→} \AgdaFunction{EP} \AgdaBound{Γ} \AgdaBound{φ} \AgdaBound{δ}\<%
+\>[12]\AgdaFunction{EP} \AgdaBound{Γ} \AgdaBound{φ} \AgdaBound{ε} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{δ} \AgdaDatatype{∶} \AgdaBound{φ} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{δ} \AgdaSymbol{→} \AgdaDatatype{key-redex} \AgdaBound{δ} \AgdaBound{ε} \AgdaSymbol{→} \AgdaFunction{EP} \AgdaBound{Γ} \AgdaBound{φ} \AgdaBound{δ}\<%
 \\
 \>\AgdaFunction{expand-EP} \AgdaSymbol{=} \AgdaFunction{expand-E'}\<%
 \\
@@ -938,8 +965,6 @@ for proof variables and path variables.
 \>\AgdaComment{\{-\<\\
 \>postulate Neutral-computeE : ∀ \{V\} \{Γ : Context V\} \{M\} \{A\} \{N\} \{P : NeutralP V\} →\<\\
 \>                           Γ ⊢ decode P ∶ M ≡〈 A 〉 N → computeE Γ M A N (decode P)\<\\
-\>\<\\
-\>postulate compute-SN : ∀ \{V\} \{Γ : Context V\} \{A\} \{δ\} → compute Γ A δ → valid Γ → SN δ\<\\
 \>\<\\
 \>postulate NF : ∀ \{V\} \{Γ\} \{φ : Term V\} → Γ ⊢ φ ∶ ty Ω → closed-prop\<\\
 \>\<\\

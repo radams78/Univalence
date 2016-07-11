@@ -46,6 +46,29 @@ We define the relation $\kr$ between expressions as follows.  If $M \kr N$, we s
 
 Clearly, if $M \kr N$, then $M \rightarrow N$.  We also have the following properties.
 
+\begin{lm}
+\label{lm:krsn}
+If $M \kr N$ and $M \twoheadrightarrow P$, then there exists $Q$ such that $N \twoheadrightarrow Q$, and either $P \kr Q$ or $P \equiv Q$.
+\end{lm}
+
+\begin{proof}
+The proof is by induction on $M \kr N$.  All cases are simple.
+\end{proof}
+
+\begin{code}%
+\>\AgdaKeyword{postulate} \AgdaPostulate{key-redex-confluent} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{N} \AgdaBound{P} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[2]\AgdaIndent{30}{}\<[30]%
+\>[30]\AgdaDatatype{key-redex} \AgdaBound{M} \AgdaBound{N} \AgdaSymbol{→} \AgdaBound{M} \AgdaDatatype{⇒} \AgdaBound{P} \AgdaSymbol{→} \AgdaFunction{Σ[} \AgdaBound{Q} \AgdaFunction{∈} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K} \AgdaFunction{]} \AgdaSymbol{(}\AgdaDatatype{key-redex} \AgdaBound{P} \AgdaBound{Q} \AgdaDatatype{⊎} \AgdaBound{P} \AgdaDatatype{≡} \AgdaBound{Q}\AgdaSymbol{)} \AgdaFunction{×} \AgdaSymbol{(}\AgdaBound{N} \AgdaDatatype{↠⁺} \AgdaBound{Q} \AgdaDatatype{⊎} \AgdaBound{N} \AgdaDatatype{≡} \AgdaBound{Q}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaKeyword{postulate} \AgdaPostulate{expand-lemma} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{M'} \AgdaBound{N} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{23}{}\<[23]%
+\>[23]\AgdaDatatype{SN} \AgdaBound{M} \AgdaSymbol{→} \AgdaDatatype{key-redex} \AgdaBound{M} \AgdaBound{M'} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaSymbol{(}\AgdaFunction{appT} \AgdaBound{M'} \AgdaBound{N}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaSymbol{(}\AgdaFunction{appT} \AgdaBound{M} \AgdaBound{N}\AgdaSymbol{)}\<%
+\end{code}
+
 \AgdaHide{
 \begin{code}%
 \>\AgdaFunction{key-redex-rep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{N} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{U} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%

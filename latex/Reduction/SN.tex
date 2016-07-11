@@ -174,6 +174,13 @@ If $E$ is strongly normalizable and $E \twoheadrightarrow_R F$ then $F$ is stron
 \>[2]\AgdaInductiveConstructor{SNviewI} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{E} \AgdaSymbol{:} \AgdaDatatype{Subexpression} \AgdaBound{V} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaSymbol{(∀} \AgdaBound{F} \AgdaSymbol{→} \AgdaBound{E} \AgdaDatatype{↠} \AgdaBound{F} \AgdaSymbol{→} \AgdaDatatype{SNview} \AgdaBound{F}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{SNview} \AgdaBound{E}\<%
+\>[4]\AgdaSymbol{(∀} \AgdaBound{F} \AgdaSymbol{→} \AgdaBound{E} \AgdaDatatype{↠⁺} \AgdaBound{F} \AgdaSymbol{→} \AgdaDatatype{SNview} \AgdaBound{F}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{SNview} \AgdaBound{E}\<%
+\\
+%
+\\
+\>\AgdaKeyword{postulate} \AgdaPostulate{SNtoSNview} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{M} \AgdaSymbol{:} \AgdaDatatype{Subexpression} \AgdaBound{V} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→}\<%
+\\
+\>[4]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaDatatype{SN} \AgdaBound{M} \AgdaSymbol{→} \AgdaDatatype{SNview} \AgdaBound{M}\<%
 \end{code}
 }
