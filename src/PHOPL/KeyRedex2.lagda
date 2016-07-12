@@ -19,7 +19,7 @@ If $\reff{M[x:=N]N_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P
 $\reff{(\lambda x:A.M)NN_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n \in \SN$.
 \item
 \label{lm:SN3}
-If $M\{x:=P:N\sim N'\}, P, N, N' \in \SN$ and $P$ is not of the form $\reff{-}$, then $\reff{\lambda x:A.M}_{N N'} P \in \SN$.
+If $M\{x:=P:N\sim N'\}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n, P, N, N' \in \SN$ and $P$ is not of the form $\reff{-}$, then $\reff{\lambda x:A.M}_{N N'} P_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in \SN$.
 \item
 \label{lm:SN4}
 If $\reff{M[x:=N]}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n, N_1, N_2, N \in \SN$ then \\
@@ -47,7 +47,7 @@ we reduce one of the $L_i$.
 
 \begin{lemma}
 \label{lm:SNrefapp}
-If $\reff{M}_{N_1 N_2} \reff{N}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \reff{N} \in \SN$ then \\
+If $\reff{M}_{N_1 N_2} \reff{N}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in \SN$ then \\
 $\reff{MN}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in \SN$.
 \end{lemma}
 
@@ -60,7 +60,8 @@ Then we have $\reff{M}_{N_1 N_2} \reff{N} \vec{P} \rightarrow \reff{M'}_{N_1 N_2
 induction hypothesis.  Similarly if we reduce $N$ or one of the $P_i$, $K_i$ or $K_i'$.
 
 \item[$MN$ is a redex]
-Then $M$ and $N$ are closed normal forms, and so $\reff{M}_{N_1 N_2} \reff{N} \vec{P} \rightarrow \reff{MN} \vec{P}$, hence
+Then $M$ and $N$ are closed normal forms, and so \\
+$\reff{M}_{N_1 N_2} \reff{N} \vec{P} \rightarrow \reff{MN} \vec{P}$, hence
 $\reff{MN} \vec{P} \in \SN$.
 \end{description}
 \end{proof}

@@ -393,11 +393,16 @@ by the induction hypothesis, as required.
 
 Now let $N_{n+1}, N_{n+1}' \in E_\Gamma(B_{n+1})$ and $P \in E_\Gamma(N_{n+1} =_{B_{n+1}} N_{n+1}')$.  Then
 \begin{align*}
-\reff{M[x:=N]\vec{N}}_{N_{n+1} N_{n+1}'} P & \in E_\Gamma(M[x:=N] \vec{N} N_{n+1} =_C M[x:=N] \vec{N} N_{n+1}') \\
-\therefore \reff{(\lambda x:A.M)N \vec{N}}_{N_{n+1} N_{n+1}'} P & \in E_\Gamma(M[x:=N] \vec{N} N_{n+1} =_C M[x:=N] \vec{N} N_{n+1}')
+\lefteqn{\reff{M[x:=N]\vec{N}}_{N_{n+1} N_{n+1}'} P} \\
+\quad & \in E_\Gamma(M[x:=N] \vec{N} N_{n+1} =_C M[x:=N] \vec{N} N_{n+1}') \\
+\lefteqn{\therefore \reff{(\lambda x:A.M)N \vec{N}}_{N_{n+1} N_{n+1}'} P} \\
+ & \in E_\Gamma(M[x:=N] \vec{N} N_{n+1} =_C M[x:=N] \vec{N} N_{n+1}')
 \end{align*}
 by the proof of Lemma \ref{lm:LM0}
-\[ \therefore \reff{(\lambda x:A.M)N \vec{N}}_{N_{n+1} N_{n+1}'} P \in E_\Gamma((\lambda x:A.M)N \vec{N} N_{n+1} =_C (\lambda x:A.M)N \vec{N} N_{n+1}') \]
+\begin{align*}
+\lefteqn{\therefore \reff{(\lambda x:A.M)N \vec{N}}_{N_{n+1} N_{n+1}'} P} \\
+\quad & \in E_\Gamma((\lambda x:A.M)N \vec{N} N_{n+1} =_C (\lambda x:A.M)N \vec{N} N_{n+1}')
+\end{align*}
 by Lemma \ref{lm:conv-compute}.
 \end{proof}
 
@@ -415,11 +420,15 @@ then $\reff{\lambda x:A.M}_{N_1 N_2} \reff{N}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P
 
 The proof is by induction on the type $C$.
 
-If $C \equiv \Omega$: it is easy to verify that $\Gamma \vdash \reff{\lambda x:A.M}_{N_1 N_2} \reff{N}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n : (\lambda x:A.M) N_1 L_1 \cdots L_n =_C (\lambda x:A.M) N_2 L_1' \cdots L_n'$.  Lemma \ref{lm:SN}.\ref{lm:SN4} gives that $(\lambda x:A.M) N_1 L_1 \cdots L_n =_C (\lambda x:A.M) N_2 L_1' \cdots L_n' \in \SN$.
+If $C \equiv \Omega$: it is easy to verify that \\ $\Gamma \vdash \reff{\lambda x:A.M}_{N_1 N_2} \reff{N}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n : (\lambda x:A.M) N_1 L_1 \cdots L_n =_C (\lambda x:A.M) N_2 L_1' \cdots L_n'$.  Lemma \ref{lm:SN}.\ref{lm:SN4} gives that \\
+$\reff{\lambda x:A.M}_{N_1 N_2} \reff{N}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in \SN$.
 
 If $C \equiv B_{n+1} \rightarrow D$: let $L_{n+1}, L_{n+1}' \in E_\Gamma(B_{n+1})$ and $P_{n+1} \in E_\Gamma(L_{n+1} =_{B_{n+1}} L_{n+1}')$.  Then
-\[ \reff{\lambda x:A.M}_{N_1 N_2} \reff{N}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} (P_n)_{L_{n+1} L_{n+1}'} P_{n+1} \in E_\Gamma((\lambda x:A.M) N_1 L_1 \cdots L_n L_{n+1} =_C (\lambda x:A.M) N_2 L_1' \cdots L_n'
-L_{n+1}') \]
+\begin{align*}
+\lefteqn{\reff{\lambda x:A.M}_{N_1 N_2} \reff{N}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} (P_n)_{L_{n+1} L_{n+1}'} P_{n+1}} \\
+\quad &\in E_\Gamma((\lambda x:A.M) N_1 L_1 \cdots L_n L_{n+1} =_C (\lambda x:A.M) N_2 L_1' \cdots L_n'
+L_{n+1}')
+\end{align*}
 by the induction hypothesis, as required.
 \end{proof}
 
@@ -435,11 +444,26 @@ Then $\reff{\lambda x:A.M}_{N N'} P \in E_\Gamma((\lambda x:A.M)N =_B (\lambda x
 \end{lm}
 
 \begin{proof}
-The proof is by induction on the type $B$.
+We prove the following stronger statement.
 
-If $B \equiv \Omega$: it is easy to verify that $\Gamma \vdash \reff{\lambda x:A.M}_{N N'} P : (\lambda x:A.M)N =_B (\lambda x:A.M) N'$.  It remains to show that $\reff{\lambda x:A.M}_{N N'} P \in \SN$.
+Let $\Gamma, x : A \vdash M : B_1 \rightarrow \cdots \rightarrow B_n \rightarrow C$.  Let $N, N' \in E_\Gamma(A)$; $P \in E_\Gamma(N =_A N')$; $L_i, L_i' \in E_\Gamma(B_i)$ and $Q_i \in E_\Gamma(L_i =_{B_i} L_i')$ for all $i$.  Suppose:
+\begin{enumerate}
+\item
+$M\{x:=P:N \sim N'\}_{L_1 L_1'} Q_1 \cdots_{L_n L_n'} Q_n \in E_\Gamma(M[x:=N]L_1 \cdots L_n =_C
+M[x:=N']L_1'\cdots L_n'$
+\item
+for all $L \in E_\Gamma(A)$, we have $M[x:=L] \in E_\Gamma(B_1 \rightarrow \cdots \rightarrow B_n \rightarrow C)$.
+\end{enumerate}
+Then $\reff{\lambda x:A.M}_{N N'} P_{L_1 L_1'} Q_1 \cdots_{L_n L_n'} Q_n \in
+E_\Gamma((\lambda x:A.M) N L_1 \cdots L_n =_C (\lambda x:A.M) N' L_1' \cdots L_n')$.
 
-If $P$ does not have the form $\reff{-}$, this follows from Lemma \ref{lm:SN}.\ref{lm:SN3}.  If $P \equiv \reff{L}$, then we have $L \in E_\Gamma(A)$ and %TODO
+The proof is by induction on the type $C$.
+
+If $C \equiv \Omega$: it is easy to verify that $\Gamma \vdash \reff{\lambda x:A.M}_{N N'} P \vec{Q} : (\lambda x:A.M)N \vec{L} =_\Omega (\lambda x:A.M) N' \vec{L'}$.  It remains to show that $\reff{\lambda x:A.M}_{N N'} P \vec{Q} \in \SN$.
+
+If $P$ does not have the form $\reff{-}$, this follows from Lemma \ref{lm:SN}.\ref{lm:SN3}.  If $P \equiv \reff{L}$, then we have $L \in E_\Gamma(A)$ and so $\reff{M[x:=L]} \vec{Q} \in \SN$ by hypothesis.  Therefore, $\reff{\lambda x:A.M}_{N N'} \reff{L} \vec{Q} \in \SN$ by Lemma \ref{lm:SN}.\ref{lm:SN4}.
+
+If $C \equiv B_{n+1} \rightarrow D$: let $L, L' \in E_\Gamma(B_{n+1})$ and $Q \in E_\Gamma(L =_{B_{n+1}} L')$.  We must show
 \end{proof}
 
 \begin{code}
