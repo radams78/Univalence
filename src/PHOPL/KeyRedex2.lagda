@@ -47,11 +47,20 @@ we reduce one of the $L_i$.
 
 \begin{lemma}
 \label{lm:SNrefapp}
-If $\reff{M}_{N_1 N_2} \reff{N}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \reff{N} \in \SN$ then $\reff{MN}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in \SN$.
+If $\reff{M}_{N_1 N_2} \reff{N}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \reff{N} \in \SN$ then \\
+$\reff{MN}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in \SN$.
 \end{lemma}
 
 \begin{proof}
 The proof is by induction on the hypothesis.  These are the possible one-step reductions from $\reff{MN} \vec{P}$:
 
-%TODO Finish
+\begin{description}
+\item[$\reff{MN} \vec{P} \rightarrow \reff{M'N} \vec{P}$ where $M \rightarrow M'$]
+Then we have $\reff{M}_{N_1 N_2} \reff{N} \vec{P} \rightarrow \reff{M'}_{N_1 N_2} \reff{N} \vec{P} \in \SN$, and the result follows by the
+induction hypothesis.  Similarly if we reduce $N$ or one of the $P_i$, $K_i$ or $K_i'$.
+
+\item[$MN$ is a redex]
+Then $M$ and $N$ are closed normal forms, and so $\reff{M}_{N_1 N_2} \reff{N} \vec{P} \rightarrow \reff{MN} \vec{P}$, hence
+$\reff{MN} \vec{P} \in \SN$.
+\end{description}
 \end{proof}

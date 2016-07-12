@@ -271,9 +271,9 @@ postulate func-E : ∀ {U} {Γ : Context U} {M : Term U} {A} {B} →
 \label{lm:conv-compute}
 \begin{enumerate}
 \item
-If $\delta \in E_\Gamma(\phi)$, $\Gamma \vdash \psi : \Omega$ and $\phi \simeq \psi$, then $\delta \in E_\Gamma(\psi)$.
+If $\delta \in E_\Gamma(\phi)$, $\Gamma \vdash \psi : \Omega$ and $\phi \simeq_\beta \psi$, then $\delta \in E_\Gamma(\psi)$.
 \item
-If $P \in E_\Gamma(M =_A N)$, $\Gamma \vdash M' : A$, $\Gamma \vdash N' : A$, $M \simeq M'$ and $N \simeq N'$,
+If $P \in E_\Gamma(M =_A N)$, $\Gamma \vdash M' : A$, $\Gamma \vdash N' : A$, $M \simeq_\beta M'$ and $N \simeq_\beta N'$,
 then $P \in E_\Gamma(M' =_A N')$.
 \end{enumerate}
 \end{lm}
@@ -305,7 +305,7 @@ If $\reff{M}_{N_1 N_2} \reff{N} \in E_\Gamma(L =_A L')$ then $\reff{MN} \in E_\G
 \begin{proof}
 We prove the following stronger statement:
 
-If $\reff{M}_{N_1 N_2} \reff{N}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in E_\Gamma(L =_A L')$ then
+If $\reff{M}_{N_1 N_2} \reff{N}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in E_\Gamma(L =_A L')$ then \\
 $\reff{MN}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in E_\Gamma(L =_A L')$.
 
 The proof is by induction on the type $A$.
