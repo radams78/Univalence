@@ -46,7 +46,7 @@ E_\Gamma(\phi) & \eqdef E_\Gamma(nf(\phi)) \\
 & \qquad (\phi \mbox{ a normalizable term of type $\Omega$}) \\
 \\
 E_\Gamma(\phi =_\Omega \psi) & \eqdef \{ P \mid \Gamma \vdash P : \phi =_\Omega \psi, \\
-& P^+ \in E_\Gamma(\phi \rightarrow \psi), P^- \in E_\Gamma(\psi \rightarrow \phi) \} \\
+& P^+ \in E_\Gamma(\phi \supset \psi), P^- \in E_\Gamma(\psi \supset \phi) \} \\
 \\
 E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \rightarrow B} M', \\
 & \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (Q \in E_\Delta(N =_A N')). \\
@@ -823,7 +823,17 @@ If $C \equiv \Omega$: it is easy to verify that $\Gamma \vdash \reff{\lambda x:A
 
 If $P$ does not have the form $\reff{-}$, this follows from Lemma \ref{lm:SN}.\ref{lm:SN3}.  If $P \equiv \reff{L}$, then we have $L \in E_\Gamma(A)$ and so $\reff{M[x:=L]} \vec{Q} \in \SN$ by hypothesis.  Therefore, $\reff{\lambda x:A.M}_{N N'} \reff{L} \vec{Q} \in \SN$ by Lemma \ref{lm:SN}.\ref{lm:SN4}.
 
-If $C \equiv B_{n+1} \rightarrow D$: let $L, L' \in E_\Gamma(B_{n+1})$ and $Q \in E_\Gamma(L =_{B_{n+1}} L')$.  We must show
+If $C \equiv B_{n+1} \rightarrow D$: let $L_{n+1}, L_{n+1}' \in E_\Gamma(B_{n+1})$ and $Q_{n+1} \in E_\Gamma(L =_{B_{n+1}} L')$.  Then
+\begin{align*}
+\lefteqn{M\{x:=P:N \sim N'\} \vec{Q}_{L_{n+1} L_{n+1}'} Q_{n+1}} \\
+\quad & \in E_\Gamma(M[x:=N]\vec{L} L_{n+1} =_D M[x:=N'] \vec{L'} L_{n+1}')
+\end{align*}
+and so the induction hypothesis gives
+\begin{align*}
+\lefteqn{\reff{\lambda x:A.M}_{N N'} P \vec{Q}_{L_{n+1} L'_{n+1}} Q_{n+1}} \\
+\quad & \in E_\Gamma((\lambda x:A.M) N \vec{L} L_{n+1} =_D (\lambda x:A.M) N' \vec{L'} L_{n+1}')
+\end{align*}
+as required.
 \end{proof}
 
 \begin{code}%
@@ -841,8 +851,7 @@ If $C \equiv B_{n+1} \rightarrow D$: let $L, L' \in E_\Gamma(B_{n+1})$ and $Q \i
 
 \begin{lm}
 \label{lm:var-compute}
-Variables are computable.  That is, if $x : A \in \Gamma$ and $\Gamma \vald$, then $x \in E_\Gamma(A)$; and similarly
-for proof variables and path variables.
+Variables are computable.  That is, if $x : T \in \Gamma$ and $\Gamma \vald$, then $x \in E_\Gamma(T)$.
 \end{lm}
 
 \begin{code}%
