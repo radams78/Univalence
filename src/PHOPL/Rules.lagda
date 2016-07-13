@@ -23,8 +23,12 @@ The rules of deduction of $\lambda o e$ are those of $\lambda o$ (Figure \ref{fi
 \infer{\Gamma \vdash P^+ : \phi \supset \psi}{\Gamma \vdash P : \phi =_\Omega \psi}
 \qquad
 \infer{\Gamma \vdash P^- : \psi \supset \phi}{\Gamma \vdash P : \psi =_\Omega \psi} \]
-\[ \infer{\Gamma \vdash \triplelambda e : x =_A y . P : M =_{A \rightarrow B} N}{\Gamma, x : A, y : A, e : x =_A y \vdash M x =_B N y \quad \Gamma \vdash M : A \rightarrow B \quad
-\Gamma \vdash N : A \rightarrow B} \]
+\[ \infer{\Gamma \vdash \triplelambda e : x =_A y . P : M =_{A \rightarrow B} N}
+  {\begin{array}{c}
+     \Gamma, x : A, y : A, e : x =_A y \vdash P : M x =_B N y \\
+     \Gamma \vdash M : A \rightarrow B \quad
+\Gamma \vdash N : A \rightarrow B
+     \end{array}} \]
 \[ \infer{\Gamma \vdash PQ : MN =_B M' N'}{\Gamma \vdash P : M =_{A \rightarrow B} M' \quad \Gamma \vdash Q : N =_A N'} \]
 \[ \infer[(M \simeq_\beta M', N \simeq_\beta N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
 \end{framed}

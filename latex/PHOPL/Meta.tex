@@ -717,6 +717,30 @@ Induction on derivations.
 \end{code}
 }
 
+Given substitutions $\sigma$, $\rho$, $\rho'$ and a path substitution $\tau$, let $\tau \bullet_{\rho, \rho'} \sigma$ be the path substitution defined by
+\[ (\tau \bullet_{\rho, \rho'} \sigma)(x) \eqdef \sigma(x)\{ \tau : \rho \sim \rho' \} \]
+
+\begin{lemma}
+$ $
+\begin{enumerate}
+\item
+If $\sigma : \Gamma \rightarrow \Delta$ and $\tau : \rho \sim \rho' : \Delta \rightarrow \Theta$ then $\tau \bullet_{\rho, \rho'} \sigma : \rho \circ \sigma \sim \rho' \circ \sigma : \Gamma \rightarrow \Theta$.
+\item
+$M[\sigma]\{ \tau : \rho \sim \rho' \} \equiv
+M\{ \tau \bullet_{\rho \rho'} \sigma : \rho \circ \sigma \sim \rho' \circ \sigma \}$
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}$ $
+\begin{enumerate}
+\item
+Let $x : A \in \Gamma$.
+We have $\Delta \vdash \sigma(x) : A$, hence $\Theta \vdash \sigma(x) \{ \tau : \rho \sim \rho' \} : \sigma(x) [ \rho ] =_A \sigma(x) [ \rho' ]$.
+\item
+An easy calculation by induction on $M$.
+\end{enumerate}
+\end{proof}
+
 \begin{theorem}[Subject Reduction]
 If $\Gamma \vdash s : T$ and $s \twoheadrightarrow t$ then $\Gamma \vdash t : T$.
 \end{theorem}
