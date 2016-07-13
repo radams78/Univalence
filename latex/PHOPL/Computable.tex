@@ -26,6 +26,8 @@
 \end{code}
 }
 
+\newcommand{\nf}[1]{\ensuremath{\mathrm{nf} \left( {#1} \right)}}
+
 We define a model of the type theory with types as sets of terms.  For every type (proposition, equation) $A$ in context $\Gamma$, define
 the set of \emph{computable} terms (proofs, paths) $E_\Gamma(A)$.
 
@@ -38,11 +40,11 @@ E_\Gamma(A \rightarrow B) \eqdef & \{ M \mid \Gamma \vdash M : A \rightarrow B, 
 & \quad \quad \reff{M}_{N N'} P \in E_\Gamma(MN =_B MN') \} \\
 \\
 E_\Gamma(\bot) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
-E_\Gamma(\phi \supset \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \rightarrow \psi, \\
+E_\Gamma(\phi \supset \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \supset \psi, \\
 & \forall (\Delta \supseteq \Gamma)(\epsilon \in E_\Delta(\phi)). \delta \epsilon \in E_\Gamma(\psi) \} \\
 E_\Gamma(\phi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi, \delta \in \SN \} \\
 & \qquad (\phi \text{ neutral}) \\
-E_\Gamma(\phi) & \eqdef E_\Gamma(nf(\phi)) \\
+E_\Gamma(\phi) & \eqdef E_\Gamma(\nf{\phi}) \\
 & \qquad (\phi \mbox{ a normalizable term of type $\Omega$}) \\
 \\
 E_\Gamma(\phi =_\Omega \psi) & \eqdef \{ P \mid \Gamma \vdash P : \phi =_\Omega \psi, \\
@@ -853,6 +855,41 @@ as required.
 \label{lm:var-compute}
 Variables are computable.  That is, if $x : T \in \Gamma$ and $\Gamma \vald$, then $x \in E_\Gamma(T)$.
 \end{lm}
+
+\begin{proof}
+Let $\Gamma$ be a valid context.
+We prove the following statements:
+\begin{enumerate}
+\item
+\label{lm:var-compute1}
+Let $x : A_1 \rightarrow \cdots \rightarrow A_n \rightarrow C \in \Gamma$.  If $M_i \in E_\Gamma(A_i)$ for all $i$,
+then $x M_1 \cdots M_n \in E_\Gamma(C)$.
+\item
+\label{lm:var-compute2}
+Let $x : A_1 \rightarrow \cdots \rightarrow A_m \rightarrow B_1 \rightarrow \cdots \rightarrow B_n \rightarrow C \in \Gamma$.
+If $M_i \in E_\Gamma(A_i)$; $N_j, N_j' \in E_\Gamma(B_j)$, and $P_j \in E_\Gamma(N_j =_{B_j} N_j')$ for all $i$, $j$,
+then $\reff{x M_1 \cdots M_m}_{N_1 N_1'} (P_1)_{N_2 N_2'} \cdots P_n$ \\ $\in E_\Gamma(x M_1 \cdots M_m N_1 \cdots N_n =_C x M_1 \cdots M_m N_1' \cdots N_n')$.
+\item
+\label{lm:var-compute3}
+Let $p : \phi_1 \supset \cdots \supset \phi_n \supset \psi \in \Gamma$.  If $\delta_i \in E_\Gamma(\phi_i)$ for all $i$,
+then $p \delta_1 \cdots \delta_n \in E_\Gamma(\psi)$.
+\item
+\label{lm:var-compute4}
+Let $e : \phi =_\Omega \psi_1 \supset \cdots \supset \psi_n \supset \chi \in \Gamma$.  If $\delta \in E_\Gamma(\phi)$ and $\epsilon_i \in E_\Gamma(\psi_i)$
+for all $i$, then $e^+ \delta \epsilon_1 \cdots \epsilon_n \in E_\Gamma(\chi)$.
+\item
+\label{lm:var-compute5}
+Let $e : \phi_1 \supset \cdots \supset \phi_n \supset \psi =_\Omega \chi \in \Gamma$.  If $\delta \in E_\Gamma(\chi)$ and $\epsilon_i \in E_\Gamma(\phi_i)$
+for all $i$, then $e^- \delta \epsilon_1 \cdots \epsilon_n \in E_\Gamma(\psi)$.
+\item
+\label{lm:var-compute6}
+Let $e : F =_{A_1 \rightarrow \cdots \rightarrow A_n \rightarrow B} G \in \Gamma$.  If $M_i, N_i \in E_\Gamma(A_i)$ and $P_i \in E_\Gamma(M_i =_{A_i} N_i)$ for all $i$,
+then $e_{M_1 N_1} (P_1)_{M_2 N_2} \cdots P_n \in E_\Gamma(F M_1 \cdots M_n =_B G N_1 \cdots N_n)$.
+\end{enumerate}
+Parts \ref{lm:var-compute1} and \ref{lm:var-compute2} are proven simultaneously by induction on the type $C$.  Part \ref{lm:var-compute3} is
+proven by induction on $\nf{\psi}$.  Part 4 is proven by induction on $\nf{\chi}$, and part 5 by induction on $\nf{\psi}$.
+Part 6 is proven by induction on the type $B$.
+\end{proof}
 
 \begin{code}%
 \>\AgdaKeyword{postulate} \AgdaPostulate{var-E'} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{x} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{V} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaRecord{E'} \AgdaBound{Γ} \AgdaSymbol{(}\AgdaFunction{typeof} \AgdaBound{x} \AgdaBound{Γ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaBound{x}\AgdaSymbol{)}\<%
