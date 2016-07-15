@@ -93,3 +93,17 @@ _⋆[_∶_∼_] : ∀ {V} → Term V → Path V → Term V → Term V → Path V
 M ⋆[ P ∶ N ∼ N' ] = app* N N' (reff M) P
 \end{code}
 }
+
+\begin{lm}
+\[ M \{ e_1 := P_1 : M_1 \sim N_1 , \ldots, e_n := P_n : M_n \sim N_n \} \equiv M \{ \tau : \rho \sim \sigma \} \enspace , \]
+where
+\begin{align*}
+\tau(x_i) & \eqdef P_i & \rho(x_i) & \eqdef M_i & \sigma(x_i) \eqdef N_i \\
+\tau(y) & \eqdef \reff{y} & \rho(y) & \eqdef y & \sigma(y) & \eqdef y
+\end{align*}
+for $y \not\equiv x_1, \ldots x_n$.
+\end{lm}
+
+\begin{proof}
+An easy induction on $M$.
+\end{proof}

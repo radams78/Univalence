@@ -29,7 +29,7 @@ Let \emph{contraction} $\rhd$ be the relation consisting of the following pairs,
 & \quad \rhd \univ{\phi \supset \chi}{\psi \supset \chi}{\lambda p : \phi \supset \chi . \lambda q : \psi .p (\epsilon q)}{\lambda p : \psi \supset \chi . \lambda q : \phi .p (\delta q)} \\
 & \univ{\phi}{\psi}{\delta}{\epsilon} \supset^* \univ{\phi'}{\psi'}{\delta'}{\epsilon'} \\
 & \quad \rhd \univ{\phi \supset \phi'}{\psi \supset \psi'}
-{\lambda p : \phi \supset \phi' . \lambda q \psi . \delta' (p (\epsilon q))}{\lambda p : \psi \supset \psi'. \lambda q : \phi . \epsilon' (p (\delta q))}
+{\lambda p : \phi \supset \phi' . \lambda q : \psi . \delta' (p (\epsilon q))}{\lambda p : \psi \supset \psi'. \lambda q : \phi . \epsilon' (p (\delta q))}
 \end{align*}
 \begin{align*}
 \reff{\phi} \supset^* \reff{\psi} & \rhd \reff{\phi \supset \psi} \\

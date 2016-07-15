@@ -360,17 +360,20 @@ computable-path-substitution U V τ σ σ' Γ Δ ._ ._ σ∶Γ⇒CΔ σ'∶Γ⇒
 }
 
 \begin{proof}
-The four parts are proved simultaneously by induction on derivations.  We give the details of
-one case here, for part \ref{computable-path-sub} for the rule
-\[ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \]
+The four parts are proved simultaneously by induction on derivations.  We give the details of a few cases here.
 
-We must prove that 
-\[ \triplelambda e:a =_A a' . M \{ \tau : \sigma \sim \rho, x := e : a \sim a' \} \in E_\Delta(\lambda x:A.M[\sigma] =_{A \rightarrow B} \lambda x:A.M[\rho]) \enspace . \]
-So let $\Theta \supseteq \Delta$; $N, N' \in E_\Theta(A)$; and $Q \in E_\Theta(N =_A N')$.  The induction hypothesis gives
-\[ M \{ \tau , x := Q \} \in E_\Theta(M[\sigma, x:= N] =_B M [ \rho, x := N' ]) \enspace . \]
-Applying Lemmas \ref{lm:expand-compute} and \ref{lm:conv-compute} gives
-\[ (\triplelambda e:a =_A a' . M \{ \tau, x := e \})_{N N'} Q \in E_\Theta((\lambda x:A.M[\sigma]) N =_B (\lambda x:A.M[\rho]) N') \]
-as required.
+Consider the rule
+\[ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \]
+For part 1, let $\Theta \supseteq \Delta$ and $N \in E_\Theta(A)$.  We must prove that $(\lambda x:A.M[\sigma])N \in E_\Theta(B)$.  The induction hypothesis gives us that $M[\sigma, x := N] \in E_\Theta(B)$, and the result follows by Lemma \ref{lm:wte2}.
+
+For part 4, let $\Theta \supseteq \Delta$ and $N, N' \in E_\Theta(A); P \in E_\Theta(N =_A N')$.  We must prove that $\reff{\lambda x:A.M[\sigma]}_{N N'} P \in E_\Theta((\lambda x:A.M[\sigma])N =_B
+(\lambda x:A.M[\sigma])N')$, and we wish to apply Lemma \ref{lm:wte4}.  So, let $\tau$ be the path substitution that maps $x$ to $P$, and $y$ to $\reff{\sigma(y)}$.  Then $\tau$ is a computable substitution from $\sigma, x:=N$ to $\sigma, x:=N'$
+(using Lemma \ref{lm:Eref}).  So the induction hypothesis gives $M \{ \tau \} \in E_\Theta(M[\sigma, x:=N] =_B M[\sigma, x:=N'])$.  By Lemma \ref{lm:pathsubcomp}, this is the same as
+\[ M [ \sigma ] \{ x := P \} \in E_\Theta(M[\sigma, x:= N] =_B M[\sigma, x:=N']) \enspace . \]
+This proves premise 1 of Lemma \ref{lm:wte4}, and premise 2 is given by the induction hypothesis.
+
+\todo{Give names to rules of deduction}
+The rule (ref) uses Lemma \ref{lm:Eref}, 
 \end{proof}
 
 \AgdaHide{

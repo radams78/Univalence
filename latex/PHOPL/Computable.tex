@@ -704,7 +704,7 @@ by Lemma \ref{lm:conv-compute}, as required.
 \end{proof}
 
 \begin{lm}
-\label{lm:LM0}
+\label{lm:wte1}
 Let $\Gamma, x : A \vdash M : B$ and let $N \in E_\Gamma(A)$.  If $\reff{M[x:=N]} \in E_\Gamma(L =_B L')$, then
 $\reff{(\lambda x:A.M)N} \in E_\Gamma(L =_B L')$.
 \end{lm}
@@ -732,6 +732,7 @@ by the induction hypothesis, as required.
 \end{proof}
 
 \begin{lm}
+\label{lm:wte2}
 Let $\Gamma, x : A \vdash M : B$ and let $N \in E_\Gamma(A)$.  If $M[x:=N] \in E_\Gamma(B)$ then $(\lambda x:A.M)N \in E_\Gamma(B)$.
 \end{lm}
 
@@ -760,7 +761,7 @@ Now let $N_{n+1}, N_{n+1}' \in E_\Gamma(B_{n+1})$ and $P \in E_\Gamma(N_{n+1} =_
 \lefteqn{\therefore \reff{(\lambda x:A.M)N \vec{N}}_{N_{n+1} N_{n+1}'} P} \\
  & \in E_\Gamma(M[x:=N] \vec{N} N_{n+1} =_C M[x:=N] \vec{N} N_{n+1}')
 \end{align*}
-by the proof of Lemma \ref{lm:LM0}
+by the proof of Lemma \ref{lm:wte1}
 \begin{align*}
 \lefteqn{\therefore \reff{(\lambda x:A.M)N \vec{N}}_{N_{n+1} N_{n+1}'} P} \\
 \quad & \in E_\Gamma((\lambda x:A.M)N \vec{N} N_{n+1} =_C (\lambda x:A.M)N \vec{N} N_{n+1}')
@@ -769,6 +770,7 @@ by Lemma \ref{lm:conv-compute}.
 \end{proof}
 
 \begin{lm}
+\label{lm:wte3}
 Let $\Gamma, x : A \vdash M : B$.  Let $N, N_1, N_2 \in E_\Gamma(A)$, and $N \simeq_\beta N_1 \simeq_\beta N_2$.  If $M[x:=N] \in E_\Gamma(B)$,
 then $\reff{\lambda x:A.M}_{N_1 N_2} \reff{N} \in E_\Gamma((\lambda x:A.M)N_1 =_B (\lambda x:A.M) N_2)$.
 \end{lm}
@@ -795,6 +797,7 @@ by the induction hypothesis, as required.
 \end{proof}
 
 \begin{lm}
+\label{lm:wte4}
 Let $\Gamma, x : A \vdash M : B$.  Let $N, N' \in E_\Gamma(A)$, $P \in E_\Gamma(N =_A N')$, and suppose:
 \begin{enumerate}
 \item
@@ -836,6 +839,23 @@ and so the induction hypothesis gives
 \quad & \in E_\Gamma((\lambda x:A.M) N \vec{L} L_{n+1} =_D (\lambda x:A.M) N' \vec{L'} L_{n+1}')
 \end{align*}
 as required.
+\end{proof}
+
+\begin{lemma}
+$ $
+\begin{enumerate}
+\item
+Let $\Gamma, p : \phi \vdash \delta : \psi$.  If $\epsilon \in E_\Gamma(\phi)$
+and $\delta [p := \epsilon] \in E_\Gamma(\psi)$ then $(\lambda p:\phi.\delta) \epsilon \in E_\Gamma(\psi)$.
+\item
+Let $\Gamma, x : A, y : A, e : x =_A y \vdash P : M x =_B N y$.  If
+$L, L' \in E_\Gamma(A)$; $Q \in E_\Gamma(L =_A L')$ and $P[ x := L, y := L, e
+:= P ] \in E_\Gamma(M L =_B N L')$, then $(\triplelambda e : x =_A y . P)_{L L'} Q \in E_\Gamma(ML =_B NL')$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Similar to the previous lemmas, using Lemma \ref{lm:SNothers}.
 \end{proof}
 
 \begin{code}%
@@ -1284,3 +1304,60 @@ Part 6 is proven by induction on the type $B$.
 \>EE-SN (app (-eq \_) (\_ ,, \_ ,, out)) (Γ⊢P∶E ,p computeP) = computeE-SN computeP (context-validity Γ⊢P∶E) -\}}\<%
 \end{code}
 }
+
+\begin{lm}
+If $P \in E_\Gamma(\phi =_\Omega \phi')$ and $Q \in E_\Gamma(\psi =_\Omega \psi')$ then
+$P \supset^* Q \in E_\Gamma(\phi \supset \psi =_\Omega \phi' \supset \psi')$.
+\end{lm}
+
+\begin{proof}
+We must prove that $(P \supset^* Q)^+ \in E_\Gamma((\phi \supset \psi) \supset \phi' \supset \psi')$ and
+$(P \supset^* Q)^- \in E_\Gamma((\phi' \supset \psi') \supset \phi \supset \psi)$.  We prove the following
+two stronger statements:
+
+\begin{enumerate}
+\item
+Suppose $P \in E_\Gamma(\phi =_\Omega \phi')$ and $Q \in E_\Gamma(\psi =_\Omega \psi_1 \supset \cdots \supset \psi_n \supset \chi)$.
+Let $\delta \in E_\Gamma(\phi \supset \psi)$, $\epsilon \in E_\Gamma(\phi')$, and $\epsilon_i \in E_\Gamma(\psi_i)$ for all $i$.
+Then $(P \supset^* Q)^+ \delta \epsilon \epsilon_1 \cdots \epsilon_n \in E_\Gamma(\chi)$.
+\item
+Suppose $P \in E_\Gamma(\phi =_\Omega \phi')$ and $Q \in E_\Gamma(\psi_1 \supset \cdots \supset \psi_n \supset \chi =_\Omega \psi')$.
+Let $\delta \in E_\Gamma(\phi' \supset \psi')$, $\epsilon \in E_\Gamma(\phi)$, and $\epsilon_i \in E_\Gamma(\psi_i)$ for all $i$.
+Then $(P \supset^* Q)^- \delta \epsilon \epsilon_1 \cdots \epsilon_n \in E_\Gamma(\chi)$.
+\end{enumerate}
+
+We give the details for statement 1 here; the proof for 2 is similar.
+
+We prove statement 1 by induction on $\nf{\chi}$.
+
+If $\nf{\chi} \equiv \bot$, then we must show that $(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \in \SN$.  We prove this
+by a secondary induction on the proofs that $P, Q, \delta, \epsilon, \epsilon_i \in \SN$.  The following are the possible
+one-step reductions from $(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon}$:
+
+\begin{itemize}
+\item
+$(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow (P' \supset^* Q) \delta \epsilon \vec{\epsilon}$
+
+In this case, the result we require follows by the induction hypothesis on $P$.  Similarly if we reduce $Q$, $\delta$, $\epsilon$
+or any of the $\epsilon_i$.
+\item
+$P \equiv \reff{\phi}$, $Q \equiv \reff{\psi}$, and $(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow \reff{\phi \supset \psi}^* \delta \epsilon \vec{\epsilon}$.
+
+Generation gives $\phi \simeq_\beta \phi'$ and $\psi \simeq_\beta \psi_1 \supset \cdots \supset \psi_n \supset \chi$.
+Then the only possible reduction sequence from $\reff{\phi \supset \psi}^* \delta \epsilon \vec{\epsilon}$ is
+\[ \reff{\phi \supset \psi}^* \delta \epsilon \vec{\epsilon} \rightarrow (\lambda p p) \delta \epsilon \vec{\epsilon} \rightarrow \delta \epsilon \vec{\epsilon} \]
+which is in $\SN$ since $\delta \in E_\Gamma(\phi \supset \psi)$.
+\item
+$P \equiv \univ{}{}{\alpha}{\beta}$, $Q \equiv \univ{}{}{\alpha'}{\beta'}$, and $(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow \univ{}{}{\lambda pq.\alpha' (p (\beta q))}{\lambda pq.\beta' (p (\alpha q))}^+ \delta \epsilon \vec{\epsilon}$.
+
+Then the only possible reduction sequence from $\univ{}{}{\lambda pq.\alpha' (p (\beta q))}{\lambda pq.\beta' (p (\alpha q))}\delta \epsilon \vec{\epsilon}$ is
+
+\begin{align*}
+\lefteqn{\univ{}{}{\lambda pq.\alpha' (p (\beta q))}{\lambda pq.\beta' (p (\alpha q))}^+ \delta \epsilon \vec{\epsilon}} \\
+& \rightarrow (\lambda pq.\alpha' (p (\beta q))) \delta \epsilon \vec{\epsilon} \\
+& \twoheadrightarrow \alpha' (\delta (\beta \epsilon)) \vec{\epsilon}
+\end{align*}
+\end{itemize}
+\todo{Finish}
+
+\end{proof}
