@@ -389,6 +389,8 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \begin{proof}
 The four parts are proved simultaneously by induction on derivations.  We give the details of a few cases here.
 
+The rule (ref) uses Lemma \ref{lm:Eref}, and the rule ($\supset^*$) uses Lemma \ref{lm:Esupset}.  The rule (univ) uses Lemma \ref{lm:Euniv}.
+
 Consider the rule
 \[ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \]
 For part 1, let $\Theta \supseteq \Delta$ and $N \in E_\Theta(A)$.  We must prove that $(\lambda x:A.M[\sigma])N \in E_\Theta(B)$.  The induction hypothesis gives us that $M[\sigma, x := N] \in E_\Theta(B)$, and the result follows by Lemma \ref{lm:wte2}.
@@ -399,8 +401,14 @@ For part 4, let $\Theta \supseteq \Delta$ and $N, N' \in E_\Theta(A); P \in E_\T
 \[ M [ \sigma ] \{ x := P \} \in E_\Theta(M[\sigma, x:= N] =_B M[\sigma, x:=N']) \enspace . \]
 This proves premise 1 of Lemma \ref{lm:wte4}, and premise 2 is given by the induction hypothesis.
 
-\todo{Give names to rules of deduction}
-The rule (ref) uses Lemma \ref{lm:Eref}, 
+Finally, consider the rule
+\[ \infer{\Gamma \vdash \triplelambda e : x =_A y . P : M =_{A \rightarrow B} N}
+  {\begin{array}{c}
+     \Gamma, x : A, y : A, e : x =_A y \vdash P : M x =_B N y \\
+     \Gamma \vdash M : A \rightarrow B \quad
+\Gamma \vdash N : A \rightarrow B
+     \end{array}} \]
+This is proven similarly to the previous case, using Lemma \ref{lm:wte5}.2.
 \end{proof}
 
 \AgdaHide{

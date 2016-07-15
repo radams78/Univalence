@@ -482,6 +482,7 @@ as required.
 \end{proof}
 
 \begin{lemma}
+\label{lm:wte5}
 $ $
 \begin{enumerate}
 \item
@@ -853,6 +854,7 @@ EE-SN (app (-eq _) (_ ,, _ ,, out)) (Γ⊢P∶E ,p computeP) = computeE-SN compu
 }
 
 \begin{lm}
+\label{lm:Esupset}
 If $P \in E_\Gamma(\phi =_\Omega \phi')$ and $Q \in E_\Gamma(\psi =_\Omega \psi')$ then
 $P \supset^* Q \in E_\Gamma(\phi \supset \psi =_\Omega \phi' \supset \psi')$.
 \end{lm}
@@ -904,7 +906,28 @@ Then the only possible reduction sequence from $\univ{}{}{\lambda pq.\alpha' (p 
 & \rightarrow (\lambda pq.\alpha' (p (\beta q))) \delta \epsilon \vec{\epsilon} \\
 & \twoheadrightarrow \alpha' (\delta (\beta \epsilon)) \vec{\epsilon}
 \end{align*}
-\end{itemize}
-\todo{Finish}
+Now, we know $P^- \in E_\Gamma(\phi' \supset \phi)$ hence $\beta \in E_\Gamma(\phi' \supset \phi)$, and so $\beta \epsilon \in E_\Gamma(\phi)$.  Similarly
+$\alpha' \in E_\Gamma(\psi \supset \psi_1 \supset \cdots \supset \psi_n \supset \chi)$, and so $\alpha' (\delta (\beta \epsilon)) \vec{\epsilon} \in E_\Gamma(\bot) \subseteq \SN$ as required.
+\item
+$P \equiv \univ{}{}{\alpha}{\beta}$, $Q \equiv \reff{\psi}$ and $(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow \univ{}{}{\lambda pq.p(\beta q)}{\lambda pq.p(\alpha q)}$
 
+Similar to the above.
+\item
+$P \equiv \reff{\phi}$, $Q \equiv \univ{}{}{\alpha}{\beta}$ and $(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow \univ{}{}{\lambda pq.\alpha(pq)}{\lambda pq.\beta(pq)}$
+
+Similar to the above.
+\end{itemize}
+
+If $\nf{\chi} \equiv \psi_{n+1} \supset \chi'$, then let $\Delta \supseteq \Gamma$ and $\epsilon_{n+1} \in E_\Delta(\psi_{n+1})$.  The induction hypothesis gives
+\[ (P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \epsilon_{n+1} \in E_\Delta(\chi') \]
+as required.
+\end{proof}
+
+\begin{lemma}
+\label{lm:Euniv}
+If $\delta \in E_\Gamma(\phi \supset \psi)$ and $\epsilon \in E_\Gamma(\psi \supset \phi)$, then $\univ{\phi}{\psi}{\delta}{\epsilon} \in E_\Gamma(\phi =_\Omega \psi)$.
+\end{lemma}
+
+\begin{proof}
+Similar.
 \end{proof}
