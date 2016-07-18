@@ -1,15 +1,17 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{autofe}
 \usepackage{bbm}
 \usepackage[greek,english]{babel}
+\usepackage{etex}
 \usepackage{framed}
-\usepackage{ucs}
 \usepackage[utf8x]{inputenc}
-\usepackage{autofe}
 \usepackage{proof}
 \usepackage{stmaryrd}
+\usepackage{suffix}
 \usepackage{textalpha}
 \usepackage{todo}
+\usepackage{ucs}
 
 \input{unicode}
 
@@ -277,6 +279,22 @@ The proof is by induction on the fact that $\delta, \epsilon, \chi, \theta_i, \a
 
 Consider a possible one-step reduction from $((\delta =_A^* \epsilon)^+ \chi \vec{\theta})^+ \alpha \vec{\beta}$.  If the reduction consists of reducing one of the subterms, we apply the induction hypothesis.  The only other possibility is that $\delta =_A^* \epsilon$ is a redex.  There are now seven cases to consider: we give the details for one of them.
 
+Let $\delta \equiv \triplelambda^{F F'} p : x =_{A_1} y.P$ and $\epsilon \equiv \triplelambda^{G G'} p : x =_{A_1} y. Q$.  We must prove that
+\begin{align*} & \mathsf{univ}_{F =_{A \rightarrow B} G,F' =_{A \rightarrow B} G'} \\
+& \qquad \qquad \left( \lambda q : F =_{A \rightarrow B} G . \triplelambda p : x =_A y. \right. \\
+& \qquad \qquad \mathsf{trans}_{A_2 \rightarrow \cdots \rightarrow A_n \rightarrow B} \left( \sym*{P [ y := x, p := \reff{x} ]} , \right. \\
+& \qquad \qquad \left. \trans*{q_{xx} \reff{x}}{Q} \right) , \\
+& \qquad \qquad \lambda q : F' =_{A \rightarrow B} G' . \triplelambda p : x =_A y. \\
+& \qquad \qquad \mathsf{trans} \left( P [ y := x,  p := \reff{x} ] , \right. \\
+& \qquad \qquad \! \! \left. \left. \trans*{q_{xy} p}{\sym*{Q [ x := y, p := \reff{y} ] }} \right) \right)^+ \chi \vec{\theta})^+ \alpha \vec{\beta} \in \SN \end{align*}
+Again, if we reduce one of the subterms, then we can apply the induction hypothesis; otherwise, we must show that
+\begin{align*} & ( \left( \lambda q : F =_{A \rightarrow \Omega} G . \triplelambda p : x =_A y. \right. \\
+& \qquad \qquad \mathsf{trans}_{A_2 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega} \left( \overline{P} , \right. \\
+& \qquad \qquad \left. \trans*{q_{xx} \reff{x}}{Q} \right) \chi \vec{\theta})^+ \alpha \vec{\beta} \in \SN \end{align*} 
+where $P[y := x, p := \reff{x}] \twoheadrightarrow \overline{P}$.  It is therefore sufficient to prove that
+\begin{align*} & 
+& \qquad \qquad (\mathsf{trans}_{A_2 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega} \left( \overline{P}[x:=L_1] , \right. \\
+& \qquad \qquad \left. \trans*{\alpha_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1} \right) \theta_2 \cdots \theta_n)^+ \alpha \vec{\beta} \in \SN \end{align*} 
 \todo{Finish proof}
 \end{proof}
 
