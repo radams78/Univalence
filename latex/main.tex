@@ -44,8 +44,8 @@
 \newcommand{\triplelambda}{\ensuremath{\lambda \!\! \lambda \!\! \lambda}}
 \newcommand{\SN}{\ensuremath{\mathbf{SN}}}
 \newcommand{\dom}{\ensuremath{\operatorname{dom}}}
-\newcommand{\sym}[1]{\ensuremath{\mathsf{sym} \left( {#1} \right)}}
-\newcommand{\trans}[2]{\ensuremath{\mathsf{trans} \left( {#1} , {#2} \right)}}
+\newcommand{\sym}[4]{\ensuremath{\mathsf{sym}_{{#1},{#2},{#3}} \left( {#4} \right)}}
+\newcommand{\trans}[6]{\ensuremath{\mathsf{trans}_{{#1},{#2},{#3},{#4}} \left( {#5} , {#6} \right)}}
 \newcommand{\kr}{\mathop{\rhd \!\!\! \rhd}}
 
 \begin{document}
@@ -160,6 +160,8 @@ syntax is formed by extending the grammar of $\lambda o$ with
 \end{array}
 \]
 
+Notice that we now tag the $\triplelambda$ proofs with two terms.
+
 The rules of deduction of $\lambda o i$ are those of Figures \ref{fig:lambdao} and \ref{fig:lambdaoe} with one modification and two additions.  The introduction rule for $\triplelambda$ is changed to %TODO Give it a name
 \[ \infer{\Gamma \vdash \triplelambda^{FG} e : x =_A y . \delta : F =_{A \rightarrow B} G}
 {\Gamma, x : A, y : A, e : x =_A y \vdash \delta : F x =_B G y} \]
@@ -168,52 +170,83 @@ and we add the rules:
 \[ \infer{\Gamma \vdash \delta =^*_A \epsilon : (M =_A N) =_\Omega (M' =_A N')}
 {\Gamma \vdash \delta : M =_A M' \quad \Gamma \vdash \epsilon : N =_A N'} \]
 
+We define terms $\sym{A}{M}{N}{\delta}$ and $\trans{A}{M}{N}{P}{\delta}{\epsilon}$.
+\begin{align*}
+\sym{\Omega}{\phi}{\psi}{\delta} & \eqdef \univ{\psi}{\phi}{\delta^-}{\delta^+} \\
+\sym{A \rightarrow B}{M}{N}{\delta} & \eqdef \triplelambda p:x =_A y. \sym{B}{My}{Nx}{\delta
+\sym{A}{x}{y}{p}} \\
+& \\
+\trans{\Omega}{\phi}{\psi}{\chi}{\delta}{\epsilon} & \eqdef \univ{\phi}{\chi}
+{\lambda p:\phi.\epsilon^+(\delta^+ p)}{\lambda p:\chi.\delta^-(\epsilon^- p)} \\
+\trans{A \rightarrow B}{M}{N}{P}{\delta}{\epsilon}
+& \eqdef \triplelambda p:x =_A y. \trans{B}{Mx}{Nx}{Py}{\delta_{xx} \reff{x}}{\epsilon_{xy} p}
+\end{align*}
+
+\begin{lm}
+$ $
+\begin{enumerate}
+\item
+If $\Gamma \vdash \delta : M =_A N$ then $\Gamma \vdash \sym{A}{M}{N}{\delta} : N =_A M$.
+\item
+If $\Gamma \vdash \delta : M =_A N$ and $\Gamma \vdash \epsilon : N =_A P$ then
+$\Gamma \vdash \trans{A}{M}{N}{P}{\delta}{\epsilon} : M =_A P$.
+\end{enumerate}
+\end{lm}
+
+\begin{proof}
+Straightforward.
+\end{proof}
+
 The reduction relation is that of $\lambda o e$ together with the following clauses:
 
 \begin{align*}
-\reff{M} =^*_A \reff{N} & \rhd \reff{M =_A N} \\
-\reff{\phi} =^*_\Omega \univ{\psi}{\chi}{\delta}{\epsilon} & \rhd 
+& \reff{M} =^*_A \reff{N}  \\ & \qquad \rhd \reff{M =_A N} \\ \\
+& \reff{\phi} =^*_\Omega \univ{\psi}{\chi}{\delta}{\epsilon}  \\ & \qquad \rhd 
   \mathsf{univ}_{\phi =_\Omega \psi,\phi =_\Omega \chi} \\
-&  \left( \lambda p:\phi =_\psi. \univ{\phi}{\chi}{\lambda q:\phi.\delta (p^+ q)}
-    {\lambda q : \chi. p^- (\epsilon q)}, \right. \\
-& 
-  \left. \lambda p:\phi =_\Omega \chi. \univ{\phi}{\psi}{\lambda q:\phi. \epsilon (p^+ q)}
-    {\lambda q : \psi. p^- (\delta q)} \right) \\
- \univ{\phi}{\psi}{\delta}{\epsilon} =^*_\Omega \reff{\chi} & \rhd
+&  \qquad \qquad \left( \lambda p:\phi =_\psi. \univ{\phi}{\chi}{\lambda q:\phi.\delta (p^+ q)}
+    {\lambda q : \chi. p^- (\epsilon q)}, \right. \\ 
+&  \qquad \qquad \left. \lambda p:\phi =_\Omega \chi. \univ{\phi}{\psi}{\lambda q:\phi. \epsilon (p^+ q)}
+    {\lambda q : \psi. p^- (\delta q)} \right) \\ \\
+& \univ{\phi}{\psi}{\delta}{\epsilon} =^*_\Omega \reff{\chi}  \\ & \qquad \rhd
   \mathsf{univ}_{\phi =_\Omega \chi, \psi =_\Omega \chi} \\
-&    \left( \lambda p:\phi = \chi . \univ{\psi}{\chi}{\lambda q:\psi. p^+ (\epsilon q)}
+& \qquad \qquad   \left( \lambda p:\phi = \chi . \univ{\psi}{\chi}{\lambda q:\psi. p^+ (\epsilon q)}
       {\lambda q:\chi. \delta (p^- q)}, \right. \\
-&    \left. \lambda p:\psi =_\Omega \chi. \univ{\phi}{\chi}{\lambda q:\phi. p^+ (\delta q)}
-      {\lambda q:\chi. \epsilon (p^- q)} \right) \\
-\lefteqn{\univ{\phi}{\psi}{\delta}{\epsilon} =^*_\Omega \univ{\phi'}{\psi'}{\delta'}{\epsilon'}} \\
-& \rhd
+& \qquad \qquad   \left. \lambda p:\psi =_\Omega \chi. \univ{\phi}{\chi}{\lambda q:\phi. p^+ (\delta q)}
+      {\lambda q:\chi. \epsilon (p^- q)} \right) \\ \\
+& \univ{\phi}{\psi}{\delta}{\epsilon} =^*_\Omega \univ{\phi'}{\psi'}{\delta'}{\epsilon'}
+ \\ & \qquad \rhd
 \mathsf{univ}_{\phi =_\Omega \phi', \psi =_\Omega \psi'} \\
-& \left( \lambda p:\phi = \phi'. \univ{\psi}{\psi'}{\lambda q:\psi. \delta' (p^+ (\epsilon q))}{\lambda q:\psi' . \delta (p^-(\epsilon' q))}, \right. \\
-& \left. \lambda p:\psi=_\Omega \psi' . \univ{\phi}{\phi'}{\lambda q:\phi. \epsilon' (p^+ (\delta q))}{\lambda q:\phi' . \epsilon (p^- (\delta' q))} \right) \\
-\lefteqn{\reff{F} =^*_{A \rightarrow B} \triplelambda^{G G'} e:x =_A y. P} \\
-& \rhd
+& \qquad \qquad \left( \lambda p:\phi = \phi'. \univ{\psi}{\psi'}{\lambda q:\psi. \delta' (p^+ (\epsilon q))}{\lambda q:\psi' . \delta (p^-(\epsilon' q))}, \right. \\
+& \qquad \qquad \left. \lambda p:\psi=_\Omega \psi' . \univ{\phi}{\phi'}{\lambda q:\phi. \epsilon' (p^+ (\delta q))}{\lambda q:\phi' . \epsilon (p^- (\delta' q))} \right) \\ \\
+& \reff{F} =^*_{A \rightarrow B} \triplelambda^{G G'} q:x =_A y. P
+ \\ & \qquad \rhd
 \mathsf{univ}_{F =_{A \rightarrow B} G, F =_{A \rightarrow B} G'} \\
-& \left( \lambda p : F =_{A \rightarrow B} G. \triplelambda^{F G'} e : x =_A y. 
-\trans{p_{xx} \reff{x}}{P}, \right. \\
-& \left. \lambda p : F =_{A \rightarrow B} G'. \triplelambda^{F G} e : x =_A y.
-\trans{p_{xy} e}{\sym{P}} \right) \\
-\lefteqn{\triplelambda^{F F'} e : x =_A y. P =^*_{A \rightarrow B} \reff{G}} \\
- & \rhd
+& \qquad \qquad \left( \lambda p : F =_{A \rightarrow B} G. \triplelambda^{F G'} q : x =_A y. 
+\trans{B}{Fx}{Gx}{G'y}{p_{xx} \reff{x}}{P}, \right. \\
+& \qquad \qquad \lambda p : F =_{A \rightarrow B} G'. \triplelambda^{F G} q : x =_A y. \\
+& \qquad \qquad \left. \trans{B}{Fx}{G'y}{Gx}{p_{xy} q}{\sym{B}{Gx}{G'y}{P}} \right) \\ \\
+& \triplelambda^{F F'} p : x =_A y. P =^*_{A \rightarrow B} \reff{G}
+  \\ & \qquad \rhd
 \mathsf{univ}_{F =_{A \rightarrow B} G,F' =_{A \rightarrow B} G} \\
-& \left( \lambda p : F =_{A \rightarrow B} G .
-\triplelambda^{F' G} e : x =_A y. \right. \\
-& \trans{\sym{P\{e := \reff{x} : x \sim x\}}}
-{p_{xy}e}, \\
-& \left. \lambda p:F'=_{A \rightarrow B} G. \triplelambda^{FG} e : x =_A y.
-\trans{P}{p_{yy} \reff{y}} \right) \\
-\lefteqn{\triplelambda^{F F'} e : x =_A y. P =^*_{A \rightarrow B} \triplelambda^{G G'} e : x =_A y . Q} \\
-& \rhd 
+& \qquad \qquad \left( \lambda q : F =_{A \rightarrow B} G .
+\triplelambda^{F' G} p : x =_A y. \right. \\
+& \qquad \qquad \trans{B}{F'x}{Fx}{Gy}{\sym{B}{Fx}{F'x}{P [ y := x, p := \reff{x} ] }}
+{
+ q_{xy}p}, \\
+& \qquad \qquad \left. \lambda q:F'=_{A \rightarrow B} G. \triplelambda^{FG} p : x =_A y.
+\trans{B}{Fx}{F'y}{Gy}{P}{q_{yy} \reff{y}} \right)
+\end{align*}
+
+\begin{align*}
+& (\triplelambda^{F F'} p : x =_A y. P) =^*_{A \rightarrow B} (\triplelambda^{G G'} p : x =_A y . Q)
+ \\ & \qquad \rhd 
 \mathsf{univ}_{F =_{A \rightarrow B} G,F' =_{A \rightarrow B} G'} \\
-& \left( \lambda p : F =_{A \rightarrow B} G . \triplelambda^{F' G'} e : x =_A y. \right. \\
-& \trans{\sym{P\{e := \reff{x} : x \sim x}}{\trans{p_{xx} \reff{x}}{Q}} , \\
-& \lambda p : F' =_{A \rightarrow B} G' . \triplelambda^{FG} e : x =_A y. \\
-& \mathsf{trans} \left( P \{ e := \reff{x} : x \sim x \} , \right. \\
-& \left. \left. \trans{p_{xy} e}{\sym{Q \{e := \reff{y} : y \sim y \}}} \right) \right)
+& \qquad \qquad \left( \lambda q : F =_{A \rightarrow B} G . \triplelambda^{F' G'} p : x =_A y. \right. \\
+& \qquad \qquad \mathsf{trans}_{B,F'x,Fx,G'y} \left( \sym{B}{Fx}{F'x}{P [ y := x, p := \reff{x} ]} , \right. \\
+& \qquad \qquad \left. \trans{B}{Fx}{Gx}{G'y}{q_{xx} \reff{x}}{Q} \right) , \\
+& \qquad \qquad \lambda q : F' =_{A \rightarrow B} G' . \triplelambda^{FG} p : x =_A y. \\
+& \qquad \qquad \mathsf{trans}_{B, Fx, F'x, Gy} \left( P [ y := x,  p := \reff{x} ] , \right. \\
+& \qquad \qquad \! \! \left. \left. \trans{B}{F'x}{G'y}{Gy}{q_{xy} p}{\sym{B}{Gy}{G'y}{Q [ x := y, p := \reff{y} ] }} \right) \right)
 \end{align*}
 %TODO Define sym, trans
 
