@@ -247,6 +247,39 @@ E_\Gamma(\phi) & \eqdef E_\Gamma(\nf{\phi}) \\
 & \qquad (\phi \mbox{ a normalizable term of type $\Omega$}) \\
 \end{align*}
 
+\begin{lemma}
+Let $M, M', N, N' \in E_\Gamma(A)$.
+If $\delta \in E_\Gamma(M =_A M')$ and $\epsilon \in E_\Gamma(N =_A N')$ then
+$\delta =_A^* \epsilon \in E_\Gamma((M =_A N) =_\Omega (M' =_A N'))$.
+\end{lemma}
+
+\begin{proof}
+We must prove that $(\delta =_A^* \epsilon)^+ \in E_\Gamma(M =_A N \supset M' =_A N')$ and
+$(\delta =_A^* \epsilon)^- \in E_\Gamma(M' =_A N' \supset M =_A N)$.  We prove the first of these; the proof of the second is similar.
+
+In fact, we prove the following statement, from which the desired conclusion easily follows:
+
+\begin{quote}
+Let $A \equiv A_1 \rightarrow \cdots \rightarrow A_n \rightarrow \bot$ be a type.  Let
+\begin{align*}
+\delta & \in E_\Gamma(M =_A M') \\
+\epsilon & \in E_\Gamma(N =_A N') \\
+\chi & \in E_\Gamma(M =_A N) \\
+\theta_i & \in E_\Gamma(L_i =_{A_i} L_i') & (1 \leq i \leq n) \\
+\alpha & \in E_\Gamma(M L_1 \cdots L_n) \\
+N L_1' \cdots L_n' & \twoheadrightarrow_\beta \phi_1 \supset \cdots \supset \phi_m \supset \bot \\
+\beta_j & \in E_\Gamma(\phi_j) & (1 \leq j \leq m)
+\end{align*}
+Then $((\delta =_A^* \epsilon)^+ \chi_{L_1 L_1'} \theta_1 \cdots_{L_n L_n'} \theta_n)^+ \alpha \beta_1 \cdots \beta_m \in \SN$.
+\end{quote}
+
+The proof is by induction on the fact that $\delta, \epsilon, \chi, \theta_i, \alpha, \beta_j \in \SN$.
+
+Consider a possible one-step reduction from $((\delta =_A^* \epsilon)^+ \chi \vec{\theta})^+ \alpha \vec{\beta}$.  If the reduction consists of reducing one of the subterms, we apply the induction hypothesis.  The only other possibility is that $\delta =_A^* \epsilon$ is a redex.  There are now seven cases to consider: we give the details for one of them.
+
+\todo{Finish proof}
+\end{proof}
+
 We define what it means to be a computable substitution and a computable path substitution as before.
 
 \begin{theorem}
