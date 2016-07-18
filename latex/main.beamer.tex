@@ -7,23 +7,7 @@
 \usepackage{catchfilebetweentags}
 \usepackage{textalpha}
 
-\DeclareUnicodeCharacter{8598}{\ensuremath{\nwarrow}}
-\DeclareUnicodeCharacter{8599}{\ensuremath{\nearrow}}
-\DeclareUnicodeCharacter{8608}{\ensuremath{\twoheadrightarrow}}
-\DeclareUnicodeCharacter{8657}{\ensuremath{\Uparrow}}
-\DeclareUnicodeCharacter{8667}{\ensuremath{\Rrightarrow}}
-\DeclareUnicodeCharacter{8718}{\ensuremath{\qed}}
-\DeclareUnicodeCharacter{8759}{\ensuremath{::}}
-\DeclareUnicodeCharacter{8988}{\ensuremath{\ulcorner}}
-\DeclareUnicodeCharacter{8989}{\ensuremath{\urcorner}}
-\DeclareUnicodeCharacter{8803}{\ensuremath{\overline{\equiv}}}
-\DeclareUnicodeCharacter{9001}{\ensuremath{\langle}}
-\DeclareUnicodeCharacter{9002}{\ensuremath{\rangle}}
-\DeclareUnicodeCharacter{9655}{\ensuremath{\rhd}}
-\DeclareUnicodeCharacter{9679}{\ensuremath{\bullet}}
-\DeclareUnicodeCharacter{10214}{\ensuremath{[}}
-\DeclareUnicodeCharacter{10215}{\ensuremath{]}}
-\DeclareUnicodeCharacter{10219}{\ensuremath{\rangle\rangle}}
+\input{unicode}
 
 \AtBeginSection[]{
   \begin{frame}
@@ -35,21 +19,6 @@
   \vfill
   \end{frame}
 }
-
-\newtheorem{prop}[theorem]{Proposition}
-\newtheorem{lm}[theorem]{Lemma}
-
-\newcommand{\Set}{\mathbf{Set}}
-\newcommand{\eqdef}{\mathrel{\smash{\stackrel{\text{def}}{=}}}}
-\newcommand{\isotoid}{\ensuremath{isotoid}}
-\newcommand{\vald}{\ensuremath{\ \mathrm{valid}}}
-\newcommand{\reff}[1]{\ensuremath{\mathsf{ref} \left( {#1} \right)}}
-\newcommand{\univ}[4]{\ensuremath{\mathsf{univ}_{{#1} , {#2}} \left( {#3} , {#4} \right)}}
-\newcommand{\triplelambda}{\ensuremath{\lambda \!\! \lambda \!\! \lambda}}
-\newcommand{\SN}{\ensuremath{\mathbf{SN}}}
-\newcommand{\dom}{\ensuremath{\operatorname{dom}}}
-\newcommand{\sym}[1]{\ensuremath{\mathsf{sym} \left( {#1} \right)}}
-\newcommand{\trans}[2]{\ensuremath{\mathsf{trans} \left( {#1} , {#2} \right)}}
 
 \title[SN Rule for Univalence]{A Strongly Normalizing Computation Rule for Univalence in Higher-Order Propositional Logic}
 \author[R. Adams, M. Bezem, T. Coquand]{\textbf{Robin Adams} \and Marc Bezem \and Thierry Coquand}
