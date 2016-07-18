@@ -21,6 +21,7 @@ We define a model of the type theory with types as sets of terms.  For every typ
 the set of \emph{computable} terms (proofs, paths) $E_\Gamma(A)$.
 
 \begin{definition}[Computable Expressions]
+\label{df:computable}
 \begin{align*}
 E_\Gamma(\Omega) \eqdef & \{ M \mid \Gamma \vdash M : \Omega, M \in \SN \} \\
 E_\Gamma(A \rightarrow B) \eqdef & \{ M \mid \Gamma \vdash M : A \rightarrow B, \\

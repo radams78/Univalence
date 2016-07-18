@@ -15,6 +15,8 @@ valid-addpath validΓ = ctxER (varR x₁ (ctxTR (ctxTR validΓ))) (varR x₀ (ct
 
 \subsection{Metatheorems}
 
+\label{section:meta}
+
 \begin{lemma}[Context Validity]
 $ $
 \begin{enumerate}

@@ -248,7 +248,61 @@ The reduction relation is that of $\lambda o e$ together with the following clau
 & \qquad \qquad \mathsf{trans}_{B, Fx, F'x, Gy} \left( P [ y := x,  p := \reff{x} ] , \right. \\
 & \qquad \qquad \! \! \left. \left. \trans{B}{F'x}{G'y}{Gy}{q_{xy} p}{\sym{B}{Gy}{G'y}{Q [ x := y, p := \reff{y} ] }} \right) \right)
 \end{align*}
-%TODO Define sym, trans
+
+\subsection{Proof of Strong Normalisation}
+
+All the results of Section \ref{section:meta} hold for $\lambda o i$ as well,
+with very similar proofs.
+
+We define the sets of computable expressions $E_\Gamma(\phi)$ for propositions
+$\phi$ as in Definition \ref{df:computable}.  The only thing to bear in mind
+is that, in the definition of $E_\Gamma(\phi \supset \psi)$, the
+propositions $\phi$ and $\psi$ might now have the form $M =_A N$.  For completeness, we write out the definition here:
+
+\begin{align*}
+E_\Gamma(\Omega) \eqdef & \{ M \mid \Gamma \vdash M : \Omega, M \in \SN \} \\
+E_\Gamma(A \rightarrow B) \eqdef & \{ M \mid \Gamma \vdash M : A \rightarrow B, \\
+& \quad \forall (\Delta \supseteq \Gamma) (N \in E_\Delta(A)). MN \in E_\Delta(B), \\
+& \quad \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (\delta \in E_\Delta(N =_A N')). \\
+& \quad \quad \reff{M}_{N N'} \delta \in E_\Gamma(MN =_B MN') \} \\
+\\
+E_\Gamma(\bot) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
+E_\Gamma(\phi \supset \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \supset \psi, \\
+& \forall (\Delta \supseteq \Gamma)(\epsilon \in E_\Delta(\phi)). \delta \epsilon \in E_\Gamma(\psi) \} \\
+E_\Gamma(\phi =_\Omega \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi =_\Omega \psi, \\
+& \delta^+ \in E_\Gamma(\phi \supset \psi), \delta^- \in E_\Gamma(\psi \supset \phi) \} \\
+E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ \delta \mid \Gamma \vdash \delta : M =_{A \rightarrow B} M', \\
+& \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (\epsilon \in E_\Delta(N =_A N')). \\
+& \delta_{NN'}\epsilon \in E_\Delta(MN =_B M'N') \} \\
+E_\Gamma(\phi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi, \delta \in \SN \} \\
+& \qquad (\phi \text{ neutral}) \\
+E_\Gamma(\phi) & \eqdef E_\Gamma(\nf{\phi}) \\
+& \qquad (\phi \mbox{ a normalizable term of type $\Omega$}) \\
+\end{align*}
+
+We define what it means to be a computable substitution and a computable path substitution as before.
+
+\begin{theorem}
+$ $
+\begin{enumerate}
+\item
+If $\Gamma \vdash M : A$, and $\sigma : \Gamma \rightarrow \Delta$ is computable,
+then $M [ \sigma ] \in E_\Delta(A)$.
+\item
+If $\Gamma \vdash \delta : \phi$, and $\sigma : \Gamma \rightarrow \Delta$ is computable,
+then $\delta [ \sigma ] \in E_\Delta(\phi[\sigma])$.
+\item
+If $\Gamma \vdash P : M =_A N$, and $\sigma : \Gamma \rightarrow \Delta$ is computable,
+then $P [ \sigma ] \in E_\Delta(M [ \sigma ] =_A N [ \sigma ])$.
+\item
+If $\Gamma \vdash M : A$, $\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$, and $\tau$, $\sigma$
+and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delta(M [ \sigma ] =_A M [ \rho ])$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Induction on derivations.
+\end{proof}
 
 \todos
 
