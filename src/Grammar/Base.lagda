@@ -27,17 +27,17 @@ record Grammar : Set₁ where
   data Subexpression : Alphabet → ∀ C → Kind C → Set
   Expression : Alphabet → ExpressionKind → Set
   VExpression : Alphabet → VarKind → Set
-  dom : Alphabet → AbstractionKind → Alphabet
-  cod : AbstractionKind → ExpressionKind
-  Abstraction : Alphabet → AbstractionKind → Set
+  dom : Alphabet → AbstractionKind' → Alphabet
+  cod : AbstractionKind' → ExpressionKind
+  Abstraction : Alphabet → AbstractionKind' → Set
   Body : Alphabet → ∀ {K} → ConstructorKind K → Set
 
   Expression V K = Subexpression V -Expression (base K)
   VExpression V K = Expression V (varKind K)
-  dom V (out _) = V
-  dom V (Π K A) = dom (V , K) A
-  cod (out K) = K
-  cod (Π _ A) = cod A
+  dom V (Π _ (_ ●)) = V
+  dom V (Π _ (K ⟶ A)) = dom (V , K) (Π _ A)
+  cod (Π _ (K ●)) = K
+  cod (Π _ (_ ⟶ A)) = cod (Π _ A)
   Abstraction V A = Expression (dom V A) (cod A)
   Body V {K} C = Subexpression V (-Constructor K) C
 

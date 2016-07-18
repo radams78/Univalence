@@ -175,29 +175,29 @@ $E[\id{V}] \equiv E$
 \AgdaHide{
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'-idOp} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaSymbol{\_)} \AgdaSymbol{=} \AgdaFunction{∼-refl}\<%
+\>[2]\AgdaFunction{liftOp'-idOp} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(\_} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{=} \AgdaFunction{∼-refl}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'-idOp} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaBound{K} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{EqReasoning} \AgdaSymbol{(}\AgdaFunction{OP} \AgdaSymbol{(}\AgdaFunction{dom} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaBound{K} \AgdaBound{A}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{dom} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaBound{K} \AgdaBound{A}\AgdaSymbol{)))} \AgdaKeyword{in} \<[90]%
-\>[90]\<%
+\>[2]\AgdaFunction{liftOp'-idOp} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{⟶} \AgdaBound{A}\AgdaSymbol{))} \AgdaSymbol{=} \AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{EqReasoning} \AgdaSymbol{(}\AgdaFunction{OP} \AgdaSymbol{(}\AgdaFunction{dom} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{⟶} \AgdaBound{A}\AgdaSymbol{)))} \AgdaSymbol{(}\AgdaFunction{dom} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{⟶} \AgdaBound{A}\AgdaSymbol{))))} \AgdaKeyword{in} \<[108]%
+\>[108]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaFunction{begin}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{liftOp'} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{K} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaBound{V}\AgdaSymbol{))}\<%
+\>[6]\AgdaFunction{liftOp'} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{K} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaBound{V}\AgdaSymbol{))}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≈⟨} \AgdaFunction{liftOp'-cong} \AgdaBound{A} \AgdaFunction{liftOp-idOp} \AgdaFunction{⟩}\<%
+\>[4]\AgdaFunction{≈⟨} \AgdaFunction{liftOp'-cong} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaBound{A}\AgdaSymbol{)} \AgdaFunction{liftOp-idOp} \AgdaFunction{⟩}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{liftOp'} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{))}\<%
+\>[6]\AgdaFunction{liftOp'} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{))}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≈⟨} \AgdaFunction{liftOp'-idOp} \AgdaBound{A} \AgdaFunction{⟩}\<%
+\>[4]\AgdaFunction{≈⟨} \AgdaFunction{liftOp'-idOp} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaBound{A}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{idOp} \AgdaSymbol{(}\AgdaFunction{dom} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaBound{K} \AgdaBound{A}\AgdaSymbol{))}\<%
+\>[6]\AgdaFunction{idOp} \AgdaSymbol{(}\AgdaFunction{dom} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{⟶} \AgdaBound{A}\AgdaSymbol{)))}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaFunction{∎}\<%

@@ -6,13 +6,13 @@
 \\
 \>\AgdaKeyword{module} \AgdaModule{Grammar.OpFamily.Lifting} \AgdaSymbol{(}\AgdaBound{G} \AgdaSymbol{:} \AgdaRecord{Grammar}\AgdaSymbol{)} \AgdaKeyword{where}\<%
 \\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Function.Equality}\<%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Function.Equality} \AgdaKeyword{hiding} \AgdaSymbol{(}\AgdaRecord{Π}\AgdaSymbol{)}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.List}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims}\<%
 \\
-\>\AgdaKeyword{open} \AgdaModule{Grammar} \AgdaBound{G}\<%
+\>\AgdaKeyword{open} \AgdaModule{Grammar} \AgdaBound{G} \AgdaKeyword{renaming} \AgdaSymbol{(}\_⟶\_ \AgdaSymbol{to} \_⇒\_\AgdaSymbol{)}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar.OpFamily.PreOpFamily} \AgdaBound{G}\<%
 \end{code}
@@ -58,10 +58,10 @@ the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \c
 \>[2]\AgdaFunction{LIFTOP'} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{A} \AgdaSymbol{→} \AgdaFunction{OP} \AgdaBound{U} \AgdaBound{V} \AgdaFunction{⟶} \AgdaFunction{OP} \AgdaSymbol{(}\AgdaFunction{dom} \AgdaBound{U} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{dom} \AgdaBound{V} \AgdaBound{A}\AgdaSymbol{)}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{LIFTOP'} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaSymbol{\_)} \AgdaSymbol{=} \AgdaFunction{id}\<%
+\>[2]\AgdaFunction{LIFTOP'} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(\_} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{=} \AgdaFunction{id}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{LIFTOP'} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaBound{K} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{LIFTOP'} \AgdaBound{A} \AgdaFunction{∘} \AgdaFunction{LIFTOP} \AgdaBound{K}\<%
+\>[2]\AgdaFunction{LIFTOP'} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{⇒} \AgdaBound{A}\AgdaSymbol{))} \AgdaSymbol{=} \AgdaFunction{LIFTOP'} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaBound{A}\AgdaSymbol{)} \AgdaFunction{∘} \AgdaFunction{LIFTOP} \AgdaBound{K}\<%
 \\
 %
 \\

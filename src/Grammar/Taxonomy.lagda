@@ -110,6 +110,18 @@ There are two \emph{classes} of kinds: expression kinds and constructor kinds.
     -Expression : KindClass
     -Constructor : ExpressionKind → KindClass
 
+  infix 2 _●
+  infixr 1 _⟶_
+  data PiDom (S : Set) : ExpressionKind → Set where
+    _● : ∀ K → PiDom S K
+    _⟶_ : ∀ {K} → S → PiDom S K → PiDom S K
+
+  data PiExp (S : Set) : Set where
+    Π : ∀ K → PiDom S K → PiExp S
+
+  AbstractionKind' : Set
+  AbstractionKind' = PiExp VarKind
+
   data AbstractionKind : Set where
     out : ExpressionKind → AbstractionKind
     Π : VarKind → AbstractionKind → AbstractionKind
@@ -123,7 +135,7 @@ There are two \emph{classes} of kinds: expression kinds and constructor kinds.
     base : ExpressionKind → Kind -Expression
 
     out  : ∀ K → ConstructorKind K
-    Π    : ∀ {K} → AbstractionKind → ConstructorKind K → ConstructorKind K
+    Π    : ∀ {K} → AbstractionKind' → ConstructorKind K → ConstructorKind K
 \end{code}
 \end{frame}
 %TODO Colours in Agda code?

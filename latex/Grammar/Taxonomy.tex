@@ -161,6 +161,39 @@ There are two \emph{classes} of kinds: expression kinds and constructor kinds.
 %
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{infix} \AgdaNumber{2} \AgdaFixityOp{\_●}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{infixr} \AgdaNumber{1} \AgdaFixityOp{\_⟶\_}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{data} \AgdaDatatype{PiDom} \AgdaSymbol{(}\AgdaBound{S} \AgdaSymbol{:} \AgdaPrimitiveType{Set}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaDatatype{ExpressionKind} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{\_●} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaBound{K} \AgdaSymbol{→} \AgdaDatatype{PiDom} \AgdaBound{S} \AgdaBound{K}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{\_⟶\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{S} \AgdaSymbol{→} \AgdaDatatype{PiDom} \AgdaBound{S} \AgdaBound{K} \AgdaSymbol{→} \AgdaDatatype{PiDom} \AgdaBound{S} \AgdaBound{K}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{data} \AgdaDatatype{PiExp} \AgdaSymbol{(}\AgdaBound{S} \AgdaSymbol{:} \AgdaPrimitiveType{Set}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{Π} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaBound{K} \AgdaSymbol{→} \AgdaDatatype{PiDom} \AgdaBound{S} \AgdaBound{K} \AgdaSymbol{→} \AgdaDatatype{PiExp} \AgdaBound{S}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{AbstractionKind'} \AgdaSymbol{:} \AgdaPrimitiveType{Set}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{AbstractionKind'} \AgdaSymbol{=} \AgdaDatatype{PiExp} \AgdaField{VarKind}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{data} \AgdaDatatype{AbstractionKind} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
@@ -198,7 +231,7 @@ There are two \emph{classes} of kinds: expression kinds and constructor kinds.
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaInductiveConstructor{Π} \<[9]%
-\>[9]\AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{AbstractionKind} \AgdaSymbol{→} \AgdaFunction{ConstructorKind} \AgdaBound{K} \AgdaSymbol{→} \AgdaFunction{ConstructorKind} \AgdaBound{K}\<%
+\>[9]\AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{AbstractionKind'} \AgdaSymbol{→} \AgdaFunction{ConstructorKind} \AgdaBound{K} \AgdaSymbol{→} \AgdaFunction{ConstructorKind} \AgdaBound{K}\<%
 \end{code}
 \end{frame}
 %TODO Colours in Agda code?

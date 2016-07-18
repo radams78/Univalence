@@ -75,14 +75,14 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
 
 \AgdaHide{
 \begin{code}
-  liftOp'-circ (out _) = ∼-refl H
-  liftOp'-circ {U} {V} {W} (Π K A) {σ} {ρ} = let open EqReasoning (OP H _ _) in 
+  liftOp'-circ (Π _ (_ ●)) = ∼-refl H
+  liftOp'-circ {U} {V} {W} (Π _ (K ⟶ A)) {σ} {ρ} = let open EqReasoning (OP H _ _) in 
     begin
-      liftOp' H A (liftOp H K (circ σ ρ))
-    ≈⟨ liftOp'-cong H A liftOp-circ ⟩
-      liftOp' H A (circ (liftOp F K σ) (liftOp G K ρ))
-    ≈⟨ liftOp'-circ A ⟩
-      circ (liftOp' F A (liftOp F K σ)) (liftOp' G A (liftOp G K ρ))
+      liftOp' H (Π _ A) (liftOp H K (circ σ ρ))
+    ≈⟨ liftOp'-cong H (Π _ A) liftOp-circ ⟩
+      liftOp' H (Π _ A) (circ (liftOp F K σ) (liftOp G K ρ))
+    ≈⟨ liftOp'-circ (Π _ A) ⟩
+      circ (liftOp' F (Π _ A) (liftOp F K σ)) (liftOp' G (Π _ A) (liftOp G K ρ))
     ∎
 \end{code}
 }

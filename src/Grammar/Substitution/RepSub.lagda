@@ -68,14 +68,14 @@ liftOp'-is-liftOp' : ∀ {U} {V} {ρ : Rep U V} {A} →
 
 \AgdaHide{
 \begin{code}
-liftOp'-is-liftOp' {ρ = ρ} {A = out _} = ∼-refl {σ = rep2sub ρ}
-liftOp'-is-liftOp' {U} {V} {ρ} {Π K A} = let open EqReasoning (OP _ _) in 
+liftOp'-is-liftOp' {ρ = ρ} {A = Π _ (_ ●)} = ∼-refl {σ = rep2sub ρ}
+liftOp'-is-liftOp' {U} {V} {ρ} {Π _ (K ⟶ A)} = let open EqReasoning (OP _ _) in 
   begin
-    rep2sub (liftOp'R A (liftRep K ρ))
-  ≈⟨ liftOp'-is-liftOp' {A = A} ⟩
-    liftOp' A (rep2sub (liftRep K ρ))
-  ≈⟨ liftOp'-cong A liftRep-is-liftSub ⟩
-    liftOp' A (liftSub K (rep2sub ρ))
+    rep2sub (liftOp'R (Π _ A) (liftRep K ρ))
+  ≈⟨ liftOp'-is-liftOp' {A = Π _ A} ⟩
+    liftOp' (Π _ A) (rep2sub (liftRep K ρ))
+  ≈⟨ liftOp'-cong (Π _ A) liftRep-is-liftSub ⟩
+    liftOp' (Π _ A) (liftSub K (rep2sub ρ))
   ∎
 \end{code}
 }

@@ -332,10 +332,10 @@ $E[\rho] \twoheadrightarrow_R E[\sigma]$ for all $K$, $A$, $E$.
 \AgdaHide{
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'-red} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaInductiveConstructor{out} \AgdaSymbol{\_\}} \AgdaSymbol{\_} \AgdaBound{ρ↠σ} \AgdaSymbol{=} \AgdaBound{ρ↠σ}\<%
+\>[2]\AgdaFunction{liftOp'-red} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(\_} \AgdaInductiveConstructor{●}\AgdaSymbol{)\}} \AgdaSymbol{\_} \AgdaBound{ρ↠σ} \AgdaSymbol{=} \AgdaBound{ρ↠σ}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'-red} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaBound{K} \AgdaBound{A}\AgdaSymbol{)\}} \AgdaBound{hyp} \AgdaBound{ρ↠σ} \AgdaSymbol{=} \AgdaFunction{liftOp'-red} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaBound{A}\AgdaSymbol{\}} \AgdaBound{hyp} \AgdaSymbol{(}\AgdaFunction{liftOp-red} \AgdaBound{hyp} \AgdaBound{ρ↠σ}\AgdaSymbol{)}\<%
+\>[2]\AgdaFunction{liftOp'-red} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{⟶} \AgdaBound{A}\AgdaSymbol{)\}} \AgdaBound{hyp} \AgdaBound{ρ↠σ} \AgdaSymbol{=} \AgdaFunction{liftOp'-red} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaBound{A}\AgdaSymbol{\}} \AgdaBound{hyp} \AgdaSymbol{(}\AgdaFunction{liftOp-red} \AgdaBound{hyp} \AgdaBound{ρ↠σ}\AgdaSymbol{)}\<%
 \end{code}
 }
 

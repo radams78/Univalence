@@ -192,8 +192,8 @@ $E[\rho] \twoheadrightarrow_R E[\sigma]$ for all $K$, $A$, $E$.
 
 \AgdaHide{
 \begin{code}
-  liftOp'-red {A = out _} _ ρ↠σ = ρ↠σ
-  liftOp'-red {A = (Π K A)} hyp ρ↠σ = liftOp'-red {A = A} hyp (liftOp-red hyp ρ↠σ)
+  liftOp'-red {A = Π _ (_ ●)} _ ρ↠σ = ρ↠σ
+  liftOp'-red {A = Π _ (K ⟶ A)} hyp ρ↠σ = liftOp'-red {A = Π _ A} hyp (liftOp-red hyp ρ↠σ)
 \end{code}
 }
 

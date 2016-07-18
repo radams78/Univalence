@@ -91,14 +91,14 @@ $E[\id{V}] \equiv E$
 
 \AgdaHide{
 \begin{code}
-  liftOp'-idOp (out _) = ∼-refl
-  liftOp'-idOp {V} (Π K A) = let open EqReasoning (OP (dom V (Π K A)) (dom V (Π K A))) in 
+  liftOp'-idOp (Π _ (_ ●)) = ∼-refl
+  liftOp'-idOp {V} (Π _ (K ⟶ A)) = let open EqReasoning (OP (dom V (Π _ (K ⟶ A))) (dom V (Π _ (K ⟶ A)))) in 
     begin
-      liftOp' A (liftOp K (idOp V))
-    ≈⟨ liftOp'-cong A liftOp-idOp ⟩
-      liftOp' A (idOp (V , K))
-    ≈⟨ liftOp'-idOp A ⟩
-      idOp (dom V (Π K A))
+      liftOp' (Π _ A) (liftOp K (idOp V))
+    ≈⟨ liftOp'-cong (Π _ A) liftOp-idOp ⟩
+      liftOp' (Π _ A) (idOp (V , K))
+    ≈⟨ liftOp'-idOp (Π _ A) ⟩
+      idOp (dom V (Π _ (K ⟶ A)))
     ∎
 \end{code}
 }

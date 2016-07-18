@@ -3,10 +3,10 @@
 open import Grammar.Base
 
 module Grammar.OpFamily.Lifting (G : Grammar) where
-open import Function.Equality
+open import Function.Equality hiding (Π)
 open import Data.List
 open import Prelims
-open Grammar G
+open Grammar G renaming (_⟶_ to _⇒_)
 open import Grammar.OpFamily.PreOpFamily G
 \end{code}
 }
@@ -32,8 +32,8 @@ the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \c
 
 \begin{code}
   LIFTOP' : ∀ {U} {V} A → OP U V ⟶ OP (dom U A) (dom V A)
-  LIFTOP' (out _) = id
-  LIFTOP' (Π K A) = LIFTOP' A ∘ LIFTOP K
+  LIFTOP' (Π _ (_ ●)) = id
+  LIFTOP' (Π _ (K ⇒ A)) = LIFTOP' (Π _ A) ∘ LIFTOP K
 
   liftOp' : ∀ {U} {V} A → Op U V → Op (dom U A) (dom V A)
   liftOp' A = Function.Equality.Π._⟨$⟩_ (LIFTOP' A)
