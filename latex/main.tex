@@ -250,6 +250,35 @@ E_\Gamma(\phi) & \eqdef E_\Gamma(\nf{\phi}) \\
 \end{align*}
 
 \begin{lemma}
+\label{lm:wte_loi1}
+If $(\delta \chi_{L_1 L_1'} \theta_1 \cdots_{L_n L_n'} \theta_n)^+ \alpha \beta_1 \cdots \beta_m \in \SN$ and $\phi, \psi, \epsilon \in \SN$ then 
+$(\univ{\phi}{\psi}{\delta}{\epsilon}^+ \chi_{L_1 L_1'} \theta_1 \cdots_{L_n L_n'} \theta_n)^+ \alpha \beta_1 \cdots \beta_m \in \SN$.
+\end{lemma}
+
+\begin{proof}
+Easy, by considering all the possible one-step reductions from the term.
+\end{proof}
+
+\begin{lemma}
+\label{lm:wte_loi2}
+If $(\delta[p:=\epsilon]_{L_1 L_1'} \theta_1 \cdots_{L_n L_n'} \theta_n)^+ \alpha \beta_1 \cdots \beta_m \in \SN$ and $\phi, \epsilon \in \SN$ then $((\lambda p : \phi . \delta) \epsilon_{L_1 L_1'} \theta_1 \cdots_{L_n L_n'} \theta_n)^+ \alpha \beta_1 \cdots \beta_m \in \SN$.
+\end{lemma}
+
+\begin{proof}
+Easy, by considering all the possible one-step reductions from the term.
+\end{proof}
+
+\begin{lemma}
+\label{lm:wte_loi3}
+If $(\delta[x := M, y := N, p := \epsilon]_{L_1 L_1'} \theta_1 \cdots_{L_n L_n'} \theta_n)^+ \alpha \beta_1 \cdots \beta_m \in \SN$ and $M, N, \epsilon \in \SN$.
+$((\triplelambda p:x =_A y. \delta)_{MN} \epsilon_{L_1 L_1'} \theta_1 \cdots_{L_n L_n'} \theta_n)^+ \alpha \beta_1 \cdots \beta_m \in \SN$.
+\end{lemma}
+
+\begin{proof}
+Similar.
+\end{proof}
+
+\begin{lemma}
 Let $M, M', N, N' \in E_\Gamma(A)$.
 If $\delta \in E_\Gamma(M =_A M')$ and $\epsilon \in E_\Gamma(N =_A N')$ then
 $\delta =_A^* \epsilon \in E_\Gamma((M =_A N) =_\Omega (M' =_A N'))$.
@@ -287,14 +316,32 @@ Let $\delta \equiv \triplelambda^{F F'} p : x =_{A_1} y.P$ and $\epsilon \equiv 
 & \qquad \qquad \lambda q : F' =_{A \rightarrow B} G' . \triplelambda p : x =_A y. \\
 & \qquad \qquad \mathsf{trans} \left( P [ y := x,  p := \reff{x} ] , \right. \\
 & \qquad \qquad \! \! \left. \left. \trans*{q_{xy} p}{\sym*{Q [ x := y, p := \reff{y} ] }} \right) \right)^+ \chi \vec{\theta})^+ \alpha \vec{\beta} \in \SN \end{align*}
-Again, if we reduce one of the subterms, then we can apply the induction hypothesis; otherwise, we must show that
+By Lemma \ref{lm:wte_loi1}, it is sufficient to prove that
 \begin{align*} & ( \left( \lambda q : F =_{A \rightarrow \Omega} G . \triplelambda p : x =_A y. \right. \\
-& \qquad \qquad \mathsf{trans}_{A_2 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega} \left( \overline{P} , \right. \\
+& \qquad \qquad \mathsf{trans}_{A_2 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega} \left( P[y:=x, p:=\reff{x}] , \right. \\
 & \qquad \qquad \left. \trans*{q_{xx} \reff{x}}{Q} \right) \chi \vec{\theta})^+ \alpha \vec{\beta} \in \SN \end{align*} 
-where $P[y := x, p := \reff{x}] \twoheadrightarrow \overline{P}$.  It is therefore sufficient to prove that
-\begin{align*} & 
-& \qquad \qquad (\mathsf{trans}_{A_2 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega} \left( \overline{P}[x:=L_1] , \right. \\
-& \qquad \qquad \left. \trans*{\alpha_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1} \right) \theta_2 \cdots \theta_n)^+ \alpha \vec{\beta} \in \SN \end{align*} 
+By Lemma \ref{lm:wte_loi2}, it is sufficient to prove that
+\begin{align*} & ( \left( \triplelambda p : x =_A y. \right. \\
+& \qquad \qquad \mathsf{trans}_{A_2 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega} \left( P[y:=x, p:=\reff{x}] , \right. \\
+& \qquad \qquad \left. \trans*{\chi_{xx} \reff{x}}{Q} \right) \vec{\theta})^+ \alpha \vec{\beta} \in \SN \end{align*} 
+By Lemma \ref{lm:wte_loi3}, it is sufficient to prove that
+\begin{align*}
+& \qquad \qquad (\mathsf{trans}_{A_2 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega} \left( P[x:=L_1, y:=L_1, p:=\reff{L_1}] , \right. \\
+& \qquad \qquad \left. \trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]} \right) \theta_2 \cdots \theta_n)^+ \alpha \vec{\beta} \in \SN \end{align*}
+Repeatedly applying Lemma \ref{lm:wte_loi3}, it is sufficient to prove that
+\begin{align*}
+& \qquad \qquad (\mathsf{trans}_\Omega \left( P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n} , \right. \\
+& \qquad \qquad \left. \trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]}_{L_2 L_2'} \theta_2 \cdots_{L_n L_n'} \theta_n \right) )^+ \alpha \vec{\beta} \in \SN \end{align*}
+ By Lemma \ref{lm:wte_loi1}, it is sufficient to prove that
+\[ (\lambda p. (\trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]}_{L_2 L_2'} \theta_2 \cdots_{L_n L_n'} \theta_n)^+ ((P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n})^+ p)) \alpha \vec{\beta} \in \SN \]
+and
+\[ \lambda p. (P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n})^- ((\trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]}_{L_2 L_2'} \theta_2 \cdots_{L_n L_n'} \theta_n)^- p) \in \SN \]
+
+We prove the first of these here.
+By Lemma \ref{lm:wte_loi2}, it is sufficient to prove that
+\[ (\trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]}_{L_2 L_2'} \theta_2 \cdots_{L_n L_n'} \theta_n)^+ ((P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n})^+ \alpha) \vec{\beta} \in \SN \]
+Repeatedly appling the three lemmas again, it is sufficient to prove that
+
 \todo{Finish proof}
 \end{proof}
 
