@@ -404,7 +404,6 @@ If $\sigma : \Gamma \rightarrow \Delta$ and $\tau : \rho \sim \rho' : \Delta \ri
 \item
 $M[\sigma]\{ \tau : \rho \sim \rho' \} \equiv
 M\{ \tau \bullet_{\rho \rho'} \sigma : \rho \circ \sigma \sim \rho' \circ \sigma \}$
-\item
 \end{enumerate}
 \end{lemma}
 

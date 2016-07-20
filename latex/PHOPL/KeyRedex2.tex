@@ -12,14 +12,24 @@ $ $
 \begin{enumerate}
 \item
 \label{lm:SN1}
-If $M[x:=N]L_1 \cdots L_n, N \in \SN$ then $(\lambda x:A.M)NL_1 \cdots L_n \in \SN$.
+If $M[x:=N]L_1 \cdots L_n \in \SN$ and $N \in \SN$ then $(\lambda x:A.M)NL_1 \cdots L_n \in \SN$.
 \item
 \label{lm:SN2}
-If $\reff{M[x:=N]N_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n, N \in \SN$ then \\
+If $\reff{M[x:=N]N_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n \in \SN$ and $N \in \SN$ then
 $\reff{(\lambda x:A.M)NN_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n \in \SN$.
 \item
 \label{lm:SN3}
-If $M\{x:=P:N\sim N'\}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n, P, N, N' \in \SN$ and $P$ is not of the form $\reff{-}$, then $\reff{\lambda x:A.M}_{N N'} P_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in \SN$.
+Suppose that:
+\begin{enumerate}
+\item
+$M\{x:=P:N\sim N'\}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in \SN$
+\item
+$P, N, N' \in \SN$
+\item
+for any term $L$, if $P \twoheadrightarrow \reff{L}$
+then $\reff{M[x:=L]}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in \SN$.
+\end{enumerate}
+Then $\reff{\lambda x:A.M}_{N N'} P_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in \SN$.
 \item
 \label{lm:SN4}
 If $\reff{M[x:=N]}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n, N_1, N_2, N \in \SN$ then \\
@@ -28,21 +38,13 @@ $\reff{\lambda x:A.M}_{N_1 N_2}\reff{N}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n 
 \end{lemma}
 
 \begin{proof}
-We prove part 1; the proofs of the other parts are similar.
+We prove part \ref{lm:SN3}; the proofs of the other parts are similar.
 
-The proof is by induction on $N \in \SN$, then on $M[x:=N]L_1 \cdots L_n \in \SN$.  The following are the possible one-step reductions from
-$(\lambda x:A.M)NL_1 \cdots L_n$.
+The proof is by induction on $P \in \SN$, then $N \in \SN$, then $N' \in \SN$,
+then on $M\{x := P : N \sim N' \} \vec{P} \in \SN$.  The following are the possible one-step reductions from
+$\reff{\lambda x:A.M}_{N N'} P \vec{P}$:
 
-\begin{description}
-\item[$(\lambda x:A.M)N\vec{L} \rightarrow (\lambda x:A.M)N'\vec{L}$, where $N \rightarrow N'$.]
-This case follows from the induction hypothesis on $N$.
-
-\item[$(\lambda x:A.M)N\vec{L} \rightarrow (\lambda x:A.M')N\vec{L}$, where $M \rightarrow M'$.]
-This case follows from the induction hypothesis on $M[x:=N]\vec{L}$.  Similarly for the case where
-we reduce one of the $L_i$.
-
-\item[$(\lambda x:A.M)N\vec{L} \rightarrow M{[x:=N]}\vec{L}$.]  We have $M[x:=N]\vec{L} \in \SN$ by hypothesis.
-\end{description}
+\todo{Proof}
 \end{proof}
 
 \begin{lemma}

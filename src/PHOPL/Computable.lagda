@@ -319,7 +319,7 @@ using Generation.  Also, $\reff{M}_{N_1 N_2} \reff{N} \vec{P} \in \SN$ hence $\r
 If $A \equiv B \rightarrow C$: we have $\Gamma \vdash \reff{MN} \vec{P} : L =_A L'$ as before.  Now, let $K_{n+1}, K_{n+1}' \in E_\Gamma(B)$
 and $P_{n+1} \in E_\Gamma(K_{n+1} =_B K_{n+1}')$.  Then we have
 \begin{align*}
-\reff{M}_{N_1 N_2} \reff{N} \vec{P}_{K_{n+1} K_{n+1}l} P_{n+1} & \in E_\Gamma(LK_{n+1} =_C L'K_{n+1}') \\
+\reff{M}_{N_1 N_2} \reff{N} \vec{P}_{K_{n+1} K_{n+1}} P_{n+1} & \in E_\Gamma(LK_{n+1} =_C L'K_{n+1}') \\
 \therefore \reff{MN} \vec{P}_{K_{n+1} K_{n+1}'} P_{n+1} & \in E_\Gamma(LK_{n+1} =_C L'K_{n+1}')
 \end{align*}
 by the induction hypothesis, as required.
