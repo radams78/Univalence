@@ -44,29 +44,33 @@ The proof is by induction on $P \in \SN$, then $N \in \SN$, then $N' \in \SN$,
 then on $M\{x := P : N \sim N' \} \vec{P} \in \SN$.  The following are the possible one-step reductions from
 $\reff{\lambda x:A.M}_{N N'} P \vec{P}$:
 
-\todo{Proof}
-\end{proof}
-
-\begin{lemma}
-\label{lm:SNrefapp}
-If $\reff{M}_{N_1 N_2} \reff{N}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in \SN$ then \\
-$\reff{MN}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in \SN$.
-\end{lemma}
-
-\begin{proof}
-The proof is by induction on the hypothesis.  These are the possible one-step reductions from $\reff{MN} \vec{P}$:
-
 \begin{description}
-\item[$\reff{MN} \vec{P} \rightarrow \reff{M'N} \vec{P}$ where $M \rightarrow M'$]
-Then we have $\reff{M}_{N_1 N_2} \reff{N} \vec{P} \rightarrow \reff{M'}_{N_1 N_2} \reff{N} \vec{P} \in \SN$, and the result follows by the
-induction hypothesis.  Similarly if we reduce $N$ or one of the $P_i$, $K_i$ or $K_i'$.
-
-\item[$MN$ is a redex]
-Then $M$ and $N$ are closed normal forms, and so \\
-$\reff{M}_{N_1 N_2} \reff{N} \vec{P} \rightarrow \reff{MN} \vec{P}$, hence
-$\reff{MN} \vec{P} \in \SN$.
+\item[$\reff{\lambda x:A.M}_{N N'} P \vec{P} \rightarrow \reff{\lambda x:A.M'}_{N N'} P \vec{P}$, where $M \rightarrow M'$]
+In this case, we have $M \{ x:=P : N \sim N' \} \vec{P} \twoheadrightarrow M' \{ x:=P : N \sim N' \} \vec{P} \in \SN$.
+For any term $L$, if $P \twoheadrightarrow \reff{L}$ then $\reff{M[x:=L]} \vec{P} \rightarrow \reff{M'[x:=L]} \vec{P} \in \SN$.
 \end{description}
 \end{proof}
+
+% \begin{lemma}
+% \label{lm:SNrefapp}
+% If $\reff{M}_{N_1 N_2} \reff{N}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in \SN$ then \\
+% $\reff{MN}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in \SN$.
+% \end{lemma}
+
+% \begin{proof}
+% The proof is by induction on the hypothesis.  These are the possible one-step reductions from $\reff{MN} \vec{P}$:
+
+% \begin{description}
+% \item[$\reff{MN} \vec{P} \rightarrow \reff{M'N} \vec{P}$ where $M \rightarrow M'$]
+% Then we have $\reff{M}_{N_1 N_2} \reff{N} \vec{P} \rightarrow \reff{M'}_{N_1 N_2} \reff{N} \vec{P} \in \SN$, and the result follows by the
+% induction hypothesis.  Similarly if we reduce $N$ or one of the $P_i$, $K_i$ or $K_i'$.
+
+% \item[$MN$ is a redex]
+% Then $M$ and $N$ are closed normal forms, and so \\
+% $\reff{M}_{N_1 N_2} \reff{N} \vec{P} \rightarrow \reff{MN} \vec{P}$, hence
+% $\reff{MN} \vec{P} \in \SN$.
+% \end{description}
+% \end{proof}
 
 \begin{lemma}
 \label{lm:SNothers}

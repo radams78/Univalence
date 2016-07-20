@@ -107,3 +107,14 @@ for $y \not\equiv x_1, \ldots x_n$.
 \begin{proof}
 An easy induction on $M$.
 \end{proof}
+
+The following lemma shows how substitution and path substitution interact.
+
+\begin{lm}
+Let $x$ and $y$ be distinct variables.  Then
+\[ M [ x:= N ] \{ y := P : L \sim L' \} \equiv M \{ x := N \{ y := P : L \sim L' \} : N [ y:= L ] \sim N [ y := L' ], y := P : L \sim L' \} \]
+\end{lm}
+
+\begin{proof}
+Induction on $M$.
+\end{proof}
