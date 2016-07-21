@@ -22,10 +22,12 @@ $\reff{(\lambda x:A.M)NN_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L
 Suppose that:
 \begin{enumerate}
 \item
+\label{hypi}
 $M\{x:=P:N\sim N'\}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in \SN$
 \item
 $P, N, N' \in \SN$
 \item
+\label{hypiii}
 for any term $L$, if $P \twoheadrightarrow \reff{L}$
 then $\reff{M[x:=L]}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in \SN$.
 \end{enumerate}
@@ -45,9 +47,19 @@ then on $M\{x := P : N \sim N' \} \vec{P} \in \SN$.  The following are the possi
 $\reff{\lambda x:A.M}_{N N'} P \vec{P}$:
 
 \begin{description}
-\item[$\reff{\lambda x:A.M}_{N N'} P \vec{P} \rightarrow \reff{\lambda x:A.M'}_{N N'} P \vec{P}$, where $M \rightarrow M'$]
-In this case, we have $M \{ x:=P : N \sim N' \} \vec{P} \twoheadrightarrow M' \{ x:=P : N \sim N' \} \vec{P} \in \SN$.
-For any term $L$, if $P \twoheadrightarrow \reff{L}$ then $\reff{M[x:=L]} \vec{P} \rightarrow \reff{M'[x:=L]} \vec{P} \in \SN$.
+\item[$\reff{\lambda x:A.M}_{N N'} P \vec{P} \rightarrow \reff{\lambda x:A.M'}_{N N'} P \vec{P}$, where $M \rightarrow M'$.]
+$ $
+
+In this case, the result follows straight from the induction hypothesis, because we have $M \{ x:=P : N \sim N' \} \vec{P} \twoheadrightarrow M' \{ x:=P : N \sim N' \} \vec{P} \in \SN$.
+And for any term $L$, if $P \twoheadrightarrow \reff{L}$ then $\reff{M[x:=L]} \vec{P} \rightarrow \reff{M'[x:=L]} \vec{P} \in \SN$.
+
+The case where we reduce $N$, $N'$, $P$, or one of the $P_i$s is similar.
+\item[$\reff{\lambda x:A.M}_{N N'} P \vec{P} \rightarrow M \{ x := P : N \sim N' \} \vec{P}$] where $P$ is a closed normal form that is not a $\reff{-}$.
+
+The conclusion follows from hypothesis \ref{hypi}.
+\item[$P \equiv \reff{L}$ and $\reff{\lambda x:A.M}_{N N'} \reff{L} \vec{P} \rightarrow \reff{(\lambda x:A.M)L}_{N N'} \vec{P}$]
+
+In this case, we have $\reff{M[x:=L]}\vec{P} \in \SN$ by hypothesis \ref{hypiii}, and the conclusion follows by part \ref{lm:SN2}.
 \end{description}
 \end{proof}
 
@@ -77,7 +89,7 @@ For any term $L$, if $P \twoheadrightarrow \reff{L}$ then $\reff{M[x:=L]} \vec{P
 $ $
 \begin{enumerate}
 \item
-If $\delta[p:=\epsilon], \phi, \epsilon \in \SN$ then $(\lambda x:\phi.\delta)\epsilon \in \SN$.
+If $\delta[p:=\epsilon], \phi, \epsilon \in \SN$ then $(\lambda p:\phi.\delta)\epsilon \in \SN$.
 \item
 If $P[x:=L, y:=L', e:=Q], L, L', Q \in \SN$ then $(\triplelambda e:x =_A y.P)_{L L'} Q \in \SN$.
 \end{enumerate}
@@ -85,4 +97,34 @@ If $P[x:=L, y:=L', e:=Q], L, L', Q \in \SN$ then $(\triplelambda e:x =_A y.P)_{L
 
 \begin{proof}
 Similar to the previous lemmas.
+\end{proof}
+
+\begin{lemma}
+\label{lm:wte_loi1}
+If $\delta \chi_{L_1 L_1'} \theta_1 \cdots_{L_m L_m'} \theta_m)^+ \alpha \beta_1 \cdots \beta_n \in \SN$ and $\phi, \psi, \epsilon \in \SN$, then
+$(\univ{\phi}{\psi}{\delta}{\epsilon}^+ \chi_{L_1 L_1'} \theta_1 \cdots_{L_m L_m'} \theta_m)^+ \alpha \beta_1 \cdots \beta_n \in \SN$.
+\end{lemma}
+
+\begin{proof}
+Similar.
+\end{proof}
+
+\begin{lemma}
+\label{lm:wte_loi2}
+If $\delta[p:=\epsilon]_{L_1 L_1'} \theta_1 \cdots_{L_m L_m'} \theta_m)^+ \alpha \beta_1 \cdots \beta_n \in \SN$ and $\phi, \epsilon \in \SN$, then
+$((\lambda p:\phi.\delta) \epsilon_{L_1 L_1'} \theta_1 \cdots_{L_m L_m'} \theta_m)^+ \alpha \beta_1 \cdots \beta_n \in \SN$.
+\end{lemma}
+
+\begin{proof}
+Similar.
+\end{proof}
+
+\begin{lemma}
+\label{lm:wte_loi3}
+If $\delta[x:=M, y:=N, p:=\epsilon]_{L_1 L_1'} \theta_1 \cdots_{L_m L_m'} \theta_m)^+ \alpha \beta_1 \cdots \beta_n \in \SN$ and $M, N, \epsilon \in \SN$, then
+$((\triplelambda p:x =_A y.\delta)_{MN} \epsilon_{L_1 L_1'} \theta_1 \cdots_{L_m L_m'} \theta_m)^+ \alpha \beta_1 \cdots \beta_n \in \SN$.
+\end{lemma}
+
+\begin{proof}
+Similar.
 \end{proof}

@@ -174,8 +174,12 @@ An easy induction on $M$.
 The following lemma shows how substitution and path substitution interact.
 
 \begin{lm}
+\label{lm:subpathsub}
 Let $x$ and $y$ be distinct variables.  Then
-\[ M [ x:= N ] \{ y := P : L \sim L' \} \equiv M \{ x := N \{ y := P : L \sim L' \} : N [ y:= L ] \sim N [ y := L' ], y := P : L \sim L' \} \]
+\begin{align*}
+& M [ x:= N ] \{ y := P : L \sim L' \} \\
+& \equiv M \{ x := N \{ y := P : L \sim L' \} : N [ y:= L ] \sim N [ y := L' ], y := P : L \sim L' \}
+\end{align*}
 \end{lm}
 
 \begin{proof}

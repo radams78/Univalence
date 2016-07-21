@@ -218,15 +218,6 @@ The reduction relation is that of $\lambda o e$ together with the following clau
 & \qquad \qquad \! \! \left. \left. \trans{B}{F'x}{G'y}{Gy}{q_{xy} p}{\sym{B}{Gy}{G'y}{Q [ x := y, p := \reff{y} ] }} \right) \right)
 \end{align*}
 
-\begin{lm}
-If $(\triplelambda p:x =_A y.\delta)_{MN} \epsilon \theta_1 \cdots \theta_n \in \SN$, then $\delta[x:=M, y:=N, p:=\epsilon] \theta_1 \cdots \theta_n \in \SN$.
-\end{lm}
-
-\paragraph{Note}
-We do not necessarily have $(\triplelambda p:x =_A y.\delta)_{MN} \epsilon \vec{\theta} \rightarrow \delta[x:=M, y:=N, p:=\epsilon] \vec{\theta}$, as the
-subterms may not be in normal form.
-
-
 \subsection{Proof of Strong Normalisation}
 
 All the results of Section \ref{section:meta} hold for $\lambda o i$ as well,
@@ -265,40 +256,11 @@ then $\delta[x:=M, y:=N, p:=\epsilon] \theta_1 \cdots \theta_n \in E_\Gamma(\phi
 \end{lemma}
 
 \begin{proof}
-The proof is by induction on $\nf{\phi}$.  The case $\bot$ follows from
-Lemma \ref{lm:SNred}, and the $\supset$ case follows easily from the induction hypothesis.
+The proof is by an induction on $\nf{\phi}$.
 \end{proof}
 
 \begin{lemma}
-\label{lm:wte_loi1}
-If $(\delta \chi_{L_1 L_1'} \theta_1 \cdots_{L_n L_n'} \theta_n)^+ \alpha \beta_1 \cdots \beta_m \in \SN$ and $\phi, \psi, \epsilon \in \SN$ then 
-$(\univ{\phi}{\psi}{\delta}{\epsilon}^+ \chi_{L_1 L_1'} \theta_1 \cdots_{L_n L_n'} \theta_n)^+ \alpha \beta_1 \cdots \beta_m \in \SN$.
-\end{lemma}
-
-\begin{proof}
-Easy, by considering all the possible one-step reductions from the term.
-\end{proof}
-
-\begin{lemma}
-\label{lm:wte_loi2}
-If $(\delta[p:=\epsilon]_{L_1 L_1'} \theta_1 \cdots_{L_n L_n'} \theta_n)^+ \alpha \beta_1 \cdots \beta_m \in \SN$ and $\phi, \epsilon \in \SN$ then $((\lambda p : \phi . \delta) \epsilon_{L_1 L_1'} \theta_1 \cdots_{L_n L_n'} \theta_n)^+ \alpha \beta_1 \cdots \beta_m \in \SN$.
-\end{lemma}
-
-\begin{proof}
-Easy, by considering all the possible one-step reductions from the term.
-\end{proof}
-
-\begin{lemma}
-\label{lm:wte_loi3}
-If $(\delta[x := M, y := N, p := \epsilon]_{L_1 L_1'} \theta_1 \cdots_{L_n L_n'} \theta_n)^+ \alpha \beta_1 \cdots \beta_m \in \SN$ and $M, N, \epsilon \in \SN$.
-$((\triplelambda p:x =_A y. \delta)_{MN} \epsilon_{L_1 L_1'} \theta_1 \cdots_{L_n L_n'} \theta_n)^+ \alpha \beta_1 \cdots \beta_m \in \SN$.
-\end{lemma}
-
-\begin{proof}
-Similar.
-\end{proof}
-
-\begin{lemma}
+\label{lm:eqstar}
 Let $M, M', N, N' \in E_\Gamma(A)$.
 If $\delta \in E_\Gamma(M =_A M')$ and $\epsilon \in E_\Gamma(N =_A N')$ then
 $\delta =_A^* \epsilon \in E_\Gamma((M =_A N) =_\Omega (M' =_A N'))$.
@@ -311,7 +273,7 @@ $(\delta =_A^* \epsilon)^- \in E_\Gamma(M' =_A N' \supset M =_A N)$.  We prove t
 In fact, we prove the following statement, from which the desired conclusion easily follows:
 
 \begin{quote}
-Let $A \equiv A_1 \rightarrow \cdots \rightarrow A_n \rightarrow \bot$ be a type.  Let
+Let $A \equiv A_1 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega$ be a type.  Let
 \begin{align*}
 \delta & \in E_\Gamma(M =_A M') \\
 \epsilon & \in E_\Gamma(N =_A N') \\
@@ -353,23 +315,34 @@ Repeatedly applying Lemma \ref{lm:wte_loi3}, it is sufficient to prove that
 & \qquad \qquad (\mathsf{trans}_\Omega \left( P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n} , \right. \\
 & \qquad \qquad \left. \trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]}_{L_2 L_2'} \theta_2 \cdots_{L_n L_n'} \theta_n \right) )^+ \alpha \vec{\beta} \in \SN \end{align*}
  By Lemma \ref{lm:wte_loi1}, it is sufficient to prove that
-\[ (\lambda p. (\trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]}_{L_2 L_2'} \theta_2 \cdots_{L_n L_n'} \theta_n)^+ ((P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n})^+ p)) \alpha \vec{\beta} \in \SN \]
+\begin{align*}
+& (\lambda p. (\trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]}_{L_2 L_2'} \theta_2 \cdots_{L_n L_n'} \theta_n)^+ \\
+& \quad ((P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n})^+ p)) \alpha \vec{\beta} \in \SN
+\end{align*}
 and
-\[ \lambda p. (P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n})^- ((\trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]}_{L_2 L_2'} \theta_2 \cdots_{L_n L_n'} \theta_n)^- p) \in \SN \]
+\begin{align*}
+& \lambda p. (P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n})^- \\
+& \quad ((\trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]}_{L_2 L_2'} \theta_2 \cdots_{L_n L_n'} \theta_n)^- p) \in \SN
+\end{align*}
 
 We prove the first of these here.
 By Lemma \ref{lm:wte_loi2}, it is sufficient to prove that
-\[ (\trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]}_{L_2 L_2'} \theta_2 \cdots_{L_n L_n'} \theta_n)^+ ((P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n})^+ \alpha) \vec{\beta} \in \SN \]
+\begin{align*}
+& (\trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]}_{L_2 L_2'} \theta_2 \cdots_{L_n L_n'} \theta_n)^+ \\
+& \quad ((P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n})^+ \alpha) \vec{\beta} \in \SN
+\end{align*}
 Repeatedly appling the three lemmas again, it is sufficient to prove that
-\[ (Q [x:= L_1, y := L_1', p:=\theta_1] \vec{\theta})^+ ((\chi \reff{L_1} \cdots
-\reff{L_n})^+ ((P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n})^+ \alpha)) \vec{\beta} \in \SN \]
+\begin{align*}
+& (Q [x:= L_1, y := L_1', p:=\theta_1] \vec{\theta})^+ ((\chi \reff{L_1} \cdots
+\reff{L_n})^+ \\
+& \quad ((P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n})^+ \alpha)) \vec{\beta} \in \SN
+\end{align*}
 
 Now, we have $\delta \in E_\Gamma(M =_A M')$, hence $\delta_{L_1L_1} \reff{L_1}
 \in E_\Gamma(M L_1 = M' L_1)$ and so $P[x := L_1, y := L_1, p := \reff{L_1}]
 \in E_\Gamma(M L_1 = M' L_1)$ by Lemma \ref{lm:Ered}.  Similarly
 $Q[x:=L_1, y:=L_1', p:=\theta_1] \in E_\Gamma(N L_1 = N' L_1')$.  The
 result follows.
-\todo{Finish proof}
 \end{proof}
 
 We define what it means to be a computable substitution and a computable path substitution as before.
@@ -393,7 +366,8 @@ and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delt
 \end{theorem}
 
 \begin{proof}
-Induction on derivations.
+Induction on derivations, as before.  We use Lemma \ref{lm:eqstar} for the rule
+$(=^*)$.
 \end{proof}
 
 \todos

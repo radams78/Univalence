@@ -213,10 +213,12 @@ If $P \rightarrow P'$ then $M \{ x:= P : N \sim N' \} \twoheadrightarrow M \{ x:
 \begin{proof}
 A straightforward induction in each case.  We give the details for one case in part 3, where $M \equiv (\lambda y:A.L)L'$ and $M' \equiv L[y:=L']$.  We have
 \begin{align*}
-((\lambda y:A.L)L') \{ x:=P \} & \eqdef (\triplelambda e : y =_A y' . L \{ x := P, y := e \})_{L'[x:=N] L'[x:=N']} L'\{ x:= P \} \\
-& \rightarrow L \{ x:= P : N \sim N' , y := e : y \sim y' \} [ y := L' [x:=N], y' := L'[x:=Nl], e := L' \{ x:=P \} ] \\
-& \equiv L \{ x := P : N \sim N' , y := L' \{ x := P \} : L' [ x := N ] \sim L' [ x := N' ] \} \\
-& \equiv L [ y := L' ] \{ x := P \}
+\lefteqn{((\lambda y:A.L)L') \{ x:=P \}} \\
+ & \eqdef (\triplelambda e : y =_A y' . L \{ x := P, y := e \})_{L'[x:=N] L'[x:=N']} L'\{ x:= P \} \\
+& \rightarrow L \{ x:= P , y := e : y \sim y' \} \\
+& \quad [ y := L' [x:=N], y' := L'[x:=N], e := L' \{ x:=P \} ] \\
+& \equiv L \{ x := P , y := L' \{ x := P \} : L [ x:= N] \sim L'[x:=N] \} \\
+& \equiv L [ y := L' ] \{ x := P \} & (\text{Lemma \ref{lm:subpathsub}})
 \end{align*}
 \end{proof}
 
