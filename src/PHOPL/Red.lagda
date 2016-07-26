@@ -217,7 +217,7 @@ A straightforward induction in each case.  We give the details for one case in p
  & \eqdef (\triplelambda e : y =_A y' . L \{ x := P, y := e \})_{L'[x:=N] L'[x:=N']} L'\{ x:= P \} \\
 & \rightarrow L \{ x:= P , y := e : y \sim y' \} \\
 & \quad [ y := L' [x:=N], y' := L'[x:=N], e := L' \{ x:=P \} ] \\
-& \equiv L \{ x := P , y := L' \{ x := P \} : L [ x:= N] \sim L'[x:=N] \} \\
+& \equiv L \{ x := P , y := L' \{ x := P \} : L' [ x:= N] \sim L'[x:=N] \} \\
 & \equiv L [ y := L' ] \{ x := P \} & (\text{Lemma \ref{lm:subpathsub}})
 \end{align*}
 \end{proof}

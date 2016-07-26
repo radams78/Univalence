@@ -139,6 +139,11 @@ and we add the rules:
 \[ \infer{\Gamma \vdash \delta =^*_A \epsilon : (M =_A N) =_\Omega (M' =_A N')}
 {\Gamma \vdash \delta : M =_A M' \quad \Gamma \vdash \epsilon : N =_A N'} \]
 
+We extend the definition of path substitution by
+\[ (N =_B N') \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{M'} \}
+\eqdef N \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{M'} \} =_B^*
+N' \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{M'} \} \enspace . \]
+
 We define terms $\sym{A}{M}{N}{\delta}$ and $\trans{A}{M}{N}{P}{\delta}{\epsilon}$.
 \begin{align*}
 \sym{\Omega}{\phi}{\psi}{\delta} & \eqdef \univ{\psi}{\phi}{\delta^-}{\delta^+} \\

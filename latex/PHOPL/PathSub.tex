@@ -158,13 +158,7 @@ y \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef \reff{y} \\
 }
 
 \begin{lm}
-\[ M \{ e_1 := P_1 : M_1 \sim N_1 , \ldots, e_n := P_n : M_n \sim N_n \} \equiv M \{ \tau : \rho \sim \sigma \} \enspace , \]
-where
-\begin{align*}
-\tau(x_i) & \eqdef P_i & \rho(x_i) & \eqdef M_i & \sigma(x_i) \eqdef N_i \\
-\tau(y) & \eqdef \reff{y} & \rho(y) & \eqdef y & \sigma(y) & \eqdef y
-\end{align*}
-for $y \not\equiv x_1, \ldots x_n$.
+\[ M \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} \equiv M \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N}, y := \reff{y} : y \sim y \} \]
 \end{lm}
 
 \begin{proof}
@@ -175,13 +169,21 @@ The following lemma shows how substitution and path substitution interact.
 
 \begin{lm}
 \label{lm:subpathsub}
-Let $x$ and $y$ be distinct variables.  Then
+Let $\vec{y}$ be a sequence of variables and $x$ a distinct variable.  Then
+\begin{enumerate}
+\item
 \begin{align*}
-& M [ x:= N ] \{ y := P : L \sim L' \} \\
-& \equiv M \{ x := N \{ y := P : L \sim L' \} : N [ y:= L ] \sim N [ y := L' ], y := P : L \sim L' \}
+& M [ x:= N ] \{ \vec{y} := \vec{P} : \vec{L} \sim \vec{L'} \} \\
+& \equiv M \{ x := N \{ \vec{y} := \vec{P} : \vec{L} \sim \vec{L'} \} : N [ \vec{y}:= \vec{L} ] \sim N [ \vec{y} := \vec{L'} ], \vec{y} := \vec{P} : \vec{L} \sim \vec{L'} \}
 \end{align*}
+\item
+\begin{align*}
+& M \{ \vec{y} := \vec{P} : \vec{L} \sim \vec{L'} \} [ x := N ]
+& \equiv M \{ \vec{y} := \vec{P} [x := N] : \vec{L} [x := N] \sim \vec{L'} [x := N], x := \ref{N} : N \sim N \}
+\end{align*}
+\end{enumerate}
 \end{lm}
 
 \begin{proof}
-Induction on $M$.
+An easy induction on $M$ in both cases.
 \end{proof}
