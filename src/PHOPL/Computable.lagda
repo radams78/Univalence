@@ -25,7 +25,7 @@ E_\Gamma(\Omega) \eqdef & \{ M \mid \Gamma \vdash M : \Omega, M \in \SN \} \\
 E_\Gamma(A \rightarrow B) \eqdef & \{ M \mid \Gamma \vdash M : A \rightarrow B, \\
 & \quad \forall (\Delta \supseteq \Gamma) (N \in E_\Delta(A)). MN \in E_\Delta(B), \\
 & \quad \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (P \in E_\Delta(N =_A N')). \\
-& \quad \quad \reff{M}_{N N'} P \in E_\Gamma(MN =_B MN') \} \\
+& \quad \quad M \{ \}_{N N'} P \in E_\Gamma(MN =_B MN') \} \\
 \\
 E_\Gamma(\bot) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
 E_\Gamma(\phi \supset \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \supset \psi, \\
@@ -284,18 +284,98 @@ From the definition of $E_\Gamma(T)$ and confluence.
 \end{proof}
 
 \begin{lm}
+Suppose:
+\begin{enumerate}
+\item
+$M \in E_\Gamma(A_1 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega)$.
+\item
+For $1 \leq i \leq n$, we have $N_i, N_i' \in E_\Gamma(A_i)$ and $P_i \in E_\Gamma(N_i =_{A_i} N_i')$.
+\item
+$\delta \in E_\Gamma(M N_1 \cdots N_n)$.
+\item
+$\nf{M N_1' \cdots N_n'} \equiv \phi_1 \supset \cdots \supset \phi_m \supset \bot$
+\item
+For $1 \leq j \leq m$, we have $\epsilon_j \in E_\Gamma(\phi_j)$.
+\end{enumerate}
+Then $(\reff{M}_{N_1 N_1'} P_1 \cdots_{N_n N_n'} P_n)^+ \delta \epsilon_1 \cdots \epsilon_m \in E_\Gamma(\bot)$.
+\end{lm}
+
+\begin{proof}
+It is easy to check that this proof is well-typed, so we just have to show that it is in $\SN$.  The proof is by
+induction on $n$, then on the proofs that $M, N_i, N_i', P_i, \delta, \epsilon_j \in \SN$.  Consider all possible one-step
+reductions from $(\reff{M} \vec{P})^+ \delta \vec{\epsilon}$.  There are the following possibilities:
+\begin{description}
+\item[$(\reff{M} \vec{P})^+ \delta \vec{\epsilon} \rightarrow (\reff{M'} \vec{P})^+ \delta \vec{\epsilon}$], where
+$M \rightarrow M'$
+
+In this case, the result follows immediately from the induction hypothesis on $M$.  Similarly for the case where we reduce
+one of the $N_i$, $N_i'$, $P_i$, $\delta$ or $\epsilon_j$.
+\item[$P_1 \equiv \reff{L}$ and $(\reff{M} \vec{P})^+ \delta \vec{\epsilon} \rightarrow (\reff{M L} P_2 \cdots P_n)^+ \delta \vec{\epsilon}$]
+
+In this case, we have that $M$ and $L$ are closed normal forms.  By Generation, we know $N_1 \simeq_\beta N_1' \simeq_\beta L$, hence $N_1, N_1' \twoheadrightarrow_\beta L$
+by Confluence, and thus $L \in E_\Gamma(A_1)$.  It follows that $ML \in E_\Gamma(A_2 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega)$, and
+the result follows by the induction hypothesis on $n$.
+\item[$M \equiv \lambda x:C.L$ and $(\reff{M} \vec{P})^+ \delta \vec{\epsilon} \rightarrow (L \{ x := P_1 : N_1 \sim N_1 \} P_2 \cdots P_n)^+ \delta \vec{\epsilon}$]
+
+We have $\lambda x:C.L \in E_\Gamma(A_1 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega)$, and hence
+\[ (\lambda x:C.L)\{\}_{N_1 N_1'} P_1 \in E_\Gamma(M N_1 =_{A_2 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega} M N_1') \enspace , \]
+i.e.
+\[ (\triplelambda e : x =_C y. L \{ x := e \})_{N_1 N_1'} P_1 \in E_\Gamma(M N_1 =_{A_2 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega} M N_1') \enspace . \]
+Noting that $M$, $N_1$, $N_1'$ and $P_1$ are closed normal forms, it follows that
+\[ L \{ x:= e : x \sim y \} [ x := N_1, y = N_1', e := P_1 ] \in E_\Gamma(M N_1 = M N_1') \enspace , \]
+i.e.
+\[ L \{ x := P_1 : N_1 \sim N_1' \} \in E_\Gamma(M N_1 = M N_1') \]
+and the desired result follows.
+\item[$n = 0$ and $\reff{M}^+ \delta \vec{\epsilon} \rightarrow (\lambda p:\phi.p)\delta \vec{\epsilon}$]
+
+Since $\delta \in E_\Gamma(M) = E_\Gamma(\nf{M}) = E_\Gamma(\phi_1 \supset \cdots \supset \phi_m \supset \bot)$, we have that
+$\delta \vec{\epsilon} \in \SN$.  Hence $(\lambda p:\phi.p) \delta \vec{\epsilon} \in \SN$ by Lemma \ref{lm:SNothers}.
+\end{description}
+\end{proof}
+
+\begin{lm}
+Suppose:
+\begin{enumerate}
+\item
+$M \in E_\Gamma(A_1 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega)$.
+\item
+For $1 \leq i \leq n$, we have $N_i, N_i' \in E_\Gamma(A_i)$ and $P_i \in E_\Gamma(N_i =_{A_i} N_i')$.
+\item
+$\delta \in E_\Gamma(M N_1' \cdots N_n')$.
+\item
+$\nf{M N_1 \cdots N_n} \equiv \phi_1 \supset \cdots \supset \phi_m \supset \bot$
+\item
+For $1 \leq j \leq m$, we have $\epsilon_j \in E_\Gamma(\phi_j)$.
+\end{enumerate}
+Then $(\reff{M}_{N_1 N_1'} P_1 \cdots_{N_n N_n'} P_n)^- \delta \epsilon_1 \cdots \epsilon_m \in E_\Gamma(\bot)$.
+\end{lm}
+
+\begin{proof}
+Similar.
+\end{proof}
+
+\begin{lm}
 \label{lm:Eref}
 If $M \in E_\Gamma(A)$ then $\reff{M} \in E_\Gamma(M =_A M)$.
 \end{lm}
 
 \begin{proof}
-The proof is by induction on the type $A$.
+We prove the following stronger statement:
 
-If $A \equiv \Omega$: we have $\Gamma \vdash M : A$, hence $\Gamma \vdash \reff{M} : M =_A M$.  Also,
-$M \in \SN$, so $\reff{M} \in \SN$.
+If $M \in E_\Gamma(A_1 \rightarrow \cdots \rightarrow A_n \rightarrow B)$ and, for all $i$, we have
+$N_i, N_i' \in E_\Gamma(A_i)$ and $P_i \in E_\Gamma(N_i =_{A_i} N_i')$, then $\reff{M}_{N_1 N_1'} (P_1)_{N_2 N_2'}
+\cdots_{N_n N_n'} P_n \in E_\Gamma(M N_1 \cdots N_n =_B M N_1' \cdots N_n')$.
 
-If $A \equiv B \rightarrow C$: again we have $\Gamma \vdash \reff{M} : M =_A M$.  Now, let $N, N' \in E_\Gamma(B)$
-and $P \in E_\Gamma(N =_B N')$.  Then $\reff{M}_{N N'} P \in E_\Gamma(MN =_C MN')$ as required.
+The proof is by induction on the type $B$.
+
+If $B \equiv \Omega$: we have that $\Gamma \vdash \reff{M} \vec{P} : M \vec{N} =_B M \vec{N'}$, so it remains
+to show that $(\reff{M} \vec{P})^+ \in E_\Gamma(M \vec{N} \sup M \vec{N'})$ and $(\reff{M} \vec{P})^- \in E_\Gamma(M \vec{N'} \sup
+M \vec{N})$.  These follow from the previous two lemmas.
+
+If $B \equiv A_{n+1} \rightarrow C$, then let $N_{n+1}, N_{n+1}' \in E_\Gamma(A_{n+1})$ and
+$P_{n+1} \in E_\Gamma(N_{n+1} =_{A_{n+1}} N_{n+1}')$.  We must show that
+$\reff{M} \vec{P}_{N_{n+1} N_{n+1}'} P_{n*1} \in E_\Gamma(M \vec{N} N_{n+1} =_C M \vec{N'} N_{n+1}')$.  This follows
+from the induction hypothesis.
 \end{proof}
 
 \begin{lm}
