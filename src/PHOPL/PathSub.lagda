@@ -109,15 +109,17 @@ The following lemma shows how substitution and path substitution interact.
 Let $\vec{y}$ be a sequence of variables and $x$ a distinct variable.  Then
 \begin{enumerate}
 \item
-\begin{align*}
+\label{lm:subpathsubi}
+$ \begin{aligned}[t]
 & M [ x:= N ] \{ \vec{y} := \vec{P} : \vec{L} \sim \vec{L'} \} \\
 & \equiv M \{ x := N \{ \vec{y} := \vec{P} : \vec{L} \sim \vec{L'} \} : N [ \vec{y}:= \vec{L} ] \sim N [ \vec{y} := \vec{L'} ], \vec{y} := \vec{P} : \vec{L} \sim \vec{L'} \}
-\end{align*}
+\end{aligned} $
 \item
-\begin{align*}
-& M \{ \vec{y} := \vec{P} : \vec{L} \sim \vec{L'} \} [ x := N ]
-& \equiv M \{ \vec{y} := \vec{P} [x := N] : \vec{L} [x := N] \sim \vec{L'} [x := N], x := \ref{N} : N \sim N \}
-\end{align*}
+\label{lm:subpathsubii}
+$ \begin{aligned}[t]
+& M \{ \vec{y} := \vec{P} : \vec{L} \sim \vec{L'} \} [ x := N ] \\
+& \equiv M \{ \vec{y} := \vec{P} [x := N] : \vec{L} [x := N] \sim \vec{L'} [x := N], x := \reff{N} : N \sim N \}
+\end{aligned} $
 \end{enumerate}
 \end{lm}
 

@@ -15,8 +15,6 @@ open import PHOPL.Neutral
 \end{code}
 }
 
-\newcommand{\nf}[1]{\ensuremath{\mathrm{nf} \left( {#1} \right)}}
-
 We define a model of the type theory with types as sets of terms.  For every type (proposition, equation) $A$ in context $\Gamma$, define
 the set of \emph{computable} terms (proofs, paths) $E_\Gamma(A)$.
 

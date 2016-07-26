@@ -28,8 +28,7 @@ $M\{x:=P:N\sim N'\}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in \SN$
 $P, N, N' \in \SN$
 \item
 \label{hypiii}
-for any term $L$, if $P \twoheadrightarrow \reff{L}$
-then $\reff{M[x:=L]}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in \SN$.
+if $\nf{P} \equiv \reff{L}$ then $\reff{M[x:=L]}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in \SN$.
 \end{enumerate}
 Then $\reff{\lambda x:A.M}_{N N'} P_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in \SN$.
 \item
@@ -101,7 +100,7 @@ Similar to the previous lemmas.
 
 \begin{lemma}
 \label{lm:wte_loi1}
-If $\delta \chi_{L_1 L_1'} \theta_1 \cdots_{L_m L_m'} \theta_m)^+ \alpha \beta_1 \cdots \beta_n \in \SN$ and $\phi, \psi, \epsilon \in \SN$, then
+If $(\delta \chi_{L_1 L_1'} \theta_1 \cdots_{L_m L_m'} \theta_m)^+ \alpha \beta_1 \cdots \beta_n \in \SN$ and $\phi, \psi, \epsilon \in \SN$, then
 $(\univ{\phi}{\psi}{\delta}{\epsilon}^+ \chi_{L_1 L_1'} \theta_1 \cdots_{L_m L_m'} \theta_m)^+ \alpha \beta_1 \cdots \beta_n \in \SN$.
 \end{lemma}
 
@@ -111,7 +110,7 @@ Similar.
 
 \begin{lemma}
 \label{lm:wte_loi2}
-If $\delta[p:=\epsilon]_{L_1 L_1'} \theta_1 \cdots_{L_m L_m'} \theta_m)^+ \alpha \beta_1 \cdots \beta_n \in \SN$ and $\phi, \epsilon \in \SN$, then
+If $(\delta[p:=\epsilon]_{L_1 L_1'} \theta_1 \cdots_{L_m L_m'} \theta_m)^+ \alpha \beta_1 \cdots \beta_n \in \SN$ and $\phi, \epsilon \in \SN$, then
 $((\lambda p:\phi.\delta) \epsilon_{L_1 L_1'} \theta_1 \cdots_{L_m L_m'} \theta_m)^+ \alpha \beta_1 \cdots \beta_n \in \SN$.
 \end{lemma}
 
@@ -121,7 +120,7 @@ Similar.
 
 \begin{lemma}
 \label{lm:wte_loi3}
-If $\delta[x:=M, y:=N, p:=\epsilon]_{L_1 L_1'} \theta_1 \cdots_{L_m L_m'} \theta_m)^+ \alpha \beta_1 \cdots \beta_n \in \SN$ and $M, N, \epsilon \in \SN$, then
+If $(\delta[x:=M, y:=N, p:=\epsilon]_{L_1 L_1'} \theta_1 \cdots_{L_m L_m'} \theta_m)^+ \alpha \beta_1 \cdots \beta_n \in \SN$ and $M, N, \epsilon \in \SN$, then
 $((\triplelambda p:x =_A y.\delta)_{MN} \epsilon_{L_1 L_1'} \theta_1 \cdots_{L_m L_m'} \theta_m)^+ \alpha \beta_1 \cdots \beta_n \in \SN$.
 \end{lemma}
 
