@@ -729,7 +729,7 @@ $N_i, N_i' \in E_\Gamma(A_i)$ and $P_i \in E_\Gamma(N_i =_{A_i} N_i')$, then $\r
 The proof is by induction on the type $B$.
 
 If $B \equiv \Omega$: we have that $\Gamma \vdash \reff{M} \vec{P} : M \vec{N} =_B M \vec{N'}$, so it remains
-to show that $(\reff{M} \vec{P})^+ \in E_\Gamma(M \vec{N} \sup M \vec{N'})$ and $(\reff{M} \vec{P})^- \in E_\Gamma(M \vec{N'} \sup
+to show that $(\reff{M} \vec{P})^+ \in E_\Gamma(M \vec{N} \supset M \vec{N'})$ and $(\reff{M} \vec{P})^- \in E_\Gamma(M \vec{N'} \supset
 M \vec{N})$.  These follow from the previous two lemmas.
 
 If $B \equiv A_{n+1} \rightarrow C$, then let $N_{n+1}, N_{n+1}' \in E_\Gamma(A_{n+1})$ and
@@ -739,48 +739,49 @@ from the induction hypothesis.
 \end{proof}
 
 \begin{lm}
-\label{lm:Ered}
-If $\reff{M}_{N_1 N_2} \reff{N} \in E_\Gamma(L =_A L')$ then $\reff{MN} \in E_\Gamma(L =_A L')$.
+%Redundant, as is lm:SNred1
+\label{lm:Ered1}
+If $\reff{M}_{N N} \reff{N} \in E_\Gamma(L =_A L')$ then $\reff{MN} \in E_\Gamma(L =_A L')$.
 \end{lm}
 
 \begin{proof}
 We prove the following stronger statement:
 
-If $\reff{M}_{N_1 N_2} \reff{N}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in E_\Gamma(L =_A L')$ then \\
+If $\reff{M}_{N N} \reff{N}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in E_\Gamma(L =_A L')$ then \\
 $\reff{MN}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in E_\Gamma(L =_A L')$.
 
 The proof is by induction on the type $A$.
 
-If $A \equiv \Omega$: we have $\Gamma \vdash \reff{M}_{N_1 N_2} \reff{N} \vec{P} : L =_A L'$, hence $\Gamma \vdash \reff{MN} \vec{P} : L =_A L'$
-using Generation.  Also, $\reff{M}_{N_1 N_2} \reff{N} \vec{P} \in \SN$ hence $\reff{MN} \vec{P} \in \SN$.
+If $A \equiv \Omega$: we have $\Gamma \vdash \reff{M}_{N N} \reff{N} \vec{P} : L =_A L'$, hence $\Gamma \vdash \reff{MN} \vec{P} : L =_A L'$
+using Generation.  Also, $\reff{M}_{N N} \reff{N} \vec{P} \in \SN$ hence $\reff{MN} \vec{P} \in \SN$ by Lemma \ref{lm:SNred1}.
 
 If $A \equiv B \rightarrow C$: we have $\Gamma \vdash \reff{MN} \vec{P} : L =_A L'$ as before.  Now, let $K_{n+1}, K_{n+1}' \in E_\Gamma(B)$
 and $P_{n+1} \in E_\Gamma(K_{n+1} =_B K_{n+1}')$.  Then we have
 \begin{align*}
-\reff{M}_{N_1 N_2} \reff{N} \vec{P}_{K_{n+1} K_{n+1}} P_{n+1} & \in E_\Gamma(LK_{n+1} =_C L'K_{n+1}') \\
+\reff{M}_{N N} \reff{N} \vec{P}_{K_{n+1} K_{n+1}} P_{n+1} & \in E_\Gamma(LK_{n+1} =_C L'K_{n+1}') \\
 \therefore \reff{MN} \vec{P}_{K_{n+1} K_{n+1}'} P_{n+1} & \in E_\Gamma(LK_{n+1} =_C L'K_{n+1}')
 \end{align*}
 by the induction hypothesis, as required.
 \end{proof}
 
-\begin{lm}
-\label{lm:Egen}
-If $\reff{M} \in E_\Gamma(N =_A N')$ then $M \in E_\Gamma(A)$ and $M \simeq_\beta N \simeq_\beta N'$.
-\end{lm}
+% \begin{lm}
+% \label{lm:Egen}
+% If $\reff{M} \in E_\Gamma(N =_A N')$ then $M \in E_\Gamma(A)$ and $M \simeq_\beta N \simeq_\beta N'$.
+% \end{lm}
 
-\begin{proof}
-The proof is by induction on the type $A$.
+% \begin{proof}
+% The proof is by induction on the type $A$.
 
-If $A \equiv \Omega$: we have $\reff{M} \in \SN$, hence $M \in \SN$.  Also, we have $\Gamma \vdash M : A$ and $M \simeq_\beta N \simeq_\beta N'$
-by Generation.
+% If $A \equiv \Omega$: we have $\reff{M} \in \SN$, hence $M \in \SN$.  Also, we have $\Gamma \vdash M : A$ and $M \simeq_\beta N \simeq_\beta N'$
+% by Generation.
 
-If $A \equiv B \rightarrow C$: we have $\Gamma \vdash M : A$ and $M \simeq_\beta N \simeq_\beta N'$ by Generation again.  Now, let $L \in E_\Gamma(B)$.
-Then $\reff{L} \in E_\Gamma(L =_B L)$ by Lemma \ref{lm:Eref}, and so $\reff{M}_{LL} \reff{L} \in E_\Gamma(NL =_C N'L)$.  Therefore,
-$\reff{ML} \in E_\Gamma(NL =_C N'L)$ by Lemma \ref{lm:Ered}.  Hence $ML \in E_\Gamma(C)$ by the induction hypothesis, as required.
+% If $A \equiv B \rightarrow C$: we have $\Gamma \vdash M : A$ and $M \simeq_\beta N \simeq_\beta N'$ by Generation again.  Now, let $L \in E_\Gamma(B)$.
+% Then $\reff{L} \in E_\Gamma(L =_B L)$ by Lemma \ref{lm:Eref}, and so $\reff{M}_{LL} \reff{L} \in E_\Gamma(NL =_C N'L)$.  Therefore,
+% $\reff{ML} \in E_\Gamma(NL =_C N'L)$ by Lemma \ref{lm:Ered1}.  Hence $ML \in E_\Gamma(C)$ by the induction hypothesis, as required.
 
-Now let $L, L' \in E_\Gamma(B)$ and $P \in E_\Gamma(L =_B L')$.  Then similarly $ML, ML' \in E_\Gamma(C)$, and also $\reff{M}_{L L'} P \in E_\Gamma(NL =_C N'L')$.  Hence $\reff{M}_{L L'} P \in E_\Gamma(ML =_C ML')$
-by Lemma \ref{lm:conv-compute}, as required.
-\end{proof}
+% Now let $L, L' \in E_\Gamma(B)$ and $P \in E_\Gamma(L =_B L')$.  Then similarly $ML, ML' \in E_\Gamma(C)$, and also $\reff{M}_{L L'} P \in E_\Gamma(NL =_C N'L')$.  Hence $\reff{M}_{L L'} P \in E_\Gamma(ML =_C ML')$
+% by Lemma \ref{lm:conv-compute}, as required.
+% \end{proof}
 
 \begin{lm}
 \label{lm:wte1}

@@ -131,3 +131,16 @@ $((\triplelambda p:x =_A y.\delta)_{MN} \epsilon_{L_1 L_1'} \theta_1 \cdots_{L_m
 Similar.
 \end{proof}
 
+\begin{lemma}
+\label{lm:SNred1}
+If $\reff{M}_{NN} \reff{N}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in \SN$ then $\reff{MN}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in \SN$.
+\end{lemma}
+
+\begin{proof}
+The proof is by induction on the hypothesis.  Consider all possible one-step reductions from $\reff{MN} \vec{P}$.
+
+If $\reff{MN} \vec{P} \rightarrow \reff{MN'} \vec{P}$ where $M \rightarrow M'$, then we have $\reff{M}_{N' N'} \reff{N'} \vec{P} \in \SN$, and so
+$\reff{MN'} \vec{P} \in \SN$ by the induction hypothesis.  Similarly for the case where we reduce $M$ or one of the $L_i$, $L_i'$ or $P_i$.
+
+The only other case is is $MN$ is a redex.  In this case, $M$ and $N$ are closed normal forms, and so we have $\reff{M}_{NN} \reff{N} \vec{P} \rightarrow \reff{MN} \vec{P} \in \SN$.
+\end{proof}
