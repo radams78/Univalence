@@ -268,6 +268,8 @@ postulate func-E : ∀ {U} {Γ : Context U} {M : Term U} {A} {B} →
 \end{code}
 }
 
+Note that, if $\Gamma \subseteq \Delta$, then $E_\Gamma(T) \subseteq E_\Delta(T)$.
+
 \begin{lm}$ $
 \label{lm:conv-compute}
 \begin{enumerate}
@@ -281,6 +283,53 @@ then $P \in E_\Gamma(M' =_A N')$.
 
 \begin{proof}
 From the definition of $E_\Gamma(T)$ and confluence.
+\end{proof}
+
+\begin{lm}
+Let $\phi$ be a normalizable term.
+\begin{enumerate}
+\item
+If $p : \phi \in \Gamma$ then $p \in E_\Gamma(\phi)$.
+\item
+$E_\Gamma(\phi) \subseteq \SN$.
+\end{enumerate}
+\end{lm}
+
+\begin{proof}
+The proof is by induction on $\nf{\phi}$.
+Let $\nf{\phi} \equiv \psi_1 \supseteq \cdots \supseteq \psi_n \supseteq \chi$,
+where $\chi$ is either $\bot$ or a neutral term.  
+\begin{enumerate}
+\item
+Let $\Delta \supseteq \Gamma$ and $\epsilon_i \in E_\Delta(\psi_i)$ for
+each $i$.  We must show that
+\[ p \epsilon_1 \cdots \epsilon_n \in E_\Delta(\chi) \]
+It is easy to see that $p \vec{\epsilon}$ is well-typed, so it remains to show that $p \vec{\epsilon} \in \SN$.
+This holds because each $\epsilon_i$ is strongly normalizing by the induction hypothesis (2).
+\item
+Let $\delta \in E_\Gamma(\phi)$.  Consider the context $\Delta \equiv \Gamma, p_1 : \psi_1, \ldots, p_n : \psi_n$.
+By the induction hypothesis (1), we have that $p_i \in E_\Delta(\psi_i)$, hence
+$\delta p_1 \cdots p_n \in E_\Gamma(\chi)$, and so $\delta p_1 \cdots p_n \in \SN$.
+It follows that $\delta \in \SN$.
+\end{enumerate}
+\end{proof}
+
+\begin{lemma}
+Let $A$ be a type.
+\begin{enumerate}
+\item
+If $x : A \in \Gamma$ then $x \in E_\Gamma(A)$.
+\item
+$E_\Gamma(A) \subseteq \SN$.
+\item
+If $M \in E_\Gamma(A)$ then $M \{ \} \in E_\Gamma(M =_A M)$.
+\item
+For all $M$, $N$, we have $E_\Gamma(M =_A N) \subseteq \SN$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\todo{Proof}
 \end{proof}
 
 \begin{lm}
