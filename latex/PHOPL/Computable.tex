@@ -687,6 +687,7 @@ i.e.
 \[ L \{ x := P_1 : N_1 \sim N_1' \} \in E_\Gamma(M N_1 = M N_1') \]
 and the desired result follows.
 \item[$n = 0$ and $\reff{M}^+ \delta \vec{\epsilon} \rightarrow (\lambda p:\phi.p)\delta \vec{\epsilon}$]
+$ $
 
 Since $\delta \in E_\Gamma(M) = E_\Gamma(\nf{M}) = E_\Gamma(\phi_1 \supset \cdots \supset \phi_m \supset \bot)$, we have that
 $\delta \vec{\epsilon} \in \SN$.  Hence $(\lambda p:\phi.p) \delta \vec{\epsilon} \in \SN$ by Lemma \ref{lm:SNothers}.
@@ -794,14 +795,14 @@ We prove the following stronger statement:
 
 Suppose $\Gamma, x : A \vdash M : B_1 \rightarrow \cdots \rightarrow B_m \rightarrow C_1 \rightarrow \cdots \rightarrow C_n \rightarrow D$.
 Let $N \in E_\Gamma(A)$, $N_i \in E_\Gamma(B_i)$, $L_j, L_j' \in E_\Gamma(C_j)$ and $P_j \in E_\Gamma(L_j =_{C_j} L_j')$ for all $i$, $j$.
-If $\reff{(M[x:=N] N_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n \in E_\Gamma(L =_{D} L')$,
-then $\reff{((\lambda x:A.M)N N_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n \in E_\Gamma(L =_{D} L')$.
+If $$\reff{M[x:=N] N_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n \in E_\Gamma(L =_{D} L') \enspace , $$
+then $$\reff{(\lambda x:A.M)N N_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n \in E_\Gamma(L =_{D} L') \enspace . $$
 
 The proof is by induction on the type $D$.
 
 If $D \equiv \Omega$: it is easy to verify that \\
-$\Gamma \vdash (\lambda x:A.M)N N_1 \cdots N_m)_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n : L =_{\Omega} L'$ using
-Generation.  Lemma \ref{lm:SN}.\ref{lm:SN2} gives that $(\lambda x:A.M)N N_1 \cdots N_m)_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n \in \SN$.
+$\Gamma \vdash \reff{(\lambda x:A.M)N \vec{N}}_{L_1 L_1'} \vec{P} : L =_{\Omega} L'$ using
+Generation.  Lemma \ref{lm:SN}.\ref{lm:SN2} gives that $\reff{(\lambda x:A.M) N \vec{N}}_{L_1 L_1'} \vec{P} \in \SN$.
 
 If $D \equiv C_{n+1} \rightarrow E$: let $L_{n+1}, L_{n+1}' \in E_\Gamma(C_{n+1})$ and $P_{n+1} \in E_{\Gamma}(L_{n+1} =_{C_{n+1}} L_{n+1}')$.  Then
 \begin{align*}
@@ -811,15 +812,35 @@ If $D \equiv C_{n+1} \rightarrow E$: let $L_{n+1}, L_{n+1}' \in E_\Gamma(C_{n+1}
 by the induction hypothesis, as required.
 \end{proof}
 
+\begin{lemma}
+\label{lm:wte5}
+$ $
+\begin{enumerate}
+\item
+Let $\Gamma, p : \phi \vdash \delta : \psi$.  If $\epsilon \in E_\Gamma(\phi)$
+and $\delta [p := \epsilon] \in E_\Gamma(\psi)$ then $(\lambda p:\phi.\delta) \epsilon \in E_\Gamma(\psi)$.
+\item
+Let $\Gamma, x : A, y : A, e : x =_A y \vdash P : M x =_B N y$.  If
+$L, L' \in E_\Gamma(A)$; $Q \in E_\Gamma(L =_A L')$ and $P[ x := L, y := L, e
+:= P ] \in E_\Gamma(M L =_B N L')$, then $(\triplelambda e : x =_A y . P)_{L L'} Q \in E_\Gamma(ML =_B NL')$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Similar to the previous lemmas, using Lemma \ref{lm:SNothers}.
+\end{proof}
+
 \begin{lm}
 \label{lm:wte2}
-Let $\Gamma, x : A \vdash M : B$ and let $N \in E_\Gamma(A)$.  If $M[x:=N] \in E_\Gamma(B)$ then $(\lambda x:A.M)N \in E_\Gamma(B)$.
+Let $\Gamma, x : A \vdash M : B$ and let $N \in E_\Gamma(A)$.  If $N\{\} \in E_\Gamma(N =_A N)$ and $M \{ x:=N\{\} : N \sim N \} \in E_\Gamma(M[x:=N] =_B M[x:=N])$ and $M[x:=N] \in E_\Gamma(B)$ then $(\lambda x:A.M)N \in E_\Gamma(B)$.
 \end{lm}
 
 \begin{proof}
 We prove the following stronger statement:
 
-Suppose $\Gamma, x : A \vdash M : B_1 \rightarrow \cdots \rightarrow B_n \rightarrow C$.  Let $N \in E_\Gamma(A)$ and $N_i \in E_\Gamma(B_i)$.  If
+Suppose $\Gamma, x : A \vdash M : B_1 \rightarrow \cdots \rightarrow B_n \rightarrow C$.  Let $N \in E_\Gamma(A)$ and $N_i \in E_\Gamma(B_i)$ for $i = 1, \ldots, n$.  Suppose
+$N\{\} \in E_\Gamma(N =_A N)$ and $N_i\{\} \in E_\Gamma(N_i =_{B_i} N_i)$ for all $i$.
+If
 $M[x:=N]N_1 \cdots N_n \in E_\Gamma(C)$ then $(\lambda x:A.M)NN_1 \cdots N_n \in E_\Gamma(C)$.
 
 The proof is by induction on the type $C$.
@@ -834,19 +855,14 @@ M[x:=N]\vec{N} N_{n+1} & \in E_\Gamma(C) \\
 \end{align*}
 by the induction hypothesis, as required.
 
-Now let $N_{n+1}, N_{n+1}' \in E_\Gamma(B_{n+1})$ and $P \in E_\Gamma(N_{n+1} =_{B_{n+1}} N_{n+1}')$.  Then
-\begin{align*}
-\lefteqn{\reff{M[x:=N]\vec{N}}_{N_{n+1} N_{n+1}'} P} \\
-\quad & \in E_\Gamma(M[x:=N] \vec{N} N_{n+1} =_C M[x:=N] \vec{N} N_{n+1}') \\
-\lefteqn{\therefore \reff{(\lambda x:A.M)N \vec{N}}_{N_{n+1} N_{n+1}'} P} \\
- & \in E_\Gamma(M[x:=N] \vec{N} N_{n+1} =_C M[x:=N] \vec{N} N_{n+1}')
-\end{align*}
-by the proof of Lemma \ref{lm:wte1}
-\begin{align*}
-\lefteqn{\therefore \reff{(\lambda x:A.M)N \vec{N}}_{N_{n+1} N_{n+1}'} P} \\
-\quad & \in E_\Gamma((\lambda x:A.M)N \vec{N} N_{n+1} =_C (\lambda x:A.M)N \vec{N} N_{n+1}')
-\end{align*}
-by Lemma \ref{lm:conv-compute}.
+Now let $N_{n+1}, N_{n+1}' \in E_\Gamma(B_{n+1})$ and $P \in E_\Gamma(N_{n+1} =_{B_{n+1}} N_{n+1}')$.  We must show that
+\[ 
+((\lambda x:A.M)N \vec{N}) \{\}_{N_{n+1}N_{n+1}'}P \in E_\Gamma((\lambda x:A.M) N \vec{N} N_{n+1} =_C (\lambda x:A.M) N \vec{N} N_{n+1}') \]
+i.e.
+$$ (\triplelambda e:x =_A y . M \{ x:=e \})_{NN} N \{ \}_{N_1 N_1} N_1\{\} \cdots_{N_n N_n} N_n\{\}_{N_{n+1} N_{n+1}'} P
+\in E_\Gamma(M[x:=N] N \vec{N} N_{n+1} = M[x:=N] N \vec{N} N_{n+1}') $$
+This will follow from the previous lemma (part 2) once we have shown
+\[ M \{ x:= N \{ \} : N \sim N \} \in E_\Gamma(M[x:=N] = M[x:=N]) \]
 \end{proof}
 
 \begin{lm}
@@ -919,24 +935,6 @@ and so the induction hypothesis gives
 \quad & \in E_\Gamma((\lambda x:A.M) N \vec{L} L_{n+1} =_D (\lambda x:A.M) N' \vec{L'} L_{n+1}')
 \end{align*}
 as required.
-\end{proof}
-
-\begin{lemma}
-\label{lm:wte5}
-$ $
-\begin{enumerate}
-\item
-Let $\Gamma, p : \phi \vdash \delta : \psi$.  If $\epsilon \in E_\Gamma(\phi)$
-and $\delta [p := \epsilon] \in E_\Gamma(\psi)$ then $(\lambda p:\phi.\delta) \epsilon \in E_\Gamma(\psi)$.
-\item
-Let $\Gamma, x : A, y : A, e : x =_A y \vdash P : M x =_B N y$.  If
-$L, L' \in E_\Gamma(A)$; $Q \in E_\Gamma(L =_A L')$ and $P[ x := L, y := L, e
-:= P ] \in E_\Gamma(M L =_B N L')$, then $(\triplelambda e : x =_A y . P)_{L L'} Q \in E_\Gamma(ML =_B NL')$.
-\end{enumerate}
-\end{lemma}
-
-\begin{proof}
-Similar to the previous lemmas, using Lemma \ref{lm:SNothers}.
 \end{proof}
 
 \begin{code}%

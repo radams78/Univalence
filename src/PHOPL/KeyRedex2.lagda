@@ -133,7 +133,8 @@ Similar.
 
 \begin{lemma}
 \label{lm:SNred1}
-If $\reff{M}_{NN} \reff{N}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in \SN$ then $\reff{MN}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in \SN$.
+If $\reff{M}_{NN} \reff{N}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in \SN$ then \\
+$\reff{MN}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in \SN$.
 \end{lemma}
 
 \begin{proof}
