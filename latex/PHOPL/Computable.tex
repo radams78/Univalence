@@ -32,26 +32,29 @@ the set of \emph{computable} terms (proofs, paths) $E_\Gamma(A)$.
 \begin{definition}[Computable Expressions]
 \label{df:computable}
 \begin{align*}
-E_\Gamma(\Omega) \eqdef & \{ M \mid \Gamma \vdash M : \Omega, M \in \SN \} \\
+E_\Gamma(\bot) \eqdef & \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
+E_\Gamma(\phi \supset \psi) \eqdef & \{ \delta \mid \Gamma \vdash \delta : \phi \supset \psi, \\
+& \quad \forall (\Delta \supseteq \Gamma)(\epsilon \in E_\Delta(\phi)). \delta \epsilon \in E_\Gamma(\psi) \} \\
+E_\Gamma(\phi) \eqdef & \{ \delta \mid \Gamma \vdash \delta : \phi, \delta \in \SN \} \\
+& \qquad (\phi \text{ neutral}) \\
+E_\Gamma(\phi) \eqdef & E_\Gamma(\nf{\phi}) \\
+& \qquad (\phi \mbox{ a normalizable term}) \\
+\\
+E_\Gamma(\Omega) \eqdef & \{ M \mid \Gamma \vdash M : \Omega, M \in \SN, \\
+& \quad \forall (\Delta \supseteq \Gamma) (\delta \in E_\Delta(M)). \\
+& \qquad (M \{\})^+ \delta \in E_\Delta(M) \text{ and } (M\{\})^- \delta \in
+E_\Delta(M) \} \\
 E_\Gamma(A \rightarrow B) \eqdef & \{ M \mid \Gamma \vdash M : A \rightarrow B, \\
 & \quad \forall (\Delta \supseteq \Gamma) (N \in E_\Delta(A)). MN \in E_\Delta(B), \\
 & \quad \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (P \in E_\Delta(N =_A N')). \\
 & \quad \quad M \{ \}_{N N'} P \in E_\Gamma(MN =_B MN') \} \\
 \\
-E_\Gamma(\bot) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
-E_\Gamma(\phi \supset \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \supset \psi, \\
-& \forall (\Delta \supseteq \Gamma)(\epsilon \in E_\Delta(\phi)). \delta \epsilon \in E_\Gamma(\psi) \} \\
-E_\Gamma(\phi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi, \delta \in \SN \} \\
-& \qquad (\phi \text{ neutral}) \\
-E_\Gamma(\phi) & \eqdef E_\Gamma(\nf{\phi}) \\
-& \qquad (\phi \mbox{ a normalizable term of type $\Omega$}) \\
+E_\Gamma(\phi =_\Omega \psi) \eqdef & \{ P \mid \Gamma \vdash P : \phi =_\Omega \psi, \\
+& \quad P^+ \in E_\Gamma(\phi \supset \psi), P^- \in E_\Gamma(\psi \supset \phi) \} \\
 \\
-E_\Gamma(\phi =_\Omega \psi) & \eqdef \{ P \mid \Gamma \vdash P : \phi =_\Omega \psi, \\
-& P^+ \in E_\Gamma(\phi \supset \psi), P^- \in E_\Gamma(\psi \supset \phi) \} \\
-\\
-E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ P \mid \Gamma \vdash P : M =_{A \rightarrow B} M', \\
-& \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (Q \in E_\Delta(N =_A N')). \\
-& P_{NN'}Q \in E_\Delta(MN =_B M'N') \}
+E_\Gamma(M =_{A \rightarrow B} M') \eqdef & \{ P \mid \Gamma \vdash P : M =_{A \rightarrow B} M', \\
+& \quad \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (Q \in E_\Delta(N =_A N')). \\
+& \quad P_{NN'}Q \in E_\Delta(MN =_B M'N') \}
 \end{align*}
 \end{definition}
 
