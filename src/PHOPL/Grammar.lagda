@@ -12,18 +12,32 @@ open import Grammar.Base
 
 \subsection{Syntax}
 
-We extend the grammar of $\lambda o$ with
+Fix three disjoint, infinite sets of variables, which we shall call \emph{term variables}, \emph{proof variables}
+and \emph{path variables}.  We shall use $x$ and $y$ as term variables, $p$ and $q$ as proof variables,
+$e$ as a path variable, and $z$ for a variable that may come from any of these three sets.
+
+The syntax of $\lambda o e$ is given by the grammar:
 
 \[
 \begin{array}{lrcl}
-\text{Path} & P & ::= & e \mid \reff{M} \mid P \supset^* P \mid \univ{\phi}{\phi}{\delta}{\delta} \mid \triplelambda e : x =_A x . P \mid P_{MM} P\\
-\text{Proof} & \delta & ::= & \cdots \mid P^+ \mid P^- \\
-\text{Context} & \Gamma & ::= & \cdots \mid \Gamma, e : M =_A M \\
-\text{Judgement} & \mathcal{J} & ::= & \cdots \mid \Gamma \vdash P : M =_A M
+\text{Type} & A,B,C & ::= & \Omega \mid A \rightarrow B \\
+\text{Term} & L,M,N, \phi,\psi,\chi & ::= & x \mid \bot \mid \phi \supset \psi \mid \lambda x:A.M \mid MN \\
+\text{Proof} & \delta, \epsilon & ::= & p \mid \lambda p:\phi.\delta \mid \delta \epsilon \mid P^+ \mid P^- \\
+\text{Path} & P, Q & ::= & e \mid \reff{M} \mid P \sup^* Q \mid \univ{\phi}{\psi}{P}{Q} \mid \triplelambda e : x =_A y. P \mid P_{MN} Q \\
+\text{Context} & \Gamma, \Delta, \Theta & ::= & \langle \rangle \mid \Gamma, x : A \mid \Gamma, p : \phi \mid \Gamma, e : M =_A N \\
+\text{Judgement} & \mathcal{J} & ::= & \Gamma \vald \mid \Gamma \vdash M : A \mid \Gamma \vdash \delta : \phi \mid \Gamma \vdash P : M =_A N
 \end{array}
 \]
 
-Note that, in the path $\triplelambda e : x =_A y . P$, the term variables $x$ and $y$ and the proof variable $e$ are all bound within $P$.
+
+In the path $\triplelambda e : x =_A y . P$, the term variables $x$ and $y$ must be distinct.  The term variable $x$ is bound within $M$ in the term $\lambda x:A.M$,
+and the proof variable $p$ is bound within $\delta$ in $\lambda p:\phi.\delta$.  The three variables $e$, $x$ and $y$ are bound within $P$ in the path
+$\triplelambda e:x =_A y.P$.  We identify terms, proofs and paths up to $\alpha$-conversion.
+
+We shall use the word 'expression' to mean either a type, term, proof or path.  We shall use $s$, $t$, $S$ and $T$ as metavariables that range over expressions.
+
+Note that we use both Roman letters $M$, $N$ and Greek letters $\phi$, $\psi$, $\chi$ to range over terms.  Intuitively, a term is understood as either a proposition or a function,
+and we shall use Greek letters for terms that are intended to be propositions.  Formally, there is no significance to which letter we choose.
 
 \todo{Give the intuition}.
 

@@ -8,7 +8,26 @@ open import PHOPL.Red
 
 \subsection{Rules of Deduction}
 
-The rules of deduction of $\lambda o e$ are those of $\lambda o$ (Figure \ref{fig:lambdao}) together with those given in Figure \ref{fig:lambdaoe}.
+The rules of deduction of $\lambda o e$ are given in Figures \ref{fig:lambdao} and \ref{fig:lambdaoe}.
+
+\begin{figure}
+\begin{framed}
+\[ \infer{\langle \rangle \vald}{} \qquad
+\infer{\Gamma, x : A \vald}{\Gamma \vald} \qquad 
+\infer{\Gamma, p : \phi \vald}{\Gamma \vdash \phi : \Omega} \]
+\[ \infer[(x : A \in \Gamma)]{\Gamma \vdash x : A}{\Gamma \vald} \qquad
+\infer[(p : \phi \in \Gamma)]{\Gamma \vdash p : \phi}{\Gamma \vald} \]
+\[ \infer{\Gamma \vdash \bot : \Omega}{\Gamma \vald} \qquad
+\infer{\Gamma \vdash \phi \supset \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} \]
+\[ \infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \qquad
+\infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \phi} \]
+\[ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \qquad
+\infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \supset \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
+\[ \infer[(\phi \simeq_\beta \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
+\end{framed}
+\caption{Rules of Deduction of $\lambda o e$}
+\label{fig:lambdao}
+\end{figure}
 
 \begin{figure}
 \begin{framed}
