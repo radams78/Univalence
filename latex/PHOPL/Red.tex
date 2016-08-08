@@ -316,9 +316,8 @@ let \emph{reduction} $\twoheadrightarrow$ be the reflexive, transitive closure; 
 \item
 Contraction is a relation between closed expressions only: if $s \rhd t$ then $s$ and $t$ are closed.  This is not true for $\rightarrow$, $\twoheadrightarrow$ or $\simeq$, however.  For example, we have $\reff{\bot}^+ x \rightarrow (\lambda p:\bot.p)x$.
 \item
-As explained above, these relations do not play any part in the rules of deduction of $\lambda o e$; 
-the relation $\simeq_\beta$ that appears in the rules of $\lambda o e$ is different.
-In particular, we \emph{do} allow $\beta$-contraction of open terms there: thus, the judgement $x : \Omega, p : (\lambda y : \Omega . y) x \vdash p : x$ is derivable in $\lambda o e$.  We shall always use the subscript $\beta$ when referring to this relation.
+As explained above, only
+the relation $\simeq_\beta$ appears in the rules of $\lambda o e$.  Note that we \emph{do} allow $\beta$-contraction of open terms there: thus, the judgement $x : \Omega, p : (\lambda y : \Omega . y) x \vdash p : x$ is derivable in $\lambda o e$.  We shall always use the subscript $\beta$ when referring to this relation.
 \end{enumerate}
 
 \begin{lm}

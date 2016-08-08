@@ -54,8 +54,7 @@ of \emph{propositions}, and the universe $U$ of \emph{types}.  The propositions 
 any type $A : U$ and terms $M : A$ and $N : A$.  The types include $\Omega$ itself and are closed under $\rightarrow$ (non-dependent function type).
 
 There are two canonical forms for proofs of $M =_A N$.  For any term $M : A$, we have $\reff{M} : M =_A M$.  We also add univalence for this system, in this form:
-if $\delta : \phi \supset \psi$ and $\epsilon : \psi \supset\phi$, then $\univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi$.  We present a reduction relation for this system, and prove it satisfies confluence, strong normalization and canonicity. \todo{Cross-reference lemma numbers.}  The reduction relation does not necessarily satisfy confluence on raw terms, but it does satisfy local confluence.  Hence, as
-every typed term is strongly normalizing, we know by Newman's Lemma that the reduction is confluent on the typed terms.
+if $\delta : \phi \supset \psi$ and $\epsilon : \psi \supset\phi$, then $\univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi$.  We present a reduction relation for this system, and prove it satisfies confluence, strong normalization and canonicity. \todo{Cross-reference lemma numbers.}
 
 For the future, we wish to expand the system with universal quantification, and expand it to a 2-dimensional system (with equations between proofs).
 

@@ -17,33 +17,33 @@ If $M[x:=N]L_1 \cdots L_n \in \SN$ and $N \in \SN$ then $(\lambda x:A.M)NL_1 \cd
 \label{lm:SN2}
 If $(\reff{M[x:=N]N_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n)^+ \delta_1 \cdots \delta_m \in \SN$ and $N \in \SN$ then
 $(\reff{(\lambda x:A.M)NN_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n)^+ \delta_1 \cdots \delta_m \in \SN$.
-\item
-\label{lm:SN3}
-Suppose that:
-\begin{enumerate}
-\item
-\label{hypi}
-$(M\{x:=P:N\sim N'\}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n)^+ \delta_1 \cdots \delta_m \in \SN$
-\item
-$P, N, N' \in \SN$
-\item
-\label{hypiii}
-if $\nf{P} \equiv \reff{L}$ then $(\reff{M[x:=L]}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n)^+ \delta_1 \cdots \delta_m \in \SN$.
-\end{enumerate}
-Then $(\reff{\lambda x:A.M}_{N N'} P_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n)^+ \delta_1 \cdots \delta_m \in \SN$.
-\item
-Suppose that:
-\begin{enumerate}
-\item
-\label{hypi}
-$(M\{x:=P:N\sim N'\}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n)^- \delta_1 \cdots \delta_m \in \SN$
-\item
-$P, N, N' \in \SN$
-\item
-\label{hypiii}
-if $\nf{P} \equiv \reff{L}$ then $(\reff{M[x:=L]}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n)^- \delta_1 \cdots \delta_m \in \SN$.
-\end{enumerate}
-Then $(\reff{\lambda x:A.M}_{N N'} P_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n)^- \delta_1 \cdots \delta_m \in \SN$.
+% \item
+% \label{lm:SN3}
+% Suppose that:
+% \begin{enumerate}
+% \item
+% \label{hypi}
+% $(M\{x:=P:N\sim N'\}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n)^+ \delta_1 \cdots \delta_m \in \SN$
+% \item
+% $P, N, N' \in \SN$
+% \item
+% \label{hypiii}
+% if $\nf{P} \equiv \reff{L}$ then $(\reff{M[x:=L]}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n)^+ \delta_1 \cdots \delta_m \in \SN$.
+% \end{enumerate}
+% Then $(\reff{\lambda x:A.M}_{N N'} P_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n)^+ \delta_1 \cdots \delta_m \in \SN$.
+% \item
+% Suppose that:
+% \begin{enumerate}
+% \item
+% \label{hypi}
+% $(M\{x:=P:N\sim N'\}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n)^- \delta_1 \cdots \delta_m \in \SN$
+% \item
+% $P, N, N' \in \SN$
+% \item
+% \label{hypiii}
+% if $\nf{P} \equiv \reff{L}$ then $(\reff{M[x:=L]}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n)^- \delta_1 \cdots \delta_m \in \SN$.
+% \end{enumerate}
+% Then $(\reff{\lambda x:A.M}_{N N'} P_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n)^- \delta_1 \cdots \delta_m \in \SN$.
 \item
 \label{lm:SN4}
 If $(\reff{M[x:=N]}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n)^+ \delta_1 \cdots \delta_m \in \SN$ and $N_1, N_2, N \in \SN$ then \\
@@ -58,26 +58,19 @@ If $\delta, \phi \in \SN$ then $\reff{\phi}^+ \delta, \reff{\phi}^- \delta \in \
 \end{lemma}
 
 \begin{proof}
-We prove part \ref{lm:SN3}; the proofs of the other parts are similar.
+We prove part \ref{lm:SN1}; the proofs of the other parts are similar.
 
-The proof is by induction on $P \in \SN$, then $N \in \SN$, then $N' \in \SN$,
-then on $M\{x := P : N \sim N' \} \vec{P} \in \SN$.  The following are the possible one-step reductions from
-$\reff{\lambda x:A.M}_{N N'} P \vec{P}$:
-
+The proof is by a double induction on the hypotheses.  Consider all possible one-step reductions from $(\lambda x:A.M) N \vec{L}$.  The possibilities are:
 \begin{description}
-\item[$\reff{\lambda x:A.M}_{N N'} P \vec{P} \rightarrow \reff{\lambda x:A.M'}_{N N'} P \vec{P}$, where $M \rightarrow M'$.]
+\item[$(\lambda x:A.M) N \vec{L} \rightarrow (\lambda x:A.M')N \vec{L}$, where $M \rightarrow M'$]
 $ $
 
-In this case, the result follows straight from the induction hypothesis, because we have $M \{ x:=P : N \sim N' \} \vec{P} \twoheadrightarrow M' \{ x:=P : N \sim N' \} \vec{P} \in \SN$.
-And for any term $L$, if $P \twoheadrightarrow \reff{L}$ then $\reff{M[x:=L]} \vec{P} \rightarrow \reff{M'[x:=L]} \vec{P} \in \SN$.
+In this case, we have $M[x:=N] \vec{L} \rightarrow M'[x:=N] \vec{L}$, and the result follows by the induction hypothesis.  Similarly for the case
+where we reduce $N$ or one of the $L_i$.
+\item[$(\lambda x:A.M)N \vec{L} \rightarrow M{[x:=N]} \vec{L}$]
+$ $
 
-The case where we reduce $N$, $N'$, $P$, or one of the $P_i$s is similar.
-\item[$\reff{\lambda x:A.M}_{N N'} P \vec{P} \rightarrow M \{ x := P : N \sim N' \} \vec{P}$] where $P$ is a closed normal form that is not a $\reff{-}$.
-
-The conclusion follows from hypothesis \ref{hypi}.
-\item[$P \equiv \reff{L}$ and $\reff{\lambda x:A.M}_{N N'} \reff{L} \vec{P} \rightarrow \reff{(\lambda x:A.M)L}_{N N'} \vec{P}$]
-
-In this case, we have $\reff{M[x:=L]}\vec{P} \in \SN$ by hypothesis \ref{hypiii}, and the conclusion follows by part \ref{lm:SN2}.
+In this case, the result follows immediately from the hypothesis.
 \end{description}
 \end{proof}
 
