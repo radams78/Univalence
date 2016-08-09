@@ -12,6 +12,7 @@
 
 The rules of deduction of $\lambda o e$ are given in Figures \ref{fig:lambdao} and \ref{fig:lambdaoe}.
 
+\newcommand{\RvarT}{\ensuremath(\mathsf{varT})}
 \begin{figure}
 \begin{framed}
 \[ \infer{\langle \rangle \vald}{} \qquad
@@ -25,7 +26,7 @@ The rules of deduction of $\lambda o e$ are given in Figures \ref{fig:lambdao} a
 \infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \phi} \]
 \[ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \qquad
 \infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \supset \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
-\[ \infer[(\phi \simeq_\beta \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
+\[ \infer[(\phi \simeq \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
 \end{framed}
 \caption{Rules of Deduction of $\lambda o e$}
 \label{fig:lambdao}
@@ -51,7 +52,7 @@ The rules of deduction of $\lambda o e$ are given in Figures \ref{fig:lambdao} a
 \Gamma \vdash N : A \rightarrow B
      \end{array}} \]
 \[ \infer{\Gamma \vdash P_{NN'}Q : MN =_B M' N'}{\Gamma \vdash P : M =_{A \rightarrow B} M' \quad \Gamma \vdash Q : N =_A N'} \]
-\[ \infer[(M \simeq_\beta M', N \simeq_\beta N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
+\[ \infer[(M \simeq M', N \simeq N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
 \end{framed}
 \caption{Rules of Deduction of $\lambda oe$}
 \label{fig:lambdaoe}

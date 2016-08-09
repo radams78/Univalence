@@ -21,8 +21,10 @@ We define a model of the type theory with types as sets of terms.  For every typ
 the set of \emph{computable} terms (proofs, paths) $E_\Gamma(A)$.
 
 \begin{definition}[Neutral]
-A term $\phi$ is \emph{neutral} iff it has the form $x M_1 \cdots M_n$, where each $M_i$ is in normal form.
+A term is \emph{neutral} iff it has the form $x M_1 \cdots M_n$, where each $M_i$ is in normal form.
 \end{definition}
+
+Note that (using Generation) a normal form of type $\Omega$ is either $\bot$, or a neutral term, or $\phi \supset \psi$ where $\phi$ and $\psi$ are normal forms of type $\Omega$.
 
 \begin{definition}[Computable Expressions]
 \label{df:computable}
@@ -30,10 +32,11 @@ A term $\phi$ is \emph{neutral} iff it has the form $x M_1 \cdots M_n$, where ea
 E_\Gamma(\bot) \eqdef & \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
 E_\Gamma(\phi \supset \psi) \eqdef & \{ \delta \mid \Gamma \vdash \delta : \phi \supset \psi, \\
 & \quad \forall (\Delta \supseteq \Gamma)(\epsilon \in E_\Delta(\phi)). \delta \epsilon \in E_\Gamma(\psi) \} \\
+& \quad \quad (\phi , \psi \text{ normal forms}) \\
 E_\Gamma(\phi) \eqdef & \{ \delta \mid \Gamma \vdash \delta : \phi, \delta \in \SN \} \\
 & \qquad (\phi \text{ neutral}) \\
 E_\Gamma(\phi) \eqdef & E_\Gamma(\nf{\phi}) \\
-& \qquad (\phi \mbox{ a normalizable term}) \\
+& \qquad (\phi \text{ a normalizable term}) \\
 \\
 E_\Gamma(\Omega) \eqdef & \{ M \mid \Gamma \vdash M : \Omega, M \in \SN, \\
 & \quad M \{\} \in E_\Gamma(M =_\Omega M) \} \\
@@ -281,9 +284,9 @@ then $M \{\} \in E_\Gamma(M =_A M)$.
 \label{lm:conv-compute}
 \begin{enumerate}
 \item
-If $\delta \in E_\Gamma(\phi)$, $\Gamma \vdash \psi : \Omega$ and $\phi \simeq_\beta \psi$, then $\delta \in E_\Gamma(\psi)$.
+If $\delta \in E_\Gamma(\phi)$, $\Gamma \vdash \psi : \Omega$ and $\phi \simeq \psi$, then $\delta \in E_\Gamma(\psi)$.
 \item
-If $P \in E_\Gamma(M =_A N)$, $\Gamma \vdash M' : A$, $\Gamma \vdash N' : A$, $M \simeq_\beta M'$ and $N \simeq_\beta N'$,
+If $P \in E_\Gamma(M =_A N)$, $\Gamma \vdash M' : A$, $\Gamma \vdash N' : A$, $M \simeq M'$ and $N \simeq N'$,
 then $P \in E_\Gamma(M' =_A N')$.
 \end{enumerate}
 \end{lm}
@@ -297,15 +300,15 @@ From the definition of $E_\Gamma(T)$ and confluence.
 Let $\phi$ be a normalizable term.
 \begin{enumerate}
 \item
-If $p : \phi \in \Gamma$ then $p \in E_\Gamma(\phi)$.
+If $\Gamma \vald$ and $p : \phi \in \Gamma$ then $p \in E_\Gamma(\phi)$.
 \item
 $E_\Gamma(\phi) \subseteq \SN$.
 \end{enumerate}
 \end{lm}
 
 \begin{proof}
-The proof is by induction on $\nf{\phi}$.
-Let $\nf{\phi} \equiv \psi_1 \supseteq \cdots \supseteq \psi_n \supseteq \chi$,
+The two parts are proved simultaneously by induction on $\nf{\phi}$.
+Let $\nf{\phi} \equiv \psi_1 \supset \cdots \supset \psi_n \supset \chi$,
 where $\chi$ is either $\bot$ or a neutral term.  
 \begin{enumerate}
 \item
@@ -327,18 +330,18 @@ It follows that $\delta \in \SN$.
 Let $A$ be a type.
 \begin{enumerate}
 \item
-If $x : A \in \Gamma$ then $x \in E_\Gamma(A)$.
+If $\Gamma \vald$ and $x : A \in \Gamma$ then $x \in E_\Gamma(A)$.
 \item
 $E_\Gamma(A) \subseteq \SN$.
 \item
-If $e : M =_A N \in \Gamma$ then $e \in E_\Gamma(M =_A N)$.
+If $\Gamma \vald$ and $e : M =_A N \in \Gamma$ and $M, N \in E_\Gamma(A)$ then $e \in E_\Gamma(M =_A N)$.
 \item
 For all $M$, $N$, we have $E_\Gamma(M =_A N) \subseteq \SN$.
 \end{enumerate}
 \end{lemma}
 
 \begin{proof}
-The three parts are proved simultaneously by induction on $A$.  Let $A \equiv A_1 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega$,
+The four parts are proved simultaneously by induction on $A$.  Let $A \equiv A_1 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega$,
 and suppose the lemma holds for each $A_i$.
 \begin{enumerate}
 \item
@@ -351,9 +354,7 @@ each $M_i \in \SN$ by the induction hypothesis, hence $x \vec{M} \in \SN$.
 Now, let $\delta \in E_\Delta(x \vec{M})$.  We must show that $(x \vec{M}) \{\} ^+ \delta \in E_\Delta(x \vec{M})$,
 i.e. $(\reff{x}_{M_1 M_1} M_1 \{\}_{M_2 M_2} \cdots_{M_n M_n} M_n\{\})^+ \delta \in E_\Delta(x \vec{M})$.
 Well-typedness is easy, and strong normalization follows from the fact that each $M_i$ and $M_i \{\}$ is strongly
-normalizing by the induction hypothesis.  (Note that $\reff{x}$ cannot be part of a redex, as it is not closed.)
-\item
-\todo{Proof}
+normalizing by the induction hypothesis (2) and (4).  (Note that $\reff{x}$ cannot be part of a redex, as it is not closed.)
 \item
 Given $M_i \in E_\Delta(A_i)$ for $1 \leq i \leq k$, and $N_j, N_j' \in E_\Delta(A_j)$ and $P_j \in E_\Delta(M_j =_{A_j} N_j)$ for
 $k < j \leq n$, we must show that \\
@@ -370,6 +371,24 @@ The proof is similar to the previous part.
 \item
 Let $M \in E_\Gamma(A)$.  Then using the induction hypothesis $M x_1 \cdots x_n \in E_{\Gamma, x_1 : A_1, \ldots, x_n : A_n}(\Omega) \subseteq \SN$,
 hence $M \in \SN$.
+\item
+Let $\Delta \supseteq \Gamma$.  Let $L_i, L_i' \in E_\Delta(A_i)$ and
+$P_i \in E_\Delta(L_i =_{A_i} L_i')$ for $i = 1, \ldots, n$.  We must show that
+$e \vec{P} \equiv e_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in E_\Delta(M L_1 \cdots L_n =_{\Omega} N L_1' \cdots L_n')$, i.e. that
+\begin{align*}
+(e \vec{P})^+ \in E_\Delta(M \vec{L} \supset N \vec{L'}) \\
+(e \vec{P})^- \in E_\Delta(N \vec{L'} \supset M \vec{L})
+\end{align*}
+We prove the first of these; the second is similar.
+
+Let $\Theta \supseteq \Delta$.  Let $\delta \in E_\Theta(M \vec{L})$.
+Let $\nf{N \vec{L'}} \equiv \phi_1 \supset \cdots \supset \phi_m \supset \chi$,
+where $\chi$ is $\bot$ or neutral.  (We know $\nf{N \vec{L'}}$ exists because
+$N \vec{L'} \in E_\Delta(\Omega)$.)  Let $\epsilon_j \in E_\Theta(\phi_j)$ for
+$j = 1, \ldots, m$.  Then we must show that
+\[ (e \vec{P})^+ \delta \epsilon_1 \cdots \epsilon_m \in E_\Theta(\chi) \]
+Well-typedness is easy to show, so it remains to show $(e \vec{P})^+ \delta \vec{\epsilon} \in \SN$.  This holds as each $P_i$, $\delta$ and $\epsilon_j$ is
+strongly normalizing.
 \item
 Let $P \in E_\Gamma(M =_A N)$.  Let $\Delta$ be the context
 \[ \Gamma, x_1 : A_1, y_1 : A_1, e_1 : x_1 =_{A_1} y_1, \ldots, x_n : A_n, y_n : A_n, e_n : x_n =_{A_n} y_n \enspace \]
@@ -408,7 +427,7 @@ In this case, the result follows immediately from the induction hypothesis on $M
 one of the $N_i$, $N_i'$, $P_i$, $\delta$ or $\epsilon_j$.
 \item[$P_1 \equiv \reff{L}$ and $(\reff{M} \vec{P})^+ \delta \vec{\epsilon} \rightarrow (\reff{M L} P_2 \cdots P_n)^+ \delta \vec{\epsilon}$]$ $
 
-In this case, we have that $M$ and $L$ are closed normal forms.  By Generation, we know $N_1 \simeq_\beta N_1' \simeq_\beta L$, hence $N_1, N_1' \twoheadrightarrow_\beta L$
+In this case, we have that $M$ and $L$ are closed normal forms.  By Generation, we know $N_1 \simeq N_1' \simeq L$, hence $N_1, N_1' \twoheadrightarrow L$
 by Confluence, and thus $L \in E_\Gamma(A_1)$.  It follows that $ML \in E_\Gamma(A_2 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega)$, and
 the result follows by the induction hypothesis on $n$.
 \item[$M \equiv \lambda x:C.L$ and $(\reff{M} \vec{P})^+ \delta \vec{\epsilon} \rightarrow (L \{ x := P_1 : N_1 \sim N_1 \} P_2 \cdots P_n)^+ \delta \vec{\epsilon}$]$ $
@@ -422,10 +441,10 @@ Noting that $M$, $N_1$, $N_1'$ and $P_1$ are closed normal forms, it follows tha
 i.e.
 \[ L \{ x := P_1 : N_1 \sim N_1' \} \in E_\Gamma(M N_1 = M N_1') \]
 and the desired result follows.
-\item[$n = 0$ and $\reff{M}^+ \delta \vec{\epsilon} \rightarrow (\lambda p:\phi.p)\delta \vec{\epsilon}$]
+\item[$n = 0$ and $\reff{M}^+ \delta \vec{\epsilon} \rightarrow (\lambda p:M.p)\delta \vec{\epsilon}$]
 $ $
 
-Since $\delta \in E_\Gamma(M) = E_\Gamma(\nf{M}) = E_\Gamma(\phi_1 \supset \cdots \supset \phi_m \supset \bot)$, we have that
+Since $\delta \in E_\Gamma(M) = E_\Gamma(\nf{M}) = E_\Gamma(\phi_1 \supset \cdots \supset \phi_m \supset \chi)$, we have that
 $\delta \vec{\epsilon} \in \SN$.  Hence $(\lambda p:\phi.p) \delta \vec{\epsilon} \in \SN$ by Lemma \ref{lm:SNothers}.
 \end{description}
 \end{proof}
@@ -511,16 +530,16 @@ by the induction hypothesis, as required.
 
 % \begin{lm}
 % \label{lm:Egen}
-% If $\reff{M} \in E_\Gamma(N =_A N')$ then $M \in E_\Gamma(A)$ and $M \simeq_\beta N \simeq_\beta N'$.
+% If $\reff{M} \in E_\Gamma(N =_A N')$ then $M \in E_\Gamma(A)$ and $M \simeq N \simeq N'$.
 % \end{lm}
 
 % \begin{proof}
 % The proof is by induction on the type $A$.
 
-% If $A \equiv \Omega$: we have $\reff{M} \in \SN$, hence $M \in \SN$.  Also, we have $\Gamma \vdash M : A$ and $M \simeq_\beta N \simeq_\beta N'$
+% If $A \equiv \Omega$: we have $\reff{M} \in \SN$, hence $M \in \SN$.  Also, we have $\Gamma \vdash M : A$ and $M \simeq N \simeq N'$
 % by Generation.
 
-% If $A \equiv B \rightarrow C$: we have $\Gamma \vdash M : A$ and $M \simeq_\beta N \simeq_\beta N'$ by Generation again.  Now, let $L \in E_\Gamma(B)$.
+% If $A \equiv B \rightarrow C$: we have $\Gamma \vdash M : A$ and $M \simeq N \simeq N'$ by Generation again.  Now, let $L \in E_\Gamma(B)$.
 % Then $\reff{L} \in E_\Gamma(L =_B L)$ by Lemma \ref{lm:Eref}, and so $\reff{M}_{LL} \reff{L} \in E_\Gamma(NL =_C N'L)$.  Therefore,
 % $\reff{ML} \in E_\Gamma(NL =_C N'L)$ by Lemma \ref{lm:Ered1}.  Hence $ML \in E_\Gamma(C)$ by the induction hypothesis, as required.
 
@@ -580,7 +599,7 @@ Similar to the previous lemmas, using Lemma \ref{lm:SNothers}.
 
 \begin{lm}
 \label{lm:wte2}
-Let $\Gamma, x : A \vdash M : B$ and let $N \in E_\Gamma(A)$.  If $N\{\} \in E_\Gamma(N =_A N)$ and $M \{ x:=N\{\} : N \sim N \} \in E_\Gamma(M[x:=N] =_B M[x:=N])$ and $M[x:=N] \in E_\Gamma(B)$ then $(\lambda x:A.M)N \in E_\Gamma(B)$.
+Let $\Gamma, x : A \vdash M : B$ and let $N \in E_\Gamma(A)$. If $M[x:=N] \in E_\Gamma(B)$ then $(\lambda x:A.M)N \in E_\Gamma(B)$.
 \end{lm}
 
 \begin{proof}
@@ -619,18 +638,22 @@ M[x:=N]\vec{N} N_{n+1} & \in E_\Gamma(C) \\
 by the induction hypothesis, as required.
 
 Now let $N_{n+1}, N_{n+1}' \in E_\Gamma(B_{n+1})$ and $P \in E_\Gamma(N_{n+1} =_{B_{n+1}} N_{n+1}')$.  We must show that
-\[ 
-((\lambda x:A.M)N \vec{N}) \{\}_{N_{n+1}N_{n+1}'}P \in E_\Gamma((\lambda x:A.M) N \vec{N} N_{n+1} =_C (\lambda x:A.M) N \vec{N} N_{n+1}') \]
+\begin{align*}
+((\lambda x:A.M)N \vec{N}) \{\}_{N_{n+1}N_{n+1}'}P \\
+\quad \in E_\Gamma((\lambda x:A.M) N \vec{N} N_{n+1} =_C (\lambda x:A.M) N \vec{N} N_{n+1}')
+\end{align*}
 i.e.
-$$ (\triplelambda e:x =_A y . M \{ x:=e \})_{NN} N \{ \}_{N_1 N_1} N_1\{\} \cdots_{N_n N_n} N_n\{\}_{N_{n+1} N_{n+1}'} P
-\in E_\Gamma(M[x:=N] N \vec{N} N_{n+1} = M[x:=N] N \vec{N} N_{n+1}') $$
+\begin{align*}
+(\triplelambda e:x =_A y . M \{ x:=e \})_{NN} N \{ \}_{N_1 N_1} N_1\{\} \cdots_{N_n N_n} N_n\{\}_{N_{n+1} N_{n+1}'} P \\
+\quad \in E_\Gamma(M[x:=N] N \vec{N} N_{n+1} = M[x:=N] N \vec{N} N_{n+1}')
+\end{align*}
 This follows from part 2 of the previous lemma since we have
 \[ M[x:=N]\{\} \equiv M \{ x:= N \{ \} : N \sim N \} \in E_\Gamma(M[x:=N] = M[x:=N]) \]
 \end{proof}
 
 \begin{lm}
 \label{lm:wte3}
-Let $\Gamma, x : A \vdash M : B$.  Let $N, N_1, N_2 \in E_\Gamma(A)$, and $N \simeq_\beta N_1 \simeq_\beta N_2$.  If $M[x:=N] \in E_\Gamma(B)$,
+Let $\Gamma, x : A \vdash M : B$.  Let $N, N_1, N_2 \in E_\Gamma(A)$, and $N \simeq N_1 \simeq N_2$.  If $M[x:=N] \in E_\Gamma(B)$,
 then $\reff{\lambda x:A.M}_{N_1 N_2} \reff{N} \in E_\Gamma((\lambda x:A.M)N_1 =_B (\lambda x:A.M) N_2)$.
 \end{lm}
 
@@ -654,57 +677,57 @@ L_{n+1}')
 by the induction hypothesis, as required.
 \end{proof}
 
-\begin{lm}
-\label{lm:wte4}
-Let $\Gamma, x : A \vdash M : B$.  Let $N, N' \in E_\Gamma(A)$, $P \in E_\Gamma(N =_A N')$, and suppose:
-\begin{enumerate}
-\item
-$M\{x:=P:N \sim N'\} \in E_\Gamma(M[x:=N] =_B M[x:=N'])$
-\item
-for all $L \in E_\Gamma(A)$, we have $M[x:=L] \in E_\Gamma(B)$.
-\end{enumerate}
-Then $\reff{\lambda x:A.M}_{N N'} P \in E_\Gamma((\lambda x:A.M)N =_B (\lambda x:A.M) N')$.
-\end{lm}
+% \begin{lm}
+% \label{lm:wte4}
+% Let $\Gamma, x : A \vdash M : B$.  Let $N, N' \in E_\Gamma(A)$, $P \in E_\Gamma(N =_A N')$, and suppose:
+% \begin{enumerate}
+% \item
+% $M\{x:=P:N \sim N'\} \in E_\Gamma(M[x:=N] =_B M[x:=N'])$
+% \item
+% for all $L \in E_\Gamma(A)$, we have $M[x:=L] \in E_\Gamma(B)$.
+% \end{enumerate}
+% Then $\reff{\lambda x:A.M}_{N N'} P \in E_\Gamma((\lambda x:A.M)N =_B (\lambda x:A.M) N')$.
+% \end{lm}
 
-\begin{proof}
-We prove the following stronger statement.
+% \begin{proof}
+% We prove the following stronger statement.
 
-Let $\Gamma, x : A \vdash M : B_1 \rightarrow \cdots \rightarrow B_n \rightarrow C$.  Let $N, N' \in E_\Gamma(A)$; $P \in E_\Gamma(N =_A N')$; $L_i, L_i' \in E_\Gamma(B_i)$ and $Q_i \in E_\Gamma(L_i =_{B_i} L_i')$ for all $i$.  Suppose:
-\begin{enumerate}
-\item
-$M\{x:=P:N \sim N'\}_{L_1 L_1'} Q_1 \cdots_{L_n L_n'} Q_n \in E_\Gamma(M[x:=N]L_1 \cdots L_n =_C
-M[x:=N']L_1'\cdots L_n'$
-\item
-for all $L \in E_\Gamma(A)$, we have $M[x:=L] \in E_\Gamma(B_1 \rightarrow \cdots \rightarrow B_n \rightarrow C)$.
-\end{enumerate}
-Then $\reff{\lambda x:A.M}_{N N'} P_{L_1 L_1'} Q_1 \cdots_{L_n L_n'} Q_n \in
-E_\Gamma((\lambda x:A.M) N L_1 \cdots L_n =_C (\lambda x:A.M) N' L_1' \cdots L_n')$.
+% Let $\Gamma, x : A \vdash M : B_1 \rightarrow \cdots \rightarrow B_n \rightarrow C$.  Let $N, N' \in E_\Gamma(A)$; $P \in E_\Gamma(N =_A N')$; $L_i, L_i' \in E_\Gamma(B_i)$ and $Q_i \in E_\Gamma(L_i =_{B_i} L_i')$ for all $i$.  Suppose:
+% \begin{enumerate}
+% \item
+% $M\{x:=P:N \sim N'\}_{L_1 L_1'} Q_1 \cdots_{L_n L_n'} Q_n \in E_\Gamma(M[x:=N]L_1 \cdots L_n =_C
+% M[x:=N']L_1'\cdots L_n'$
+% \item
+% for all $L \in E_\Gamma(A)$, we have $M[x:=L] \in E_\Gamma(B_1 \rightarrow \cdots \rightarrow B_n \rightarrow C)$.
+% \end{enumerate}
+% Then $\reff{\lambda x:A.M}_{N N'} P_{L_1 L_1'} Q_1 \cdots_{L_n L_n'} Q_n \in
+% E_\Gamma((\lambda x:A.M) N L_1 \cdots L_n =_C (\lambda x:A.M) N' L_1' \cdots L_n')$.
 
-The proof is by induction on the type $C$.
+% The proof is by induction on the type $C$.
 
-If $C \equiv \Omega$: it is easy to verify that $\Gamma \vdash \reff{\lambda x:A.M}_{N N'} P \vec{Q} : (\lambda x:A.M)N \vec{L} =_\Omega (\lambda x:A.M) N' \vec{L'}$.  
+% If $C \equiv \Omega$: it is easy to verify that $\Gamma \vdash \reff{\lambda x:A.M}_{N N'} P \vec{Q} : (\lambda x:A.M)N \vec{L} =_\Omega (\lambda x:A.M) N' \vec{L'}$.  
 
-Let $\Delta \supseteq \Gamma$ and $\delta \in E_\Delta((\lambda x:A.M)N\vec{L})$.
-Let $\nf{(\lambda x:A.M) N' \vec{L}} \equiv \phi_1 \supset \cdots \supset \phi_m \supset \chi$, where $\chi$ is $\bot$ or neutral, and let $\epsilon_j \in E_\Delta(\phi_j)$ for each $j$.  As in the proofs of the previous lemmas, we must show that $(\reff{\lambda x:A.M}_{N N'} P \vec{Q})^+ \delta \vec{\epsilon} \in \SN$, and we wish to apply Lemma \ref{lm:SN}.\ref{lm:SN3}.
+% Let $\Delta \supseteq \Gamma$ and $\delta \in E_\Delta((\lambda x:A.M)N\vec{L})$.
+% Let $\nf{(\lambda x:A.M) N' \vec{L}} \equiv \phi_1 \supset \cdots \supset \phi_m \supset \chi$, where $\chi$ is $\bot$ or neutral, and let $\epsilon_j \in E_\Delta(\phi_j)$ for each $j$.  As in the proofs of the previous lemmas, we must show that $(\reff{\lambda x:A.M}_{N N'} P \vec{Q})^+ \delta \vec{\epsilon} \in \SN$, and we wish to apply Lemma \ref{lm:SN}.\ref{lm:SN3}.
 
-We have $(M \{ x:=P : N \sim N' \} \vec{Q})^+ \delta \vec{\epsilon} \in \SN$ from hypothesis 1.
-If $\nf{P} \equiv \reff{L}$, then we have $N, N' \twoheadrightarrow_\beta L$ and so $L \in E_\Gamma(A)$, hence $(\reff{M[x:=L]} \vec{Q})^+ \delta \vec{\epsilon} \in \SN$ by hypothesis 2.  Therefore, \\
-$(\reff{\lambda x:A.M}_{N N'} \reff{L} \vec{Q})^+ \delta \vec{\epsilon} \in \SN$ by Lemma \ref{lm:SN}.\ref{lm:SN4}.
+% We have $(M \{ x:=P : N \sim N' \} \vec{Q})^+ \delta \vec{\epsilon} \in \SN$ from hypothesis 1.
+% If $\nf{P} \equiv \reff{L}$, then we have $N, N' \twoheadrightarrow L$ and so $L \in E_\Gamma(A)$, hence $(\reff{M[x:=L]} \vec{Q})^+ \delta \vec{\epsilon} \in \SN$ by hypothesis 2.  Therefore, \\
+% $(\reff{\lambda x:A.M}_{N N'} \reff{L} \vec{Q})^+ \delta \vec{\epsilon} \in \SN$ by Lemma \ref{lm:SN}.\ref{lm:SN4}.
 
-The proof for $(\reff{\lambda x:A.M}_{N N'} \reff{L} \vec{Q})^-$ is similar.
+% The proof for $(\reff{\lambda x:A.M}_{N N'} \reff{L} \vec{Q})^-$ is similar.
 
-If $C \equiv B_{n+1} \rightarrow D$: let $L_{n+1}, L_{n+1}' \in E_\Gamma(B_{n+1})$ and $Q_{n+1} \in E_\Gamma(L =_{B_{n+1}} L')$.  Then
-\begin{align*}
-\lefteqn{M\{x:=P:N \sim N'\} \vec{Q}_{L_{n+1} L_{n+1}'} Q_{n+1}} \\
-\quad & \in E_\Gamma(M[x:=N]\vec{L} L_{n+1} =_D M[x:=N'] \vec{L'} L_{n+1}')
-\end{align*}
-and so the induction hypothesis gives
-\begin{align*}
-\lefteqn{\reff{\lambda x:A.M}_{N N'} P \vec{Q}_{L_{n+1} L'_{n+1}} Q_{n+1}} \\
-\quad & \in E_\Gamma((\lambda x:A.M) N \vec{L} L_{n+1} =_D (\lambda x:A.M) N' \vec{L'} L_{n+1}')
-\end{align*}
-as required.
-\end{proof}
+% If $C \equiv B_{n+1} \rightarrow D$: let $L_{n+1}, L_{n+1}' \in E_\Gamma(B_{n+1})$ and $Q_{n+1} \in E_\Gamma(L =_{B_{n+1}} L')$.  Then
+% \begin{align*}
+% \lefteqn{M\{x:=P:N \sim N'\} \vec{Q}_{L_{n+1} L_{n+1}'} Q_{n+1}} \\
+% \quad & \in E_\Gamma(M[x:=N]\vec{L} L_{n+1} =_D M[x:=N'] \vec{L'} L_{n+1}')
+% \end{align*}
+% and so the induction hypothesis gives
+% \begin{align*}
+% \lefteqn{\reff{\lambda x:A.M}_{N N'} P \vec{Q}_{L_{n+1} L'_{n+1}} Q_{n+1}} \\
+% \quad & \in E_\Gamma((\lambda x:A.M) N \vec{L} L_{n+1} =_D (\lambda x:A.M) N' \vec{L'} L_{n+1}')
+% \end{align*}
+% as required.
+% \end{proof}
 
 \begin{code}
 postulate conv-E' : ∀ {V} {K} {Γ} {A} {B} {M : Expression V (varKind K)} →
@@ -1059,7 +1082,7 @@ or any of the $\epsilon_i$.
 \item
 $P \equiv \reff{\phi}$, $Q \equiv \reff{\psi}$, and $(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow \reff{\phi \supset \psi}^* \delta \epsilon \vec{\epsilon}$.
 
-Generation gives $\phi \simeq_\beta \phi'$ and $\psi \simeq_\beta \psi_1 \supset \cdots \supset \psi_n \supset \chi$.
+Generation gives $\phi \simeq \phi'$ and $\psi \simeq \psi_1 \supset \cdots \supset \psi_n \supset \chi$.
 Then the only possible reduction sequence from $\reff{\phi \supset \psi}^* \delta \epsilon \vec{\epsilon}$ is
 \[ \reff{\phi \supset \psi}^* \delta \epsilon \vec{\epsilon} \rightarrow (\lambda p p) \delta \epsilon \vec{\epsilon} \rightarrow \delta \epsilon \vec{\epsilon} \]
 which is in $\SN$ since $\delta \in E_\Gamma(\phi \supset \psi)$.
