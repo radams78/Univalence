@@ -377,6 +377,88 @@ $$ \infer{\Gamma \vdash \bot : \Omega}{\Gamma \vald} $$
 We have that $\bot \in \SN$.  We must show that $\reff{\bot} \in E_\Delta(\bot =_\Omega \bot)$, i.e. that
 \[ \reff{\bot}^+, \reff{\bot}^- \in E_\Delta(\bot \supset \bot) \]
 Let $\delta \in E_\Delta(\bot)$; we must show that $\reff{\bot}^+ \delta, \reff{\bot}^- \delta \in E_\Delta(\bot)$.
+
+\item
+$$ \infer{\Gamma \vdash \phi \supset \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} $$
+
+By the induction hypothesis, $\phi[\sigma], \psi[\sigma] \in \SN$, hence $\phi[\sigma] \supset \psi[\sigma] \in \SN$.
+
+Also by the induction hypothesis, we have $\phi[\sigma]\{\} \in E_\Delta(\phi[\sigma] =_\Omega \phi[\sigma])$, and
+$\psi[\sigma]\{\} \in E_\Delta(\psi[\sigma] =_\Omega \psi[\sigma])$.  Therefore, $\phi[\sigma]\{\} \supset^* \psi[\sigma]\{\}
+\in E_\Delta(\phi[\sigma] \supset \psi[\sigma] =_\Omega \phi[\sigma] \supset \psi[\sigma])$ by Lemma \ref{lm:Esupset}.
+\item
+$$ \infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} $$
+
+\begin{enumerate}
+\item[1]
+We have $M[\sigma] \in E_\Delta(A \rightarrow B)$ and $N[\sigma] \in E_\Delta(A)$, so $M[\sigma] N[\sigma] \in E_\Delta(B)$.
+\item[4]
+We have $M\{\tau\} \in E_\Delta(M [ \rho ] =_{A \rightarrow B} M [ \sigma ])$ and $N[\rho], N[\sigma] \in E_\Delta(A)$,
+$N \{ \tau \} \in E_\Delta(N[ \rho ] =_A N[\sigma])$ by the induction hypothesis (1) and (4).  Therefore,
+$M \{ \tau \}_{N[\rho] N[\sigma]} N \{ \tau \} \in E_\Delta(M[\rho] N[\rho] =_B M[\sigma] N[\sigma])$.
+\end{enumerate}
+\item
+$$\infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \phi}$$
+
+We have $\delta [ \sigma ] \in E_\Delta(\phi [ \sigma ] \supset \psi [ \sigma ])$ and $\epsilon [ \sigma ] \in E_\Delta(\phi [ \sigma ])$,
+hence $\delta [ \sigma ] \epsilon [\sigma] \in E_\Delta(\psi [ \sigma ])$.
+\item
+$$ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B}$$
+
+\begin{enumerate}
+\item[1]
+\begin{itemize}
+\item
+Let $\Theta \supseteq \Delta$ and $N \in E_\Theta(A)$.  We must show that $(\lambda x:A.M[\sigma])N \in E_\Theta(B)$.
+
+We have that $(\sigma, x:=N) : (\Gamma, x : A) \rightarrow \Theta$ is computable, and so the induction hypothesis gives
+$M[\sigma, x:=N] \in E_\Theta(B)$.  The result follows by Lemma \ref{lm:wte2}.
+\item
+We must show that $\triplelambda e:x =_A y. M [ \sigma ] \{ x := e : x \sim y \} \equiv
+\triplelambda e:x =_A y. M \{ z_1 := \sigma(z_1) \{ \}, \ldots, z_n := \sigma(z_n)\{\}, x := e \} \in E_\Delta(\lambda x:A.M[\sigma] =_{A \rightarrow B} \lambda x:A.M[\sigma])$.
+
+So let $\Theta \supseteq \Delta$ and $N, N' \in E_\Theta(A)$, $P \in E_\Theta(N =_A N')$.  Then $(z_1 := \sigma(z_1)\{\}, \ldots, z_n := \sigma(z_n)\{\}, x := P) : (\sigma, x:=N) \sim (\sigma, x:=N') : (\Gamma, x:A) \rightarrow \Theta$
+is computable, and so the induction hypothesis gives
+\[ M \{ z_i := \sigma(z_i) \{\}, x := P \} \in E_\Theta(M [ \sigma, x:=N] =_B M [\sigma, x:=N']) \enspace . \]
+Therefore, by Lemma \ref{lm.wte5}.2, we have that $(\triplelambda e:x =_A y. M \{ z_i := \sigma(z_i) \{\}, x := e \})_{N N'} P \in E_\Theta(M[\sigma, x:=N] =_B M[\sigma, x:=N'])$.
+
+Hence Lemma \ref{lm:conv-compute} gives $(\triplelambda e:x =_A y. M \{ z_i := \sigma(z_i) \{\}, x := e \})_{N N'} P \in E_\Theta((\lambda x:A.M[\sigma])N =_B (\lambda x:A.M[\sigma])N')$
+as required.
+\end{itemize}
+\item[4]
+Let $\Theta \supseteq \Delta$ and $N, N' \in E_\Theta(A)$, $P \in E_\Theta(N =_A N')$.  Then $(\tau, x:=P) : (\rho, x:=N) \sim (\sigma, x:=N') : (\Gamma, x :A) \rightarrow \Delta$ is computable,
+and so the induction hypothesis gives
+\[ M \{ \tau, x := P \} \in E_\Theta(M[\rho, x:=N] =_B M[\sigma, x:=N']) \enspace . \]
+By Lemma \ref{lm:conv-compute},
+\[ M \{ \tau, x := P \} \in E_\Theta((\lambda x:A.M[\rho]) N =_B (\lambda x:A.M[\sigma]) N') \]
+and so Lemma \ref{lm:wte5}.2 gives
+\[ (\triplelambda e:x=_A y.M \{ \tau, x:=e \})_{N N'} P \in E_\Theta((\lambda x:A.M[\rho]) N =_B (\lambda x:A.M[\sigma]) N') \]
+as required.
+\end{enumerate}
+\item
+$$\infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \supset \psi}{\Gamma, p : \phi \vdash \delta : \psi}$$
+
+Let $\Theta \supseteq \Delta$ and $\epsilon \in E_\Theta(\phi[\sigma])$.  Then $(\sigma, p:=\epsilon) : (\Gamma, p : \phi) \rightarrow \Theta$
+is computable, and so the induction hypothesis gives
+\[ \delta[\sigma, p:=\epsilon] \in E_\Theta(\psi[\sigma)) \enspace . \]
+Hence by Lemma \ref{lm:wte5}.1, we have $(\lambda p:\phi[\sigma].\delta[\sigma]) \epsilon \in E_\Theta(\psi[\sigma])$, as required.
+\item
+$$ \infer[(\phi \simeq \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} $$
+
+We have that $\delta[\sigma] \in E_\Gamma(\phi[\sigma])$ by induction hypothesis, and so $\delta[\sigma] \in E_\Gamma(\psi[\sigma])$ by
+Lemma \ref{lm:conv-compute}.
+\item
+$$ \infer[(e : M =_A N \in \Gamma)]{\Gamma \vdash e : M =_A N}{\Gamma \vald} $$
+
+We have $\sigma(e) \in E_\Gamma(M[\sigma] =_A N[\sigma])$ by hypothesis.
+\item
+$$ \infer{\Gamma \vdash \reff{M} : M =_A M}{\Gamma \vdash M : A} $$
+
+This case holds by Lemma \ref{lm:Eref}.
+\item
+$$ \infer{\Gamma \vdash P \supset^* Q : \phi \supset \psi =_\Omega \phi' \supset \psi'}{\Gamma \vdash P : \phi =_\Omega \phi' \quad \Gamma \vdash Q : \psi =_\Omega \psi'} $$
+
+This case holds by Lemma \ref{lm:Esupset}.
 \end{itemize}
 \end{proof}
 

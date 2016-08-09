@@ -35,7 +35,7 @@ E_\Gamma(\phi \supset \psi) \eqdef & \{ \delta \mid \Gamma \vdash \delta : \phi 
 & \quad \quad (\phi , \psi \text{ normal forms}) \\
 E_\Gamma(\phi) \eqdef & \{ \delta \mid \Gamma \vdash \delta : \phi, \delta \in \SN \} \\
 & \qquad (\phi \text{ neutral}) \\
-E_\Gamma(\phi) \eqdef & E_\Gamma(\nf{\phi}) \\
+E_\Gamma(\phi) \eqdef & \{ \delta \mid \Gamma \vdash \delta : \phi, \delta \in E_\Gamma(\nf{\phi}) \} \\
 & \qquad (\phi \text{ a normalizable term}) \\
 \\
 E_\Gamma(\Omega) \eqdef & \{ M \mid \Gamma \vdash M : \Omega, M \in \SN, \\
@@ -293,6 +293,21 @@ then $P \in E_\Gamma(M' =_A N')$.
 
 \begin{proof}
 From the definition of $E_\Gamma(T)$ and confluence.
+\end{proof}
+
+As a consequence of this lemma, we can ignore the restriction '$\phi$ and $\psi$ are normal forms' in the definition of $E_\Gamma(\phi \supset \psi)$:
+\begin{lm}$ $
+Let $\phi$ and $\psi$ be normalizable terms, and suppose $\Gamma \vdash \phi : \Omega$ and $\Gamma \vdash \psi : \Omega$.  Then $\delta \in E_\Gamma(\phi \supset \psi)$ if and only if $\Gamma \vdash \delta : \phi \supset \psi$
+and, for all $\Delta \supseteq \Gamma$ and $\epsilon \in E_\Delta(\phi)$, we have $\delta \epsilon \in E_\Delta(\psi)$.
+\end{lm}
+
+\begin{proof}
+Suppose $\delta \in E_\Gamma(\phi \supset \psi)$.  Let $\Delta \supseteq \Gamma$ and $\epsilon in E_\Delta(\phi)$.  Then $\delta \in E_\Gamma(\nf{\phi} \supset \nf{\psi})$
+and $\epsilon \in E_\Gamma(\nf{\phi})$, hence $\delta \epsilon \in E_\Gamma(\nf{\psi})$.  We also have $\Delta \vdash \delta \epsilon : \psi$, and so $\delta \epsilon \in E_\Delta(\psi)$.
+
+Conversely, suppose the right-hand side holds.  We must show that $\delta \in E_\Gamma(\nf{\phi} \supset \nf{\psi})$.  Let $\Delta \supseteq \Gamma$ and $\epsilon \in
+E_\Delta(\nf{\phi})$.  Then $\epsilon \in E_\Delta(\phi)$ by the previous lemma, and so $\delta \epsilon \in E_\Delta(\psi)$ by hypothesis.  Therefore $\delta \epsilon \in E_\Delta(\nf{\psi})$
+as required.
 \end{proof}
 
 \begin{lm}
