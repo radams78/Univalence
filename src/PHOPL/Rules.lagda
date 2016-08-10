@@ -49,7 +49,7 @@ The rules of deduction of $\lambda o e$ are given in Figures \ref{fig:lambdao} a
      \Gamma \vdash M : A \rightarrow B \quad
 \Gamma \vdash N : A \rightarrow B
      \end{array}} \]
-\[ \infer{\Gamma \vdash P_{NN'}Q : MN =_B M' N'}{\Gamma \vdash P : M =_{A \rightarrow B} M' \quad \Gamma \vdash Q : N =_A N'} \]
+\[ \infer{\Gamma \vdash P_{NN'}Q : MN =_B M' N'}{\Gamma \vdash P : M =_{A \rightarrow B} M' \quad \Gamma \vdash Q : N =_A N' \quad \Gamma \vdash N : A \quad \Gamma \vdash N' : A} \]
 \[ \infer[(M \simeq M', N \simeq N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
 \end{framed}
 \caption{Rules of Deduction of $\lambda oe$}

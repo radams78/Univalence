@@ -420,7 +420,7 @@ We must show that $\triplelambda e:x =_A y. M [ \sigma ] \{ x := e : x \sim y \}
 So let $\Theta \supseteq \Delta$ and $N, N' \in E_\Theta(A)$, $P \in E_\Theta(N =_A N')$.  Then $(z_1 := \sigma(z_1)\{\}, \ldots, z_n := \sigma(z_n)\{\}, x := P) : (\sigma, x:=N) \sim (\sigma, x:=N') : (\Gamma, x:A) \rightarrow \Theta$
 is computable, and so the induction hypothesis gives
 \[ M \{ z_i := \sigma(z_i) \{\}, x := P \} \in E_\Theta(M [ \sigma, x:=N] =_B M [\sigma, x:=N']) \enspace . \]
-Therefore, by Lemma \ref{lm.wte5}.2, we have that $(\triplelambda e:x =_A y. M \{ z_i := \sigma(z_i) \{\}, x := e \})_{N N'} P \in E_\Theta(M[\sigma, x:=N] =_B M[\sigma, x:=N'])$.
+Therefore, by Lemma \ref{lm:wte5}.2, we have that $(\triplelambda e:x =_A y. M \{ z_i := \sigma(z_i) \{\}, x := e \})_{N N'} P \in E_\Theta(M[\sigma, x:=N] =_B M[\sigma, x:=N'])$.
 
 Hence Lemma \ref{lm:conv-compute} gives $(\triplelambda e:x =_A y. M \{ z_i := \sigma(z_i) \{\}, x := e \})_{N N'} P \in E_\Theta((\lambda x:A.M[\sigma])N =_B (\lambda x:A.M[\sigma])N')$
 as required.
@@ -459,6 +459,43 @@ This case holds by Lemma \ref{lm:Eref}.
 $$ \infer{\Gamma \vdash P \supset^* Q : \phi \supset \psi =_\Omega \phi' \supset \psi'}{\Gamma \vdash P : \phi =_\Omega \phi' \quad \Gamma \vdash Q : \psi =_\Omega \psi'} $$
 
 This case holds by Lemma \ref{lm:Esupset}.
+
+\item
+$$ \infer{\Gamma \vdash \univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi}{\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \psi \supset \phi} $$
+
+This case holds by Lemma \ref{lm:Euniv}.
+\item
+$$ \infer{\Gamma \vdash P^+ : \phi \supset \psi}{\Gamma \vdash P : \phi =_\Omega \psi} $$
+
+The induction hypothesis gives $P[\sigma] \in E_\Delta(\phi[\sigma] =_\Omega \psi[\sigma])$, and so immediately $P[\sigma]^+ \in E_\Delta(\phi[\sigma] \supset \psi[\sigma])$.
+\item
+$$ \infer{\Gamma \vdash P^- : \psi \supset \phi}{\Gamma \vdash P : \phi =_\Omega \psi} $$
+
+The induction hypothesis gives $P[\sigma] \in E_\Delta(\phi[\sigma] =_\Omega \psi[\sigma])$, and so immediately $P[\sigma]^- \in E_\Delta(\psi[\sigma] \supset \phi[\sigma])$.
+\item
+$$ \infer{\Gamma \vdash \triplelambda e : x =_A y . P : M =_{A \rightarrow B} N}
+  {\begin{array}{c}
+     \Gamma, x : A, y : A, e : x =_A y \vdash P : M x =_B N y \\
+     \Gamma \vdash M : A \rightarrow B \quad
+\Gamma \vdash N : A \rightarrow B
+     \end{array}} $$
+
+Let $\Theta \supseteq \Delta$, $L, L' \in E_\Theta(A)$, and $Q \in E_\Theta(L =_A L')$.  We must show that
+\[ (\triplelambda e:x =_A y. P [ \sigma ])_{L L'} Q \in E_\Theta(ML =_B NL') \enspace . \]
+We have that $(\sigma, x:=L, y:=L', e:=Q) : (\Gamma, x : A, y : A, e : x =_A y) \rightarrow \Theta$ is computable, and so
+the induction hypothesis gives
+\[ P [ \sigma, x := L, y := L', e := Q ] \in E_\Theta(ML =_B NL') \enspace . \]
+The result follow by Lemma \ref{lm:wte5}.2.
+\item
+$$ \infer{\Gamma \vdash P_{NN'}Q : MN =_B M' N'}{\Gamma \vdash P : M =_{A \rightarrow B} M' \quad \Gamma \vdash Q : N =_A N' \quad \Gamma \vdash N : A \quad \Gamma \vdash N' : A}$$
+
+The induction hypothesis gives $P[\sigma] \in E_\Delta(M[\sigma] =_{A \rightarrow B} M'[\sigma])$ and $N[\sigma] \in E_\Delta(A)$, $N'[\sigma] \in E_\Delta(A)$, $Q[\sigma] \in E_\Delta(N =_A N')$.
+It follows immediately that $(P_{NN'}Q)[\sigma] \in E_\Delta(M[\sigma] N[\sigma] =_B M'[\sigma] N'[\sigma])$.
+\item
+$$ \infer[(M \simeq M', N \simeq N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} $$
+
+The induction hypothesis gives $P[\sigma] \in E_\Delta(M[\sigma] =_A N[\sigma])$, hence $P[\sigma] \in E_\Delta(M'[\sigma] =_A N'[\sigma])$ by Lemma
+\ref{lm:conv-compute}.
 \end{itemize}
 \end{proof}
 
