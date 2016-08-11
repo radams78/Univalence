@@ -8,33 +8,32 @@ open import PHOPL.Red
 
 \subsection{Rules of Deduction}
 
-The rules of deduction of $\lambda o e$ are given in Figures \ref{fig:lambdao} and \ref{fig:lambdaoe}.
+The rules of deduction of $\lambda o e$ are given in Figure \ref{fig:lambdao}.
 
 \newcommand{\RvarT}{\ensuremath(\mathsf{varT})}
 \begin{figure}
 \begin{framed}
+\paragraph{Contexts}
 \[ \infer{\langle \rangle \vald}{} \qquad
 \infer{\Gamma, x : A \vald}{\Gamma \vald} \qquad 
-\infer{\Gamma, p : \phi \vald}{\Gamma \vdash \phi : \Omega} \]
+\infer{\Gamma, p : \phi \vald}{\Gamma \vdash \phi : \Omega} \qquad
+\infer{\Gamma, e : M =_A N \vald}{\Gamma \vdash M : A \quad \Gamma \vdash N : A} \]
 \[ \infer[(x : A \in \Gamma)]{\Gamma \vdash x : A}{\Gamma \vald} \qquad
 \infer[(p : \phi \in \Gamma)]{\Gamma \vdash p : \phi}{\Gamma \vald} \]
+\[ \infer[(e : M =_A N \in \Gamma)]{\Gamma \vdash e : M =_A N}{\Gamma \vald} \]
+
+\paragraph{Terms}
 \[ \infer{\Gamma \vdash \bot : \Omega}{\Gamma \vald} \qquad
 \infer{\Gamma \vdash \phi \supset \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} \]
 \[ \infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \qquad
-\infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \phi} \]
-\[ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \qquad
+\infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \]
+
+\paragraph{Proofs}
+\[ \infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \phi} \qquad
 \infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \supset \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
 \[ \infer[(\phi \simeq \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
-\end{framed}
-\caption{Rules of Deduction of $\lambda o e$}
-\label{fig:lambdao}
-\end{figure}
 
-\begin{figure}
-\begin{framed}
-\[ \infer{\Gamma, e : M =_A N \vald}{\Gamma \vdash M : A \quad \Gamma \vdash N : A}
-\qquad
-\infer[(e : M =_A N \in \Gamma)]{\Gamma \vdash e : M =_A N}{\Gamma \vald} \]
+\paragraph{Paths}
 \[ \infer{\Gamma \vdash \reff{M} : M =_A M}{\Gamma \vdash M : A}
 \qquad
 \infer{\Gamma \vdash P \supset^* Q : \phi \supset \psi =_\Omega \phi' \supset \psi'}{\Gamma \vdash P : \phi =_\Omega \phi' \quad \Gamma \vdash Q : \psi =_\Omega \psi'} \]
@@ -53,7 +52,7 @@ The rules of deduction of $\lambda o e$ are given in Figures \ref{fig:lambdao} a
 \[ \infer[(M \simeq M', N \simeq N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
 \end{framed}
 \caption{Rules of Deduction of $\lambda oe$}
-\label{fig:lambdaoe}
+\label{fig:lambdao}
 \end{figure}
 
 \begin{code}

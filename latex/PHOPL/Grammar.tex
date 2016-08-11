@@ -37,8 +37,8 @@ The syntax of $\lambda o e$ is given by the grammar:
 \end{array}
 \]
 
-
-In the path $\triplelambda e : x =_A y . P$, the term variables $x$ and $y$ must be distinct.  The term variable $x$ is bound within $M$ in the term $\lambda x:A.M$,
+In the path $\triplelambda e : x =_A y . P$, the term variables $x$ and $y$ must be distinct.  (We also have $x \not\equiv e \not\equiv y$, thanks to our
+stipulation that term variables and path variables are disjoint.)  The term variable $x$ is bound within $M$ in the term $\lambda x:A.M$,
 and the proof variable $p$ is bound within $\delta$ in $\lambda p:\phi.\delta$.  The three variables $e$, $x$ and $y$ are bound within $P$ in the path
 $\triplelambda e:x =_A y.P$.  We identify terms, proofs and paths up to $\alpha$-conversion.
 
@@ -46,6 +46,8 @@ We shall use the word 'expression' to mean either a type, term, proof or path.  
 
 Note that we use both Roman letters $M$, $N$ and Greek letters $\phi$, $\psi$, $\chi$ to range over terms.  Intuitively, a term is understood as either a proposition or a function,
 and we shall use Greek letters for terms that are intended to be propositions.  Formally, there is no significance to which letter we choose.
+
+Note also that the types of $\lambda o e$ are just the simple types over $\Omega$; in particular, no variable can occur in a type.
 
 \todo{Give the intuition}.
 

@@ -15,7 +15,8 @@ open import PHOPL.PathSub
 We make the following definitions simultaneously:
 \begin{enumerate}
 \item
-Let \emph{contraction} $\rhd$ be the relation consisting of the pairs shown in Figure \ref{fig:red}, where $M$, $N$, $N'$, $N_1$, $N_2$, $P$, $Q$, $\phi$, $\phi'$, $\psi$, $\psi'$, $\chi$, $\delta$, $\delta'$, $\epsilon$, $\epsilon'$ are closed expressions in normal form.
+Let \emph{contraction} $\rhd$ be the relation consisting of the pairs $s \rhd t$ shown in Figure \ref{fig:red}, 
+such that $s$ is closed, and every proper subexpression of $s$ is in normal form.
 
 \begin{figure}
 \begin{framed}
@@ -199,7 +200,7 @@ Critical-Pairs reflamλλλ reflamλλλ = _ ,p ref ,p ref
 \paragraph{Note}
 Contraction is a relation between closed expressions only: if $s \rhd t$ then $s$ and $t$ are closed.  This is not true for $\rightarrow$, $\twoheadrightarrow$ or $\simeq$, however.  For example, we have $\reff{\bot}^+ x \rightarrow (\lambda p:\bot.p)x$.
 
-\begin{lm}
+\begin{lm}[Reduction respects substitution]
 $ $
 \begin{enumerate}
 \item
@@ -216,21 +217,22 @@ A straightforward induction in each case.
 \end{proof}
 
 \paragraph{Note}
-It is not true in general that, if $M \rightarrow M'$ then $M \{ x:=P : N \sim N' \} \twoheadrightarrow M' \{ x:=P : N \sim N' \}$.  For example, we have
+It is not true in general that reduction respects path substitution; that is, that if $M \rightarrow M'$ then $M \{ x:=P : N \sim N' \} \twoheadrightarrow M' \{ x:=P : N \sim N' \}$.  For example, we have
 $(\lambda x:\Omega.x)(\bot \supset \bot) \rightarrow \bot \supset \bot$,
 but
 \begin{align*}
-((\lambda x:\Omega.x)(\bot \supset \bot)) \{ \} & \equiv (\triplelambda e:x =_\Omega x'.e)(\reff{\bot} \supset^* \reff{\bot}) \\
-(\bot \supset \bot) \{ \} & \equiv \reff{\bot} \supset^* \reff{\bot}
+(\bot \supset \bot) \{ \} & \equiv \reff{\bot} \supset^* \reff{\bot} \\
+((\lambda x:\Omega.x)(\bot \supset \bot)) \{ \} & \equiv (\triplelambda e:x =_\Omega x'.e)(\reff{\bot} \supset^* \reff{\bot})
 \end{align*}
-The first of these paths does \emph{not} reduce to the second, because $\reff{\bot} \supset^* \reff{\bot}$ is not a normal form.
+The second of these paths does \emph{not} reduce to the first, because $\reff{\bot} \supset^* \reff{\bot}$ is not a normal form.
 
 \begin{prop}
 If $r \rightarrow s$ and $r \rightarrow s'$ then there exists $t$ such that $s \rightarrow^? t$ and $s' \rightarrow^? t$.
 \end{prop}
 
 \begin{proof}
-Case analysis on $r \rightarrow s$ and $r \rightarrow s'$.  There are no critical pairs thanks to our restriction that, if $s \rhd t$, then all proper subterms of $s$ are normal forms.
+Case analysis on $r \rightarrow s$ and $r \rightarrow s'$.  There are no critical pairs thanks to our restriction that, if $s \rhd t$, then all proper subterms of $s$ are normal forms; thus, redexes
+cannot overlap.
 \end{proof}
 
 \begin{cor}[Confluence]
