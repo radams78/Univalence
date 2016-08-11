@@ -470,3 +470,27 @@ and we shall use Greek letters for terms that are intended to be propositions.  
 \>\AgdaComment{--REFACTOR General pattern}\<%
 \end{code}
 }
+
+\paragraph{Substitution}
+
+We write $t[z:=s]$ for the result of substituting $s$ for $z$ in $t$,
+renaming bound variables to avoid capture.  We write $s[z_1 := t_1, \ldots, z_n := t_n]$
+or $s[\vec{z} := \vec{t}]$ for the result of simultaneously substituting
+each $t_i$ for $z_i$ in $s$.
+
+A \emph{substitution} $\sigma$ is a function whose domain is a finite set of variables, and
+which maps term variables to terms, proof variables to proofs, and path variables to paths.
+Given a substitution $\sigma$ and an expression $t$, we write $t[\sigma]$ for the result
+of substituting $\sigma(z)$ for $z$ within $t$, for each variable $z$ in the domain of $\sigma$.
+
+Given two substitutions $\sigma$ and $\rho$, we define their \emph{composition} $\sigma \circ \rho$ to
+be the substitution with the same domain an $\rho$, such that
+\[ (\sigma \circ \rho)(x) \eqdef \rho(x)[\sigma] \enspace . \]
+
+\begin{lemma}
+\[ t [\sigma \circ \rho] \equiv t [ \rho ] [ \sigma ] \]
+\end{lemma}
+
+\begin{proof}
+An easy induction on $t$.
+\end{proof}

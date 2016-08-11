@@ -114,18 +114,16 @@ postulate compR-typed : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Rep U V} {Γ} {Δ} 
 \end{code}
 }
 
-Let $\Gamma$ and $\Delta$ be contexts.  A \emph{substitution} $\sigma : \Gamma \Rightarrow \Delta$
-is a function mapping a term $\sigma(x)$ to every term variable $x \in \dom \Gamma$, a proof $\sigma(p)$ to
-every proof variable $p \in \dom \Gamma$, and a path $\sigma(e)$ to every path variable $e \in \dom \Gamma$, such that:
+Let $\Gamma$ and $\Delta$ be contexts.  A \emph{substitution from $\Gamma$ to $\Delta$}, $\sigma : \Gamma \Rightarrow \Delta$,
+is a substitution whose domain is $\dom \Gamma$ such that:
 \begin{itemize}
 \item
 for every term variable $x : A \in \Gamma$, we have $\Delta \vdash \sigma(x) : A$;
 \item
 for every proof variable $p : \phi \in \Gamma$, we have $\Delta \vdash \sigma(p) : \phi [ \sigma ]$;
 \item
-for every path variable $e : M =_A N \in \Gamma$, we have $\Delta \vdash \sigma(e) : M [ \sigma ] =_A N [ \sigma ]$
+for every path variable $e : M =_A N \in \Gamma$, we have $\Delta \vdash \sigma(e) : M [ \sigma ] =_A N [ \sigma ]$.
 \end{itemize}
-where $\phi [ \sigma ]$ is the result of substituting $\sigma(x)$ for every term variable $x$ in $\phi$.
 
 \begin{code}
 postulate _∶_⇒_ : ∀ {U} {V} → Sub U V → Context U → Context V → Set
@@ -225,18 +223,18 @@ If $\Gamma \vdash \lambda x:A.M : B$ then there exists $C$ such that $\Gamma, x 
 \item
 If $\Gamma \vdash MN : A$ then there exists $B$ such that $\Gamma \vdash M : B \rightarrow A$ and $\Gamma \vdash N : B$.
 \item
-If $\Gamma \vdash p : \phi$, then there exists $\psi$ such that $p : \psi \in \Gamma$ and $\phi \simeq_\beta \psi$.
+If $\Gamma \vdash p : \phi$, then there exists $\psi$ such that $p : \psi \in \Gamma$ and $\phi \simeq \psi$.
 \item
-If $\Gamma \vdash \lambda p:\phi.\delta : \psi$, then there exists $\chi$ such that $\Gamma, p : \phi \vdash \delta : \chi$ and $\psi \simeq_\beta \phi \supset \chi$.
+If $\Gamma \vdash \lambda p:\phi.\delta : \psi$, then there exists $\chi$ such that $\Gamma, p : \phi \vdash \delta : \chi$ and $\psi \simeq \phi \supset \chi$.
 \item
 If $\Gamma \vdash \delta \epsilon : \phi$ then there exists $\psi$ such that $\Gamma \vdash \delta : \psi \supset \phi$ and $\Gamma \vdash \epsilon : \psi$.
 \item
-If $\Gamma \vdash e : M =_A N$, then there exist $M'$, $N'$ such that $e : M' =_A N' \in \Gamma$ and $M \simeq_\beta M'$, $N \simeq_\beta N'$.
+If $\Gamma \vdash e : M =_A N$, then there exist $M'$, $N'$ such that $e : M' =_A N' \in \Gamma$ and $M \simeq M'$, $N \simeq N'$.
 \item
-If $\Gamma \vdash \reff{M} : N =_A P$, then we have $\Gamma \vdash M : A$ and $M \simeq_\beta N \simeq_\beta P$.
+If $\Gamma \vdash \reff{M} : N =_A P$, then we have $\Gamma \vdash M : A$ and $M \simeq N \simeq P$.
 \item
 If $\Gamma \vdash P \supset^* Q : \phi =_A \psi$, then there exist $\phi_1$, $\phi_2$, $\psi_1$, $\psi_2$ such that
-$\Gamma \vdash P : \phi_1 =_\Omega \psi_1$, $\Gamma \vdash Q : \phi_2 =_\Omega \psi_2$, $\phi \simeq_\beta \phi_1 \supset \psi_1$, $\psi \simeq_\beta \phi_2 \supset \psi_2$, and $A \equiv \Omega$.
+$\Gamma \vdash P : \phi_1 =_\Omega \psi_1$, $\Gamma \vdash Q : \phi_2 =_\Omega \psi_2$, $\phi \simeq \phi_1 \supset \psi_1$, $\psi \simeq \phi_2 \supset \psi_2$, and $A \equiv \Omega$.
 \item
 If $\Gamma \vdash \univ{\phi}{\psi}{P}{Q} : \chi =_A \theta$, then we have $\Gamma \vdash P : \phi \supset \psi$, $\Gamma \vdash Q : \psi \supset \phi$,
 $\Gamma \vdash \chi \simeq_\Delta \phi : \Omega$, $\Gamma \vdash \theta \simeq_\Delta \psi : \Omega$ and $A \equiv \Omega$.
@@ -244,12 +242,12 @@ $\Gamma \vdash \chi \simeq_\Delta \phi : \Omega$, $\Gamma \vdash \theta \simeq_\
 If $\Gamma \vdash \triplelambda e : x =_A y. P : M =_B N$ then there exists $C$ such that $\Gamma, x : A, y : A, e : x =_A y \vdash P : M x =_C N y$
 and $B \equiv A \rightarrow C$.
 \item
-If $\Gamma \vdash P_{M M'} Q : N =_A N'$, then there exist $B$, $F$ and $G$ such that $\Gamma \vdash P : F =_{B \rightarrow A} G$, $\Gamma \vdash Q : M =_B M'$, $N \simeq_\beta F M$
-and $N' \simeq_\beta G M'$.
+If $\Gamma \vdash P_{M M'} Q : N =_A N'$, then there exist $B$, $F$ and $G$ such that $\Gamma \vdash P : F =_{B \rightarrow A} G$, $\Gamma \vdash Q : M =_B M'$, $N \simeq F M$
+and $N' \simeq G M'$.
 \item
-If $\Gamma \vdash P^+ : \phi$, then there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\phi \simeq_\beta \psi \supset \chi$.
+If $\Gamma \vdash P^+ : \phi$, then there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\phi \simeq \psi \supset \chi$.
 \item
-If $\Gamma \vdash P^- : \phi$, there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\phi \simeq_\beta \chi \supset \psi$.
+If $\Gamma \vdash P^- : \phi$, there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\phi \simeq \chi \supset \psi$.
 \end{enumerate}
 \end{lemma}
 
@@ -265,13 +263,6 @@ postulate Generation-ΛP : ∀ {V} {Γ : Context V} {φ} {δ} {ε} {ψ} →
                           (ψ ≃ φ ⊃ χ × Γ ,P φ ⊢ δ ∶ χ ⇑)
 \end{code}
 }
-
-Given substitutions $\sigma, \rho : \Gamma \rightarrow \Delta$, a \emph{path substitution} $\tau : \sigma \sim \rho$
-is a function mapping every term variable $x \in \Gamma$ to a path $\tau(x)$ such that:
-\begin{itemize}
-\item
-if $x : A \in \Gamma$ then $\Delta \vdash \tau(x) : \sigma(x) =_A \rho(x)$.
-\end{itemize}
 
 \begin{code}
 _∶_∼_∶_⇒_ : ∀ {U} {V} → PathSub U V → Sub U V → Sub U V → Context U → Context V → Set
@@ -302,8 +293,13 @@ postulate sub↗-decomp : ∀ {U} {V} {C} {K} (M : Subexpression (U , -Term) C K
 \end{code}
 }
 
+If $\rho, \sigma : \Gamma \rightarrow \Delta$ and $\tau$ is a path substitution whose domain
+is the term variables in $\dom \Gamma$, then we write
+$\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$ iff, for each variable $x : A \in \Gamma$, we have
+$\Delta \vdash \tau(x) : \sigma(x) =_A \rho(x)$.
+
 \begin{prop}[Path Substitution]
-If $\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$ and $\Gamma \vdash M : A$,
+If $\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$ and $\Gamma \vdash M : A$ and $\Delta \vald$,
 then $\Delta \vdash M \{ \tau : \sigma \sim \rho \} : M [ \sigma ] =_A M [ \rho ]$.
 \end{prop}
 
@@ -392,29 +388,14 @@ postulate ⋆-typed : ∀ {V} {M : Term V} {P N N' Γ A B} →
 \end{code}
 }
 
-Given substitutions $\sigma$, $\rho$, $\rho'$ and a path substitution $\tau$, let $\tau \bullet_{\rho, \rho'} \sigma$ be the path substitution defined by
-\[ (\tau \bullet_{\rho, \rho'} \sigma)(x) \eqdef \sigma(x)\{ \tau : \rho \sim \rho' \} \]
-
 \begin{lemma}
 \label{lm:pathsubcomp}
-$ $
-\begin{enumerate}
-\item
 If $\sigma : \Gamma \rightarrow \Delta$ and $\tau : \rho \sim \rho' : \Delta \rightarrow \Theta$ then $\tau \bullet_{\rho, \rho'} \sigma : \rho \circ \sigma \sim \rho' \circ \sigma : \Gamma \rightarrow \Theta$.
-\item
-$M[\sigma]\{ \tau : \rho \sim \rho' \} \equiv
-M\{ \tau \bullet_{\rho \rho'} \sigma : \rho \circ \sigma \sim \rho' \circ \sigma \}$
-\end{enumerate}
 \end{lemma}
 
-\begin{proof}$ $
-\begin{enumerate}
-\item
+\begin{proof}
 Let $x : A \in \Gamma$.
 We have $\Delta \vdash \sigma(x) : A$, hence $\Theta \vdash \sigma(x) \{ \tau : \rho \sim \rho' \} : \sigma(x) [ \rho ] =_A \sigma(x) [ \rho' ]$.
-\item
-An easy calculation by induction on $M$.
-\end{enumerate}
 \end{proof}
 
 \begin{theorem}[Subject Reduction]

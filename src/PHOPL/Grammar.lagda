@@ -31,8 +31,8 @@ The syntax of $\lambda o e$ is given by the grammar:
 \end{array}
 \]
 
-
-In the path $\triplelambda e : x =_A y . P$, the term variables $x$ and $y$ must be distinct.  The term variable $x$ is bound within $M$ in the term $\lambda x:A.M$,
+In the path $\triplelambda e : x =_A y . P$, the term variables $x$ and $y$ must be distinct.  (We also have $x \not\equiv e \not\equiv y$, thanks to our
+stipulation that term variables and path variables are disjoint.)  The term variable $x$ is bound within $M$ in the term $\lambda x:A.M$,
 and the proof variable $p$ is bound within $\delta$ in $\lambda p:\phi.\delta$.  The three variables $e$, $x$ and $y$ are bound within $P$ in the path
 $\triplelambda e:x =_A y.P$.  We identify terms, proofs and paths up to $\alpha$-conversion.
 
@@ -40,6 +40,8 @@ We shall use the word 'expression' to mean either a type, term, proof or path.  
 
 Note that we use both Roman letters $M$, $N$ and Greek letters $\phi$, $\psi$, $\chi$ to range over terms.  Intuitively, a term is understood as either a proposition or a function,
 and we shall use Greek letters for terms that are intended to be propositions.  Formally, there is no significance to which letter we choose.
+
+Note also that the types of $\lambda o e$ are just the simple types over $\Omega$; in particular, no variable can occur in a type.
 
 \todo{Give the intuition}.
 
@@ -234,3 +236,27 @@ imp-injr refl = refl
 --REFACTOR General pattern
 \end{code}
 }
+
+\paragraph{Substitution}
+
+We write $t[z:=s]$ for the result of substituting $s$ for $z$ in $t$,
+renaming bound variables to avoid capture.  We write $s[z_1 := t_1, \ldots, z_n := t_n]$
+or $s[\vec{z} := \vec{t}]$ for the result of simultaneously substituting
+each $t_i$ for $z_i$ in $s$.
+
+A \emph{substitution} $\sigma$ is a function whose domain is a finite set of variables, and
+which maps term variables to terms, proof variables to proofs, and path variables to paths.
+Given a substitution $\sigma$ and an expression $t$, we write $t[\sigma]$ for the result
+of substituting $\sigma(z)$ for $z$ within $t$, for each variable $z$ in the domain of $\sigma$.
+
+Given two substitutions $\sigma$ and $\rho$, we define their \emph{composition} $\sigma \circ \rho$ to
+be the substitution with the same domain an $\rho$, such that
+\[ (\sigma \circ \rho)(x) \eqdef \rho(x)[\sigma] \enspace . \]
+
+\begin{lemma}
+\[ t [\sigma \circ \rho] \equiv t [ \rho ] [ \sigma ] \]
+\end{lemma}
+
+\begin{proof}
+An easy induction on $t$.
+\end{proof}

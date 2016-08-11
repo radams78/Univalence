@@ -125,3 +125,20 @@ $ \begin{aligned}[t]
 \begin{proof}
 An easy induction on $M$ in both cases.
 \end{proof}
+
+A \emph{path substitution} $\tau$ is a function whose domain is a finite set of term variables,
+and which maps each term variable to a path.  Given a path substitution $\tau$ and substitutions $\rho$, $\sigma$
+with the same domain $\{ x_1, \ldots, x_n \}$, we write
+\[ M \{ \tau : \rho \sim \sigma \} \text{ for } M \{ x_1 := \tau(x_1) : \rho(x_1) \sim \sigma(x_1), \ldots, \tau(x_n) : \rho(x_n) \sim \sigma(x_n) \} \enspace . \]
+
+Given substitutions $\sigma$, $\rho$, $\rho'$ and a path substitution $\tau$, let $\tau \bullet_{\rho, \rho'} \sigma$ be the path substitution defined by
+\[ (\tau \bullet_{\rho, \rho'} \sigma)(x) \eqdef \sigma(x)\{ \tau : \rho \sim \rho' \} \]
+
+\begin{lemma}
+$M[\sigma]\{ \tau : \rho \sim \rho' \} \equiv
+M\{ \tau \bullet_{\rho \rho'} \sigma : \rho \circ \sigma \sim \rho' \circ \sigma \}$
+\end{lemma}
+
+\begin{proof}
+An easy induction on $M$.
+\end{proof}

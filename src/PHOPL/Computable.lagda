@@ -17,8 +17,8 @@ open import PHOPL.Neutral
 
 \section{Computable Expressions}
 
-We define a model of the type theory with types as sets of terms.  For every type (proposition, equation) $A$ in context $\Gamma$, define
-the set of \emph{computable} terms (proofs, paths) $E_\Gamma(A)$.
+We define a model of the type theory with types as sets of terms.  For every type (proposition, equation) $T$ in context $\Gamma$, define
+the set of \emph{computable} terms (proofs, paths) $E_\Gamma(T)$.
 
 \begin{definition}[Neutral]
 A term is \emph{neutral} iff it has the form $x M_1 \cdots M_n$, where each $M_i$ is in normal form.
@@ -36,7 +36,7 @@ E_\Gamma(\phi \supset \psi) \eqdef & \{ \delta \mid \Gamma \vdash \delta : \phi 
 E_\Gamma(\phi) \eqdef & \{ \delta \mid \Gamma \vdash \delta : \phi, \delta \in \SN \} \\
 & \qquad (\phi \text{ neutral}) \\
 E_\Gamma(\phi) \eqdef & \{ \delta \mid \Gamma \vdash \delta : \phi, \delta \in E_\Gamma(\nf{\phi}) \} \\
-& \qquad (\phi \text{ a normalizable term}) \\
+& \qquad (\phi \text{ a weakly normalizable term}) \\
 \\
 E_\Gamma(\Omega) \eqdef & \{ M \mid \Gamma \vdash M : \Omega, M \in \SN, \\
 & \quad M \{\} \in E_\Gamma(M =_\Omega M) \} \\
@@ -295,14 +295,14 @@ then $P \in E_\Gamma(M' =_A N')$.
 From the definition of $E_\Gamma(T)$ and confluence.
 \end{proof}
 
-As a consequence of this lemma, we can ignore the restriction '$\phi$ and $\psi$ are normal forms' in the definition of $E_\Gamma(\phi \supset \psi)$:
+As a consequence of this lemma, we can relax the restriction '$\phi$ and $\psi$ are normal forms' in the definition of $E_\Gamma(\phi \supset \psi)$:
 \begin{lm}$ $
-Let $\phi$ and $\psi$ be normalizable terms, and suppose $\Gamma \vdash \phi : \Omega$ and $\Gamma \vdash \psi : \Omega$.  Then $\delta \in E_\Gamma(\phi \supset \psi)$ if and only if $\Gamma \vdash \delta : \phi \supset \psi$
+Let $\phi$ and $\psi$ be weakly normalizable terms, and suppose $\Gamma \vdash \phi : \Omega$ and $\Gamma \vdash \psi : \Omega$.  Then $\delta \in E_\Gamma(\phi \supset \psi)$ if and only if $\Gamma \vdash \delta : \phi \supset \psi$
 and, for all $\Delta \supseteq \Gamma$ and $\epsilon \in E_\Delta(\phi)$, we have $\delta \epsilon \in E_\Delta(\psi)$.
 \end{lm}
 
 \begin{proof}
-Suppose $\delta \in E_\Gamma(\phi \supset \psi)$.  Let $\Delta \supseteq \Gamma$ and $\epsilon in E_\Delta(\phi)$.  Then $\delta \in E_\Gamma(\nf{\phi} \supset \nf{\psi})$
+Suppose $\delta \in E_\Gamma(\phi \supset \psi)$.  Let $\Delta \supseteq \Gamma$ and $\epsilon \in E_\Delta(\phi)$.  Then $\delta \in E_\Gamma(\nf{\phi} \supset \nf{\psi})$
 and $\epsilon \in E_\Gamma(\nf{\phi})$, hence $\delta \epsilon \in E_\Gamma(\nf{\psi})$.  We also have $\Delta \vdash \delta \epsilon : \psi$, and so $\delta \epsilon \in E_\Delta(\psi)$.
 
 Conversely, suppose the right-hand side holds.  We must show that $\delta \in E_\Gamma(\nf{\phi} \supset \nf{\psi})$.  Let $\Delta \supseteq \Gamma$ and $\epsilon \in
@@ -312,7 +312,7 @@ as required.
 
 \begin{lm}
 \label{lm:varcompute1}
-Let $\phi$ be a normalizable term.
+Let $\phi$ be a weakly normalizable term.
 \begin{enumerate}
 \item
 If $\Gamma \vald$ and $p : \phi \in \Gamma$ then $p \in E_\Gamma(\phi)$.
@@ -510,38 +510,38 @@ $\reff{M} \vec{P}_{N_{n+1} N_{n+1}'} P_{n*1} \in E_\Gamma(M \vec{N} N_{n+1} =_C 
 from the induction hypothesis.
 \end{proof}
 
-\begin{lm}
-\label{lm:Ered1}
-If $\reff{M}_{N N} \reff{N} \in E_\Gamma(L =_A L')$ then $\reff{MN} \in E_\Gamma(L =_A L')$.
-\end{lm}
+% \begin{lm}
+% \label{lm:Ered1}
+% If $\reff{M}_{N N} \reff{N} \in E_\Gamma(L =_A L')$ then $\reff{MN} \in E_\Gamma(L =_A L')$.
+% \end{lm}
 
-\begin{proof}
-We prove the following stronger statement:
+% \begin{proof}
+% We prove the following stronger statement:
 
-If $\reff{M}_{N N} \reff{N}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in E_\Gamma(L =_A L')$ then \\
-$\reff{MN}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in E_\Gamma(L =_A L')$.
+% If $\reff{M}_{N N} \reff{N}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in E_\Gamma(L =_A L')$ then \\
+% $\reff{MN}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in E_\Gamma(L =_A L')$.
 
-The proof is by induction on the type $A$.
+% The proof is by induction on the type $A$.
 
-If $A \equiv \Omega$: we have $\Gamma \vdash \reff{M}_{N N} \reff{N} \vec{P} : L =_A L'$, hence $\Gamma \vdash \reff{MN} \vec{P} : L =_\Omega L'$
-using Generation.  We must show that $(\reff{MN} \vec{P})^+ \in E_\Gamma(L \supset L')$.
+% If $A \equiv \Omega$: we have $\Gamma \vdash \reff{M}_{N N} \reff{N} \vec{P} : L =_A L'$, hence $\Gamma \vdash \reff{MN} \vec{P} : L =_\Omega L'$
+% using Generation.  We must show that $(\reff{MN} \vec{P})^+ \in E_\Gamma(L \supset L')$.
 
-Let $\delta \in E_\Gamma(L)$.  Let $\nf{L'} \equiv \phi_1 \supset \cdots \supset \phi_m \supset \chi$, where $\chi$ is either $\bot$ or neutral.  Let $\epsilon_j \in E_\Gamma(\phi_j)$ for all $j$.  
-It is easy to see that $\Gamma \vdash (\reff{MN} \vec{P})^+ \delta \vec{\epsilon} : \chi$, and it remains to show that this proof is strongly normalizing.
-By hypothesis, we have
-\[ (\reff{M}_{NN} \reff{N} \vec{P})^+ \delta \vec{\epsilon} \in \SN \]
-and the result follows by Lemma \ref{lm:SNred1}.
+% Let $\delta \in E_\Gamma(L)$.  Let $\nf{L'} \equiv \phi_1 \supset \cdots \supset \phi_m \supset \chi$, where $\chi$ is either $\bot$ or neutral.  Let $\epsilon_j \in E_\Gamma(\phi_j)$ for all $j$.  
+% It is easy to see that $\Gamma \vdash (\reff{MN} \vec{P})^+ \delta \vec{\epsilon} : \chi$, and it remains to show that this proof is strongly normalizing.
+% By hypothesis, we have
+% \[ (\reff{M}_{NN} \reff{N} \vec{P})^+ \delta \vec{\epsilon} \in \SN \]
+% and the result follows by Lemma \ref{lm:SNred1}.
 
-Similarly, $(\reff{M}_{NN} \reff{N} \vec{P})^- \in E_\Gamma(L' \supset L)$.
+% Similarly, $(\reff{M}_{NN} \reff{N} \vec{P})^- \in E_\Gamma(L' \supset L)$.
 
-If $A \equiv B \rightarrow C$: we have $\Gamma \vdash \reff{MN} \vec{P} : L =_A L'$ as before.  Now, let $K_{n+1}, K_{n+1}' \in E_\Gamma(B)$
-and $P_{n+1} \in E_\Gamma(K_{n+1} =_B K_{n+1}')$.  Then we have
-\begin{align*}
-\reff{M}_{N N} \reff{N} \vec{P}_{K_{n+1} K_{n+1}} P_{n+1} & \in E_\Gamma(LK_{n+1} =_C L'K_{n+1}') \\
-\therefore \reff{MN} \vec{P}_{K_{n+1} K_{n+1}'} P_{n+1} & \in E_\Gamma(LK_{n+1} =_C L'K_{n+1}')
-\end{align*}
-by the induction hypothesis, as required.
-\end{proof}
+% If $A \equiv B \rightarrow C$: we have $\Gamma \vdash \reff{MN} \vec{P} : L =_A L'$ as before.  Now, let $K_{n+1}, K_{n+1}' \in E_\Gamma(B)$
+% and $P_{n+1} \in E_\Gamma(K_{n+1} =_B K_{n+1}')$.  Then we have
+% \begin{align*}
+% \reff{M}_{N N} \reff{N} \vec{P}_{K_{n+1} K_{n+1}} P_{n+1} & \in E_\Gamma(LK_{n+1} =_C L'K_{n+1}') \\
+% \therefore \reff{MN} \vec{P}_{K_{n+1} K_{n+1}'} P_{n+1} & \in E_\Gamma(LK_{n+1} =_C L'K_{n+1}')
+% \end{align*}
+% by the induction hypothesis, as required.
+% \end{proof}
 
 % \begin{lm}
 % \label{lm:Egen}
@@ -562,37 +562,37 @@ by the induction hypothesis, as required.
 % by Lemma \ref{lm:conv-compute}, as required.
 % \end{proof}
 
-\begin{lm}
-\label{lm:wte1}
-Let $\Gamma, x : A \vdash M : B$ and let $N \in E_\Gamma(A)$.  If $\reff{M[x:=N]} \in E_\Gamma(L =_B L')$, then
-$\reff{(\lambda x:A.M)N} \in E_\Gamma(L =_B L')$.
-\end{lm}
+% \begin{lm}
+% \label{lm:wte1}
+% Let $\Gamma, x : A \vdash M : B$ and let $N \in E_\Gamma(A)$.  If $\reff{M[x:=N]} \in E_\Gamma(L =_B L')$, then
+% $\reff{(\lambda x:A.M)N} \in E_\Gamma(L =_B L')$.
+% \end{lm}
 
-\begin{proof}
-We prove the following stronger statement:
+% \begin{proof}
+% We prove the following stronger statement:
 
-Suppose $\Gamma, x : A \vdash M : B_1 \rightarrow \cdots \rightarrow B_m \rightarrow C_1 \rightarrow \cdots \rightarrow C_n \rightarrow D$.
-Let $N \in E_\Gamma(A)$, $N_i \in E_\Gamma(B_i)$, $L_j, L_j' \in E_\Gamma(C_j)$ and $P_j \in E_\Gamma(L_j =_{C_j} L_j')$ for all $i$, $j$.
-If $$\reff{M[x:=N] N_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n \in E_\Gamma(L =_{D} L') \enspace , $$
-then $$\reff{(\lambda x:A.M)N N_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n \in E_\Gamma(L =_{D} L') \enspace . $$
+% Suppose $\Gamma, x : A \vdash M : B_1 \rightarrow \cdots \rightarrow B_m \rightarrow C_1 \rightarrow \cdots \rightarrow C_n \rightarrow D$.
+% Let $N \in E_\Gamma(A)$, $N_i \in E_\Gamma(B_i)$, $L_j, L_j' \in E_\Gamma(C_j)$ and $P_j \in E_\Gamma(L_j =_{C_j} L_j')$ for all $i$, $j$.
+% If $$\reff{M[x:=N] N_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n \in E_\Gamma(L =_{D} L') \enspace , $$
+% then $$\reff{(\lambda x:A.M)N N_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n \in E_\Gamma(L =_{D} L') \enspace . $$
 
-The proof is by induction on the type $D$.
+% The proof is by induction on the type $D$.
 
-If $D \equiv \Omega$: it is easy to verify that \\
-$\Gamma \vdash \reff{(\lambda x:A.M)N \vec{N}} \vec{P} : L =_{\Omega} L'$ using
-Generation.  Now, let $\Delta \supseteq \Gamma$, let $\delta \in E_\Delta(L)$, let
-$\nf{L'} \equiv \psi_1 \supset \cdots \supset \psi_m \supset \chi$ where $\chi$ is $\bot$ or neutral,
-and let $\epsilon_j \in E_\Delta(\psi_j)$ for each $j$.  We have that $\Delta \vdash (\reff{(\lambda x:A.M)N \vec{N}} \vec{P})^+ \delta \vec{\epsilon} : \chi$, so it remains to show that this term is strongly normalizing.  The hypothesis gives
-\[ (\reff{M[x:=N] \vec{N}} \vec{P})^+ \delta \vec{\epsilon} \in E_\Delta(\chi) \subseteq \SN \]
-and the result follows by Lemma \ref{lm:SN}.\ref{lm:SN2}.
+% If $D \equiv \Omega$: it is easy to verify that \\
+% $\Gamma \vdash \reff{(\lambda x:A.M)N \vec{N}} \vec{P} : L =_{\Omega} L'$ using
+% Generation.  Now, let $\Delta \supseteq \Gamma$, let $\delta \in E_\Delta(L)$, let
+% $\nf{L'} \equiv \psi_1 \supset \cdots \supset \psi_m \supset \chi$ where $\chi$ is $\bot$ or neutral,
+% and let $\epsilon_j \in E_\Delta(\psi_j)$ for each $j$.  We have that $\Delta \vdash (\reff{(\lambda x:A.M)N \vec{N}} \vec{P})^+ \delta \vec{\epsilon} : \chi$, so it remains to show that this term is strongly normalizing.  The hypothesis gives
+% \[ (\reff{M[x:=N] \vec{N}} \vec{P})^+ \delta \vec{\epsilon} \in E_\Delta(\chi) \subseteq \SN \]
+% and the result follows by Lemma \ref{lm:SN}.\ref{lm:SN2}.
 
-If $D \equiv C_{n+1} \rightarrow E$: let $L_{n+1}, L_{n+1}' \in E_\Gamma(C_{n+1})$ and $P_{n+1} \in E_{\Gamma}(L_{n+1} =_{C_{n+1}} L_{n+1}')$.  Then
-\begin{align*}
-\reff{(M[x:=N] \vec{N}} \vec{P}_{L_{n+1} L_{n+1}'} P_{n+1} & \in E_\Gamma(L L_{n+1} =_{E} L' L_{n+1}') \\
-\therefore \reff{((\lambda x:A.M)N \vec{N}} \vec{P}_{L_{n+1} L_{n+1}'} P_{n+1} & \in E_\Gamma(L L_{n+1} =_{E} L' L_{n+1}')
-\end{align*}
-by the induction hypothesis, as required.
-\end{proof}
+% If $D \equiv C_{n+1} \rightarrow E$: let $L_{n+1}, L_{n+1}' \in E_\Gamma(C_{n+1})$ and $P_{n+1} \in E_{\Gamma}(L_{n+1} =_{C_{n+1}} L_{n+1}')$.  Then
+% \begin{align*}
+% \reff{(M[x:=N] \vec{N}} \vec{P}_{L_{n+1} L_{n+1}'} P_{n+1} & \in E_\Gamma(L L_{n+1} =_{E} L' L_{n+1}') \\
+% \therefore \reff{((\lambda x:A.M)N \vec{N}} \vec{P}_{L_{n+1} L_{n+1}'} P_{n+1} & \in E_\Gamma(L L_{n+1} =_{E} L' L_{n+1}')
+% \end{align*}
+% by the induction hypothesis, as required.
+% \end{proof}
 
 \begin{lemma}
 \label{lm:wte5}
@@ -625,7 +625,7 @@ $M[x:=N]N_1 \cdots N_n \in E_\Gamma(C)$ then $(\lambda x:A.M)NN_1 \cdots N_n \in
 
 The proof is by induction on the type $C$.
 
-If $C \equiv \Omega$: it is easy to verify that $\Gamma \vdash (\lambda x:A.M)NN_1 \cdots N_n : \Omega$.  Lemma \ref{lm:SN}.\ref{lm:SN1}
+If $C \equiv \Omega$: it is easy to verify that $\Gamma \vdash (\lambda x:A.M)NN_1 \cdots N_n : \Omega$.  Lemma \ref{lm:SN}.
 gives that $(\lambda x:A.M)NN_1 \cdots N_n \in \SN$.
 
 Now let $\Delta \supseteq \Gamma$ and $\delta \in E_\Delta((\lambda x:A.M)N \vec{N})$.  Let $\nf{(\lambda x:A.M)N \vec{N}} \equiv \phi_1 \supset \cdots \supset \phi_n \supset \chi$ where $\chi$ is $\bot$ or neutral.  Let $\epsilon_j \in E_\Delta(\phi_j)$ for each $j$.  We must show that
@@ -666,31 +666,31 @@ This follows from part 2 of the previous lemma since we have
 \[ M[x:=N]\{\} \equiv M \{ x:= N \{ \} : N \sim N \} \in E_\Gamma(M[x:=N] = M[x:=N]) \]
 \end{proof}
 
-\begin{lm}
-\label{lm:wte3}
-Let $\Gamma, x : A \vdash M : B$.  Let $N, N_1, N_2 \in E_\Gamma(A)$, and $N \simeq N_1 \simeq N_2$.  If $M[x:=N] \in E_\Gamma(B)$,
-then $\reff{\lambda x:A.M}_{N_1 N_2} \reff{N} \in E_\Gamma((\lambda x:A.M)N_1 =_B (\lambda x:A.M) N_2)$.
-\end{lm}
+% \begin{lm}
+% \label{lm:wte3}
+% Let $\Gamma, x : A \vdash M : B$.  Let $N, N_1, N_2 \in E_\Gamma(A)$, and $N \simeq N_1 \simeq N_2$.  If $M[x:=N] \in E_\Gamma(B)$,
+% then $\reff{\lambda x:A.M}_{N_1 N_2} \reff{N} \in E_\Gamma((\lambda x:A.M)N_1 =_B (\lambda x:A.M) N_2)$.
+% \end{lm}
 
-\begin{proof}
-We prove the following stronger statement.
+% \begin{proof}
+% We prove the following stronger statement.
 
-Suppose $\Gamma, x : A \vdash M : B_1 \rightarrow \cdots \rightarrow B_n \rightarrow C$ and $N, N_1, N_2 \in E_\Gamma(A)$,
-$L_i, L_i' \in E_\Gamma(B_i)$ and $P_i \in E_\Gamma(L_i =_{B_i} L_i')$ for all $i$.  If $M[x:=N] \in E_\Gamma(B_1 \rightarrow \cdots \rightarrow B_n \rightarrow C)$,
-then $\reff{\lambda x:A.M}_{N_1 N_2} \reff{N}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in E_\Gamma((\lambda x:A.M) N_1 L_1 \cdots L_n =_C (\lambda x:A.M) N_2 L_1' \cdots L_n')$.
+% Suppose $\Gamma, x : A \vdash M : B_1 \rightarrow \cdots \rightarrow B_n \rightarrow C$ and $N, N_1, N_2 \in E_\Gamma(A)$,
+% $L_i, L_i' \in E_\Gamma(B_i)$ and $P_i \in E_\Gamma(L_i =_{B_i} L_i')$ for all $i$.  If $M[x:=N] \in E_\Gamma(B_1 \rightarrow \cdots \rightarrow B_n \rightarrow C)$,
+% then $\reff{\lambda x:A.M}_{N_1 N_2} \reff{N}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in E_\Gamma((\lambda x:A.M) N_1 L_1 \cdots L_n =_C (\lambda x:A.M) N_2 L_1' \cdots L_n')$.
 
-The proof is by induction on the type $C$.
+% The proof is by induction on the type $C$.
 
-If $C \equiv \Omega$: the proof follows the same pattern as our last few lemmas, using Lemma \ref{lm:SN}.\ref{lm:SN4}.
+% If $C \equiv \Omega$: the proof follows the same pattern as our last few lemmas, using Lemma \ref{lm:SN}.\ref{lm:SN4}.
 
-If $C \equiv B_{n+1} \rightarrow D$: let $L_{n+1}, L_{n+1}' \in E_\Gamma(B_{n+1})$ and $P_{n+1} \in E_\Gamma(L_{n+1} =_{B_{n+1}} L_{n+1}')$.  Then
-\begin{align*}
-\lefteqn{\reff{\lambda x:A.M}_{N_1 N_2} \reff{N}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} (P_n)_{L_{n+1} L_{n+1}'} P_{n+1}} \\
-\quad &\in E_\Gamma((\lambda x:A.M) N_1 L_1 \cdots L_n L_{n+1} =_C (\lambda x:A.M) N_2 L_1' \cdots L_n'
-L_{n+1}')
-\end{align*}
-by the induction hypothesis, as required.
-\end{proof}
+% If $C \equiv B_{n+1} \rightarrow D$: let $L_{n+1}, L_{n+1}' \in E_\Gamma(B_{n+1})$ and $P_{n+1} \in E_\Gamma(L_{n+1} =_{B_{n+1}} L_{n+1}')$.  Then
+% \begin{align*}
+% \lefteqn{\reff{\lambda x:A.M}_{N_1 N_2} \reff{N}_{L_1 L_1'} P_1 \cdots_{L_n L_n'} (P_n)_{L_{n+1} L_{n+1}'} P_{n+1}} \\
+% \quad &\in E_\Gamma((\lambda x:A.M) N_1 L_1 \cdots L_n L_{n+1} =_C (\lambda x:A.M) N_2 L_1' \cdots L_n'
+% L_{n+1}')
+% \end{align*}
+% by the induction hypothesis, as required.
+% \end{proof}
 
 % \begin{lm}
 % \label{lm:wte4}
@@ -1102,9 +1102,11 @@ Then the only possible reduction sequence from $\reff{\phi \supset \psi}^* \delt
 \[ \reff{\phi \supset \psi}^* \delta \epsilon \vec{\epsilon} \rightarrow (\lambda p p) \delta \epsilon \vec{\epsilon} \rightarrow \delta \epsilon \vec{\epsilon} \]
 which is in $\SN$ since $\delta \in E_\Gamma(\phi \supset \psi)$.
 \item
-$P \equiv \univ{}{}{\alpha}{\beta}$, $Q \equiv \univ{}{}{\alpha'}{\beta'}$, and $(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow \univ{}{}{\lambda pq.\alpha' (p (\beta q))}{\lambda pq.\beta' (p (\alpha q))}^+ \delta \epsilon \vec{\epsilon}$.
+$P \equiv \univ*{\alpha}{\beta}$, $Q \equiv \univ*{\alpha'}{\beta'}$, and \\
+$(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow \univ{}{}{\lambda pq.\alpha' (p (\beta q))}{\lambda pq.\beta' (p (\alpha q))}^+ \delta \epsilon \vec{\epsilon}$.
 
-Then the only possible reduction sequence from $\univ{}{}{\lambda pq.\alpha' (p (\beta q))}{\lambda pq.\beta' (p (\alpha q))}\delta \epsilon \vec{\epsilon}$ is
+Then the only possible reduction sequence from \\
+$\univ*{\lambda pq.\alpha' (p (\beta q))}{\lambda pq.\beta' (p (\alpha q))}\delta \epsilon \vec{\epsilon}$ is
 
 \begin{align*}
 \lefteqn{\univ{}{}{\lambda pq.\alpha' (p (\beta q))}{\lambda pq.\beta' (p (\alpha q))}^+ \delta \epsilon \vec{\epsilon}} \\
@@ -1114,11 +1116,11 @@ Then the only possible reduction sequence from $\univ{}{}{\lambda pq.\alpha' (p 
 Now, we know $P^- \in E_\Gamma(\phi' \supset \phi)$ hence $\beta \in E_\Gamma(\phi' \supset \phi)$, and so $\beta \epsilon \in E_\Gamma(\phi)$.  Similarly
 $\alpha' \in E_\Gamma(\psi \supset \psi_1 \supset \cdots \supset \psi_n \supset \chi)$, and so $\alpha' (\delta (\beta \epsilon)) \vec{\epsilon} \in E_\Gamma(\bot) \subseteq \SN$ as required.
 \item
-$P \equiv \univ{}{}{\alpha}{\beta}$, $Q \equiv \reff{\psi}$ and $(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow \univ{}{}{\lambda pq.p(\beta q)}{\lambda pq.p(\alpha q)}$
+$P \equiv \univ*{\alpha}{\beta}$, $Q \equiv \reff{\psi}$ and $(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow \univ{}{}{\lambda pq.p(\beta q)}{\lambda pq.p(\alpha q)}$
 
 Similar to the above.
 \item
-$P \equiv \reff{\phi}$, $Q \equiv \univ{}{}{\alpha}{\beta}$ and $(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow \univ{}{}{\lambda pq.\alpha(pq)}{\lambda pq.\beta(pq)}$
+$P \equiv \reff{\phi}$, $Q \equiv \univ*{\alpha}{\beta}$ and $(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow \univ{}{}{\lambda pq.\alpha(pq)}{\lambda pq.\beta(pq)}$
 
 Similar to the above.
 \end{itemize}

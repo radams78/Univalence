@@ -27,11 +27,13 @@ According to the traditional approach to type theory \todo{Citation}, a type the
 following properties in order to enjoy a good meaning explanation:
 \begin{itemize}
 \item \textbf{Confluence} --- The reduction relation should be confluent.
-\item \textbf{Strong Normalization} --- Every reduction strategy should terminate.
+\item \textbf{Normalization} --- Every well-typed term should reduce to a normal form.
 \item \textbf{Canonicity} --- Hence every well-typed term of type $A$ reduces to a unique canonical form of $A$.  (For example,
 every closed term of type $\mathbb{N}$ reduces to a unique \emph{numeral} --- a term formed by applying $\mathrm{suc}$ some
 finite number of times to 0.)
 \end{itemize}
+
+It is desirable to have, in addition, \emph{strong normalization}, so that we know that we are free to choose whatever reduction strategy we please.
 
 The \emph{univalence axiom} of Homotopy Type theory (HoTT) \todo{Citation} breaks the property of canonicity.  It postulates a
 constant
@@ -50,11 +52,13 @@ the full Homotopy Type Theory is a complex and interdependent system.  We can ta
 a well-behaved reduction relation, then doing the same for more and more complex systems, gradually approaching the full strength of HoTT.
 
 In this paper, we present a system we call $\lambda o e$, or predicative higher-order propositional logic.  It is a type theory with two universes: the universe $\Omega$
-of \emph{propositions}, and the universe $U$ of \emph{types}.  The propositions are closed under $\supset$ (implication) and include $\bot$ (falsehood), and an equality proposition $M =_A N$ for
+of \emph{propositions}, and the universe of \emph{types}.  The propositions are closed under $\supset$ (implication) and include $\bot$ (falsehood), and an equality proposition $M =_A N$ for
 any type $A : U$ and terms $M : A$ and $N : A$.  The types include $\Omega$ itself and are closed under $\rightarrow$ (non-dependent function type).
 
-There are two canonical forms for proofs of $M =_A N$.  For any term $M : A$, we have $\reff{M} : M =_A M$.  We also add univalence for this system, in this form:
-if $\delta : \phi \supset \psi$ and $\epsilon : \psi \supset\phi$, then $\univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi$.  We present a reduction relation for this system, and prove it satisfies confluence, strong normalization and canonicity. \todo{Cross-reference lemma numbers.}
+There are two canonical forms for proofs of $M =_\Omega N$.  For any term $M : \Omega$, we have $\reff{M} : M =_\Omega M$.  We also add univalence for this system, in this form:
+if $\delta : \phi \supset \psi$ and $\epsilon : \psi \supset\phi$, then $\univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi$.  
+
+We present a reduction relation for this system, and prove it satisfies confluence, strong normalization and canonicity. \todo{Cross-reference lemma numbers.}
 
 For the future, we wish to expand the system with universal quantification, and expand it to a 2-dimensional system (with equations between proofs).
 
