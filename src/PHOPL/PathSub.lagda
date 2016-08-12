@@ -13,11 +13,10 @@ We introduce a notion of \emph{path substitution}.  The intention is that, if
 $\Gamma \vdash P : M =_A M'$ and $\Gamma, x : A \vdash N : B$ then $\Gamma \vdash N \{ x := P : M \sim M' \} : N [ x:= M ] =_B N [ x := M' ]$.
 
 \begin{definition}[Path Substitution]
-Given terms $M_1$, \ldots, $M_n$ and $N_1$, \ldots, $N_n$; paths $P_1$, \ldots, $P_n$; term variales $x_1$, \ldots, $x_n$; and a term $L$, define the path $L \{ x_1 := P_1 : M_1 \sim N_1 , \ldots, x_n := P_n : M_n \sim N_n \}$ as follows.
+Given terms $M_1$, \ldots, $M_n$ and $N_1$, \ldots, $N_n$; paths $P_1$, \ldots, $P_n$; term variables $x_1$, \ldots, $x_n$; and a term $L$, define the path $L \{ x_1 := P_1 : M_1 \sim N_1 , \ldots, x_n := P_n : M_n \sim N_n \}$ as follows.
 \begin{align*}
 x_i \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef P_i \\
-y \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef \reff{y} \\
-& \qquad (y \not\equiv x_1, \ldots, x_n) \\
+y \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef \reff{y} \qquad (y \not\equiv x_1, \ldots, x_n) \\
 \bot \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef \reff{\bot} \\
 (LL') \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} \\
 \omit\rlap{\qquad \qquad $\eqdef L \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \}_{L' [\vec{x} := \vec{M}] L' [\vec{x} := \vec{N}]} L' \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \}$} \\
@@ -125,4 +124,21 @@ $ \begin{aligned}[t]
 
 \begin{proof}
 An easy induction on $M$ in both cases.
+\end{proof}
+
+A \emph{path substitution} $\tau$ is a function whose domain is a finite set of term variables,
+and which maps each term variable to a path.  Given a path substitution $\tau$ and substitutions $\rho$, $\sigma$
+with the same domain $\{ x_1, \ldots, x_n \}$, we write
+\[ M \{ \tau : \rho \sim \sigma \} \text{ for } M \{ x_1 := \tau(x_1) : \rho(x_1) \sim \sigma(x_1), \ldots, \tau(x_n) : \rho(x_n) \sim \sigma(x_n) \} \enspace . \]
+
+Given substitutions $\sigma$, $\rho$, $\rho'$ and a path substitution $\tau$, let $\tau \bullet_{\rho, \rho'} \sigma$ be the path substitution defined by
+\[ (\tau \bullet_{\rho, \rho'} \sigma)(x) \eqdef \sigma(x)\{ \tau : \rho \sim \rho' \} \]
+
+\begin{lemma}
+$M[\sigma]\{ \tau : \rho \sim \rho' \} \equiv
+M\{ \tau \bullet_{\rho \rho'} \sigma : \rho \circ \sigma \sim \rho' \circ \sigma \}$
+\end{lemma}
+
+\begin{proof}
+An easy induction on $M$.
 \end{proof}

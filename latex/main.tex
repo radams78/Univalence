@@ -27,11 +27,13 @@ According to the traditional approach to type theory \todo{Citation}, a type the
 following properties in order to enjoy a good meaning explanation:
 \begin{itemize}
 \item \textbf{Confluence} --- The reduction relation should be confluent.
-\item \textbf{Strong Normalization} --- Every reduction strategy should terminate.
+\item \textbf{Normalization} --- Every well-typed term should reduce to a normal form.
 \item \textbf{Canonicity} --- Hence every well-typed term of type $A$ reduces to a unique canonical form of $A$.  (For example,
 every closed term of type $\mathbb{N}$ reduces to a unique \emph{numeral} --- a term formed by applying $\mathrm{suc}$ some
 finite number of times to 0.)
 \end{itemize}
+
+It is desirable to have, in addition, \emph{strong normalization}, so that we know that we are free to choose whatever reduction strategy we please.
 
 The \emph{univalence axiom} of Homotopy Type theory (HoTT) \todo{Citation} breaks the property of canonicity.  It postulates a
 constant
@@ -50,54 +52,21 @@ the full Homotopy Type Theory is a complex and interdependent system.  We can ta
 a well-behaved reduction relation, then doing the same for more and more complex systems, gradually approaching the full strength of HoTT.
 
 In this paper, we present a system we call $\lambda o e$, or predicative higher-order propositional logic.  It is a type theory with two universes: the universe $\Omega$
-of \emph{propositions}, and the universe $U$ of \emph{types}.  The propositions are closed under $\supset$ (implication) and include $\bot$ (falsehood), and an equality proposition $M =_A N$ for
+of \emph{propositions}, and the universe of \emph{types}.  The propositions are closed under $\supset$ (implication) and include $\bot$ (falsehood), and an equality proposition $M =_A N$ for
 any type $A : U$ and terms $M : A$ and $N : A$.  The types include $\Omega$ itself and are closed under $\rightarrow$ (non-dependent function type).
 
-There are two canonical forms for proofs of $M =_A N$.  For any term $M : A$, we have $\reff{M} : M =_A M$.  We also add univalence for this system, in this form:
-if $\delta : \phi \supset \psi$ and $\epsilon : \psi \supset\phi$, then $\univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi$.  We present a reduction relation for this system, and prove it satisfies confluence, strong normalization and canonicity. \todo{Cross-reference lemma numbers.}  The reduction relation does not necessarily satisfy confluence on raw terms, but it does satisfy local confluence.  Hence, as
-every typed term is strongly normalizing, we know by Newman's Lemma that the reduction is confluent on the typed terms.
+There are two canonical forms for proofs of $M =_\Omega N$.  For any term $M : \Omega$, we have $\reff{M} : M =_\Omega M$.  We also add univalence for this system, in this form:
+if $\delta : \phi \supset \psi$ and $\epsilon : \psi \supset\phi$, then $\univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi$.  
+
+We present a reduction relation for this system, and prove it satisfies confluence, strong normalization and canonicity. \todo{Cross-reference lemma numbers.}
 
 For the future, we wish to expand the system with universal quantification, and expand it to a 2-dimensional system (with equations between proofs).
 
 \todo{Elimination of the false proposition?}
 
-\section{Predicative Higher-Order Propositional Logic}
+\section{Predicative Higher-Order Propositional Logic with Extensional Equality}
 
-We call the following type theory $\lambda o$, or \emph{predicative higher-order propositional logic}.  Its
-syntax is given by the grammar:
-
-\[
-\begin{array}{lrcl}
-\text{Type} & A & ::= & \Omega \mid A \rightarrow A \\
-\text{Term} & M, \phi & ::= & x \mid \bot \mid \phi \supset\phi \mid \lambda x:A.M \mid MM \\
-\text{Proof} & \delta & ::= & p \mid \lambda p:\phi.\delta \mid \delta \delta
-\end{array}
-\]
-where $p$ is a \emph{proof variable} and $x$ is a \emph{term variable}.  We define the usual relation of $\beta$-reduction on these terms.
-The rules of deduction of $\lambda o$ are given in Figure \ref{fig:lambdao}
-
-\begin{figure}
-\begin{framed}
-\[ \infer{\langle \rangle \vald}{} \qquad
-\infer{\Gamma, x : A \vald}{\Gamma \vald} \qquad 
-\infer{\Gamma, p : \phi \vald}{\Gamma \vdash \phi : \Omega} \]
-\[ \infer[(x : A \in \Gamma)]{\Gamma \vdash x : A}{\Gamma \vald} \qquad
-\infer[(p : \phi \in \Gamma)]{\Gamma \vdash p : \phi}{\Gamma \vald} \]
-\[ \infer{\Gamma \vdash \bot : \Omega}{\Gamma \vald} \qquad
-\infer{\Gamma \vdash \phi \supset \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} \]
-\[ \infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \qquad
-\infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \phi} \]
-\[ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \qquad
-\infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \supset \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
-\[ \infer[(\phi \simeq_\beta \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
-\end{framed}
-\caption{Rules of Deduction of $\lambda o$}
-\label{fig:lambdao}
-\end{figure}
-
-\section{Extensional Equality}
-
-We extend the system to a type theory $\lambda o e$, or predicative higher-order propositional logic with extensional equality.
+We call the following type theory $\lambda o e$, or \emph{predicative higher-order propositional logic with extensional equality}.  
 
 \input{PHOPL/Grammar.tex}
 \input{PHOPL/PathSub.tex}
@@ -114,266 +83,280 @@ We extend the system to a type theory $\lambda o e$, or predicative higher-order
 
 %TODO Canonicity
 
-\section{$\lambda o i$}
+% \section{$\lambda o i$}
 
-We further extend the system so that the equations are elements of $\Omega$.  This allows us, for example,
-to form propositions of the form $M =_A N \supset N =_A M$.
+% We further extend the system so that the equations are elements of $\Omega$.  This allows us, for example,
+% to form propositions of the form $M =_A N \supset N =_A M$.
 
-The system $\lambda o i$ ($\lambda o$ with \emph{internal} equality) is defined as follows.  The
-syntax is formed by extending the grammar of $\lambda o$ with
-\[
-\begin{array}{lrcl}
-\text{Term} & M, \phi & ::= & \cdots \mid M =_A M \\
-\text{Proof} & \delta & ::= & \cdots \mid \reff{M} \mid \delta \supset^* \delta \mid \univ{\phi}{\phi}{\delta}{\delta} \mid \triplelambda^{MM} e : x =_A x . \delta \mid \delta_{MM} \delta\\
-& & & \quad \mid \delta =^*_A \delta \mid \delta^+ \mid \delta^-
-\end{array}
-\]
+% The system $\lambda o i$ ($\lambda o$ with \emph{internal} equality) is defined as follows.  The
+% syntax is formed by extending the grammar of $\lambda o$ with
+% \[
+% \begin{array}{lrcl}
+% \text{Term} & M, \phi & ::= & \cdots \mid M =_A M \\
+% \text{Proof} & \delta & ::= & \cdots \mid \reff{M} \mid \delta \supset^* \delta \mid \univ{\phi}{\phi}{\delta}{\delta} \mid \triplelambda^{MM} e : x =_A x . \delta \mid \delta_{MM} \delta\\
+% & & & \quad \mid \delta =^*_A \delta \mid \delta^+ \mid \delta^-
+% \end{array}
+% \]
 
-Notice that we now tag the $\triplelambda$ proofs with two terms.
+% Notice that we now tag the $\triplelambda$ proofs with two terms.
 
-The rules of deduction of $\lambda o i$ are those of Figures \ref{fig:lambdao} and \ref{fig:lambdaoe} with one modification and two additions.  The introduction rule for $\triplelambda$ is changed to %TODO Give it a name
-\[ \infer{\Gamma \vdash \triplelambda^{FG} e : x =_A y . \delta : F =_{A \rightarrow B} G}
-{\Gamma, x : A, y : A, e : x =_A y \vdash \delta : F x =_B G y} \]
-and we add the rules:
-\[ \infer{\Gamma \vdash M =_A N : \Omega}{\Gamma \vdash M : A \quad \Gamma \vdash N : A} \]
-\[ \infer{\Gamma \vdash \delta =^*_A \epsilon : (M =_A N) =_\Omega (M' =_A N')}
-{\Gamma \vdash \delta : M =_A M' \quad \Gamma \vdash \epsilon : N =_A N'} \]
+% The rules of deduction of $\lambda o i$ are those of Figures \ref{fig:lambdao} and \ref{fig:lambdaoe} with one modification and two additions.  The introduction rule for $\triplelambda$ is changed to %TODO Give it a name
+% \[ \infer{\Gamma \vdash \triplelambda^{FG} e : x =_A y . \delta : F =_{A \rightarrow B} G}
+% {\Gamma, x : A, y : A, e : x =_A y \vdash \delta : F x =_B G y} \]
+% and we add the rules:
+% \[ \infer{\Gamma \vdash M =_A N : \Omega}{\Gamma \vdash M : A \quad \Gamma \vdash N : A} \]
+% \[ \infer{\Gamma \vdash \delta =^*_A \epsilon : (M =_A N) =_\Omega (M' =_A N')}
+% {\Gamma \vdash \delta : M =_A M' \quad \Gamma \vdash \epsilon : N =_A N'} \]
 
-We extend the definition of path substitution by
-\[ (N =_B N') \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{M'} \}
-\eqdef N \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{M'} \} =_B^*
-N' \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{M'} \} \enspace . \]
+% We extend the definition of path substitution by
+% \[ (N =_B N') \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{M'} \}
+% \eqdef N \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{M'} \} =_B^*
+% N' \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{M'} \} \enspace . \]
 
-We define terms $\sym{A}{M}{N}{\delta}$ and $\trans{A}{M}{N}{P}{\delta}{\epsilon}$.
-\begin{align*}
-\sym{\Omega}{\phi}{\psi}{\delta} & \eqdef \univ{\psi}{\phi}{\delta^-}{\delta^+} \\
-\sym{A \rightarrow B}{M}{N}{\delta} & \eqdef \triplelambda p:x =_A y. \sym{B}{My}{Nx}{\delta
-\sym{A}{x}{y}{p}} \\
-& \\
-\trans{\Omega}{\phi}{\psi}{\chi}{\delta}{\epsilon} & \eqdef \univ{\phi}{\chi}
-{\lambda p:\phi.\epsilon^+(\delta^+ p)}{\lambda p:\chi.\delta^-(\epsilon^- p)} \\
-\trans{A \rightarrow B}{M}{N}{P}{\delta}{\epsilon}
-& \eqdef \triplelambda p:x =_A y. \trans{B}{Mx}{Nx}{Py}{\delta_{xx} \reff{x}}{\epsilon_{xy} p}
-\end{align*}
+% We define terms $\sym{A}{M}{N}{\delta}$ and $\trans{A}{M}{N}{P}{\delta}{\epsilon}$.
+% \begin{align*}
+% \sym{\Omega}{\phi}{\psi}{\delta} & \eqdef \univ{\psi}{\phi}{\delta^-}{\delta^+} \\
+% \sym{A \rightarrow B}{M}{N}{\delta} & \eqdef \triplelambda p:x =_A y. \sym{B}{My}{Nx}{\delta
+% \sym{A}{x}{y}{p}} \\
+% & \\
+% \trans{\Omega}{\phi}{\psi}{\chi}{\delta}{\epsilon} & \eqdef \univ{\phi}{\chi}
+% {\lambda p:\phi.\epsilon^+(\delta^+ p)}{\lambda p:\chi.\delta^-(\epsilon^- p)} \\
+% \trans{A \rightarrow B}{M}{N}{P}{\delta}{\epsilon}
+% & \eqdef \triplelambda p:x =_A y. \trans{B}{Mx}{Nx}{Py}{\delta_{xx} \reff{x}}{\epsilon_{xy} p}
+% \end{align*}
 
-\begin{lm}
-$ $
-\begin{enumerate}
+% \begin{lm}
+% $ $
+% \begin{enumerate}
+% \item
+% If $\Gamma \vdash \delta : M =_A N$ then $\Gamma \vdash \sym{A}{M}{N}{\delta} : N =_A M$.
+% \item
+% If $\Gamma \vdash \delta : M =_A N$ and $\Gamma \vdash \epsilon : N =_A P$ then
+% $\Gamma \vdash \trans{A}{M}{N}{P}{\delta}{\epsilon} : M =_A P$.
+% \end{enumerate}
+% \end{lm}
+
+% \begin{proof}
+% Straightforward.
+% \end{proof}
+
+% The reduction relation is that of $\lambda o e$ together with the following clauses:
+
+% \begin{align*}
+% & \reff{M} =^*_A \reff{N}  \\ & \qquad \rhd \reff{M =_A N} \\ \\
+% & \reff{\phi} =^*_\Omega \univ{\psi}{\chi}{\delta}{\epsilon}  \\ & \qquad \rhd 
+%   \mathsf{univ}_{\phi =_\Omega \psi,\phi =_\Omega \chi} \\
+% &  \qquad \qquad \left( \lambda p:\phi =_\psi. \univ{\phi}{\chi}{\lambda q:\phi.\delta (p^+ q)}
+%     {\lambda q : \chi. p^- (\epsilon q)}, \right. \\ 
+% &  \qquad \qquad \left. \lambda p:\phi =_\Omega \chi. \univ{\phi}{\psi}{\lambda q:\phi. \epsilon (p^+ q)}
+%     {\lambda q : \psi. p^- (\delta q)} \right) \\ \\
+% & \univ{\phi}{\psi}{\delta}{\epsilon} =^*_\Omega \reff{\chi}  \\ & \qquad \rhd
+%   \mathsf{univ}_{\phi =_\Omega \chi, \psi =_\Omega \chi} \\
+% & \qquad \qquad   \left( \lambda p:\phi = \chi . \univ{\psi}{\chi}{\lambda q:\psi. p^+ (\epsilon q)}
+%       {\lambda q:\chi. \delta (p^- q)}, \right. \\
+% & \qquad \qquad   \left. \lambda p:\psi =_\Omega \chi. \univ{\phi}{\chi}{\lambda q:\phi. p^+ (\delta q)}
+%       {\lambda q:\chi. \epsilon (p^- q)} \right) \\ \\
+% & \univ{\phi}{\psi}{\delta}{\epsilon} =^*_\Omega \univ{\phi'}{\psi'}{\delta'}{\epsilon'}
+%  \\ & \qquad \rhd
+% \mathsf{univ}_{\phi =_\Omega \phi', \psi =_\Omega \psi'} \\
+% & \qquad \qquad \left( \lambda p:\phi = \phi'. \univ{\psi}{\psi'}{\lambda q:\psi. \delta' (p^+ (\epsilon q))}{\lambda q:\psi' . \delta (p^-(\epsilon' q))}, \right. \\
+% & \qquad \qquad \left. \lambda p:\psi=_\Omega \psi' . \univ{\phi}{\phi'}{\lambda q:\phi. \epsilon' (p^+ (\delta q))}{\lambda q:\phi' . \epsilon (p^- (\delta' q))} \right) \\ \\
+% & \reff{F} =^*_{A \rightarrow B} \triplelambda^{G G'} q:x =_A y. P
+%  \\ & \qquad \rhd
+% \mathsf{univ}_{F =_{A \rightarrow B} G, F =_{A \rightarrow B} G'} \\
+% & \qquad \qquad \left( \lambda p : F =_{A \rightarrow B} G. \triplelambda^{F G'} q : x =_A y. 
+% \trans{B}{Fx}{Gx}{G'y}{p_{xx} \reff{x}}{P}, \right. \\
+% & \qquad \qquad \lambda p : F =_{A \rightarrow B} G'. \triplelambda^{F G} q : x =_A y. \\
+% & \qquad \qquad \left. \trans{B}{Fx}{G'y}{Gx}{p_{xy} q}{\sym{B}{Gx}{G'y}{P}} \right) \\ \\
+% & \triplelambda^{F F'} p : x =_A y. P =^*_{A \rightarrow B} \reff{G}
+%   \\ & \qquad \rhd
+% \mathsf{univ}_{F =_{A \rightarrow B} G,F' =_{A \rightarrow B} G} \\
+% & \qquad \qquad \left( \lambda q : F =_{A \rightarrow B} G .
+% \triplelambda^{F' G} p : x =_A y. \right. \\
+% & \qquad \qquad \trans{B}{F'x}{Fx}{Gy}{\sym{B}{Fx}{F'x}{P [ y := x, p := \reff{x} ] }}
+% {
+%  q_{xy}p}, \\
+% & \qquad \qquad \left. \lambda q:F'=_{A \rightarrow B} G. \triplelambda^{FG} p : x =_A y.
+% \trans{B}{Fx}{F'y}{Gy}{P}{q_{yy} \reff{y}} \right)
+% \end{align*}
+
+% \begin{align*}
+% & (\triplelambda^{F F'} p : x =_A y. P) =^*_{A \rightarrow B} (\triplelambda^{G G'} p : x =_A y . Q)
+%  \\ & \qquad \rhd 
+% \mathsf{univ}_{F =_{A \rightarrow B} G,F' =_{A \rightarrow B} G'} \\
+% & \qquad \qquad \left( \lambda q : F =_{A \rightarrow B} G . \triplelambda^{F' G'} p : x =_A y. \right. \\
+% & \qquad \qquad \mathsf{trans}_{B,F'x,Fx,G'y} \left( \sym{B}{Fx}{F'x}{P [ y := x, p := \reff{x} ]} , \right. \\
+% & \qquad \qquad \left. \trans{B}{Fx}{Gx}{G'y}{q_{xx} \reff{x}}{Q} \right) , \\
+% & \qquad \qquad \lambda q : F' =_{A \rightarrow B} G' . \triplelambda^{FG} p : x =_A y. \\
+% & \qquad \qquad \mathsf{trans}_{B, Fx, F'x, Gy} \left( P [ y := x,  p := \reff{x} ] , \right. \\
+% & \qquad \qquad \! \! \left. \left. \trans{B}{F'x}{G'y}{Gy}{q_{xy} p}{\sym{B}{Gy}{G'y}{Q [ x := y, p := \reff{y} ] }} \right) \right)
+% \end{align*}
+
+% \subsection{Proof of Strong Normalisation}
+
+% All the results of Section \ref{section:meta} hold for $\lambda o i$ as well,
+% with very similar proofs.
+
+% We define the sets of computable expressions $E_\Gamma(\phi)$ for propositions
+% $\phi$ as in Definition \ref{df:computable}.  The only thing to bear in mind
+% is that, in the definition of $E_\Gamma(\phi \supset \psi)$, the
+% propositions $\phi$ and $\psi$ might now have the form $M =_A N$.  For completeness, we write out the definition here:
+
+% \begin{align*}
+% E_\Gamma(\Omega) \eqdef & \{ M \mid \Gamma \vdash M : \Omega, M \in \SN \} \\
+% E_\Gamma(A \rightarrow B) \eqdef & \{ M \mid \Gamma \vdash M : A \rightarrow B, \\
+% & \quad \forall (\Delta \supseteq \Gamma) (N \in E_\Delta(A)). MN \in E_\Delta(B), \\
+% & \quad \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (\delta \in E_\Delta(N =_A N')). \\
+% & \quad \quad \reff{M}_{N N'} \delta \in E_\Gamma(MN =_B MN') \} \\
+% \\
+% E_\Gamma(\bot) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
+% E_\Gamma(\phi \supset \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \supset \psi, \\
+% & \forall (\Delta \supseteq \Gamma)(\epsilon \in E_\Delta(\phi)). \delta \epsilon \in E_\Gamma(\psi) \} \\
+% E_\Gamma(\phi =_\Omega \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi =_\Omega \psi, \\
+% & \delta^+ \in E_\Gamma(\phi \supset \psi), \delta^- \in E_\Gamma(\psi \supset \phi) \} \\
+% E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ \delta \mid \Gamma \vdash \delta : M =_{A \rightarrow B} M', \\
+% & \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (\epsilon \in E_\Delta(N =_A N')). \\
+% & \delta_{NN'}\epsilon \in E_\Delta(MN =_B M'N') \} \\
+% E_\Gamma(\phi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi, \delta \in \SN \} \\
+% & \qquad (\phi \text{ neutral}) \\
+% E_\Gamma(\phi) & \eqdef E_\Gamma(\nf{\phi}) \\
+% & \qquad (\phi \mbox{ a normalizable term of type $\Omega$}) \\
+% \end{align*}
+
+% \begin{lemma}
+% \label{lm:Ered}
+% If $(\triplelambda p:x =_A y. \delta)_{M N} \epsilon \theta_1 \cdots \theta_n \in E_\Gamma(\phi)$
+% then $\delta[x:=M, y:=N, p:=\epsilon] \theta_1 \cdots \theta_n \in E_\Gamma(\phi)$.
+% \end{lemma}
+
+% \begin{proof}
+% The proof is by an induction on $\nf{\phi}$.
+% \end{proof}
+
+% \begin{lemma}
+% \label{lm:eqstar}
+% Let $M, M', N, N' \in E_\Gamma(A)$.
+% If $\delta \in E_\Gamma(M =_A M')$ and $\epsilon \in E_\Gamma(N =_A N')$ then
+% $\delta =_A^* \epsilon \in E_\Gamma((M =_A N) =_\Omega (M' =_A N'))$.
+% \end{lemma}
+
+% \begin{proof}
+% We must prove that $(\delta =_A^* \epsilon)^+ \in E_\Gamma(M =_A N \supset M' =_A N')$ and
+% $(\delta =_A^* \epsilon)^- \in E_\Gamma(M' =_A N' \supset M =_A N)$.  We prove the first of these; the proof of the second is similar.
+
+% In fact, we prove the following statement, from which the desired conclusion easily follows:
+
+% \begin{quote}
+% Let $A \equiv A_1 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega$ be a type.  Let
+% \begin{align*}
+% \delta & \in E_\Gamma(M =_A M') \\
+% \epsilon & \in E_\Gamma(N =_A N') \\
+% \chi & \in E_\Gamma(M =_A N) \\
+% \theta_i & \in E_\Gamma(L_i =_{A_i} L_i') & (1 \leq i \leq n) \\
+% \alpha & \in E_\Gamma(M L_1 \cdots L_n) \\
+% N L_1' \cdots L_n' & \twoheadrightarrow_\beta \phi_1 \supset \cdots \supset \phi_m \supset \bot \\
+% \beta_j & \in E_\Gamma(\phi_j) & (1 \leq j \leq m)
+% \end{align*}
+% Then $((\delta =_A^* \epsilon)^+ \chi_{L_1 L_1'} \theta_1 \cdots_{L_n L_n'} \theta_n)^+ \alpha \beta_1 \cdots \beta_m \in \SN$.
+% \end{quote}
+
+% The proof is by induction on the fact that $\delta, \epsilon, \chi, \theta_i, \alpha, \beta_j \in \SN$.
+
+% Consider a possible one-step reduction from $((\delta =_A^* \epsilon)^+ \chi \vec{\theta})^+ \alpha \vec{\beta}$.  If the reduction consists of reducing one of the subterms, we apply the induction hypothesis.  The only other possibility is that $\delta =_A^* \epsilon$ is a redex.  There are now seven cases to consider: we give the details for one of them.
+
+% Let $\delta \equiv \triplelambda^{F F'} p : x =_{A_1} y.P$ and $\epsilon \equiv \triplelambda^{G G'} p : x =_{A_1} y. Q$.  We must prove that
+% \begin{align*} & \mathsf{univ}_{F =_{A \rightarrow B} G,F' =_{A \rightarrow B} G'} \\
+% & \qquad \qquad \left( \lambda q : F =_{A \rightarrow B} G . \triplelambda p : x =_A y. \right. \\
+% & \qquad \qquad \mathsf{trans}_{A_2 \rightarrow \cdots \rightarrow A_n \rightarrow B} \left( \sym*{P [ y := x, p := \reff{x} ]} , \right. \\
+% & \qquad \qquad \left. \trans*{q_{xx} \reff{x}}{Q} \right) , \\
+% & \qquad \qquad \lambda q : F' =_{A \rightarrow B} G' . \triplelambda p : x =_A y. \\
+% & \qquad \qquad \mathsf{trans} \left( P [ y := x,  p := \reff{x} ] , \right. \\
+% & \qquad \qquad \! \! \left. \left. \trans*{q_{xy} p}{\sym*{Q [ x := y, p := \reff{y} ] }} \right) \right)^+ \chi \vec{\theta})^+ \alpha \vec{\beta} \in \SN \end{align*}
+% By Lemma \ref{lm:wte_loi1}, it is sufficient to prove that
+% \begin{align*} & ( \left( \lambda q : F =_{A \rightarrow \Omega} G . \triplelambda p : x =_A y. \right. \\
+% & \qquad \qquad \mathsf{trans}_{A_2 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega} \left( P[y:=x, p:=\reff{x}] , \right. \\
+% & \qquad \qquad \left. \trans*{q_{xx} \reff{x}}{Q} \right) \chi \vec{\theta})^+ \alpha \vec{\beta} \in \SN \end{align*} 
+% By Lemma \ref{lm:wte_loi2}, it is sufficient to prove that
+% \begin{align*} & ( \left( \triplelambda p : x =_A y. \right. \\
+% & \qquad \qquad \mathsf{trans}_{A_2 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega} \left( P[y:=x, p:=\reff{x}] , \right. \\
+% & \qquad \qquad \left. \trans*{\chi_{xx} \reff{x}}{Q} \right) \vec{\theta})^+ \alpha \vec{\beta} \in \SN \end{align*} 
+% By Lemma \ref{lm:wte_loi3}, it is sufficient to prove that
+% \begin{align*}
+% & \qquad \qquad (\mathsf{trans}_{A_2 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega} \left( P[x:=L_1, y:=L_1, p:=\reff{L_1}] , \right. \\
+% & \qquad \qquad \left. \trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]} \right) \theta_2 \cdots \theta_n)^+ \alpha \vec{\beta} \in \SN \end{align*}
+% Repeatedly applying Lemma \ref{lm:wte_loi3}, it is sufficient to prove that
+% \begin{align*}
+% & \qquad \qquad (\mathsf{trans}_\Omega \left( P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n} , \right. \\
+% & \qquad \qquad \left. \trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]}_{L_2 L_2'} \theta_2 \cdots_{L_n L_n'} \theta_n \right) )^+ \alpha \vec{\beta} \in \SN \end{align*}
+%  By Lemma \ref{lm:wte_loi1}, it is sufficient to prove that
+% \begin{align*}
+% & (\lambda p. (\trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]}_{L_2 L_2'} \theta_2 \cdots_{L_n L_n'} \theta_n)^+ \\
+% & \quad ((P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n})^+ p)) \alpha \vec{\beta} \in \SN
+% \end{align*}
+% and
+% \begin{align*}
+% & \lambda p. (P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n})^- \\
+% & \quad ((\trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]}_{L_2 L_2'} \theta_2 \cdots_{L_n L_n'} \theta_n)^- p) \in \SN
+% \end{align*}
+
+% We prove the first of these here.
+% By Lemma \ref{lm:wte_loi2}, it is sufficient to prove that
+% \begin{align*}
+% & (\trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]}_{L_2 L_2'} \theta_2 \cdots_{L_n L_n'} \theta_n)^+ \\
+% & \quad ((P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n})^+ \alpha) \vec{\beta} \in \SN
+% \end{align*}
+% Repeatedly appling the three lemmas again, it is sufficient to prove that
+% \begin{align*}
+% & (Q [x:= L_1, y := L_1', p:=\theta_1] \vec{\theta})^+ ((\chi \reff{L_1} \cdots
+% \reff{L_n})^+ \\
+% & \quad ((P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n})^+ \alpha)) \vec{\beta} \in \SN
+% \end{align*}
+
+% Now, we have $\delta \in E_\Gamma(M =_A M')$, hence $\delta_{L_1L_1} \reff{L_1}
+% \in E_\Gamma(M L_1 = M' L_1)$ and so $P[x := L_1, y := L_1, p := \reff{L_1}]
+% \in E_\Gamma(M L_1 = M' L_1)$ by Lemma \ref{lm:Ered}.  Similarly
+% $Q[x:=L_1, y:=L_1', p:=\theta_1] \in E_\Gamma(N L_1 = N' L_1')$.  The
+% result follows.
+% \end{proof}
+
+% We define what it means to be a computable substitution and a computable path substitution as before.
+
+% \begin{theorem}
+% $ $
+% \begin{enumerate}
+% \item
+% If $\Gamma \vdash M : A$, and $\sigma : \Gamma \rightarrow \Delta$ is computable,
+% then $M [ \sigma ] \in E_\Delta(A)$.
+% \item
+% If $\Gamma \vdash \delta : \phi$, and $\sigma : \Gamma \rightarrow \Delta$ is computable,
+% then $\delta [ \sigma ] \in E_\Delta(\phi[\sigma])$.
+% \item
+% If $\Gamma \vdash P : M =_A N$, and $\sigma : \Gamma \rightarrow \Delta$ is computable,
+% then $P [ \sigma ] \in E_\Delta(M [ \sigma ] =_A N [ \sigma ])$.
+% \item
+% If $\Gamma \vdash M : A$, $\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$, and $\tau$, $\sigma$
+% and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delta(M [ \sigma ] =_A M [ \rho ])$.
+% \end{enumerate}
+% \end{theorem}
+
+% \begin{proof}
+% Induction on derivations, as before.  We use Lemma \ref{lm:eqstar} for the rule
+% $(=^*)$.
+% \end{proof}
+
+\section{Future Work}
+
+We have shown that it is possible, in a system with non-dependent function types and implication, to give a strongly normalizing,
+confluent reduction rule for the univalence constructor.  We now intend to do the same for stronger and stronger systems, getting
+ever closer to full homotopy type theory.  The next steps will be:
+
+\begin{itemize}
 \item
-If $\Gamma \vdash \delta : M =_A N$ then $\Gamma \vdash \sym{A}{M}{N}{\delta} : N =_A M$.
+a system where the equations $M =_A N$ are objects of $\Omega$, allowing us to form propositions such as $M =_A N \supset N =_A M$.
 \item
-If $\Gamma \vdash \delta : M =_A N$ and $\Gamma \vdash \epsilon : N =_A P$ then
-$\Gamma \vdash \trans{A}{M}{N}{P}{\delta}{\epsilon} : M =_A P$.
-\end{enumerate}
-\end{lm}
-
-\begin{proof}
-Straightforward.
-\end{proof}
-
-The reduction relation is that of $\lambda o e$ together with the following clauses:
-
-\begin{align*}
-& \reff{M} =^*_A \reff{N}  \\ & \qquad \rhd \reff{M =_A N} \\ \\
-& \reff{\phi} =^*_\Omega \univ{\psi}{\chi}{\delta}{\epsilon}  \\ & \qquad \rhd 
-  \mathsf{univ}_{\phi =_\Omega \psi,\phi =_\Omega \chi} \\
-&  \qquad \qquad \left( \lambda p:\phi =_\psi. \univ{\phi}{\chi}{\lambda q:\phi.\delta (p^+ q)}
-    {\lambda q : \chi. p^- (\epsilon q)}, \right. \\ 
-&  \qquad \qquad \left. \lambda p:\phi =_\Omega \chi. \univ{\phi}{\psi}{\lambda q:\phi. \epsilon (p^+ q)}
-    {\lambda q : \psi. p^- (\delta q)} \right) \\ \\
-& \univ{\phi}{\psi}{\delta}{\epsilon} =^*_\Omega \reff{\chi}  \\ & \qquad \rhd
-  \mathsf{univ}_{\phi =_\Omega \chi, \psi =_\Omega \chi} \\
-& \qquad \qquad   \left( \lambda p:\phi = \chi . \univ{\psi}{\chi}{\lambda q:\psi. p^+ (\epsilon q)}
-      {\lambda q:\chi. \delta (p^- q)}, \right. \\
-& \qquad \qquad   \left. \lambda p:\psi =_\Omega \chi. \univ{\phi}{\chi}{\lambda q:\phi. p^+ (\delta q)}
-      {\lambda q:\chi. \epsilon (p^- q)} \right) \\ \\
-& \univ{\phi}{\psi}{\delta}{\epsilon} =^*_\Omega \univ{\phi'}{\psi'}{\delta'}{\epsilon'}
- \\ & \qquad \rhd
-\mathsf{univ}_{\phi =_\Omega \phi', \psi =_\Omega \psi'} \\
-& \qquad \qquad \left( \lambda p:\phi = \phi'. \univ{\psi}{\psi'}{\lambda q:\psi. \delta' (p^+ (\epsilon q))}{\lambda q:\psi' . \delta (p^-(\epsilon' q))}, \right. \\
-& \qquad \qquad \left. \lambda p:\psi=_\Omega \psi' . \univ{\phi}{\phi'}{\lambda q:\phi. \epsilon' (p^+ (\delta q))}{\lambda q:\phi' . \epsilon (p^- (\delta' q))} \right) \\ \\
-& \reff{F} =^*_{A \rightarrow B} \triplelambda^{G G'} q:x =_A y. P
- \\ & \qquad \rhd
-\mathsf{univ}_{F =_{A \rightarrow B} G, F =_{A \rightarrow B} G'} \\
-& \qquad \qquad \left( \lambda p : F =_{A \rightarrow B} G. \triplelambda^{F G'} q : x =_A y. 
-\trans{B}{Fx}{Gx}{G'y}{p_{xx} \reff{x}}{P}, \right. \\
-& \qquad \qquad \lambda p : F =_{A \rightarrow B} G'. \triplelambda^{F G} q : x =_A y. \\
-& \qquad \qquad \left. \trans{B}{Fx}{G'y}{Gx}{p_{xy} q}{\sym{B}{Gx}{G'y}{P}} \right) \\ \\
-& \triplelambda^{F F'} p : x =_A y. P =^*_{A \rightarrow B} \reff{G}
-  \\ & \qquad \rhd
-\mathsf{univ}_{F =_{A \rightarrow B} G,F' =_{A \rightarrow B} G} \\
-& \qquad \qquad \left( \lambda q : F =_{A \rightarrow B} G .
-\triplelambda^{F' G} p : x =_A y. \right. \\
-& \qquad \qquad \trans{B}{F'x}{Fx}{Gy}{\sym{B}{Fx}{F'x}{P [ y := x, p := \reff{x} ] }}
-{
- q_{xy}p}, \\
-& \qquad \qquad \left. \lambda q:F'=_{A \rightarrow B} G. \triplelambda^{FG} p : x =_A y.
-\trans{B}{Fx}{F'y}{Gy}{P}{q_{yy} \reff{y}} \right)
-\end{align*}
-
-\begin{align*}
-& (\triplelambda^{F F'} p : x =_A y. P) =^*_{A \rightarrow B} (\triplelambda^{G G'} p : x =_A y . Q)
- \\ & \qquad \rhd 
-\mathsf{univ}_{F =_{A \rightarrow B} G,F' =_{A \rightarrow B} G'} \\
-& \qquad \qquad \left( \lambda q : F =_{A \rightarrow B} G . \triplelambda^{F' G'} p : x =_A y. \right. \\
-& \qquad \qquad \mathsf{trans}_{B,F'x,Fx,G'y} \left( \sym{B}{Fx}{F'x}{P [ y := x, p := \reff{x} ]} , \right. \\
-& \qquad \qquad \left. \trans{B}{Fx}{Gx}{G'y}{q_{xx} \reff{x}}{Q} \right) , \\
-& \qquad \qquad \lambda q : F' =_{A \rightarrow B} G' . \triplelambda^{FG} p : x =_A y. \\
-& \qquad \qquad \mathsf{trans}_{B, Fx, F'x, Gy} \left( P [ y := x,  p := \reff{x} ] , \right. \\
-& \qquad \qquad \! \! \left. \left. \trans{B}{F'x}{G'y}{Gy}{q_{xy} p}{\sym{B}{Gy}{G'y}{Q [ x := y, p := \reff{y} ] }} \right) \right)
-\end{align*}
-
-\subsection{Proof of Strong Normalisation}
-
-All the results of Section \ref{section:meta} hold for $\lambda o i$ as well,
-with very similar proofs.
-
-We define the sets of computable expressions $E_\Gamma(\phi)$ for propositions
-$\phi$ as in Definition \ref{df:computable}.  The only thing to bear in mind
-is that, in the definition of $E_\Gamma(\phi \supset \psi)$, the
-propositions $\phi$ and $\psi$ might now have the form $M =_A N$.  For completeness, we write out the definition here:
-
-\begin{align*}
-E_\Gamma(\Omega) \eqdef & \{ M \mid \Gamma \vdash M : \Omega, M \in \SN \} \\
-E_\Gamma(A \rightarrow B) \eqdef & \{ M \mid \Gamma \vdash M : A \rightarrow B, \\
-& \quad \forall (\Delta \supseteq \Gamma) (N \in E_\Delta(A)). MN \in E_\Delta(B), \\
-& \quad \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (\delta \in E_\Delta(N =_A N')). \\
-& \quad \quad \reff{M}_{N N'} \delta \in E_\Gamma(MN =_B MN') \} \\
-\\
-E_\Gamma(\bot) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
-E_\Gamma(\phi \supset \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi \supset \psi, \\
-& \forall (\Delta \supseteq \Gamma)(\epsilon \in E_\Delta(\phi)). \delta \epsilon \in E_\Gamma(\psi) \} \\
-E_\Gamma(\phi =_\Omega \psi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi =_\Omega \psi, \\
-& \delta^+ \in E_\Gamma(\phi \supset \psi), \delta^- \in E_\Gamma(\psi \supset \phi) \} \\
-E_\Gamma(M =_{A \rightarrow B} M') & \eqdef \{ \delta \mid \Gamma \vdash \delta : M =_{A \rightarrow B} M', \\
-& \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (\epsilon \in E_\Delta(N =_A N')). \\
-& \delta_{NN'}\epsilon \in E_\Delta(MN =_B M'N') \} \\
-E_\Gamma(\phi) & \eqdef \{ \delta \mid \Gamma \vdash \delta : \phi, \delta \in \SN \} \\
-& \qquad (\phi \text{ neutral}) \\
-E_\Gamma(\phi) & \eqdef E_\Gamma(\nf{\phi}) \\
-& \qquad (\phi \mbox{ a normalizable term of type $\Omega$}) \\
-\end{align*}
-
-\begin{lemma}
-\label{lm:Ered}
-If $(\triplelambda p:x =_A y. \delta)_{M N} \epsilon \theta_1 \cdots \theta_n \in E_\Gamma(\phi)$
-then $\delta[x:=M, y:=N, p:=\epsilon] \theta_1 \cdots \theta_n \in E_\Gamma(\phi)$.
-\end{lemma}
-
-\begin{proof}
-The proof is by an induction on $\nf{\phi}$.
-\end{proof}
-
-\begin{lemma}
-\label{lm:eqstar}
-Let $M, M', N, N' \in E_\Gamma(A)$.
-If $\delta \in E_\Gamma(M =_A M')$ and $\epsilon \in E_\Gamma(N =_A N')$ then
-$\delta =_A^* \epsilon \in E_\Gamma((M =_A N) =_\Omega (M' =_A N'))$.
-\end{lemma}
-
-\begin{proof}
-We must prove that $(\delta =_A^* \epsilon)^+ \in E_\Gamma(M =_A N \supset M' =_A N')$ and
-$(\delta =_A^* \epsilon)^- \in E_\Gamma(M' =_A N' \supset M =_A N)$.  We prove the first of these; the proof of the second is similar.
-
-In fact, we prove the following statement, from which the desired conclusion easily follows:
-
-\begin{quote}
-Let $A \equiv A_1 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega$ be a type.  Let
-\begin{align*}
-\delta & \in E_\Gamma(M =_A M') \\
-\epsilon & \in E_\Gamma(N =_A N') \\
-\chi & \in E_\Gamma(M =_A N) \\
-\theta_i & \in E_\Gamma(L_i =_{A_i} L_i') & (1 \leq i \leq n) \\
-\alpha & \in E_\Gamma(M L_1 \cdots L_n) \\
-N L_1' \cdots L_n' & \twoheadrightarrow_\beta \phi_1 \supset \cdots \supset \phi_m \supset \bot \\
-\beta_j & \in E_\Gamma(\phi_j) & (1 \leq j \leq m)
-\end{align*}
-Then $((\delta =_A^* \epsilon)^+ \chi_{L_1 L_1'} \theta_1 \cdots_{L_n L_n'} \theta_n)^+ \alpha \beta_1 \cdots \beta_m \in \SN$.
-\end{quote}
-
-The proof is by induction on the fact that $\delta, \epsilon, \chi, \theta_i, \alpha, \beta_j \in \SN$.
-
-Consider a possible one-step reduction from $((\delta =_A^* \epsilon)^+ \chi \vec{\theta})^+ \alpha \vec{\beta}$.  If the reduction consists of reducing one of the subterms, we apply the induction hypothesis.  The only other possibility is that $\delta =_A^* \epsilon$ is a redex.  There are now seven cases to consider: we give the details for one of them.
-
-Let $\delta \equiv \triplelambda^{F F'} p : x =_{A_1} y.P$ and $\epsilon \equiv \triplelambda^{G G'} p : x =_{A_1} y. Q$.  We must prove that
-\begin{align*} & \mathsf{univ}_{F =_{A \rightarrow B} G,F' =_{A \rightarrow B} G'} \\
-& \qquad \qquad \left( \lambda q : F =_{A \rightarrow B} G . \triplelambda p : x =_A y. \right. \\
-& \qquad \qquad \mathsf{trans}_{A_2 \rightarrow \cdots \rightarrow A_n \rightarrow B} \left( \sym*{P [ y := x, p := \reff{x} ]} , \right. \\
-& \qquad \qquad \left. \trans*{q_{xx} \reff{x}}{Q} \right) , \\
-& \qquad \qquad \lambda q : F' =_{A \rightarrow B} G' . \triplelambda p : x =_A y. \\
-& \qquad \qquad \mathsf{trans} \left( P [ y := x,  p := \reff{x} ] , \right. \\
-& \qquad \qquad \! \! \left. \left. \trans*{q_{xy} p}{\sym*{Q [ x := y, p := \reff{y} ] }} \right) \right)^+ \chi \vec{\theta})^+ \alpha \vec{\beta} \in \SN \end{align*}
-By Lemma \ref{lm:wte_loi1}, it is sufficient to prove that
-\begin{align*} & ( \left( \lambda q : F =_{A \rightarrow \Omega} G . \triplelambda p : x =_A y. \right. \\
-& \qquad \qquad \mathsf{trans}_{A_2 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega} \left( P[y:=x, p:=\reff{x}] , \right. \\
-& \qquad \qquad \left. \trans*{q_{xx} \reff{x}}{Q} \right) \chi \vec{\theta})^+ \alpha \vec{\beta} \in \SN \end{align*} 
-By Lemma \ref{lm:wte_loi2}, it is sufficient to prove that
-\begin{align*} & ( \left( \triplelambda p : x =_A y. \right. \\
-& \qquad \qquad \mathsf{trans}_{A_2 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega} \left( P[y:=x, p:=\reff{x}] , \right. \\
-& \qquad \qquad \left. \trans*{\chi_{xx} \reff{x}}{Q} \right) \vec{\theta})^+ \alpha \vec{\beta} \in \SN \end{align*} 
-By Lemma \ref{lm:wte_loi3}, it is sufficient to prove that
-\begin{align*}
-& \qquad \qquad (\mathsf{trans}_{A_2 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega} \left( P[x:=L_1, y:=L_1, p:=\reff{L_1}] , \right. \\
-& \qquad \qquad \left. \trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]} \right) \theta_2 \cdots \theta_n)^+ \alpha \vec{\beta} \in \SN \end{align*}
-Repeatedly applying Lemma \ref{lm:wte_loi3}, it is sufficient to prove that
-\begin{align*}
-& \qquad \qquad (\mathsf{trans}_\Omega \left( P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n} , \right. \\
-& \qquad \qquad \left. \trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]}_{L_2 L_2'} \theta_2 \cdots_{L_n L_n'} \theta_n \right) )^+ \alpha \vec{\beta} \in \SN \end{align*}
- By Lemma \ref{lm:wte_loi1}, it is sufficient to prove that
-\begin{align*}
-& (\lambda p. (\trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]}_{L_2 L_2'} \theta_2 \cdots_{L_n L_n'} \theta_n)^+ \\
-& \quad ((P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n})^+ p)) \alpha \vec{\beta} \in \SN
-\end{align*}
-and
-\begin{align*}
-& \lambda p. (P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n})^- \\
-& \quad ((\trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]}_{L_2 L_2'} \theta_2 \cdots_{L_n L_n'} \theta_n)^- p) \in \SN
-\end{align*}
-
-We prove the first of these here.
-By Lemma \ref{lm:wte_loi2}, it is sufficient to prove that
-\begin{align*}
-& (\trans*{\chi_{L_1 L_1} \reff{L_1}}{Q[x:=L_1, y:=L_1', p:=\theta_1]}_{L_2 L_2'} \theta_2 \cdots_{L_n L_n'} \theta_n)^+ \\
-& \quad ((P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n})^+ \alpha) \vec{\beta} \in \SN
-\end{align*}
-Repeatedly appling the three lemmas again, it is sufficient to prove that
-\begin{align*}
-& (Q [x:= L_1, y := L_1', p:=\theta_1] \vec{\theta})^+ ((\chi \reff{L_1} \cdots
-\reff{L_n})^+ \\
-& \quad ((P[x:=L_1, y:=L_1, p:=\reff{L_1}]_{L_2 L_2} \reff{L_2} \cdots_{L_n L_n} \reff{L_n})^+ \alpha)) \vec{\beta} \in \SN
-\end{align*}
-
-Now, we have $\delta \in E_\Gamma(M =_A M')$, hence $\delta_{L_1L_1} \reff{L_1}
-\in E_\Gamma(M L_1 = M' L_1)$ and so $P[x := L_1, y := L_1, p := \reff{L_1}]
-\in E_\Gamma(M L_1 = M' L_1)$ by Lemma \ref{lm:Ered}.  Similarly
-$Q[x:=L_1, y:=L_1', p:=\theta_1] \in E_\Gamma(N L_1 = N' L_1')$.  The
-result follows.
-\end{proof}
-
-We define what it means to be a computable substitution and a computable path substitution as before.
-
-\begin{theorem}
-$ $
-\begin{enumerate}
-\item
-If $\Gamma \vdash M : A$, and $\sigma : \Gamma \rightarrow \Delta$ is computable,
-then $M [ \sigma ] \in E_\Delta(A)$.
-\item
-If $\Gamma \vdash \delta : \phi$, and $\sigma : \Gamma \rightarrow \Delta$ is computable,
-then $\delta [ \sigma ] \in E_\Delta(\phi[\sigma])$.
-\item
-If $\Gamma \vdash P : M =_A N$, and $\sigma : \Gamma \rightarrow \Delta$ is computable,
-then $P [ \sigma ] \in E_\Delta(M [ \sigma ] =_A N [ \sigma ])$.
-\item
-If $\Gamma \vdash M : A$, $\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$, and $\tau$, $\sigma$
-and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delta(M [ \sigma ] =_A M [ \rho ])$.
-\end{enumerate}
-\end{theorem}
-
-\begin{proof}
-Induction on derivations, as before.  We use Lemma \ref{lm:eqstar} for the rule
-$(=^*)$.
-\end{proof}
+a system with universal quantification over the types $A$, allowing us to form propositions such as $\forall x:A. x =_A x$ and
+$\forall x,y : A. x =_A y \supset y =_A x$
+\end{itemize}
 
 \todos
 
@@ -382,41 +365,41 @@ $(=^*)$.
 \bibliography{type}
 \end{frame}
 
-\appendix
+% \appendix
 
-\section{About the Formalization}
+% \section{About the Formalization}
 
-\input{Prelims.tex}
-\mode<all>{\input{Grammar/Taxonomy.tex}}
-\mode<all>{\input{Grammar/Base.tex}}
+% \input{Prelims.tex}
+% \mode<all>{\input{Grammar/Taxonomy.tex}}
+% \mode<all>{\input{Grammar/Base.tex}}
 
-We define the operations of replacement and substitution on
-expressions.  
+% We define the operations of replacement and substitution on
+% expressions.  
 
-\input{Grammar/Substitution/PreOpFamily.tex}
-\input{Grammar/Substitution/OpFamily.tex}
+% \input{Grammar/Substitution/PreOpFamily.tex}
+% \input{Grammar/Substitution/OpFamily.tex}
 
-The details are given in Appendix \ref{appendix:repsub}.
+% The details are given in Appendix \ref{appendix:repsub}.
 
-\input{Grammar/Context.tex}
-\input{Reduction/Base.tex}
-\input{Reduction/SN.tex}
-%\input{PL/Grammar.tex}
-%\input{PL/Rules.tex}
-%\input{PL/Computable.tex}
+% \input{Grammar/Context.tex}
+% \input{Reduction/Base.tex}
+% \input{Reduction/SN.tex}
+% %\input{PL/Grammar.tex}
+% %\input{PL/Rules.tex}
+% %\input{PL/Computable.tex}
 
-\section{Replacement and Substitution}
-\label{appendix:repsub}
+% \section{Replacement and Substitution}
+% \label{appendix:repsub}
 
-\input{Grammar/OpFamily/PreOpFamily.tex}
-\input{Grammar/OpFamily/Lifting.tex}
-\input{Grammar/OpFamily/LiftFamily.tex}
-\input{Grammar/OpFamily/Composition.tex}
-\input{Grammar/OpFamily/OpFamily.tex}
-\input{Grammar/Replacement.tex}
-\input{Grammar/Substitution/Lifting.tex}
-\input{Grammar/Substitution/RepSub.tex}
-\input{Grammar/Substitution/LiftFamily.tex}
-\input{Grammar/Substitution/Botsub.tex}
+% \input{Grammar/OpFamily/PreOpFamily.tex}
+% \input{Grammar/OpFamily/Lifting.tex}
+% \input{Grammar/OpFamily/LiftFamily.tex}
+% \input{Grammar/OpFamily/Composition.tex}
+% \input{Grammar/OpFamily/OpFamily.tex}
+% \input{Grammar/Replacement.tex}
+% \input{Grammar/Substitution/Lifting.tex}
+% \input{Grammar/Substitution/RepSub.tex}
+% \input{Grammar/Substitution/LiftFamily.tex}
+% \input{Grammar/Substitution/Botsub.tex}
 
 \end{document}
