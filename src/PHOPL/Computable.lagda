@@ -306,7 +306,7 @@ Suppose $\delta \in E_\Gamma(\phi \supset \psi)$.  Let $\Delta \supseteq \Gamma$
 and $\epsilon \in E_\Gamma(\nf{\phi})$, hence $\delta \epsilon \in E_\Gamma(\nf{\psi})$.  We also have $\Delta \vdash \delta \epsilon : \psi$, and so $\delta \epsilon \in E_\Delta(\psi)$.
 
 Conversely, suppose the right-hand side holds.  We must show that $\delta \in E_\Gamma(\nf{\phi} \supset \nf{\psi})$.  Let $\Delta \supseteq \Gamma$ and $\epsilon \in
-E_\Delta(\nf{\phi})$.  Then $\epsilon \in E_\Delta(\phi)$ by the previous lemma, and so $\delta \epsilon \in E_\Delta(\psi)$ by hypothesis.  Therefore $\delta \epsilon \in E_\Delta(\nf{\psi})$
+E_\Delta(\nf{\phi})$.  Then $\epsilon \in E_\Delta(\phi)$ by Lemma \ref{lm:conv-compute}, and so $\delta \epsilon \in E_\Delta(\psi)$ by hypothesis.  Therefore $\delta \epsilon \in E_\Delta(\nf{\psi})$
 as required.
 \end{proof}
 
@@ -656,7 +656,7 @@ $L, L' \in E_\Gamma(A)$; $Q \in E_\Gamma(L =_A L')$ and $P[ x := L, y := L, e
 \end{lemma}
 
 \begin{proof}
-Similar to the previous lemmas, using Lemma \ref{lm:SNothers}.
+Similar to Lemma \ref{lm:Eref}, using Lemma \ref{lm:SNothers}.
 \end{proof}
 
 \begin{lm}
@@ -688,7 +688,7 @@ By hypothesis, we have
 i.e.
 \[ (M\{x:=N\{\} : N \sim N\} N_1 \{\} \cdots N_n \{\})^+ \delta \vec{\epsilon}
 \in \SN \]
-and so the result follows by Lemma \ref{lm:SNothers}.2
+and so the result follows by Lemma \ref{lm:SNothers}.3.
 
 The proof for $(\lambda x:A.M)N \vec{N})\{\}^-$ is similar.
 
@@ -709,7 +709,7 @@ i.e.
 (\triplelambda e:x =_A y . M \{ x:=e \})_{NN} N \{ \}_{N_1 N_1} N_1\{\} \cdots_{N_n N_n} N_n\{\}_{N_{n+1} N_{n+1}'} P \\
 \quad \in E_\Gamma(M[x:=N] N \vec{N} N_{n+1} = M[x:=N] N \vec{N} N_{n+1}')
 \end{align*}
-This follows from part 2 of the previous lemma since we have
+This follows from Lemma \ref{lm:wte5}.2, since we have
 \[ M[x:=N]\{\} \equiv M \{ x:= N \{ \} : N \sim N \} \in E_\Gamma(M[x:=N] = M[x:=N]) \]
 \end{proof}
 

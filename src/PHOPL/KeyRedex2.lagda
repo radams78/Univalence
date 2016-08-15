@@ -8,10 +8,13 @@ Let $\SN$ be the set of all strongly normalizing expressions.
 
 \begin{lemma}
 \label{lm:SN}
+\label{lm:SNothers} %TODO
 % $ $
 % \begin{enumerate}
 % \item
 % \label{lm:SN1}
+\begin{enumerate}
+\item
 If $M[x:=N]L_1 \cdots L_n \in \SN$ and $N \in \SN$ then $(\lambda x:A.M)NL_1 \cdots L_n \in \SN$.
 % \item
 % \label{lm:SN2}
@@ -55,10 +58,17 @@ If $M[x:=N]L_1 \cdots L_n \in \SN$ and $N \in \SN$ then $(\lambda x:A.M)NL_1 \cd
 % \label{lm:SN5}
 % If $\delta, \phi \in \SN$ then $\reff{\phi}^+ \delta, \reff{\phi}^- \delta \in \SN$.
 % \end{enumerate}
+\item
+If $\delta[p:=\epsilon], \phi, \epsilon \in \SN$ then $(\lambda p:\phi.\delta)\epsilon \in \SN$.
+\item
+If $(P[x:=L, y:=L', e:=Q]_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^+ \delta_1 \cdots \delta_m \in \SN$ and $L, L', Q \in \SN$ then $((\triplelambda e:x =_A y.P)_{L L'} Q_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^+ \delta_1 \cdots \delta_m \in \SN$.
+\item
+If $(P[x:=L, y:=L', e:=Q]_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^- \delta_1 \cdots \delta_m \in \SN$ and $L, L', Q \in \SN$ then $((\triplelambda e:x =_A y.P)_{L L'} Q_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^- \delta_1 \cdots \delta_m \in \SN$.
+\end{enumerate}
 \end{lemma}
 
 \begin{proof}
-%We prove part \ref{lm:SN1}; the proofs of the other parts are similar.
+We prove part \ref{lm:SN1}; the proofs of the other parts are similar.
 
 The proof is by a double induction on the hypotheses.  Consider all possible one-step reductions from $(\lambda x:A.M) N \vec{L}$.  The possibilities are:
 \begin{description}
@@ -94,23 +104,6 @@ In this case, the result follows immediately from the hypothesis.
 % $\reff{MN} \vec{P} \in \SN$.
 % \end{description}
 % \end{proof}
-
-\begin{lemma}
-\label{lm:SNothers}
-$ $
-\begin{enumerate}
-\item
-If $\delta[p:=\epsilon], \phi, \epsilon \in \SN$ then $(\lambda p:\phi.\delta)\epsilon \in \SN$.
-\item
-If $(P[x:=L, y:=L', e:=Q]_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^+ \delta_1 \cdots \delta_m \in \SN$ and $L, L', Q \in \SN$ then $((\triplelambda e:x =_A y.P)_{L L'} Q_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^+ \delta_1 \cdots \delta_m \in \SN$.
-\item
-If $(P[x:=L, y:=L', e:=Q]_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^- \delta_1 \cdots \delta_m \in \SN$ and $L, L', Q \in \SN$ then $((\triplelambda e:x =_A y.P)_{L L'} Q_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^- \delta_1 \cdots \delta_m \in \SN$.
-\end{enumerate}
-\end{lemma}
-
-\begin{proof}
-Similar to the previous lemma.
-\end{proof}
 
 % \begin{lemma}
 % \label{lm:wte_loi1}
