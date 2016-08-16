@@ -9,8 +9,9 @@ open import PHOPL.Grammar
 
 \subsection{Path Substitution}
 
-We introduce a notion of \emph{path substitution}.  The intention is that, if
-$\Gamma \vdash P : M =_A M'$ and $\Gamma, x : A \vdash N : B$ then $\Gamma \vdash N \{ x := P : M \sim M' \} : N [ x:= M ] =_B N [ x := M' ]$.
+Intuitively, if $N$ and $N'$ are equal then $M[x:=N]$ and $M[x:=N']$ should be equal.  To handle this syntactically,
+we introduce a notion of \emph{path substitution}.  If $N$, $M$ and $M'$ are terms, $x$ a term variable, and $P$ a path, then we shall define a path $N \{ x := P : M \sim M' \}$.  The intention is that, if
+$\Gamma \vdash P : M =_A M'$ and $\Gamma, x : A \vdash N : B$ then $\Gamma \vdash N \{ x := P : M \sim M' \} : N [ x:= M ] =_B N [ x := M' ]$ (see Proposition \ref{prop:pathsub}). 
 
 \begin{definition}[Path Substitution]
 Given terms $M_1$, \ldots, $M_n$ and $N_1$, \ldots, $N_n$; paths $P_1$, \ldots, $P_n$; term variables $x_1$, \ldots, $x_n$; and a term $L$, define the path $L \{ x_1 := P_1 : M_1 \sim N_1 , \ldots, x_n := P_n : M_n \sim N_n \}$ as follows.
@@ -25,6 +26,11 @@ y \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef \reff{y} \qquad (y \n
 (\phi \supset \psi) \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef \phi \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} \supset^* \psi \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \}
 \end{align*}
 \end{definition}
+
+We shall often omit the endpoints $\vec{M}$ and $\vec{N}$.
+
+\paragraph{Note}
+The case $n = 0$ is permitted, and we shall have that, if $\Gamma \vdash M : A$ then $\Gamma \vdash M \{\} : M =_A M$.  There are thus two paths from a term $M$ to itself: $\reff{M}$ and $M \{\}$.  There are not always equal; for example, $(\lambda x:A.x) \{\} \equiv \triplelambda e : x =_A y. e$, which (after we define the reduction relation) will not be convertible with $\reff{\lambda x:A.x}$.  
 
 \begin{code}
 PathSub : Alphabet → Alphabet → Set
@@ -103,9 +109,9 @@ An easy induction on $M$.
 
 The following lemma shows how substitution and path substitution interact.
 
-\begin{lm}
+\begin{lm}[Substitution]
 \label{lm:subpathsub}
-Let $\vec{y}$ be a sequence of variables and $x$ a distinct variable.  Then
+Let $\vec{x}$ and $\vec{y}$ be a disjoint sequences of variables.  Then
 \begin{enumerate}
 \item
 \label{lm:subpathsubi}
@@ -123,9 +129,15 @@ $ \begin{aligned}[t]
 \end{lm}
 
 \begin{proof}
-An easy induction on $M$ in both cases.
+An easy induction on $M$ in all cases.
 \end{proof}
 
+\paragraph{Note}
+The familiar substitution lemma also holds: $t [\vec{z_1} := \vec{s_1}] [\vec{z_2} := \vec{s_2}] \equiv t [\vec{z_1} := \vec{s_1}[\vec{z_2} := \vec{s_2}], 
+\vec{z_2} := \vec{s_2}]$.  We cannot form a lemma about the fourth case, simplifying $M \{ \vec{x} := \vec{P} \} \{ \vec{y} := \vec{Q} \}$, because
+$M \{ \vec{x} := \vec{P} \}$ is a path, and path substitution can only be applied to a term.
+
+\begin{definition}
 A \emph{path substitution} $\tau$ is a function whose domain is a finite set of term variables,
 and which maps each term variable to a path.  Given a path substitution $\tau$ and substitutions $\rho$, $\sigma$
 with the same domain $\{ x_1, \ldots, x_n \}$, we write
@@ -133,6 +145,7 @@ with the same domain $\{ x_1, \ldots, x_n \}$, we write
 
 Given substitutions $\sigma$, $\rho$, $\rho'$ and a path substitution $\tau$, let $\tau \bullet_{\rho, \rho'} \sigma$ be the path substitution defined by
 \[ (\tau \bullet_{\rho, \rho'} \sigma)(x) \eqdef \sigma(x)\{ \tau : \rho \sim \rho' \} \]
+\end{definition}
 
 \begin{lemma}
 $M[\sigma]\{ \tau : \rho \sim \rho' \} \equiv

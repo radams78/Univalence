@@ -53,7 +53,7 @@ a well-behaved reduction relation, then doing the same for more and more complex
 
 In this paper, we present a system we call $\lambda o e$, or predicative higher-order propositional logic.  It is a type theory with two universes: the universe $\Omega$
 of \emph{propositions}, and the universe of \emph{types}.  The propositions are closed under $\supset$ (implication) and include $\bot$ (falsehood), and an equality proposition $M =_A N$ for
-any type $A : U$ and terms $M : A$ and $N : A$.  The types include $\Omega$ itself and are closed under $\rightarrow$ (non-dependent function type).
+any type $A$ and terms $M : A$ and $N : A$.  The types include $\Omega$ itself and are closed under $\rightarrow$ (non-dependent function type).
 
 There are two canonical forms for proofs of $M =_\Omega N$.  For any term $M : \Omega$, we have $\reff{M} : M =_\Omega M$.  We also add univalence for this system, in this form:
 if $\delta : \phi \supset \psi$ and $\epsilon : \psi \supset\phi$, then $\univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi$.  
@@ -73,9 +73,6 @@ We call the following type theory $\lambda o e$, or \emph{predicative higher-ord
 \input{PHOPL/Red.tex}
 \input{PHOPL/Rules.tex}
 \input{PHOPL/Meta.tex}
-
-\subsection{Strong Normalization Proof}
-
 \input{PHOPL/KeyRedex2.tex}
 \input{PHOPL/Computable.tex}
 \input{PHOPL/SubC.tex}

@@ -6,15 +6,14 @@ module PHOPL.KeyRedex2 where
 
 Let $\SN$ be the set of all strongly normalizing expressions.
 
-\begin{lemma}
-\label{lm:SN}
-\label{lm:SNothers} %TODO
-% $ $
+\begin{prop}
+\label{prop:SN}
+$ $
 % \begin{enumerate}
 % \item
-% \label{lm:SN1}
 \begin{enumerate}
 \item
+\label{lm:SN1}
 If $M[x:=N]L_1 \cdots L_n \in \SN$ and $N \in \SN$ then $(\lambda x:A.M)NL_1 \cdots L_n \in \SN$.
 % \item
 % \label{lm:SN2}
@@ -65,7 +64,7 @@ If $(P[x:=L, y:=L', e:=Q]_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^+ \delta_1 \cdots 
 \item
 If $(P[x:=L, y:=L', e:=Q]_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^- \delta_1 \cdots \delta_m \in \SN$ and $L, L', Q \in \SN$ then $((\triplelambda e:x =_A y.P)_{L L'} Q_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^- \delta_1 \cdots \delta_m \in \SN$.
 \end{enumerate}
-\end{lemma}
+\end{prop}
 
 \begin{proof}
 We prove part \ref{lm:SN1}; the proofs of the other parts are similar.

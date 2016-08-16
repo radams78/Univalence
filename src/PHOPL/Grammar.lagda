@@ -26,7 +26,7 @@ The syntax of $\lambda o e$ is given by the grammar:
 \text{Path} & P, Q & ::= & e \mid \reff{M} \mid P \supset^* Q \mid \univ{\phi}{\psi}{P}{Q} \mid \\
 & & & \triplelambda e : x =_A y. P \mid P_{MN} Q \\
 \text{Context} & \Gamma, \Delta, \Theta & ::= & \langle \rangle \mid \Gamma, x : A \mid \Gamma, p : \phi \mid \Gamma, e : M =_A N \\
-\text{Judgement} & \mathcal{J} & ::= & \Gamma \vald \mid \Gamma \vdash M : A \mid \Gamma \vdash \delta : \phi \mid \\
+\text{Judgement} & \mathbf{J} & ::= & \Gamma \vald \mid \Gamma \vdash M : A \mid \Gamma \vdash \delta : \phi \mid \\
 & & & \Gamma \vdash P : M =_A N
 \end{array}
 \]
@@ -36,12 +36,12 @@ stipulation that term variables and path variables are disjoint.)  The term vari
 and the proof variable $p$ is bound within $\delta$ in $\lambda p:\phi.\delta$.  The three variables $e$, $x$ and $y$ are bound within $P$ in the path
 $\triplelambda e:x =_A y.P$.  We identify terms, proofs and paths up to $\alpha$-conversion.
 
-We shall use the word 'expression' to mean either a type, term, proof or path.  We shall use $r$, $s$, $t$, $S$ and $T$ as metavariables that range over expressions.
+We shall use the word 'expression' to mean either a type, term, proof, path, or equation (an equation having the form $M =_A N$).  We shall use $r$, $s$, $t$, $S$ and $T$ as metavariables that range over expressions.
 
 Note that we use both Roman letters $M$, $N$ and Greek letters $\phi$, $\psi$, $\chi$ to range over terms.  Intuitively, a term is understood as either a proposition or a function,
 and we shall use Greek letters for terms that are intended to be propositions.  Formally, there is no significance to which letter we choose.
 
-Note also that the types of $\lambda o e$ are just the simple types over $\Omega$; in particular, no variable can occur in a type.
+Note also that the types of $\lambda o e$ are just the simple types over $\Omega$; therefore, no variable can occur in a type.
 
 \todo{Give the intuition}.
 
@@ -247,16 +247,9 @@ each $t_i$ for $z_i$ in $s$.
 A \emph{substitution} $\sigma$ is a function whose domain is a finite set of variables, and
 which maps term variables to terms, proof variables to proofs, and path variables to paths.
 Given a substitution $\sigma$ and an expression $t$, we write $t[\sigma]$ for the result
-of substituting $\sigma(z)$ for $z$ within $t$, for each variable $z$ in the domain of $\sigma$.
+of simultaneously substituting $\sigma(z)$ for $z$ within $t$, for each variable $z$ in the domain of $\sigma$.
 
 Given two substitutions $\sigma$ and $\rho$, we define their \emph{composition} $\sigma \circ \rho$ to
 be the substitution with the same domain an $\rho$, such that
 \[ (\sigma \circ \rho)(x) \eqdef \rho(x)[\sigma] \enspace . \]
-
-\begin{lemma}
-\[ t [\sigma \circ \rho] \equiv t [ \rho ] [ \sigma ] \]
-\end{lemma}
-
-\begin{proof}
-An easy induction on $t$.
-\end{proof}
+An easy induction on $t$ shows that we have $t [\sigma \circ \rho] \equiv t [ \rho ] [ \sigma ]$.

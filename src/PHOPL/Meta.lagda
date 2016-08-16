@@ -17,6 +17,8 @@ valid-addpath validΓ = ctxER (varR x₁ (ctxTR (ctxTR validΓ))) (varR x₀ (ct
 
 \label{section:meta}
 
+In the lemmas that follow, the letter $\mathcal{J}$ stands for any of the expressions that may occur to the right of the turnstile in a judgement, i.e.~$\mathrm{valid}$, $M : A$, $\delta : \phi$, or $P : M =_A N$.
+
 \begin{lemma}[Context Validity]
 $ $
 \begin{enumerate}
@@ -62,9 +64,9 @@ context-validity'' (ctxER (varR .(↑ x₀) (ctxTR (ctxTR validΓ))) _) = valid�
 \end{code}
 }
 
-\begin{theorem}[Weakening]
+\begin{lemma}[Weakening]
 If $\Gamma \vdash \mathcal{J}$, $\Gamma \subseteq \Delta$ and $\Delta \vald$ then $\Delta \vdash \mathcal{J}$.
-\end{theorem}
+\end{lemma}
 
 \begin{proof}
 Induction on derivations.
@@ -129,9 +131,9 @@ for every path variable $e : M =_A N \in \Gamma$, we have $\Delta \vdash \sigma(
 postulate _∶_⇒_ : ∀ {U} {V} → Sub U V → Context U → Context V → Set
 \end{code}
 
-\begin{theorem}[Substitution]
+\begin{lemma}[Well-Typed Substitution]
 If $\Gamma \vdash \mathcal{J}$, $\sigma : \Gamma \Rightarrow \Delta$ and $\Delta \vald$, then $\Delta \vdash \mathcal{J} [\sigma]$.
-\end{theorem}
+\end{lemma}
 
 \begin{proof}
 Induction on derivations.
@@ -298,14 +300,19 @@ is the term variables in $\dom \Gamma$, then we write
 $\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$ iff, for each variable $x : A \in \Gamma$, we have
 $\Delta \vdash \tau(x) : \sigma(x) =_A \rho(x)$.
 
-\begin{prop}[Path Substitution]
+\begin{lemma}[Path Substitution]
+\label{lm:pathsub}
 If $\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$ and $\Gamma \vdash M : A$ and $\Delta \vald$,
 then $\Delta \vdash M \{ \tau : \sigma \sim \rho \} : M [ \sigma ] =_A M [ \rho ]$.
-\end{prop}
+\end{lemma}
 
 \begin{proof}
 Induction on derivations.
 \end{proof}
+
+\paragraph{Note}
+
+
 
 \begin{code}
 path-substitution : ∀ {U} {V} {Γ : Context U} {Δ : Context V} 
@@ -398,9 +405,9 @@ Let $x : A \in \Gamma$.
 We have $\Delta \vdash \sigma(x) : A$, hence $\Theta \vdash \sigma(x) \{ \tau : \rho \sim \rho' \} : \sigma(x) [ \rho ] =_A \sigma(x) [ \rho' ]$.
 \end{proof}
 
-\begin{theorem}[Subject Reduction]
+\begin{prop}[Subject Reduction]
 If $\Gamma \vdash s : T$ and $s \twoheadrightarrow t$ then $\Gamma \vdash t : T$.
-\end{theorem}
+\end{prop}
 
 \begin{proof}
 It is sufficient to prove the case $s \rightarrow t$.  The proof is by a case analysis on $s \rightarrow t$, using the Generation Lemma.
