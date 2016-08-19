@@ -42,18 +42,11 @@ Our main theorem is as follows.
 \label{theorem:mainprop}
 \begin{enumerate}
 \item
-If $\Gamma \vdash M : A$, and $\sigma : \Gamma \rightarrow \Delta$ is computable,
-then $M [ \sigma ] \in E_\Delta(A)$.
-\item
-If $\Gamma \vdash \delta : \phi$, and $\sigma : \Gamma \rightarrow \Delta$ is computable,
-then $\delta [ \sigma ] \in E_\Delta(\phi[\sigma])$.
-\item
-If $\Gamma \vdash P : M =_A N$, and $\sigma : \Gamma \rightarrow \Delta$ is computable,
-then $P [ \sigma ] \in E_\Delta(M [ \sigma ] =_A N [ \sigma ])$.
+If $\Gamma \vdash t : T$ and $\sigma : \Gamma \Rightarrow \Delta$ is computable, and $\Delta \vald$, then $t[\sigma] \in E_\Delta(T[\sigma])$.
 \item
 \label{computable-path-sub}
-If $\Gamma \vdash M : A$, $\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$, and $\tau$, $\sigma$
-and $\rho$ are all computable, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delta(M [ \sigma ] =_A M [ \rho ])$.
+If $\Gamma \vdash M : A$, $\tau : \sigma \sim \rho : \Gamma \Rightarrow \Delta$, and $\tau$, $\sigma$
+and $\rho$ are all computable, and $\Delta \vald$, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delta(M [ \sigma ] =_A M [ \rho ])$.
 \end{enumerate}
 \end{theorem}
 
@@ -401,10 +394,8 @@ We have that $\sigma(p) \in E_\Delta(\phi[\sigma])$ by hypothesis.
 \item
 $$ \infer{\Gamma \vdash \bot : \Omega}{\Gamma \vald} $$
 
-We have that $\bot \in \SN$.  We must show that $\reff{\bot} \in E_\Delta(\bot =_\Omega \bot)$, i.e. that
-\[ \reff{\bot}^+, \reff{\bot}^- \in E_\Delta(\bot \supset \bot) \]
-Let $\delta \in E_\Delta(\bot)$; we must show that $\reff{\bot}^+ \delta, \reff{\bot}^- \delta \in E_\Delta(\bot)$.
-
+From Lemma \ref{lm:Ebot}, we have $\bot \in E_\Delta(\Omega)$ and therefore
+$\bot\{\} \in E_\Delta(\bot =_\Omega \bot)$.
 \item
 $$ \infer{\Gamma \vdash \phi \supset \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} $$
 
@@ -439,7 +430,7 @@ $$ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M 
 Let $\Theta \supseteq \Delta$ and $N \in E_\Theta(A)$.  We must show that $(\lambda x:A.M[\sigma])N \in E_\Theta(B)$.
 
 We have that $(\sigma, x:=N) : (\Gamma, x : A) \rightarrow \Theta$ is computable, and so the induction hypothesis gives
-$M[\sigma, x:=N] \in E_\Theta(B)$.  The result follows by Lemma \ref{lm:wte}.\ref{lm:wteE}.
+$M[\sigma, x:=N] \in E_\Theta(B)$.  The result follows by Lemma \ref{lm:wte}.\ref{lm:wteT}.
 \item
 We must show that $\triplelambda e:x =_A y. M [ \sigma ] \{ x := e : x \sim y \} \equiv
 \triplelambda e:x =_A y. M \{ z_1 := \sigma(z_1) \{ \}, \ldots, z_n := \sigma(z_n)\{\}, x := e \} \in E_\Delta(\lambda x:A.M[\sigma] =_{A \rightarrow B} \lambda x:A.M[\sigma])$.
@@ -847,14 +838,18 @@ The induction hypothesis gives $P[\sigma] \in E_\Delta(M[\sigma] =_A N[\sigma])$
 \end{code}
 }
 
-\begin{corollary}[Strong Normalization]
-Every well-typed term, proof and path is strongly normalizing.
+\begin{corollary}[Soundness]
+If $\Gamma \vdash t : T$ then $t \in E_\Gamma(T)$.
 \end{corollary}
 
 \begin{proof}
 We apply the theorem with $\sigma$ the identity substitution.  The identity substitution is computable
 by Lemmas \ref{lm:varcompute1} and \ref{lm:varcompute2}.
 \end{proof}
+
+\begin{corollary}[Strong Normalization]
+Every well-typed term, proof and path is strongly normalizing.
+\end{corollary}
 
 %<*Strong-Normalization>
 \begin{code}%

@@ -12,9 +12,8 @@ open import PHOPL.PathSub
 \end{code}
 }
 
-Let us say that a substitution $\sigma : \Gamma \rightarrow \Delta$ is \emph{computable}
-iff, for all $x : A \in \Gamma$, we have $\sigma(x) \in E_\Delta(A)$; and, for all $p : \phi \in
-\Gamma$, we have $\sigma(p) \in E_\Delta(\phi[\sigma])$.
+Let us say that a substitution $\sigma : \Gamma \Rightarrow \Delta$ is \emph{computable}
+iff, for all $z : T \in \Gamma$, we have $\sigma(z) \in E_\Delta(T[\sigma])$.
 
 \begin{code}
 _∶_⇒C_ : ∀ {U} {V} → Sub U V → Context U → Context V → Set
@@ -63,7 +62,7 @@ postulate subC-cong : ∀ {U} {V} {σ τ : Sub U V} {Γ} {Δ} →
 \end{code}
 }
 
-Let us say that a path substitution $\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$ is
+Let us say that a path substitution $\tau : \sigma \sim \rho : \Gamma \Rightarrow \Delta$ is
 \emph{computable} iff, for all $x : A \in \Gamma$, we have $\tau(x) \in E_\Delta(\sigma(x) =_A \rho(x))$.
 
 \begin{code}
