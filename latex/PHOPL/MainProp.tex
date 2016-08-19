@@ -439,7 +439,7 @@ $$ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M 
 Let $\Theta \supseteq \Delta$ and $N \in E_\Theta(A)$.  We must show that $(\lambda x:A.M[\sigma])N \in E_\Theta(B)$.
 
 We have that $(\sigma, x:=N) : (\Gamma, x : A) \rightarrow \Theta$ is computable, and so the induction hypothesis gives
-$M[\sigma, x:=N] \in E_\Theta(B)$.  The result follows by Lemma \ref{lm:wte2}.
+$M[\sigma, x:=N] \in E_\Theta(B)$.  The result follows by Lemma \ref{lm:wte}.\ref{lm:wteE}.
 \item
 We must show that $\triplelambda e:x =_A y. M [ \sigma ] \{ x := e : x \sim y \} \equiv
 \triplelambda e:x =_A y. M \{ z_1 := \sigma(z_1) \{ \}, \ldots, z_n := \sigma(z_n)\{\}, x := e \} \in E_\Delta(\lambda x:A.M[\sigma] =_{A \rightarrow B} \lambda x:A.M[\sigma])$.
@@ -447,7 +447,7 @@ We must show that $\triplelambda e:x =_A y. M [ \sigma ] \{ x := e : x \sim y \}
 So let $\Theta \supseteq \Delta$ and $N, N' \in E_\Theta(A)$, $P \in E_\Theta(N =_A N')$.  Then $(z_1 := \sigma(z_1)\{\}, \ldots, z_n := \sigma(z_n)\{\}, x := P) : (\sigma, x:=N) \sim (\sigma, x:=N') : (\Gamma, x:A) \rightarrow \Theta$
 is computable, and so the induction hypothesis gives
 \[ M \{ z_i := \sigma(z_i) \{\}, x := P \} \in E_\Theta(M [ \sigma, x:=N] =_B M [\sigma, x:=N']) \enspace . \]
-Therefore, by Lemma \ref{lm:wte5}.2, we have that $(\triplelambda e:x =_A y. M \{ z_i := \sigma(z_i) \{\}, x := e \})_{N N'} P \in E_\Theta(M[\sigma, x:=N] =_B M[\sigma, x:=N'])$.
+Therefore, by Lemma \ref{lm:wte}.\ref{lm:wteE}, we have that $(\triplelambda e:x =_A y. M \{ z_i := \sigma(z_i) \{\}, x := e \})_{N N'} P \in E_\Theta(M[\sigma, x:=N] =_B M[\sigma, x:=N'])$.
 
 Hence Lemma \ref{lm:conv-compute} gives $(\triplelambda e:x =_A y. M \{ z_i := \sigma(z_i) \{\}, x := e \})_{N N'} P \in E_\Theta((\lambda x:A.M[\sigma])N =_B (\lambda x:A.M[\sigma])N')$
 as required.
@@ -458,7 +458,7 @@ and so the induction hypothesis gives
 \[ M \{ \tau, x := P \} \in E_\Theta(M[\rho, x:=N] =_B M[\sigma, x:=N']) \enspace . \]
 By Lemma \ref{lm:conv-compute},
 \[ M \{ \tau, x := P \} \in E_\Theta((\lambda x:A.M[\rho]) N =_B (\lambda x:A.M[\sigma]) N') \]
-and so Lemma \ref{lm:wte5}.2 gives
+and so Lemma \ref{lm:wte}.\ref{lm:wteE} gives
 \[ (\triplelambda e:x=_A y.M \{ \tau, x:=e \})_{N N'} P \in E_\Theta((\lambda x:A.M[\rho]) N =_B (\lambda x:A.M[\sigma]) N') \]
 as required.
 \end{enumerate}
@@ -468,7 +468,7 @@ $$\infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \supset \psi}{\Gamma, p 
 Let $\Theta \supseteq \Delta$ and $\epsilon \in E_\Theta(\phi[\sigma])$.  Then $(\sigma, p:=\epsilon) : (\Gamma, p : \phi) \rightarrow \Theta$
 is computable, and so the induction hypothesis gives
 \[ \delta[\sigma, p:=\epsilon] \in E_\Theta(\psi[\sigma)) \enspace . \]
-Hence by Lemma \ref{lm:wte5}.1, we have $(\lambda p:\phi[\sigma].\delta[\sigma]) \epsilon \in E_\Theta(\psi[\sigma])$, as required.
+Hence by Lemma \ref{lm:wte}.\ref{lm:wteP}, we have $(\lambda p:\phi[\sigma].\delta[\sigma]) \epsilon \in E_\Theta(\psi[\sigma])$, as required.
 \item
 $$ \infer[(\phi \simeq \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} $$
 
@@ -512,7 +512,7 @@ Let $\Theta \supseteq \Delta$, $L, L' \in E_\Theta(A)$, and $Q \in E_\Theta(L =_
 We have that $(\sigma, x:=L, y:=L', e:=Q) : (\Gamma, x : A, y : A, e : x =_A y) \rightarrow \Theta$ is computable, and so
 the induction hypothesis gives
 \[ P [ \sigma, x := L, y := L', e := Q ] \in E_\Theta(ML =_B NL') \enspace . \]
-The result follow by Lemma \ref{lm:wte5}.2.
+The result follow by Lemma \ref{lm:wte}.\ref{lm:wteE}.
 \item
 $$ \infer{\Gamma \vdash P_{NN'}Q : MN =_B M' N'}{\Gamma \vdash P : M =_{A \rightarrow B} M' \quad \Gamma \vdash Q : N =_A N' \quad \Gamma \vdash N : A \quad \Gamma \vdash N' : A}$$
 

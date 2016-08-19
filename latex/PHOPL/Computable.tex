@@ -37,30 +37,33 @@ A term is \emph{neutral} iff it has the form $x M_1 \cdots M_n$, where each $M_i
 
 Note that (using Generation) a normal form of type $\Omega$ is either $\bot$, or a neutral term, or $\phi \supset \psi$ where $\phi$ and $\psi$ are normal forms of type $\Omega$.
 
+\newcommand{\ldot}{\, . \,}
 \begin{definition}[Computable Expressions]
 \label{df:computable}
 \begin{align*}
-E_\Gamma(\bot) \eqdef & \{ \delta \mid \Gamma \vdash \delta : \bot, \delta \in \SN \} \\
-E_\Gamma(\phi \supset \psi) \eqdef & \{ \delta \mid \Gamma \vdash \delta : \phi \supset \psi, \\
-& \quad \forall (\Delta \supseteq \Gamma)(\epsilon \in E_\Delta(\phi)). \delta \epsilon \in E_\Gamma(\psi) \} \\
-& \quad \quad (\phi , \psi \text{ normal forms}) \\
-E_\Gamma(\phi) \eqdef & \{ \delta \mid \Gamma \vdash \delta : \phi, \delta \in \SN \} \\
+E_\Gamma(\chi) \eqdef \{ \delta \mid & \Gamma \vdash \delta : \chi\text{ and } \delta \in \SN \} \\
+& \qquad (\chi \text{ is neutral or } \bot) \\
+E_\Gamma(\phi \supset \psi) \eqdef \{ \delta \mid & \Gamma \vdash \delta : \phi \supset \psi\text{ and } \\
+& \forall \Delta \supseteq \Gamma \ldot \forall \epsilon \in E_\Delta(\phi)\ldot \delta \epsilon \in E_\Gamma(\psi) \} \\
+& \qquad (\phi , \psi \text{ normal forms}) \\
+E_\Gamma(\phi) \eqdef \{ \delta \mid & \Gamma \vdash \delta : \phi\text{ and } \delta \in \SN \} \\
 & \qquad (\phi \text{ neutral}) \\
-E_\Gamma(\phi) \eqdef & \{ \delta \mid \Gamma \vdash \delta : \phi, \delta \in E_\Gamma(\nf{\phi}) \} \\
+E_\Gamma(\phi) \eqdef \{ \delta \mid & \Gamma \vdash \delta : \phi\text{ and } \delta \in E_\Gamma(\nf{\phi}) \} \\
 & \qquad (\phi \text{ a weakly normalizable term}) \\
 \\
-E_\Gamma(\Omega) \eqdef & \{ M \mid \Gamma \vdash M : \Omega, M \in \SN, \\
-& \quad M \{\} \in E_\Gamma(M =_\Omega M) \} \\
-E_\Gamma(A \rightarrow B) \eqdef & \{ M \mid \Gamma \vdash M : A \rightarrow B, \\
-& \quad \forall (\Delta \supseteq \Gamma) (N \in E_\Delta(A)). MN \in E_\Delta(B), \\
-& \quad M \{\} \in E_\Gamma(M =_{A \rightarrow B} M) \} \\
+E_\Gamma(\Omega) \eqdef \{ M \mid & \Gamma \vdash M : \Omega\text{ and } M \in \SN\text{ and } \\
+& M \{\} \in E_\Gamma(M =_\Omega M) \} \\
+E_\Gamma(A \rightarrow B) \eqdef \{ M \mid & \Gamma \vdash M : A \rightarrow B\text{ and } \\
+& \forall \Delta \supseteq \Gamma\ldot \forall N \in E_\Delta(A)\ldot MN \in E_\Delta(B)\text{ and } \\
+& M \{\} \in E_\Gamma(M =_{A \rightarrow B} M) \} \\
 \\
-E_\Gamma(\phi =_\Omega \psi) \eqdef & \{ P \mid \Gamma \vdash P : \phi =_\Omega \psi, \\
-& \quad P^+ \in E_\Gamma(\phi \supset \psi), P^- \in E_\Gamma(\psi \supset \phi) \} \\
+E_\Gamma(\phi =_\Omega \psi) \eqdef \{ P \mid & \Gamma \vdash P : \phi =_\Omega \psi\text{ and } \\
+& P^+ \in E_\Gamma(\phi \supset \psi)\text{ and } P^- \in E_\Gamma(\psi \supset \phi) \} \\
+& \qquad (\phi , \psi \text{ weakly normalizable terms}) \\
 \\
-E_\Gamma(M =_{A \rightarrow B} M') \eqdef & \{ P \mid \Gamma \vdash P : M =_{A \rightarrow B} M', \\
-& \quad \forall (\Delta \supseteq \Gamma) (N, N' \in E_\Delta(A)) (Q \in E_\Delta(N =_A N')). \\
-& \quad P_{NN'}Q \in E_\Delta(MN =_B M'N') \}
+E_\Gamma(M =_{A \rightarrow B} M') \eqdef \{ P \mid & \Gamma \vdash P : M =_{A \rightarrow B} M'\text{ and } \\
+& \forall \Delta \supseteq \Gamma\ldot \forall N, N' \in E_\Delta(A)\ldot \forall Q \in E_\Delta(N =_A N')\ldot \\
+& P_{NN'}Q \in E_\Delta(MN =_B M'N') \}
 \end{align*}
 \end{definition}
 
@@ -637,12 +640,21 @@ E_\Gamma(M =_{A \rightarrow B} M') \eqdef & \{ P \mid \Gamma \vdash P : M =_{A \
 \end{code}
 }
 
+If $\phi$ is a term that is not weakly normalizable, then $E_\Gamma(\phi)$ is undefined.  Similarly, $E_\Gamma(\phi =_\Omega \psi)$ is undefined if $\phi$ and $\psi$ are
+not both weakly normalizable.
+
 Note that each $E_\Gamma(T)$ is closed under reduction, and that, if $\Gamma \subseteq \Delta$, then $E_\Gamma(T) \subseteq E_\Delta(T)$.  Note also that, if $M \in E_\Gamma(A)$,
-then $M \{\} \in E_\Gamma(M =_A M)$.
+then $M \{\} \in E_\Gamma(M =_A M)$.  
 
 \begin{lm}$ $
 \label{lm:conv-compute}
 \begin{enumerate}
+\item
+$E_\Gamma(T)$ is closed under reductain.
+\item
+If $\Gamma \subseteq \Delta$ and $\Delta \vald$ then $E_\Gamma(T) \subseteq E_\Delta(T)$.
+\item
+If $t \in E_\Gamma(T)$ then $\Gamma \vdash t : T$.  (Hence, if $\Gamma$ is not a valid context, then $E_\Gamma(T) = \emptyset$.)
 \item
 If $\delta \in E_\Gamma(\phi)$, $\Gamma \vdash \psi : \Omega$ and $\phi \simeq \psi$, then $\delta \in E_\Gamma(\psi)$.
 \item
@@ -652,10 +664,10 @@ then $P \in E_\Gamma(M' =_A N')$.
 \end{lm}
 
 \begin{proof}
-From the definition of $E_\Gamma(T)$ and confluence.
+These follow easily from the definition of $E_\Gamma(T)$.  Confluence is required for the last two parts.
 \end{proof}
 
-As a consequence of this lemma, we can relax the restriction '$\phi$ and $\psi$ are normal forms' in the definition of $E_\Gamma(\phi \supset \psi)$:
+As a consequence of Lemma \ref{lm:conv-compute}.4, we can relax the restriction '$\phi$ and $\psi$ are normal forms' in the definition of $E_\Gamma(\phi \supset \psi)$:
 \begin{lm}$ $
 Let $\phi$ and $\psi$ be weakly normalizable terms, and suppose $\Gamma \vdash \phi : \Omega$ and $\Gamma \vdash \psi : \Omega$.  Then $\delta \in E_\Gamma(\phi \supset \psi)$ if and only if $\Gamma \vdash \delta : \phi \supset \psi$
 and, for all $\Delta \supseteq \Gamma$ and $\epsilon \in E_\Delta(\phi)$, we have $\delta \epsilon \in E_\Delta(\psi)$.
@@ -663,10 +675,10 @@ and, for all $\Delta \supseteq \Gamma$ and $\epsilon \in E_\Delta(\phi)$, we hav
 
 \begin{proof}
 Suppose $\delta \in E_\Gamma(\phi \supset \psi)$.  Let $\Delta \supseteq \Gamma$ and $\epsilon \in E_\Delta(\phi)$.  Then $\delta \in E_\Gamma(\nf{\phi} \supset \nf{\psi})$
-and $\epsilon \in E_\Gamma(\nf{\phi})$, hence $\delta \epsilon \in E_\Gamma(\nf{\psi})$.  We also have $\Delta \vdash \delta \epsilon : \psi$, and so $\delta \epsilon \in E_\Delta(\psi)$.
+and $\epsilon \in E_\Delta(\nf{\phi})$, hence $\delta \epsilon \in E_\Delta(\nf{\psi})$.  We also have $\Delta \vdash \delta \epsilon : \psi$, and so $\delta \epsilon \in E_\Delta(\psi)$.
 
 Conversely, suppose the right-hand side holds.  We must show that $\delta \in E_\Gamma(\nf{\phi} \supset \nf{\psi})$.  Let $\Delta \supseteq \Gamma$ and $\epsilon \in
-E_\Delta(\nf{\phi})$.  Then $\epsilon \in E_\Delta(\phi)$ by Lemma \ref{lm:conv-compute}, and so $\delta \epsilon \in E_\Delta(\psi)$ by hypothesis.  Therefore $\delta \epsilon \in E_\Delta(\nf{\psi})$
+E_\Delta(\nf{\phi})$.  Then $\epsilon \in E_\Delta(\phi)$ by Lemma \ref{lm:conv-compute}.4, and so $\delta \epsilon \in E_\Delta(\psi)$ by hypothesis.  Therefore $\delta \epsilon \in E_\Delta(\nf{\psi})$
 as required.
 \end{proof}
 
@@ -801,58 +813,81 @@ It follows that $\delta \in \SN$.
 \end{enumerate}
 \end{proof}
 
-\begin{lemma}
-Let $A$ be a type.
-\begin{enumerate}
-\item
-If $x : A \in \Gamma$ then $x \in E_\Gamma(A)$.
-\item
-$E_\Gamma(A) \subseteq \SN$.
-\item
-If $M \in E_\Gamma(A)$ then $M \{ \} \in E_\Gamma(M =_A M)$.
-\item
-For all $M$, $N$, we have $E_\Gamma(M =_A N) \subseteq \SN$.
-\end{enumerate}
-\end{lemma}
-
-\begin{proof}
-\todo{Proof}
-\end{proof}
+Our aim now is to prove that, if $M \in E_\Gamma(A)$, then $\reff{M} \in E_\Gamma(M =_A M)$.  In order to prove this,
+we need the following technical result.
 
 \begin{lm}
+\label{lm:pre-ref}
 Suppose:
 \begin{enumerate}
 \item
 $M \in E_\Gamma(A_1 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega)$.
 \item
 For $1 \leq i \leq n$, we have $N_i, N_i' \in E_\Gamma(A_i)$ and $P_i \in E_\Gamma(N_i =_{A_i} N_i')$.
-\item
-$\delta \in E_\Gamma(M N_1 \cdots N_n)$.
-\item
-$\nf{M N_1' \cdots N_n'} \equiv \phi_1 \supset \cdots \supset \phi_m \supset \chi$ where $\chi$
-is either $\bot$ or a neutral term.
-\item
-For $1 \leq j \leq m$, we have $\epsilon_j \in E_\Gamma(\phi_j)$.
 \end{enumerate}
-Then $(\reff{M}_{N_1 N_1'} P_1 \cdots_{N_n N_n'} P_n)^+ \delta \epsilon_1 \cdots \epsilon_m \in E_\Gamma(\chi)$.
+Then $(\reff{M}_{N_1 N_1'} P_1 \cdots_{N_n N_n'} P_n)^+ \in E_\Gamma(M N_1 \cdots N_n \supset M N_1' \cdots N_n')$
+and $(\reff{M}_{N_1 N_1'} P_1 \cdots_{N_n N_n'} P_n)^- \in E_\Gamma(M N_1' \cdots N_n' \supset M N_1 \cdots N_n)$.
 \end{lm}
 
 \begin{proof}
-It is easy to check that this proof is well-typed, so we just have to show that it is in $\SN$.  The proof is by
-induction on $n$, then on the proofs that $M, N_i, N_i', P_i, \delta, \epsilon_j \in \SN$.  Consider all possible one-step
+We shall prove that $(\reff{M} \vec{P})^+ \in E_\Gamma(M \vec{N} \supset M \vec{N'})$.  The proof for
+$(\reff{M} \vec{P})^- \in E_\Gamma(M \vec{N}' \supset M \vec{N})$.
+
+It is easy to check that $(\reff{M} \vec{P})^+$ is well-typed.  So we have to show the following.  If
+\begin{enumerate}
+\item
+$\delta \in E_\Gamma(M N_1 \cdots N_n)$;
+\item
+$\nf{M N_1' \cdots N_n'} \equiv \phi_1 \supset \cdots \supset \phi_m \supset \chi$ where $\chi$
+is either $\bot$ or a neutral term;
+\item
+for $1 \leq j \leq m$, we have $\epsilon_j \in E_\Gamma(\phi_j)$;
+\end{enumerate}
+then $(\reff{M}_{N_1 N_1'} P_1 \cdots_{N_n N_n'} P_n)^+ \delta \epsilon_1 \cdots \epsilon_m \in E_\Gamma(\chi)$.
+
+The proof is by induction on $n$, then on the proofs that $M, N_i, N_i', P_i, \delta, \epsilon_j \in \SN$.
+
+\begin{enumerate}
+\item
+\label{Case 1}
+Case $n = 0$:
+
+Consider all possible one-step
 reductions from $(\reff{M} \vec{P})^+ \delta \vec{\epsilon}$.  There are the following possibilities:
-\begin{description}
-\item[$(\reff{M} \vec{P})^+ \delta \vec{\epsilon} \rightarrow (\reff{M'} \vec{P})^+ \delta \vec{\epsilon}$], where
-$M \rightarrow M'$
+\begin{enumerate}
+\item
+\label{Case 1.1}
+$\reff{M}^+ \delta \vec{\epsilon} \rightarrow \reff{M'}^+ \delta \vec{\epsilon}$], where
+$M \rightarrow M'$.
 
 In this case, the result follows immediately from the induction hypothesis on $M$.  Similarly for the case where we reduce
-one of the $N_i$, $N_i'$, $P_i$, $\delta$ or $\epsilon_j$.
-\item[$P_1 \equiv \reff{L}$ and $(\reff{M} \vec{P})^+ \delta \vec{\epsilon} \rightarrow (\reff{M L} P_2 \cdots P_n)^+ \delta \vec{\epsilon}$]$ $
+$\delta$ or one of the $\epsilon_j$.
+\item
+\label{Case 1.2}
+$\reff{M}^+ \delta \vec{\epsilon} \rightarrow (\lambda p:M.p)\delta \vec{\epsilon}$
+
+Since $\delta \in E_\Gamma(M) = E_\Gamma(\nf{M}) = E_\Gamma(\phi_1 \supset \cdots \supset \phi_m \supset \chi)$, we have that
+$\delta \vec{\epsilon} \in \SN$.  Hence $(\lambda p:\phi.p) \delta \vec{\epsilon} \in \SN$ by Propositiol \ref{prop:SN}.\ref{prop:SNP}.
+\end{enumerate}
+\item
+Induction step
+
+Suppose the result holds for $n$.  Consider all possible one-step reductions from $(\reff{M} P_1 \cdots P_{n+1})^+ \delta \vec{\epsilon}$.
+There are the following possibilities:
+\begin{enumerate}
+\item
+$(\reff{M} \vec{P})^+ \delta \vec{\epsilon} \rightarrow (\reff{M'} \vec{P})^+ \delta \vec{\epsilon}$, where
+$M \rightarrow M'$.
+
+Just as in Case \ref{Case 1.1} above, the result follows immediately from the induction hypothesis on $M$.  Similarly for the case where we reduce one of the $P_i$, $\delta$ or $\epsilon_j$.
+\item
+$P_1 \equiv \reff{L}$ and $(\reff{M} \vec{P})^+ \delta \vec{\epsilon} \rightarrow (\reff{M L} P_2 \cdots P_n)^+ \delta \vec{\epsilon}$
 
 In this case, we have that $M$ and $L$ are closed normal forms.  By Generation, we know $N_1 \simeq N_1' \simeq L$, hence $N_1, N_1' \twoheadrightarrow L$
 by Confluence, and thus $L \in E_\Gamma(A_1)$.  It follows that $ML \in E_\Gamma(A_2 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega)$, and
 the result follows by the induction hypothesis on $n$.
-\item[$M \equiv \lambda x:C.L$ and $(\reff{M} \vec{P})^+ \delta \vec{\epsilon} \rightarrow (L \{ x := P_1 : N_1 \sim N_1 \} P_2 \cdots P_n)^+ \delta \vec{\epsilon}$]$ $
+\item
+$M \equiv \lambda x:C.L$ and $(\reff{M} \vec{P})^+ \delta \vec{\epsilon} \rightarrow (L \{ x := P_1 : N_1 \sim N_1 \} P_2 \cdots P_n)^+ \delta \vec{\epsilon}$
 
 We have $\lambda x:C.L \in E_\Gamma(A_1 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega)$, and hence
 \[ (\lambda x:C.L)\{\}_{N_1 N_1'} P_1 \in E_\Gamma(M N_1 =_{A_2 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega} M N_1') \enspace , \]
@@ -863,34 +898,8 @@ Noting that $M$, $N_1$, $N_1'$ and $P_1$ are closed normal forms, it follows tha
 i.e.
 \[ L \{ x := P_1 : N_1 \sim N_1' \} \in E_\Gamma(M N_1 = M N_1') \]
 and the desired result follows.
-\item[$n = 0$ and $\reff{M}^+ \delta \vec{\epsilon} \rightarrow (\lambda p:M.p)\delta \vec{\epsilon}$]
-$ $
-
-Since $\delta \in E_\Gamma(M) = E_\Gamma(\nf{M}) = E_\Gamma(\phi_1 \supset \cdots \supset \phi_m \supset \chi)$, we have that
-$\delta \vec{\epsilon} \in \SN$.  Hence $(\lambda p:\phi.p) \delta \vec{\epsilon} \in \SN$ by Lemma \ref{lm:SNothers}.
-\end{description}
-\end{proof}
-
-\begin{lm}
-Suppose:
-\begin{enumerate}
-\item
-$M \in E_\Gamma(A_1 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega)$.
-\item
-For $1 \leq i \leq n$, we have $N_i, N_i' \in E_\Gamma(A_i)$ and $P_i \in E_\Gamma(N_i =_{A_i} N_i')$.
-\item
-$\delta \in E_\Gamma(M N_1' \cdots N_n')$.
-\item
-$\nf{M N_1 \cdots N_n} \equiv \phi_1 \supset \cdots \supset \phi_m \supset \chi$ where $\chi$
-is either $\bot$ or a neutral term.
-\item
-For $1 \leq j \leq m$, we have $\epsilon_j \in E_\Gamma(\phi_j)$.
 \end{enumerate}
-Then $(\reff{M}_{N_1 N_1'} P_1 \cdots_{N_n N_n'} P_n)^- \delta \epsilon_1 \cdots \epsilon_m \in E_\Gamma(\chi)$.
-\end{lm}
-
-\begin{proof}
-Similar.
+\end{enumerate}
 \end{proof}
 
 \begin{lm}
@@ -909,7 +918,7 @@ The proof is by induction on the type $B$.
 
 If $B \equiv \Omega$: we have that $\Gamma \vdash \reff{M} \vec{P} : M \vec{N} =_B M \vec{N'}$, so it remains
 to show that $(\reff{M} \vec{P})^+ \in E_\Gamma(M \vec{N} \supset M \vec{N'})$ and $(\reff{M} \vec{P})^- \in E_\Gamma(M \vec{N'} \supset
-M \vec{N})$.  These follow from the previous two lemmas.
+M \vec{N})$.  These follow from Lemma \ref{lm:pre-ref}.
 
 If $B \equiv A_{n+1} \rightarrow C$, then let $N_{n+1}, N_{n+1}' \in E_\Gamma(A_{n+1})$ and \\
 $P_{n+1} \in E_\Gamma(N_{n+1} =_{A_{n+1}} N_{n+1}')$.  We must show that
@@ -1002,37 +1011,35 @@ from the induction hypothesis.
 % \end{proof}
 
 \begin{lemma}
-\label{lm:wte5}
+\label{lm:wte}
 $ $
 \begin{enumerate}
 \item
-Let $\Gamma, p : \phi \vdash \delta : \psi$.  If $\epsilon \in E_\Gamma(\phi)$
-and $\delta [p := \epsilon] \in E_\Gamma(\psi)$ then $(\lambda p:\phi.\delta) \epsilon \in E_\Gamma(\psi)$.
-\item
+\label{lm:wteE}
 Let $\Gamma, x : A, y : A, e : x =_A y \vdash P : M x =_B N y$.  If
 $L, L' \in E_\Gamma(A)$; $Q \in E_\Gamma(L =_A L')$ and $P[ x := L, y := L, e
 := P ] \in E_\Gamma(M L =_B N L')$, then $(\triplelambda e : x =_A y . P)_{L L'} Q \in E_\Gamma(ML =_B NL')$.
+\item
+\label{lm:wteP}
+Let $\Gamma, p : \phi \vdash \delta : \psi$.  If $\epsilon \in E_\Gamma(\phi)$
+and $\delta [p := \epsilon] \in E_\Gamma(\psi)$ then $(\lambda p:\phi.\delta) \epsilon \in E_\Gamma(\psi)$.
+\item
+\label{lm:wteT}
+Let $\Gamma, x : A \vdash M : B$ and let $N \in E_\Gamma(A)$. If $M[x:=N] \in E_\Gamma(B)$ then $(\lambda x:A.M)N \in E_\Gamma(B)$.
 \end{enumerate}
 \end{lemma}
 
 \begin{proof}
-Similar to Lemma \ref{lm:Eref}, using Lemma \ref{lm:SNothers}.
-\end{proof}
+We prove part \ref{lm:wteT} here; the proofs for the other parts is similar.
 
-\begin{lm}
-\label{lm:wte2}
-Let $\Gamma, x : A \vdash M : B$ and let $N \in E_\Gamma(A)$. If $M[x:=N] \in E_\Gamma(B)$ then $(\lambda x:A.M)N \in E_\Gamma(B)$.
-\end{lm}
-
-\begin{proof}
-We prove the following stronger statement:
+We shall prove the following stronger statement:
 
 Suppose $\Gamma, x : A \vdash M : B_1 \rightarrow \cdots \rightarrow B_n \rightarrow C$.  Let $N \in E_\Gamma(A)$ and $N_i \in E_\Gamma(B_i)$ for $i = 1, \ldots, n$.  If
 $M[x:=N]N_1 \cdots N_n \in E_\Gamma(C)$ then $(\lambda x:A.M)NN_1 \cdots N_n \in E_\Gamma(C)$.
 
 The proof is by induction on the type $C$.
 
-If $C \equiv \Omega$: it is easy to verify that $\Gamma \vdash (\lambda x:A.M)NN_1 \cdots N_n : \Omega$.  Lemma \ref{lm:SN}.
+If $C \equiv \Omega$: it is easy to verify that $\Gamma \vdash (\lambda x:A.M)NN_1 \cdots N_n : \Omega$.  Proposition \ref{prop:SN}.\ref{prop:SNT}
 gives that $(\lambda x:A.M)NN_1 \cdots N_n \in \SN$.
 
 Now let $\Delta \supseteq \Gamma$ and $\delta \in E_\Delta((\lambda x:A.M)N \vec{N})$.  Let $\nf{(\lambda x:A.M)N \vec{N}} \equiv \phi_1 \supset \cdots \supset \phi_n \supset \chi$ where $\chi$ is $\bot$ or neutral.  Let $\epsilon_j \in E_\Delta(\phi_j)$ for each $j$.  We must show that
@@ -1048,7 +1055,7 @@ By hypothesis, we have
 i.e.
 \[ (M\{x:=N\{\} : N \sim N\} N_1 \{\} \cdots N_n \{\})^+ \delta \vec{\epsilon}
 \in \SN \]
-and so the result follows by Lemma \ref{lm:SNothers}.3.
+and so the result follows by Proposition \ref{prop:SN}.\ref{prop:SNE}.
 
 The proof for $(\lambda x:A.M)N \vec{N})\{\}^-$ is similar.
 
@@ -1069,7 +1076,7 @@ i.e.
 (\triplelambda e:x =_A y . M \{ x:=e \})_{NN} N \{ \}_{N_1 N_1} N_1\{\} \cdots_{N_n N_n} N_n\{\}_{N_{n+1} N_{n+1}'} P \\
 \quad \in E_\Gamma(M[x:=N] N \vec{N} N_{n+1} = M[x:=N] N \vec{N} N_{n+1}')
 \end{align*}
-This follows from Lemma \ref{lm:wte5}.2, since we have
+This follows from part \ref{lm:wteE}, since we have
 \[ M[x:=N]\{\} \equiv M \{ x:= N \{ \} : N \sim N \} \in E_\Gamma(M[x:=N] = M[x:=N]) \]
 \end{proof}
 
