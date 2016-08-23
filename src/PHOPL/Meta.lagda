@@ -454,3 +454,29 @@ postulate Equation-Validity₂ : ∀ {V} {Γ : Context V} {P : Path V} {M} {A} {
                              Γ ⊢ P ∶ M ≡〈 A 〉 N → Γ ⊢ N ∶ ty A
 \end{code}
 
+\subsubsection{Canonicity}
+
+Define the \emph{canonical objects} of a given type as follows:
+\begin{itemize}
+\item
+The canonical objects $\theta$ of $\Omega$ are given by the grammar
+\[ \theta ::= \bot \mid \theta \supset \theta \]
+\item
+A canonical object of type $A \rightarrow B$ has the form $\lambda x:A.M$, where
+$x : A \vdash M : B$.
+\end{itemize}
+We define the \emph{canonical proofs} of a canonical object $\theta$ of $\Omega$ as follows:
+\begin{itemize}
+\item
+There is no canonical proof of $\bot$.
+\item
+A canonical proof of $\phi \supset \psi$ has the form $\lambda p : \phi . \delta$, where $p : \phi \vdash \delta : \psi$.
+\end{itemize}
+We define the \emph{canonical paths} of an equation as follows:
+\begin{itemize}
+\item
+
+
+\begin{prop}[Canonicity]
+If $\vdash t : T$ and $t$ is in normal form, then $t$ is a canonical object (proof, path) of $T$.
+\end{prop}

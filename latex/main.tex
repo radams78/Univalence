@@ -23,15 +23,17 @@
 
 \section{Introduction}
 
-According to the traditional approach to type theory \todo{Citation}, a type theory should have the
-following properties in order to enjoy a good meaning explanation:
+The rules of deduction of a type theory are traditionally justified by a \emph{meaning explanation} \cite{ML:ITT}, in which to know that a given term has a given type is to know that it computes to a \emph{canonical object} of that type.  For such a meaning explanation to be possible, the type theory should have the following properties:
 \begin{itemize}
 \item \textbf{Confluence} --- The reduction relation should be confluent.
 \item \textbf{Normalization} --- Every well-typed term should reduce to a normal form.
-\item \textbf{Canonicity} --- Hence every well-typed term of type $A$ reduces to a unique canonical form of $A$.  (For example,
-every closed term of type $\mathbb{N}$ reduces to a unique \emph{numeral} --- a term formed by applying $\mathrm{suc}$ some
-finite number of times to 0.)
+\item Every closed normal form of type $A$ is a canonical object of type $A$.
 \end{itemize}
+From these three properties, we have:
+\begin{itemize}
+\item \textbf{Canonicity} --- Every term of type $A$ reduces to a unique canonical object of type $A$.
+\end{itemize}
+\todo{Highlight the lemma Canonicity in this paper}
 
 It is desirable to have, in addition, \emph{strong normalization}, so that we know that we are free to choose whatever reduction strategy we please.
 
@@ -42,9 +44,8 @@ that is an inverse to the canonical function $A = B \rightarrow A \simeq B$.  Wh
 where we eliminate a path (proof of equality) formed by $\isotoid$, it gets 'stuck'.
 
 As possible solutions to this problem, we may try to do with a weaker property than canonicity, such as \emph{propositional canonicity}.
-We may attempt to prove that every closed term of type $\mathbb{N}$ is \emph{propositionally} equal to a numeral.  (This is known as
-\emph{Voevodsky's Conecture} \todo{Cite}.)  Or we may attempt to change the definition of equality to make $\isotoid$ definable (\cite{Polonsky14a}), or
-shift to an entirely different type theory such as Cubical Type Theory \todo{Cite}.
+We may attempt to prove that every closed term of type $\mathbb{N}$ is \emph{propositionally} equal to a numeral, as conjectured by Voevodsky.  Or we may attempt to change the definition of equality to make $\isotoid$ definable\cite{Polonsky14a}, or
+shift to an entirely different type theory such as Cubical Type Theory\cite{cchm:cubical}.
 
 We could also try a more conservative approach, and simply attempt to find a reduction relation for a type theory involving $\isotoid$ that satisfies
 all three of the properties above.  There seems to be no reason \emph{a priori} to believe this is not possible, but it is difficult to do because
@@ -358,7 +359,6 @@ $\forall x,y : A. x =_A y \supset y =_A x$
 \todos
 
 \begin{frame}
-\frametitle{Bibliography}
 \bibliography{type}
 \end{frame}
 
