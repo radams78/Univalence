@@ -867,3 +867,4 @@ postulate Consistency : ∀ {M : Proof ∅} → 〈〉 ⊢ M ∶ ⊥ → Empty
 -- Consistency = {!!}
 \end{code}
 }
+

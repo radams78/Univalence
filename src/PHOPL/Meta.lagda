@@ -247,9 +247,9 @@ and $B \equiv A \rightarrow C$.
 If $\Gamma \vdash P_{M M'} Q : N =_A N'$, then there exist $B$, $F$ and $G$ such that $\Gamma \vdash P : F =_{B \rightarrow A} G$, $\Gamma \vdash Q : M =_B M'$, $N \simeq F M$
 and $N' \simeq G M'$.
 \item
-If $\Gamma \vdash P^+ : \phi$, then there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\phi \simeq \psi \supset \chi$.
+If $\Gamma \vdash P^+ : \phi$, then there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\phi \simeq (\psi \supset \chi)$.
 \item
-If $\Gamma \vdash P^- : \phi$, there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\phi \simeq \chi \supset \psi$.
+If $\Gamma \vdash P^- : \phi$, there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\phi \simeq (\chi \supset \psi)$.
 \end{enumerate}
 \end{lemma}
 
@@ -455,6 +455,7 @@ postulate Equation-Validity₂ : ∀ {V} {Γ : Context V} {P : Path V} {M} {A} {
 \end{code}
 
 \begin{definition}[Canonical Object]
+$ $
 \begin{itemize}
 \item
 The canonical objects $\theta$ of $\Omega$ are given by the grammar

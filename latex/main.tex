@@ -33,11 +33,10 @@ From these three properties, we have:
 \begin{itemize}
 \item \textbf{Canonicity} --- Every term of type $A$ reduces to a unique canonical object of type $A$.
 \end{itemize}
-\todo{Highlight the lemma Canonicity in this paper}
 
 It is desirable to have, in addition, \emph{strong normalization}, so that we know that we are free to choose whatever reduction strategy we please.
 
-The \emph{univalence axiom} of Homotopy Type theory (HoTT) \todo{Citation} breaks the property of canonicity.  It postulates a
+The \emph{univalence axiom} of Homotopy Type theory (HoTT) \cite{hottbook} breaks the property of canonicity.  It postulates a
 constant
 \[ \isotoid : A \simeq B \rightarrow A = B \]
 that is an inverse to the canonical function $A = B \rightarrow A \simeq B$.  When a computation reaches a point

@@ -1612,7 +1612,7 @@ one-step reductions from $(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon}$:
 
 \begin{itemize}
 \item
-$(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow (P' \supset^* Q) \delta \epsilon \vec{\epsilon}$
+$(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow (P' \supset^* Q) \delta \epsilon \vec{\epsilon}$ where $P \rightarrow P'$.
 
 In this case, the result we require follows by the induction hypothesis on $P$.  Similarly if we reduce $Q$, $\delta$, $\epsilon$
 or any of the $\epsilon_i$.
@@ -1625,24 +1625,24 @@ Then the only possible reduction sequence from $\reff{\phi \supset \psi}^* \delt
 which is in $\SN$ since $\delta \in E_\Gamma(\phi \supset \psi)$.
 \item
 $P \equiv \univ*{\alpha}{\beta}$, $Q \equiv \univ*{\alpha'}{\beta'}$, and \\
-$(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow \univ{}{}{\lambda pq.\alpha' (p (\beta q))}{\lambda pq.\beta' (p (\alpha q))}^+ \delta \epsilon \vec{\epsilon}$.
+$(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow \univ*{\lambda pq.\alpha' (p (\beta q))}{\lambda pq.\beta' (p (\alpha q))}^+ \delta \epsilon \vec{\epsilon}$.
 
 Then the only possible reduction sequence from \\
 $\univ*{\lambda pq.\alpha' (p (\beta q))}{\lambda pq.\beta' (p (\alpha q))}\delta \epsilon \vec{\epsilon}$ is
 
 \begin{align*}
-\lefteqn{\univ{}{}{\lambda pq.\alpha' (p (\beta q))}{\lambda pq.\beta' (p (\alpha q))}^+ \delta \epsilon \vec{\epsilon}} \\
+\lefteqn{\univ*{\lambda pq.\alpha' (p (\beta q))}{\lambda pq.\beta' (p (\alpha q))}^+ \delta \epsilon \vec{\epsilon}} \\
 & \rightarrow (\lambda pq.\alpha' (p (\beta q))) \delta \epsilon \vec{\epsilon} \\
 & \twoheadrightarrow \alpha' (\delta (\beta \epsilon)) \vec{\epsilon}
 \end{align*}
 Now, we know $P^- \in E_\Gamma(\phi' \supset \phi)$ hence $\beta \in E_\Gamma(\phi' \supset \phi)$, and so $\beta \epsilon \in E_\Gamma(\phi)$.  Similarly
 $\alpha' \in E_\Gamma(\psi \supset \psi_1 \supset \cdots \supset \psi_n \supset \chi)$, and so $\alpha' (\delta (\beta \epsilon)) \vec{\epsilon} \in E_\Gamma(\bot) \subseteq \SN$ as required.
 \item
-$P \equiv \univ*{\alpha}{\beta}$, $Q \equiv \reff{\psi}$ and $(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow \univ{}{}{\lambda pq.p(\beta q)}{\lambda pq.p(\alpha q)}$
+$P \equiv \univ*{\alpha}{\beta}$, $Q \equiv \reff{\psi}$ and $(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow \univ*{\lambda pq.p(\beta q)}{\lambda pq.p(\alpha q)}$
 
 Similar to the above.
 \item
-$P \equiv \reff{\phi}$, $Q \equiv \univ*{\alpha}{\beta}$ and $(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow \univ{}{}{\lambda pq.\alpha(pq)}{\lambda pq.\beta(pq)}$
+$P \equiv \reff{\phi}$, $Q \equiv \univ*{\alpha}{\beta}$ and $(P \supset^* Q)^+ \delta \epsilon \vec{\epsilon} \rightarrow \univ*{\lambda pq.\alpha(pq)}{\lambda pq.\beta(pq)}$
 
 Similar to the above.
 \end{itemize}
@@ -1658,5 +1658,5 @@ If $\delta \in E_\Gamma(\phi \supset \psi)$ and $\epsilon \in E_\Gamma(\psi \sup
 \end{lemma}
 
 \begin{proof}
-Similar. \todo{Write out the details}
+Similar.
 \end{proof}
