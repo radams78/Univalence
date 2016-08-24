@@ -238,6 +238,7 @@ cannot overlap.
 \end{proof}
 
 \begin{cor}[Confluence]
+\label{cor:confluence}
 $ $
 \begin{enumerate}
 \item

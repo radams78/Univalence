@@ -454,29 +454,36 @@ postulate Equation-Validity₂ : ∀ {V} {Γ : Context V} {P : Path V} {M} {A} {
                              Γ ⊢ P ∶ M ≡〈 A 〉 N → Γ ⊢ N ∶ ty A
 \end{code}
 
-\subsubsection{Canonicity}
-
-Define the \emph{canonical objects} of a given type as follows:
+\begin{definition}[Canonical Object]
 \begin{itemize}
 \item
 The canonical objects $\theta$ of $\Omega$ are given by the grammar
 \[ \theta ::= \bot \mid \theta \supset \theta \]
 \item
 A canonical object of type $A \rightarrow B$ has the form $\lambda x:A.M$, where
-$x : A \vdash M : B$.
+$x : A \vdash M : B$ and $M$ is in normal form.
 \end{itemize}
 We define the \emph{canonical proofs} of a canonical object $\theta$ of $\Omega$ as follows:
 \begin{itemize}
 \item
 There is no canonical proof of $\bot$.
 \item
-A canonical proof of $\phi \supset \psi$ has the form $\lambda p : \phi . \delta$, where $p : \phi \vdash \delta : \psi$.
+A canonical proof of $\phi \supset \psi$ has the form $\lambda p : \phi . \delta$, where $p : \phi \vdash \delta : \psi$ and $\delta$ is in normal form.
 \end{itemize}
-We define the \emph{canonical paths} of an equation as follows:
+We define the \emph{canonical paths} of an equation $M =_A N$, where $M$ and $N$ are canonical objects of $A$, as follows:
 \begin{itemize}
 \item
-
+A canonical path of $\phi =_\Omega \psi$ is either $\reff{\phi}$ if $\phi \simeq \psi$, or $\univ{\phi}{\psi}{\delta}{\epsilon}$, where $\delta$ is a canonical
+proof of $\phi \supset \psi$ and $\epsilon$ is a canonical proof of $\psi \supset \phi$.
+\item
+A canonical path of $F =_{A \rightarrow B} G$ is either $\reff{F}$ if $F \simeq G$, or $\triplelambda e:x =_A y.P$ where $x : A, y : A, e : x =_A y \vdash P : Fx =_B Gy$ and $P$ is in normal form.
+\end{itemize}
+\end{definition}
 
 \begin{prop}[Canonicity]
 If $\vdash t : T$ and $t$ is in normal form, then $t$ is a canonical object (proof, path) of $T$.
 \end{prop}
+
+\begin{proof}
+This follows easily from the Generation Lemma.
+\end{proof}

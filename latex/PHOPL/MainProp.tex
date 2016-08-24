@@ -848,6 +848,7 @@ by Lemmas \ref{lm:varcompute1} and \ref{lm:varcompute2}.
 \end{proof}
 
 \begin{corollary}[Strong Normalization]
+\label{cor:SN}
 Every well-typed term, proof and path is strongly normalizing.
 \end{corollary}
 
@@ -873,6 +874,11 @@ Every well-typed term, proof and path is strongly normalizing.
 \>[2]\AgdaSymbol{(}\AgdaPostulate{Computable-Sub} \AgdaSymbol{(}\AgdaFunction{idSub} \AgdaBound{V}\AgdaSymbol{)} \AgdaFunction{idSubC} \AgdaBound{Γ⊢M∶A} \AgdaSymbol{(}\AgdaFunction{context-validity} \AgdaBound{Γ⊢M∶A}\AgdaSymbol{)))}\<%
 \end{code}
 }
+
+\begin{corollary}[Canonicity]
+\label{cor:canon}
+If $\vdash s : T$, then there is a unique canonical object $t$ of $T$ such that $s \twoheadrightarrow t$.
+\end{corollary}
 
 \begin{corollary}[Consistency]
 There is no proof $\delta$ such that $\vdash \delta : \bot$.
