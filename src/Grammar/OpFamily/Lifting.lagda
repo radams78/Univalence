@@ -31,11 +31,11 @@ Given an operation $\sigma : U \rightarrow V$ and a list of variable kinds $A \e
 the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \cdots ) , A_n)$.
 
 \begin{code}
-  LIFTOP' : ∀ {U} {V} A → OP U V ⟶ OP (dom U A) (dom V A)
-  LIFTOP' (Π _ (_ ●)) = id
-  LIFTOP' (Π _ (K ⇒ A)) = LIFTOP' (Π _ A) ∘ LIFTOP K
+  LIFTOP' : ∀ {U} {V} VV → OP U V ⟶ OP (extend U VV) (extend V VV)
+  LIFTOP' [] = id
+  LIFTOP' (W ∷ VV) = LIFTOP' VV ∘ LIFTOP W
 
-  liftOp' : ∀ {U} {V} A → Op U V → Op (dom U A) (dom V A)
+  liftOp' : ∀ {U} {V} VV → Op U V → Op (extend U VV) (extend V VV)
   liftOp' A = Function.Equality.Π._⟨$⟩_ (LIFTOP' A)
 
   liftOp'-cong : ∀ {U} {V} A {ρ σ : Op U V} → 
@@ -46,12 +46,11 @@ the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \c
 This allows us to define the action of \emph{application} $E[\sigma]$:
 
 \begin{code}
-  ap : ∀ {U} {V} {C} {K} → 
-    Op U V → Subexpression U C K → Subexpression V C K
+  ap : ∀ {U} {V} {C} {K} → Op U V → Subexpression U C K → Subexpression V C K
   ap ρ (var x) = apV ρ x
   ap ρ (app c EE) = app c (ap ρ EE)
-  ap _ out = out
-  ap ρ (_,,_ {A = A} E EE) = ap (liftOp' A ρ) E ,, ap ρ EE
+  ap _ [] = []
+  ap ρ (_∷_ {A = SK AA _} E EE) = ap (liftOp' AA ρ) E ∷ ap ρ EE
 \end{code}
 
 We prove that application respects $\sim$.
@@ -66,9 +65,9 @@ We prove that application respects $\sim$.
 \begin{code}
   ap-congl ρ-is-σ (var x) = ρ-is-σ x
   ap-congl ρ-is-σ (app c E) = Prelims.cong (app c) (ap-congl ρ-is-σ E)
-  ap-congl _ out = refl
-  ap-congl ρ-is-σ (_,,_ {A = A} E F) = 
-    cong₂ _,,_ (ap-congl (liftOp'-cong A ρ-is-σ) E) (ap-congl ρ-is-σ F)
+  ap-congl _ [] = refl
+  ap-congl ρ-is-σ (_∷_ {A = SK AA _} E F) = 
+    cong₂ _∷_ (ap-congl (liftOp'-cong AA ρ-is-σ) E) (ap-congl ρ-is-σ F)
 
   ap-congr : ∀ {U} {V} {C} {K}
     {σ : Op U V} {E F : Subexpression U C K} →

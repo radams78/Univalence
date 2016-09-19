@@ -28,9 +28,9 @@ record Taxonomy : Set₁ where
     VarKind : Set
     NonVarKind : Set
 
-  data ExpressionKind : Set where
-    varKind : VarKind → ExpressionKind
-    nonVarKind : NonVarKind → ExpressionKind
+  data ExpKind : Set where
+    varKind : VarKind → ExpKind
+    nonVarKind : NonVarKind → ExpKind
 \end{code}
 %</Taxonomy>
 
@@ -88,6 +88,12 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
 \end{code}
 \end{frame}
 
+A \emph{constructor kind} is an expression of the form
+
+\[ ((A_{11} \rightarrow \cdots \rightarrow A_{1r_1} \rightarrow B_1) \rightarrow \cdots \rightarrow (A_{m1} \rightarrow \cdots \rightarrow A_{mr_m} \rightarrow B_m) \rightarrow C) \]
+
+where each $A_{ij}$ is a variable kind, and each $B_i$ and $C$ is an expression kind.
+
 A constructor $c$ of kind (\ref{eq:conkind}) is a constructor that takes $m$ arguments of kind $B_1$, \ldots, $B_m$, and binds $r_i$ variables in its $i$th argument of kind $A_{ij}$,
 producing an expression of kind $C$.  We write this expression as
 
@@ -98,44 +104,39 @@ c([x_{11}, \ldots, x_{1r_1}]E_1, \ldots, [x_{m1}, \ldots, x_{mr_m}]E_m) \enspace
 
 The subexpressions of the form $[x_{i1}, \ldots, x_{ir_i}]E_i$ shall be called \emph{abstractions}.
 
-When giving a specific grammar, we shall feel free to use BNF notation.  
+We formalise this as follows.  First, a \emph{simple kind} over the sets $A$ and $B$ is an expression of the form
+\[ a_1 \longrightarrow \cdots \longrightarrow a_n \longrightarrow b \]
+where each $a_i \in A$ and $b \in B$.
 
-We formalise this as follows.  First, we construct the sets of expression kinds and constructor kinds over a taxonomy:
+\begin{code}
+  record SimpleKind (A B : Set) : Set where
+    constructor SK
+    field
+      dom : List A
+      cod : B
 
-\begin{frame}[fragile]
-There are two \emph{classes} of kinds: expression kinds and constructor kinds.
+  _✧ : ∀ {A} {B} → B → SimpleKind A B
+  b ✧ = SK [] b
+
+  _⟶_ : ∀ {A} {B} → A → SimpleKind A B → SimpleKind A B
+  a ⟶ SK dom cod = SK (a ∷ dom) cod
+\end{code}
+
+An abstraction kind is a simple kind over variable kinds and expression kinds.
+A constructor kind is a simple kind over abstraction kinds and expression kinds.
+
+\begin{code}
+  AbsKind = SimpleKind VarKind ExpKind
+  ConKind = SimpleKind AbsKind ExpKind
+\end{code}
 
 \begin{code}
   data KindClass : Set where
     -Expression : KindClass
-    -Constructor : ExpressionKind → KindClass
+    -ListAbs : KindClass
 
-  infix 2 _●
-  infixr 1 _⟶_
-  data PiDom (S : Set) : ExpressionKind → Set where
-    _● : ∀ K → PiDom S K
-    _⟶_ : ∀ {K} → S → PiDom S K → PiDom S K
-
-  data PiExp (S : Set) : Set where
-    Π : ∀ K → PiDom S K → PiExp S
-
-  AbstractionKind' : Set
-  AbstractionKind' = PiExp VarKind
-
-  data AbstractionKind : Set where
-    out : ExpressionKind → AbstractionKind
-    Π : VarKind → AbstractionKind → AbstractionKind
-
-  data Kind : KindClass → Set
-  ConstructorKind : ExpressionKind → Set
-
-  ConstructorKind K = Kind (-Constructor K)
-
-  data Kind where
-    base : ExpressionKind → Kind -Expression
-
-    out  : ∀ K → ConstructorKind K
-    Π    : ∀ {K} → AbstractionKind' → ConstructorKind K → ConstructorKind K
+  Kind : KindClass → Set
+  Kind -Expression = ExpKind
+  Kind -ListAbs = List AbsKind
 \end{code}
-\end{frame}
-%TODO Colours in Agda code?
+

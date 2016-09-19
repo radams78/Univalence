@@ -10,8 +10,8 @@ module Grammar.Base where
 record IsGrammar (T : Taxonomy) : Set₁ where
   open Taxonomy T
   field
-    Constructor    : ∀ {K} → ConstructorKind K → Set
-    parent         : VarKind → ExpressionKind
+    Constructor    : ConKind → Set
+    parent         : VarKind → ExpKind
 
 record Grammar : Set₁ where
   field
@@ -24,34 +24,24 @@ record Grammar : Set₁ where
 
 %<*Expression>
 \begin{code}
-  data Subexpression : Alphabet → ∀ C → Kind C → Set
-  Expression : Alphabet → ExpressionKind → Set
+  data Subexpression (V : Alphabet) : ∀ C → Kind C → Set
+  Expression : Alphabet → ExpKind → Set
   VExpression : Alphabet → VarKind → Set
-  dom : Alphabet → AbstractionKind' → Alphabet
-  cod : AbstractionKind' → ExpressionKind
-  Abstraction : Alphabet → AbstractionKind' → Set
-  Body : Alphabet → ∀ {K} → ConstructorKind K → Set
+  Abstraction : Alphabet → AbsKind → Set
+  Body : Alphabet → List AbsKind → Set
 
-  Expression V K = Subexpression V -Expression (base K)
+  Expression V K = Subexpression V -Expression K
   VExpression V K = Expression V (varKind K)
-  dom V (Π _ (_ ●)) = V
-  dom V (Π _ (K ⟶ A)) = dom (V , K) (Π _ A)
-  cod (Π _ (K ●)) = K
-  cod (Π _ (_ ⟶ A)) = cod (Π _ A)
-  Abstraction V A = Expression (dom V A) (cod A)
-  Body V {K} C = Subexpression V (-Constructor K) C
+  Abstraction V (SK VV K) = Expression (extend V VV) K
+  Body V AA = Subexpression V -ListAbs AA
 
-  infixr 50 _,,_
-  data Subexpression where
-    var : ∀ {V} {K} → Var V K → VExpression V K
-    app : ∀ {V} {K} {C} → Constructor C → Body V {K} C → 
-      Expression V K
-
-    out : ∀ {V} {K} → Body V (out K)
-    _,,_ : ∀ {V} {K} {A} {C} → Abstraction V A → Body V {K} C → Body V (Π A C)
+  data Subexpression V where
+    var : ∀ {K} → Var V K → VExpression V K
+    app : ∀ {AA} {K} → Constructor (SK AA K) → Body V AA → Expression V K
+    [] : Body V []
+    _∷_ : ∀ {A} {AA} → Abstraction V A → Body V AA → Body V (A ∷ AA)
 \end{code}
 %</Expression>
-
 
 \AgdaHide{
 \begin{code}
@@ -64,7 +54,6 @@ record Grammar : Set₁ where
     _snoc_ : ∀ {A} {K} → ExpList V A → Expression V (varKind K) → ExpList V (A snoc K)
 
   Reduction : Set₁
-  Reduction = ∀ {V} {K} {C : Kind (-Constructor K)} → 
-    Constructor C → Body V C → Expression V K → Set
+  Reduction = ∀ {V} {AA} {K} → Constructor (SK AA K) → Body V AA → Expression V K → Set
 \end{code}
 }
