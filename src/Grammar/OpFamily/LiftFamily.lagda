@@ -86,19 +86,19 @@ $E[\id{V}] \equiv E$
  
 \begin{code}      
   liftOp'-idOp : ∀ {V} A → 
-    liftOp' A (idOp V) ∼op idOp (dom V A)
+    liftOp' A (idOp V) ∼op idOp (extend V A)
 \end{code}
 
 \AgdaHide{
 \begin{code}
-  liftOp'-idOp (Π _ (_ ●)) = ∼-refl
-  liftOp'-idOp {V} (Π _ (K ⟶ A)) = let open EqReasoning (OP (dom V (Π _ (K ⟶ A))) (dom V (Π _ (K ⟶ A)))) in 
+  liftOp'-idOp [] = ∼-refl
+  liftOp'-idOp {V} (K ∷ A) = let open EqReasoning (OP (extend V (K ∷ A)) (extend V (K ∷ A))) in 
     begin
-      liftOp' (Π _ A) (liftOp K (idOp V))
-    ≈⟨ liftOp'-cong (Π _ A) liftOp-idOp ⟩
-      liftOp' (Π _ A) (idOp (V , K))
-    ≈⟨ liftOp'-idOp (Π _ A) ⟩
-      idOp (dom V (Π _ (K ⟶ A)))
+      liftOp' A (liftOp K (idOp V))
+    ≈⟨ liftOp'-cong A liftOp-idOp ⟩
+      liftOp' A (idOp (V , K))
+    ≈⟨ liftOp'-idOp A ⟩
+      idOp (extend V (K ∷ A))
     ∎
 \end{code}
 }
@@ -112,15 +112,15 @@ $E[\id{V}] \equiv E$
 \begin{code}
   ap-idOp {E = var x} = apV-idOp x
   ap-idOp {E = app c EE} = cong (app c) ap-idOp
-  ap-idOp {E = out} = refl
-  ap-idOp {V} {E = _,,_ {A = A} E F} =
+  ap-idOp {E = []} = refl
+  ap-idOp {V} {E = _∷_ {A = SK A _} E F} =
     let open ≡-Reasoning in 
     begin
-      ap (liftOp' A (idOp V)) E ,, ap (idOp V) F
-    ≡⟨ cong₂ _,,_ (ap-congl (liftOp'-idOp A) E) ap-idOp ⟩
-       ap (idOp (dom V A)) E ,, F
-    ≡⟨ cong (λ x → x ,, F) ap-idOp ⟩
-       E ,, F
+      ap (liftOp' A (idOp V)) E ∷ ap (idOp V) F
+    ≡⟨ cong₂ _∷_ (ap-congl (liftOp'-idOp A) E) ap-idOp ⟩
+       ap (idOp (extend V A)) E ∷ F
+    ≡⟨ cong (λ x → x ∷ F) ap-idOp ⟩
+       E ∷ F
     ∎
 \end{code}
 }

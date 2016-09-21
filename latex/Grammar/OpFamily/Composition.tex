@@ -132,29 +132,29 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
 \AgdaHide{
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'-circ} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(\_} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{=} \AgdaFunction{∼-refl} \AgdaBound{H}\<%
+\>[2]\AgdaFunction{liftOp'-circ} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaFunction{∼-refl} \AgdaBound{H}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'-circ} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{⟶} \AgdaBound{A}\AgdaSymbol{))} \AgdaSymbol{\{}\AgdaBound{σ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{EqReasoning} \AgdaSymbol{(}\AgdaFunction{OP} \AgdaBound{H} \AgdaSymbol{\_} \AgdaSymbol{\_)} \AgdaKeyword{in} \<[86]%
-\>[86]\<%
+\>[2]\AgdaFunction{liftOp'-circ} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{∷} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{σ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{EqReasoning} \AgdaSymbol{(}\AgdaFunction{OP} \AgdaBound{H} \AgdaSymbol{\_} \AgdaSymbol{\_)} \AgdaKeyword{in} \<[80]%
+\>[80]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaFunction{begin}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{liftOp'} \AgdaBound{H} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{H} \AgdaBound{K} \AgdaSymbol{(}\AgdaField{circ} \AgdaBound{σ} \AgdaBound{ρ}\AgdaSymbol{))}\<%
+\>[6]\AgdaFunction{liftOp'} \AgdaBound{H} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{H} \AgdaBound{K} \AgdaSymbol{(}\AgdaField{circ} \AgdaBound{σ} \AgdaBound{ρ}\AgdaSymbol{))}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≈⟨} \AgdaFunction{liftOp'-cong} \AgdaBound{H} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaBound{A}\AgdaSymbol{)} \AgdaField{liftOp-circ} \AgdaFunction{⟩}\<%
+\>[4]\AgdaFunction{≈⟨} \AgdaFunction{liftOp'-cong} \AgdaBound{H} \AgdaBound{A} \AgdaField{liftOp-circ} \AgdaFunction{⟩}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{liftOp'} \AgdaBound{H} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaField{circ} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{F} \AgdaBound{K} \AgdaBound{σ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{G} \AgdaBound{K} \AgdaBound{ρ}\AgdaSymbol{))}\<%
+\>[6]\AgdaFunction{liftOp'} \AgdaBound{H} \AgdaBound{A} \AgdaSymbol{(}\AgdaField{circ} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{F} \AgdaBound{K} \AgdaBound{σ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{G} \AgdaBound{K} \AgdaBound{ρ}\AgdaSymbol{))}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≈⟨} \AgdaFunction{liftOp'-circ} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaBound{A}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
+\>[4]\AgdaFunction{≈⟨} \AgdaFunction{liftOp'-circ} \AgdaBound{A} \AgdaFunction{⟩}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaField{circ} \AgdaSymbol{(}\AgdaFunction{liftOp'} \AgdaBound{F} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{F} \AgdaBound{K} \AgdaBound{σ}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{liftOp'} \AgdaBound{G} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{G} \AgdaBound{K} \AgdaBound{ρ}\AgdaSymbol{))}\<%
+\>[6]\AgdaField{circ} \AgdaSymbol{(}\AgdaFunction{liftOp'} \AgdaBound{F} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{F} \AgdaBound{K} \AgdaBound{σ}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{liftOp'} \AgdaBound{G} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{G} \AgdaBound{K} \AgdaBound{ρ}\AgdaSymbol{))}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaFunction{∎}\<%
@@ -179,10 +179,10 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
 \>[2]\AgdaFunction{ap-circ} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaBound{c} \AgdaBound{E}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{cong} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaBound{c}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{ap-circ} \AgdaBound{E}\AgdaSymbol{)}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{ap-circ} \AgdaInductiveConstructor{out} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\>[2]\AgdaFunction{ap-circ} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{ap-circ} \AgdaSymbol{(}\AgdaInductiveConstructor{\_,,\_} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaBound{A}\AgdaSymbol{\}} \AgdaBound{E} \AgdaBound{E'}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{σ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaInductiveConstructor{\_,,\_}\<%
+\>[2]\AgdaFunction{ap-circ} \AgdaSymbol{(}\AgdaInductiveConstructor{\_∷\_} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaInductiveConstructor{SK} \AgdaBound{A} \AgdaSymbol{\_\}} \AgdaBound{E} \AgdaBound{E'}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{σ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaInductiveConstructor{\_∷\_}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaSymbol{(}\AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{≡-Reasoning} \AgdaKeyword{in} \<[29]%

@@ -115,9 +115,11 @@ where each $a_i \in A$ and $b \in B$.
       dom : List A
       cod : B
 
+  infix 71 _✧
   _✧ : ∀ {A} {B} → B → SimpleKind A B
   b ✧ = SK [] b
 
+  infixr 70 _⟶_
   _⟶_ : ∀ {A} {B} → A → SimpleKind A B → SimpleKind A B
   a ⟶ SK dom cod = SK (a ∷ dom) cod
 \end{code}

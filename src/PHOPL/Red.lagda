@@ -57,26 +57,26 @@ $\triplelambda e:y=_Ay'.M\{x:=e:y\sim y'\} \rhd \reff{\lambda x:A.M}$}
 
 \begin{code}
 data R : Reduction where
-  βT : ∀ {V} {A} {M} {N} → R {V} -appTerm (ΛT A M ,, N ,, out) (M ⟦ x₀:= N ⟧)
-  βR : ∀ {V} {φ} {δ} {ε} → R {V} -appProof (ΛP φ δ ,, ε ,, out) (δ ⟦ x₀:= ε ⟧)
-  plus-ref : ∀ {V} {φ} → R {V} -plus (reff φ ,, out) (ΛP φ (var x₀))
-  minus-ref : ∀ {V} {φ} → R {V} -minus (reff φ ,, out) (ΛP φ (var x₀))
-  plus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → R {V} -plus (univ φ ψ δ ε ,, out) δ 
-  minus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → R {V} -minus (univ φ ψ δ ε ,, out) ε
-  ref⊃*univ : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → R {V} -imp* (reff φ ,, univ ψ χ δ ε ,, out) (univ (φ ⊃ ψ) (φ ⊃ χ) (ΛP (φ ⊃ ψ) (ΛP (φ ⇑) (appP (δ ⇑ ⇑) (appP (var x₁) (var x₀))))) (ΛP (φ ⊃ χ) (ΛP (φ ⇑) (appP (ε ⇑ ⇑) (appP (var x₁) (var x₀))))))
-  univ⊃*ref : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → R {V} -imp* (univ φ ψ δ ε ,, reff χ ,, out) (univ (φ ⊃ χ) (ψ ⊃ χ) (ΛP (φ ⊃ χ) (ΛP (ψ ⇑) (appP (var x₁) (appP (ε ⇑ ⇑) (var x₀))))) (ΛP (ψ ⊃ χ) (ΛP (φ ⇑) (appP (var x₁) (appP (δ ⇑ ⇑) (var x₀))))))
+  βT : ∀ {V} {A} {M} {N} → R {V} -appTerm (ΛT A M ∷ N ∷ []) (M ⟦ x₀:= N ⟧)
+  βR : ∀ {V} {φ} {δ} {ε} → R {V} -appProof (ΛP φ δ ∷ ε ∷ []) (δ ⟦ x₀:= ε ⟧)
+  plus-ref : ∀ {V} {φ} → R {V} -plus (reff φ ∷ []) (ΛP φ (var x₀))
+  minus-ref : ∀ {V} {φ} → R {V} -minus (reff φ ∷ []) (ΛP φ (var x₀))
+  plus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → R {V} -plus (univ φ ψ δ ε ∷ []) δ 
+  minus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → R {V} -minus (univ φ ψ δ ε ∷ []) ε
+  ref⊃*univ : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → R {V} -imp* (reff φ ∷ univ ψ χ δ ε ∷ []) (univ (φ ⊃ ψ) (φ ⊃ χ) (ΛP (φ ⊃ ψ) (ΛP (φ ⇑) (appP (δ ⇑ ⇑) (appP (var x₁) (var x₀))))) (ΛP (φ ⊃ χ) (ΛP (φ ⇑) (appP (ε ⇑ ⇑) (appP (var x₁) (var x₀))))))
+  univ⊃*ref : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → R {V} -imp* (univ φ ψ δ ε ∷ reff χ ∷ []) (univ (φ ⊃ χ) (ψ ⊃ χ) (ΛP (φ ⊃ χ) (ΛP (ψ ⇑) (appP (var x₁) (appP (ε ⇑ ⇑) (var x₀))))) (ΛP (ψ ⊃ χ) (ΛP (φ ⇑) (appP (var x₁) (appP (δ ⇑ ⇑) (var x₀))))))
   univ⊃*univ : ∀ {V} {φ} {φ'} {ψ} {ψ'} {δ} {δ'} {ε} {ε'} →
-    R {V} -imp* (univ φ ψ δ ε ,, univ φ' ψ' δ' ε' ,, out)
+    R {V} -imp* (univ φ ψ δ ε ∷ univ φ' ψ' δ' ε' ∷ [])
     (univ (φ ⊃ φ') (ψ ⊃ ψ') (ΛP (φ ⊃ φ') (ΛP (ψ ⇑) (appP (δ' ⇑ ⇑) (appP (var x₁) (appP (ε ⇑ ⇑) (var x₀))))))
       (ΛP (ψ ⊃ ψ') (ΛP (φ ⇑) (appP (ε' ⇑ ⇑) (appP (var x₁) (appP (δ ⇑ ⇑) (var x₀)))))))
-  ref⊃*ref : ∀ {V} {φ} {ψ} → R {V} -imp* (reff φ ,, reff ψ ,, out) (reff (φ ⊃ ψ))
-  refref : ∀ {V} {M} {N} → R {V} -app* (N ,, N ,, reff M ,, reff N ,, out) (reff (appT M N))
-  βE : ∀ {V} {M} {N} {A} {P} {Q} → R {V} -app* (M ,, N ,, λλλ A P ,, Q ,, out) 
+  ref⊃*ref : ∀ {V} {φ} {ψ} → R {V} -imp* (reff φ ∷ reff ψ ∷ []) (reff (φ ⊃ ψ))
+  refref : ∀ {V} {M} {N} → R {V} -app* (N ∷ N ∷ reff M ∷ reff N ∷ []) (reff (appT M N))
+  βE : ∀ {V} {M} {N} {A} {P} {Q} → R {V} -app* (M ∷ N ∷ λλλ A P ∷ Q ∷ []) 
     (P ⟦ x₂:= M ,x₁:= N ,x₀:= Q ⟧)
-  reflamvar : ∀ {V} {N} {N'} {A} {M} {e} → R {V} -app* (N ,, N' ,, reff (ΛT A M) ,, var e ,, out) (M ⟦⟦ x₀::= (var e) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
-  reflam⊃* : ∀ {V} {N} {N'} {A} {M} {P} {Q} → R {V} -app* (N ,, N' ,, reff (ΛT A M) ,, (P ⊃* Q) ,, out) (M ⟦⟦ x₀::= (P ⊃* Q) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
-  reflamuniv : ∀ {V} {N} {N'} {A} {M} {φ} {ψ} {δ} {ε} → R {V} -app* (N ,, N' ,, reff (ΛT A M) ,, univ φ ψ δ ε ,, out) (M ⟦⟦ x₀::= (univ φ ψ δ ε) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
-  reflamλλλ : ∀ {V} {N} {N'} {A} {M} {B} {P} → R {V} -app* (N ,, N' ,, reff (ΛT A M) ,, λλλ B P ,, out) (M ⟦⟦ x₀::= (λλλ B P) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
+  reflamvar : ∀ {V} {N} {N'} {A} {M} {e} → R {V} -app* (N ∷ N' ∷ reff (ΛT A M) ∷ var e ∷ []) (M ⟦⟦ x₀::= (var e) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
+  reflam⊃* : ∀ {V} {N} {N'} {A} {M} {P} {Q} → R {V} -app* (N ∷ N' ∷ reff (ΛT A M) ∷ (P ⊃* Q) ∷ []) (M ⟦⟦ x₀::= (P ⊃* Q) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
+  reflamuniv : ∀ {V} {N} {N'} {A} {M} {φ} {ψ} {δ} {ε} → R {V} -app* (N ∷ N' ∷ reff (ΛT A M) ∷ univ φ ψ δ ε ∷ []) (M ⟦⟦ x₀::= (univ φ ψ δ ε) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
+  reflamλλλ : ∀ {V} {N} {N'} {A} {M} {B} {P} → R {V} -app* (N ∷ N' ∷ reff (ΛT A M) ∷ λλλ B P ∷ []) (M ⟦⟦ x₀::= (λλλ B P) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
 \end{code}
 
 Let $\rightarrow^?$ be the reflexive closure of $\rightarrow$;
@@ -116,7 +116,7 @@ postulate univ-red : ∀ {V} {φ φ' ψ ψ' : Term V} {δ} {δ'} {ε} {ε'} →
 
 postulate ΛP-red : ∀ {V} {φ φ' : Term V} {δ} {δ'} → φ ↠ φ' → δ ↠ δ' → ΛP φ δ ↠ ΛP φ' δ'
 
-postulate pre-Confluent : ∀ {V} {K} {C} {c : Constructor C} {E E' : Body V C} {F} →
+postulate pre-Confluent : ∀ {V} {K} {C} {c : Constructor (SK C K)} {E E' : Body V C} {F} →
                         R c E F → E ⇒ E' → Σ[ F' ∈ Expression V K ] R c E' F' × F ↠ F'
 {-pre-Confluent βT (appl (redex ()))
 pre-Confluent βT (appl (app (appl M⇒M'))) = _ ,p βT ,p red-subl (osr-red M⇒M')
@@ -179,7 +179,7 @@ pre-Confluent reflam⊃* E⇒E' = {!!}
 pre-Confluent reflamuniv E⇒E' = {!!}
 pre-Confluent reflamλλλ E⇒E' = {!!} -}
 
-Critical-Pairs : ∀ {V} {K} {C} {c : Constructor C} {E : Body V C} {F} {G} → R c E F → R c E G → Σ[ H ∈ Expression V K ] F ↠ H × G ↠ H
+Critical-Pairs : ∀ {V} {K} {C} {c : Constructor (SK C K)} {E : Body V C} {F} {G} → R c E F → R c E G → Σ[ H ∈ Expression V K ] F ↠ H × G ↠ H
 Critical-Pairs βT βT = _ ,p ref ,p ref
 Critical-Pairs βR βR = _ ,p ref ,p ref
 Critical-Pairs plus-ref plus-ref = _ ,p ref ,p ref
@@ -266,11 +266,11 @@ Local-Confluent (app E⇒F) (redex r) = let (H ,p r⇒H ,p G↠H) = pre-Confluen
 Local-Confluent (app E⇒F) (app E⇒G) = let (H ,p F↠H ,p G↠H) = Local-Confluent E⇒F E⇒G in 
   app _ H ,p respects-red app F↠H ,p respects-red app G↠H
 Local-Confluent (appl E⇒F) (appl E⇒G) = let (H ,p F↠H ,p G↠H) = Local-Confluent E⇒F E⇒G in 
-  (H ,, _) ,p respects-red appl F↠H ,p respects-red appl G↠H
-Local-Confluent (appl {E' = E'} E⇒F) (appr {F' = F'} E⇒G) = (E' ,, F') ,p osr-red (appr E⇒G) ,p osr-red (appl E⇒F)
-Local-Confluent (appr {F' = F'} E⇒F) (appl {E' = E'} E⇒G) = E' ,, F' ,p (osr-red (appl E⇒G)) ,p (osr-red (appr E⇒F))
+  (H ∷ _) ,p respects-red appl F↠H ,p respects-red appl G↠H
+Local-Confluent (appl {E' = E'} E⇒F) (appr {F' = F'} E⇒G) = (E' ∷ F') ,p osr-red (appr E⇒G) ,p osr-red (appl E⇒F)
+Local-Confluent (appr {F' = F'} E⇒F) (appl {E' = E'} E⇒G) = E' ∷ F' ,p (osr-red (appl E⇒G)) ,p (osr-red (appr E⇒F))
 Local-Confluent (appr E⇒F) (appr E⇒G) = let (H ,p F↠H ,p G↠H) = Local-Confluent E⇒F E⇒G in
-  (_ ,, H) ,p respects-red appr F↠H ,p respects-red appr G↠H
+  (_ ∷ H) ,p respects-red appr F↠H ,p respects-red appr G↠H
 {-Local-Confluent (redex βT) (redex βT) = _ ,p ref ,p ref
 Local-Confluent (redex βT) (app (appl (redex ())))
 Local-Confluent (redex (βT {M = M} {N})) (app (appl (app (appl {E' = M'} M⇒M')))) = 
@@ -383,7 +383,7 @@ var-red x↠M = var-red' x↠M refl
 
 private bot-red' : ∀ {V} {φ ψ : Term V} → φ ↠ ψ → φ ≡ ⊥ → ψ ≡ ⊥
 bot-red' (osr-red (redex βT)) ()
-bot-red' (osr-red (app {c = -bot} {F = out} x)) _ = refl
+bot-red' (osr-red (app {c = -bot} {F = []} x)) _ = refl
 bot-red' (osr-red (app {c = -imp} _)) ()
 bot-red' (osr-red (app {c = -appTerm} _)) ()
 bot-red' (osr-red (app {c = -lamTerm _} _)) ()
@@ -397,10 +397,10 @@ imp-red' : ∀ {V} {φ ψ χ θ : Term V} → φ ↠ ψ → φ ≡ χ ⊃ θ →
   Σ[ χ' ∈ Term V ] Σ[ θ' ∈ Term V ] χ ↠ χ' × θ ↠ θ' × ψ ≡ χ' ⊃ θ'
 imp-red' (osr-red (redex βT)) ()
 imp-red' (osr-red (app {c = -bot} _)) ()
-imp-red' {θ = θ} (osr-red (app {c = -imp} (appl {E' = χ'} {F = _ ,, out} χ⇒χ'))) φ≡χ⊃θ = 
+imp-red' {θ = θ} (osr-red (app {c = -imp} (appl {E' = χ'} {F = _ ∷ []} χ⇒χ'))) φ≡χ⊃θ = 
   χ' ,p θ ,p subst (λ x → x ↠ χ') (imp-injl φ≡χ⊃θ) (osr-red χ⇒χ') ,p 
   ref ,p (cong (λ x → χ' ⊃ x) (imp-injr φ≡χ⊃θ))
-imp-red' {χ = χ} (osr-red (app {c = -imp} (appr (appl {E' = θ'} {F = out} θ⇒θ')))) φ≡χ⊃θ = 
+imp-red' {χ = χ} (osr-red (app {c = -imp} (appr (appl {E' = θ'} {F = []} θ⇒θ')))) φ≡χ⊃θ = 
   χ ,p θ' ,p ref ,p (subst (λ x → x ↠ θ') (imp-injr φ≡χ⊃θ) (osr-red θ⇒θ')) ,p 
   cong (λ x → x ⊃ θ') (imp-injl φ≡χ⊃θ)
 imp-red' (osr-red (app {c = -imp} (appr (appr ())))) _

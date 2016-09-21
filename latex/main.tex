@@ -51,7 +51,7 @@ all three of the properties above.  There seems to be no reason \emph{a priori} 
 the full Homotopy Type Theory is a complex and interdependent system.  We can tackle the problem by adding univalence to a much simpler system, finding
 a well-behaved reduction relation, then doing the same for more and more complex systems, gradually approaching the full strength of HoTT.
 
-In this paper, we present a system we call $\lambda o e$, or predicative higher-order propositional logic.  It is a type theory with two universes: the universe $\Omega$
+In this paper, we present a system we call $\lambda o e$, or predicative higher-order minimal logic.  It is a type theory with two universes: the universe $\Omega$
 of \emph{propositions}, and the universe of \emph{types}.  The propositions are closed under $\supset$ (implication) and include $\bot$ (falsehood), and an equality proposition $M =_A N$ for
 any type $A$ and terms $M : A$ and $N : A$.  The types include $\Omega$ itself and are closed under $\rightarrow$ (non-dependent function type).
 
@@ -62,11 +62,9 @@ We present a reduction relation for this system, and prove it satisfies confluen
 
 For the future, we wish to expand the system with universal quantification, and expand it to a 2-dimensional system (with equations between proofs).
 
-\todo{Elimination of the false proposition?}
+\section{Predicative Higher-Order Minimal Logic with Extensional Equality}
 
-\section{Predicative Higher-Order Propositional Logic with Extensional Equality}
-
-We call the following type theory $\lambda o e$, or \emph{predicative higher-order propositional logic with extensional equality}.  
+We call the following type theory $\lambda o e$, or \emph{predicative higher-order minimal logic with extensional equality}.  
 
 \input{PHOPL/Grammar.tex}
 \input{PHOPL/PathSub.tex}

@@ -43,7 +43,11 @@ and we shall use Greek letters for terms that are intended to be propositions.  
 
 Note also that the types of $\lambda o e$ are just the simple types over $\Omega$; therefore, no variable can occur in a type.
 
-\todo{Give the intuition}.
+The intuition behind the new expressions is as follows (see also the rules of deduction in Figure \ref{fig:lambdaoe}).  For any object $M : A$, there is the trivial path $\reff{M} : M =_A M$.  The constructor $\supset^*$ ensures congruence for $\supset$ --- if $P : \phi =_\Omega \phi'$ and $Q : \psi =_\Omega \psi'$ then $P \supset^* Q : \phi \supset \psi =_\Omega \phi' \supset \psi'$.  The constructor $\mathsf{univ}$ gives univalence for our propositions: if $\delta : \phi \supset \psi$ and $\epsilon : \psi \supset \phi$, then $\univ{\phi}{\psi}{\delta}{\epsilon}$ is a path of type $\phi =_\Omega \psi$.  The constructors $^+$ and $^-$ are the converses: if $P$ is a path of type $\phi =_\Omega \psi$, then $P^+$ is a proof of $\phi \supset \psi$, and $P^-$ is a proof of $\psi \supset \phi$.
+
+The constructor $\triplelambda$ gives functional extensionality.  Let $F$ and $G$ be functions of type $A \rightarrow B$.  If $F x =_B G y$ whenever $x =_A y$, then $F =_{A \rightarrow B} G$.  More formally, if $P$ is a path of type $Fx =_B Gy$ that depends on $x : A$, $y : A$ and $e : x =_A y$, then $\triplelambda e : x =_A y . P$ is a path of type $F =_{A \rightarrow B} G$.
+
+Finally, if $P$ is a path of type $F =_{A \rightarrow B} G$, and $Q$ is a path $M =_A N$, then $P_{MN} Q$ is a path $FM =_B G N$.
 
 \begin{code}
 data PHOPLVarKind : Set where
@@ -63,33 +67,46 @@ PHOPLTaxonomy = record {
 module PHOPLgrammar where
   open Taxonomy PHOPLTaxonomy
 
+  -vProof : ExpKind
+  -vProof = varKind -Proof
+
+  -vTerm : ExpKind
+  -vTerm = varKind -Term
+
+  -vPath : ExpKind
+  -vPath = varKind -Path
+
+  -nvType : ExpKind
+  -nvType = nonVarKind -Type
+
+  -nvEq : ExpKind
+  -nvEq = nonVarKind -Equation
+
   data Type : Set where
     Ω : Type
     _⇛_ : Type → Type → Type
 
-  data PHOPLcon : ∀ {K : ExpressionKind} → 
-    Kind (-Constructor K) → Set where
-    -ty : Type → PHOPLcon (out (nonVarKind -Type))
-    -appProof : PHOPLcon (Π (Π _ (varKind -Proof ●)) (Π (Π _ (varKind -Proof ●)) (out (varKind -Proof))))
-    -lamProof : PHOPLcon (Π (Π _ (varKind -Term ●))
-      (Π (Π _ (-Proof ⟶ varKind -Proof ●)) (out (varKind -Proof))))
-    -bot : PHOPLcon (out (varKind -Term))
-    -imp : PHOPLcon (Π (Π _ (varKind -Term ●)) (Π (Π _ (varKind -Term ●)) (out (varKind -Term))))
-    -appTerm : PHOPLcon (Π (Π _ (varKind -Term ●)) (Π (Π _ (varKind -Term ●)) (out (varKind -Term))))
-    -lamTerm : Type → PHOPLcon (Π (Π _ (-Term ⟶ varKind -Term ●)) (out (varKind -Term)))
-    -ref : PHOPLcon (Π (Π _ (varKind -Term ●)) (out (varKind -Path)))
-    -imp* : PHOPLcon (Π (Π _ (varKind -Path ●)) (Π (Π _ (varKind -Path ●)) (out (varKind -Path))))
-    -univ : PHOPLcon (Π (Π _ (varKind -Term ●)) (Π (Π _ (varKind -Term ●)) (Π (Π _ (varKind -Proof ●)) (Π (Π _ (varKind -Proof ●)) (out (varKind -Path))))))
-    -lll : Type → PHOPLcon (Π (Π _ (-Term ⟶ -Term ⟶ -Path ⟶ varKind -Path ●)) (out (varKind -Path)))
-    -app* : PHOPLcon (Π (Π _ (varKind -Term ●)) (Π (Π _ (varKind -Term ●)) (Π (Π _ (varKind -Path ●)) (Π (Π _ (varKind -Path ●)) (out (varKind -Path))))))
-    -plus : PHOPLcon (Π (Π _ (varKind -Path ●)) (out (varKind -Proof)))
-    -minus : PHOPLcon (Π (Π _ (varKind -Path ●)) (out (varKind -Proof)))
-    -eq : Type → PHOPLcon (Π (Π _ (varKind -Term ●)) (Π (Π _ (varKind -Term ●)) (out (nonVarKind -Equation))))
+  data PHOPLcon : ConKind → Set where
+    -ty : Type → PHOPLcon (-nvType ✧)
+    -appProof : PHOPLcon (-vProof ✧ ⟶ -vProof ✧ ⟶ -vProof ✧)
+    -lamProof : PHOPLcon (-vTerm ✧ ⟶ (-Proof ⟶ -vProof ✧) ⟶ -vProof ✧)
+    -bot : PHOPLcon (-vTerm ✧)
+    -imp : PHOPLcon (-vTerm ✧ ⟶ -vTerm ✧ ⟶ -vTerm ✧)
+    -appTerm : PHOPLcon (-vTerm ✧ ⟶ -vTerm ✧ ⟶ -vTerm ✧)
+    -lamTerm : Type → PHOPLcon ((-Term ⟶ -vTerm ✧) ⟶ -vTerm ✧)
+    -ref : PHOPLcon (-vTerm ✧ ⟶ -vPath ✧)
+    -imp* : PHOPLcon (-vPath ✧ ⟶ -vPath ✧ ⟶ -vPath ✧)
+    -univ : PHOPLcon (-vTerm ✧ ⟶ -vTerm ✧ ⟶ -vProof ✧ ⟶ -vProof ✧ ⟶ -vPath ✧)
+    -lll : Type → PHOPLcon ((-Term ⟶ -Term ⟶ -Path ⟶ -vPath ✧) ⟶ -vPath ✧)
+    -app* : PHOPLcon (-vTerm ✧ ⟶ -vTerm ✧ ⟶ -vPath ✧ ⟶ -vPath ✧ ⟶ -vPath ✧)
+    -plus : PHOPLcon (-vPath ✧ ⟶ -vProof ✧)
+    -minus : PHOPLcon (-vPath ✧ ⟶ -vProof ✧)
+    -eq : Type → PHOPLcon (-vTerm ✧ ⟶ -vTerm ✧ ⟶ -nvEq ✧)
 
-  PHOPLparent : PHOPLVarKind → ExpressionKind
-  PHOPLparent -Proof = varKind -Term
-  PHOPLparent -Term = nonVarKind -Type
-  PHOPLparent -Path = nonVarKind -Equation
+  PHOPLparent : PHOPLVarKind → ExpKind
+  PHOPLparent -Proof = -vTerm
+  PHOPLparent -Term = -nvType
+  PHOPLparent -Path = -nvEq
 
   PHOPL : Grammar
   PHOPL = record { 
@@ -102,73 +119,73 @@ open PHOPLgrammar public
 open import Grammar PHOPL public
 
 Proof : Alphabet → Set
-Proof V = Expression V (varKind -Proof)
+Proof V = Expression V -vProof
 
 Term : Alphabet → Set
-Term V = Expression V (varKind -Term)
+Term V = Expression V -vTerm
 
 Path : Alphabet → Set
-Path V = Expression V (varKind -Path)
+Path V = Expression V -vPath
 
 Equation : Alphabet → Set
-Equation V = Expression V (nonVarKind -Equation)
+Equation V = Expression V -nvEq
 
 appP : ∀ {V} → Proof V → Proof V → Proof V
-appP δ ε = app -appProof (δ ,, ε ,, out)
+appP δ ε = app -appProof (δ ∷ ε ∷ [])
 
 ΛP : ∀ {V} → Term V → Proof (V , -Proof) → Proof V
-ΛP φ δ = app -lamProof (φ ,, δ ,, out)
+ΛP φ δ = app -lamProof (φ ∷ δ ∷ [])
 
 ⊥ : ∀ {V} → Term V
-⊥ = app -bot out
+⊥ = app -bot []
 
 infix 65 _⊃_
 _⊃_ : ∀ {V} → Term V → Term V → Term V
-φ ⊃ ψ = app -imp (φ ,, ψ ,, out)
+φ ⊃ ψ = app -imp (φ ∷ ψ ∷ [])
 
 appT : ∀ {V} → Term V → Term V → Term V
-appT M N = app -appTerm (M ,, N ,, out)
+appT M N = app -appTerm (M ∷ N ∷ [])
 
 appT-injl : ∀ {V} {M M' N N' : Term V} → appT M N ≡ appT M' N' → M ≡ M'
 appT-injl refl = refl
 
 ΛT : ∀ {V} → Type → Term (V , -Term) → Term V
-ΛT A M = app (-lamTerm A) (M ,, out)
+ΛT A M = app (-lamTerm A) (M ∷ [])
 
 reff : ∀ {V} → Term V → Path V
-reff M = app -ref (M ,, out)
+reff M = app -ref (M ∷ [])
 
 infix 15 _⊃*_
 _⊃*_ : ∀ {V} → Path V → Path V → Path V
-P ⊃* Q = app -imp* (P ,, Q ,, out)
+P ⊃* Q = app -imp* (P ∷ Q ∷ [])
 
 univ : ∀ {V} → Term V → Term V → Proof V → Proof V → Path V
-univ φ ψ P Q = app -univ (φ ,, ψ ,, P ,, Q ,, out)
+univ φ ψ P Q = app -univ (φ ∷ ψ ∷ P ∷ Q ∷ [])
 
 λλλ : ∀ {V} → Type → Path (V , -Term , -Term , -Path) → Path V
-λλλ A P = app (-lll A) (P ,, out)
+λλλ A P = app (-lll A) (P ∷ [])
 
 app* : ∀ {V} → Term V → Term V → Path V → Path V → Path V
-app* M N P Q = app -app* (M ,, N ,, P ,, Q ,, out)
+app* M N P Q = app -app* (M ∷ N ∷ P ∷ Q ∷ [])
 
 plus : ∀ {V} → Path V → Proof V
-plus P = app -plus (P ,, out)
+plus P = app -plus (P ∷ [])
 
 minus : ∀ {V} → Path V → Proof V
-minus P = app -minus (P ,, out)
+minus P = app -minus (P ∷ [])
 
 ty : ∀ {V} → Type → Expression V (nonVarKind -Type)
-ty A = app (-ty A) out
+ty A = app (-ty A) []
 
 yt : ∀ {V} → Expression V (nonVarKind -Type) → Type
-yt (app (-ty A) out) = A
+yt (app (-ty A) []) = A
 
 ty-yt : ∀ {V} {A : Expression V (nonVarKind -Type)} → ty (yt A) ≡ A
-ty-yt {A = app (-ty _) out} = refl
+ty-yt {A = app (-ty _) []} = refl
 
 infix 60 _≡〈_〉_
 _≡〈_〉_ : ∀ {V} → Term V → Type → Term V → Equation V
-M ≡〈 A 〉 N = app (-eq A) (M ,, N ,, out)
+M ≡〈 A 〉 N = app (-eq A) (M ∷ N ∷ [])
 
 infixl 59 _,T_
 _,T_ : ∀ {V} → Context V → Type → Context (V , -Term)

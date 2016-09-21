@@ -49,7 +49,11 @@ and we shall use Greek letters for terms that are intended to be propositions.  
 
 Note also that the types of $\lambda o e$ are just the simple types over $\Omega$; therefore, no variable can occur in a type.
 
-\todo{Give the intuition}.
+The intuition behind the new expressions is as follows (see also the rules of deduction in Figure \ref{fig:lambdaoe}).  For any object $M : A$, there is the trivial path $\reff{M} : M =_A M$.  The constructor $\supset^*$ ensures congruence for $\supset$ --- if $P : \phi =_\Omega \phi'$ and $Q : \psi =_\Omega \psi'$ then $P \supset^* Q : \phi \supset \psi =_\Omega \phi' \supset \psi'$.  The constructor $\mathsf{univ}$ gives univalence for our propositions: if $\delta : \phi \supset \psi$ and $\epsilon : \psi \supset \phi$, then $\univ{\phi}{\psi}{\delta}{\epsilon}$ is a path of type $\phi =_\Omega \psi$.  The constructors $^+$ and $^-$ are the converses: if $P$ is a path of type $\phi =_\Omega \psi$, then $P^+$ is a proof of $\phi \supset \psi$, and $P^-$ is a proof of $\psi \supset \phi$.
+
+The constructor $\triplelambda$ gives functional extensionality.  Let $F$ and $G$ be functions of type $A \rightarrow B$.  If $F x =_B G y$ whenever $x =_A y$, then $F =_{A \rightarrow B} G$.  More formally, if $P$ is a path of type $Fx =_B Gy$ that depends on $x : A$, $y : A$ and $e : x =_A y$, then $\triplelambda e : x =_A y . P$ is a path of type $F =_{A \rightarrow B} G$.
+
+Finally, if $P$ is a path of type $F =_{A \rightarrow B} G$, and $Q$ is a path $M =_A N$, then $P_{MN} Q$ is a path $FM =_B G N$.
 
 \begin{code}%
 \>\AgdaKeyword{data} \AgdaDatatype{PHOPLVarKind} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
@@ -97,6 +101,46 @@ Note also that the types of $\lambda o e$ are just the simple types over $\Omega
 %
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{-vProof} \AgdaSymbol{:} \AgdaDatatype{ExpKind}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{-vProof} \AgdaSymbol{=} \AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Proof}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{-vTerm} \AgdaSymbol{:} \AgdaDatatype{ExpKind}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{-vTerm} \AgdaSymbol{=} \AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{-vPath} \AgdaSymbol{:} \AgdaDatatype{ExpKind}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{-vPath} \AgdaSymbol{=} \AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Path}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{-nvType} \AgdaSymbol{:} \AgdaDatatype{ExpKind}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{-nvType} \AgdaSymbol{=} \AgdaInductiveConstructor{nonVarKind} \AgdaInductiveConstructor{-Type}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{-nvEq} \AgdaSymbol{:} \AgdaDatatype{ExpKind}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{-nvEq} \AgdaSymbol{=} \AgdaInductiveConstructor{nonVarKind} \AgdaInductiveConstructor{-Equation}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{data} \AgdaDatatype{Type} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
@@ -108,73 +152,66 @@ Note also that the types of $\lambda o e$ are just the simple types over $\Omega
 %
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{data} \AgdaDatatype{PHOPLcon} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K} \AgdaSymbol{:} \AgdaDatatype{ExpressionKind}\AgdaSymbol{\}} \AgdaSymbol{→} \<[43]%
-\>[43]\<%
+\>[2]\AgdaKeyword{data} \AgdaDatatype{PHOPLcon} \AgdaSymbol{:} \AgdaFunction{ConKind} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaDatatype{Kind} \AgdaSymbol{(}\AgdaInductiveConstructor{-Constructor} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\>[4]\AgdaInductiveConstructor{-ty} \AgdaSymbol{:} \AgdaDatatype{Type} \AgdaSymbol{→} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaFunction{-nvType} \AgdaFunction{✧}\AgdaSymbol{)}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-ty} \AgdaSymbol{:} \AgdaDatatype{Type} \AgdaSymbol{→} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaSymbol{(}\AgdaInductiveConstructor{nonVarKind} \AgdaInductiveConstructor{-Type}\AgdaSymbol{))}\<%
+\>[4]\AgdaInductiveConstructor{-appProof} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaFunction{-vProof} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vProof} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vProof} \AgdaFunction{✧}\AgdaSymbol{)}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-appProof} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Proof} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Proof} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Proof}\AgdaSymbol{))))}\<%
+\>[4]\AgdaInductiveConstructor{-lamProof} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaFunction{-vTerm} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaSymbol{(}\AgdaInductiveConstructor{-Proof} \AgdaFunction{⟶} \AgdaFunction{-vProof} \AgdaFunction{✧}\AgdaSymbol{)} \AgdaFunction{⟶} \AgdaFunction{-vProof} \AgdaFunction{✧}\AgdaSymbol{)}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-lamProof} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{●}\AgdaSymbol{))}\<%
+\>[4]\AgdaInductiveConstructor{-bot} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaFunction{-vTerm} \AgdaFunction{✧}\AgdaSymbol{)}\<%
 \\
-\>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{-Proof} \AgdaInductiveConstructor{⟶} \AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Proof} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Proof}\AgdaSymbol{))))}\<%
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{-imp} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaFunction{-vTerm} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vTerm} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vTerm} \AgdaFunction{✧}\AgdaSymbol{)}\<%
 \\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-bot} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term}\AgdaSymbol{))}\<%
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{-appTerm} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaFunction{-vTerm} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vTerm} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vTerm} \AgdaFunction{✧}\AgdaSymbol{)}\<%
 \\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-imp} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term}\AgdaSymbol{))))}\<%
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{-lamTerm} \AgdaSymbol{:} \AgdaDatatype{Type} \AgdaSymbol{→} \AgdaDatatype{PHOPLcon} \AgdaSymbol{((}\AgdaInductiveConstructor{-Term} \AgdaFunction{⟶} \AgdaFunction{-vTerm} \AgdaFunction{✧}\AgdaSymbol{)} \AgdaFunction{⟶} \AgdaFunction{-vTerm} \AgdaFunction{✧}\AgdaSymbol{)}\<%
 \\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-appTerm} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term}\AgdaSymbol{))))}\<%
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{-ref} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaFunction{-vTerm} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vPath} \AgdaFunction{✧}\AgdaSymbol{)}\<%
 \\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-lamTerm} \AgdaSymbol{:} \AgdaDatatype{Type} \AgdaSymbol{→} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{⟶} \AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term}\AgdaSymbol{)))}\<%
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{-imp*} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaFunction{-vPath} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vPath} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vPath} \AgdaFunction{✧}\AgdaSymbol{)}\<%
 \\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-ref} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Path}\AgdaSymbol{)))}\<%
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{-univ} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaFunction{-vTerm} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vTerm} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vProof} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vProof} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vPath} \AgdaFunction{✧}\AgdaSymbol{)}\<%
 \\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-imp*} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Path} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Path} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Path}\AgdaSymbol{))))}\<%
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{-lll} \AgdaSymbol{:} \AgdaDatatype{Type} \AgdaSymbol{→} \AgdaDatatype{PHOPLcon} \AgdaSymbol{((}\AgdaInductiveConstructor{-Term} \AgdaFunction{⟶} \AgdaInductiveConstructor{-Term} \AgdaFunction{⟶} \AgdaInductiveConstructor{-Path} \AgdaFunction{⟶} \AgdaFunction{-vPath} \AgdaFunction{✧}\AgdaSymbol{)} \AgdaFunction{⟶} \AgdaFunction{-vPath} \AgdaFunction{✧}\AgdaSymbol{)}\<%
 \\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-univ} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Proof} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Proof} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Path}\AgdaSymbol{))))))}\<%
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{-app*} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaFunction{-vTerm} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vTerm} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vPath} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vPath} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vPath} \AgdaFunction{✧}\AgdaSymbol{)}\<%
 \\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-lll} \AgdaSymbol{:} \AgdaDatatype{Type} \AgdaSymbol{→} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{⟶} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{⟶} \AgdaInductiveConstructor{-Path} \AgdaInductiveConstructor{⟶} \AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Path} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Path}\AgdaSymbol{)))}\<%
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{-plus} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaFunction{-vPath} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vProof} \AgdaFunction{✧}\AgdaSymbol{)}\<%
 \\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-app*} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Path} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Path} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Path}\AgdaSymbol{))))))}\<%
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{-minus} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaFunction{-vPath} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vProof} \AgdaFunction{✧}\AgdaSymbol{)}\<%
 \\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-plus} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Path} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Proof}\AgdaSymbol{)))}\<%
-\\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-minus} \AgdaSymbol{:} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Path} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Proof}\AgdaSymbol{)))}\<%
-\\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{-eq} \AgdaSymbol{:} \AgdaDatatype{Type} \AgdaSymbol{→} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{(}\AgdaInductiveConstructor{Π} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{●}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{out} \AgdaSymbol{(}\AgdaInductiveConstructor{nonVarKind} \AgdaInductiveConstructor{-Equation}\AgdaSymbol{))))}\<%
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{-eq} \AgdaSymbol{:} \AgdaDatatype{Type} \AgdaSymbol{→} \AgdaDatatype{PHOPLcon} \AgdaSymbol{(}\AgdaFunction{-vTerm} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-vTerm} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{-nvEq} \AgdaFunction{✧}\AgdaSymbol{)}\<%
 \\
 %
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{PHOPLparent} \AgdaSymbol{:} \AgdaDatatype{PHOPLVarKind} \AgdaSymbol{→} \AgdaDatatype{ExpressionKind}\<%
+\>[2]\AgdaFunction{PHOPLparent} \AgdaSymbol{:} \AgdaDatatype{PHOPLVarKind} \AgdaSymbol{→} \AgdaDatatype{ExpKind}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{PHOPLparent} \AgdaInductiveConstructor{-Proof} \AgdaSymbol{=} \AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term}\<%
+\>[2]\AgdaFunction{PHOPLparent} \AgdaInductiveConstructor{-Proof} \AgdaSymbol{=} \AgdaFunction{-vTerm}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{PHOPLparent} \AgdaInductiveConstructor{-Term} \AgdaSymbol{=} \AgdaInductiveConstructor{nonVarKind} \AgdaInductiveConstructor{-Type}\<%
+\>[2]\AgdaFunction{PHOPLparent} \AgdaInductiveConstructor{-Term} \AgdaSymbol{=} \AgdaFunction{-nvType}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{PHOPLparent} \AgdaInductiveConstructor{-Path} \AgdaSymbol{=} \AgdaInductiveConstructor{nonVarKind} \AgdaInductiveConstructor{-Equation}\<%
+\>[2]\AgdaFunction{PHOPLparent} \AgdaInductiveConstructor{-Path} \AgdaSymbol{=} \AgdaFunction{-nvEq}\<%
 \\
 %
 \\
@@ -209,43 +246,43 @@ Note also that the types of $\lambda o e$ are just the simple types over $\Omega
 \\
 \>\AgdaFunction{Proof} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
 \\
-\>\AgdaFunction{Proof} \AgdaBound{V} \AgdaSymbol{=} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Proof}\AgdaSymbol{)}\<%
+\>\AgdaFunction{Proof} \AgdaBound{V} \AgdaSymbol{=} \AgdaFunction{Expression} \AgdaBound{V} \AgdaFunction{-vProof}\<%
 \\
 %
 \\
 \>\AgdaFunction{Term} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
 \\
-\>\AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{=} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Term}\AgdaSymbol{)}\<%
+\>\AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{=} \AgdaFunction{Expression} \AgdaBound{V} \AgdaFunction{-vTerm}\<%
 \\
 %
 \\
 \>\AgdaFunction{Path} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
 \\
-\>\AgdaFunction{Path} \AgdaBound{V} \AgdaSymbol{=} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-Path}\AgdaSymbol{)}\<%
+\>\AgdaFunction{Path} \AgdaBound{V} \AgdaSymbol{=} \AgdaFunction{Expression} \AgdaBound{V} \AgdaFunction{-vPath}\<%
 \\
 %
 \\
 \>\AgdaFunction{Equation} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
 \\
-\>\AgdaFunction{Equation} \AgdaBound{V} \AgdaSymbol{=} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{nonVarKind} \AgdaInductiveConstructor{-Equation}\AgdaSymbol{)}\<%
+\>\AgdaFunction{Equation} \AgdaBound{V} \AgdaSymbol{=} \AgdaFunction{Expression} \AgdaBound{V} \AgdaFunction{-nvEq}\<%
 \\
 %
 \\
 \>\AgdaFunction{appP} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Proof} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Proof} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Proof} \AgdaBound{V}\<%
 \\
-\>\AgdaFunction{appP} \AgdaBound{δ} \AgdaBound{ε} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-appProof} \AgdaSymbol{(}\AgdaBound{δ} \AgdaInductiveConstructor{,,} \AgdaBound{ε} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{)}\<%
+\>\AgdaFunction{appP} \AgdaBound{δ} \AgdaBound{ε} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-appProof} \AgdaSymbol{(}\AgdaBound{δ} \AgdaInductiveConstructor{∷} \AgdaBound{ε} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{)}\<%
 \\
 %
 \\
 \>\AgdaFunction{ΛP} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Proof} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Proof}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaFunction{Proof} \AgdaBound{V}\<%
 \\
-\>\AgdaFunction{ΛP} \AgdaBound{φ} \AgdaBound{δ} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-lamProof} \AgdaSymbol{(}\AgdaBound{φ} \AgdaInductiveConstructor{,,} \AgdaBound{δ} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{)}\<%
+\>\AgdaFunction{ΛP} \AgdaBound{φ} \AgdaBound{δ} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-lamProof} \AgdaSymbol{(}\AgdaBound{φ} \AgdaInductiveConstructor{∷} \AgdaBound{δ} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{)}\<%
 \\
 %
 \\
 \>\AgdaFunction{⊥} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V}\<%
 \\
-\>\AgdaFunction{⊥} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-bot} \AgdaInductiveConstructor{out}\<%
+\>\AgdaFunction{⊥} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-bot} \AgdaInductiveConstructor{[]}\<%
 \\
 %
 \\
@@ -253,13 +290,13 @@ Note also that the types of $\lambda o e$ are just the simple types over $\Omega
 \\
 \>\AgdaFunction{\_⊃\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V}\<%
 \\
-\>\AgdaBound{φ} \AgdaFunction{⊃} \AgdaBound{ψ} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-imp} \AgdaSymbol{(}\AgdaBound{φ} \AgdaInductiveConstructor{,,} \AgdaBound{ψ} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{)}\<%
+\>\AgdaBound{φ} \AgdaFunction{⊃} \AgdaBound{ψ} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-imp} \AgdaSymbol{(}\AgdaBound{φ} \AgdaInductiveConstructor{∷} \AgdaBound{ψ} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{)}\<%
 \\
 %
 \\
 \>\AgdaFunction{appT} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V}\<%
 \\
-\>\AgdaFunction{appT} \AgdaBound{M} \AgdaBound{N} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-appTerm} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{,,} \AgdaBound{N} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{)}\<%
+\>\AgdaFunction{appT} \AgdaBound{M} \AgdaBound{N} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-appTerm} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{∷} \AgdaBound{N} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{)}\<%
 \\
 %
 \\
@@ -271,13 +308,13 @@ Note also that the types of $\lambda o e$ are just the simple types over $\Omega
 \\
 \>\AgdaFunction{ΛT} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Type} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Term}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V}\<%
 \\
-\>\AgdaFunction{ΛT} \AgdaBound{A} \AgdaBound{M} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-lamTerm} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{)}\<%
+\>\AgdaFunction{ΛT} \AgdaBound{A} \AgdaBound{M} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-lamTerm} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{)}\<%
 \\
 %
 \\
 \>\AgdaFunction{reff} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Path} \AgdaBound{V}\<%
 \\
-\>\AgdaFunction{reff} \AgdaBound{M} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-ref} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{)}\<%
+\>\AgdaFunction{reff} \AgdaBound{M} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-ref} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{)}\<%
 \\
 %
 \\
@@ -285,55 +322,55 @@ Note also that the types of $\lambda o e$ are just the simple types over $\Omega
 \\
 \>\AgdaFunction{\_⊃*\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Path} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Path} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Path} \AgdaBound{V}\<%
 \\
-\>\AgdaBound{P} \AgdaFunction{⊃*} \AgdaBound{Q} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-imp*} \AgdaSymbol{(}\AgdaBound{P} \AgdaInductiveConstructor{,,} \AgdaBound{Q} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{)}\<%
+\>\AgdaBound{P} \AgdaFunction{⊃*} \AgdaBound{Q} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-imp*} \AgdaSymbol{(}\AgdaBound{P} \AgdaInductiveConstructor{∷} \AgdaBound{Q} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{)}\<%
 \\
 %
 \\
 \>\AgdaFunction{univ} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Proof} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Proof} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Path} \AgdaBound{V}\<%
 \\
-\>\AgdaFunction{univ} \AgdaBound{φ} \AgdaBound{ψ} \AgdaBound{P} \AgdaBound{Q} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-univ} \AgdaSymbol{(}\AgdaBound{φ} \AgdaInductiveConstructor{,,} \AgdaBound{ψ} \AgdaInductiveConstructor{,,} \AgdaBound{P} \AgdaInductiveConstructor{,,} \AgdaBound{Q} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{)}\<%
+\>\AgdaFunction{univ} \AgdaBound{φ} \AgdaBound{ψ} \AgdaBound{P} \AgdaBound{Q} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-univ} \AgdaSymbol{(}\AgdaBound{φ} \AgdaInductiveConstructor{∷} \AgdaBound{ψ} \AgdaInductiveConstructor{∷} \AgdaBound{P} \AgdaInductiveConstructor{∷} \AgdaBound{Q} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{)}\<%
 \\
 %
 \\
 \>\AgdaFunction{λλλ} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Type} \AgdaSymbol{→} \AgdaFunction{Path} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Path}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaFunction{Path} \AgdaBound{V}\<%
 \\
-\>\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-lll} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{P} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{)}\<%
+\>\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-lll} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{P} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{)}\<%
 \\
 %
 \\
 \>\AgdaFunction{app*} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Path} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Path} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Path} \AgdaBound{V}\<%
 \\
-\>\AgdaFunction{app*} \AgdaBound{M} \AgdaBound{N} \AgdaBound{P} \AgdaBound{Q} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-app*} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{,,} \AgdaBound{N} \AgdaInductiveConstructor{,,} \AgdaBound{P} \AgdaInductiveConstructor{,,} \AgdaBound{Q} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{)}\<%
+\>\AgdaFunction{app*} \AgdaBound{M} \AgdaBound{N} \AgdaBound{P} \AgdaBound{Q} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-app*} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{∷} \AgdaBound{N} \AgdaInductiveConstructor{∷} \AgdaBound{P} \AgdaInductiveConstructor{∷} \AgdaBound{Q} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{)}\<%
 \\
 %
 \\
 \>\AgdaFunction{plus} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Path} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Proof} \AgdaBound{V}\<%
 \\
-\>\AgdaFunction{plus} \AgdaBound{P} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-plus} \AgdaSymbol{(}\AgdaBound{P} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{)}\<%
+\>\AgdaFunction{plus} \AgdaBound{P} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-plus} \AgdaSymbol{(}\AgdaBound{P} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{)}\<%
 \\
 %
 \\
 \>\AgdaFunction{minus} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Path} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Proof} \AgdaBound{V}\<%
 \\
-\>\AgdaFunction{minus} \AgdaBound{P} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-minus} \AgdaSymbol{(}\AgdaBound{P} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{)}\<%
+\>\AgdaFunction{minus} \AgdaBound{P} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-minus} \AgdaSymbol{(}\AgdaBound{P} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{)}\<%
 \\
 %
 \\
 \>\AgdaFunction{ty} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Type} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{nonVarKind} \AgdaInductiveConstructor{-Type}\AgdaSymbol{)}\<%
 \\
-\>\AgdaFunction{ty} \AgdaBound{A} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-ty} \AgdaBound{A}\AgdaSymbol{)} \AgdaInductiveConstructor{out}\<%
+\>\AgdaFunction{ty} \AgdaBound{A} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-ty} \AgdaBound{A}\AgdaSymbol{)} \AgdaInductiveConstructor{[]}\<%
 \\
 %
 \\
 \>\AgdaFunction{yt} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{nonVarKind} \AgdaInductiveConstructor{-Type}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{Type}\<%
 \\
-\>\AgdaFunction{yt} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-ty} \AgdaBound{A}\AgdaSymbol{)} \AgdaInductiveConstructor{out}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaBound{A}\<%
+\>\AgdaFunction{yt} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-ty} \AgdaBound{A}\AgdaSymbol{)} \AgdaInductiveConstructor{[]}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaBound{A}\<%
 \\
 %
 \\
 \>\AgdaFunction{ty-yt} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{nonVarKind} \AgdaInductiveConstructor{-Type}\AgdaSymbol{)\}} \AgdaSymbol{→} \AgdaFunction{ty} \AgdaSymbol{(}\AgdaFunction{yt} \AgdaBound{A}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaBound{A}\<%
 \\
-\>\AgdaFunction{ty-yt} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-ty} \AgdaSymbol{\_)} \AgdaInductiveConstructor{out}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\>\AgdaFunction{ty-yt} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-ty} \AgdaSymbol{\_)} \AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
 \\
 %
 \\
@@ -341,7 +378,7 @@ Note also that the types of $\lambda o e$ are just the simple types over $\Omega
 \\
 \>\AgdaFunction{\_≡〈\_〉\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Type} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Equation} \AgdaBound{V}\<%
 \\
-\>\AgdaBound{M} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{N} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-eq} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{,,} \AgdaBound{N} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{)}\<%
+\>\AgdaBound{M} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{N} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-eq} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{∷} \AgdaBound{N} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{)}\<%
 \\
 %
 \\

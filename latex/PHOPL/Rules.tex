@@ -10,7 +10,7 @@
 
 \subsection{Rules of Deduction}
 
-The rules of deduction of $\lambda o e$ are given in Figure \ref{fig:lambdao}.
+The rules of deduction of $\lambda o e$ are given in Figure \ref{fig:lambdaoe}.
 
 \newcommand{\RvarT}{\ensuremath(\mathsf{varT})}
 \begin{figure}
@@ -54,7 +54,7 @@ The rules of deduction of $\lambda o e$ are given in Figure \ref{fig:lambdao}.
 \[ \infer[(M \simeq M', N \simeq N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
 \end{framed}
 \caption{Rules of Deduction of $\lambda oe$}
-\label{fig:lambdao}
+\label{fig:lambdaoe}
 \end{figure}
 
 \begin{code}%
@@ -257,7 +257,7 @@ The rules of deduction of $\lambda o e$ are given in Figure \ref{fig:lambdao}.
 \>[2]\AgdaComment{---------------------------------------}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-ref} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{,,} \AgdaInductiveConstructor{out}\AgdaSymbol{)} \AgdaDatatype{∶} \AgdaBound{M} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{M}\<%
+\>[4]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaFunction{reff} \AgdaBound{M} \AgdaDatatype{∶} \AgdaBound{M} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{M}\<%
 \\
 %
 \\

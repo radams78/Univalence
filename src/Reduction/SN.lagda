@@ -36,8 +36,8 @@ If $E$ is strongly normalizable and $E \twoheadrightarrow_R F$ then $F$ is stron
 \end{lemma}
 
 \begin{code}
-SNsubexp : ∀ {V K} {C : Kind (-Constructor K)}
-  {c : Constructor C} {E : Subexpression V (-Constructor K) C} → 
+SNsubexp : ∀ {V K C}
+  {c : Constructor (SK C K)} {E : Subexpression V -ListAbs C} → 
   SN (app c E) → SN E
 \end{code}
 
@@ -49,24 +49,24 @@ SNsubexp {c = c} {E = E} (SNI .(app c E) SNcE) =
 }
 
 \begin{code}
-SNsubbodyl : ∀ {V K A L M N} → 
-  SN (_,,_ {V} {K} {A} {L} M N) → SN M
+SNsubbodyl : ∀ {V A L M N} → 
+  SN (_∷_ {V} {A} {L} M N) → SN M
 \end{code}
 
 \AgdaHide{
 \begin{code}
-SNsubbodyl {V} {K} {A} {L} {M} {N} (SNI .(_,,_ M N) SNM) = SNI M (λ M' M⇒M' → SNsubbodyl (SNM (_,,_ M' N) (appl M⇒M')))
+SNsubbodyl {V} {A} {L} {M} {N} (SNI .(_∷_ M N) SNM) = SNI M (λ M' M⇒M' → SNsubbodyl (SNM (_∷_ M' N) (appl M⇒M')))
 \end{code}
 }
 
 \begin{code}
-SNsubbodyr : ∀ {V K A L M N} → 
-  SN (_,,_ {V} {K} {A} {L} M N) → SN N
+SNsubbodyr : ∀ {V A L M N} → 
+  SN (_∷_ {V} {A} {L} M N) → SN N
 \end{code}
 
 \AgdaHide{
 \begin{code}
-SNsubbodyr {V} {K} {A} {L} {M} {N} (SNI .(_,,_ M N) SNN) = SNI N (λ N' N⇒N' → SNsubbodyr (SNN (_,,_ M N') (appr N⇒N')))
+SNsubbodyr {V} {A} {L} {M} {N} (SNI .(_∷_ M N) SNN) = SNI N (λ N' N⇒N' → SNsubbodyr (SNN (_∷_ M N') (appr N⇒N')))
 \end{code}
 }
 

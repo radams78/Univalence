@@ -35,6 +35,7 @@ record Grammar : Set₁ where
   Abstraction V (SK VV K) = Expression (extend V VV) K
   Body V AA = Subexpression V -ListAbs AA
 
+  infixr 5 _∷_
   data Subexpression V where
     var : ∀ {K} → Var V K → VExpression V K
     app : ∀ {AA} {K} → Constructor (SK AA K) → Body V AA → Expression V K

@@ -8,7 +8,7 @@ open import PHOPL.Red
 
 \subsection{Rules of Deduction}
 
-The rules of deduction of $\lambda o e$ are given in Figure \ref{fig:lambdao}.
+The rules of deduction of $\lambda o e$ are given in Figure \ref{fig:lambdaoe}.
 
 \newcommand{\RvarT}{\ensuremath(\mathsf{varT})}
 \begin{figure}
@@ -52,7 +52,7 @@ The rules of deduction of $\lambda o e$ are given in Figure \ref{fig:lambdao}.
 \[ \infer[(M \simeq M', N \simeq N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
 \end{framed}
 \caption{Rules of Deduction of $\lambda oe$}
-\label{fig:lambdao}
+\label{fig:lambdaoe}
 \end{figure}
 
 \begin{code}
@@ -126,7 +126,7 @@ data _⊢_∶_ where
 
                Γ ⊢ M ∶ ty A → 
   ---------------------------------------
-    Γ ⊢ app -ref (M ,, out) ∶ M ≡〈 A 〉 M
+    Γ ⊢ reff M ∶ M ≡〈 A 〉 M
 
   ⊃*R : ∀ {V} {Γ : Context V} {P Q : Expression V (varKind -Path)} {φ φ' ψ ψ' : Term V} →
 
