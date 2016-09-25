@@ -27,8 +27,11 @@ data Context : Alphabet → Set where
   _,_ : ∀ {V} {K} → Context V → Expression V (parent K) → 
     Context (V , K)
 
-pretypeof : ∀ {V} {K} {L} (x : Var (V , K) L) (Γ : Context (V , K)) →
-  Expression V (parent L)
+-- Define typeof such that, if x : A ∈ Γ, then typeof x Γ ≡ A
+-- We define it the following way so that typeof x Γ computes to an expression of the form
+-- M 〈 upRep 〉, even if x is not in canonical form
+private pretypeof : ∀ {V} {K} {L} (x : Var (V , K) L) (Γ : Context (V , K)) →
+                  Expression V (parent L)
 typeof : ∀ {V} {K} (x : Var V K) (Γ : Context V) → 
   Expression V (parent K)
 
@@ -37,5 +40,4 @@ pretypeof (↑ x) (Γ , A) = typeof x Γ
 
 typeof {∅} ()
 typeof {_ , _} x Γ = pretypeof x Γ 〈 upRep 〉
---We define it this way so that typeof x Γ computes to an expression of the form --- 〈 upRep 〉, even if x is not in canonical form.
 \end{code}

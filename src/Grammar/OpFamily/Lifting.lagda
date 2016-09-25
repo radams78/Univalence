@@ -3,7 +3,7 @@
 open import Grammar.Base
 
 module Grammar.OpFamily.Lifting (G : Grammar) where
-open import Function.Equality hiding (Π)
+open import Function.Equality
 open import Data.List
 open import Prelims
 open Grammar G renaming (_⟶_ to _⇒_)
@@ -20,8 +20,7 @@ record Lifting (F : PreOpFamily) : Set₁ where
   open PreOpFamily F
   field
     liftOp : ∀ {U} {V} K → Op U V → Op (U , K) (V , K)
-    liftOp-cong : ∀ {V} {W} {K} {ρ σ : Op V W} → 
-      ρ ∼op σ → liftOp K ρ ∼op liftOp K σ
+    liftOp-cong : ∀ {V} {W} {K} {ρ σ : Op V W} → ρ ∼op σ → liftOp K ρ ∼op liftOp K σ
 
   LIFTOP : ∀ {U} {V} K → OP U V ⟶ OP (U , K) (V , K)
   LIFTOP = λ K → record { _⟨$⟩_ = liftOp K ; cong = liftOp-cong }
@@ -31,16 +30,15 @@ Given an operation $\sigma : U \rightarrow V$ and a list of variable kinds $A \e
 the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \cdots ) , A_n)$.
 
 \begin{code}
-  LIFTOP' : ∀ {U} {V} VV → OP U V ⟶ OP (extend U VV) (extend V VV)
+  LIFTOP' : ∀ {U} {V} AA → OP U V ⟶ OP (extend U AA) (extend V AA)
   LIFTOP' [] = id
-  LIFTOP' (W ∷ VV) = LIFTOP' VV ∘ LIFTOP W
+  LIFTOP' (A ∷ AA) = LIFTOP' AA ∘ LIFTOP A
 
   liftOp' : ∀ {U} {V} VV → Op U V → Op (extend U VV) (extend V VV)
-  liftOp' A = Function.Equality.Π._⟨$⟩_ (LIFTOP' A)
+  liftOp' A = Π._⟨$⟩_ (LIFTOP' A)
 
-  liftOp'-cong : ∀ {U} {V} A {ρ σ : Op U V} → 
-    ρ ∼op σ → liftOp' A ρ ∼op liftOp' A σ
-  liftOp'-cong A = Function.Equality.Π.cong (LIFTOP' A)
+  liftOp'-cong : ∀ {U} {V} A {ρ σ : Op U V} → ρ ∼op σ → liftOp' A ρ ∼op liftOp' A σ
+  liftOp'-cong A = Π.cong (LIFTOP' A)
 \end{code}
 
 This allows us to define the action of \emph{application} $E[\sigma]$:
