@@ -24,7 +24,7 @@ C_\Gamma(\phi \rightarrow \psi) & = \{ \delta \mid \Gamma : \delta : \phi \right
 \begin{code}
 C : ∀ {P} → Context P → Prp ∅ → Proof P → Set
 C Γ (app -bot out) δ = Γ ⊢ δ ∶ ⊥P × SN δ
-C Γ (app -imp (φ ,, ψ ,, out)) δ = Γ ⊢ δ ∶ (φ ⇛ ψ) 〈 magic 〉 × 
+C Γ (app -imp (φ ∷ ψ ∷ out)) δ = Γ ⊢ δ ∶ (φ ⇛ ψ) 〈 magic 〉 × 
   (∀ Q {Δ : Context Q} ρ ε → ρ ∶ Γ ⇒R Δ → 
     C Δ φ ε → C Δ ψ (appP (δ 〈 ρ 〉) ε))
 \end{code}
@@ -51,8 +51,8 @@ C-typed : ∀ {P} {Γ : Context P} {φ} {δ} → C Γ φ δ → Γ ⊢ δ ∶ φ
 
 \AgdaHide{
 \begin{code}
-C-typed {φ = app -bot out} = proj₁
-C-typed {φ = app -imp (_ ,, _ ,, out)} = proj₁
+C-typed {φ = app -bot []} = proj₁
+C-typed {φ = app -imp (_ ∷ _ ∷ [])} = proj₁
 \end{code}
 }
 
@@ -63,8 +63,8 @@ C-rep : ∀ {P} {Q} {Γ : Context P} {Δ : Context Q} {φ} {δ} {ρ} →
 
 \AgdaHide{
 \begin{code}
-C-rep {φ = app -bot out} (Γ⊢δ∶x₀ ,p SNδ) ρ∶Γ→Δ = (Weakening Γ⊢δ∶x₀ ρ∶Γ→Δ) ,p SNrep β-creates-rep SNδ
-C-rep {P} {Q} {Γ} {Δ} {app -imp (φ ,, ψ ,, out)} {δ} {ρ} (Γ⊢δ∶φ⇒ψ ,p Cδ) ρ∶Γ→Δ = (subst 
+C-rep {φ = app -bot []} (Γ⊢δ∶x₀ ,p SNδ) ρ∶Γ→Δ = (Weakening Γ⊢δ∶x₀ ρ∶Γ→Δ) ,p SNrep β-creates-rep SNδ
+C-rep {P} {Q} {Γ} {Δ} {app -imp (φ ∷ ψ ∷ [])} {δ} {ρ} (Γ⊢δ∶φ⇒ψ ,p Cδ) ρ∶Γ→Δ = (subst 
   (λ x → Δ ⊢ δ 〈 ρ 〉 ∶ x) 
   (magic-unique' (φ ⇛ ψ))
   (Weakening Γ⊢δ∶φ⇒ψ ρ∶Γ→Δ)) ,p (λ R {Θ} σ ε σ∶Δ→Θ ε∈CΘ → subst (C Θ ψ) 
@@ -79,8 +79,8 @@ C-osr : ∀ {P} {Γ : Context P} φ {δ} {ε} → C Γ φ δ → δ ⇒ ε → C
 
 \AgdaHide{
 \begin{code}
-C-osr (app -bot out) (Γ⊢δ∶x₀ ,p SNδ) δ→ε = (subject-reduction Γ⊢δ∶x₀ δ→ε) ,p (SNred SNδ (osr-red δ→ε))
-C-osr {Γ = Γ} (app -imp (_,,_ φ (_,,_ ψ out))) {δ = δ} (Γ⊢δ∶φ⇒ψ ,p Cδ) δ→δ' = subject-reduction Γ⊢δ∶φ⇒ψ δ→δ' ,p 
+C-osr (app -bot []) (Γ⊢δ∶x₀ ,p SNδ) δ→ε = (subject-reduction Γ⊢δ∶x₀ δ→ε) ,p (SNred SNδ (osr-red δ→ε))
+C-osr {Γ = Γ} (app -imp (_∷_ φ (_∷_ ψ []))) {δ = δ} (Γ⊢δ∶φ⇒ψ ,p Cδ) δ→δ' = subject-reduction Γ⊢δ∶φ⇒ψ δ→δ' ,p 
   (λ Q ρ ε ρ∶Γ→Δ ε∈Cφ → C-osr ψ (Cδ Q ρ ε ρ∶Γ→Δ ε∈Cφ) (app (appl (respects-osr replacement β-respects-rep δ→δ'))))
 
 C-red : ∀ {P} {Γ : Context P} φ {δ} {ε} → C Γ φ δ → δ ↠ ε → C Γ φ ε
@@ -101,8 +101,8 @@ CsubSN : ∀ {P} {Γ : Context P} φ {δ} → C Γ φ δ → SN δ
 
 \AgdaHide{
 \begin{code}
-NeutralC {P} {Γ} {δ} {app -bot out} Γ⊢δ∶x₀ Neutralδ hyp = Γ⊢δ∶x₀ ,p SNI δ (λ ε δ→ε → proj₂ (hyp ε δ→ε))
-NeutralC {P} {Γ} {δ} {app -imp (_,,_ φ (_,,_ ψ out))} Γ⊢δ∶φ→ψ neutralδ hyp = Γ⊢δ∶φ→ψ ,p 
+NeutralC {P} {Γ} {δ} {app -bot []} Γ⊢δ∶x₀ Neutralδ hyp = Γ⊢δ∶x₀ ,p SNI δ (λ ε δ→ε → proj₂ (hyp ε δ→ε))
+NeutralC {P} {Γ} {δ} {app -imp (_∷_ φ (_∷_ ψ []))} Γ⊢δ∶φ→ψ neutralδ hyp = Γ⊢δ∶φ→ψ ,p 
   (λ Q ρ ε ρ∶Γ→Δ ε∈Cφ → claim ε (CsubSN φ {δ = ε} ε∈Cφ) ρ∶Γ→Δ ε∈Cφ) where
   claim : ∀ {Q} {Δ} {ρ : Rep P Q} ε → SN ε → ρ ∶ Γ ⇒R Δ → C Δ φ ε → C Δ ψ (appP (δ 〈  ρ 〉) ε)
   claim {Q} {Δ} {ρ} ε (SNI .ε SNε) ρ∶Γ→Δ ε∈Cφ = NeutralC {Q} {Δ} {appP (δ 〈  ρ 〉) ε} ψ
@@ -122,8 +122,8 @@ NeutralC {P} {Γ} {δ} {app -imp (_,,_ φ (_,,_ ψ out))} Γ⊢δ∶φ→ψ neut
         in subst (C Δ ψ) (cong (λ x → appP x ε) δ₀〈ρ〉≡δ') (proj₂ δ₀∈C[φ⇒ψ] Q ρ ε ρ∶Γ→Δ ε∈Cφ))
       (λ ε' ε→ε' → claim ε' (SNε ε' ε→ε') ρ∶Γ→Δ (C-osr φ ε∈Cφ ε→ε')))
 
-CsubSN {P} {Γ} {app -bot out} = proj₂
-CsubSN {P} {Γ} {app -imp (φ ,, ψ ,, out)} {δ} P₁ = 
+CsubSN {P} {Γ} {app -bot []} = proj₂
+CsubSN {P} {Γ} {app -imp (φ ∷ ψ ∷ [])} {δ} P₁ = 
     SNap' {replacement} {P} {P , -proof} {E = δ} {σ = upRep} β-respects-rep
       (SNsubbodyl (SNsubexp (CsubSN {Γ = Γ ,P φ 〈 magic 〉} ψ
       (proj₂ P₁ (P , -proof) upRep (var x₀) (λ _ → refl)

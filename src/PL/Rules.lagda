@@ -230,10 +230,10 @@ substitution {Q = Q} {Δ = Δ} {σ = σ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ�
 prop-triv-red : ∀ {P} {φ ψ : Expression P prp} → φ ⇒ ψ → ⊥
 prop-triv-red {_} {app -bot out} (redex ())
 prop-triv-red {P} {app -bot out} (app ())
-prop-triv-red {P} {app -imp (_,,_ _ (_,,_ _ out))} (redex ())
-prop-triv-red {P} {app -imp (_,,_ φ (_,,_ ψ out))} (app (appl φ→φ')) = prop-triv-red {P} φ→φ'
-prop-triv-red {P} {app -imp (_,,_ φ (_,,_ ψ out))} (app (appr (appl ψ→ψ'))) = prop-triv-red {P} ψ→ψ'
-prop-triv-red {P} {app -imp (_,,_ _ (_,,_ _ out))} (app (appr (appr ())))
+prop-triv-red {P} {app -imp (_∷_ _ (_∷_ _ []))} (redex ())
+prop-triv-red {P} {app -imp (_∷_ φ (_∷_ ψ []))} (app (appl φ→φ')) = prop-triv-red {P} φ→φ'
+prop-triv-red {P} {app -imp (_∷_ φ (_∷_ ψ []))} (app (appr (appl ψ→ψ'))) = prop-triv-red {P} ψ→ψ'
+prop-triv-red {P} {app -imp (_∷_ _ (_∷_ _ []))} (app (appr (appr ())))
 \end{code}
 }
 

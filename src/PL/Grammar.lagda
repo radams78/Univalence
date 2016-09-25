@@ -38,13 +38,13 @@ module PLgrammar where
   proof = varKind -proof
   prp = nonVarKind -prp
 
-  data PLCon : ∀ {K : ExpressionKind} → Kind (-Constructor K) → Set where
-    -app : PLCon (Π (Π _ (proof ●)) (Π (Π _ (proof ●)) (out proof)))
-    -lam : PLCon (Π (Π _ (prp ●)) (Π (Π _ (-proof ⟶ proof ●)) (out proof)))
-    -bot : PLCon (out prp)
-    -imp : PLCon (Π (Π _ (prp ●)) (Π (Π _ (prp ●)) (out prp)))
+  data PLCon : ConKind → Set where
+    -app : PLCon (proof ✧ ⟶ proof ✧ ⟶ proof ✧)
+    -lam : PLCon (prp ✧ ⟶ (-proof ⟶ proof ✧) ⟶ proof ✧)
+    -bot : PLCon (prp ✧)
+    -imp : PLCon (prp ✧ ⟶ prp ✧ ⟶ prp ✧)
 
-  PLparent : VarKind → ExpressionKind
+  PLparent : VarKind → ExpKind
   PLparent -proof = prp
 
 open PLgrammar
@@ -62,21 +62,21 @@ Prp : Alphabet → Set
 Prp P = Expression P prp
 
 ⊥P : ∀ {P} → Prp P
-⊥P = app -bot out
+⊥P = app -bot []
 
 _⇛_ : ∀ {P} → Prp P → Prp P → Prp P
-φ ⇛ ψ = app -imp (φ ,, ψ ,, out)
+φ ⇛ ψ = app -imp (φ ∷ ψ ∷ [])
 \end{code}
 
 \AgdaHide{
 \begin{code}
 close : ∀ {P} → Prp P → Prp ∅
 close (app -bot out) = ⊥P
-close (app -imp (φ ,, ψ ,, out)) = close φ ⇛ close ψ
+close (app -imp (φ ∷ ψ ∷ out)) = close φ ⇛ close ψ
 
 close-magic : ∀ {P} {φ : Prp P} → close φ 〈 magic 〉 ≡ φ
-close-magic {φ = app -bot out} = refl
-close-magic {φ = app -imp (φ ,, ψ ,, out)} = cong₂ _⇛_ close-magic close-magic
+close-magic {φ = app -bot []} = refl
+close-magic {φ = app -imp (φ ∷ ψ ∷ [])} = cong₂ _⇛_ close-magic close-magic
 
 close-magic' : ∀ {P} {Q} {φ : Prp P} {σ : Sub P Q} →
   φ ⟦ σ ⟧ ≡ close φ 〈 magic 〉
@@ -96,7 +96,7 @@ close-magic' {P} {Q} {φ} {σ} =
 
 close-sub : ∀ {P} {Q} φ {σ : Sub P Q} → close (φ ⟦ σ ⟧) ≡ close φ
 close-sub (app -bot out) = refl
-close-sub (app -imp (φ ,, ψ ,, out)) = cong₂ _⇛_ (close-sub φ) (close-sub ψ)
+close-sub (app -imp (φ ∷ ψ ∷ out)) = cong₂ _⇛_ (close-sub φ) (close-sub ψ)
 
 close-rep : ∀ {P} {Q} φ {ρ : Rep P Q} → close (φ 〈 ρ 〉) ≡ close φ
 close-rep φ {ρ} = let open ≡-Reasoning in
@@ -118,10 +118,10 @@ Proof : Alphabet → Set
 Proof P = Expression P proof
 
 appP : ∀ {P} → Proof P → Proof P → Proof P
-appP δ ε = app -app (δ ,, ε ,, out)
+appP δ ε = app -app (δ ∷ ε ∷ [])
 
 ΛP : ∀ {P} → Prp P → Proof (P , -proof) → Proof P
-ΛP φ δ = app -lam (φ ,, δ ,, out)
+ΛP φ δ = app -lam (φ ∷ δ ∷ [])
 \end{code}
 
 \subsubsection{$\beta$-reduction}
@@ -130,9 +130,9 @@ The relation of \emph{$\beta$-reduction} is defined by: $(\lambda x \delta) \eps
 \rightarrow_\beta \delta [ x := \epsilon ]$.
 
 \begin{code}
-data β {V} : ∀ {K} {C : Kind (-Constructor K)} → 
-  Constructor C → Body V C → Expression V K → Set where
-  βI : ∀ {φ} {δ} {ε} → β -app (ΛP φ δ ,, ε ,, out) (δ ⟦ x₀:= ε ⟧)
+data β {V} : ∀ {K} {C} →
+  Constructor (SK C K) → Body V C → Expression V K → Set where
+  βI : ∀ {φ} {δ} {ε} → β -app (ΛP φ δ ∷ ε ∷ []) (δ ⟦ x₀:= ε ⟧)
 
 open import Reduction Propositional-Logic β
 \end{code}
@@ -156,10 +156,10 @@ It is easy to check that $\beta$-reduction respects and creates replacement, and
 
 \AgdaHide{
 \begin{code}
-β-creates-rep {c = -app} (var _ ,, _) ()
-β-creates-rep {c = -app} (app -app _ ,, _) ()
+β-creates-rep {c = -app} (var _ ∷ _) ()
+β-creates-rep {c = -app} (app -app _ ∷ _) ()
 β-creates-rep {c = -app} 
-  (app -lam (_ ,, δ ,, out) ,, (ε ,, out)) βI = record { 
+  (app -lam (_ ∷ δ ∷ []) ∷ (ε ∷ [])) βI = record { 
   created = δ ⟦ x₀:= ε ⟧ ; 
   red-created = βI ; 
   ap-created = compRS-botSub δ }
@@ -231,9 +231,9 @@ NeutralC-lm : ∀ {P} {δ ε : Proof P} {X : Proof P → Set} →
   (∀ ε' → ε ⇒ ε' → X (appP δ ε')) →
   ∀ χ → appP δ ε ⇒ χ → X χ
 NeutralC-lm () _ _ ._ (redex βI)
-NeutralC-lm _ hyp1 _ .(app -app (_,,_ _ (_,,_ _ out))) (app (appl δ→δ')) = hyp1 _ δ→δ'
-NeutralC-lm _ _ hyp2 .(app -app (_,,_ _ (_,,_ _ out))) (app (appr (appl ε→ε'))) = hyp2 _ ε→ε'
-NeutralC-lm _ _ _ .(app -app (_,,_ _ (_,,_ _ _))) (app (appr (appr ())))
+NeutralC-lm _ hyp1 _ .(app -app (_∷_ _ (_∷_ _ []))) (app (appl δ→δ')) = hyp1 _ δ→δ'
+NeutralC-lm _ _ hyp2 .(app -app (_∷_ _ (_∷_ _ []))) (app (appr (appl ε→ε'))) = hyp2 _ ε→ε'
+NeutralC-lm _ _ _ .(app -app (_∷_ _ (_∷_ _ _))) (app (appr (appr ())))
 \end{code}
 }
 

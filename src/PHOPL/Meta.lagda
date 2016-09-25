@@ -352,7 +352,7 @@ path-substitution {U} {V} {Γ} {Δ} {ρ} {σ} {τ} (ΛR .{U} .{Γ} {A} {M} {B} �
                  validΔAAE)
                  (Mσ-typed ρ∶Γ⇒Δ refl)
                  (Mσ-typed σ∶Γ⇒Δ refl)
-                 (sym-conv (redex-conv (subst (R -appTerm ((ΛT A M ⟦ ρ ⟧) ⇑ ⇑ ⇑ ,, var x₂ ,, out)) (sub↖-decomp M) βT))) (sym-conv (redex-conv (subst (R -appTerm ((ΛT A M ⟦ σ ⟧) ⇑ ⇑ ⇑ ,, var x₁ ,, out)) (sub↗-decomp M) βT)))
+                 (sym-conv (redex-conv (subst (R -appTerm ((ΛT A M ⟦ ρ ⟧) ⇑ ⇑ ⇑ ∷ var x₂ ∷ [])) (sub↖-decomp M) βT))) (sym-conv (redex-conv (subst (R -appTerm ((ΛT A M ⟦ σ ⟧) ⇑ ⇑ ⇑ ∷ var x₁ ∷ [])) (sub↗-decomp M) βT)))
   in lllR step1
 
 postulate idPathSub : ∀ V → PathSub V V
@@ -416,8 +416,8 @@ It is sufficient to prove the case $s \rightarrow t$.  The proof is by a case an
 \AgdaHide{
 \begin{code}
 postulate Subject-Reduction-R : ∀ {V} {K} {C} 
-                              {c : Constructor C} {E : Body V C} {F : Expression V (varKind K)} {Γ} {A} →
-                              Γ ⊢ (app c E) ∶ A → R c E F → Γ ⊢ F ∶ A
+                              {c : Constructor (SK C (varKind K))} {E : Body V C} {F : Expression V (varKind K)} {Γ} {A} →
+                              Γ ⊢ app c E ∶ A → R c E F → Γ ⊢ F ∶ A
 
 {-Subject-Reduction-R : ∀ {V} {K} {C} 
   {c : Constructor C} {E : Body V C} {F : Expression V (varKind K)} {Γ} {A} →

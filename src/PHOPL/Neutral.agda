@@ -29,10 +29,10 @@ neutral-red' {N = app (app _ _) _} (osr-red (redex βT)) EF≡ΛMN = ⊥-elim (a
 neutral-red' {N = var _} (osr-red (app _)) ()
 neutral-red' {N = app _ _} (osr-red (app {c = -bot} _)) ()
 neutral-red' {N = app _ _} (osr-red (app {c = -imp} _)) ()
-neutral-red' {N = app N P} (osr-red (app {c = -appTerm} (appl {F = F ,, out} E⇒E'))) NP≡EF = 
+neutral-red' {N = app N P} (osr-red (app {c = -appTerm} (appl {F = F ∷ []} E⇒E'))) NP≡EF = 
   let (N' ,p N'≡E') = neutral-red' (osr-red E⇒E') (appT-injl NP≡EF) in
   app N' P ,p cong₂ appT N'≡E' (appT-injr NP≡EF)
-neutral-red' {N = app N P} (osr-red (app {c = -appTerm} (appr (appl {E' = F'} {F = out} F↠F')))) NP≡EF = app N F' ,p cong (λ x → appT x F') (appT-injl NP≡EF)
+neutral-red' {N = app N P} (osr-red (app {c = -appTerm} (appr (appl {E' = F'} {F = []} F↠F')))) NP≡EF = app N F' ,p cong (λ x → appT x F') (appT-injl NP≡EF)
 neutral-red' {N = app _ _} (osr-red (app {c = -appTerm} (appr (appr ())))) _
 neutral-red' {N = app _ _} (osr-red (app {c = -lamTerm x} _)) ()
 neutral-red' {N = N} ref N≡M₁ = N ,p N≡M₁
