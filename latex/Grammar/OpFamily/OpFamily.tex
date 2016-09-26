@@ -48,45 +48,26 @@ Finally. we can define: a \emph{family of operations} is a pre-family with lift 
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
 \>[6]\AgdaFunction{apV} \AgdaSymbol{(}\AgdaBound{σ} \AgdaField{∘} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{x} \AgdaDatatype{≡} \AgdaFunction{ap} \AgdaBound{σ} \AgdaSymbol{(}\AgdaFunction{apV} \AgdaBound{ρ} \AgdaBound{x}\AgdaSymbol{)}\<%
-\end{code}
-
-\AgdaHide{
-\begin{code}%
-\>\AgdaKeyword{record} \AgdaRecord{OpFamily} \AgdaSymbol{:} \AgdaPrimitiveType{Set₂} \AgdaKeyword{where}\<%
+\\
+%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{field}\<%
-\\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaField{liftFamily} \AgdaSymbol{:} \AgdaRecord{LiftFamily}\<%
-\\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaField{isOpFamily} \<[16]%
-\>[16]\AgdaSymbol{:} \AgdaRecord{IsOpFamily} \AgdaField{liftFamily}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{open} \AgdaModule{IsOpFamily} \AgdaField{isOpFamily} \AgdaKeyword{public}\<%
-\end{code}
-}
-
-\begin{code}%
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{COMP} \AgdaSymbol{:} \AgdaRecord{Composition} \AgdaField{liftFamily} \AgdaField{liftFamily} \AgdaField{liftFamily}\<%
+\>[2]\AgdaFunction{COMP} \AgdaSymbol{:} \AgdaRecord{Composition} \AgdaBound{F} \AgdaBound{F} \AgdaBound{F}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{COMP} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{} \<[18]%
 \>[18]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaField{circ} \AgdaSymbol{=} \AgdaFunction{\_∘\_} \AgdaSymbol{;} \<[17]%
+\>[4]\AgdaField{circ} \AgdaSymbol{=} \AgdaField{\_∘\_} \AgdaSymbol{;} \<[17]%
 \>[17]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaField{liftOp-circ} \AgdaSymbol{=} \AgdaFunction{liftOp-comp} \AgdaSymbol{;} \<[32]%
+\>[4]\AgdaField{liftOp-circ} \AgdaSymbol{=} \AgdaField{liftOp-comp} \AgdaSymbol{;} \<[32]%
 \>[32]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaField{apV-circ} \AgdaSymbol{=} \AgdaFunction{apV-comp} \AgdaSymbol{\}}\<%
+\>[4]\AgdaField{apV-circ} \AgdaSymbol{=} \AgdaField{apV-comp} \AgdaSymbol{\}}\<%
 \\
 %
 \\
@@ -99,7 +80,7 @@ Finally. we can define: a \emph{family of operations} is a pre-family with lift 
 \>[2]\AgdaFunction{comp-congl} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaBound{σ'} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaBound{σ} \AgdaFunction{∼op} \AgdaBound{σ'} \AgdaSymbol{→} \AgdaBound{σ} \AgdaFunction{∘} \AgdaBound{ρ} \AgdaFunction{∼op} \AgdaBound{σ'} \AgdaFunction{∘} \AgdaBound{ρ}\<%
+\>[4]\AgdaBound{σ} \AgdaFunction{∼op} \AgdaBound{σ'} \AgdaSymbol{→} \AgdaBound{σ} \AgdaField{∘} \AgdaBound{ρ} \AgdaFunction{∼op} \AgdaBound{σ'} \AgdaField{∘} \AgdaBound{ρ}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{comp-congl} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ'}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaBound{σ∼σ'} \AgdaBound{x} \AgdaSymbol{=} \AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{≡-Reasoning} \AgdaKeyword{in} \<[71]%
@@ -109,10 +90,10 @@ Finally. we can define: a \emph{family of operations} is a pre-family with lift 
 \>[4]\AgdaFunction{begin}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{apV} \AgdaSymbol{(}\AgdaBound{σ} \AgdaFunction{∘} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{x}\<%
+\>[6]\AgdaFunction{apV} \AgdaSymbol{(}\AgdaBound{σ} \AgdaField{∘} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{x}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≡⟨} \AgdaFunction{apV-comp} \AgdaFunction{⟩}\<%
+\>[4]\AgdaFunction{≡⟨} \AgdaField{apV-comp} \AgdaFunction{⟩}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
 \>[6]\AgdaFunction{ap} \AgdaBound{σ} \AgdaSymbol{(}\AgdaFunction{apV} \AgdaBound{ρ} \AgdaBound{x}\AgdaSymbol{)}\<%
@@ -124,10 +105,10 @@ Finally. we can define: a \emph{family of operations} is a pre-family with lift 
 \>[6]\AgdaFunction{ap} \AgdaBound{σ'} \AgdaSymbol{(}\AgdaFunction{apV} \AgdaBound{ρ} \AgdaBound{x}\AgdaSymbol{)}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≡⟨⟨} \AgdaFunction{apV-comp} \AgdaFunction{⟩⟩}\<%
+\>[4]\AgdaFunction{≡⟨⟨} \AgdaField{apV-comp} \AgdaFunction{⟩⟩}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{apV} \AgdaSymbol{(}\AgdaBound{σ'} \AgdaFunction{∘} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{x}\<%
+\>[6]\AgdaFunction{apV} \AgdaSymbol{(}\AgdaBound{σ'} \AgdaField{∘} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{x}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaFunction{∎}\<%
@@ -136,7 +117,7 @@ Finally. we can define: a \emph{family of operations} is a pre-family with lift 
 \>[2]\AgdaKeyword{postulate} \AgdaPostulate{comp-congr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaBound{ρ'} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[2]\AgdaIndent{23}{}\<[23]%
-\>[23]\AgdaBound{ρ} \AgdaFunction{∼op} \AgdaBound{ρ'} \AgdaSymbol{→} \AgdaBound{σ} \AgdaFunction{∘} \AgdaBound{ρ} \AgdaFunction{∼op} \AgdaBound{σ} \AgdaFunction{∘} \AgdaBound{ρ'}\<%
+\>[23]\AgdaBound{ρ} \AgdaFunction{∼op} \AgdaBound{ρ'} \AgdaSymbol{→} \AgdaBound{σ} \AgdaField{∘} \AgdaBound{ρ} \AgdaFunction{∼op} \AgdaBound{σ} \AgdaField{∘} \AgdaBound{ρ'}\<%
 \end{code}
 
 The following results about operations are easy to prove.
@@ -185,7 +166,7 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
 \>[45]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaBound{τ} \AgdaFunction{∘} \AgdaSymbol{(}\AgdaBound{σ} \AgdaFunction{∘} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaFunction{∼op} \AgdaSymbol{(}\AgdaBound{τ} \AgdaFunction{∘} \AgdaBound{σ}\AgdaSymbol{)} \AgdaFunction{∘} \AgdaBound{ρ}\<%
+\>[4]\AgdaBound{τ} \AgdaField{∘} \AgdaSymbol{(}\AgdaBound{σ} \AgdaField{∘} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaFunction{∼op} \AgdaSymbol{(}\AgdaBound{τ} \AgdaField{∘} \AgdaBound{σ}\AgdaSymbol{)} \AgdaField{∘} \AgdaBound{ρ}\<%
 \end{code}
 
 \AgdaHide{
@@ -199,16 +180,16 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
 \>[10]\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{apV} \AgdaSymbol{(}\AgdaBound{τ} \AgdaFunction{∘} \AgdaSymbol{(}\AgdaBound{σ} \AgdaFunction{∘} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaBound{x}\<%
+\>[6]\AgdaFunction{apV} \AgdaSymbol{(}\AgdaBound{τ} \AgdaField{∘} \AgdaSymbol{(}\AgdaBound{σ} \AgdaField{∘} \AgdaBound{ρ}\AgdaSymbol{))} \AgdaBound{x}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≡⟨} \AgdaFunction{apV-comp} \AgdaFunction{⟩}\<%
+\>[4]\AgdaFunction{≡⟨} \AgdaField{apV-comp} \AgdaFunction{⟩}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{ap} \AgdaBound{τ} \AgdaSymbol{(}\AgdaFunction{apV} \AgdaSymbol{(}\AgdaBound{σ} \AgdaFunction{∘} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{x}\AgdaSymbol{)}\<%
+\>[6]\AgdaFunction{ap} \AgdaBound{τ} \AgdaSymbol{(}\AgdaFunction{apV} \AgdaSymbol{(}\AgdaBound{σ} \AgdaField{∘} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{x}\AgdaSymbol{)}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≡⟨} \AgdaFunction{cong} \AgdaSymbol{(}\AgdaFunction{ap} \AgdaBound{τ}\AgdaSymbol{)} \AgdaFunction{apV-comp} \AgdaFunction{⟩}\<%
+\>[4]\AgdaFunction{≡⟨} \AgdaFunction{cong} \AgdaSymbol{(}\AgdaFunction{ap} \AgdaBound{τ}\AgdaSymbol{)} \AgdaField{apV-comp} \AgdaFunction{⟩}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
 \>[6]\AgdaFunction{ap} \AgdaBound{τ} \AgdaSymbol{(}\AgdaFunction{ap} \AgdaBound{σ} \AgdaSymbol{(}\AgdaFunction{apV} \AgdaBound{ρ} \AgdaBound{x}\AgdaSymbol{))}\<%
@@ -217,13 +198,13 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
 \>[4]\AgdaFunction{≡⟨⟨} \AgdaFunction{ap-circ} \AgdaSymbol{(}\AgdaFunction{apV} \AgdaBound{ρ} \AgdaBound{x}\AgdaSymbol{)} \AgdaFunction{⟩⟩}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{ap} \AgdaSymbol{(}\AgdaBound{τ} \AgdaFunction{∘} \AgdaBound{σ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{apV} \AgdaBound{ρ} \AgdaBound{x}\AgdaSymbol{)}\<%
+\>[6]\AgdaFunction{ap} \AgdaSymbol{(}\AgdaBound{τ} \AgdaField{∘} \AgdaBound{σ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{apV} \AgdaBound{ρ} \AgdaBound{x}\AgdaSymbol{)}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≡⟨⟨} \AgdaFunction{apV-comp} \AgdaFunction{⟩⟩}\<%
+\>[4]\AgdaFunction{≡⟨⟨} \AgdaField{apV-comp} \AgdaFunction{⟩⟩}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{apV} \AgdaSymbol{((}\AgdaBound{τ} \AgdaFunction{∘} \AgdaBound{σ}\AgdaSymbol{)} \AgdaFunction{∘} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{x}\<%
+\>[6]\AgdaFunction{apV} \AgdaSymbol{((}\AgdaBound{τ} \AgdaField{∘} \AgdaBound{σ}\AgdaSymbol{)} \AgdaField{∘} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{x}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaFunction{∎}\<%
@@ -232,7 +213,7 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
 
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{unitl} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{idOp} \AgdaBound{V} \AgdaFunction{∘} \AgdaBound{σ} \AgdaFunction{∼op} \AgdaBound{σ}\<%
+\>[2]\AgdaFunction{unitl} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{idOp} \AgdaBound{V} \AgdaField{∘} \AgdaBound{σ} \AgdaFunction{∼op} \AgdaBound{σ}\<%
 \end{code}
 
 \AgdaHide{
@@ -246,10 +227,10 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
 \>[10]\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{apV} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaBound{V} \AgdaFunction{∘} \AgdaBound{σ}\AgdaSymbol{)} \AgdaBound{x}\<%
+\>[6]\AgdaFunction{apV} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaBound{V} \AgdaField{∘} \AgdaBound{σ}\AgdaSymbol{)} \AgdaBound{x}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≡⟨} \AgdaFunction{apV-comp} \AgdaFunction{⟩}\<%
+\>[4]\AgdaFunction{≡⟨} \AgdaField{apV-comp} \AgdaFunction{⟩}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
 \>[6]\AgdaFunction{ap} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaBound{V}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{apV} \AgdaBound{σ} \AgdaBound{x}\AgdaSymbol{)}\<%
@@ -267,7 +248,7 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
 
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{unitr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{σ} \AgdaFunction{∘} \AgdaFunction{idOp} \AgdaBound{U} \AgdaFunction{∼op} \AgdaBound{σ}\<%
+\>[2]\AgdaFunction{unitr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{σ} \AgdaField{∘} \AgdaFunction{idOp} \AgdaBound{U} \AgdaFunction{∼op} \AgdaBound{σ}\<%
 \end{code}
 
 \AgdaHide{
@@ -280,10 +261,10 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
 \>[10]\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{apV} \AgdaSymbol{(}\AgdaBound{σ} \AgdaFunction{∘} \AgdaFunction{idOp} \AgdaBound{U}\AgdaSymbol{)} \AgdaBound{x}\<%
+\>[6]\AgdaFunction{apV} \AgdaSymbol{(}\AgdaBound{σ} \AgdaField{∘} \AgdaFunction{idOp} \AgdaBound{U}\AgdaSymbol{)} \AgdaBound{x}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≡⟨} \AgdaFunction{apV-comp} \AgdaFunction{⟩}\<%
+\>[4]\AgdaFunction{≡⟨} \AgdaField{apV-comp} \AgdaFunction{⟩}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
 \>[6]\AgdaFunction{ap} \AgdaBound{σ} \AgdaSymbol{(}\AgdaFunction{apV} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaBound{U}\AgdaSymbol{)} \AgdaBound{x}\AgdaSymbol{)}\<%
@@ -298,3 +279,23 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
 \>[4]\AgdaFunction{∎}\<%
 \end{code}
 }
+
+\AgdaHide{
+\begin{code}%
+\>\AgdaKeyword{record} \AgdaRecord{OpFamily} \AgdaSymbol{:} \AgdaPrimitiveType{Set₂} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{field}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{liftFamily} \AgdaSymbol{:} \AgdaRecord{LiftFamily}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{isOpFamily} \<[16]%
+\>[16]\AgdaSymbol{:} \AgdaRecord{IsOpFamily} \AgdaField{liftFamily}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{open} \AgdaModule{IsOpFamily} \AgdaField{isOpFamily} \AgdaKeyword{public}\<%
+\end{code}
+}
+

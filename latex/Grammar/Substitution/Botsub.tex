@@ -32,7 +32,7 @@ $(V , K) \Rightarrow V$:
 
 \AgdaHide{
 \begin{code}%
-\>\AgdaFunction{botSub} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{ExpList} \AgdaBound{V} \AgdaBound{A} \AgdaSymbol{→} \AgdaFunction{Sub} \AgdaSymbol{(}\AgdaFunction{snoc-extend} \AgdaBound{V} \AgdaBound{A}\AgdaSymbol{)} \AgdaBound{V}\<%
+\>\AgdaFunction{botSub} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{snocListExp} \AgdaBound{V} \AgdaBound{A} \AgdaSymbol{→} \AgdaFunction{Sub} \AgdaSymbol{(}\AgdaFunction{snoc-extend} \AgdaBound{V} \AgdaBound{A}\AgdaSymbol{)} \AgdaBound{V}\<%
 \\
 \>\AgdaFunction{botSub} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaBound{x} \AgdaSymbol{=} \AgdaInductiveConstructor{var} \AgdaBound{x}\<%
 \\

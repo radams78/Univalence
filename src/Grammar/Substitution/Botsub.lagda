@@ -21,7 +21,7 @@ $(V , K) \Rightarrow V$:
 
 \AgdaHide{
 \begin{code}
-botSub : ∀ {V} {A} → ExpList V A → Sub (snoc-extend V A) V
+botSub : ∀ {V} {A} → snocListExp V A → Sub (snoc-extend V A) V
 botSub {A = []} _ _ x = var x
 botSub {A = _ snoc _} (_ snoc E) _ x₀ = E
 botSub {A = _ snoc _} (EE snoc _) L (↑ x) = botSub EE L x

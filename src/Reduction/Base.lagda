@@ -187,14 +187,14 @@ $E[\rho] \twoheadrightarrow_R E[\sigma]$ for all $K$, $A$, $E$.
 }
 
 \begin{code}
-  liftOp'-red : ∀ {U V A} {ρ σ : Op U V} → respects' → 
-    ρ ↠s σ → liftOp' A ρ ↠s liftOp' A σ
+  liftsOp-red : ∀ {U V A} {ρ σ : Op U V} → respects' → 
+    ρ ↠s σ → liftsOp A ρ ↠s liftsOp A σ
 \end{code}
 
 \AgdaHide{
 \begin{code}
-  liftOp'-red {A = []} _ ρ↠σ = ρ↠σ
-  liftOp'-red {A = K ∷ A} hyp ρ↠σ = liftOp'-red {A = A} hyp (liftOp-red hyp ρ↠σ)
+  liftsOp-red {A = []} _ ρ↠σ = ρ↠σ
+  liftsOp-red {A = K ∷ A} hyp ρ↠σ = liftsOp-red {A = A} hyp (liftOp-red hyp ρ↠σ)
 \end{code}
 }
 
@@ -208,7 +208,7 @@ $E[\rho] \twoheadrightarrow_R E[\sigma]$ for all $K$, $A$, $E$.
   apredl {E = var x} hyp ρ↠σ = ρ↠σ _ x
   apredl {E = app _ E} hyp ρ↠σ = respects-red app (apredl {E = E} hyp ρ↠σ)
   apredl {E = []} _ _ = ref
-  apredl {E = _∷_ {A = SK A _} E F} hyp ρ↠σ = trans-red (respects-red appl (apredl {E = E} hyp (liftOp'-red {A = A} hyp ρ↠σ))) (respects-red appr (apredl {E = F} hyp ρ↠σ))
+  apredl {E = _∷_ {A = SK A _} E F} hyp ρ↠σ = trans-red (respects-red appl (apredl {E = E} hyp (liftsOp-red {A = A} hyp ρ↠σ))) (respects-red appr (apredl {E = F} hyp ρ↠σ))
 \end{code}
 }
 
@@ -301,7 +301,7 @@ create-osr hyp (_∷_ {A = SK A _} E F) {σ = σ} (appr {F' = F'} σF⇒F') =
   record { 
     created = _∷_ E created; 
     red-created = appr red-created; 
-    ap-created = cong (_∷_ (E 〈 OpFamily.liftOp' replacement A σ 〉)) ap-created
+    ap-created = cong (_∷_ (E 〈 OpFamily.liftsOp replacement A σ 〉)) ap-created
     }
 \end{code}
 }

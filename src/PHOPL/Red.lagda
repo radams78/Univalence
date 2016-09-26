@@ -116,7 +116,7 @@ postulate univ-red : ∀ {V} {φ φ' ψ ψ' : Term V} {δ} {δ'} {ε} {ε'} →
 
 postulate ΛP-red : ∀ {V} {φ φ' : Term V} {δ} {δ'} → φ ↠ φ' → δ ↠ δ' → ΛP φ δ ↠ ΛP φ' δ'
 
-postulate pre-Confluent : ∀ {V} {K} {C} {c : Constructor (SK C K)} {E E' : Body V C} {F} →
+postulate pre-Confluent : ∀ {V} {K} {C} {c : Constructor (SK C K)} {E E' : ListAbs V C} {F} →
                         R c E F → E ⇒ E' → Σ[ F' ∈ Expression V K ] R c E' F' × F ↠ F'
 {-pre-Confluent βT (appl (redex ()))
 pre-Confluent βT (appl (app (appl M⇒M'))) = _ ,p βT ,p red-subl (osr-red M⇒M')
@@ -179,7 +179,7 @@ pre-Confluent reflam⊃* E⇒E' = {!!}
 pre-Confluent reflamuniv E⇒E' = {!!}
 pre-Confluent reflamλλλ E⇒E' = {!!} -}
 
-Critical-Pairs : ∀ {V} {K} {C} {c : Constructor (SK C K)} {E : Body V C} {F} {G} → R c E F → R c E G → Σ[ H ∈ Expression V K ] F ↠ H × G ↠ H
+Critical-Pairs : ∀ {V} {K} {C} {c : Constructor (SK C K)} {E : ListAbs V C} {F} {G} → R c E F → R c E G → Σ[ H ∈ Expression V K ] F ↠ H × G ↠ H
 Critical-Pairs βT βT = _ ,p ref ,p ref
 Critical-Pairs βR βR = _ ,p ref ,p ref
 Critical-Pairs plus-ref plus-ref = _ ,p ref ,p ref

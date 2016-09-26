@@ -52,33 +52,6 @@ A \emph{pre-family with lifting} is a pre-family with a lifting operation that s
 \>[6]\AgdaFunction{apV} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{K} \AgdaBound{σ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaBound{x}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaFunction{ap} \AgdaFunction{up} \AgdaSymbol{(}\AgdaFunction{apV} \AgdaBound{σ} \AgdaBound{x}\AgdaSymbol{)}\<%
 \end{code}
 
-\AgdaHide{
-\begin{code}%
-\>\AgdaKeyword{record} \AgdaRecord{LiftFamily} \AgdaSymbol{:} \AgdaPrimitiveType{Set₂} \AgdaKeyword{where}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{field}\<%
-\\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaField{preOpFamily} \AgdaSymbol{:} \AgdaRecord{PreOpFamily}\<%
-\\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaField{lifting} \AgdaSymbol{:} \AgdaRecord{Lifting} \AgdaField{preOpFamily}\<%
-\\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaField{isLiftFamily} \AgdaSymbol{:} \AgdaRecord{IsLiftFamily} \AgdaField{preOpFamily} \AgdaField{lifting}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{open} \AgdaModule{PreOpFamily} \AgdaField{preOpFamily} \AgdaKeyword{public}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{open} \AgdaModule{Lifting} \AgdaField{lifting} \AgdaKeyword{public}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{open} \AgdaModule{IsLiftFamily} \AgdaField{isLiftFamily} \AgdaKeyword{public}\<%
-\end{code}
-}
-
 \begin{lemma}
 In any pre-family with lifting:
 \begin{enumerate}
@@ -108,7 +81,7 @@ $E[\id{V}] \equiv E$
 \>[6]\AgdaFunction{apV} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{K} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaBound{V}\AgdaSymbol{))} \AgdaInductiveConstructor{x₀}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≡⟨} \AgdaFunction{liftOp-x₀} \AgdaFunction{⟩}\<%
+\>[4]\AgdaFunction{≡⟨} \AgdaField{liftOp-x₀} \AgdaFunction{⟩}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
 \>[6]\AgdaInductiveConstructor{var} \AgdaInductiveConstructor{x₀}\<%
@@ -134,7 +107,7 @@ $E[\id{V}] \equiv E$
 \>[6]\AgdaFunction{apV} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{K} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaBound{V}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaBound{x}\AgdaSymbol{)}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≡⟨} \AgdaFunction{liftOp-↑} \AgdaBound{x} \AgdaFunction{⟩}\<%
+\>[4]\AgdaFunction{≡⟨} \AgdaField{liftOp-↑} \AgdaBound{x} \AgdaFunction{⟩}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
 \>[6]\AgdaFunction{ap} \AgdaFunction{up} \AgdaSymbol{(}\AgdaFunction{apV} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaBound{V}\AgdaSymbol{)} \AgdaBound{x}\AgdaSymbol{)}\<%
@@ -165,36 +138,36 @@ $E[\id{V}] \equiv E$
  
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'-idOp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{A} \AgdaSymbol{→} \<[27]%
+\>[2]\AgdaFunction{liftsOp-idOp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{A} \AgdaSymbol{→} \<[27]%
 \>[27]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{liftOp'} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaBound{V}\AgdaSymbol{)} \AgdaFunction{∼op} \AgdaFunction{idOp} \AgdaSymbol{(}\AgdaFunction{extend} \AgdaBound{V} \AgdaBound{A}\AgdaSymbol{)}\<%
+\>[4]\AgdaFunction{liftsOp} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaBound{V}\AgdaSymbol{)} \AgdaFunction{∼op} \AgdaFunction{idOp} \AgdaSymbol{(}\AgdaFunction{extend} \AgdaBound{V} \AgdaBound{A}\AgdaSymbol{)}\<%
 \end{code}
 
 \AgdaHide{
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'-idOp} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaFunction{∼-refl}\<%
+\>[2]\AgdaFunction{liftsOp-idOp} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaFunction{∼-refl}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp'-idOp} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{∷} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{EqReasoning} \AgdaSymbol{(}\AgdaFunction{OP} \AgdaSymbol{(}\AgdaFunction{extend} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{∷} \AgdaBound{A}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{extend} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{∷} \AgdaBound{A}\AgdaSymbol{)))} \AgdaKeyword{in} \<[96]%
+\>[2]\AgdaFunction{liftsOp-idOp} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{∷} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{EqReasoning} \AgdaSymbol{(}\AgdaFunction{OP} \AgdaSymbol{(}\AgdaFunction{extend} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{∷} \AgdaBound{A}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{extend} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{∷} \AgdaBound{A}\AgdaSymbol{)))} \AgdaKeyword{in} \<[96]%
 \>[96]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaFunction{begin}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{liftOp'} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{K} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaBound{V}\AgdaSymbol{))}\<%
+\>[6]\AgdaFunction{liftsOp} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{K} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaBound{V}\AgdaSymbol{))}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≈⟨} \AgdaFunction{liftOp'-cong} \AgdaBound{A} \AgdaFunction{liftOp-idOp} \AgdaFunction{⟩}\<%
+\>[4]\AgdaFunction{≈⟨} \AgdaFunction{liftsOp-cong} \AgdaBound{A} \AgdaFunction{liftOp-idOp} \AgdaFunction{⟩}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{liftOp'} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{))}\<%
+\>[6]\AgdaFunction{liftsOp} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{))}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≈⟨} \AgdaFunction{liftOp'-idOp} \AgdaBound{A} \AgdaFunction{⟩}\<%
+\>[4]\AgdaFunction{≈⟨} \AgdaFunction{liftsOp-idOp} \AgdaBound{A} \AgdaFunction{⟩}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
 \>[6]\AgdaFunction{idOp} \AgdaSymbol{(}\AgdaFunction{extend} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{∷} \AgdaBound{A}\AgdaSymbol{))}\<%
@@ -235,10 +208,10 @@ $E[\id{V}] \equiv E$
 \>[4]\AgdaFunction{begin}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{ap} \AgdaSymbol{(}\AgdaFunction{liftOp'} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaBound{V}\AgdaSymbol{))} \AgdaBound{E} \AgdaInductiveConstructor{∷} \AgdaFunction{ap} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaBound{V}\AgdaSymbol{)} \AgdaBound{F}\<%
+\>[6]\AgdaFunction{ap} \AgdaSymbol{(}\AgdaFunction{liftsOp} \AgdaBound{A} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaBound{V}\AgdaSymbol{))} \AgdaBound{E} \AgdaInductiveConstructor{∷} \AgdaFunction{ap} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaBound{V}\AgdaSymbol{)} \AgdaBound{F}\<%
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≡⟨} \AgdaFunction{cong₂} \AgdaInductiveConstructor{\_∷\_} \AgdaSymbol{(}\AgdaFunction{ap-congl} \AgdaSymbol{(}\AgdaFunction{liftOp'-idOp} \AgdaBound{A}\AgdaSymbol{)} \AgdaBound{E}\AgdaSymbol{)} \AgdaFunction{ap-idOp} \AgdaFunction{⟩}\<%
+\>[4]\AgdaFunction{≡⟨} \AgdaFunction{cong₂} \AgdaInductiveConstructor{\_∷\_} \AgdaSymbol{(}\AgdaFunction{ap-congl} \AgdaSymbol{(}\AgdaFunction{liftsOp-idOp} \AgdaBound{A}\AgdaSymbol{)} \AgdaBound{E}\AgdaSymbol{)} \AgdaFunction{ap-idOp} \AgdaFunction{⟩}\<%
 \\
 \>[4]\AgdaIndent{7}{}\<[7]%
 \>[7]\AgdaFunction{ap} \AgdaSymbol{(}\AgdaFunction{idOp} \AgdaSymbol{(}\AgdaFunction{extend} \AgdaBound{V} \AgdaBound{A}\AgdaSymbol{))} \AgdaBound{E} \AgdaInductiveConstructor{∷} \AgdaBound{F}\<%
@@ -251,5 +224,31 @@ $E[\id{V}] \equiv E$
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaFunction{∎}\<%
+\\
+%
+\\
+\>\AgdaKeyword{record} \AgdaRecord{LiftFamily} \AgdaSymbol{:} \AgdaPrimitiveType{Set₂} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{field}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{preOpFamily} \AgdaSymbol{:} \AgdaRecord{PreOpFamily}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{lifting} \AgdaSymbol{:} \AgdaRecord{Lifting} \AgdaField{preOpFamily}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{isLiftFamily} \AgdaSymbol{:} \AgdaRecord{IsLiftFamily} \AgdaField{preOpFamily} \AgdaField{lifting}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{open} \AgdaModule{PreOpFamily} \AgdaField{preOpFamily} \AgdaKeyword{public}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{open} \AgdaModule{Lifting} \AgdaField{lifting} \AgdaKeyword{public}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{open} \AgdaModule{IsLiftFamily} \AgdaField{isLiftFamily} \AgdaKeyword{public}\<%
 \end{code}
 }
+

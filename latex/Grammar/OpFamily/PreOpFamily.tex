@@ -79,16 +79,12 @@ We formalize this definition in stages.  First, we define a \emph{pre-family of 
 \>[4]\AgdaField{up} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaField{Op} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{)}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaField{apV-up} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{x} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{V} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \<[43]%
-\>[43]\<%
+\>[4]\AgdaField{apV-up} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{x} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{V} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaField{apV} \AgdaSymbol{(}\AgdaField{up} \AgdaSymbol{\{}\AgdaArgument{K} \AgdaSymbol{=} \AgdaBound{L}\AgdaSymbol{\})} \AgdaBound{x} \AgdaDatatype{≡} \AgdaInductiveConstructor{var} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaBound{x}\AgdaSymbol{)}\<%
 \\
-\>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaField{apV} \AgdaSymbol{(}\AgdaField{up} \AgdaSymbol{\{}\AgdaArgument{K} \AgdaSymbol{=} \AgdaBound{L}\AgdaSymbol{\})} \AgdaBound{x} \AgdaDatatype{≡} \AgdaInductiveConstructor{var} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaBound{x}\AgdaSymbol{)}\<%
-\\
-\>[0]\AgdaIndent{4}{}\<[4]%
+\>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaField{idOp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaBound{V} \AgdaSymbol{→} \AgdaField{Op} \AgdaBound{V} \AgdaBound{V}\<%
 \\
-\>[0]\AgdaIndent{4}{}\<[4]%
+\>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaField{apV-idOp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{x} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{V} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaField{apV} \AgdaSymbol{(}\AgdaField{idOp} \AgdaBound{V}\AgdaSymbol{)} \AgdaBound{x} \AgdaDatatype{≡} \AgdaInductiveConstructor{var} \AgdaBound{x}\<%
 \end{code}
 

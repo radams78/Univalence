@@ -116,7 +116,65 @@ postulate compR-typed : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Rep U V} {Γ} {Δ} 
 \end{code}
 }
 
-Let $\Gamma$ and $\Delta$ be contexts.  A \emph{substitution from $\Gamma$ to $\Delta$}, $\sigma : \Gamma \Rightarrow \Delta$,
+\begin{lemma}[Generation]
+$ $
+\begin{enumerate}
+\item
+If $\Gamma \vdash x : A$ then $x : A \in \Gamma$.
+\item
+If $\Gamma \vdash \bot : A$ then $A \equiv \Omega$.
+\item
+If $\Gamma \vdash \phi \supset \psi : A$ then $\Gamma \vdash \phi : \Omega$, $\Gamma \vdash \psi : \Omega$ and $A \equiv \Omega$.
+\item
+If $\Gamma \vdash \lambda x:A.M : B$ then there exists $C$ such that $\Gamma, x : A \vdash M : C$ and $B \equiv A \rightarrow C$.
+\item
+If $\Gamma \vdash MN : A$ then there exists $B$ such that $\Gamma \vdash M : B \rightarrow A$ and $\Gamma \vdash N : B$.
+\item
+If $\Gamma \vdash p : \phi$, then there exists $\psi$ such that $p : \psi \in \Gamma$ and $\phi \simeq \psi$.
+\item
+If $\Gamma \vdash \lambda p:\phi.\delta : \psi$, then there exists $\chi$ such that $\Gamma, p : \phi \vdash \delta : \chi$ and $\psi \simeq \phi \supset \chi$.
+\item
+If $\Gamma \vdash \delta \epsilon : \phi$ then there exists $\psi$ such that $\Gamma \vdash \delta : \psi \supset \phi$ and $\Gamma \vdash \epsilon : \psi$.
+\item
+If $\Gamma \vdash e : M =_A N$, then there exist $M'$, $N'$ such that $e : M' =_A N' \in \Gamma$ and $M \simeq M'$, $N \simeq N'$.
+\item
+If $\Gamma \vdash \reff{M} : N =_A P$, then we have $\Gamma \vdash M : A$ and $M \simeq N \simeq P$.
+\item
+If $\Gamma \vdash P \supset^* Q : \phi =_A \psi$, then there exist $\phi_1$, $\phi_2$, $\psi_1$, $\psi_2$ such that
+$\Gamma \vdash P : \phi_1 =_\Omega \psi_1$, $\Gamma \vdash Q : \phi_2 =_\Omega \psi_2$, $\phi \simeq \phi_1 \supset \psi_1$, $\psi \simeq \phi_2 \supset \psi_2$, and $A \equiv \Omega$.
+\item
+If $\Gamma \vdash \univ{\phi}{\psi}{P}{Q} : \chi =_A \theta$, then we have $\Gamma \vdash P : \phi \supset \psi$, $\Gamma \vdash Q : \psi \supset \phi$,
+$\Gamma \vdash \chi \simeq_\Delta \phi : \Omega$, $\Gamma \vdash \theta \simeq_\Delta \psi : \Omega$ and $A \equiv \Omega$.
+\item
+If $\Gamma \vdash \triplelambda e : x =_A y. P : M =_B N$ then there exists $C$ such that $\Gamma, x : A, y : A, e : x =_A y \vdash P : M x =_C N y$
+and $B \equiv A \rightarrow C$.
+\item
+If $\Gamma \vdash P_{M M'} Q : N =_A N'$, then there exist $B$, $F$ and $G$ such that $\Gamma \vdash P : F =_{B \rightarrow A} G$, $\Gamma \vdash Q : M =_B M'$, $N \simeq F M$
+and $N' \simeq G M'$.
+\item
+If $\Gamma \vdash P^+ : \phi$, then there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\phi \simeq (\psi \supset \chi)$.
+\item
+If $\Gamma \vdash P^- : \phi$, there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\phi \simeq (\chi \supset \psi)$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Induction on derivations.
+\end{proof}
+
+\AgdaHide{
+\begin{code}
+postulate Generation-ΛP : ∀ {V} {Γ : Context V} {φ} {δ} {ε} {ψ} →
+                          Γ ⊢ appP (ΛP φ δ) ε ∶ ψ →
+                          Σ[ χ ∈ Term V ] 
+                          (ψ ≃ φ ⊃ χ × Γ ,P φ ⊢ δ ∶ χ ⇑)
+\end{code}
+}
+
+\subsubsection{Substitutions}
+
+\begin{df}
+Let $\Gamma$ and $\Delta$ be contexts.  A \emph{substitution from $\Gamma$ to $\Delta$}\footnote{These have also been called \emph{context morphisms}, for example in Hoffman \cite{Hofmann97syntaxand}.  Note however that what we call a substitution from $\Gamma$ to $\Delta$ is what Hoffman calls a context morphism from $\Delta$ to $\Gamma$.}, $\sigma : \Gamma \Rightarrow \Delta$,
 is a substitution whose domain is $\dom \Gamma$ such that:
 \begin{itemize}
 \item
@@ -126,6 +184,7 @@ for every proof variable $p : \phi \in \Gamma$, we have $\Delta \vdash \sigma(p)
 \item
 for every path variable $e : M =_A N \in \Gamma$, we have $\Delta \vdash \sigma(e) : M [ \sigma ] =_A N [ \sigma ]$.
 \end{itemize}
+\end{df}
 
 \begin{code}
 postulate _∶_⇒_ : ∀ {U} {V} → Sub U V → Context U → Context V → Set
@@ -211,61 +270,6 @@ postulate sub↗-typed : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {A} → σ ∶ Γ 
 \end{code}
 }
 
-\begin{lemma}[Generation]
-$ $
-\begin{enumerate}
-\item
-If $\Gamma \vdash x : A$ then $x : A \in \Gamma$.
-\item
-If $\Gamma \vdash \bot : A$ then $A \equiv \Omega$.
-\item
-If $\Gamma \vdash \phi \supset \psi : A$ then $\Gamma \vdash \phi : \Omega$, $\Gamma \vdash \psi : \Omega$ and $A \equiv \Omega$.
-\item
-If $\Gamma \vdash \lambda x:A.M : B$ then there exists $C$ such that $\Gamma, x : A \vdash M : C$ and $B \equiv A \rightarrow C$.
-\item
-If $\Gamma \vdash MN : A$ then there exists $B$ such that $\Gamma \vdash M : B \rightarrow A$ and $\Gamma \vdash N : B$.
-\item
-If $\Gamma \vdash p : \phi$, then there exists $\psi$ such that $p : \psi \in \Gamma$ and $\phi \simeq \psi$.
-\item
-If $\Gamma \vdash \lambda p:\phi.\delta : \psi$, then there exists $\chi$ such that $\Gamma, p : \phi \vdash \delta : \chi$ and $\psi \simeq \phi \supset \chi$.
-\item
-If $\Gamma \vdash \delta \epsilon : \phi$ then there exists $\psi$ such that $\Gamma \vdash \delta : \psi \supset \phi$ and $\Gamma \vdash \epsilon : \psi$.
-\item
-If $\Gamma \vdash e : M =_A N$, then there exist $M'$, $N'$ such that $e : M' =_A N' \in \Gamma$ and $M \simeq M'$, $N \simeq N'$.
-\item
-If $\Gamma \vdash \reff{M} : N =_A P$, then we have $\Gamma \vdash M : A$ and $M \simeq N \simeq P$.
-\item
-If $\Gamma \vdash P \supset^* Q : \phi =_A \psi$, then there exist $\phi_1$, $\phi_2$, $\psi_1$, $\psi_2$ such that
-$\Gamma \vdash P : \phi_1 =_\Omega \psi_1$, $\Gamma \vdash Q : \phi_2 =_\Omega \psi_2$, $\phi \simeq \phi_1 \supset \psi_1$, $\psi \simeq \phi_2 \supset \psi_2$, and $A \equiv \Omega$.
-\item
-If $\Gamma \vdash \univ{\phi}{\psi}{P}{Q} : \chi =_A \theta$, then we have $\Gamma \vdash P : \phi \supset \psi$, $\Gamma \vdash Q : \psi \supset \phi$,
-$\Gamma \vdash \chi \simeq_\Delta \phi : \Omega$, $\Gamma \vdash \theta \simeq_\Delta \psi : \Omega$ and $A \equiv \Omega$.
-\item
-If $\Gamma \vdash \triplelambda e : x =_A y. P : M =_B N$ then there exists $C$ such that $\Gamma, x : A, y : A, e : x =_A y \vdash P : M x =_C N y$
-and $B \equiv A \rightarrow C$.
-\item
-If $\Gamma \vdash P_{M M'} Q : N =_A N'$, then there exist $B$, $F$ and $G$ such that $\Gamma \vdash P : F =_{B \rightarrow A} G$, $\Gamma \vdash Q : M =_B M'$, $N \simeq F M$
-and $N' \simeq G M'$.
-\item
-If $\Gamma \vdash P^+ : \phi$, then there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\phi \simeq (\psi \supset \chi)$.
-\item
-If $\Gamma \vdash P^- : \phi$, there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\phi \simeq (\chi \supset \psi)$.
-\end{enumerate}
-\end{lemma}
-
-\begin{proof}
-Induction on derivations.
-\end{proof}
-
-\AgdaHide{
-\begin{code}
-postulate Generation-ΛP : ∀ {V} {Γ : Context V} {φ} {δ} {ε} {ψ} →
-                          Γ ⊢ appP (ΛP φ δ) ε ∶ ψ →
-                          Σ[ χ ∈ Term V ] 
-                          (ψ ≃ φ ⊃ χ × Γ ,P φ ⊢ δ ∶ χ ⇑)
-\end{code}
-}
-
 \begin{code}
 _∶_∼_∶_⇒_ : ∀ {U} {V} → PathSub U V → Sub U V → Sub U V → Context U → Context V → Set
 τ ∶ σ ∼ σ' ∶ Γ ⇒ Δ = ∀ x → Δ ⊢ τ x ∶ σ -Term x ≡〈 typeof' x Γ 〉 σ' -Term x
@@ -295,10 +299,12 @@ postulate sub↗-decomp : ∀ {U} {V} {C} {K} (M : Subexpression (U , -Term) C K
 \end{code}
 }
 
+\begin{df}
 If $\rho, \sigma : \Gamma \rightarrow \Delta$ and $\tau$ is a path substitution whose domain
 is the term variables in $\dom \Gamma$, then we write
 $\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$ iff, for each variable $x : A \in \Gamma$, we have
 $\Delta \vdash \tau(x) : \sigma(x) =_A \rho(x)$.
+\end{df}
 
 \begin{lemma}[Path Substitution]
 \label{lm:pathsub}
@@ -309,9 +315,6 @@ then $\Delta \vdash M \{ \tau : \sigma \sim \rho \} : M [ \sigma ] =_A M [ \rho 
 \begin{proof}
 Induction on derivations.
 \end{proof}
-
-\paragraph{Note}
-
 
 
 \begin{code}
@@ -416,11 +419,11 @@ It is sufficient to prove the case $s \rightarrow t$.  The proof is by a case an
 \AgdaHide{
 \begin{code}
 postulate Subject-Reduction-R : ∀ {V} {K} {C} 
-                              {c : Constructor (SK C (varKind K))} {E : Body V C} {F : Expression V (varKind K)} {Γ} {A} →
+                              {c : Constructor (SK C (varKind K))} {E : ListAbs V C} {F : Expression V (varKind K)} {Γ} {A} →
                               Γ ⊢ app c E ∶ A → R c E F → Γ ⊢ F ∶ A
 
 {-Subject-Reduction-R : ∀ {V} {K} {C} 
-  {c : Constructor C} {E : Body V C} {F : Expression V (varKind K)} {Γ} {A} →
+  {c : Constructor C} {E : ListAbs V C} {F : Expression V (varKind K)} {Γ} {A} →
   Γ ⊢ (app c E) ∶ A → R c E F → Γ ⊢ F ∶ A
 Subject-Reduction-R Γ⊢ΛPφδε∶A βR =
   let (χ ,p A≃φ⊃χ ,p Γ,φ⊢δ∶χ) = Generation-ΛP Γ⊢ΛPφδε∶A in {!!}
@@ -453,6 +456,8 @@ postulate Equation-Validity₁ : ∀ {V} {Γ : Context V} {P : Path V} {M} {A} {
 postulate Equation-Validity₂ : ∀ {V} {Γ : Context V} {P : Path V} {M} {A} {N} →
                              Γ ⊢ P ∶ M ≡〈 A 〉 N → Γ ⊢ N ∶ ty A
 \end{code}
+
+\subsubsection{Canonicity}
 
 \begin{definition}[Canonical Object]
 $ $

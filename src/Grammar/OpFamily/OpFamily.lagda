@@ -25,20 +25,8 @@ record IsOpFamily (F : LiftFamily) : Set₂ where
       liftOp K (σ ∘ ρ) ∼op liftOp K σ ∘ liftOp K ρ
     apV-comp : ∀ {U} {V} {W} {K} {σ : Op V W} {ρ : Op U V} {x : Var U K} →
       apV (σ ∘ ρ) x ≡ ap σ (apV ρ x)
-\end{code}
 
-\AgdaHide{
-\begin{code}
-record OpFamily : Set₂ where
-  field
-    liftFamily : LiftFamily
-    isOpFamily  : IsOpFamily liftFamily
-  open IsOpFamily isOpFamily public
-\end{code}
-}
-
-\begin{code}
-  COMP : Composition liftFamily liftFamily liftFamily
+  COMP : Composition F F F
   COMP = record { 
     circ = _∘_ ; 
     liftOp-circ = liftOp-comp ; 
@@ -148,3 +136,14 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
     ∎
 \end{code}
 }
+
+\AgdaHide{
+\begin{code}
+record OpFamily : Set₂ where
+  field
+    liftFamily : LiftFamily
+    isOpFamily  : IsOpFamily liftFamily
+  open IsOpFamily isOpFamily public
+\end{code}
+}
+

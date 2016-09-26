@@ -30,8 +30,8 @@ data Context : Alphabet → Set where
 -- Define typeof such that, if x : A ∈ Γ, then typeof x Γ ≡ A
 -- We define it the following way so that typeof x Γ computes to an expression of the form
 -- M 〈 upRep 〉, even if x is not in canonical form
-private pretypeof : ∀ {V} {K} {L} (x : Var (V , K) L) (Γ : Context (V , K)) →
-                  Expression V (parent L)
+pretypeof : ∀ {V} {K} {L} (x : Var (V , K) L) (Γ : Context (V , K)) →
+            Expression V (parent L)
 typeof : ∀ {V} {K} (x : Var V K) (Γ : Context V) → 
   Expression V (parent K)
 

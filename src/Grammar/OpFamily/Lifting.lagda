@@ -30,15 +30,15 @@ Given an operation $\sigma : U \rightarrow V$ and a list of variable kinds $A \e
 the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \cdots ) , A_n)$.
 
 \begin{code}
-  LIFTOP' : ∀ {U} {V} AA → OP U V ⟶ OP (extend U AA) (extend V AA)
-  LIFTOP' [] = id
-  LIFTOP' (A ∷ AA) = LIFTOP' AA ∘ LIFTOP A
+  LIFTSOP : ∀ {U} {V} AA → OP U V ⟶ OP (extend U AA) (extend V AA)
+  LIFTSOP [] = id
+  LIFTSOP (A ∷ AA) = LIFTSOP AA ∘ LIFTOP A
 
-  liftOp' : ∀ {U} {V} VV → Op U V → Op (extend U VV) (extend V VV)
-  liftOp' A = Π._⟨$⟩_ (LIFTOP' A)
+  liftsOp : ∀ {U} {V} VV → Op U V → Op (extend U VV) (extend V VV)
+  liftsOp A = Π._⟨$⟩_ (LIFTSOP A)
 
-  liftOp'-cong : ∀ {U} {V} A {ρ σ : Op U V} → ρ ∼op σ → liftOp' A ρ ∼op liftOp' A σ
-  liftOp'-cong A = Π.cong (LIFTOP' A)
+  liftsOp-cong : ∀ {U} {V} A {ρ σ : Op U V} → ρ ∼op σ → liftsOp A ρ ∼op liftsOp A σ
+  liftsOp-cong A = Π.cong (LIFTSOP A)
 \end{code}
 
 This allows us to define the action of \emph{application} $E[\sigma]$:
@@ -48,7 +48,7 @@ This allows us to define the action of \emph{application} $E[\sigma]$:
   ap ρ (var x) = apV ρ x
   ap ρ (app c EE) = app c (ap ρ EE)
   ap _ [] = []
-  ap ρ (_∷_ {A = SK AA _} E EE) = ap (liftOp' AA ρ) E ∷ ap ρ EE
+  ap ρ (_∷_ {A = SK AA _} E EE) = ap (liftsOp AA ρ) E ∷ ap ρ EE
 \end{code}
 
 We prove that application respects $\sim$.
@@ -65,7 +65,7 @@ We prove that application respects $\sim$.
   ap-congl ρ-is-σ (app c E) = Prelims.cong (app c) (ap-congl ρ-is-σ E)
   ap-congl _ [] = refl
   ap-congl ρ-is-σ (_∷_ {A = SK AA _} E F) = 
-    cong₂ _∷_ (ap-congl (liftOp'-cong AA ρ-is-σ) E) (ap-congl ρ-is-σ F)
+    cong₂ _∷_ (ap-congl (liftsOp-cong AA ρ-is-σ) E) (ap-congl ρ-is-σ F)
 
   ap-congr : ∀ {U} {V} {C} {K}
     {σ : Op U V} {E F : Subexpression U C K} →

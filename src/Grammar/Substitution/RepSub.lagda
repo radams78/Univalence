@@ -10,7 +10,7 @@ open import Grammar.Replacement G
 open import Grammar.Substitution.PreOpFamily G
 open import Grammar.Substitution.Lifting G
 
-open OpFamily replacement using () renaming (liftOp' to liftOp'R)
+open OpFamily replacement using () renaming (liftsOp to liftsOpR)
 open PreOpFamily pre-substitution
 open Lifting LIFTSUB
 \end{code}
@@ -62,20 +62,20 @@ up-is-up _ = refl
 }
 
 \begin{code}
-liftOp'-is-liftOp' : ∀ {U} {V} {ρ : Rep U V} {A} → 
-  rep2sub (liftOp'R  A ρ) ∼ liftOp' A (rep2sub ρ)
+liftsOp-is-liftsOp : ∀ {U} {V} {ρ : Rep U V} {A} → 
+  rep2sub (liftsOpR  A ρ) ∼ liftsOp A (rep2sub ρ)
 \end{code}
 
 \AgdaHide{
 \begin{code}
-liftOp'-is-liftOp' {ρ = ρ} {A = []} = ∼-refl {σ = rep2sub ρ}
-liftOp'-is-liftOp' {U} {V} {ρ} {K ∷ A} = let open EqReasoning (OP _ _) in 
+liftsOp-is-liftsOp {ρ = ρ} {A = []} = ∼-refl {σ = rep2sub ρ}
+liftsOp-is-liftsOp {U} {V} {ρ} {K ∷ A} = let open EqReasoning (OP _ _) in 
   begin
-    rep2sub (liftOp'R A (liftRep K ρ))
-  ≈⟨ liftOp'-is-liftOp' {A = A} ⟩
-    liftOp' A (rep2sub (liftRep K ρ))
-  ≈⟨ liftOp'-cong A liftRep-is-liftSub ⟩
-    liftOp' A (liftSub K (rep2sub ρ))
+    rep2sub (liftsOpR A (liftRep K ρ))
+  ≈⟨ liftsOp-is-liftsOp {A = A} ⟩
+    liftsOp A (rep2sub (liftRep K ρ))
+  ≈⟨ liftsOp-cong A liftRep-is-liftSub ⟩
+    liftsOp A (liftSub K (rep2sub ρ))
   ∎
 \end{code}
 }
@@ -93,11 +93,11 @@ rep-is-sub [] = refl
 rep-is-sub {U} {V} (_∷_ {A = SK A _} E F) {ρ} = cong₂ _∷_ 
   (let open ≡-Reasoning {A = Subexpression (extend V A) _ _} in
   begin 
-    E 〈 liftOp'R A ρ 〉
+    E 〈 liftsOpR A ρ 〉
   ≡⟨ rep-is-sub E ⟩
-    E ⟦ (λ K x → var (liftOp'R A ρ K x)) ⟧ 
-  ≡⟨ ap-congl (liftOp'-is-liftOp' {A = A}) E ⟩
-    E ⟦ liftOp' A (λ K x → var (ρ K x)) ⟧
+    E ⟦ (λ K x → var (liftsOpR A ρ K x)) ⟧ 
+  ≡⟨ ap-congl (liftsOp-is-liftsOp {A = A}) E ⟩
+    E ⟦ liftsOp A (λ K x → var (ρ K x)) ⟧
   ∎)
   (rep-is-sub F)
 \end{code}

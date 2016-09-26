@@ -30,19 +30,6 @@ record IsLiftFamily (F : PreOpFamily) (L : Lifting F) : Set₁ where
       apV (liftOp K σ) (↑ x) ≡ ap up (apV σ x)
 \end{code}
 
-\AgdaHide{
-\begin{code}
-record LiftFamily : Set₂ where
-  field
-    preOpFamily : PreOpFamily
-    lifting : Lifting preOpFamily
-    isLiftFamily : IsLiftFamily preOpFamily lifting
-  open PreOpFamily preOpFamily public
-  open Lifting lifting public
-  open IsLiftFamily isLiftFamily public
-\end{code}
-}
-
 \begin{lemma}
 In any pre-family with lifting:
 \begin{enumerate}
@@ -85,19 +72,19 @@ $E[\id{V}] \equiv E$
 }
  
 \begin{code}      
-  liftOp'-idOp : ∀ {V} A → 
-    liftOp' A (idOp V) ∼op idOp (extend V A)
+  liftsOp-idOp : ∀ {V} A → 
+    liftsOp A (idOp V) ∼op idOp (extend V A)
 \end{code}
 
 \AgdaHide{
 \begin{code}
-  liftOp'-idOp [] = ∼-refl
-  liftOp'-idOp {V} (K ∷ A) = let open EqReasoning (OP (extend V (K ∷ A)) (extend V (K ∷ A))) in 
+  liftsOp-idOp [] = ∼-refl
+  liftsOp-idOp {V} (K ∷ A) = let open EqReasoning (OP (extend V (K ∷ A)) (extend V (K ∷ A))) in 
     begin
-      liftOp' A (liftOp K (idOp V))
-    ≈⟨ liftOp'-cong A liftOp-idOp ⟩
-      liftOp' A (idOp (V , K))
-    ≈⟨ liftOp'-idOp A ⟩
+      liftsOp A (liftOp K (idOp V))
+    ≈⟨ liftsOp-cong A liftOp-idOp ⟩
+      liftsOp A (idOp (V , K))
+    ≈⟨ liftsOp-idOp A ⟩
       idOp (extend V (K ∷ A))
     ∎
 \end{code}
@@ -116,11 +103,21 @@ $E[\id{V}] \equiv E$
   ap-idOp {V} {E = _∷_ {A = SK A _} E F} =
     let open ≡-Reasoning in 
     begin
-      ap (liftOp' A (idOp V)) E ∷ ap (idOp V) F
-    ≡⟨ cong₂ _∷_ (ap-congl (liftOp'-idOp A) E) ap-idOp ⟩
+      ap (liftsOp A (idOp V)) E ∷ ap (idOp V) F
+    ≡⟨ cong₂ _∷_ (ap-congl (liftsOp-idOp A) E) ap-idOp ⟩
        ap (idOp (extend V A)) E ∷ F
     ≡⟨ cong (λ x → x ∷ F) ap-idOp ⟩
        E ∷ F
     ∎
+
+record LiftFamily : Set₂ where
+  field
+    preOpFamily : PreOpFamily
+    lifting : Lifting preOpFamily
+    isLiftFamily : IsLiftFamily preOpFamily lifting
+  open PreOpFamily preOpFamily public
+  open Lifting lifting public
+  open IsLiftFamily isLiftFamily public
 \end{code}
 }
+

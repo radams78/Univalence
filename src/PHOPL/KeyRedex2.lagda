@@ -4,6 +4,8 @@ module PHOPL.KeyRedex2 where
 \end{code}
 }
 
+\subsubsection{Well-Typed Expansion}
+
 Let $\SN$ be the set of all strongly normalizing expressions.
 
 \begin{prop}

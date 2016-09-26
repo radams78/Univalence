@@ -275,7 +275,7 @@ The relation of \emph{$\beta$-reduction} is defined by: $(\lambda x \delta) \eps
 \>\AgdaKeyword{data} \AgdaDatatype{β} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{Constructor} \AgdaSymbol{(}\AgdaInductiveConstructor{SK} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaFunction{Body} \AgdaBound{V} \AgdaBound{C} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\>[2]\AgdaFunction{Constructor} \AgdaSymbol{(}\AgdaInductiveConstructor{SK} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaFunction{ListAbs} \AgdaBound{V} \AgdaBound{C} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaInductiveConstructor{βI} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{φ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ε}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{β} \AgdaInductiveConstructor{-app} \AgdaSymbol{(}\AgdaFunction{ΛP} \AgdaBound{φ} \AgdaBound{δ} \AgdaInductiveConstructor{∷} \AgdaBound{ε} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{δ} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{ε} \AgdaFunction{⟧}\AgdaSymbol{)}\<%
