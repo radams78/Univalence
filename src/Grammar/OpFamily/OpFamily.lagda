@@ -42,11 +42,11 @@ record IsOpFamily (F : LiftFamily) : Set₂ where
   comp-congl {U} {V} {W} {σ} {σ'} {ρ} σ∼σ' x = let open ≡-Reasoning in 
     begin
       apV (σ ∘ ρ) x
-    ≡⟨ apV-comp ⟩
+    ≡⟨ apV-circ ⟩
       ap σ (apV ρ x)
     ≡⟨ ap-congl σ∼σ' (apV ρ x) ⟩
       ap σ' (apV ρ x)
-    ≡⟨⟨ apV-comp ⟩⟩
+    ≡⟨⟨ apV-circ ⟩⟩
       apV (σ' ∘ ρ) x
     ∎
   postulate comp-congr : ∀ {U} {V} {W} {σ : Op V W} {ρ ρ' : Op U V} →
@@ -94,13 +94,13 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
   assoc {U} {V} {W} {X} {τ} {σ} {ρ} {K} x = let open ≡-Reasoning {A = Expression X (varKind K)} in 
     begin 
       apV (τ ∘ (σ ∘ ρ)) x
-    ≡⟨ apV-comp ⟩
+    ≡⟨ apV-circ ⟩
       ap τ (apV (σ ∘ ρ) x)
-    ≡⟨ cong (ap τ) apV-comp ⟩
+    ≡⟨ cong (ap τ) apV-circ ⟩
       ap τ (ap σ (apV ρ x))
     ≡⟨⟨ ap-comp (apV ρ x) ⟩⟩
       ap (τ ∘ σ) (apV ρ x)
-    ≡⟨⟨ apV-comp ⟩⟩
+    ≡⟨⟨ apV-circ ⟩⟩
       apV ((τ ∘ σ) ∘ ρ) x
     ∎
 \end{code}
@@ -115,7 +115,7 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
   unitl {U} {V} {σ} {K} x = let open ≡-Reasoning {A = Expression V (varKind K)} in 
     begin 
       apV (idOp V ∘ σ) x
-    ≡⟨ apV-comp ⟩
+    ≡⟨ apV-circ ⟩
       ap (idOp V) (apV σ x)
     ≡⟨ ap-idOp ⟩
       apV σ x
@@ -132,7 +132,7 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
   unitr {U} {V} {σ} {K} x = let open ≡-Reasoning {A = Expression V (varKind K)} in
     begin 
       apV (σ ∘ idOp U) x
-    ≡⟨ apV-comp ⟩
+    ≡⟨ apV-circ ⟩
       ap σ (apV (idOp U) x)
     ≡⟨ cong (ap σ) (apV-idOp x) ⟩
       apV σ x
