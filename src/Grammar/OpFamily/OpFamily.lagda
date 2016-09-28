@@ -16,41 +16,12 @@ open import Grammar.OpFamily.Composition G
 Finally. we can define: a \emph{family of operations} is a pre-family with lift $F$ together with a composition $\circ : F;F \rightarrow F$.
 
 \begin{code}
-record IsOpFamily (F : LiftFamily) : Set₂ where
-  open LiftFamily F public
+record OpFamily : Set₂ where
   field
-    comp : Composition F F F
-
-{-  infix 50 _∘_
-  field
-    _∘_ : ∀ {U} {V} {W} → Op V W → Op U V → Op U W
-    liftOp-comp : ∀ {U} {V} {W} {K} {σ : Op V W} {ρ : Op U V} →
-      liftOp K (σ ∘ ρ) ∼op liftOp K σ ∘ liftOp K ρ
-    apV-comp : ∀ {U} {V} {W} {K} {σ : Op V W} {ρ : Op U V} {x : Var U K} →
-      apV (σ ∘ ρ) x ≡ ap σ (apV ρ x)
-
-  COMP : Composition F F F
-  COMP = record { 
-    circ = _∘_ ; 
-    liftOp-circ = liftOp-comp ; 
-    apV-circ = apV-comp } -}
-
+    liftFamily : LiftFamily
+    comp : Composition liftFamily liftFamily liftFamily
+  open LiftFamily liftFamily public
   open Composition comp public
-
-  comp-congl : ∀ {U} {V} {W} {σ σ' : Op V W} {ρ : Op U V} →
-    σ ∼op σ' → σ ∘ ρ ∼op σ' ∘ ρ
-  comp-congl {U} {V} {W} {σ} {σ'} {ρ} σ∼σ' x = let open ≡-Reasoning in 
-    begin
-      apV (σ ∘ ρ) x
-    ≡⟨ apV-circ ⟩
-      ap σ (apV ρ x)
-    ≡⟨ ap-congl σ∼σ' (apV ρ x) ⟩
-      ap σ' (apV ρ x)
-    ≡⟨⟨ apV-circ ⟩⟩
-      apV (σ' ∘ ρ) x
-    ∎
-  postulate comp-congr : ∀ {U} {V} {W} {σ : Op V W} {ρ ρ' : Op U V} →
-                       ρ ∼op ρ' → σ ∘ ρ ∼op σ ∘ ρ'
 \end{code}
 
 The following results about operations are easy to prove.
@@ -94,13 +65,13 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
   assoc {U} {V} {W} {X} {τ} {σ} {ρ} {K} x = let open ≡-Reasoning {A = Expression X (varKind K)} in 
     begin 
       apV (τ ∘ (σ ∘ ρ)) x
-    ≡⟨ apV-circ ⟩
+    ≡⟨ apV-comp ⟩
       ap τ (apV (σ ∘ ρ) x)
-    ≡⟨ cong (ap τ) apV-circ ⟩
+    ≡⟨ cong (ap τ) apV-comp ⟩
       ap τ (ap σ (apV ρ x))
     ≡⟨⟨ ap-comp (apV ρ x) ⟩⟩
       ap (τ ∘ σ) (apV ρ x)
-    ≡⟨⟨ apV-circ ⟩⟩
+    ≡⟨⟨ apV-comp ⟩⟩
       apV ((τ ∘ σ) ∘ ρ) x
     ∎
 \end{code}
@@ -115,7 +86,7 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
   unitl {U} {V} {σ} {K} x = let open ≡-Reasoning {A = Expression V (varKind K)} in 
     begin 
       apV (idOp V ∘ σ) x
-    ≡⟨ apV-circ ⟩
+    ≡⟨ apV-comp ⟩
       ap (idOp V) (apV σ x)
     ≡⟨ ap-idOp ⟩
       apV σ x
@@ -132,21 +103,10 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
   unitr {U} {V} {σ} {K} x = let open ≡-Reasoning {A = Expression V (varKind K)} in
     begin 
       apV (σ ∘ idOp U) x
-    ≡⟨ apV-circ ⟩
+    ≡⟨ apV-comp ⟩
       ap σ (apV (idOp U) x)
     ≡⟨ cong (ap σ) (apV-idOp x) ⟩
       apV σ x
     ∎
 \end{code}
 }
-
-\AgdaHide{
-\begin{code}
-record OpFamily : Set₂ where
-  field
-    liftFamily : LiftFamily
-    isOpFamily  : IsOpFamily liftFamily
-  open IsOpFamily isOpFamily public
-\end{code}
-}
-

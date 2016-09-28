@@ -277,7 +277,7 @@ $ E [ \uparrow ] [ x_0 := F ] \equiv E$
 
 \AgdaHide{
 \begin{code}%
-\>\AgdaFunction{comp-botSub''} \AgdaBound{F} \AgdaSymbol{=} \AgdaKeyword{let} \AgdaBound{COMP} \AgdaSymbol{=} \AgdaFunction{OpFamily.comp} \AgdaFunction{SUB} \AgdaKeyword{in} \AgdaFunction{comp-botSub} \AgdaSymbol{\{}\AgdaArgument{E'} \AgdaSymbol{=} \AgdaBound{F}\AgdaSymbol{\}} \AgdaBound{COMP} \AgdaBound{COMP}\<%
+\>\AgdaFunction{comp-botSub''} \AgdaBound{F} \AgdaSymbol{=} \AgdaKeyword{let} \AgdaBound{COMP} \AgdaSymbol{=} \AgdaField{OpFamily.comp} \AgdaFunction{SUB} \AgdaKeyword{in} \AgdaFunction{comp-botSub} \AgdaSymbol{\{}\AgdaArgument{E'} \AgdaSymbol{=} \AgdaBound{F}\AgdaSymbol{\}} \AgdaBound{COMP} \AgdaBound{COMP}\<%
 \end{code}
 }
 
@@ -310,7 +310,7 @@ $ E [ \uparrow ] [ x_0 := F ] \equiv E$
 \\
 \>\AgdaFunction{botSub-botSub} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{E} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K} \AgdaInductiveConstructor{,} \AgdaBound{L}\AgdaSymbol{)} \AgdaBound{M}\AgdaSymbol{)} \AgdaBound{F} \AgdaBound{G} \AgdaSymbol{→} \AgdaBound{E} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaBound{L} \AgdaSymbol{(}\AgdaFunction{x₀:=} \AgdaBound{F}\AgdaSymbol{)} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{G} \AgdaFunction{⟧} \AgdaDatatype{≡} \AgdaBound{E} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaSymbol{(}\AgdaBound{G} \AgdaFunction{⇑}\AgdaSymbol{)} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{F} \AgdaFunction{⟧}\<%
 \\
-\>\AgdaFunction{botSub-botSub} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaBound{E} \AgdaBound{F} \AgdaBound{G} \AgdaSymbol{=} \AgdaKeyword{let} \AgdaBound{COMP} \AgdaSymbol{=} \AgdaFunction{OpFamily.comp} \AgdaFunction{SUB} \AgdaKeyword{in} \AgdaFunction{ap-comp-sim} \AgdaBound{COMP} \AgdaBound{COMP} \AgdaSymbol{(}\AgdaFunction{botSub-botSub'} \AgdaBound{F} \AgdaBound{G}\AgdaSymbol{)} \AgdaBound{E} \AgdaComment{-- TODO Duplication with comp-botSub'' ?}\<%
+\>\AgdaFunction{botSub-botSub} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaBound{E} \AgdaBound{F} \AgdaBound{G} \AgdaSymbol{=} \AgdaKeyword{let} \AgdaBound{COMP} \AgdaSymbol{=} \AgdaField{OpFamily.comp} \AgdaFunction{SUB} \AgdaKeyword{in} \AgdaFunction{ap-comp-sim} \AgdaBound{COMP} \AgdaBound{COMP} \AgdaSymbol{(}\AgdaFunction{botSub-botSub'} \AgdaBound{F} \AgdaBound{G}\AgdaSymbol{)} \AgdaBound{E} \AgdaComment{-- TODO Duplication with comp-botSub'' ?}\<%
 \\
 %
 \\

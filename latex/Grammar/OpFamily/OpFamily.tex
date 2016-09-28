@@ -23,82 +23,22 @@
 Finally. we can define: a \emph{family of operations} is a pre-family with lift $F$ together with a composition $\circ : F;F \rightarrow F$.
 
 \begin{code}%
-\>\AgdaKeyword{record} \AgdaRecord{IsOpFamily} \AgdaSymbol{(}\AgdaBound{F} \AgdaSymbol{:} \AgdaRecord{LiftFamily}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaPrimitiveType{Set₂} \AgdaKeyword{where}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{open} \AgdaModule{LiftFamily} \AgdaBound{F} \AgdaKeyword{public}\<%
+\>\AgdaKeyword{record} \AgdaRecord{OpFamily} \AgdaSymbol{:} \AgdaPrimitiveType{Set₂} \AgdaKeyword{where}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{field}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaField{comp} \AgdaSymbol{:} \AgdaRecord{Composition} \AgdaBound{F} \AgdaBound{F} \AgdaBound{F}\<%
+\>[4]\AgdaField{liftFamily} \AgdaSymbol{:} \AgdaRecord{LiftFamily}\<%
 \\
-%
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{comp} \AgdaSymbol{:} \AgdaRecord{Composition} \AgdaField{liftFamily} \AgdaField{liftFamily} \AgdaField{liftFamily}\<%
 \\
-\>\AgdaComment{\{-  infix 50 \_∘\_\<\\
-\>  field\<\\
-\>    \_∘\_ : ∀ \{U\} \{V\} \{W\} → Op V W → Op U V → Op U W\<\\
-\>    liftOp-comp : ∀ \{U\} \{V\} \{W\} \{K\} \{σ : Op V W\} \{ρ : Op U V\} →\<\\
-\>      liftOp K (σ ∘ ρ) ∼op liftOp K σ ∘ liftOp K ρ\<\\
-\>    apV-comp : ∀ \{U\} \{V\} \{W\} \{K\} \{σ : Op V W\} \{ρ : Op U V\} \{x : Var U K\} →\<\\
-\>      apV (σ ∘ ρ) x ≡ ap σ (apV ρ x)\<\\
-\>\<\\
-\>  COMP : Composition F F F\<\\
-\>  COMP = record \{ \<\\
-\>    circ = \_∘\_ ; \<\\
-\>    liftOp-circ = liftOp-comp ; \<\\
-\>    apV-circ = apV-comp \} -\}}\<%
-\\
-%
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{open} \AgdaModule{LiftFamily} \AgdaField{liftFamily} \AgdaKeyword{public}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{open} \AgdaModule{Composition} \AgdaField{comp} \AgdaKeyword{public}\<%
-\\
-%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{comp-congl} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaBound{σ'} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
-\\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaBound{σ} \AgdaFunction{∼op} \AgdaBound{σ'} \AgdaSymbol{→} \AgdaBound{σ} \AgdaFunction{∘} \AgdaBound{ρ} \AgdaFunction{∼op} \AgdaBound{σ'} \AgdaFunction{∘} \AgdaBound{ρ}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{comp-congl} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ'}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaBound{σ∼σ'} \AgdaBound{x} \AgdaSymbol{=} \AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{≡-Reasoning} \AgdaKeyword{in} \<[71]%
-\>[71]\<%
-\\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{begin}\<%
-\\
-\>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{apV} \AgdaSymbol{(}\AgdaBound{σ} \AgdaFunction{∘} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{x}\<%
-\\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≡⟨} \AgdaFunction{apV-comp} \AgdaFunction{⟩}\<%
-\\
-\>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{ap} \AgdaBound{σ} \AgdaSymbol{(}\AgdaFunction{apV} \AgdaBound{ρ} \AgdaBound{x}\AgdaSymbol{)}\<%
-\\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≡⟨} \AgdaFunction{ap-congl} \AgdaBound{σ∼σ'} \AgdaSymbol{(}\AgdaFunction{apV} \AgdaBound{ρ} \AgdaBound{x}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
-\\
-\>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{ap} \AgdaBound{σ'} \AgdaSymbol{(}\AgdaFunction{apV} \AgdaBound{ρ} \AgdaBound{x}\AgdaSymbol{)}\<%
-\\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≡⟨⟨} \AgdaFunction{apV-comp} \AgdaFunction{⟩⟩}\<%
-\\
-\>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{apV} \AgdaSymbol{(}\AgdaBound{σ'} \AgdaFunction{∘} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{x}\<%
-\\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{∎}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{postulate} \AgdaPostulate{comp-congr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaBound{ρ'} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
-\\
-\>[2]\AgdaIndent{23}{}\<[23]%
-\>[23]\AgdaBound{ρ} \AgdaFunction{∼op} \AgdaBound{ρ'} \AgdaSymbol{→} \AgdaBound{σ} \AgdaFunction{∘} \AgdaBound{ρ} \AgdaFunction{∼op} \AgdaBound{σ} \AgdaFunction{∘} \AgdaBound{ρ'}\<%
 \end{code}
 
 The following results about operations are easy to prove.
@@ -260,23 +200,3 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
 \>[4]\AgdaFunction{∎}\<%
 \end{code}
 }
-
-\AgdaHide{
-\begin{code}%
-\>\AgdaKeyword{record} \AgdaRecord{OpFamily} \AgdaSymbol{:} \AgdaPrimitiveType{Set₂} \AgdaKeyword{where}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{field}\<%
-\\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaField{liftFamily} \AgdaSymbol{:} \AgdaRecord{LiftFamily}\<%
-\\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaField{isOpFamily} \<[16]%
-\>[16]\AgdaSymbol{:} \AgdaRecord{IsOpFamily} \AgdaField{liftFamily}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{open} \AgdaModule{IsOpFamily} \AgdaField{isOpFamily} \AgdaKeyword{public}\<%
-\end{code}
-}
-

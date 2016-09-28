@@ -118,6 +118,28 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
 \\
 \>[0]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaFunction{∎}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{comp-congl} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaBound{σ'} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{F} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{G} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{\_∼op\_} \AgdaBound{F} \AgdaBound{σ} \AgdaBound{σ'} \AgdaSymbol{→} \AgdaFunction{\_∼op\_} \AgdaBound{H} \AgdaSymbol{(}\AgdaBound{σ} \AgdaField{∘} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{σ'} \AgdaField{∘} \AgdaBound{ρ}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{comp-congl} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{Bifunction.congl} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaFunction{OP} \AgdaBound{F} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{B} \AgdaSymbol{=} \AgdaFunction{OP} \AgdaBound{G} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{C} \AgdaSymbol{=} \AgdaFunction{OP} \AgdaBound{H} \AgdaBound{U} \AgdaBound{W}\AgdaSymbol{\}} \AgdaField{\_∘\_} \AgdaFunction{comp-cong}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{comp-congr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{F} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaBound{ρ'} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{G} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{\_∼op\_} \AgdaBound{G} \AgdaBound{ρ} \AgdaBound{ρ'} \AgdaSymbol{→} \AgdaFunction{\_∼op\_} \AgdaBound{H} \AgdaSymbol{(}\AgdaBound{σ} \AgdaField{∘} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{σ} \AgdaField{∘} \AgdaBound{ρ'}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{comp-congr} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{Bifunction.congr} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaFunction{OP} \AgdaBound{F} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{B} \AgdaSymbol{=} \AgdaFunction{OP} \AgdaBound{G} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{C} \AgdaSymbol{=} \AgdaFunction{OP} \AgdaBound{H} \AgdaBound{U} \AgdaBound{W}\AgdaSymbol{\}} \AgdaField{\_∘\_} \AgdaFunction{comp-cong}\<%
 \end{code}
 }
 

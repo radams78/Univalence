@@ -156,10 +156,10 @@ assocRSSR {ρ = ρ} {σ} {τ} x = sym (sub-compSR (τ _ x))
 SUB : OpFamily
 SUB = record { 
   liftFamily = SubLF;
-  isOpFamily = record{ comp = record { 
+  comp = record { 
     _∘_ = _•_ ; 
     liftOp-comp = liftSub-comp ; 
-    apV-comp = refl } }
+    apV-comp = refl }
   }
 \end{code}
 

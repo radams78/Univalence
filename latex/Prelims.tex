@@ -5,6 +5,8 @@ Test
 \AgdaHide{\section{Preliminaries}
 
 \begin{code}%
+\>\AgdaComment{--TODO Add these to standard library?}\<%
+\\
 \>\AgdaKeyword{module} \AgdaModule{Prelims} \AgdaKeyword{where}\<%
 \\
 %
@@ -14,6 +16,34 @@ Test
 \>\AgdaKeyword{import} \AgdaModule{Relation.Binary.EqReasoning}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Relation.Binary.PropositionalEquality} \AgdaKeyword{public} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaDatatype{\_≡\_}\AgdaSymbol{;}\AgdaInductiveConstructor{refl}\AgdaSymbol{;}\AgdaFunction{sym}\AgdaSymbol{;}\AgdaFunction{trans}\AgdaSymbol{;}\AgdaFunction{cong}\AgdaSymbol{;}\AgdaFunction{cong₂}\AgdaSymbol{;}\AgdaFunction{subst}\AgdaSymbol{;}\AgdaFunction{subst₂}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaKeyword{module} \AgdaModule{Bifunction} \<[18]%
+\>[18]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{\{}\AgdaBound{r₁} \AgdaBound{r₂} \AgdaBound{s₁} \AgdaBound{s₂} \AgdaBound{t₁} \AgdaBound{t₂}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A} \AgdaSymbol{:} \AgdaRecord{Setoid} \AgdaBound{r₁} \AgdaBound{r₂}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{B} \AgdaSymbol{:} \AgdaRecord{Setoid} \AgdaBound{s₁} \AgdaBound{s₂}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C} \AgdaSymbol{:} \AgdaRecord{Setoid} \AgdaBound{t₁} \AgdaBound{t₂}\AgdaSymbol{\}} \<[79]%
+\>[79]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{(}\AgdaBound{f} \AgdaSymbol{:} \AgdaField{Setoid.Carrier} \AgdaBound{A} \AgdaSymbol{→} \AgdaField{Setoid.Carrier} \AgdaBound{B} \AgdaSymbol{→} \AgdaField{Setoid.Carrier} \AgdaBound{C}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{wd} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{a} \AgdaBound{a'} \AgdaBound{b} \AgdaBound{b'}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaField{Setoid.\_≈\_} \AgdaBound{A} \AgdaBound{a} \AgdaBound{a'} \AgdaSymbol{→} \AgdaField{Setoid.\_≈\_} \AgdaBound{B} \AgdaBound{b} \AgdaBound{b'} \AgdaSymbol{→} \AgdaField{Setoid.\_≈\_} \AgdaBound{C} \AgdaSymbol{(}\AgdaBound{f} \AgdaBound{a} \AgdaBound{b}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{f} \AgdaBound{a'} \AgdaBound{b'}\AgdaSymbol{))} \AgdaKeyword{where}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{congl} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{a} \AgdaBound{a'} \AgdaBound{b}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaField{Setoid.\_≈\_} \AgdaBound{A} \AgdaBound{a} \AgdaBound{a'} \AgdaSymbol{→} \AgdaField{Setoid.\_≈\_} \AgdaBound{C} \AgdaSymbol{(}\AgdaBound{f} \AgdaBound{a} \AgdaBound{b}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{f} \AgdaBound{a'} \AgdaBound{b}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{congl} \AgdaBound{a≈a'} \AgdaSymbol{=} \AgdaBound{wd} \AgdaBound{a≈a'} \AgdaSymbol{(}\AgdaFunction{Setoid.refl} \AgdaBound{B}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{congr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{a} \AgdaBound{b} \AgdaBound{b'}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaField{Setoid.\_≈\_} \AgdaBound{B} \AgdaBound{b} \AgdaBound{b'} \AgdaSymbol{→} \AgdaField{Setoid.\_≈\_} \AgdaBound{C} \AgdaSymbol{(}\AgdaBound{f} \AgdaBound{a} \AgdaBound{b}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{f} \AgdaBound{a} \AgdaBound{b'}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{congr} \AgdaBound{b≈b'} \AgdaSymbol{=} \AgdaBound{wd} \AgdaSymbol{(}\AgdaFunction{Setoid.refl} \AgdaBound{A}\AgdaSymbol{)} \AgdaBound{b≈b'}\<%
 \\
 %
 \\
@@ -56,8 +86,6 @@ Test
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaSymbol{\_} \AgdaFunction{≡⟨⟨} \AgdaBound{y≡x} \AgdaFunction{⟩⟩} \AgdaBound{y≡z} \AgdaSymbol{=} \AgdaFunction{trans} \AgdaSymbol{(}\AgdaFunction{sym} \AgdaBound{y≡x}\AgdaSymbol{)} \AgdaBound{y≡z}\<%
-\\
-\>\AgdaComment{--TODO Add this to standard library}\<%
 \\
 %
 \\

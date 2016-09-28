@@ -195,22 +195,19 @@ and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
 \>[35]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaField{isOpFamily} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{}\<%
+\>[2]\AgdaField{comp} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{} \<[18]%
+\>[18]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaField{comp} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{} \<[20]%
-\>[20]\<%
+\>[4]\AgdaField{\_∘\_} \AgdaSymbol{=} \AgdaFunction{\_•R\_} \AgdaSymbol{;} \<[17]%
+\>[17]\<%
 \\
-\>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaField{\_∘\_} \AgdaSymbol{=} \AgdaFunction{\_•R\_} \AgdaSymbol{;} \<[19]%
-\>[19]\<%
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{apV-comp} \AgdaSymbol{=} \AgdaInductiveConstructor{refl} \AgdaSymbol{;} \<[22]%
+\>[22]\<%
 \\
-\>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaField{apV-comp} \AgdaSymbol{=} \AgdaInductiveConstructor{refl} \AgdaSymbol{;} \<[24]%
-\>[24]\<%
-\\
-\>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaField{liftOp-comp} \AgdaSymbol{=} \AgdaFunction{liftRep-comp} \AgdaSymbol{\}} \AgdaSymbol{\}} \AgdaSymbol{\}}\<%
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{liftOp-comp} \AgdaSymbol{=} \AgdaFunction{liftRep-comp} \AgdaSymbol{\}} \AgdaSymbol{\}}\<%
 \end{code}
 
 \AgdaHide{

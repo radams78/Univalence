@@ -5,11 +5,22 @@ Test
 \AgdaHide{\section{Preliminaries}
 
 \begin{code}
+--TODO Add these to standard library?
 module Prelims where
 
 open import Relation.Binary public hiding (_⇒_)
 import Relation.Binary.EqReasoning
 open import Relation.Binary.PropositionalEquality public using (_≡_;refl;sym;trans;cong;cong₂;subst;subst₂)
+
+module Bifunction 
+  {r₁ r₂ s₁ s₂ t₁ t₂} {A : Setoid r₁ r₂} {B : Setoid s₁ s₂} {C : Setoid t₁ t₂} 
+  (f : Setoid.Carrier A → Setoid.Carrier B → Setoid.Carrier C) (wd : ∀ {a a' b b'} → Setoid._≈_ A a a' → Setoid._≈_ B b b' → Setoid._≈_ C (f a b) (f a' b')) where
+
+  congl : ∀ {a a' b} → Setoid._≈_ A a a' → Setoid._≈_ C (f a b) (f a' b)
+  congl a≈a' = wd a≈a' (Setoid.refl B)
+
+  congr : ∀ {a b b'} → Setoid._≈_ B b b' → Setoid._≈_ C (f a b) (f a b')
+  congr b≈b' = wd (Setoid.refl A) b≈b'
 
 module EqReasoning {s₁ s₂} (S : Setoid s₁ s₂) where
   open Setoid S using (_≈_)
@@ -26,7 +37,6 @@ module ≡-Reasoning {a} {A : Set a} where
   infixr 2 _≡⟨⟨_⟩⟩_
   _≡⟨⟨_⟩⟩_ : ∀ (x : A) {y z} → y ≡ x → y ≡ z → x ≡ z
   _ ≡⟨⟨ y≡x ⟩⟩ y≡z = trans (sym y≡x) y≡z
---TODO Add this to standard library
 
 cong₃ : ∀ {A B C D : Set} (f : A → B → C → D) {a a' b b' c c'} →
         a ≡ a' → b ≡ b' → c ≡ c' → f a b c ≡ f a' b' c'
