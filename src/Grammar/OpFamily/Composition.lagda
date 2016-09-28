@@ -67,13 +67,13 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
       apV H (σ' ∘ ρ') x
     ∎
 
-  comp-congl : ∀ {U} {V} {W} {σ σ' : Op F V W} {ρ : Op G U V} →
+  comp-congl : ∀ {U} {V} {W} {σ σ' : Op F V W} (ρ : Op G U V) →
     _∼op_ F σ σ' → _∼op_ H (σ ∘ ρ) (σ' ∘ ρ)
-  comp-congl {U} {V} {W} = Bifunction.congl {A = OP F V W} {B = OP G U V} {C = OP H U W} _∘_ comp-cong
+  comp-congl {U} {V} {W} _ = Bifunction.congl {A = OP F V W} {B = OP G U V} {C = OP H U W} _∘_ comp-cong
 
-  comp-congr : ∀ {U} {V} {W} {σ : Op F V W} {ρ ρ' : Op G U V} →
+  comp-congr : ∀ {U} {V} {W} (σ : Op F V W) {ρ ρ' : Op G U V} →
     _∼op_ G ρ ρ' → _∼op_ H (σ ∘ ρ) (σ ∘ ρ')
-  comp-congr {U} {V} {W} = Bifunction.congr {A = OP F V W} {B = OP G U V} {C = OP H U W} _∘_ comp-cong
+  comp-congr {U} {V} {W} _ = Bifunction.congr {A = OP F V W} {B = OP G U V} {C = OP H U W} _∘_ comp-cong
 \end{code}
 }
 

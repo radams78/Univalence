@@ -85,9 +85,6 @@ liftRep-comp : ∀ {U} {V} {W} {K} {ρ' : Rep V W} {ρ : Rep U V} →
 \begin{code}
 liftRep-comp x₀ = refl
 liftRep-comp (↑ _) = refl
-
-postulate liftRep-comp₄ : ∀ {U} {V1} {V2} {V3} {V4} {K} {ρ1 : Rep U V1} {ρ2 : Rep V1 V2} {ρ3 : Rep V2 V3} {ρ4 : Rep V3 V4} →
-                       liftRep K (ρ4 •R ρ3 •R ρ2 •R ρ1) ∼R liftRep K ρ4 •R liftRep K ρ3 •R liftRep K ρ2 •R liftRep K ρ1
 \end{code}
 }
 
@@ -103,13 +100,27 @@ replacement = record {
 
 \AgdaHide{
 \begin{code}
-open OpFamily replacement public using () 
+open OpFamily replacement public using (comp-congl) 
   renaming (ap-congl to rep-congr;
            ap-congr to rep-congl;
            ap-idOp to rep-idOp;
            ap-comp to rep-comp;
            liftOp-idOp to liftRep-idOp;
            liftOp-up to liftRep-upRep)
+
+liftRep-comp₄ : ∀ {U} {V1} {V2} {V3} {V4} {K} {ρ1 : Rep U V1} {ρ2 : Rep V1 V2} {ρ3 : Rep V2 V3} {ρ4 : Rep V3 V4} →
+                liftRep K (ρ4 •R ρ3 •R ρ2 •R ρ1) ∼R liftRep K ρ4 •R liftRep K ρ3 •R liftRep K ρ2 •R liftRep K ρ1
+liftRep-comp₄ {U} {V1} {V2} {V3} {V4} {K} {ρ1} {ρ2} {ρ3} {ρ4} =
+  let open Prelims.EqReasoning (PreOpFamily.OP pre-replacement (U , K) (V4 , K)) in 
+  begin
+    liftRep K (ρ4 •R ρ3 •R ρ2 •R ρ1)
+  ≈⟨ liftRep-comp ⟩
+    liftRep K (ρ4 •R ρ3 •R ρ2) •R liftRep K ρ1
+  ≈⟨ comp-congl (liftRep K ρ1) liftRep-comp ⟩
+    liftRep K (ρ4 •R ρ3) •R liftRep K ρ2 •R liftRep K ρ1
+  ≈⟨ comp-congl (liftRep K ρ1) (comp-congl (liftRep K ρ2) liftRep-comp) ⟩
+    liftRep K ρ4 •R liftRep K ρ3 •R liftRep K ρ2 •R liftRep K ρ1
+  ∎
 
 postulate rep-comp₄ : ∀ {U} {V1} {V2} {V3} {V4} 
                       {ρ1 : Rep U V1} {ρ2 : Rep V1 V2} {ρ3 : Rep V2 V3} {ρ4 : Rep V3 V4} 
