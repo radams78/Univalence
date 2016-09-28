@@ -24,14 +24,8 @@ record OpFamily : Set₂ where
   open Composition comp public
 \end{code}
 
-The following results about operations are easy to prove.
-\begin{lemma}$ $
-  \begin{enumerate}
-  \item $(\sigma , K) \circ \uparrow \sim \uparrow \circ \sigma$
-  \item $(\id{V} , K) \sim \id{V,K}$
-  \item $\id{V}[E] \equiv E$
-  \item $(\sigma \circ \rho)[E] \equiv \sigma[\rho[E]]$
-  \end{enumerate}
+\begin{lemma}
+\[ E [ \uparrow ] (\sigma , K) ] \equiv E [ \sigma ] [ \uparrow ] \]
 \end{lemma}
 
 \begin{code}
