@@ -109,7 +109,7 @@ open OpFamily replacement public using ()
            ap-idOp to rep-idOp;
            ap-comp to rep-comp;
            liftOp-idOp to liftRep-idOp;
-           liftOp-up' to liftRep-upRep)
+           liftOp-up to liftRep-upRep)
 
 postulate rep-comp₄ : ∀ {U} {V1} {V2} {V3} {V4} 
                       {ρ1 : Rep U V1} {ρ2 : Rep V1 V2} {ρ3 : Rep V2 V3} {ρ4 : Rep V3 V4} 

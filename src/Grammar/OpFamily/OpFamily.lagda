@@ -29,14 +29,14 @@ record OpFamily : Set₂ where
 \end{lemma}
 
 \begin{code}
-  liftOp-up' : ∀ {U} {V} {C} {K} {L}
+  liftOp-up : ∀ {U} {V} {C} {K} {L}
     {σ : Op U V} (E : Subexpression U C K) →
     ap (liftOp L σ) (ap up E) ≡ ap up (ap σ E)
 \end{code}
 
 \AgdaHide{
 \begin{code}
-  liftOp-up' E = liftOp-up-mixed comp comp refl {E = E}
+  liftOp-up E = liftOp-up-mixed comp comp refl {E = E}
 \end{code}
 }
 

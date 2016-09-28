@@ -47,7 +47,7 @@ Finally. we can define: a \emph{family of operations} is a pre-family with lift 
 
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp-up'} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}}\<%
+\>[2]\AgdaFunction{liftOp-up} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{E} \AgdaSymbol{:} \AgdaDatatype{Subexpression} \AgdaBound{U} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→}\<%
@@ -59,7 +59,7 @@ Finally. we can define: a \emph{family of operations} is a pre-family with lift 
 \AgdaHide{
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{liftOp-up'} \AgdaBound{E} \AgdaSymbol{=} \AgdaFunction{liftOp-up-mixed} \AgdaField{comp} \AgdaField{comp} \AgdaInductiveConstructor{refl} \AgdaSymbol{\{}\AgdaArgument{E} \AgdaSymbol{=} \AgdaBound{E}\AgdaSymbol{\}}\<%
+\>[2]\AgdaFunction{liftOp-up} \AgdaBound{E} \AgdaSymbol{=} \AgdaFunction{liftOp-up-mixed} \AgdaField{comp} \AgdaField{comp} \AgdaInductiveConstructor{refl} \AgdaSymbol{\{}\AgdaArgument{E} \AgdaSymbol{=} \AgdaBound{E}\AgdaSymbol{\}}\<%
 \end{code}
 }
 
