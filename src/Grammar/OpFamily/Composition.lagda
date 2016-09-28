@@ -27,6 +27,7 @@ $(\sigma \circ \rho)(x) \equiv \rho(x) [ \sigma ]$
 
 \begin{code}
 record Composition (F G H : LiftFamily) : Set where
+  infix 25 _∘_
   field
     _∘_ : ∀ {U} {V} {W} → Op F V W → Op G U V → Op H U W
     liftOp-circ : ∀ {U V W K σ ρ} → 
