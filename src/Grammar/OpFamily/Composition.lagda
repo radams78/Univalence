@@ -27,12 +27,13 @@ $(\sigma \circ \rho)(x) \equiv \rho(x) [ \sigma ]$
 
 \begin{code}
 record Composition (F G H : LiftFamily) : Set where
+  infix 25 _∘_
   field
     _∘_ : ∀ {U} {V} {W} → Op F V W → Op G U V → Op H U W
-    liftOp-circ : ∀ {U V W K σ ρ} → 
+    liftOp-comp : ∀ {U V W K σ ρ} → 
       _∼op_ H (liftOp H K (_∘_ {U} {V} {W} σ ρ)) 
         (liftOp F K σ ∘ liftOp G K ρ)
-    apV-circ : ∀ {U} {V} {W} {K} {σ} {ρ} {x : Var U K} → 
+    apV-comp : ∀ {U} {V} {W} {K} {σ} {ρ} {x : Var U K} → 
       apV H (_∘_ {U} {V} {W} σ ρ) x ≡ ap F σ (apV G ρ x)
 \end{code}
 
@@ -49,65 +50,65 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
 \end{lemma}
 
 \begin{code}
-  circ-cong : ∀ {U V W} {σ σ' : Op F V W} {ρ ρ' : Op G U V} → 
+  comp-cong : ∀ {U V W} {σ σ' : Op F V W} {ρ ρ' : Op G U V} → 
     _∼op_ F σ σ' → _∼op_ G ρ ρ' → _∼op_ H (σ ∘ ρ) (σ' ∘ ρ')
 \end{code}
 
 \AgdaHide{
 \begin{code}
-  circ-cong {U} {V} {W} {σ} {σ'} {ρ} {ρ'} σ∼σ' ρ∼ρ' x = let open ≡-Reasoning in 
+  comp-cong {U} {V} {W} {σ} {σ'} {ρ} {ρ'} σ∼σ' ρ∼ρ' x = let open ≡-Reasoning in 
     begin
       apV H (σ ∘ ρ) x
-    ≡⟨ apV-circ ⟩
+    ≡⟨ apV-comp ⟩
       ap F σ (apV G ρ x)
     ≡⟨ ap-cong F σ∼σ' (ρ∼ρ' x) ⟩
       ap F σ' (apV G ρ' x)
-    ≡⟨⟨ apV-circ ⟩⟩
+    ≡⟨⟨ apV-comp ⟩⟩
       apV H (σ' ∘ ρ') x
     ∎
 \end{code}
 }
 
 \begin{code}
-  liftsOp-circ : ∀ {U V W} A {σ ρ} → 
+  liftsOp-comp : ∀ {U V W} A {σ ρ} → 
     _∼op_ H (liftsOp H A (_∘_ {U} {V} {W} σ ρ)) 
       (liftsOp F A σ ∘ liftsOp G A ρ)
 \end{code}
 
 \AgdaHide{
 \begin{code}
-  liftsOp-circ [] = ∼-refl H
-  liftsOp-circ {U} {V} {W} (K ∷ A) {σ} {ρ} = let open EqReasoning (OP H _ _) in 
+  liftsOp-comp [] = ∼-refl H
+  liftsOp-comp {U} {V} {W} (K ∷ A) {σ} {ρ} = let open EqReasoning (OP H _ _) in 
     begin
       liftsOp H A (liftOp H K (σ ∘ ρ))
-    ≈⟨ liftsOp-cong H A liftOp-circ ⟩
+    ≈⟨ liftsOp-cong H A liftOp-comp ⟩
       liftsOp H A (liftOp F K σ ∘ liftOp G K ρ)
-    ≈⟨ liftsOp-circ A ⟩
+    ≈⟨ liftsOp-comp A ⟩
       liftsOp F A (liftOp F K σ) ∘ liftsOp G A (liftOp G K ρ)
     ∎
 \end{code}
 }
 
 \begin{code}
-  ap-circ : ∀ {U V W C K} (E : Subexpression U C K) {σ ρ} → 
+  ap-comp : ∀ {U V W C K} (E : Subexpression U C K) {σ ρ} → 
     ap H (_∘_ {U} {V} {W} σ ρ) E ≡ ap F σ (ap G ρ E)
 \end{code}
 
 \AgdaHide{
 \begin{code}
-  ap-circ (var _) = apV-circ
-  ap-circ (app c E) = cong (app c) (ap-circ E)
-  ap-circ [] = refl
-  ap-circ (_∷_ {A = SK A _} E E') {σ} {ρ} = cong₂ _∷_
+  ap-comp (var _) = apV-comp
+  ap-comp (app c E) = cong (app c) (ap-comp E)
+  ap-comp [] = refl
+  ap-comp (_∷_ {A = SK A _} E E') {σ} {ρ} = cong₂ _∷_
     (let open ≡-Reasoning in 
     begin
       ap H (liftsOp H A (σ ∘ ρ)) E
-    ≡⟨ ap-congl H (liftsOp-circ A) E ⟩
+    ≡⟨ ap-congl H (liftsOp-comp A) E ⟩
       ap H (liftsOp F A σ ∘ liftsOp G A ρ) E
-    ≡⟨ ap-circ E ⟩
+    ≡⟨ ap-comp E ⟩
       ap F (liftsOp F A σ) (ap G (liftsOp G A ρ) E)
     ∎) 
-    (ap-circ E')
+    (ap-comp E')
 \end{code}
 }
 
@@ -118,24 +119,24 @@ then $E [\rho] [\sigma] \equiv E [\rho'] [\sigma']$ for every expression $E$.
 \end{lm}
 
 \begin{code}
-ap-circ-sim : ∀ {F F' G G' H} (circ₁ : Composition F G H) (circ₂ : Composition F' G' H) {U} {V} {V'} {W}
+ap-comp-sim : ∀ {F F' G G' H} (comp₁ : Composition F G H) (comp₂ : Composition F' G' H) {U} {V} {V'} {W}
   {σ : Op F V W} {ρ : Op G U V} {σ' : Op F' V' W} {ρ' : Op G' U V'} →
-  _∼op_ H (Composition._∘_ circ₁ σ ρ) (Composition._∘_ circ₂ σ' ρ') →
+  _∼op_ H (Composition._∘_ comp₁ σ ρ) (Composition._∘_ comp₂ σ' ρ') →
   ∀ {C} {K} (E : Subexpression U C K) →
   ap F σ (ap G ρ E) ≡ ap F' σ' (ap G' ρ' E)
 \end{code}
 
 \AgdaHide{
 \begin{code}
-ap-circ-sim {F} {F'} {G} {G'} {H} circ₁ circ₂ {U} {V} {V'} {W} {σ} {ρ} {σ'} {ρ'} hyp {C} {K} E =
+ap-comp-sim {F} {F'} {G} {G'} {H} comp₁ comp₂ {U} {V} {V'} {W} {σ} {ρ} {σ'} {ρ'} hyp {C} {K} E =
   let open ≡-Reasoning in 
   begin
     ap F σ (ap G ρ E)
-  ≡⟨⟨ Composition.ap-circ circ₁ E {σ} {ρ} ⟩⟩
-    ap H (Composition._∘_ circ₁ σ ρ) E
+  ≡⟨⟨ Composition.ap-comp comp₁ E {σ} {ρ} ⟩⟩
+    ap H (Composition._∘_ comp₁ σ ρ) E
   ≡⟨ ap-congl H hyp E ⟩
-    ap H (Composition._∘_ circ₂ σ' ρ') E
-  ≡⟨ Composition.ap-circ circ₂ E {σ'} {ρ'} ⟩
+    ap H (Composition._∘_ comp₂ σ' ρ') E
+  ≡⟨ Composition.ap-comp comp₂ E {σ'} {ρ'} ⟩
     ap F' σ' (ap G' ρ' E)
   ∎
 \end{code}
@@ -149,15 +150,15 @@ $\uparrow_G(E)[F \uparrow] \equiv \uparrow_{F'}(\sigma(E))$ for every subexpress
 \end{lm}
 
 \begin{code}
-liftOp-up-mixed : ∀ {F} {G} {H} {F'} (circ₁ : Composition F G H) (circ₂ : Composition F' F H)
+liftOp-up-mixed : ∀ {F} {G} {H} {F'} (comp₁ : Composition F G H) (comp₂ : Composition F' F H)
   {U} {V} {C} {K} {L} {σ : Op F U V} →
   (∀ {V} {C} {K} {L} {E : Subexpression V C K} → ap F (up F {V} {L}) E ≡ ap F' (up F' {V} {L}) E) →
   ∀ {E : Subexpression U C K} → ap F (liftOp F L σ) (ap G (up G) E) ≡ ap F' (up F') (ap F σ E)
-liftOp-up-mixed {F} {G} {H} {F'} circ₁ circ₂ {U} {V} {C} {K} {L} {σ} hyp {E = E} = ap-circ-sim circ₁ circ₂ 
+liftOp-up-mixed {F} {G} {H} {F'} comp₁ comp₂ {U} {V} {C} {K} {L} {σ} hyp {E = E} = ap-comp-sim comp₁ comp₂ 
   (λ x → let open ≡-Reasoning in 
   begin
-    apV H (Composition._∘_ circ₁ (liftOp F L σ) (up G)) x
-  ≡⟨ Composition.apV-circ circ₁ ⟩
+    apV H (Composition._∘_ comp₁ (liftOp F L σ) (up G)) x
+  ≡⟨ Composition.apV-comp comp₁ ⟩
     ap F (liftOp F L σ) (apV G (up G) x)
   ≡⟨ cong (ap F (liftOp F L σ)) (apV-up G) ⟩
     apV F (liftOp F L σ) (↑ x)
@@ -165,8 +166,8 @@ liftOp-up-mixed {F} {G} {H} {F'} circ₁ circ₂ {U} {V} {C} {K} {L} {σ} hyp {E
     ap F (up F) (apV F σ x)
   ≡⟨ hyp {E = apV F σ x}⟩
     ap F' (up F') (apV F σ x)
-  ≡⟨⟨ Composition.apV-circ circ₂ ⟩⟩
-    apV H (Composition._∘_ circ₂ (up F') σ) x
+  ≡⟨⟨ Composition.apV-comp comp₂ ⟩⟩
+    apV H (Composition._∘_ comp₂ (up F') σ) x
   ∎) 
   E
 \end{code}

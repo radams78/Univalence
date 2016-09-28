@@ -44,14 +44,14 @@ liftSub-compRS {U} {V} {W} {K} {ρ} {σ} {L} (↑ x) = let open ≡-Reasoning {A
 --TODO Version of composition that takes OpFamilies
 COMPRS : Composition proto-replacement SubLF SubLF
 COMPRS = record { 
-  circ = _•RS_ ; 
-  liftOp-circ = liftSub-compRS ; 
-  apV-circ = refl }
+  _∘_ = _•RS_ ; 
+  liftOp-comp = liftSub-compRS ; 
+  apV-comp = refl }
 
 sub-compRS : ∀ {U} {V} {W} {C} {K} 
   (E : Subexpression U C K) {ρ : Rep V W} {σ : Sub U V} →
   E ⟦ ρ •RS σ ⟧ ≡ E ⟦ σ ⟧ 〈 ρ 〉
-sub-compRS E = Composition.ap-circ COMPRS E
+sub-compRS E = Composition.ap-comp COMPRS E
 
 infixl 60 _•SR_
 _•SR_ : ∀ {U} {V} {W} → Sub V W → Rep U V → Sub U W
@@ -72,9 +72,9 @@ liftSub-compSR (↑ x) = refl
 --TODO Rename proto-replacement to RepLF
 COMPSR : Composition SubLF proto-replacement SubLF
 COMPSR = record { 
-  circ = _•SR_ ; 
-  liftOp-circ = liftSub-compSR ; 
-  apV-circ = refl }
+  _∘_ = _•SR_ ; 
+  liftOp-comp = liftSub-compSR ; 
+  apV-comp = refl }
 
 sub-compSR : ∀ {U} {V} {W} {C} {K} 
   (E : Subexpression U C K) {σ : Sub V W} {ρ : Rep U V} → 
@@ -83,7 +83,7 @@ sub-compSR : ∀ {U} {V} {W} {C} {K}
 
 \AgdaHide{
 \begin{code}
-sub-compSR E = Composition.ap-circ COMPSR E
+sub-compSR E = Composition.ap-comp COMPSR E
 \end{code}
 }
 
@@ -156,10 +156,10 @@ assocRSSR {ρ = ρ} {σ} {τ} x = sym (sub-compSR (τ _ x))
 SUB : OpFamily
 SUB = record { 
   liftFamily = SubLF;
-  isOpFamily = record { 
+  isOpFamily = record{ comp = record { 
     _∘_ = _•_ ; 
     liftOp-comp = liftSub-comp ; 
-    apV-comp = refl } 
+    apV-comp = refl } }
   }
 \end{code}
 
@@ -192,6 +192,6 @@ sub-comp : ∀ {U} {V} {W} {C} {K}
 
 \AgdaHide{
 \begin{code}
-sub-comp = OpFamily.ap-circ SUB
+sub-comp = OpFamily.ap-comp SUB
 \end{code}
 }

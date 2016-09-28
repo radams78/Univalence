@@ -84,15 +84,15 @@ We now define two compositions $\bullet_1 : \mathrm{replacement} ; \mathrm{subst
 \>[18]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaField{circ} \AgdaSymbol{=} \AgdaFunction{\_•RS\_} \AgdaSymbol{;} \<[17]%
-\>[17]\<%
+\>[2]\AgdaField{\_∘\_} \AgdaSymbol{=} \AgdaFunction{\_•RS\_} \AgdaSymbol{;} \<[16]%
+\>[16]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaField{liftOp-circ} \AgdaSymbol{=} \AgdaFunction{liftSub-compRS} \AgdaSymbol{;} \<[33]%
+\>[2]\AgdaField{liftOp-comp} \AgdaSymbol{=} \AgdaFunction{liftSub-compRS} \AgdaSymbol{;} \<[33]%
 \>[33]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaField{apV-circ} \AgdaSymbol{=} \AgdaInductiveConstructor{refl} \AgdaSymbol{\}}\<%
+\>[2]\AgdaField{apV-comp} \AgdaSymbol{=} \AgdaInductiveConstructor{refl} \AgdaSymbol{\}}\<%
 \\
 %
 \\
@@ -105,7 +105,7 @@ We now define two compositions $\bullet_1 : \mathrm{replacement} ; \mathrm{subst
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaBound{E} \AgdaFunction{⟦} \AgdaBound{ρ} \AgdaFunction{•RS} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaDatatype{≡} \AgdaBound{E} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\<%
 \\
-\>\AgdaFunction{sub-compRS} \AgdaBound{E} \AgdaSymbol{=} \AgdaFunction{Composition.ap-circ} \AgdaFunction{COMPRS} \AgdaBound{E}\<%
+\>\AgdaFunction{sub-compRS} \AgdaBound{E} \AgdaSymbol{=} \AgdaFunction{Composition.ap-comp} \AgdaFunction{COMPRS} \AgdaBound{E}\<%
 \\
 %
 \\
@@ -141,15 +141,15 @@ We now define two compositions $\bullet_1 : \mathrm{replacement} ; \mathrm{subst
 \>[18]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaField{circ} \AgdaSymbol{=} \AgdaFunction{\_•SR\_} \AgdaSymbol{;} \<[17]%
-\>[17]\<%
+\>[2]\AgdaField{\_∘\_} \AgdaSymbol{=} \AgdaFunction{\_•SR\_} \AgdaSymbol{;} \<[16]%
+\>[16]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaField{liftOp-circ} \AgdaSymbol{=} \AgdaFunction{liftSub-compSR} \AgdaSymbol{;} \<[33]%
+\>[2]\AgdaField{liftOp-comp} \AgdaSymbol{=} \AgdaFunction{liftSub-compSR} \AgdaSymbol{;} \<[33]%
 \>[33]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaField{apV-circ} \AgdaSymbol{=} \AgdaInductiveConstructor{refl} \AgdaSymbol{\}}\<%
+\>[2]\AgdaField{apV-comp} \AgdaSymbol{=} \AgdaInductiveConstructor{refl} \AgdaSymbol{\}}\<%
 \\
 %
 \\
@@ -166,7 +166,7 @@ We now define two compositions $\bullet_1 : \mathrm{replacement} ; \mathrm{subst
 
 \AgdaHide{
 \begin{code}%
-\>\AgdaFunction{sub-compSR} \AgdaBound{E} \AgdaSymbol{=} \AgdaFunction{Composition.ap-circ} \AgdaFunction{COMPSR} \AgdaBound{E}\<%
+\>\AgdaFunction{sub-compSR} \AgdaBound{E} \AgdaSymbol{=} \AgdaFunction{Composition.ap-comp} \AgdaFunction{COMPSR} \AgdaBound{E}\<%
 \end{code}
 }
 
@@ -306,8 +306,8 @@ able to prove that this is a composition $\mathrm{substitution} ; \mathrm{substi
 \>[2]\AgdaField{liftFamily} \AgdaSymbol{=} \AgdaFunction{SubLF}\AgdaSymbol{;}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaField{isOpFamily} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{} \<[24]%
-\>[24]\<%
+\>[2]\AgdaField{isOpFamily} \AgdaSymbol{=} \AgdaKeyword{record}\AgdaSymbol{\{} \AgdaField{comp} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{} \<[39]%
+\>[39]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaField{\_∘\_} \AgdaSymbol{=} \AgdaFunction{\_•\_} \AgdaSymbol{;} \<[16]%
@@ -318,8 +318,7 @@ able to prove that this is a composition $\mathrm{substitution} ; \mathrm{substi
 \>[33]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaField{apV-comp} \AgdaSymbol{=} \AgdaInductiveConstructor{refl} \AgdaSymbol{\}} \<[22]%
-\>[22]\<%
+\>[4]\AgdaField{apV-comp} \AgdaSymbol{=} \AgdaInductiveConstructor{refl} \AgdaSymbol{\}} \AgdaSymbol{\}}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaSymbol{\}}\<%
@@ -362,6 +361,6 @@ We can now prove general results such as:
 
 \AgdaHide{
 \begin{code}%
-\>\AgdaFunction{sub-comp} \AgdaSymbol{=} \AgdaFunction{OpFamily.ap-circ} \AgdaFunction{SUB}\<%
+\>\AgdaFunction{sub-comp} \AgdaSymbol{=} \AgdaFunction{OpFamily.ap-comp} \AgdaFunction{SUB}\<%
 \end{code}
 }

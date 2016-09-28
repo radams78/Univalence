@@ -95,10 +95,11 @@ postulate liftRep-comp₄ : ∀ {U} {V1} {V2} {V3} {V4} {K} {ρ1 : Rep U V1} {ρ
 replacement : OpFamily
 replacement = record { 
   liftFamily = proto-replacement ; 
-  isOpFamily = record { 
-    _∘_ = _•R_ ; 
-    apV-comp = refl ; 
-    liftOp-comp = liftRep-comp } }
+  isOpFamily = record {
+    comp = record { 
+      _∘_ = _•R_ ; 
+      apV-comp = refl ; 
+      liftOp-comp = liftRep-comp } } }
 \end{code}
 
 \AgdaHide{
@@ -107,7 +108,7 @@ open OpFamily replacement public using ()
   renaming (ap-congl to rep-congr;
            ap-congr to rep-congl;
            ap-idOp to rep-idOp;
-           ap-circ to rep-comp;
+           ap-comp to rep-comp;
            liftOp-idOp to liftRep-idOp;
            liftOp-up' to liftRep-upRep)
 

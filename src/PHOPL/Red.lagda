@@ -52,9 +52,6 @@ such that $s$ is closed, and every proper subexpression of $s$ is in normal form
 An expression $s$ is in \emph{normal form} iff there is no expression $t$ such that $s \rightarrow t$.
 \end{enumerate}
 
-\todo{Conjecture: We can remove the restriction on $P$ in the last clause if we add reduction rules:
-$\triplelambda e:y=_Ay'.M\{x:=e:y\sim y'\} \rhd \reff{\lambda x:A.M}$}
-
 \begin{code}
 data R : Reduction where
   βT : ∀ {V} {A} {M} {N} → R {V} -appTerm (ΛT A M ∷ N ∷ []) (M ⟦ x₀:= N ⟧)

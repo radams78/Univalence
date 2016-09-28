@@ -176,7 +176,7 @@ It is easy to check that $\beta$-reduction respects and creates replacement, and
 \AgdaHide{
 \begin{code}
 β-respects-sub {σ = σ} (βI {φ} {δ} {ε}) = subst
-  (β -app _) (sym (comp-botSub δ)) βI
+  (β -app _) (sym (comp-botSub'' δ)) βI
 
 prop-not-reduce : ∀ {P} {φ ψ : Prp P} → φ ⇒ ψ → ⊥
 prop-not-reduce (redex ())

@@ -18,7 +18,10 @@ Finally. we can define: a \emph{family of operations} is a pre-family with lift 
 \begin{code}
 record IsOpFamily (F : LiftFamily) : Set₂ where
   open LiftFamily F public
-  infix 50 _∘_
+  field
+    comp : Composition F F F
+
+{-  infix 50 _∘_
   field
     _∘_ : ∀ {U} {V} {W} → Op V W → Op U V → Op U W
     liftOp-comp : ∀ {U} {V} {W} {K} {σ : Op V W} {ρ : Op U V} →
@@ -30,9 +33,9 @@ record IsOpFamily (F : LiftFamily) : Set₂ where
   COMP = record { 
     circ = _∘_ ; 
     liftOp-circ = liftOp-comp ; 
-    apV-circ = apV-comp }
+    apV-circ = apV-comp } -}
 
-  open Composition COMP public
+  open Composition comp public
 
   comp-congl : ∀ {U} {V} {W} {σ σ' : Op V W} {ρ : Op U V} →
     σ ∼op σ' → σ ∘ ρ ∼op σ' ∘ ρ
@@ -68,7 +71,7 @@ The following results about operations are easy to prove.
 
 \AgdaHide{
 \begin{code}
-  liftOp-up' E = liftOp-up-mixed COMP COMP refl {E = E}
+  liftOp-up' E = liftOp-up-mixed comp comp refl {E = E}
 \end{code}
 }
 
@@ -95,7 +98,7 @@ This functor is faithful and injective on objects, and so $\Op$ can be seen as a
       ap τ (apV (σ ∘ ρ) x)
     ≡⟨ cong (ap τ) apV-comp ⟩
       ap τ (ap σ (apV ρ x))
-    ≡⟨⟨ ap-circ (apV ρ x) ⟩⟩
+    ≡⟨⟨ ap-comp (apV ρ x) ⟩⟩
       ap (τ ∘ σ) (apV ρ x)
     ≡⟨⟨ apV-comp ⟩⟩
       apV ((τ ∘ σ) ∘ ρ) x
