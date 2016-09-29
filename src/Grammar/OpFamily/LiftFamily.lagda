@@ -91,8 +91,7 @@ $E[\id{V}] \equiv E$
 }
 
 \begin{code}
-  ap-idOp : ∀ {V} {C} {K} {E : Subexpression V C K} → 
-    ap (idOp V) E ≡ E
+  ap-idOp : ∀ {V} {C} {K} {E : Subexpression V C K} → ap (idOp V) E ≡ E
 \end{code}
 
 \AgdaHide{
