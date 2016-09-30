@@ -22,13 +22,13 @@ The rules of deduction of the system are as follows.
 
 \begin{code}
 infix 10 _⊢_∶_
-data _⊢_∶_ : ∀ {P} → Context P → Proof P → Prp P → Set where
-  var : ∀ {P} {Γ : Context P} {p : Var P -proof} → 
-    Γ ⊢ var p ∶ typeof p Γ
+data _⊢_∶_ : ∀ {P} → Context P → Proof P → Prop → Set where
+  var : ∀ {P} {Γ : Context P} (p : Var P -proof) → 
+    Γ ⊢ var p ∶ unprp (typeof p Γ)
   app : ∀ {P} {Γ : Context P} {δ} {ε} {φ} {ψ} → 
     Γ ⊢ δ ∶ φ ⇛ ψ → Γ ⊢ ε ∶ φ → Γ ⊢ appP δ ε ∶ ψ
   Λ : ∀ {P} {Γ : Context P} {φ} {δ} {ψ} → 
-    Γ ,P φ ⊢ δ ∶ ψ 〈 upRep 〉 → Γ ⊢ ΛP φ δ ∶ φ ⇛ ψ
+    Γ ,P φ ⊢ δ ∶ ψ → Γ ⊢ ΛP φ δ ∶ φ ⇛ ψ
 \end{code}
 
 \AgdaHide{
@@ -44,7 +44,7 @@ iff for all $x : \phi \in \Gamma$ we have $\rho(x) : \phi \in \Delta$.
 
 \begin{code}
 _∶_⇒R_ : ∀ {P} {Q} → Rep P Q → Context P → Context Q → Set
-ρ ∶ Γ ⇒R Δ = ∀ x → typeof {K = -proof} (ρ _ x) Δ ≡ typeof x Γ 〈 ρ 〉
+ρ ∶ Γ ⇒R Δ = ∀ x → unprp (typeof {K = -proof} (ρ _ x) Δ) ≡ unprp (typeof x Γ)
 \end{code}
 
 \begin{lemma}$ $
@@ -69,33 +69,33 @@ idRep-typed : ∀ {P} {Γ : Context P} → idRep P ∶ Γ ⇒R Γ
 
 \AgdaHide{
 \begin{code}
-idRep-typed {P} {Γ} x = sym rep-idOp
+idRep-typed {P} {Γ} x = cong unprp (sym ap-idRep)
 \end{code}
 }
 
 \begin{code}
-↑-typed : ∀ {P} {Γ : Context P} {φ : Prp P} → upRep ∶ Γ ⇒R (Γ ,P φ)
+↑-typed : ∀ {P} {Γ : Context P} {φ : Prop} → upRep ∶ Γ ⇒R (Γ ,P φ)
 \end{code}
 
 \AgdaHide{
 \begin{code}
-↑-typed {P} {Γ} {φ} x = refl
+↑-typed {P} {Γ} {φ} x = ?
 \end{code}
 }
 
 \begin{code}
-liftRep-typed : ∀ {P} {Q} {ρ} {Γ : Context P} {Δ : Context Q} {φ : Prp P} → 
-  ρ ∶ Γ ⇒R Δ → liftRep -proof ρ ∶ (Γ ,P φ) ⇒R (Δ ,P φ 〈 ρ 〉)
+liftRep-typed : ∀ {P} {Q} {ρ} {Γ : Context P} {Δ : Context Q} {φ : Prop} → 
+  ρ ∶ Γ ⇒R Δ → liftRep -proof ρ ∶ (Γ ,P φ) ⇒R (Δ ,P φ)
 \end{code}
 
 \AgdaHide{
 \begin{code}
-liftRep-typed {P} {Q = Q} {ρ = ρ} {Γ} {Δ = Δ} {φ = φ} ρ∶Γ→Δ x₀ = sym (liftRep-upRep φ)
+liftRep-typed {P} {Q = Q} {ρ = ρ} {Γ} {Δ = Δ} {φ = φ} ρ∶Γ→Δ x₀ = refl
 liftRep-typed {Q = Q} {ρ = ρ} {Γ = Γ} {Δ = Δ} {φ} ρ∶Γ→Δ (↑ x) = let open ≡-Reasoning in 
   begin
-    typeof (liftRep -proof ρ -proof (↑ x)) (Δ ,P φ 〈 ρ 〉)
+    typeof (liftRep -proof ρ -proof (↑ x)) (Δ ,P φ)
   ≡⟨⟩
-    typeof (↑ (ρ -proof x)) (Δ ,P φ 〈 ρ 〉)
+    typeof (↑ (ρ -proof x)) (Δ ,P φ)
   ≡⟨⟩
     typeof (ρ -proof x) Δ 〈 upRep 〉
   ≡⟨ cong (λ x₁ → x₁ 〈 upRep 〉) (ρ∶Γ→Δ x) ⟩
@@ -130,20 +130,19 @@ liftRep-typed {Q = Q} {ρ = ρ} {Γ = Γ} {Δ = Δ} {φ} ρ∶Γ→Δ (↑ x) = 
 
 \begin{code}
 Weakening : ∀ {P} {Q} {Γ : Context P} {Δ : Context Q} {ρ} {δ} {φ} → 
-  Γ ⊢ δ ∶ φ → ρ ∶ Γ ⇒R Δ → Δ ⊢ δ 〈 ρ 〉 ∶ φ 〈 ρ 〉
+  Γ ⊢ δ ∶ φ → ρ ∶ Γ ⇒R Δ → Δ ⊢ δ 〈 ρ 〉 ∶ φ
 \end{code}
 
 \AgdaHide{
 \begin{code}
-Weakening {P} {Q} {Γ} {Δ} {ρ} (var {p = p}) ρ∶Γ→Δ = change-type (ρ∶Γ→Δ p) var
+Weakening {P} {Q} {Γ} {Δ} {ρ} (var p) ρ∶Γ→Δ = change-type (cong unprp {!sym (ρ∶Γ→Δ p)!}) (var (ρ _ p))
 Weakening (app Γ⊢δ∶φ→ψ Γ⊢ε∶φ) ρ∶Γ→Δ = app (Weakening Γ⊢δ∶φ→ψ ρ∶Γ→Δ) (Weakening Γ⊢ε∶φ ρ∶Γ→Δ)
 Weakening .{P} {Q} .{Γ} {Δ} {ρ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∶ψ) ρ∶Γ→Δ = Λ 
-  (change-type (liftRep-upRep ψ)
-  (Weakening {P , -proof} {Q , -proof} {Γ ,P φ} {Δ ,P φ 〈  ρ 〉} {liftRep -proof ρ} {δ} {ψ 〈 upRep 〉} 
+  (Weakening {P , -proof} {Q , -proof} {Γ ,P φ} {Δ ,P φ} {liftRep -proof ρ} {δ} {ψ} 
     Γ,φ⊢δ∶ψ 
-    claim)) where
-  claim : ∀ (x : Var (P , -proof) -proof) → typeof (liftRep -proof ρ -proof x) (Δ ,P φ 〈 ρ 〉) ≡ typeof x (Γ ,P φ) 〈 liftRep -proof ρ 〉
-  claim x₀ = sym (liftRep-upRep φ)
+    claim) where
+  claim : ∀ (x : Var (P , -proof) -proof) → typeof (liftRep -proof ρ -proof x) (Δ ,P φ) ≡ typeof x (Γ ,P φ) 〈 liftRep -proof ρ 〉
+  claim x₀ = {!!}
   claim (↑ x) = let open ≡-Reasoning in 
     begin 
       typeof (ρ -proof x) Δ 〈 upRep 〉
@@ -159,7 +158,7 @@ for every $x : \phi$ in $\Gamma$, we have $\Delta \vdash \sigma(x) : \phi$.
 
 \begin{code}
 _∶_⇒_ : ∀ {P} {Q} → Sub P Q → Context P → Context Q → Set
-σ ∶ Γ ⇒ Δ = ∀ x → Δ ⊢ σ _ x ∶ typeof x Γ ⟦ σ ⟧
+σ ∶ Γ ⇒ Δ = ∀ x → Δ ⊢ σ _ x ∶ unprp (typeof x Γ)
 \end{code}
 
 \begin{lemma}$ $
@@ -177,63 +176,46 @@ If $\Gamma \vdash \delta : \phi$ and $\sigma : \Gamma \rightarrow \Delta$ then $
 
 \begin{code}
 liftSub-typed : ∀ {P} {Q} {σ} 
-  {Γ : Context P} {Δ : Context Q} {φ : Prp P} → 
-  σ ∶ Γ ⇒ Δ → liftSub -proof σ ∶ (Γ ,P φ) ⇒ (Δ ,P φ ⟦ σ ⟧)
+  {Γ : Context P} {Δ : Context Q} {φ : Prop} → 
+  σ ∶ Γ ⇒ Δ → liftSub -proof σ ∶ (Γ ,P φ) ⇒ (Δ ,P φ)
 \end{code}
 
 \AgdaHide{
 \begin{code}
 liftSub-typed {σ = σ} {Γ} {Δ} {φ} σ∶Γ⇒Δ x =
-  change-type (sym (liftSub-upRep (pretypeof x (Γ ,P φ)))) (pre-LiftSub-typed x) where
-  pre-LiftSub-typed : ∀ x → Δ ,P φ ⟦ σ ⟧ ⊢ liftSub -proof σ -proof x ∶ pretypeof x (Γ ,P φ) ⟦ σ ⟧ 〈 upRep 〉
-  pre-LiftSub-typed x₀ = var
-  pre-LiftSub-typed (↑ x) = Weakening (σ∶Γ⇒Δ x) (↑-typed {φ = φ ⟦ σ ⟧})
+  {!!} where
+  pre-LiftSub-typed : ∀ x → Δ ,P φ ⊢ liftSub -proof σ -proof x ∶ unprp (pretypeof x (Γ ,P φ))
+  pre-LiftSub-typed x₀ = var x₀
+  pre-LiftSub-typed (↑ x) = Weakening (σ∶Γ⇒Δ x) (↑-typed {φ = φ})
 \end{code}
 }
 
 \begin{code}
-botSub-typed : ∀ {P} {Γ : Context P} {φ : Prp P} {δ} →
+botSub-typed : ∀ {P} {Γ : Context P} {φ : Prop} {δ} →
   Γ ⊢ δ ∶ φ → x₀:= δ ∶ (Γ ,P φ) ⇒ Γ
 \end{code}
 
 \AgdaHide{
 \begin{code}
-botSub-typed {P} {Γ} {φ} {δ} Γ⊢δ:φ x = change-type (sym (botSub-upRep _)) (pre-botSub-typed x) where
-  pre-botSub-typed : ∀ x → Γ ⊢ (x₀:= δ) -proof x ∶ pretypeof x (Γ ,P φ)
+botSub-typed {P} {Γ} {φ} {δ} Γ⊢δ:φ x = {!!} where
+  pre-botSub-typed : ∀ x → Γ ⊢ (x₀:= δ) -proof x ∶ unprp (pretypeof x (Γ ,P φ))
   pre-botSub-typed x₀ = Γ⊢δ:φ
-  pre-botSub-typed (↑ x) = var
+  pre-botSub-typed (↑ x) = var x
 \end{code}
 }
 
 \begin{code}
 substitution : ∀ {P} {Q}
   {Γ : Context P} {Δ : Context Q} {δ} {φ} {σ} → 
-  Γ ⊢ δ ∶ φ → σ ∶ Γ ⇒ Δ → Δ ⊢ δ ⟦ σ ⟧ ∶ φ ⟦ σ ⟧
+  Γ ⊢ δ ∶ φ → σ ∶ Γ ⇒ Δ → Δ ⊢ δ ⟦ σ ⟧ ∶ φ
 \end{code}
 
 \AgdaHide{
 \begin{code}
-substitution var σ∶Γ→Δ = σ∶Γ→Δ _
+substitution (var _) σ∶Γ→Δ = σ∶Γ→Δ _
 substitution (app Γ⊢δ∶φ→ψ Γ⊢ε∶φ) σ∶Γ→Δ = app (substitution Γ⊢δ∶φ→ψ σ∶Γ→Δ) (substitution Γ⊢ε∶φ σ∶Γ→Δ)
 substitution {Q = Q} {Δ = Δ} {σ = σ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∶ψ) σ∶Γ→Δ = Λ 
-  (change-type
-  (let open ≡-Reasoning {A = Expression ( Q , -proof) prp} in
-  begin 
-    ψ 〈 upRep 〉 ⟦ liftSub -proof σ ⟧
-  ≡⟨⟨ sub-compSR ψ ⟩⟩
-    ψ ⟦ liftSub -proof σ •SR (λ _ → ↑) ⟧  
-  ≡⟨ sub-compRS ψ ⟩
-    ψ ⟦ σ ⟧ 〈 upRep 〉
-  ∎)
-  (substitution Γ,φ⊢δ∶ψ (liftSub-typed σ∶Γ→Δ)))
-
-prop-triv-red : ∀ {P} {φ ψ : Expression P prp} → φ ⇒ ψ → ⊥
-prop-triv-red {_} {app -bot out} (redex ())
-prop-triv-red {P} {app -bot out} (app ())
-prop-triv-red {P} {app -imp (_∷_ _ (_∷_ _ []))} (redex ())
-prop-triv-red {P} {app -imp (_∷_ φ (_∷_ ψ []))} (app (appl φ→φ')) = prop-triv-red {P} φ→φ'
-prop-triv-red {P} {app -imp (_∷_ φ (_∷_ ψ []))} (app (appr (appl ψ→ψ'))) = prop-triv-red {P} ψ→ψ'
-prop-triv-red {P} {app -imp (_∷_ _ (_∷_ _ []))} (app (appr (appr ())))
+  (substitution Γ,φ⊢δ∶ψ (liftSub-typed σ∶Γ→Δ))
 \end{code}
 }
 
@@ -248,25 +230,17 @@ subject-reduction : ∀ {P} {Γ : Context P} {δ ε : Proof ( P)} {φ} →
 
 \AgdaHide{
 \begin{code}
-subject-reduction var ()
+subject-reduction = {!!}
+{- subject-reduction (var _) ()
 subject-reduction (app {ε = ε} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∶ψ) Γ⊢ε∶φ) (redex βI) = 
-  change-type 
-  (let open ≡-Reasoning in
-  begin 
-    ψ 〈 upRep 〉 ⟦ x₀:= ε ⟧
-  ≡⟨⟨ sub-compSR ψ ⟩⟩
-    ψ ⟦ idSub P ⟧                 
-  ≡⟨ sub-idOp ⟩
-    ψ                           
-  ∎) 
-  (substitution Γ,φ⊢δ∶ψ (botSub-typed Γ⊢ε∶φ))
+  substitution Γ,φ⊢δ∶ψ (botSub-typed Γ⊢ε∶φ)
 subject-reduction (app Γ⊢δ∶φ→ψ Γ⊢ε∶φ) (app (appl δ→δ')) = app (subject-reduction Γ⊢δ∶φ→ψ δ→δ') Γ⊢ε∶φ
 subject-reduction (app Γ⊢δ∶φ→ψ Γ⊢ε∶φ) (app (appr (appl ε→ε'))) = app Γ⊢δ∶φ→ψ (subject-reduction Γ⊢ε∶φ ε→ε')
 subject-reduction (app Γ⊢δ∶φ→ψ Γ⊢ε∶φ) (app (appr (appr ())))
 subject-reduction (Λ _) (redex ())
-subject-reduction (Λ {P = P} {φ = φ} {δ = δ} {ψ = ψ} Γ⊢δ∶φ) (app (appl {E' = φ'} δ→ε)) = ⊥-elim (prop-triv-red {P = P} δ→ε)
-subject-reduction (Λ Γ⊢δ∶φ) (app (appr (appl δ→ε))) = Λ (subject-reduction Γ⊢δ∶φ δ→ε)
-subject-reduction (Λ _) (app (appr (appr ())))
+subject-reduction (Λ {P = P} {φ = φ} {δ = δ} {ψ = ψ} Γ⊢δ∶φ) (app (appl {E' = φ'} δ→ε)) = ?
+--subject-reduction (Λ Γ⊢δ∶φ) (app (appr (appl δ→ε))) = Λ (subject-reduction Γ⊢δ∶φ δ→ε)
+--subject-reduction (Λ _) (app (appr (appr ()))) -}
 \end{code}
 }
 

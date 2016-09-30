@@ -473,7 +473,7 @@ If $R$ creates replacements, then so does $\rightarrow_R$.
 \end{lemma}
 
 \begin{code}%
-\>\AgdaFunction{create-osr} \AgdaSymbol{:} \AgdaFunction{creates'} \AgdaFunction{replacement} \AgdaSymbol{→} \AgdaFunction{creates} \AgdaFunction{replacement} \AgdaDatatype{\_⇒\_}\<%
+\>\AgdaFunction{create-osr} \AgdaSymbol{:} \AgdaFunction{creates'} \AgdaFunction{REP} \AgdaSymbol{→} \AgdaFunction{creates} \AgdaFunction{REP} \AgdaDatatype{\_⇒\_}\<%
 \end{code}
 
 \AgdaHide{
@@ -559,8 +559,8 @@ If $R$ creates replacements, then so does $\rightarrow_R$.
 \>[75]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{creation} \AgdaSymbol{\{}\AgdaArgument{Ops} \AgdaSymbol{=} \AgdaFunction{replacement}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaFunction{create-osr} \AgdaBound{hyp} \AgdaBound{F} \AgdaBound{σF⇒F'}\AgdaSymbol{)} \AgdaKeyword{in} \<[68]%
-\>[68]\<%
+\>[2]\AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{creation} \AgdaSymbol{\{}\AgdaArgument{Ops} \AgdaSymbol{=} \AgdaFunction{REP}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaFunction{create-osr} \AgdaBound{hyp} \AgdaBound{F} \AgdaBound{σF⇒F'}\AgdaSymbol{)} \AgdaKeyword{in} \<[60]%
+\>[60]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{record} \AgdaSymbol{\{} \<[11]%
@@ -575,7 +575,7 @@ If $R$ creates replacements, then so does $\rightarrow_R$.
 \>[36]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaField{ap-created} \AgdaSymbol{=} \AgdaFunction{cong} \AgdaSymbol{(}\AgdaInductiveConstructor{\_∷\_} \AgdaSymbol{(}\AgdaBound{E} \AgdaFunction{〈} \AgdaFunction{OpFamily.liftsOp} \AgdaFunction{replacement} \AgdaBound{A} \AgdaBound{σ} \AgdaFunction{〉}\AgdaSymbol{))} \AgdaFunction{ap-created}\<%
+\>[4]\AgdaField{ap-created} \AgdaSymbol{=} \AgdaFunction{cong} \AgdaSymbol{(}\AgdaInductiveConstructor{\_∷\_} \AgdaSymbol{(}\AgdaBound{E} \AgdaFunction{〈} \AgdaFunction{OpFamily.liftsOp} \AgdaFunction{REP} \AgdaBound{A} \AgdaBound{σ} \AgdaFunction{〉}\AgdaSymbol{))} \AgdaFunction{ap-created}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaSymbol{\}}\<%

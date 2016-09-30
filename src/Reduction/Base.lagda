@@ -268,7 +268,7 @@ If $R$ creates replacements, then so does $\rightarrow_R$.
 \end{lemma}
 
 \begin{code}
-create-osr : creates' replacement → creates replacement _⇒_
+create-osr : creates' REP → creates REP _⇒_
 \end{code}
 
 \AgdaHide{
@@ -297,11 +297,11 @@ create-osr hyp (_∷_ E F) {σ = σ} (appl σE⇒E') =
     ap-created = cong (λ x → _∷_ x (F 〈 σ 〉)) ap-created
     }
 create-osr hyp (_∷_ {A = SK A _} E F) {σ = σ} (appr {F' = F'} σF⇒F') =     
-  let open creation {Ops = replacement} (create-osr hyp F σF⇒F') in 
+  let open creation {Ops = REP} (create-osr hyp F σF⇒F') in 
   record { 
     created = _∷_ E created; 
     red-created = appr red-created; 
-    ap-created = cong (_∷_ (E 〈 OpFamily.liftsOp replacement A σ 〉)) ap-created
+    ap-created = cong (_∷_ (E 〈 OpFamily.liftsOp REP A σ 〉)) ap-created
     }
 \end{code}
 }

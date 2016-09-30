@@ -38,11 +38,14 @@ module PLgrammar where
   proof = varKind -proof
   prp = nonVarKind -prp
 
+  data Prop : Set where
+    ⊥P : Prop
+    _⇛_ : Prop → Prop → Prop
+
   data PLCon : ConKind → Set where
+    -prp : Prop → PLCon (prp ✧)
     -app : PLCon (proof ✧ ⟶ proof ✧ ⟶ proof ✧)
-    -lam : PLCon (prp ✧ ⟶ (-proof ⟶ proof ✧) ⟶ proof ✧)
-    -bot : PLCon (prp ✧)
-    -imp : PLCon (prp ✧ ⟶ prp ✧ ⟶ prp ✧)
+    -lam : Prop → PLCon ((-proof ⟶ proof ✧) ⟶ proof ✧)
 
   PLparent : VarKind → ExpKind
   PLparent -proof = prp
@@ -58,61 +61,11 @@ Propositional-Logic = record {
 
 open import Grammar Propositional-Logic
 
-Prp : Alphabet → Set
-Prp P = Expression P prp
+unprp : ∀ {V} → Expression V prp → Prop
+unprp (app (-prp φ) []) = φ
 
-⊥P : ∀ {P} → Prp P
-⊥P = app -bot []
-
-_⇛_ : ∀ {P} → Prp P → Prp P → Prp P
-φ ⇛ ψ = app -imp (φ ∷ ψ ∷ [])
-\end{code}
-
-\AgdaHide{
-\begin{code}
-close : ∀ {P} → Prp P → Prp ∅
-close (app -bot out) = ⊥P
-close (app -imp (φ ∷ ψ ∷ out)) = close φ ⇛ close ψ
-
-close-magic : ∀ {P} {φ : Prp P} → close φ 〈 magic 〉 ≡ φ
-close-magic {φ = app -bot []} = refl
-close-magic {φ = app -imp (φ ∷ ψ ∷ [])} = cong₂ _⇛_ close-magic close-magic
-
-close-magic' : ∀ {P} {Q} {φ : Prp P} {σ : Sub P Q} →
-  φ ⟦ σ ⟧ ≡ close φ 〈 magic 〉
-close-magic' {P} {Q} {φ} {σ} = 
-  let open ≡-Reasoning in 
-  begin
-    φ ⟦ σ ⟧
-  ≡⟨⟨ sub-congl (close-magic {φ = φ}) ⟩⟩
-    close φ 〈 magic 〉 ⟦ σ ⟧
-  ≡⟨⟨ sub-compSR (close φ) ⟩⟩
-    (close φ) ⟦ σ •SR magic ⟧
-  ≡⟨ sub-congr (λ ()) (close φ) ⟩
-    (close φ) ⟦ rep2sub magic ⟧
-  ≡⟨⟨ rep-is-sub (close φ) ⟩⟩
-    (close φ) 〈 magic 〉
-  ∎
-
-close-sub : ∀ {P} {Q} φ {σ : Sub P Q} → close (φ ⟦ σ ⟧) ≡ close φ
-close-sub (app -bot out) = refl
-close-sub (app -imp (φ ∷ ψ ∷ out)) = cong₂ _⇛_ (close-sub φ) (close-sub ψ)
-
-close-rep : ∀ {P} {Q} φ {ρ : Rep P Q} → close (φ 〈 ρ 〉) ≡ close φ
-close-rep φ {ρ} = let open ≡-Reasoning in
-  begin
-    close (φ 〈 ρ 〉)
-  ≡⟨ cong close (rep-is-sub φ) ⟩
-    close (φ ⟦ rep2sub ρ ⟧)
-  ≡⟨ close-sub φ ⟩
-    close φ
-  ∎
-\end{code}
-}
-
-\begin{code}
-_,P_ : ∀ {P} → Context P → Prp P → Context (P , -proof)
-_,P_ = _,_
+_,P_ : ∀ {P} → Context P → Prop → Context (P , -proof)
+Γ ,P φ = _,_ {K = -proof} Γ (app (-prp φ) [])
 
 Proof : Alphabet → Set
 Proof P = Expression P proof
@@ -120,8 +73,8 @@ Proof P = Expression P proof
 appP : ∀ {P} → Proof P → Proof P → Proof P
 appP δ ε = app -app (δ ∷ ε ∷ [])
 
-ΛP : ∀ {P} → Prp P → Proof (P , -proof) → Proof P
-ΛP φ δ = app -lam (φ ∷ δ ∷ [])
+ΛP : ∀ {P} → Prop → Proof (P , -proof) → Proof P
+ΛP φ δ = app (-lam φ) (δ ∷ [])
 \end{code}
 
 \subsubsection{$\beta$-reduction}
@@ -140,7 +93,7 @@ open import Reduction Propositional-Logic β
 It is easy to check that $\beta$-reduction respects and creates replacement, and respects substitution.
 
 \begin{code}
-β-respects-rep : respects' replacement
+β-respects-rep : respects' REP
 \end{code}
 
 \AgdaHide{
@@ -151,7 +104,7 @@ It is easy to check that $\beta$-reduction respects and creates replacement, and
 }
 
 \begin{code}
-β-creates-rep : creates' replacement
+β-creates-rep : creates' REP
 \end{code}
 
 \AgdaHide{
@@ -159,13 +112,12 @@ It is easy to check that $\beta$-reduction respects and creates replacement, and
 β-creates-rep {c = -app} (var _ ∷ _) ()
 β-creates-rep {c = -app} (app -app _ ∷ _) ()
 β-creates-rep {c = -app} 
-  (app -lam (_ ∷ δ ∷ []) ∷ (ε ∷ [])) βI = record { 
+  (app (-lam _) (δ ∷ []) ∷ (ε ∷ [])) βI = record { 
   created = δ ⟦ x₀:= ε ⟧ ; 
   red-created = βI ; 
   ap-created = compRS-botSub δ }
-β-creates-rep {c = -lam} _ ()
-β-creates-rep {c = -bot} _ ()
-β-creates-rep {c = -imp} _ ()
+β-creates-rep {c = -lam _} _ ()
+β-creates-rep {c = -prp _} _ ()
 \end{code}
 }
 
@@ -178,25 +130,18 @@ It is easy to check that $\beta$-reduction respects and creates replacement, and
 β-respects-sub {σ = σ} (βI {φ} {δ} {ε}) = subst
   (β -app _) (sym (comp-botSub'' δ)) βI
 
-prop-not-reduce : ∀ {P} {φ ψ : Prp P} → φ ⇒ ψ → ⊥
-prop-not-reduce (redex ())
-prop-not-reduce (app {c = -imp} (appl φ⇒ψ)) = prop-not-reduce φ⇒ψ
-prop-not-reduce (app {c = -imp} (appr (appl φ⇒ψ))) = prop-not-reduce φ⇒ψ
-prop-not-reduce (app {c = -imp} (appr (appr ())))
-
 red-β-redex : ∀ {P} {φ} {δ} {ε} {χ} (S : Proof P → Set) → 
     appP (ΛP φ δ) ε ⇒ χ →
     S (δ ⟦ x₀:= ε ⟧) →
     (∀ δ' → δ ⇒ δ' → S (appP (ΛP φ δ') ε)) →
     (∀ ε' → ε ⇒ ε' → S (appP (ΛP φ δ) ε')) →
     S χ
-red-β-redex _ (redex βI) δ[p∶=ε]∈CΓψ _ _ = δ[p∶=ε]∈CΓψ
-red-β-redex _ (app (appl (redex ()))) _ _ 
-red-β-redex _ (app (appl (app (appl φ⇒φ')))) _ _ = ⊥-elim (prop-not-reduce φ⇒φ')
-red-β-redex _ (app (appl (app (appr (appl δ⇒δ'))))) _ hyp1 _ = hyp1 _ δ⇒δ'
-red-β-redex _ (app (appl (app (appr (appr ()))))) _ _
-red-β-redex _ (app (appr (appl {E' = ε'} ε⇒ε'))) _ _ hyp2 = hyp2 _ ε⇒ε'
-red-β-redex _ (app (appr (appr ()))) _ _
+red-β-redex _ (redex βI) δ[p:=ε]∈S _ _ = δ[p:=ε]∈S
+red-β-redex _ (app (appl (redex ()))) _ _ _
+red-β-redex _ (app (appl (app (appl δ⇒δ')))) _ hyp1 _ = hyp1 _ δ⇒δ'
+red-β-redex _ (app (appl (app (appr ())))) _ _ _
+red-β-redex _ (app (appr (appl ε⇒ε'))) _ _ hyp2 = hyp2 _ ε⇒ε'
+red-β-redex _ (app (appr (appr ()))) _ _ _
 \end{code}
 }
 

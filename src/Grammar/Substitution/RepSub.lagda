@@ -10,7 +10,7 @@ open import Grammar.Replacement G
 open import Grammar.Substitution.PreOpFamily G
 open import Grammar.Substitution.Lifting G
 
-open OpFamily replacement using () renaming (liftsOp to liftsOpR)
+open OpFamily REP using () renaming (liftsOp to liftsOpR)
 open PreOpFamily pre-substitution
 open Lifting LIFTSUB
 \end{code}
