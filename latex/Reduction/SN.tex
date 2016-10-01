@@ -119,7 +119,7 @@ If $E$ is strongly normalizable and $E \twoheadrightarrow_R F$ then $F$ is stron
 \>\AgdaFunction{SNrep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{E} \AgdaSymbol{:} \AgdaDatatype{Subexpression} \AgdaBound{U} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{creates'} \AgdaFunction{replacement} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{E} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaSymbol{(}\AgdaBound{E} \AgdaFunction{〈} \AgdaBound{σ} \AgdaFunction{〉}\AgdaSymbol{)}\<%
+\>[2]\AgdaFunction{creates'} \AgdaFunction{REP} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{E} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaSymbol{(}\AgdaBound{E} \AgdaFunction{〈} \AgdaBound{σ} \AgdaFunction{〉}\AgdaSymbol{)}\<%
 \end{code}
 
 \AgdaHide{
@@ -131,7 +131,7 @@ If $E$ is strongly normalizable and $E \twoheadrightarrow_R F$ then $F$ is stron
 \>[2]\AgdaKeyword{let} \AgdaBound{E₀} \AgdaSymbol{=} \AgdaFunction{create-osr} \AgdaBound{hyp} \AgdaBound{E} \AgdaBound{σE→F} \AgdaKeyword{in}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{creation} \AgdaSymbol{\{}\AgdaArgument{Ops} \AgdaSymbol{=} \AgdaFunction{replacement}\AgdaSymbol{\}} \AgdaBound{E₀} \AgdaKeyword{in}\<%
+\>[2]\AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{creation} \AgdaSymbol{\{}\AgdaArgument{Ops} \AgdaSymbol{=} \AgdaFunction{REP}\AgdaSymbol{\}} \AgdaBound{E₀} \AgdaKeyword{in}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{subst} \AgdaDatatype{SN} \AgdaFunction{ap-created} \AgdaSymbol{(}\AgdaFunction{SNrep} \AgdaBound{hyp} \AgdaSymbol{(}\AgdaBound{SNE} \AgdaFunction{created} \AgdaFunction{red-created}\AgdaSymbol{)))}\<%

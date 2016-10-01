@@ -85,14 +85,14 @@ SNap' {Ops} {E = E} {σ = σ} hyp (SNI .(OpFamily.ap Ops σ E) SNσE) = SNI E (�
 
 \begin{code}
 SNrep : ∀ {U V C K} {E : Subexpression U C K} {σ : Rep U V} →
-  creates' replacement → SN E → SN (E 〈 σ 〉)
+  creates' REP → SN E → SN (E 〈 σ 〉)
 \end{code}
 
 \AgdaHide{
 \begin{code}
 SNrep {U} {V} {C} {K} {E} {σ} hyp (SNI .E SNE) = SNI (E 〈 σ 〉) (λ F σE→F → 
   let E₀ = create-osr hyp E σE→F in
-  let open creation {Ops = replacement} E₀ in
+  let open creation {Ops = REP} E₀ in
   subst SN ap-created (SNrep hyp (SNE created red-created)))
 \end{code}
 }

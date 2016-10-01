@@ -42,7 +42,7 @@ liftSub-compRS {U} {V} {W} {K} {ρ} {σ} {L} (↑ x) = let open ≡-Reasoning {A
 
 \begin{code}
 --TODO Version of composition that takes OpFamilies
-COMPRS : Composition proto-replacement SubLF SubLF
+COMPRS : Composition Rep∶LF SubLF SubLF
 COMPRS = record { 
   _∘_ = _•RS_ ; 
   liftOp-comp = liftSub-compRS ; 
@@ -69,8 +69,7 @@ liftSub-compSR (↑ x) = refl
 }
 
 \begin{code}
---TODO Rename proto-replacement to RepLF
-COMPSR : Composition SubLF proto-replacement SubLF
+COMPSR : Composition SubLF Rep∶LF SubLF
 COMPSR = record { 
   _∘_ = _•SR_ ; 
   liftOp-comp = liftSub-compSR ; 

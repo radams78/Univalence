@@ -140,7 +140,7 @@ open import Reduction Propositional-Logic β
 It is easy to check that $\beta$-reduction respects and creates replacement, and respects substitution.
 
 \begin{code}
-β-respects-rep : respects' replacement
+β-respects-rep : respects' REP
 \end{code}
 
 \AgdaHide{
@@ -151,7 +151,7 @@ It is easy to check that $\beta$-reduction respects and creates replacement, and
 }
 
 \begin{code}
-β-creates-rep : creates' replacement
+β-creates-rep : creates' REP
 \end{code}
 
 \AgdaHide{

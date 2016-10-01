@@ -88,11 +88,11 @@ open import Reduction PHOPL R public
 postulate eq-resp-conv : ∀ {V} {M M' N N' : Term V} {A : Type} →
                        M ≃ M' → N ≃ N' → M ≡〈 A 〉 N ≃ M' ≡〈 A 〉 N'
 
-postulate R-creates-rep : creates' replacement
+postulate R-creates-rep : creates' REP
 
-postulate R-respects-replacement : respects' replacement
+postulate R-respects-replacement : respects' REP
 
-postulate R-creates-replacement : creates' replacement
+postulate R-creates-replacement : creates' REP
 
 postulate R-respects-sub : respects' SUB
 
