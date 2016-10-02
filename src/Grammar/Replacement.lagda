@@ -118,8 +118,8 @@ rep-idOp = OpFamily.ap-idOp REP
 rep-comp : ∀ {U V W C K} (E : Subexpression U C K) {σ : Rep V W} {ρ} → E 〈 σ •R ρ 〉 ≡ E 〈 ρ 〉 〈 σ 〉
 rep-comp = OpFamily.ap-comp REP
 
-liftRep-idOp : ∀ {V K} → liftRep K (idRep V) ∼R idRep (V , K)
-liftRep-idOp = OpFamily.liftOp-idOp REP
+liftRep-idRep : ∀ {V K} → liftRep K (idRep V) ∼R idRep (V , K)
+liftRep-idRep = OpFamily.liftOp-idOp REP
 
 liftRep-upRep : ∀ {U V C K L} {σ : Rep U V} (E : Subexpression U C K) → E 〈 upRep 〉 〈 liftRep L σ 〉 ≡ E 〈 σ 〉 〈 upRep 〉
 liftRep-upRep = OpFamily.liftOp-up REP
