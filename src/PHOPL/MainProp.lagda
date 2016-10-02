@@ -36,16 +36,34 @@ and $\rho$ are all computable, and $\Delta \vald$, then $M \{ \tau : \sigma \sim
 
 %<*Computable-Sub>
 \begin{code}
-postulate Computable-Sub : ∀ {U} {V} {K} (σ : Sub U V) {Γ} {Δ} 
-                         {M : Expression U (varKind K)} {A} →
-                         σ ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → E' Δ (A ⟦ σ ⟧) (M ⟦ σ ⟧)
+Computable-Sub : ∀ {U} {V} {K} (σ : Sub U V) {Γ} {Δ} 
+                 {M : Expression U (varKind K)} {A} →
+                 σ ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → E' Δ (A ⟦ σ ⟧) (M ⟦ σ ⟧)
 \end{code}
 %</Computable-Sub>
 
 \AgdaHide{
 \begin{code}
-postulate computable-path-substitution : ∀ U V (τ : PathSub U V) σ σ' Γ Δ M A → σ ∶ Γ ⇒C Δ → σ' ∶ Γ ⇒C Δ → τ ∶ σ ∼ σ' ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → 
-                                       EE Δ (M ⟦ σ ⟧ ≡〈 yt A 〉 M ⟦ σ' ⟧) (M ⟦⟦ τ ∶ σ ∼ σ' ⟧⟧) 
+computable-path-substitution : ∀ U V (τ : PathSub U V) σ σ' Γ Δ M A → σ ∶ Γ ⇒C Δ → σ' ∶ Γ ⇒C Δ → τ ∶ σ ∼ σ' ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → 
+                               EE Δ (M ⟦ σ ⟧ ≡〈 yt A 〉 M ⟦ σ' ⟧) (M ⟦⟦ τ ∶ σ ∼ σ' ⟧⟧) 
+
+Computable-Sub _ σ∶Γ⇒CΔ (varR x _) _ = σ∶Γ⇒CΔ x
+Computable-Sub σ σ∶Γ⇒CΔ (appR Γ⊢M∶A⇛B Γ⊢N∶A) validΔ = appT-E validΔ (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢M∶A⇛B validΔ) (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢N∶A validΔ) -- TODO Prove appT-E
+Computable-Sub σ σ∶Γ⇒CΔ (ΛR Γ⊢M∶A) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒CΔ (⊥R validΓ) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒CΔ (⊃R Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒CΔ (appPR Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒CΔ (ΛPR Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒CΔ (convR Γ⊢M∶A Γ⊢M∶A₁ x) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒CΔ (refR Γ⊢M∶A) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒CΔ (⊃*R Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒CΔ (univR Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒CΔ (plusR Γ⊢M∶A) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒CΔ (minusR Γ⊢M∶A) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒CΔ (lllR Γ⊢M∶A) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒CΔ (app*R Γ⊢M∶A Γ⊢M∶A₁ Γ⊢M∶A₂ Γ⊢M∶A₃) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒CΔ (convER Γ⊢M∶A Γ⊢M∶A₁ Γ⊢M∶A₂ M≃M' N≃N') validΔ = {!!}
+computable-path-substitution U V τ σ σ' Γ Δ M A σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ'∶Γ⇒CΔ Γ⊢M∶A validΔ = {!!}
 
 {- Computable-Sub σ σ∶Γ⇒Δ (varR x validΓ) validΔ _ = σ∶Γ⇒Δ x
 Computable-Sub {V = V} σ {Δ = Δ} σ∶Γ⇒Δ (appR Γ⊢M∶A⇛B Γ⊢N∶A) validΔ _ = 
