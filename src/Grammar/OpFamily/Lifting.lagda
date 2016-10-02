@@ -3,7 +3,7 @@
 open import Grammar.Base
 
 module Grammar.OpFamily.Lifting (G : Grammar) where
-open import Function.Equality
+open import Function.Equality hiding (setoid)
 open import Data.List
 open import Prelims
 open Grammar G renaming (_⟶_ to _⇒_)
@@ -75,13 +75,8 @@ We prove that application respects $\sim$.
   ap-cong : ∀ {U} {V} {C} {K}
     {ρ σ : Op U V} {M N : Subexpression U C K} →
     ρ ∼op σ → M ≡ N → ap ρ M ≡ ap σ N
-  ap-cong {ρ = ρ} {σ} {M} {N} ρ∼σ M≡N = let open ≡-Reasoning in 
-    begin
-      ap ρ M
-    ≡⟨ ap-congl ρ∼σ M ⟩
-      ap σ M
-    ≡⟨ ap-congr M≡N ⟩
-      ap σ N
-    ∎
+  ap-cong {U} {V} {C} {K} =
+    Bifunction.cong2 {A = OP U V} {B = setoid (Subexpression U C K)} {C = setoid (Subexpression V C K)} 
+    ap ap-congl (λ _ → ap-congr)
 \end{code}
 }
