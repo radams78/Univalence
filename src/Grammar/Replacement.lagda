@@ -112,8 +112,8 @@ rep-congr = OpFamily.ap-congl REP
 rep-congl : ∀ {U V C K} {ρ : Rep U V} {E F : Subexpression U C K} → E ≡ F → E 〈 ρ 〉 ≡ F 〈 ρ 〉
 rep-congl = OpFamily.ap-congr REP
 
-rep-idOp : ∀ {V C K} {E : Subexpression V C K} → E 〈 idRep V 〉 ≡ E
-rep-idOp = OpFamily.ap-idOp REP
+rep-idRep : ∀ {V C K} {E : Subexpression V C K} → E 〈 idRep V 〉 ≡ E
+rep-idRep = OpFamily.ap-idOp REP
 
 rep-comp : ∀ {U V W C K} (E : Subexpression U C K) {σ : Rep V W} {ρ} → E 〈 σ •R ρ 〉 ≡ E 〈 ρ 〉 〈 σ 〉
 rep-comp = OpFamily.ap-comp REP

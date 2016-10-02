@@ -48,8 +48,8 @@ computable-path-substitution : ∀ U V (τ : PathSub U V) σ σ' Γ Δ M A → �
                                EE Δ (M ⟦ σ ⟧ ≡〈 yt A 〉 M ⟦ σ' ⟧) (M ⟦⟦ τ ∶ σ ∼ σ' ⟧⟧) 
 
 Computable-Sub _ σ∶Γ⇒CΔ (varR x _) _ = σ∶Γ⇒CΔ x
-Computable-Sub σ σ∶Γ⇒CΔ (appR Γ⊢M∶A⇛B Γ⊢N∶A) validΔ = appT-E validΔ (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢M∶A⇛B validΔ) (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢N∶A validΔ) -- TODO Prove appT-E
-Computable-Sub σ σ∶Γ⇒CΔ (ΛR Γ⊢M∶A) validΔ = {!!}
+Computable-Sub σ σ∶Γ⇒CΔ (appR Γ⊢M∶A⇛B Γ⊢N∶A) validΔ = appT-E validΔ (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢M∶A⇛B validΔ) (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢N∶A validΔ)
+Computable-Sub σ σ∶Γ⇒CΔ (ΛR Γ,A⊢M∶B) validΔ = {!C<!}
 Computable-Sub σ σ∶Γ⇒CΔ (⊥R validΓ) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (⊃R Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (appPR Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
