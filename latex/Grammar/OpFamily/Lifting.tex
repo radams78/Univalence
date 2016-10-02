@@ -6,7 +6,7 @@
 \\
 \>\AgdaKeyword{module} \AgdaModule{Grammar.OpFamily.Lifting} \AgdaSymbol{(}\AgdaBound{G} \AgdaSymbol{:} \AgdaRecord{Grammar}\AgdaSymbol{)} \AgdaKeyword{where}\<%
 \\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Function.Equality}\<%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Function.Equality} \AgdaKeyword{hiding} \AgdaSymbol{(}\AgdaFunction{setoid}\AgdaSymbol{)}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.List}\<%
 \\
@@ -153,28 +153,13 @@ We prove that application respects $\sim$.
 \>[4]\AgdaBound{ρ} \AgdaFunction{∼op} \AgdaBound{σ} \AgdaSymbol{→} \AgdaBound{M} \AgdaDatatype{≡} \AgdaBound{N} \AgdaSymbol{→} \AgdaFunction{ap} \AgdaBound{ρ} \AgdaBound{M} \AgdaDatatype{≡} \AgdaFunction{ap} \AgdaBound{σ} \AgdaBound{N}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{ap-cong} \AgdaSymbol{\{}\AgdaArgument{ρ} \AgdaSymbol{=} \AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaBound{ρ∼σ} \AgdaBound{M≡N} \AgdaSymbol{=} \AgdaKeyword{let} \AgdaKeyword{open} \AgdaModule{≡-Reasoning} \AgdaKeyword{in} \<[64]%
-\>[64]\<%
+\>[2]\AgdaFunction{ap-cong} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{=}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{begin}\<%
+\>[4]\AgdaFunction{cong2} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaFunction{OP} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{B} \AgdaSymbol{=} \AgdaFunction{setoid} \AgdaSymbol{(}\AgdaDatatype{Subexpression} \AgdaBound{U} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaArgument{C} \AgdaSymbol{=} \AgdaFunction{setoid} \AgdaSymbol{(}\AgdaDatatype{Subexpression} \AgdaBound{V} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)\}} \<[93]%
+\>[93]\<%
 \\
-\>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{ap} \AgdaBound{ρ} \AgdaBound{M}\<%
-\\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≡⟨} \AgdaFunction{ap-congl} \AgdaBound{ρ∼σ} \AgdaBound{M} \AgdaFunction{⟩}\<%
-\\
-\>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{ap} \AgdaBound{σ} \AgdaBound{M}\<%
-\\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{≡⟨} \AgdaFunction{ap-congr} \AgdaBound{M≡N} \AgdaFunction{⟩}\<%
-\\
-\>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaFunction{ap} \AgdaBound{σ} \AgdaBound{N}\<%
-\\
-\>[0]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaFunction{∎}\<%
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaFunction{ap} \AgdaFunction{ap-congl} \AgdaSymbol{(λ} \AgdaBound{\_} \AgdaSymbol{→} \AgdaFunction{ap-congr}\AgdaSymbol{)}\<%
 \end{code}
 }

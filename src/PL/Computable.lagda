@@ -81,7 +81,7 @@ C-osr : ∀ {P} {Γ : Context P} φ {δ} {ε} → C Γ φ δ → δ ⇒ ε → C
 \begin{code}
 C-osr (app -bot []) (Γ⊢δ∶x₀ ,p SNδ) δ→ε = (subject-reduction Γ⊢δ∶x₀ δ→ε) ,p (SNred SNδ (osr-red δ→ε))
 C-osr {Γ = Γ} (app -imp (_∷_ φ (_∷_ ψ []))) {δ = δ} (Γ⊢δ∶φ⇒ψ ,p Cδ) δ→δ' = subject-reduction Γ⊢δ∶φ⇒ψ δ→δ' ,p 
-  (λ Q ρ ε ρ∶Γ→Δ ε∈Cφ → C-osr ψ (Cδ Q ρ ε ρ∶Γ→Δ ε∈Cφ) (app (appl (respects-osr replacement β-respects-rep δ→δ'))))
+  (λ Q ρ ε ρ∶Γ→Δ ε∈Cφ → C-osr ψ (Cδ Q ρ ε ρ∶Γ→Δ ε∈Cφ) (app (appl (respects-osr REP β-respects-rep δ→δ'))))
 
 C-red : ∀ {P} {Γ : Context P} φ {δ} {ε} → C Γ φ δ → δ ↠ ε → C Γ φ ε
 C-red φ δ∈CΓφ (osr-red δ⇒ε) = C-osr φ δ∈CΓφ δ⇒ε
@@ -124,7 +124,7 @@ NeutralC {P} {Γ} {δ} {app -imp (_∷_ φ (_∷_ ψ []))} Γ⊢δ∶φ→ψ neu
 
 CsubSN {P} {Γ} {app -bot []} = proj₂
 CsubSN {P} {Γ} {app -imp (φ ∷ ψ ∷ [])} {δ} P₁ = 
-    SNap' {replacement} {P} {P , -proof} {E = δ} {σ = upRep} β-respects-rep
+    SNap' {REP} {P} {P , -proof} {E = δ} {σ = upRep} β-respects-rep
       (SNsubbodyl (SNsubexp (CsubSN {Γ = Γ ,P φ 〈 magic 〉} ψ
       (proj₂ P₁ (P , -proof) upRep (var x₀) (λ _ → refl)
       (NeutralC φ

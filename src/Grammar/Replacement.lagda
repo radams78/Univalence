@@ -100,8 +100,8 @@ REP = record {
 
 \AgdaHide{
 \begin{code}
-•R-congl : ∀ {U V W} {ρ₁ ρ₂ : Rep V W} (ρ₃ : Rep U V) → ρ₁ ∼R ρ₂ → ρ₁ •R ρ₃ ∼R ρ₂ •R ρ₃
-•R-congl _ = OpFamily.comp-congl REP
+•R-congl : ∀ {U V W} {ρ₁ ρ₂ : Rep V W} → ρ₁ ∼R ρ₂ → ∀ (ρ₃ : Rep U V) → ρ₁ •R ρ₃ ∼R ρ₂ •R ρ₃
+•R-congl = OpFamily.comp-congl REP
 
 •R-congr : ∀ {U V W} {ρ₁ : Rep V W} {ρ₂ ρ₃ : Rep U V} → ρ₂ ∼R ρ₃ → ρ₁ •R ρ₂ ∼R ρ₁ •R ρ₃
 •R-congr {ρ₁ = ρ₁} = OpFamily.comp-congr REP ρ₁
@@ -132,9 +132,9 @@ liftRep-comp₄ {U} {V1} {V2} {V3} {V4} {K} {ρ1} {ρ2} {ρ3} {ρ4} =
     liftRep K (ρ4 •R ρ3 •R ρ2 •R ρ1)
   ≈⟨ liftRep-comp ⟩
     liftRep K (ρ4 •R ρ3 •R ρ2) •R liftRep K ρ1
-  ≈⟨ •R-congl (liftRep K ρ1) liftRep-comp ⟩
+  ≈⟨ •R-congl liftRep-comp (liftRep K ρ1)⟩
     liftRep K (ρ4 •R ρ3) •R liftRep K ρ2 •R liftRep K ρ1
-  ≈⟨ •R-congl (liftRep K ρ1) (•R-congl (liftRep K ρ2) liftRep-comp) ⟩
+  ≈⟨ •R-congl (•R-congl liftRep-comp (liftRep K ρ2)) (liftRep K ρ1)⟩
     liftRep K ρ4 •R liftRep K ρ3 •R liftRep K ρ2 •R liftRep K ρ1
   ∎
 

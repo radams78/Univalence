@@ -76,7 +76,7 @@ We prove that application respects $\sim$.
     {ρ σ : Op U V} {M N : Subexpression U C K} →
     ρ ∼op σ → M ≡ N → ap ρ M ≡ ap σ N
   ap-cong {U} {V} {C} {K} =
-    Bifunction.cong2 {A = OP U V} {B = setoid (Subexpression U C K)} {C = setoid (Subexpression V C K)} 
+    cong2 {A = OP U V} {B = setoid (Subexpression U C K)} {C = setoid (Subexpression V C K)} 
     ap ap-congl (λ _ → ap-congr)
 \end{code}
 }
