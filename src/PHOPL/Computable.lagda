@@ -12,7 +12,6 @@ open import PHOPL.Rules
 open import PHOPL.Meta
 open import PHOPL.KeyRedex2
 \end{code}
-al}
 
 \section{Computable Expressions}
 
@@ -152,14 +151,16 @@ then $M \{\} \in E_\Gamma(M =_A M)$.
 
 \AgdaHide{
 \begin{code}
+
 Enf-red : ∀ {V S Γ} {L : Leaves V S} {δ ε} → Enf Γ L δ → δ ⇒ ε → Enf Γ L ε
 Enf-red {L = neutral _} (Γ⊢δ∶φ ,p δSN) δ⇒ε = 
   Subject-Reduction Γ⊢δ∶φ (osr-red δ⇒ε) ,p 
   SNred δSN (osr-red δ⇒ε)
-Enf-red {L = bot} δ∈EΓL δ⇒ε = {!!}
-Enf-red {L = imp L L₁} δ∈EΓL δ⇒ε = {!!} 
+Enf-red {L = bot} (Γ⊢δ∶⊥ ,p SNδ) δ⇒ε = (Subject-Reduction Γ⊢δ∶⊥ (osr-red δ⇒ε)) ,p (SNred SNδ (osr-red δ⇒ε)) -- TODO Refactor Subject-Reduction o osr-red
+Enf-red {L = imp φ ψ} {δ} {ε} (Γ⊢δ∶φ⊃ψ ,p computeδ) δ⇒ε = (Subject-Reduction Γ⊢δ∶φ⊃ψ (osr-red δ⇒ε)) ,p 
+  (λ Δ {ρ} {θ} ρ∶Γ⇒RΔ Δ⊢θ∶φ computeε → subst (λ χ → Enf Δ χ (appP (ε 〈 ρ 〉) θ)) {!!} (computeδ Δ {ρ} {θ} ρ∶Γ⇒RΔ Δ⊢θ∶φ))
 
-postulate compute-SN : ∀ {V} {Γ : Context V} {A} {δ} → ET Γ A δ → valid Γ → SN δ
+{- postulate compute-SN : ∀ {V} {Γ : Context V} {A} {δ} → ET Γ A δ → valid Γ → SN δ
 
 postulate decode-rep : ∀ {U} {V} {S} (L : Leaves U S) {ρ : Rep U V} →
                      decode-Prop (lrep ρ L) ≡ decode-Prop L 〈 ρ 〉
@@ -379,7 +380,7 @@ postulate func-EE : ∀ {U} {Γ : Context U} {A} {B} {M} {M'} {P} →
                   (∀ V (Δ : Context V) (N N' : Term V) Q ρ → ρ ∶ Γ ⇒R Δ → 
                   E Δ A N → E Δ A N' → EE Δ N A N' Q →
                   EE Δ (appT (M 〈 ρ 〉) N) B (appT (M' 〈 ρ 〉) N') (app* N N' (P 〈 ρ 〉) Q)) →
-                  EE Γ M (A ⇛ B) M' P
+                  EE Γ M (A ⇛ B) M' P -}
 
 {-
 postulate Neutral-EE : ∀ {V} {Γ : Context V} {M} {A} {N} {P : NeutralP V} →
