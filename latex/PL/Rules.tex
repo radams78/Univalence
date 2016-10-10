@@ -32,7 +32,7 @@ The rules of deduction of the system are as follows.
 \>\AgdaKeyword{data} \AgdaDatatype{\_⊢\_∶\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaBound{P} \AgdaSymbol{→} \AgdaFunction{Proof} \AgdaBound{P} \AgdaSymbol{→} \AgdaFunction{Prp} \AgdaBound{P} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaInductiveConstructor{var} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{p} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{P} \AgdaInductiveConstructor{-proof}\AgdaSymbol{\}} \AgdaSymbol{→} \<[51]%
+\>[2]\AgdaInductiveConstructor{var} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{p} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{P} \AgdaInductiveConstructor{-proof}\AgdaSymbol{)} \AgdaSymbol{→} \<[51]%
 \>[51]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
@@ -95,7 +95,7 @@ If $\rho : \Gamma \rightarrow \Delta$ and $\Gamma \vdash \delta : \phi$ then $\D
 
 \AgdaHide{
 \begin{code}%
-\>\AgdaFunction{idRep-typed} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaBound{x} \AgdaSymbol{=} \AgdaFunction{sym} \AgdaFunction{rep-idOp}\<%
+\>\AgdaFunction{idRep-typed} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaBound{x} \AgdaSymbol{=} \AgdaFunction{sym} \AgdaFunction{ap-idRep}\<%
 \end{code}
 }
 
@@ -227,7 +227,7 @@ If $\rho : \Gamma \rightarrow \Delta$ and $\Gamma \vdash \delta : \phi$ then $\D
 
 \AgdaHide{
 \begin{code}%
-\>\AgdaFunction{Weakening} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Q}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaSymbol{\{}\AgdaArgument{p} \AgdaSymbol{=} \AgdaBound{p}\AgdaSymbol{\})} \AgdaBound{ρ∶Γ→Δ} \AgdaSymbol{=} \AgdaFunction{change-type} \AgdaSymbol{(}\AgdaBound{ρ∶Γ→Δ} \AgdaBound{p}\AgdaSymbol{)} \AgdaInductiveConstructor{var}\<%
+\>\AgdaFunction{Weakening} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Q}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaBound{p}\AgdaSymbol{)} \AgdaBound{ρ∶Γ→Δ} \AgdaSymbol{=} \AgdaFunction{change-type} \AgdaSymbol{(}\AgdaBound{ρ∶Γ→Δ} \AgdaBound{p}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaSymbol{\_} \AgdaBound{p}\AgdaSymbol{))}\<%
 \\
 \>\AgdaFunction{Weakening} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaBound{Γ⊢δ∶φ→ψ} \AgdaBound{Γ⊢ε∶φ}\AgdaSymbol{)} \AgdaBound{ρ∶Γ→Δ} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaFunction{Weakening} \AgdaBound{Γ⊢δ∶φ→ψ} \AgdaBound{ρ∶Γ→Δ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{Weakening} \AgdaBound{Γ⊢ε∶φ} \AgdaBound{ρ∶Γ→Δ}\AgdaSymbol{)}\<%
 \\
@@ -328,7 +328,7 @@ If $\Gamma \vdash \delta : \phi$ and $\sigma : \Gamma \rightarrow \Delta$ then $
 \>[2]\AgdaFunction{pre-LiftSub-typed} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaBound{x} \AgdaSymbol{→} \AgdaBound{Δ} \AgdaFunction{,P} \AgdaBound{φ} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaDatatype{⊢} \AgdaFunction{liftSub} \AgdaInductiveConstructor{-proof} \AgdaBound{σ} \AgdaInductiveConstructor{-proof} \AgdaBound{x} \AgdaDatatype{∶} \AgdaFunction{pretypeof} \AgdaBound{x} \AgdaSymbol{(}\AgdaBound{Γ} \AgdaFunction{,P} \AgdaBound{φ}\AgdaSymbol{)} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaFunction{upRep} \AgdaFunction{〉}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{pre-LiftSub-typed} \AgdaInductiveConstructor{x₀} \AgdaSymbol{=} \AgdaInductiveConstructor{var}\<%
+\>[2]\AgdaFunction{pre-LiftSub-typed} \AgdaInductiveConstructor{x₀} \AgdaSymbol{=} \AgdaInductiveConstructor{var} \AgdaInductiveConstructor{x₀}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{pre-LiftSub-typed} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaBound{x}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{Weakening} \AgdaSymbol{(}\AgdaBound{σ∶Γ⇒Δ} \AgdaBound{x}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{↑-typed} \AgdaSymbol{\{}\AgdaArgument{φ} \AgdaSymbol{=} \AgdaBound{φ} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{\})}\<%
@@ -353,7 +353,7 @@ If $\Gamma \vdash \delta : \phi$ and $\sigma : \Gamma \rightarrow \Delta$ then $
 \>[2]\AgdaFunction{pre-botSub-typed} \AgdaInductiveConstructor{x₀} \AgdaSymbol{=} \AgdaBound{Γ⊢δ:φ}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{pre-botSub-typed} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaBound{x}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{var}\<%
+\>[2]\AgdaFunction{pre-botSub-typed} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaBound{x}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{var} \AgdaBound{x}\<%
 \end{code}
 }
 
@@ -370,7 +370,7 @@ If $\Gamma \vdash \delta : \phi$ and $\sigma : \Gamma \rightarrow \Delta$ then $
 
 \AgdaHide{
 \begin{code}%
-\>\AgdaFunction{substitution} \AgdaInductiveConstructor{var} \AgdaBound{σ∶Γ→Δ} \AgdaSymbol{=} \AgdaBound{σ∶Γ→Δ} \AgdaSymbol{\_}\<%
+\>\AgdaFunction{substitution} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaSymbol{\_)} \AgdaBound{σ∶Γ→Δ} \AgdaSymbol{=} \AgdaBound{σ∶Γ→Δ} \AgdaSymbol{\_}\<%
 \\
 \>\AgdaFunction{substitution} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaBound{Γ⊢δ∶φ→ψ} \AgdaBound{Γ⊢ε∶φ}\AgdaSymbol{)} \AgdaBound{σ∶Γ→Δ} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaFunction{substitution} \AgdaBound{Γ⊢δ∶φ→ψ} \AgdaBound{σ∶Γ→Δ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{substitution} \AgdaBound{Γ⊢ε∶φ} \AgdaBound{σ∶Γ→Δ}\AgdaSymbol{)}\<%
 \\
@@ -441,7 +441,7 @@ If $\Gamma \vdash \delta : \phi$ and $\delta \rightarrow_\beta \epsilon$ then $\
 
 \AgdaHide{
 \begin{code}%
-\>\AgdaFunction{subject-reduction} \AgdaInductiveConstructor{var} \AgdaSymbol{()}\<%
+\>\AgdaFunction{subject-reduction} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaSymbol{\_)} \AgdaSymbol{()}\<%
 \\
 \>\AgdaFunction{subject-reduction} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{\{}\AgdaArgument{ε} \AgdaSymbol{=} \AgdaBound{ε}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{Λ} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ψ}\AgdaSymbol{\}} \AgdaBound{Γ,φ⊢δ∶ψ}\AgdaSymbol{)} \AgdaBound{Γ⊢ε∶φ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaInductiveConstructor{βI}\AgdaSymbol{)} \AgdaSymbol{=} \<[83]%
 \>[83]\<%

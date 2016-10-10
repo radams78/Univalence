@@ -129,7 +129,7 @@ CsubSN {P} {Γ} {app -imp (φ ∷ ψ ∷ [])} {δ} P₁ =
       (proj₂ P₁ (P , -proof) upRep (var x₀) (λ _ → refl)
       (NeutralC φ
         (subst (λ x → (Γ ,P φ 〈 magic 〉) ⊢ var x₀ ∶ x) 
-          (magic-unique' φ) var) 
+          (magic-unique' φ) (var _)) 
         (varNeutral x₀) 
         (λ _ ()))))))
 \end{code}
@@ -146,7 +146,7 @@ varC : ∀ {P} {Γ : Context P} {x : Var P -proof} →
 
 \AgdaHide{
 \begin{code}
-varC {P} {Γ} {x} = NeutralC (close (typeof x Γ)) (change-type (sym close-magic) var) (varNeutral x) (λ ε ())
+varC {P} {Γ} {x} = NeutralC (close (typeof x Γ)) (change-type (sym close-magic) (var x)) (varNeutral x) (λ ε ())
 \end{code}
 }
 
@@ -204,25 +204,50 @@ WTE {ψ = ψ} Γ,p∶φ⊢δ∶ψ Γ⊢ε∶φ δ[p∶=ε]∈CΓψ = WTEaux ψ �
 \end{code}
 }
 
+\begin{lm}
+If $\delta \in C_\Gamma(\phi \rightarrow \psi)$ and $\epsilon \in C_\Gamma(\phi)$ then $\delta \epsilon \in C_\Gamma(\psi)$.
+\end{lm}
+
+\begin{code}
+C-app : ∀ {P} {Γ : Context P} {δ ε φ ψ} → C Γ (φ ⇛ ψ) δ → C Γ φ ε → C Γ ψ (appP δ ε)
+C-app {P} {Γ} {δ} {ε} {φ} {ψ} (Γ⊢δ∶φ⇛ψ ,p δ∈CΓφ⇛ψ) ε∈CΓφ =
+  subst (λ x → C Γ ψ (appP x ε)) ap-idRep 
+    (δ∈CΓφ⇛ψ P (idRep P) ε idRep-typed ε∈CΓφ)
+\end{code}
+
+A substitution $\sigma$ is a \emph{computable} substitution from $\Gamma$ to $\Delta$, $\sigma : \Gamma \rightarrow_C \Delta$,
+iff for all $p : \phi \in \Gamma$ we have $\sigma(p) \in C_\Delta(\phi)$.
+
+\begin{code}
+_∶_⇒C_ : ∀ {P} {Q} → Sub P Q → Context P → Context Q → Set
+σ ∶ Γ ⇒C Δ = ∀ x → C Δ (close (typeof {K = -proof} x Γ)) (σ _ x)
+\end{code}
+
 \begin{prop}
-If $\Gamma \vdash \delta : \phi$ and $\sigma : \Gamma \rightarrow \Delta$ then $\delta [ \sigma ] \in C_\Delta(\phi)$.
+If $\sigma : \Gamma \rightarrow_C \Delta$ then $\sigma : \Gamma \rightarrow \Delta$.
+\end{prop}
+
+\begin{code}
+SubC-typed : ∀ {P Q} {σ : Sub P Q} {Γ Δ} → σ ∶ Γ ⇒C Δ → σ ∶ Γ ⇒ Δ
+SubC-typed σ∶Γ⇒CΔ x = change-type {!!} (C-typed (σ∶Γ⇒CΔ x))
+\end{code}
+
+\begin{prop}
+If $\Gamma \vdash \delta : \phi$ and $\sigma : \Gamma \rightarrow_C \Delta$ then $\delta [ \sigma ] \in C_\Delta(\phi)$.
 \end{prop}
 
 \begin{code}
 SNmainlemma : ∀ {P} {Q} {Γ : Context P} {δ} {φ} {σ : Sub P Q} {Δ} →
-  Γ ⊢ δ ∶ φ →
-  (∀ x → C Δ (close (typeof {K = -proof} x Γ)) (σ _ x)) →
+  Γ ⊢ δ ∶ φ → σ ∶ Γ ⇒C Δ →
   C Δ (close φ) (δ ⟦ σ ⟧)
 \end{code}
 
 \AgdaHide{
 \begin{code}
 --TODO Tidy up
-SNmainlemma (var {p = p}) hyp = hyp p
+SNmainlemma (var p) hyp = hyp p
 SNmainlemma {P} {Q} {Γ} {σ = σ} {Δ} (app {δ = δ} {ε} {φ} {ψ} Γ⊢δ∶φ⇛ψ Γ⊢ε∶φ) hyp = 
-  subst (C Δ (close ψ)) (cong (λ M → appP M (ε ⟦ σ ⟧)) rep-idOp) 
-    (proj₂ (SNmainlemma Γ⊢δ∶φ⇛ψ hyp) Q (idRep Q) (ε ⟦ σ ⟧) idRep-typed 
-      (SNmainlemma Γ⊢ε∶φ hyp))
+  C-app {φ = close φ} {close ψ} (SNmainlemma Γ⊢δ∶φ⇛ψ hyp) (SNmainlemma Γ⊢ε∶φ hyp)
 SNmainlemma {P} {Q} {Γ} {σ = σ} {Δ} (Λ {φ = φ} {δ} {ψ} Γ,φ⊢δ∶ψ) hyp = 
   let σ∶Γ⇒Δ : σ ∶ Γ ⇒ Δ
       σ∶Γ⇒Δ = λ x → change-type 
