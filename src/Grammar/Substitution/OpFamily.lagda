@@ -68,6 +68,7 @@ liftSub-compSR (↑ x) = refl
 \end{code}
 }
 
+\begin{code}
 COMPSR : Composition SubLF Rep∶LF SubLF
 COMPSR = record { 
   _∘_ = _•SR_ ; 
