@@ -21,6 +21,11 @@
 
 \maketitle
 
+\begin{abstract}
+    Homotopy type theory offers the promise of a formal system for the univalent foundations of mathematics. However, if we simply add the univalence axiom to type theory, then we lose the property of canonicity --- that every term computes to a normal form. A computation becomes `stuck' when it reaches the point that it needs to evaluate a proof term that is an application of the univalence axiom. So we wish to find a way to compute with the univalence axiom.
+    As a first step, we present here a system of higher-order propositional logic, with a universe Omega of propositions closed under implication and quantification over any simple type over Omega. We add a type $M =_A N$ for any terms $M$, $N$ of type $A$, and two ways to prove an equality: reflexivity, and the univalence axiom. We present reduction relations for this system, and prove the reduction confluent and strongly normalizing on the well-typed terms. 
+\end{abstract}
+
 \section{Introduction}
 
 The rules of deduction of a type theory are traditionally justified by a \emph{meaning explanation} \cite{ML:ITT}, in which to know that a given term has a given type is to know that it computes to a \emph{canonical object} of that type.  For such a meaning explanation to be possible, the type theory should have the following properties:
