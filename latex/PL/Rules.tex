@@ -219,7 +219,7 @@ If $\rho : \Gamma \rightarrow \Delta$ and $\Gamma \vdash \delta : \phi$ then $\D
 }
 
 \begin{code}%
-\>\AgdaFunction{Weakening} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Q}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{Q}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ}\AgdaSymbol{\}} \AgdaSymbol{→} \<[68]%
+\>\AgdaFunction{weakening} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Q}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{Q}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ}\AgdaSymbol{\}} \AgdaSymbol{→} \<[68]%
 \>[68]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
@@ -228,15 +228,15 @@ If $\rho : \Gamma \rightarrow \Delta$ and $\Gamma \vdash \delta : \phi$ then $\D
 
 \AgdaHide{
 \begin{code}%
-\>\AgdaFunction{Weakening} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Q}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaBound{p}\AgdaSymbol{)} \AgdaBound{ρ∶Γ→Δ} \AgdaSymbol{=} \AgdaFunction{change-type} \AgdaSymbol{(}\AgdaBound{ρ∶Γ→Δ} \AgdaBound{p}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaSymbol{\_} \AgdaBound{p}\AgdaSymbol{))}\<%
+\>\AgdaFunction{weakening} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Q}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaBound{p}\AgdaSymbol{)} \AgdaBound{ρ∶Γ→Δ} \AgdaSymbol{=} \AgdaFunction{change-type} \AgdaSymbol{(}\AgdaBound{ρ∶Γ→Δ} \AgdaBound{p}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaSymbol{\_} \AgdaBound{p}\AgdaSymbol{))}\<%
 \\
-\>\AgdaFunction{Weakening} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaBound{Γ⊢δ∶φ→ψ} \AgdaBound{Γ⊢ε∶φ}\AgdaSymbol{)} \AgdaBound{ρ∶Γ→Δ} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaFunction{Weakening} \AgdaBound{Γ⊢δ∶φ→ψ} \AgdaBound{ρ∶Γ→Δ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{Weakening} \AgdaBound{Γ⊢ε∶φ} \AgdaBound{ρ∶Γ→Δ}\AgdaSymbol{)}\<%
+\>\AgdaFunction{weakening} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaBound{Γ⊢δ∶φ→ψ} \AgdaBound{Γ⊢ε∶φ}\AgdaSymbol{)} \AgdaBound{ρ∶Γ→Δ} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaFunction{weakening} \AgdaBound{Γ⊢δ∶φ→ψ} \AgdaBound{ρ∶Γ→Δ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{weakening} \AgdaBound{Γ⊢ε∶φ} \AgdaBound{ρ∶Γ→Δ}\AgdaSymbol{)}\<%
 \\
-\>\AgdaFunction{Weakening} \AgdaSymbol{.\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Q}\AgdaSymbol{\}} \AgdaSymbol{.\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{Λ} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ψ}\AgdaSymbol{\}} \AgdaBound{Γ,φ⊢δ∶ψ}\AgdaSymbol{)} \AgdaBound{ρ∶Γ→Δ} \AgdaSymbol{=} \AgdaInductiveConstructor{Λ} \<[74]%
+\>\AgdaFunction{weakening} \AgdaSymbol{.\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Q}\AgdaSymbol{\}} \AgdaSymbol{.\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{Λ} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ψ}\AgdaSymbol{\}} \AgdaBound{Γ,φ⊢δ∶ψ}\AgdaSymbol{)} \AgdaBound{ρ∶Γ→Δ} \AgdaSymbol{=} \AgdaInductiveConstructor{Λ} \<[74]%
 \>[74]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaSymbol{(}\AgdaFunction{Weakening} \AgdaSymbol{\{}\AgdaBound{P} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-proof}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Q} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-proof}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaFunction{,P} \AgdaBound{φ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ} \AgdaFunction{,P} \AgdaBound{φ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-proof} \AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ψ}\AgdaSymbol{\}} \<[84]%
+\>[2]\AgdaSymbol{(}\AgdaFunction{weakening} \AgdaSymbol{\{}\AgdaBound{P} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-proof}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Q} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-proof}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaFunction{,P} \AgdaBound{φ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ} \AgdaFunction{,P} \AgdaBound{φ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaFunction{liftRep} \AgdaInductiveConstructor{-proof} \AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ψ}\AgdaSymbol{\}} \<[84]%
 \>[84]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
@@ -291,7 +291,7 @@ If $\Gamma \vdash \delta : \phi$ and $\sigma : \Gamma \rightarrow \Delta$ then $
 \>[2]\AgdaFunction{pre-LiftSub-typed} \AgdaInductiveConstructor{x₀} \AgdaSymbol{=} \AgdaInductiveConstructor{var} \AgdaInductiveConstructor{x₀}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{pre-LiftSub-typed} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaBound{x}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{Weakening} \AgdaSymbol{(}\AgdaBound{σ∶Γ⇒Δ} \AgdaBound{x}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{↑-typed} \AgdaSymbol{\{}\AgdaArgument{φ} \AgdaSymbol{=} \AgdaBound{φ}\AgdaSymbol{\})}\<%
+\>[2]\AgdaFunction{pre-LiftSub-typed} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaBound{x}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{weakening} \AgdaSymbol{(}\AgdaBound{σ∶Γ⇒Δ} \AgdaBound{x}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{↑-typed} \AgdaSymbol{\{}\AgdaArgument{φ} \AgdaSymbol{=} \AgdaBound{φ}\AgdaSymbol{\})}\<%
 \end{code}
 }
 
@@ -343,6 +343,18 @@ If $\Gamma \vdash \delta : \phi$ and $\sigma : \Gamma \rightarrow \Delta$ then $
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaSymbol{(}\AgdaFunction{substitution} \AgdaBound{Γ,φ⊢δ∶ψ} \AgdaSymbol{(}\AgdaFunction{liftSub-typed} \AgdaBound{σ∶Γ→Δ}\AgdaSymbol{))}\<%
+\\
+%
+\\
+\>\AgdaFunction{comp-typed} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Q}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{R}\AgdaSymbol{\}}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{Q}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Θ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{R}\AgdaSymbol{\}}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{\{}\AgdaBound{τ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{Δ} \AgdaFunction{⇒} \AgdaBound{Θ} \AgdaSymbol{→} \AgdaBound{σ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{τ} \AgdaFunction{•} \AgdaBound{σ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒} \AgdaBound{Θ}\<%
+\\
+\>\AgdaFunction{comp-typed} \AgdaBound{τ∶Δ⇒Θ} \AgdaBound{σ∶Γ⇒Δ} \AgdaBound{x} \AgdaSymbol{=} \AgdaFunction{substitution} \AgdaSymbol{(}\AgdaBound{σ∶Γ⇒Δ} \AgdaBound{x}\AgdaSymbol{)} \AgdaBound{τ∶Δ⇒Θ}\<%
 \end{code}
 }
 

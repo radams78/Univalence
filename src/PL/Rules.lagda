@@ -133,16 +133,16 @@ liftRep-typed {Q = Q} {ρ = ρ} {Γ = Γ} {Δ = Δ} {φ} ρ∶Γ→Δ (↑ x) =
 }
 
 \begin{code}
-Weakening : ∀ {P} {Q} {Γ : Context P} {Δ : Context Q} {ρ} {δ} {φ} → 
+weakening : ∀ {P} {Q} {Γ : Context P} {Δ : Context Q} {ρ} {δ} {φ} → 
   Γ ⊢ δ ∶ φ → ρ ∶ Γ ⇒R Δ → Δ ⊢ δ 〈 ρ 〉 ∶ φ
 \end{code}
 
 \AgdaHide{
 \begin{code}
-Weakening {P} {Q} {Γ} {Δ} {ρ} (var p) ρ∶Γ→Δ = change-type (ρ∶Γ→Δ p) (var (ρ _ p))
-Weakening (app Γ⊢δ∶φ→ψ Γ⊢ε∶φ) ρ∶Γ→Δ = app (Weakening Γ⊢δ∶φ→ψ ρ∶Γ→Δ) (Weakening Γ⊢ε∶φ ρ∶Γ→Δ)
-Weakening .{P} {Q} .{Γ} {Δ} {ρ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∶ψ) ρ∶Γ→Δ = Λ 
-  (Weakening {P , -proof} {Q , -proof} {Γ ,P φ} {Δ ,P φ} {liftRep -proof ρ} {δ} {ψ} 
+weakening {P} {Q} {Γ} {Δ} {ρ} (var p) ρ∶Γ→Δ = change-type (ρ∶Γ→Δ p) (var (ρ _ p))
+weakening (app Γ⊢δ∶φ→ψ Γ⊢ε∶φ) ρ∶Γ→Δ = app (weakening Γ⊢δ∶φ→ψ ρ∶Γ→Δ) (weakening Γ⊢ε∶φ ρ∶Γ→Δ)
+weakening .{P} {Q} .{Γ} {Δ} {ρ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∶ψ) ρ∶Γ→Δ = Λ 
+  (weakening {P , -proof} {Q , -proof} {Γ ,P φ} {Δ ,P φ} {liftRep -proof ρ} {δ} {ψ} 
     Γ,φ⊢δ∶ψ (liftRep-typed ρ∶Γ→Δ))
 \end{code}
 }
@@ -179,7 +179,7 @@ liftSub-typed {σ = σ} {Γ} {Δ} {φ} σ∶Γ⇒Δ x =
   change-type (sym (unprp-rep (pretypeof x (Γ ,P φ)) upRep)) (pre-LiftSub-typed x) where
   pre-LiftSub-typed : ∀ x → Δ ,P φ ⊢ liftSub -proof σ -proof x ∶ unprp (pretypeof x (Γ ,P φ))
   pre-LiftSub-typed x₀ = var x₀
-  pre-LiftSub-typed (↑ x) = Weakening (σ∶Γ⇒Δ x) (↑-typed {φ = φ})
+  pre-LiftSub-typed (↑ x) = weakening (σ∶Γ⇒Δ x) (↑-typed {φ = φ})
 \end{code}
 }
 
@@ -210,6 +210,11 @@ substitution (var _) σ∶Γ→Δ = σ∶Γ→Δ _
 substitution (app Γ⊢δ∶φ→ψ Γ⊢ε∶φ) σ∶Γ→Δ = app (substitution Γ⊢δ∶φ→ψ σ∶Γ→Δ) (substitution Γ⊢ε∶φ σ∶Γ→Δ)
 substitution {Q = Q} {Δ = Δ} {σ = σ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∶ψ) σ∶Γ→Δ = Λ 
   (substitution Γ,φ⊢δ∶ψ (liftSub-typed σ∶Γ→Δ))
+
+comp-typed : ∀ {P} {Q} {R}
+  {Γ : Context P} {Δ : Context Q} {Θ : Context R}
+  {τ} {σ} → τ ∶ Δ ⇒ Θ → σ ∶ Γ ⇒ Δ → τ • σ ∶ Γ ⇒ Θ
+comp-typed τ∶Δ⇒Θ σ∶Γ⇒Δ x = substitution (σ∶Γ⇒Δ x) τ∶Δ⇒Θ
 \end{code}
 }
 
