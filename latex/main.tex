@@ -372,7 +372,7 @@ The following are the lemmas about computable expressions needed to prove Theore
 \label{lm:conv-compute}
 \begin{enumerate}
 \item
-$E_\Gamma(T)$ is closed under reductain.
+$E_\Gamma(T)$ is closed under reduction.
 \item
 If $\Gamma \subseteq \Delta$ and $\Delta \vald$ then $E_\Gamma(T) \subseteq E_\Delta(T)$.
 \item
@@ -534,90 +534,6 @@ $\delta p_1 \cdots p_n \in E_\Gamma(\chi)$, and so $\delta p_1 \cdots p_n \in \S
 It follows that $\delta \in \SN$.
 \end{enumerate}
 \end{proof}
-
-% \begin{lm}
-% \label{lm:Ered1}
-% If $\reff{M}_{N N} \reff{N} \in E_\Gamma(L =_A L')$ then $\reff{MN} \in E_\Gamma(L =_A L')$.
-% \end{lm}
-
-% \begin{proof}
-% We prove the following stronger statement:
-
-% If $\reff{M}_{N N} \reff{N}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in E_\Gamma(L =_A L')$ then \\
-% $\reff{MN}_{K_1 K_1'} P_1 \cdots_{K_n K_n'} P_n \in E_\Gamma(L =_A L')$.
-
-% The proof is by induction on the type $A$.
-
-% If $A \equiv \Omega$: we have $\Gamma \vdash \reff{M}_{N N} \reff{N} \vec{P} : L =_A L'$, hence $\Gamma \vdash \reff{MN} \vec{P} : L =_\Omega L'$
-% using Generation.  We must show that $(\reff{MN} \vec{P})^+ \in E_\Gamma(L \supset L')$.
-
-% Let $\delta \in E_\Gamma(L)$.  Let $\nf{L'} \equiv \phi_1 \supset \cdots \supset \phi_m \supset \chi$, where $\chi$ is either $\bot$ or neutral.  Let $\epsilon_j \in E_\Gamma(\phi_j)$ for all $j$.  
-% It is easy to see that $\Gamma \vdash (\reff{MN} \vec{P})^+ \delta \vec{\epsilon} : \chi$, and it remains to show that this proof is strongly normalizing.
-% By hypothesis, we have
-% \[ (\reff{M}_{NN} \reff{N} \vec{P})^+ \delta \vec{\epsilon} \in \SN \]
-% and the result follows by Lemma \ref{lm:SNred1}.
-
-% Similarly, $(\reff{M}_{NN} \reff{N} \vec{P})^- \in E_\Gamma(L' \supset L)$.
-
-% If $A \equiv B \rightarrow C$: we have $\Gamma \vdash \reff{MN} \vec{P} : L =_A L'$ as before.  Now, let $K_{n+1}, K_{n+1}' \in E_\Gamma(B)$
-% and $P_{n+1} \in E_\Gamma(K_{n+1} =_B K_{n+1}')$.  Then we have
-% \begin{align*}
-% \reff{M}_{N N} \reff{N} \vec{P}_{K_{n+1} K_{n+1}} P_{n+1} & \in E_\Gamma(LK_{n+1} =_C L'K_{n+1}') \\
-% \therefore \reff{MN} \vec{P}_{K_{n+1} K_{n+1}'} P_{n+1} & \in E_\Gamma(LK_{n+1} =_C L'K_{n+1}')
-% \end{align*}
-% by the induction hypothesis, as required.
-% \end{proof}
-
-% \begin{lm}
-% \label{lm:Egen}
-% If $\reff{M} \in E_\Gamma(N =_A N')$ then $M \in E_\Gamma(A)$ and $M \simeq N \simeq N'$.
-% \end{lm}
-
-% \begin{proof}
-% The proof is by induction on the type $A$.
-
-% If $A \equiv \Omega$: we have $\reff{M} \in \SN$, hence $M \in \SN$.  Also, we have $\Gamma \vdash M : A$ and $M \simeq N \simeq N'$
-% by Generation.
-
-% If $A \equiv B \rightarrow C$: we have $\Gamma \vdash M : A$ and $M \simeq N \simeq N'$ by Generation again.  Now, let $L \in E_\Gamma(B)$.
-% Then $\reff{L} \in E_\Gamma(L =_B L)$ by Lemma \ref{lm:Eref}, and so $\reff{M}_{LL} \reff{L} \in E_\Gamma(NL =_C N'L)$.  Therefore,
-% $\reff{ML} \in E_\Gamma(NL =_C N'L)$ by Lemma \ref{lm:Ered1}.  Hence $ML \in E_\Gamma(C)$ by the induction hypothesis, as required.
-
-% Now let $L, L' \in E_\Gamma(B)$ and $P \in E_\Gamma(L =_B L')$.  Then similarly $ML, ML' \in E_\Gamma(C)$, and also $\reff{M}_{L L'} P \in E_\Gamma(NL =_C N'L')$.  Hence $\reff{M}_{L L'} P \in E_\Gamma(ML =_C ML')$
-% by Lemma \ref{lm:conv-compute}, as required.
-% \end{proof}
-
-% \begin{lm}
-% \label{lm:wte1}
-% Let $\Gamma, x : A \vdash M : B$ and let $N \in E_\Gamma(A)$.  If $\reff{M[x:=N]} \in E_\Gamma(L =_B L')$, then
-% $\reff{(\lambda x:A.M)N} \in E_\Gamma(L =_B L')$.
-% \end{lm}
-
-% \begin{proof}
-% We prove the following stronger statement:
-
-% Suppose $\Gamma, x : A \vdash M : B_1 \rightarrow \cdots \rightarrow B_m \rightarrow C_1 \rightarrow \cdots \rightarrow C_n \rightarrow D$.
-% Let $N \in E_\Gamma(A)$, $N_i \in E_\Gamma(B_i)$, $L_j, L_j' \in E_\Gamma(C_j)$ and $P_j \in E_\Gamma(L_j =_{C_j} L_j')$ for all $i$, $j$.
-% If $$\reff{M[x:=N] N_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n \in E_\Gamma(L =_{D} L') \enspace , $$
-% then $$\reff{(\lambda x:A.M)N N_1 \cdots N_m}_{L_1 L_1'} (P_1)_{L_2 L_2'} \cdots_{L_n L_n'} P_n \in E_\Gamma(L =_{D} L') \enspace . $$
-
-% The proof is by induction on the type $D$.
-
-% If $D \equiv \Omega$: it is easy to verify that \\
-% $\Gamma \vdash \reff{(\lambda x:A.M)N \vec{N}} \vec{P} : L =_{\Omega} L'$ using
-% Generation.  Now, let $\Delta \supseteq \Gamma$, let $\delta \in E_\Delta(L)$, let
-% $\nf{L'} \equiv \psi_1 \supset \cdots \supset \psi_m \supset \chi$ where $\chi$ is $\bot$ or neutral,
-% and let $\epsilon_j \in E_\Delta(\psi_j)$ for each $j$.  We have that $\Delta \vdash (\reff{(\lambda x:A.M)N \vec{N}} \vec{P})^+ \delta \vec{\epsilon} : \chi$, so it remains to show that this term is strongly normalizing.  The hypothesis gives
-% \[ (\reff{M[x:=N] \vec{N}} \vec{P})^+ \delta \vec{\epsilon} \in E_\Delta(\chi) \subseteq \SN \]
-% and the result follows by Lemma \ref{lm:SN}.\ref{lm:SN2}.
-
-% If $D \equiv C_{n+1} \rightarrow E$: let $L_{n+1}, L_{n+1}' \in E_\Gamma(C_{n+1})$ and $P_{n+1} \in E_{\Gamma}(L_{n+1} =_{C_{n+1}} L_{n+1}')$.  Then
-% \begin{align*}
-% \reff{(M[x:=N] \vec{N}} \vec{P}_{L_{n+1} L_{n+1}'} P_{n+1} & \in E_\Gamma(L L_{n+1} =_{E} L' L_{n+1}') \\
-% \therefore \reff{((\lambda x:A.M)N \vec{N}} \vec{P}_{L_{n+1} L_{n+1}'} P_{n+1} & \in E_\Gamma(L L_{n+1} =_{E} L' L_{n+1}')
-% \end{align*}
-% by the induction hypothesis, as required.
-% \end{proof}
 
 \begin{lemma}
 \label{lm:wte}

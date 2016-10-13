@@ -13,7 +13,7 @@ open import PHOPL.PathSub
 }
 
 Let us say that a substitution $\sigma : \Gamma \Rightarrow \Delta$ is \emph{computable}
-iff, for all $z : T \in \Gamma$, we have $\sigma(z) \in E_\Delta(T[\sigma])$.
+iff, for all $z : T \in \Gamma$, we have $\sigma(z) \in E\Delta(T[\sigma])$.
 
 \begin{code}
 _∶_⇒C_ : ∀ {U} {V} → Sub U V → Context U → Context V → Set
@@ -92,6 +92,14 @@ postulate pathsubC-valid₂ : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {Δ}
 
 postulate extendSubC : ∀ {U} {V} {σ : Sub U V} {M : Term V} {Γ} {Δ} {A} →
                           σ ∶ Γ ⇒C Δ → E Δ A M → extendSub σ M ∶ Γ ,T A ⇒C Δ
+
+postulate wteT : ∀ {V} {Γ : Context V} {A M B N} → Γ ,T A ⊢ M ∶ ty B → E Γ A N → E Γ B (M ⟦ x₀:= N ⟧) →
+                 E Γ B (appT (ΛT A M) N)
+
+--TODO Duplications with PL
+postulate extend-subC : ∀ {U} {V} {σ : Sub U V} {Γ : Context U} {Δ : Context V} {K} {M : Expression V (varKind K)} {A : Expression U (parent K)} →
+                      σ ∶ Γ ⇒C Δ → E' Δ (A ⟦ σ ⟧) M → 
+                      x₀:= M • liftSub K σ ∶ Γ , A ⇒C Δ
 \end{code}
 }
 
