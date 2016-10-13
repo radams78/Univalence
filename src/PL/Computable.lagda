@@ -1,5 +1,6 @@
 \AgdaHide{
 \begin{code}
+--TODO Duplications with PHOPL.Computable
 module PL.Computable where
 open import Data.Empty
 open import Data.Product renaming (_,_ to _,p_)
@@ -33,17 +34,6 @@ C Γ (φ ⇛ ψ) δ = Γ ⊢ δ ∶ φ ⇛ ψ ×
 \begin{enumerate}
 \item
 If $\delta \in C_\Gamma(\phi)$ then $\Gamma \vdash \delta : \phi$.
-\item
-If $\delta \in C_\Gamma(\phi)$ and $\rho : \Gamma \rightarrow \Delta$ then $\delta \langle \rho \rangle \in C_\Delta(\phi)$.
-\item
-If $\delta \in C_\Gamma(\phi)$ and $\delta \rightarrow_\beta \epsilon$ then $\epsilon \in C_\Gamma(\phi)$.
-\item
-Let $\Gamma \vdash \delta : \phi$.  
-If $\delta$ is neutral and, for all $\epsilon$ such that $\delta \rightarrow_\beta \epsilon$, we have $\epsilon \in C_\Gamma(\phi)$, then $\delta \in C_\Gamma(\phi)$.
-\item
-If $\delta \in C_\Gamma(\phi)$ then $\delta$ is strongly normalizable.
-\end{enumerate}
-\end{lemma}
 
 \begin{code}
 C-typed : ∀ {P} {Γ : Context P} {φ} {δ} → C Γ φ δ → Γ ⊢ δ ∶ φ
@@ -55,6 +45,9 @@ C-typed {φ = ⊥P} = proj₁
 C-typed {φ = _ ⇛ _} = proj₁
 \end{code}
 }
+
+\item
+If $\delta \in C_\Gamma(\phi)$ and $\rho : \Gamma \rightarrow \Delta$ then $\delta \langle \rho \rangle \in C_\Delta(\phi)$.
 
 \begin{code}
 C-rep : ∀ {P} {Q} {Γ : Context P} {Δ : Context Q} φ {δ} {ρ} → 
@@ -71,23 +64,35 @@ C-rep {P} {Q} {Γ} {Δ} (φ ⇛ ψ) {δ} {ρ} (Γ⊢δ∶φ⇒ψ ,p Cδ) ρ∶Γ
 \end{code}
 }
 
+\item
+If $\delta \in C_\Gamma(\phi)$ and $\delta \twoheadrightarrow_\beta \epsilon$ then $\epsilon \in C_\Gamma(\phi)$.
+
+\AgdaHide{
 \begin{code}
 C-osr : ∀ {P} {Γ : Context P} φ {δ} {ε} → C Γ φ δ → δ ⇒ ε → C Γ φ ε
+C-osr (⊥P) (Γ⊢δ∶x₀ ,p SNδ) δ→ε = (subject-reduction Γ⊢δ∶x₀ δ→ε) ,p (SNred SNδ (osr-red δ→ε))
+C-osr {Γ = Γ} (φ ⇛ ψ) {δ = δ} (Γ⊢δ∶φ⇒ψ ,p Cδ) δ→δ' = subject-reduction Γ⊢δ∶φ⇒ψ δ→δ' ,p 
+  (λ Q ρ ε ρ∶Γ→Δ ε∈Cφ → C-osr ψ (Cδ Q ρ ε ρ∶Γ→Δ ε∈Cφ) (app (appl (respects-osr REP β-respects-rep δ→δ'))))
+\end{code}
+}
+
+\begin{code}
+C-red : ∀ {P} {Γ : Context P} φ {δ} {ε} → C Γ φ δ → δ ↠ ε → C Γ φ ε
 \end{code}
 
 \AgdaHide{
 \begin{code}
-C-osr (⊥P) (Γ⊢δ∶x₀ ,p SNδ) δ→ε = (subject-reduction Γ⊢δ∶x₀ δ→ε) ,p (SNred SNδ (osr-red δ→ε))
-C-osr {Γ = Γ} (φ ⇛ ψ) {δ = δ} (Γ⊢δ∶φ⇒ψ ,p Cδ) δ→δ' = subject-reduction Γ⊢δ∶φ⇒ψ δ→δ' ,p 
-  (λ Q ρ ε ρ∶Γ→Δ ε∈Cφ → C-osr ψ (Cδ Q ρ ε ρ∶Γ→Δ ε∈Cφ) (app (appl (respects-osr REP β-respects-rep δ→δ'))))
-
-C-red : ∀ {P} {Γ : Context P} φ {δ} {ε} → C Γ φ δ → δ ↠ ε → C Γ φ ε
 C-red φ δ∈CΓφ (osr-red δ⇒ε) = C-osr φ δ∈CΓφ δ⇒ε
 C-red _ δ∈CΓφ ref = δ∈CΓφ
 C-red φ δ∈CΓφ (trans-red δ↠ε ε↠χ) = C-red φ (C-red φ δ∈CΓφ δ↠ε) ε↠χ
 \end{code}
 }
 
+\item
+Let $\Gamma \vdash \delta : \phi$.  
+If $\delta$ is neutral and, for all $\epsilon$ such that $\delta \rightarrow_\beta \epsilon$, we have $\epsilon \in C_\Gamma(\phi)$, then $\delta \in C_\Gamma(\phi)$.
+\item
+If $\delta \in C_\Gamma(\phi)$ then $\delta$ is strongly normalizable.
 \begin{code}
 NeutralC : ∀ {P} {Γ : Context P} {δ : Proof ( P)} (φ : Prop) →
   Γ ⊢ δ ∶ φ → Neutral δ →
@@ -129,6 +134,9 @@ CsubSN {P} {Γ} {φ ⇛ ψ} {δ} P₁ =
         (λ _ ()))))))
 \end{code}
 }
+
+\end{enumerate}
+\end{lemma}
 
 \begin{corollary}
 If $p : \phi \in \Gamma$ then $p \in C_\Gamma(\phi)$.
@@ -255,7 +263,6 @@ SNmainlemma : ∀ {P} {Q} {Γ : Context P} {δ} {φ} {σ : Sub P Q} {Δ} →
 
 \AgdaHide{
 \begin{code}
---TODO Tidy up
 SNmainlemma (var p) σ∶Γ⇒CΔ = σ∶Γ⇒CΔ p
 SNmainlemma (app Γ⊢δ∶φ⇛ψ Γ⊢ε∶φ) σ∶Γ⇒CΔ = 
   C-app (SNmainlemma Γ⊢δ∶φ⇛ψ σ∶Γ⇒CΔ) (SNmainlemma Γ⊢ε∶φ σ∶Γ⇒CΔ)
