@@ -100,6 +100,10 @@ postulate wteT : ∀ {V} {Γ : Context V} {A M B N} → Γ ,T A ⊢ M ∶ ty B �
 postulate extend-subC : ∀ {U} {V} {σ : Sub U V} {Γ : Context U} {Δ : Context V} {K} {M : Expression V (varKind K)} {A : Expression U (parent K)} →
                       σ ∶ Γ ⇒C Δ → E' Δ (A ⟦ σ ⟧) M → 
                       x₀:= M • liftSub K σ ∶ Γ , A ⇒C Δ
+
+subCRS : ∀ {U V W} {ρ : Rep V W} {σ : Sub U V} {Γ Δ Θ} →
+         ρ ∶ Δ ⇒R Θ → σ ∶ Γ ⇒C Δ → ρ •RS σ ∶ Γ ⇒C Θ
+subCRS ρ∶Δ⇒RΘ σ∶Γ⇒CΔ x = {!Erep!}                 
 \end{code}
 }
 

@@ -21,6 +21,10 @@ nrep : ∀ {U} {V} → Rep U V → Neutral U → Neutral V
 nrep ρ (var x) = var (ρ -Term x)
 nrep ρ (app M N) = app (nrep ρ M) (N 〈 ρ 〉)
 
+nrep-comp : ∀ {U V W ρ' ρ N} → nrep (ρ' •R ρ) N ≡ nrep ρ' (nrep ρ N)
+nrep-comp {N = var x} = refl
+nrep-comp {N = app N x} = {!!}
+
 neutral-red' : ∀ {V} {N : Neutral V} {M₁} {M₂} → M₁ ↠ M₂ → decode-Neutral N ≡ M₁ →
   Σ[ N' ∈ Neutral V ] decode-Neutral N' ≡ M₂
 neutral-red' {N = var _} (osr-red (redex βT)) ()

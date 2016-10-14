@@ -1,6 +1,7 @@
 \AgdaHide{
 \begin{code}
 module PHOPL.Computable where
+import Relation.Binary.PreorderReasoning
 open import Data.Empty renaming (⊥ to Empty)
 open import Data.Product renaming (_,_ to _,p_)
 open import Prelims
@@ -72,6 +73,12 @@ lrep : ∀ {U} {V} {S} → Rep U V → Leaves U S → Leaves V S
 lrep ρ (neutral N) = neutral (nrep ρ N)
 lrep ρ bot = bot
 lrep ρ (imp φ ψ) = imp (lrep ρ φ) (lrep ρ ψ)
+
+lrep-comp : ∀ {U V W S ρ' ρ} {L : Leaves U S} →
+  lrep (ρ' •R ρ) L ≡ lrep ρ' (lrep ρ L)
+lrep-comp {L = neutral x} = cong neutral {!!}
+lrep-comp {L = bot} = {!!}
+lrep-comp {L = imp L L₁} = {!!}
 
 decode-Prop : ∀ {V} {S} → Leaves V S → Term V
 decode-Prop (neutral N) = decode-Neutral N
@@ -368,6 +375,36 @@ EE-typed = E'-typed
 
 EE-SN : ∀ {V} {Γ : Context V} E {P} → EE Γ E P → SN P
 EE-SN _ = E'-SN
+
+computeP-rep : ∀ {U V S Γ Δ} {ρ : Rep U V} {L : Leaves U S} {δ} →
+  computeP Γ L δ → ρ ∶ Γ ⇒R Δ → computeP Δ (lrep ρ L) (δ 〈 ρ 〉)
+computeP-rep {S = neutral} {L = neutral _} computeδ _ = SNrep R-creates-rep computeδ
+computeP-rep {S = bot} {L = bot} computeδ ρ∶Γ⇒RΔ = SNrep R-creates-rep computeδ
+computeP-rep {S = imp S T} {ρ = ρ} {L = imp φ ψ} computeδ ρ∶Γ⇒RΔ Θ {ρ'} ρ'∶Δ⇒RΘ Δ⊢ε∶φ computeε = 
+  subst₂ (computeP Θ) (let open ≡-Reasoning in 
+  begin
+    lrep (ρ' •R ρ) ψ
+  ≡⟨ {!!} ⟩
+    lrep ρ' (lrep ρ ψ)
+  ∎) {!!} {!!}
+
+compute-rep : ∀ {U V Γ Δ} {ρ : Rep U V} {K} {A : Expression U (parent K)} {M : Expression U (varKind K)} → 
+  E' Γ A M → ρ ∶ Γ ⇒R Δ → valid Δ → compute Δ (A 〈 ρ 〉) (M 〈 ρ 〉)
+compute-rep {V = V} {ρ = ρ} {K = -Proof} {A} (E'I typed (S ,p L ,p A↠L ,p computeM)) ρ∶Γ⇒RΔ validΔ = S ,p lrep ρ L ,p 
+  (let open Relation.Binary.PreorderReasoning (RED V _ _) in 
+  begin
+    A 〈 ρ 〉
+  ∼⟨ red-rep A↠L ⟩
+    decode-Prop L 〈 ρ 〉
+  ≈⟨ sym (decode-rep L) ⟩
+    decode-Prop (lrep ρ L)
+  ∎ ) ,p {!!}
+compute-rep {K = -Term} E'ΓAM ρ∶Γ⇒RΔ validΔ = {!!}
+compute-rep {K = -Path} E'ΓAM ρ∶Γ⇒RΔ validΔ = {!!}
+
+E'-rep : ∀ {U V Γ Δ} {ρ : Rep U V} {K} {A : Expression U (parent K)} {M : Expression U (varKind K)} → 
+  E' Γ A M → ρ ∶ Γ ⇒R Δ → valid Δ → E' Δ (A 〈 ρ 〉) (M 〈 ρ 〉)
+E'-rep (E'I Γ⊢M∶A computeM) ρ∶Γ⇒RΔ validΔ = E'I (weakening Γ⊢M∶A validΔ ρ∶Γ⇒RΔ) {!!}
 
 {-
 postulate Neutral-computeE : ∀ {V} {Γ : Context V} {M} {A} {N} {P : NeutralP V} →

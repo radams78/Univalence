@@ -61,13 +61,15 @@ Computable-Sub σ {Δ = Δ} σ∶Γ⇒CΔ (ΛR {A = A} {M} {B} Γ,A⊢M∶B) val
     (subst (E Θ B) 
       (let open ≡-Reasoning in 
       begin
-        M ⟦ x₀:= N • (liftRep _ ρ •RS liftSub _ σ) ⟧
+        M ⟦ x₀:= N • liftSub _ (ρ •RS σ) ⟧
       ≡⟨ sub-comp M ⟩
-        M ⟦ liftSub _ σ ⟧ ⟦ x₀:= N •SR liftRep _ ρ ⟧
-      ≡⟨ sub-compSR (M ⟦ liftSub _ σ ⟧) ⟩
+        M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧
+      ≡⟨ sub-congl (sub-congr liftSub-compRS M) ⟩
+        M ⟦ liftRep _ ρ •RS liftSub _ σ ⟧ ⟦ x₀:= N ⟧
+      ≡⟨ sub-congl (sub-compRS M) ⟩
         M ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 ⟦ x₀:= N ⟧
       ∎) 
-      (Computable-Sub (x₀:= N • liftSub _ (ρ •RS σ)) {!!} Γ,A⊢M∶B validΘ)))) ,p 
+      (Computable-Sub (x₀:= N • liftSub _ (ρ •RS σ)) (extend-subC {!!} {!!}) Γ,A⊢M∶B validΘ)))) ,p 
   {!!})
 Computable-Sub σ σ∶Γ⇒CΔ (⊥R validΓ) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (⊃R Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}

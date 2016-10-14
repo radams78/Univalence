@@ -1,5 +1,7 @@
 \AgdaHide{
 \begin{code}
+import Relation.Binary.PropositionalEquality.Core
+open import Relation.Binary hiding (_⇒_)
 open import Grammar.Base
 \end{code}
 }
@@ -49,6 +51,16 @@ data _↠_ {V C K} (E : Subexpression V C K) :
   osr-red : ∀ {F} → E ⇒ F → E ↠ F
   ref : E ↠ E
   trans-red : ∀ {F G} → E ↠ F → F ↠ G → E ↠ G
+
+RED : Alphabet → ∀ C → Kind C → Preorder _ _ _
+RED V C K = record { 
+  Carrier = Subexpression V C K ; 
+  _≈_ = _≡_ ; 
+  _∼_ = _↠_ ; 
+  isPreorder = record { 
+    isEquivalence = Relation.Binary.PropositionalEquality.Core.isEquivalence ; 
+    reflexive = λ { {M} .{M} refl → ref } ; 
+    trans = trans-red } }
 
 data _≃_ {V C K} : Subexpression V C K → Subexpression V C K → Set 
   where
