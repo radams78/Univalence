@@ -393,26 +393,55 @@ computeP-rep {S = imp S T} {ρ = ρ} {L = imp φ ψ} {δ} computeδ ρ∶Γ⇒R�
       (cong decode-Prop {x = lrep ρ' (lrep ρ φ)} (sym lrep-comp))) 
     (subst (λ x → computeP Θ x ε) {x = lrep ρ' (lrep ρ φ)} (sym lrep-comp) computeε))
 
-compute-rep : ∀ {U V Γ Δ} {ρ : Rep U V} {K} {A : Expression U (parent K)} {M : Expression U (varKind K)} → 
-  E' Γ A M → ρ ∶ Γ ⇒R Δ → valid Δ → compute Δ (A 〈 ρ 〉) (M 〈 ρ 〉)
-compute-rep {V = V} {ρ = ρ} {K = -Proof} {A} {M} (E'I typed (S ,p L ,p A↠L ,p computeM)) ρ∶Γ⇒RΔ validΔ = S ,p lrep ρ L ,p 
-  (let open Relation.Binary.PreorderReasoning (RED V _ _) in 
+red-decode-rep : ∀ {U} {V} {φ : Term U} {S} (L : Leaves U S) {ρ : Rep U V} →
+  φ ↠ decode-Prop L → φ 〈 ρ 〉 ↠ decode-Prop (lrep ρ L)
+red-decode-rep {V = V} {φ} L {ρ} φ↠L = let open Relation.Binary.PreorderReasoning (RED V -Expression (varKind -Term)) in 
   begin
-    A 〈 ρ 〉
-  ∼⟨ red-rep A↠L ⟩
+    φ 〈 ρ 〉
+  ∼⟨ red-rep φ↠L ⟩
     decode-Prop L 〈 ρ 〉
   ≈⟨ sym (decode-rep L) ⟩
     decode-Prop (lrep ρ L)
-  ∎ ) ,p computeP-rep {ρ = ρ} {L} {δ = M} computeM ρ∶Γ⇒RΔ
+  ∎
+
+compute-rep : ∀ {U V Γ Δ} {ρ : Rep U V} {K} {A : Expression U (parent K)} {M : Expression U (varKind K)} → 
+  E' Γ A M → ρ ∶ Γ ⇒R Δ → valid Δ → compute Δ (A 〈 ρ 〉) (M 〈 ρ 〉)
+compute-rep {V = V} {ρ = ρ} {K = -Proof} {φ} {M} (E'I typed (S ,p L ,p φ↠L ,p computeM)) ρ∶Γ⇒RΔ validΔ = S ,p lrep ρ L ,p 
+  red-decode-rep L φ↠L ,p
+  computeP-rep {ρ = ρ} {L} {δ = M} computeM ρ∶Γ⇒RΔ
 compute-rep {K = -Term} {app (-ty Ω) []} (E'I _ SNM) _ _ = SNrep R-creates-rep SNM
 compute-rep {K = -Term} {app (-ty (φ ⇛ ψ)) []} {δ} (E'I Γ⊢δ∶φ⊃ψ (δapp ,p δeq)) ρ∶Γ⇒RΔ validΔ = (λ {W} Θ {ρ'} {ε} ρ'∶Δ⇒RΘ Θ⊢ε∶φ computeε → 
-            subst (computeT Θ ψ) (cong (λ x → appT x ε) (rep-comp δ)) (δapp Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) Θ⊢ε∶φ computeε)) ,p 
-  (λ Θ {ρ'} {ε} {ε'} {P} ρ'∶Δ⇒Θ Θ⊢P∶ε≡ε' computeε computeε' computeP → {!subst₃ (λ a b c → computeE Θ (appT a ε) ψ (appT b ε') (c ⋆[ P ∶ ε ∼ ε' ])!})
-compute-rep {K = -Path} E'ΓAM ρ∶Γ⇒RΔ validΔ = {!!}
+  subst (computeT Θ ψ) (cong (λ x → appT x ε) (rep-comp δ)) (δapp Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) Θ⊢ε∶φ computeε)) ,p 
+  (λ Θ {ρ'} {ε} {ε'} {P} ρ'∶Δ⇒RΘ Θ⊢P∶ε≡ε' computeε computeε' computeP → subst
+    (λ a → computeE Θ (appT a ε) ψ (appT a ε') (a ⋆[ P ∶ ε ∼ ε' ]))
+    (rep-comp δ) 
+    (δeq Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) Θ⊢P∶ε≡ε' computeε computeε' computeP))
+compute-rep {V = V} {ρ = ρ} {K = -Path} {app (-eq Ω) (φ ∷ ψ ∷ [])} {P} (E'I Γ⊢P∶φ≡ψ (S ,p S' ,p L ,p L' ,p φ↠L ,p ψ↠L' ,p computeP+ ,p computeP- )) ρ∶Γ⇒RΔ validΔ = 
+  S ,p S' ,p lrep ρ L ,p lrep ρ L' ,p 
+  red-decode-rep L φ↠L ,p
+  red-decode-rep L' ψ↠L' ,p 
+  (λ Θ {ρ'} {ε} ρ'∶Δ⇒RΘ Θ⊢ε∶Lρρ' computeε → subst₂ (λ a b → computeP Θ a (appP (plus b) ε)) {lrep (ρ' •R ρ) L'}
+                                              {lrep ρ' (lrep ρ L')} {P 〈 ρ' •R ρ 〉} {(P 〈 ρ 〉) 〈 ρ' 〉} 
+  lrep-comp (rep-comp P) (computeP+ Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) 
+    (change-type Θ⊢ε∶Lρρ' (cong decode-Prop {lrep ρ' (lrep ρ L)} {lrep (ρ' •R ρ) L} (sym lrep-comp))) 
+    (subst (λ a → computeP Θ a ε) {lrep ρ' (lrep ρ L)}
+       {lrep (ρ' •R ρ) L} (sym lrep-comp) computeε))) ,p 
+  (λ Θ {ρ'} {ε} ρ'∶Δ⇒RΘ Θ⊢ε∶L'ρρ' computeε → subst₂ (λ a b → computeP Θ a (appP (minus b) ε)) {lrep (ρ' •R ρ) L}
+                                              {lrep ρ' (lrep ρ L)} {P 〈 ρ' •R ρ 〉} {(P 〈 ρ 〉) 〈 ρ' 〉} 
+  lrep-comp (rep-comp P) (computeP- Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) 
+    (change-type Θ⊢ε∶L'ρρ' (cong decode-Prop {lrep ρ' (lrep ρ L')} {lrep (ρ' •R ρ) L'} (sym lrep-comp))) 
+    (subst (λ a → computeP Θ a ε) {lrep ρ' (lrep ρ L')}
+       {lrep (ρ' •R ρ) L'} (sym lrep-comp) computeε)))
+--TODO Tidy up this proof
+compute-rep {K = -Path} {app (-eq (A ⇛ B)) (F ∷ G ∷ [])} {P} (E'I Γ⊢P∶F≡G computeP) ρ∶Γ⇒RΔ validΔ Θ {ρ'} {N} {N'} {Q} ρ'∶Δ⇒RΘ Θ⊢Q∶N≡N' computeQ = 
+  subst₃
+    (λ a b c → computeE Θ (appT a N) B (appT b N') (app* N N' c Q)) 
+    (rep-comp F) (rep-comp G) (rep-comp P) 
+    (computeP Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) Θ⊢Q∶N≡N' computeQ)
 
 E'-rep : ∀ {U V Γ Δ} {ρ : Rep U V} {K} {A : Expression U (parent K)} {M : Expression U (varKind K)} → 
   E' Γ A M → ρ ∶ Γ ⇒R Δ → valid Δ → E' Δ (A 〈 ρ 〉) (M 〈 ρ 〉)
-E'-rep (E'I Γ⊢M∶A computeM) ρ∶Γ⇒RΔ validΔ = E'I (weakening Γ⊢M∶A validΔ ρ∶Γ⇒RΔ) {!!}
+E'-rep (E'I Γ⊢M∶A computeM) ρ∶Γ⇒RΔ validΔ = E'I (weakening Γ⊢M∶A validΔ ρ∶Γ⇒RΔ) (compute-rep (E'I Γ⊢M∶A computeM) ρ∶Γ⇒RΔ validΔ)
 
 {-
 postulate Neutral-computeE : ∀ {V} {Γ : Context V} {M} {A} {N} {P : NeutralP V} →

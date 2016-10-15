@@ -1,6 +1,7 @@
 \AgdaHide{
 \begin{code}
 module PHOPL.SubC where
+open import Data.Vec
 open import Data.Product hiding (_,_)
 open import Prelims
 open import PHOPL.Grammar
@@ -96,14 +97,45 @@ postulate extendSubC : ∀ {U} {V} {σ : Sub U V} {M : Term V} {Γ} {Δ} {A} →
 postulate wteT : ∀ {V} {Γ : Context V} {A M B N} → Γ ,T A ⊢ M ∶ ty B → E Γ A N → E Γ B (M ⟦ x₀:= N ⟧) →
                  E Γ B (appT (ΛT A M) N)
 
+Pi : ∀ {n} → Vec Type n → Type → Type
+Pi [] B = B
+Pi (A ∷ AA) B = A ⇛ Pi AA B
+
+APP : ∀ {V n} → Term V → Vec (Term V) n → Term V
+APP M [] = M
+APP M (N ∷ NN) = APP (appT M N) NN
+
+APP* : ∀ {V n} → Vec (Term V) n → Vec (Term V) n → Path V → Vec (Path V) n → Path V
+APP* [] [] P [] = P
+APP* (M ∷ MM) (N ∷ NN) P (Q ∷ QQ) = app* M N (APP* MM NN P QQ) Q
+
+private pre-wteE : ∀ {n} {V} {Γ : Context V} {A P M} {BB : Vec Type n} {C M' L L' Q NN NN' RR} →
+                 addpath Γ A ⊢ P ∶ appT (M ⇑ ⇑ ⇑) (var x₂) ≡〈 Pi BB C 〉 appT (M' ⇑ ⇑ ⇑) (var x₁) →
+                 E Γ A L → E Γ A L' → E' Γ (L ≡〈 A 〉 L') Q →
+                 (∀ i → E Γ (lookup i BB) (lookup i NN)) → (∀ i → E Γ (lookup i BB) (lookup i NN')) → (∀ i → E' Γ (lookup i NN ≡〈 lookup i BB 〉 lookup i NN') (lookup i RR)) →
+                 E' Γ (APP (appT M L) NN ≡〈 C 〉 APP (appT M' L') NN') (APP* NN NN' (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR) →
+                 E' Γ (APP (appT M L) NN' ≡〈 C 〉 APP (appT M' L') NN') (APP* NN NN' (app* L L' (λλλ A P) Q) RR)
+pre-wteE {C = Ω} ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' Ni∈EΓBi N'i∈EΓBi Ri∈EΓNi≡N'i PLL'QRR∈EΓMLNN≡M'L'NN' = E'I {!!} {!!}
+pre-wteE {C = C ⇛ C₁} ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' Ni∈EΓBi N'i∈EΓBi Ri∈EΓNi≡N'i PLL'QRR∈EΓMLNN≡M'L'NN' = {!!}
+
+wteE : ∀ {V} {Γ : Context V} {A P M B N L L' Q} →
+  addpath Γ A ⊢ P ∶ appT (M ⇑ ⇑ ⇑) (var x₂) ≡〈 B 〉 appT (N ⇑ ⇑ ⇑) (var x₁) → 
+  E Γ A L → E Γ A L' → E' Γ (L ≡〈 A 〉 L') Q →
+  E' Γ (appT M L ≡〈 B 〉 appT N L') (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) →
+  E' Γ (appT M L ≡〈 B 〉 appT N L') (app* L L' (λλλ A P) Q)
+wteE {V} {Γ} {A} {P} {M} {B} {N} {L} {L'} {Q} ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' P⟦LL'P⟧∈EΓML≡NL' = 
+  {!!}
+
 --TODO Duplications with PL
 postulate extend-subC : ∀ {U} {V} {σ : Sub U V} {Γ : Context U} {Δ : Context V} {K} {M : Expression V (varKind K)} {A : Expression U (parent K)} →
                       σ ∶ Γ ⇒C Δ → E' Δ (A ⟦ σ ⟧) M → 
                       x₀:= M • liftSub K σ ∶ Γ , A ⇒C Δ
 
 subCRS : ∀ {U V W} {ρ : Rep V W} {σ : Sub U V} {Γ Δ Θ} →
-         ρ ∶ Δ ⇒R Θ → σ ∶ Γ ⇒C Δ → ρ •RS σ ∶ Γ ⇒C Θ
-subCRS ρ∶Δ⇒RΘ σ∶Γ⇒CΔ x = {!Erep!}                 
+         ρ ∶ Δ ⇒R Θ → σ ∶ Γ ⇒C Δ → valid Θ → ρ •RS σ ∶ Γ ⇒C Θ
+subCRS {ρ = ρ} {σ = σ} {Γ} {Θ = Θ} ρ∶Δ⇒RΘ σ∶Γ⇒CΔ validΘ x = 
+  subst (λ a → E' Θ a ((σ _ x) 〈 ρ 〉)) {typeof x Γ ⟦ σ ⟧ 〈 ρ 〉} {typeof x Γ ⟦ ρ •RS σ ⟧} 
+    (sym (sub-compRS (typeof x Γ))) (E'-rep (σ∶Γ⇒CΔ x) ρ∶Δ⇒RΘ validΘ)
 \end{code}
 }
 

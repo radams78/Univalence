@@ -208,11 +208,6 @@ typeof' x Γ  = yt (typeof x Γ)
 typeof-typeof' : ∀ {V} {x : Var V -Term} {Γ} → typeof x Γ ≡ ty (typeof' x Γ)
 typeof-typeof' = sym ty-yt
 
-APP : ∀ {V} → Term V → List (Term V) → Term V
-APP M [] = M
-APP M (N ∷ NN) = APP (appT M N) NN
---REFACTOR Remove this?
-
 addpath : ∀ {V} → Context V → Type → Context (V , -Term , -Term , -Path)
 addpath Γ A = Γ ,T A ,T A ,E var x₁ ≡〈 A 〉 var x₀
 

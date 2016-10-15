@@ -54,10 +54,10 @@ Computable-Sub σ {Δ = Δ} σ∶Γ⇒CΔ (ΛR {A = A} {M} {B} Γ,A⊢M∶B) val
       Δ,A⊢M⟦σ⟧∶B = substitution Γ,A⊢M∶B (ctxTR validΔ) (liftSub-typed (subC-typed σ∶Γ⇒CΔ)) in
   E'I 
   (ΛR Δ,A⊢M⟦σ⟧∶B) 
-  ((λ Θ {ρ} {N} ρ∶Δ⇒Θ Θ⊢N∶A computeN → 
+  ((λ Θ {ρ} {N} ρ∶Δ⇒RΘ Θ⊢N∶A computeN → 
     let validΘ : valid Θ
         validΘ = context-validity Θ⊢N∶A in
-    E'.computable (wteT (weakening Δ,A⊢M⟦σ⟧∶B (ctxTR validΘ) (liftRep-typed ρ∶Δ⇒Θ)) (E'I Θ⊢N∶A computeN) 
+    E'.computable (wteT (weakening Δ,A⊢M⟦σ⟧∶B (ctxTR validΘ) (liftRep-typed ρ∶Δ⇒RΘ)) (E'I Θ⊢N∶A computeN) 
     (subst (E Θ B) 
       (let open ≡-Reasoning in 
       begin
@@ -69,8 +69,9 @@ Computable-Sub σ {Δ = Δ} σ∶Γ⇒CΔ (ΛR {A = A} {M} {B} Γ,A⊢M∶B) val
       ≡⟨ sub-congl (sub-compRS M) ⟩
         M ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 ⟦ x₀:= N ⟧
       ∎) 
-      (Computable-Sub (x₀:= N • liftSub _ (ρ •RS σ)) (extend-subC {!!} {!!}) Γ,A⊢M∶B validΘ)))) ,p 
-  {!!})
+      (Computable-Sub (x₀:= N • liftSub _ (ρ •RS σ)) 
+      (extend-subC (subCRS ρ∶Δ⇒RΘ σ∶Γ⇒CΔ validΘ) (E'I Θ⊢N∶A computeN)) Γ,A⊢M∶B validΘ)))) ,p 
+  (λ Θ ρ∶Γ⇒RΔ Θ⊢Q∶N≡N' computeN computeN' computeQ → {!!}))
 Computable-Sub σ σ∶Γ⇒CΔ (⊥R validΓ) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (⊃R Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (appPR Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
