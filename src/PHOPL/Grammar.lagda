@@ -4,6 +4,7 @@ module PHOPL.Grammar where
 
 open import Data.Empty renaming (⊥ to Empty)
 open import Data.List
+open import Data.Vec
 open import Prelims
 open import Grammar.Taxonomy
 open import Grammar.Base
@@ -182,6 +183,22 @@ yt (app (-ty A) []) = A
 
 ty-yt : ∀ {V} {A : Expression V (nonVarKind -Type)} → ty (yt A) ≡ A
 ty-yt {A = app (-ty _) []} = refl
+
+Pi : ∀ {n} → Vec Type n → Type → Type
+Pi [] B = B
+Pi (A ∷ AA) B = A ⇛ Pi AA B
+
+APP : ∀ {V n} → Term V → Vec (Term V) n → Term V
+APP M [] = M
+APP M (N ∷ NN) = APP (appT M N) NN
+
+APPP : ∀ {V} {n} → Proof V → Vec (Proof V) n → Proof V
+APPP δ [] = δ
+APPP δ (ε ∷ εε) = APPP (appP δ ε) εε
+
+APP* : ∀ {V n} → Vec (Term V) n → Vec (Term V) n → Path V → Vec (Path V) n → Path V
+APP* [] [] P [] = P
+APP* (M ∷ MM) (N ∷ NN) P (Q ∷ QQ) = APP* MM NN (app* M N P Q) QQ
 
 infix 60 _≡〈_〉_
 _≡〈_〉_ : ∀ {V} → Term V → Type → Term V → Equation V

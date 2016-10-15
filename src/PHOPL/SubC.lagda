@@ -1,8 +1,9 @@
 \AgdaHide{
 \begin{code}
 module PHOPL.SubC where
+open import Data.Fin
 open import Data.Vec
-open import Data.Product hiding (_,_)
+open import Data.Product renaming (_,_ to _,p_)
 open import Prelims
 open import PHOPL.Grammar
 open import PHOPL.Red
@@ -97,26 +98,35 @@ postulate extendSubC : ∀ {U} {V} {σ : Sub U V} {M : Term V} {Γ} {Δ} {A} →
 postulate wteT : ∀ {V} {Γ : Context V} {A M B N} → Γ ,T A ⊢ M ∶ ty B → E Γ A N → E Γ B (M ⟦ x₀:= N ⟧) →
                  E Γ B (appT (ΛT A M) N)
 
-Pi : ∀ {n} → Vec Type n → Type → Type
-Pi [] B = B
-Pi (A ∷ AA) B = A ⇛ Pi AA B
+private pre-wte+-computeP : ∀ {m} {n} {V} {Γ : Context V} {S} {L₁ : Leaves V S}
+                          {MM NN : Vec (Term V) m} {P L L' Q RR} {εε : Vec (Proof V) n} {A} →
+                          computeP Γ L₁ (APPP (plus (APP* MM NN (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR)) εε) →
+                          computeP Γ L₁ (APPP (plus (APP* MM NN (app* L L' (λλλ A P) Q) RR)) εε)
+pre-wte+-computeP {L₁ = neutral x} computePRRεε = {!!}
+pre-wte+-computeP {L₁ = bot} computePRRεε = {!!}
+pre-wte+-computeP {L₁ = imp L₁ L₂} computePRRεε Δ ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = {!!}
 
-APP : ∀ {V n} → Term V → Vec (Term V) n → Term V
-APP M [] = M
-APP M (N ∷ NN) = APP (appT M N) NN
-
-APP* : ∀ {V n} → Vec (Term V) n → Vec (Term V) n → Path V → Vec (Path V) n → Path V
-APP* [] [] P [] = P
-APP* (M ∷ MM) (N ∷ NN) P (Q ∷ QQ) = app* M N (APP* MM NN P QQ) Q
+private pre-wte-compute : ∀ {n} {V} {Γ : Context V} {A P M} {BB : Vec Type n} {C M' L L' Q NN NN' RR} →
+                 addpath Γ A ⊢ P ∶ appT (M ⇑ ⇑ ⇑) (var x₂) ≡〈 Pi BB C 〉 appT (M' ⇑ ⇑ ⇑) (var x₁) →
+                 E Γ A L → E Γ A L' → E' Γ (L ≡〈 A 〉 L') Q →
+                 (∀ i → E Γ (lookup i BB) (lookup i NN)) → (∀ i → E Γ (lookup i BB) (lookup i NN')) → (∀ i → E' Γ (lookup i NN ≡〈 lookup i BB 〉 lookup i NN') (lookup i RR)) →
+                 E' Γ (APP (appT M L) NN ≡〈 C 〉 APP (appT M' L') NN') (APP* NN NN' (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR) →
+                 computeE Γ (APP (appT M L) NN) C (APP (appT M' L') NN') (APP* NN NN' (app* L L' (λλλ A P) Q) RR)
+pre-wte-compute {C = Ω} ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' Ni∈EΓBi N'i∈EΓBi Ri∈EΓNi≡N'i (E'I Γ⊢PLL'Q∶MNN≡M'NN' (S₁ ,p S₂ ,p L₁ ,p L₂ ,p MLNN↠L₁ ,p M'L'NN'↠L₂ ,p computeP+ ,p computeP- )) =
+  S₁ ,p S₂ ,p L₁ ,p L₂ ,p MLNN↠L₁ ,p M'L'NN'↠L₂ ,p 
+  (λ Δ ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε → {!!}) ,p 
+  (λ Δ ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε → {!!})
+pre-wte-compute {C = C ⇛ C₁} ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' Ni∈EΓBi N'i∈EΓBi Ri∈EΓNi≡N'i PLL'QRR∈EΓMLNN≡M'L'NN' Δ ρ∶Γ⇒RΔ Δ⊢Q∶N≡N' computeQ = {!!}
 
 private pre-wteE : ∀ {n} {V} {Γ : Context V} {A P M} {BB : Vec Type n} {C M' L L' Q NN NN' RR} →
                  addpath Γ A ⊢ P ∶ appT (M ⇑ ⇑ ⇑) (var x₂) ≡〈 Pi BB C 〉 appT (M' ⇑ ⇑ ⇑) (var x₁) →
                  E Γ A L → E Γ A L' → E' Γ (L ≡〈 A 〉 L') Q →
                  (∀ i → E Γ (lookup i BB) (lookup i NN)) → (∀ i → E Γ (lookup i BB) (lookup i NN')) → (∀ i → E' Γ (lookup i NN ≡〈 lookup i BB 〉 lookup i NN') (lookup i RR)) →
                  E' Γ (APP (appT M L) NN ≡〈 C 〉 APP (appT M' L') NN') (APP* NN NN' (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR) →
-                 E' Γ (APP (appT M L) NN' ≡〈 C 〉 APP (appT M' L') NN') (APP* NN NN' (app* L L' (λλλ A P) Q) RR)
-pre-wteE {C = Ω} ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' Ni∈EΓBi N'i∈EΓBi Ri∈EΓNi≡N'i PLL'QRR∈EΓMLNN≡M'L'NN' = E'I {!!} {!!}
-pre-wteE {C = C ⇛ C₁} ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' Ni∈EΓBi N'i∈EΓBi Ri∈EΓNi≡N'i PLL'QRR∈EΓMLNN≡M'L'NN' = {!!}
+                 E' Γ (APP (appT M L) NN ≡〈 C 〉 APP (appT M' L') NN') (APP* NN NN' (app* L L' (λλλ A P) Q) RR)
+pre-wteE ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' Ni∈EΓBi N'i∈EΓBi Ri∈EΓNi≡N'i PLL'QRR∈EΓMLNN≡M'L'NN' = E'I (APP*-typed (app*R (E'.typed L∈EΓA) (E'.typed L'∈EΓA) 
+  (lllR ΓAAE⊢P∶Mx≡Ny) (E'.typed Q∈EΓL≡L')) 
+  (λ i → E'.typed (Ri∈EΓNi≡N'i i))) {!!}
 
 wteE : ∀ {V} {Γ : Context V} {A P M B N L L' Q} →
   addpath Γ A ⊢ P ∶ appT (M ⇑ ⇑ ⇑) (var x₂) ≡〈 B 〉 appT (N ⇑ ⇑ ⇑) (var x₁) → 

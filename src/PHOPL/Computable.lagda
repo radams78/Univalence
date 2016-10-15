@@ -150,7 +150,7 @@ conv-computeE {Γ = Γ} {M = M} {M' = M'} {A = Ω} {N' = N'} {P} (S ,p T ,p φ ,
           step1 = subst (λ x → Δ ⊢ x ∶ ty Ω) 
             (sym (decode-rep φ)) 
             (weakening 
-              (Subject-Reduction 
+              (subject-reduction 
                 Γ⊢M∶A M↠φ) (context-validity Δ⊢ε∶φ'ρ) ρ∶Γ⇒RΔ) in
       let step1a : decode-Prop (lrep ρ φ') ≃ decode-Prop (lrep ρ φ)
           step1a = subst₂ _≃_ (sym (trans (decode-rep φ') (rep-congl φ'≡Q))) (sym (decode-rep φ)) (conv-rep {M = Q} {N = decode-Prop φ} 
@@ -168,7 +168,7 @@ conv-computeE {Γ = Γ} {M = M} {M' = M'} {A = Ω} {N' = N'} {P} (S ,p T ,p φ ,
           step6 = subst (λ x → Δ ⊢ x ∶ ty Ω) (sym (decode-rep ψ')) 
                 (weakening 
                   (subst (λ x → Γ ⊢ x ∶ ty Ω) (sym ψ'≡R) 
-                  (Subject-Reduction Γ⊢N'∶A N'↠R)) 
+                  (subject-reduction Γ⊢N'∶A N'↠R)) 
                 (context-validity Δ⊢ε∶φ'ρ) 
                 ρ∶Γ⇒RΔ) in
       conv-computeP {L = lrep ρ ψ} {M = lrep ρ ψ'} step4 (sym-conv step5) step6) ,p 
@@ -177,7 +177,7 @@ conv-computeE {Γ = Γ} {M = M} {M' = M'} {A = Ω} {N' = N'} {P} (S ,p T ,p φ ,
           step1 = subst (λ x → Δ ⊢ x ∶ ty Ω) 
             (sym (decode-rep ψ)) 
             (weakening 
-              (Subject-Reduction 
+              (subject-reduction 
                 Γ⊢N∶A N↠ψ) (context-validity Δ⊢ε∶ψ'ρ) ρ∶Γ⇒RΔ) in
       let step1a : decode-Prop (lrep ρ ψ') ≃ decode-Prop (lrep ρ ψ)
           step1a = subst₂ _≃_ (sym (trans (decode-rep ψ') (rep-congl ψ'≡R))) (sym (decode-rep ψ)) (conv-rep {M = R} {N = decode-Prop ψ} 
@@ -195,7 +195,7 @@ conv-computeE {Γ = Γ} {M = M} {M' = M'} {A = Ω} {N' = N'} {P} (S ,p T ,p φ ,
           step6 = subst (λ x → Δ ⊢ x ∶ ty Ω) (sym (decode-rep φ')) 
                 (weakening 
                   (subst (λ x → Γ ⊢ x ∶ ty Ω) (sym φ'≡Q) 
-                  (Subject-Reduction Γ⊢M'∶A M'↠Q)) 
+                  (subject-reduction Γ⊢M'∶A M'↠Q)) 
                 (context-validity Δ⊢ε∶ψ'ρ) 
                 ρ∶Γ⇒RΔ) in
       conv-computeP {L = lrep ρ φ} {M = lrep ρ φ'} step4 (sym-conv step5) step6))
@@ -203,11 +203,11 @@ conv-computeE {A = A ⇛ B} computeP Γ⊢M∶A Γ⊢N∶A Γ⊢M'∶A Γ⊢N'�
   conv-computeE {A = B} 
   (computeP Δ ρ∶Γ⇒RΔ Δ⊢Q∶N≡N' computeQ) 
     (appR (weakening Γ⊢M∶A (context-validity Δ⊢Q∶N≡N') ρ∶Γ⇒RΔ) 
-      (Equation-Validity₁ Δ⊢Q∶N≡N')) 
+      (equation-validity₁ Δ⊢Q∶N≡N')) 
     (appR (weakening Γ⊢N∶A (context-validity Δ⊢Q∶N≡N') ρ∶Γ⇒RΔ) 
-      (Equation-Validity₂ Δ⊢Q∶N≡N'))
-    (appR (weakening Γ⊢M'∶A (context-validity Δ⊢Q∶N≡N') ρ∶Γ⇒RΔ) (Equation-Validity₁ Δ⊢Q∶N≡N')) 
-    (appR (weakening Γ⊢N'∶A (context-validity Δ⊢Q∶N≡N') ρ∶Γ⇒RΔ) (Equation-Validity₂ Δ⊢Q∶N≡N')) 
+      (equation-validity₂ Δ⊢Q∶N≡N'))
+    (appR (weakening Γ⊢M'∶A (context-validity Δ⊢Q∶N≡N') ρ∶Γ⇒RΔ) (equation-validity₁ Δ⊢Q∶N≡N')) 
+    (appR (weakening Γ⊢N'∶A (context-validity Δ⊢Q∶N≡N') ρ∶Γ⇒RΔ) (equation-validity₂ Δ⊢Q∶N≡N')) 
     (appT-convl (conv-rep M≃M')) (appT-convl (conv-rep N≃N'))
 --TODO Common pattern
 
@@ -231,15 +231,15 @@ expand-computeT {A = A ⇛ B} {M} {M'} (computeM'app ,p computeM'eq) Γ⊢M∶A�
     let validΔ : valid Δ
         validΔ = context-validity Δ⊢P∶N≡N' in
     let Γ⊢M'∶A⇛B : Γ ⊢ M' ∶ ty (A ⇛ B)
-        Γ⊢M'∶A⇛B = Subject-Reduction Γ⊢M∶A⇛B (key-redex-red M▷M') in
+        Γ⊢M'∶A⇛B = subject-reduction Γ⊢M∶A⇛B (key-redex-red M▷M') in
     let Δ⊢M'ρ∶A⇛B : Δ ⊢ M' 〈 ρ 〉 ∶ ty (A ⇛ B)
         Δ⊢M'ρ∶A⇛B = weakening Γ⊢M'∶A⇛B validΔ ρ∶Γ⇒Δ in
     let Δ⊢Mρ∶A⇛B : Δ ⊢ M 〈 ρ 〉 ∶ ty (A ⇛ B)
         Δ⊢Mρ∶A⇛B = weakening Γ⊢M∶A⇛B validΔ ρ∶Γ⇒Δ in
     let Δ⊢N∶A : Δ ⊢ N ∶ ty A
-        Δ⊢N∶A = Equation-Validity₁ Δ⊢P∶N≡N' in
+        Δ⊢N∶A = equation-validity₁ Δ⊢P∶N≡N' in
     let Δ⊢N'∶A : Δ ⊢ N' ∶ ty A
-        Δ⊢N'∶A = Equation-Validity₂ Δ⊢P∶N≡N' in
+        Δ⊢N'∶A = equation-validity₂ Δ⊢P∶N≡N' in
     let M'ρX≃MρX : ∀ X → appT (M' 〈 ρ 〉) X ≃ appT (M 〈 ρ 〉) X
         M'ρX≃MρX = λ _ → sym-conv (appT-convl (red-conv (red-rep (key-redex-red M▷M')))) in
     expand-computeE 
