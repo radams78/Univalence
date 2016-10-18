@@ -2,6 +2,10 @@
 \begin{code}%
 \>\AgdaKeyword{module} \AgdaModule{PHOPL.Meta} \AgdaKeyword{where}\<%
 \\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Fin}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Vec}\<%
+\\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Product} \AgdaKeyword{renaming} \AgdaSymbol{(}\AgdaInductiveConstructor{\_,\_} \AgdaSymbol{to} \AgdaInductiveConstructor{\_,p\_}\AgdaSymbol{)}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims}\<%
@@ -780,7 +784,7 @@ It is sufficient to prove the case $s \rightarrow t$.  The proof is by a case an
 }
 
 \begin{code}%
-\>\AgdaKeyword{postulate} \AgdaPostulate{Subject-Reduction} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}}\<%
+\>\AgdaKeyword{postulate} \AgdaPostulate{subject-reduction} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}}\<%
 \\
 \>[0]\AgdaIndent{28}{}\<[28]%
 \>[28]\AgdaSymbol{\{}\AgdaBound{E} \AgdaBound{F} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{→} \<[67]%
@@ -791,17 +795,43 @@ It is sufficient to prove the case $s \rightarrow t$.  The proof is by a case an
 \\
 %
 \\
-\>\AgdaKeyword{postulate} \AgdaPostulate{Equation-Validity₁} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaSymbol{:} \AgdaFunction{Path} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\>\AgdaKeyword{postulate} \AgdaPostulate{equation-validity₁} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaSymbol{:} \AgdaFunction{Path} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[28]\AgdaIndent{29}{}\<[29]%
 \>[29]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{P} \AgdaDatatype{∶} \AgdaBound{M} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{N} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{A}\<%
 \\
 %
 \\
-\>\AgdaKeyword{postulate} \AgdaPostulate{Equation-Validity₂} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaSymbol{:} \AgdaFunction{Path} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\>\AgdaKeyword{postulate} \AgdaPostulate{equation-validity₂} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaSymbol{:} \AgdaFunction{Path} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[28]\AgdaIndent{29}{}\<[29]%
 \>[29]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{P} \AgdaDatatype{∶} \AgdaBound{M} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{N} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{N} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{A}\<%
+\\
+%
+\\
+\>\AgdaFunction{APP*-typed} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{n}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{:} \AgdaDatatype{Vec} \AgdaSymbol{(}\AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{)} \AgdaBound{n}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaBound{QQ} \AgdaBound{M} \AgdaBound{N} \AgdaBound{AA} \AgdaBound{B}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{P} \AgdaDatatype{∶} \AgdaBound{M} \AgdaFunction{≡〈} \AgdaFunction{Pi} \AgdaBound{AA} \AgdaBound{B} \AgdaFunction{〉} \AgdaBound{N} \AgdaSymbol{→} \AgdaSymbol{(∀} \AgdaBound{i} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaFunction{lookup} \AgdaBound{i} \AgdaBound{QQ} \AgdaDatatype{∶} \AgdaFunction{lookup} \AgdaBound{i} \AgdaBound{MM} \AgdaFunction{≡〈} \AgdaFunction{lookup} \AgdaBound{i} \AgdaBound{AA} \AgdaFunction{〉} \AgdaFunction{lookup} \AgdaBound{i} \AgdaBound{NN} \AgdaSymbol{)} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaBound{P} \AgdaBound{QQ} \AgdaDatatype{∶} \AgdaFunction{APP} \AgdaBound{M} \AgdaBound{MM} \AgdaFunction{≡〈} \AgdaBound{B} \AgdaFunction{〉} \AgdaFunction{APP} \AgdaBound{N} \AgdaBound{NN}\<%
+\\
+\>\AgdaFunction{APP*-typed} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{QQ} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{AA} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaBound{Γ⊢P∶M≡N} \AgdaSymbol{\_} \AgdaSymbol{=} \AgdaBound{Γ⊢P∶M≡N}\<%
+\\
+\>\AgdaFunction{APP*-typed} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaBound{M} \AgdaInductiveConstructor{∷} \AgdaBound{MM}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{NN} \AgdaSymbol{=} \AgdaBound{N} \AgdaInductiveConstructor{∷} \AgdaBound{NN}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{QQ} \AgdaSymbol{=} \AgdaBound{Q} \AgdaInductiveConstructor{∷} \AgdaBound{QQ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{AA} \AgdaSymbol{=} \AgdaBound{A} \AgdaInductiveConstructor{∷} \AgdaBound{AA}\AgdaSymbol{\}} \AgdaBound{Γ⊢P∶M≡N} \AgdaBound{Γ⊢QQ∶MM≡NN} \AgdaSymbol{=} \<[88]%
+\>[88]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{APP*-typed} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaBound{MM}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{NN} \AgdaSymbol{=} \AgdaBound{NN}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{QQ} \AgdaSymbol{=} \AgdaBound{QQ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{AA} \AgdaSymbol{=} \AgdaBound{AA}\AgdaSymbol{\}} \<[53]%
+\>[53]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{(}\AgdaInductiveConstructor{app*R} \AgdaSymbol{(}\AgdaPostulate{equation-validity₁} \AgdaSymbol{(}\AgdaBound{Γ⊢QQ∶MM≡NN} \AgdaInductiveConstructor{zero}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaPostulate{equation-validity₂} \AgdaSymbol{(}\AgdaBound{Γ⊢QQ∶MM≡NN} \AgdaInductiveConstructor{zero}\AgdaSymbol{))} \<[87]%
+\>[87]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaBound{Γ⊢P∶M≡N} \AgdaSymbol{(}\AgdaBound{Γ⊢QQ∶MM≡NN} \AgdaInductiveConstructor{zero}\AgdaSymbol{))} \AgdaSymbol{(λ} \AgdaBound{i} \AgdaSymbol{→} \AgdaBound{Γ⊢QQ∶MM≡NN} \AgdaSymbol{(}\AgdaInductiveConstructor{suc} \AgdaBound{i}\AgdaSymbol{))}\<%
 \end{code}
 
 \subsubsection{Canonicity}

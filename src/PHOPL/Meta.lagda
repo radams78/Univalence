@@ -2,7 +2,6 @@
 \begin{code}
 module PHOPL.Meta where
 open import Data.Fin
-open import Data.Vec
 open import Data.Product renaming (_,_ to _,p_)
 open import Prelims
 open import PHOPL.Grammar
@@ -458,14 +457,18 @@ postulate equation-validity₁ : ∀ {V} {Γ : Context V} {P : Path V} {M} {A} {
 postulate equation-validity₂ : ∀ {V} {Γ : Context V} {P : Path V} {M} {A} {N} →
                              Γ ⊢ P ∶ M ≡〈 A 〉 N → Γ ⊢ N ∶ ty A
 
-APP*-typed : ∀ {n} {V} {Γ : Context V} {MM NN : Vec (Term V) n} {P QQ M N AA B} →
+app*R' : ∀ {V} {Γ : Context V} {P Q : Path V} {M M' N N' : Term V} {A B : Type} →
+    Γ ⊢ P ∶ M ≡〈 A ⇛ B 〉 M' → Γ ⊢ Q ∶ N ≡〈 A 〉 N' →
+  -------------------------------------------------
+    Γ ⊢ app* N N' P Q ∶ appT M N ≡〈 B 〉 appT M' N'
+app*R' Γ⊢P∶M≡M' Γ⊢Q∶N≡N' = app*R (equation-validity₁ Γ⊢Q∶N≡N') (equation-validity₂ Γ⊢Q∶N≡N') Γ⊢P∶M≡M' Γ⊢Q∶N≡N'
+
+APP*-typed : ∀ {n} {V} {Γ : Context V} {MM NN : snocVec (Term V) n} {P QQ M N AA B} →
   Γ ⊢ P ∶ M ≡〈 Pi AA B 〉 N → (∀ i → Γ ⊢ lookup i QQ ∶ lookup i MM ≡〈 lookup i AA 〉 lookup i NN ) →
   Γ ⊢ APP* MM NN P QQ ∶ APP M MM ≡〈 B 〉 APP N NN
 APP*-typed {MM = []} {[]} {QQ = []} {AA = []} Γ⊢P∶M≡N _ = Γ⊢P∶M≡N
-APP*-typed {MM = M ∷ MM} {NN = N ∷ NN} {QQ = Q ∷ QQ} {AA = A ∷ AA} Γ⊢P∶M≡N Γ⊢QQ∶MM≡NN = 
-  APP*-typed {MM = MM} {NN = NN} {QQ = QQ} {AA = AA} 
-  (app*R (equation-validity₁ (Γ⊢QQ∶MM≡NN zero)) (equation-validity₂ (Γ⊢QQ∶MM≡NN zero)) 
-  Γ⊢P∶M≡N (Γ⊢QQ∶MM≡NN zero)) (λ i → Γ⊢QQ∶MM≡NN (suc i))
+APP*-typed {MM = MM snoc M} {NN = NN snoc N} {QQ = QQ snoc Q} {AA = AA snoc A} Γ⊢P∶M≡N Γ⊢QQ∶MM≡NN = 
+  app*R' (APP*-typed Γ⊢P∶M≡N (λ i → Γ⊢QQ∶MM≡NN (suc i))) (Γ⊢QQ∶MM≡NN zero)
 \end{code}
 
 \subsubsection{Canonicity}

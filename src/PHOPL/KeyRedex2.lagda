@@ -1,6 +1,7 @@
 \AgdaHide{
 \begin{code}
 module PHOPL.KeyRedex2 where
+open import Prelims
 open import Data.Nat
 open import Data.Vec
 open import PHOPL.Grammar
@@ -69,19 +70,19 @@ pre-lmSNE₁' _ _ _ _ _ (app (appr (appr (appl (app (appr ()))))))
 pre-lmSNE₁' _ _ _ _ hypQ (app (appr (appr (appr (appl Q⇒Q'))))) = hypQ _ Q⇒Q'
 pre-lmSNE₁' _ _ _ _ _ (app (appr (appr (appr (appr ())))))
 
-data redVT {V} : ∀ {n} → Vec (Term V) n → Vec (Term V) n → Set where
-  redleft : ∀ {n M M'} {NN : Vec _ n} → M ⇒ M' → redVT (M ∷ NN) (M' ∷ NN)
-  redright : ∀ {n M} {NN NN' : Vec _ n} → redVT NN NN' → redVT (M ∷ NN) (M ∷ NN')
+data redVT {V} : ∀ {n} → snocVec (Term V) n → snocVec (Term V) n → Set where
+  redleft : ∀ {n} {MM MM' : snocVec (Term V) n} {N} → redVT MM MM' → redVT (MM snoc N) (MM' snoc N)
+  redright : ∀ {n} {MM : snocVec (Term V) n} {N N'} → N ⇒ N' → redVT (MM snoc N) (MM snoc N')
 
 data redVP {V} : ∀ {n} → Vec (Proof V) n → Vec (Proof V) n → Set where
   redleft : ∀ {n} {δ} {δ'} {εε : Vec _ n} → δ ⇒ δ' → redVP (δ ∷ εε) (δ' ∷ εε)
   redright : ∀ {n} {δ} {εε εε' : Vec _ n} → redVP εε εε' → redVP (δ ∷ εε) (δ ∷ εε')
 
-data redVPa {V} : ∀ {n} → Vec (Path V) n → Vec (Path V) n → Set where
-  redleft : ∀ {n} {P} {P'} {QQ : Vec _ n} → P ⇒ P' → redVPa (P ∷ QQ) (P' ∷ QQ)
-  redright : ∀ {n} {P} {QQ QQ' : Vec _ n} → redVPa QQ QQ' → redVPa (P ∷ QQ) (P ∷ QQ')
+data redVPa {V} : ∀ {n} → snocVec (Path V) n → snocVec (Path V) n → Set where
+  redleft : ∀ {n} {PP PP' : snocVec (Path V) n} {Q} → redVPa PP PP' → redVPa (PP snoc Q) (PP' snoc Q)
+  redright : ∀ {n} {PP : snocVec (Path V) n} {Q Q'} → Q ⇒ Q' → redVPa (PP snoc Q) (PP snoc Q')
 
-pre-lmSNE₂ : ∀ {n} {V} {L L' : Term V} {P Q A F} {MM NN : Vec (Term V) n} {PP} 
+pre-lmSNE₂ : ∀ {n} {V} {L L' : Term V} {P Q A F} {MM NN : snocVec (Term V) n} {PP} 
   {C : Path V → Set} →
   C (APP* MM NN (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) PP) →
   (∀ MM' → redVT MM MM' → C (APP* MM' NN (app* L L' (λλλ A P) Q) PP)) →
@@ -92,33 +93,26 @@ pre-lmSNE₂ : ∀ {n} {V} {L L' : Term V} {P Q A F} {MM NN : Vec (Term V) n} {P
   (∀ Q₁ → Q ⇒ Q₁ → C (APP* MM NN (app* L L' (λλλ A P) Q₁) PP)) →
   (∀ PP' → redVPa PP PP' → C (APP* MM NN (app* L L' (λλλ A P) Q) PP')) →
   APP* MM NN (app* L L' (λλλ A P) Q) PP ⇒ F → C F
-pre-lmSNE₂ {MM = []} {[]} {[]} hyp-red hypMM hypNN hypL hypL' hypP hypQ hypPP PQPP⇒F = pre-lmSNE₁' hyp-red hypL hypL' hypP hypQ PQPP⇒F
-pre-lmSNE₂ {MM = M ∷ MM} {NN = N ∷ NN} {PP = P ∷ PP} hyp-red hypMM hypNN hypL hypL' hypP hypQ hypPP PQPP⇒F = {!!}
+pre-lmSNE₂ {MM = []} {[]} {[]} hyp-red _ _ hypL hypL' hypP hypQ _ PQPP⇒F = pre-lmSNE₁' hyp-red hypL hypL' hypP hypQ PQPP⇒F
+pre-lmSNE₂ {MM = [] snoc _} {[] snoc _} {[] snoc _} _ _ _ _ _ _ _ _ (redex ())
+pre-lmSNE₂ {MM = _ snoc _} {_ snoc _} {_ snoc _} _ hypMM _ _ _ _ _ _ (app (appl M⇒M')) = hypMM _ (redright M⇒M')
+pre-lmSNE₂ {MM = _ snoc _} {_ snoc _} {_ snoc _} _ _ hypNN _ _ _ _ _ (app (appr (appl N⇒N'))) = hypNN _ (redright N⇒N')
+pre-lmSNE₂ {MM = _ snoc _} {_ snoc _} {_ snoc P} _ _ _ _ _ _ _ hypPP (app (appr (appr (appr (appl P⇒P'))))) = hypPP _ (redright P⇒P')
+pre-lmSNE₂ {MM = _ snoc _} {_ snoc _} {_ snoc _} _ _ _ _ _ _ _ _ (app (appr (appr (appr (appr ())))))
+pre-lmSNE₂ {MM = _ snoc _ snoc _} {_ snoc _ snoc _} {_ snoc _ snoc _} _ _ _ _ _ _ _ _ (redex ())
+pre-lmSNE₂ {MM = MM snoc M} {NN snoc N} {PP snoc P} {C = C} hyp-red hypMM hypNN hypL hypL' hypP hypQ hypPP (app (appr (appr (appl PQPP⇒F)))) = 
+  pre-lmSNE₂ {MM = MM} {NN} {PP} {C = λ x → C (app* M N x P)} 
+    hyp-red 
+    (λ _ MM⇒MM' → hypMM _ (redleft MM⇒MM')) (λ _ NN⇒NN' → hypNN _ (redleft NN⇒NN'))
+    hypL hypL' hypP hypQ 
+    (λ _ PP⇒PP' → hypPP _ (redleft PP⇒PP')) 
+    PQPP⇒F
 
 lmSNE₁ : ∀ {V} {L L' : Term V} {P} {Q} {A} → 
   SN (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) → SN L → SN L' → SN Q →
   SN (app* L L' (λλλ A P) Q)
 lmSNE₁ {V} {L} {L'} {P} {Q} {A} SNPQ SNL SNL' SNQ = SNI _ (λ F → pre-lmSNE₁ SNPQ SNL SNL' SNQ)
 
-
-plusAPP*-red : ∀ {n} {V} {MM NN : Vec (Term V) n} {M} {N} {P} {Q} {QQ} {conc : Proof V → Set} →
-  (∀ {X} → APP* MM NN (app* M N P Q) QQ ⇒ X → conc (plus X)) →
-  ∀ {X} → plus (APP* MM NN (app* M N P Q) QQ) ⇒ X → conc X
-plusAPP*-red {MM = []} {[]} {QQ = []} hyp (redex ())
-plusAPP*-red {MM = []} {[]} {QQ = []} hyp (app (appl x)) = hyp x
-plusAPP*-red {MM = []} {[]} {QQ = []} hyp (app (appr ()))
-plusAPP*-red {MM = _ ∷ MM} {NN = _ ∷ _} {QQ = _ ∷ _} {conc} hyp M⇒X = 
-  plusAPP*-red {MM = MM} {conc = conc} hyp M⇒X 
-
-lmSNE : ∀ {m} {n} {V} {Γ : Context V} {S} {L₁ : Leaves V S}
-      {MM NN : Vec (Term V) m} {P L L' Q RR} {εε : Vec (Proof V) n} {A} →
-      SN (APPP (plus (APP* MM NN (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR)) εε) →
-      SN L → SN L' → SN Q → ∀ F →
-      APPP (plus (APP* MM NN (app* L L' (λλλ A P) Q) RR)) εε ⇒ F → SN F
-lmSNE {MM = MM} {NN} {P} {L} {L'} {Q} {RR} {εε = []} SNPRRεε SNL SNL' SNQ F PRRεε⇒F = plusAPP*-red {MM = MM} {NN} {QQ = RR} {conc = SN} 
-  (λ {X} x → {!!}) 
-  PRRεε⇒F
-lmSNE {εε = ε ∷ εε} SNPRRεε SNL SNL' SNQ F PRRεε⇒F = {!!}
 \end{code}
 }
 

@@ -184,21 +184,21 @@ yt (app (-ty A) []) = A
 ty-yt : ∀ {V} {A : Expression V (nonVarKind -Type)} → ty (yt A) ≡ A
 ty-yt {A = app (-ty _) []} = refl
 
-Pi : ∀ {n} → Vec Type n → Type → Type
+Pi : ∀ {n} → snocVec Type n → Type → Type
 Pi [] B = B
-Pi (A ∷ AA) B = A ⇛ Pi AA B
+Pi (AA snoc A) B = Pi AA (A ⇛ B)
 
-APP : ∀ {V n} → Term V → Vec (Term V) n → Term V
+APP : ∀ {V n} → Term V → snocVec (Term V) n → Term V
 APP M [] = M
-APP M (N ∷ NN) = APP (appT M N) NN
+APP M (NN snoc N) = appT (APP M NN) N
 
 APPP : ∀ {V} {n} → Proof V → Vec (Proof V) n → Proof V
 APPP δ [] = δ
 APPP δ (ε ∷ εε) = APPP (appP δ ε) εε
 
-APP* : ∀ {V n} → Vec (Term V) n → Vec (Term V) n → Path V → Vec (Path V) n → Path V
+APP* : ∀ {V n} → snocVec (Term V) n → snocVec (Term V) n → Path V → snocVec (Path V) n → Path V
 APP* [] [] P [] = P
-APP* (M ∷ MM) (N ∷ NN) P (Q ∷ QQ) = APP* MM NN (app* M N P Q) QQ
+APP* (MM snoc M) (NN snoc N) P (QQ snoc Q) = app* M N (APP* MM NN P QQ) Q
 
 infix 60 _≡〈_〉_
 _≡〈_〉_ : ∀ {V} → Term V → Type → Term V → Equation V
