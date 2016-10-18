@@ -81,6 +81,26 @@ red-conv : ∀ {V} {C} {K} {M N : Subexpression V C K} → M ↠ N → M ≃ N
 red-conv (osr-red M⇒N) = osr-conv M⇒N
 red-conv ref = ref
 red-conv (trans-red M↠N N↠P) = trans-conv (red-conv M↠N) (red-conv N↠P)
+
+convl : ∀ {V} {A} {AA} {E E' : Abstraction V A} {FF : ListAbs V AA} → 
+  E ≃ E' → (_∷_ {V} {A} {AA} E FF) ≃ (E' ∷ FF)
+convl (osr-conv x) = osr-conv (appl x)
+convl ref = ref
+convl (sym-conv E≃E') = sym-conv (convl E≃E')
+convl (trans-conv E≃E' E'≃E'') = trans-conv (convl E≃E') (convl E'≃E'')
+
+convr : ∀ {V} {A} {AA} {E : Abstraction V A} {FF FF' : ListAbs V AA} → 
+  FF ≃ FF' → (_∷_ {V} {A} {AA} E FF) ≃ (E ∷ FF')
+convr (osr-conv x) = osr-conv (appr x)
+convr ref = ref
+convr (sym-conv E≃E') = sym-conv (convr E≃E')
+convr (trans-conv E≃E' E'≃E'') = trans-conv (convr E≃E') (convr E'≃E'')
+
+app-resp-conv : ∀ {V} {AA} {K} {c : Constructor (SK AA K)} {EE FF : ListAbs V AA} → EE ≃ FF → app c EE ≃ app c FF
+app-resp-conv (osr-conv EE⇒FF) = osr-conv (app EE⇒FF)
+app-resp-conv ref = ref
+app-resp-conv (sym-conv EE≃FF) = sym-conv (app-resp-conv EE≃FF)
+app-resp-conv (trans-conv EE≃FF FF≃GG) = trans-conv (app-resp-conv EE≃FF) (app-resp-conv FF≃GG)
 \end{code}
 }
 

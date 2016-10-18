@@ -2,7 +2,6 @@
 \begin{code}
 module PHOPL.SubC where
 open import Data.Fin
-open import Data.Vec
 open import Data.Product renaming (_,_ to _,p_)
 open import Prelims
 open import PHOPL.Grammar
@@ -11,6 +10,7 @@ open import PHOPL.Rules
 open import PHOPL.Meta
 open import PHOPL.Computable
 open import PHOPL.PathSub
+open import PHOPL.KeyRedex2
 \end{code}
 }
 
@@ -99,14 +99,14 @@ postulate wteT : ∀ {V} {Γ : Context V} {A M B N} → Γ ,T A ⊢ M ∶ ty B �
                  E Γ B (appT (ΛT A M) N)
 
 private pre-wte+-computeP : ∀ {m} {n} {V} {Γ : Context V} {S} {L₁ : Leaves V S}
-                          {MM NN : Vec (Term V) m} {P L L' Q RR} {εε : Vec (Proof V) n} {A} →
+                          {MM NN : snocVec (Term V) m} {P L L' Q RR} {εε : snocVec (Proof V) n} {A} →
                           computeP Γ L₁ (APPP (plus (APP* MM NN (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR)) εε) →
                           computeP Γ L₁ (APPP (plus (APP* MM NN (app* L L' (λλλ A P) Q) RR)) εε)
 pre-wte+-computeP {L₁ = neutral x} computePRRεε = {!!}
 pre-wte+-computeP {L₁ = bot} computePRRεε = {!!}
 pre-wte+-computeP {L₁ = imp L₁ L₂} computePRRεε Δ ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = {!!}
 
-private pre-wte-compute : ∀ {n} {V} {Γ : Context V} {A P M} {BB : Vec Type n} {C M' L L' Q NN NN' RR} →
+private pre-wte-compute : ∀ {n} {V} {Γ : Context V} {A P M} {BB : snocVec Type n} {C M' L L' Q NN NN' RR} →
                  addpath Γ A ⊢ P ∶ appT (M ⇑ ⇑ ⇑) (var x₂) ≡〈 Pi BB C 〉 appT (M' ⇑ ⇑ ⇑) (var x₁) →
                  E Γ A L → E Γ A L' → E' Γ (L ≡〈 A 〉 L') Q →
                  (∀ i → E Γ (lookup i BB) (lookup i NN)) → (∀ i → E Γ (lookup i BB) (lookup i NN')) → (∀ i → E' Γ (lookup i NN ≡〈 lookup i BB 〉 lookup i NN') (lookup i RR)) →
@@ -118,7 +118,7 @@ pre-wte-compute {C = Ω} ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' Ni
   (λ Δ ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε → {!!})
 pre-wte-compute {C = C ⇛ C₁} ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' Ni∈EΓBi N'i∈EΓBi Ri∈EΓNi≡N'i PLL'QRR∈EΓMLNN≡M'L'NN' Δ ρ∶Γ⇒RΔ Δ⊢Q∶N≡N' computeQ = {!!}
 
-private pre-wteE : ∀ {n} {V} {Γ : Context V} {A P M} {BB : Vec Type n} {C M' L L' Q NN NN' RR} →
+private pre-wteE : ∀ {n} {V} {Γ : Context V} {A P M} {BB : snocVec Type n} {C M' L L' Q NN NN' RR} →
                  addpath Γ A ⊢ P ∶ appT (M ⇑ ⇑ ⇑) (var x₂) ≡〈 Pi BB C 〉 appT (M' ⇑ ⇑ ⇑) (var x₁) →
                  E Γ A L → E Γ A L' → E' Γ (L ≡〈 A 〉 L') Q →
                  (∀ i → E Γ (lookup i BB) (lookup i NN)) → (∀ i → E Γ (lookup i BB) (lookup i NN')) → (∀ i → E' Γ (lookup i NN ≡〈 lookup i BB 〉 lookup i NN') (lookup i RR)) →
