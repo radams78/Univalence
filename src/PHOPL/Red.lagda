@@ -2,6 +2,7 @@
 \begin{code}
 module PHOPL.Red where
 open import Data.Unit
+open import Data.Vec
 open import Data.Product renaming (_,_ to _,p_)
 open import Data.List
 open import Prelims
@@ -420,4 +421,28 @@ postulate conv-rep : ∀ {U} {V} {C} {K} {ρ : Rep U V} {M N : Subexpression U C
 postulate conv-sub : ∀ {U} {V} {C} {K} {σ : Sub U V} {M N : Subexpression U C K} → M ≃ N → M ⟦ σ ⟧ ≃ N ⟦ σ ⟧
 
 postulate appT-convl : ∀ {V} {M M' N : Term V} → M ≃ M' → appT M N ≃ appT M' N
+
+data redVT {V} : ∀ {n} → snocVec (Term V) n → snocVec (Term V) n → Set where
+  redleft : ∀ {n} {MM MM' : snocVec (Term V) n} {N} → redVT MM MM' → redVT (MM snoc N) (MM' snoc N)
+  redright : ∀ {n} {MM : snocVec (Term V) n} {N N'} → N ⇒ N' → redVT (MM snoc N) (MM snoc N')
+
+data redVP {V} : ∀ {n} → snocVec (Proof V) n → snocVec (Proof V) n → Set where
+  redleft : ∀ {n} {εε εε' : snocVec _ n} {δ} → redVP εε εε' → redVP (εε snoc δ) (εε' snoc δ)
+  redright : ∀ {n} {εε : snocVec _ n} {δ} {δ'} → δ ⇒ δ' → redVP (εε snoc δ) (εε snoc δ')
+
+data redVPa {V} : ∀ {n} → snocVec (Path V) n → snocVec (Path V) n → Set where
+  redleft : ∀ {n} {PP PP' : snocVec (Path V) n} {Q} → redVPa PP PP' → redVPa (PP snoc Q) (PP' snoc Q)
+  redright : ∀ {n} {PP : snocVec (Path V) n} {Q Q'} → Q ⇒ Q' → redVPa (PP snoc Q) (PP snoc Q')
+
+APPP-redl : ∀ {V n δ δ'} {εε : snocVec (Proof V) n} → δ ⇒ δ' → APPP δ εε ⇒ APPP δ' εε
+APPP-redl {εε = []} δ⇒δ' = δ⇒δ'
+APPP-redl {εε = εε snoc _} δ⇒δ' = app (appl (APPP-redl {εε = εε} δ⇒δ'))
+
+APP*-red₁ : ∀ {V n} {MM MM' NN : snocVec (Term V) n} {P PP} → redVT MM MM' → APP* MM NN P PP ⇒ APP* MM' NN P PP
+APP*-red₁ {NN = _ snoc _} {PP = _ snoc _} (redleft MM⇒MM') = app (appr (appr (appl (APP*-red₁ MM⇒MM'))))
+APP*-red₁ {NN = _ snoc _} {PP = _ snoc _} (redright M⇒M') = app (appl M⇒M')
+
+APP*-red₂ : ∀ {V n} MM {NN NN' : snocVec (Term V) n} {P PP} → redVT NN NN' → APP* MM NN P PP ⇒ APP* MM NN' P PP
+APP*-red₂ (MM snoc _) {_ snoc _} {_ snoc _} {PP = _ snoc _} (redleft NN⇒NN') = app (appr (appr (appl (APP*-red₂ MM NN⇒NN'))))
+APP*-red₂ (_ snoc _) {PP = _ snoc _} (redright N⇒N') = app (appr (appl N⇒N'))
 \end{code}

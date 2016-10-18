@@ -192,9 +192,9 @@ APP : ∀ {V n} → Term V → snocVec (Term V) n → Term V
 APP M [] = M
 APP M (NN snoc N) = appT (APP M NN) N
 
-APPP : ∀ {V} {n} → Proof V → Vec (Proof V) n → Proof V
+APPP : ∀ {V} {n} → Proof V → snocVec (Proof V) n → Proof V
 APPP δ [] = δ
-APPP δ (ε ∷ εε) = APPP (appP δ ε) εε
+APPP δ (εε snoc ε) = appP (APPP δ εε) ε
 
 APP* : ∀ {V n} → snocVec (Term V) n → snocVec (Term V) n → Path V → snocVec (Path V) n → Path V
 APP* [] [] P [] = P
