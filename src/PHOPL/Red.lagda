@@ -54,6 +54,17 @@ An expression $s$ is in \emph{normal form} iff there is no expression $t$ such t
 \end{enumerate}
 
 \begin{code}
+--Redex for a path ref ⊃* univ:
+ru-redex : ∀ {V} → Term V → Term V → Term V → Proof V → Proof V → Path V
+ru-redex φ ψ χ δ ε = univ (φ ⊃ ψ) (φ ⊃ χ) (ΛP (φ ⊃ ψ) (ΛP (φ ⇑) (appP (δ ⇑ ⇑) (appP (var x₁) (var x₀))))) (ΛP (φ ⊃ χ) (ΛP (φ ⇑) (appP (ε ⇑ ⇑) (appP (var x₁) (var x₀)))))
+
+ur-redex : ∀ {V} → Term V → Term V → Term V → Proof V → Proof V → Path V
+ur-redex φ ψ χ δ ε = univ (φ ⊃ χ) (ψ ⊃ χ) (ΛP (φ ⊃ χ) (ΛP (ψ ⇑) (appP (var x₁) (appP (ε ⇑ ⇑) (var x₀))))) (ΛP (ψ ⊃ χ) (ΛP (φ ⇑) (appP (var x₁) (appP (δ ⇑ ⇑) (var x₀)))))
+
+uu-redex : ∀ {V} → Term V → Term V → Term V → Term V → Proof V → Proof V → Proof V → Proof V → Path V
+uu-redex φ φ' ψ ψ' δ δ' ε ε' = univ (φ ⊃ φ') (ψ ⊃ ψ') (ΛP (φ ⊃ φ') (ΛP (ψ ⇑) (appP (δ' ⇑ ⇑) (appP (var x₁) (appP (ε ⇑ ⇑) (var x₀))))))
+  (ΛP (ψ ⊃ ψ') (ΛP (φ ⇑) (appP (ε' ⇑ ⇑) (appP (var x₁) (appP (δ ⇑ ⇑) (var x₀))))))
+
 data R : Reduction where
   βT : ∀ {V} {A} {M} {N} → R {V} -appTerm (ΛT A M ∷ N ∷ []) (M ⟦ x₀:= N ⟧)
   βR : ∀ {V} {φ} {δ} {ε} → R {V} -appProof (ΛP φ δ ∷ ε ∷ []) (δ ⟦ x₀:= ε ⟧)
@@ -61,12 +72,10 @@ data R : Reduction where
   minus-ref : ∀ {V} {φ} → R {V} -minus (reff φ ∷ []) (ΛP φ (var x₀))
   plus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → R {V} -plus (univ φ ψ δ ε ∷ []) δ 
   minus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → R {V} -minus (univ φ ψ δ ε ∷ []) ε
-  ref⊃*univ : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → R {V} -imp* (reff φ ∷ univ ψ χ δ ε ∷ []) (univ (φ ⊃ ψ) (φ ⊃ χ) (ΛP (φ ⊃ ψ) (ΛP (φ ⇑) (appP (δ ⇑ ⇑) (appP (var x₁) (var x₀))))) (ΛP (φ ⊃ χ) (ΛP (φ ⇑) (appP (ε ⇑ ⇑) (appP (var x₁) (var x₀))))))
-  univ⊃*ref : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → R {V} -imp* (univ φ ψ δ ε ∷ reff χ ∷ []) (univ (φ ⊃ χ) (ψ ⊃ χ) (ΛP (φ ⊃ χ) (ΛP (ψ ⇑) (appP (var x₁) (appP (ε ⇑ ⇑) (var x₀))))) (ΛP (ψ ⊃ χ) (ΛP (φ ⇑) (appP (var x₁) (appP (δ ⇑ ⇑) (var x₀))))))
+  ref⊃*univ : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → R {V} -imp* (reff φ ∷ univ ψ χ δ ε ∷ []) (ru-redex φ ψ χ δ ε)
+  univ⊃*ref : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → R {V} -imp* (univ φ ψ δ ε ∷ reff χ ∷ []) (ur-redex φ ψ χ δ ε)
   univ⊃*univ : ∀ {V} {φ} {φ'} {ψ} {ψ'} {δ} {δ'} {ε} {ε'} →
-    R {V} -imp* (univ φ ψ δ ε ∷ univ φ' ψ' δ' ε' ∷ [])
-    (univ (φ ⊃ φ') (ψ ⊃ ψ') (ΛP (φ ⊃ φ') (ΛP (ψ ⇑) (appP (δ' ⇑ ⇑) (appP (var x₁) (appP (ε ⇑ ⇑) (var x₀))))))
-      (ΛP (ψ ⊃ ψ') (ΛP (φ ⇑) (appP (ε' ⇑ ⇑) (appP (var x₁) (appP (δ ⇑ ⇑) (var x₀)))))))
+    R {V} -imp* (univ φ ψ δ ε ∷ univ φ' ψ' δ' ε' ∷ []) (uu-redex φ φ' ψ ψ' δ δ' ε ε')
   ref⊃*ref : ∀ {V} {φ} {ψ} → R {V} -imp* (reff φ ∷ reff ψ ∷ []) (reff (φ ⊃ ψ))
   refref : ∀ {V} {M} {N} → R {V} -app* (N ∷ N ∷ reff M ∷ reff N ∷ []) (reff (appT M N))
   βE : ∀ {V} {M} {N} {A} {P} {Q} → R {V} -app* (M ∷ N ∷ λλλ A P ∷ Q ∷ []) 
@@ -86,6 +95,19 @@ let \emph{reduction} $\twoheadrightarrow$ be the reflexive, transitive closure; 
 \begin{code}
 open import Reduction PHOPL R public 
 
+univ-osrE : ∀ {V} {φ} {ψ} {δ} {ε} {C : Path V → Set} →
+  (∀ φ' → φ ⇒ φ' → C (univ φ' ψ δ ε)) →
+  (∀ ψ' → ψ ⇒ ψ' → C (univ φ ψ' δ ε)) →
+  (∀ δ' → δ ⇒ δ' → C (univ φ ψ δ' ε)) →
+  (∀ ε' → ε ⇒ ε' → C (univ φ ψ δ ε')) →
+  ∀ {P} → univ φ ψ δ ε ⇒ P → C P
+univ-osrE _ _ _ _ (redex ())
+univ-osrE hypφ _ _ _ (app (appl φ⇒φ')) = hypφ _ φ⇒φ'
+univ-osrE _ hypψ _ _ (app (appr (appl ψ⇒ψ'))) = hypψ _ ψ⇒ψ'
+univ-osrE _ _ hypδ _ (app (appr (appr (appl δ⇒δ')))) = hypδ _ δ⇒δ'
+univ-osrE _ _ _ hypε (app (appr (appr (appr (appl ε⇒ε'))))) = hypε _ ε⇒ε'
+univ-osrE _ _ _ _ (app (appr (appr (appr (appr ())))))
+
 eq-resp-conv : ∀ {V} {M M' N N' : Term V} {A : Type} →
   M ≃ M' → N ≃ N' → M ≡〈 A 〉 N ≃ M' ≡〈 A 〉 N'
 eq-resp-conv M≃M' N≃N' = app-resp-conv (trans-conv (convl M≃M') (convr (convl N≃N')))
@@ -93,6 +115,10 @@ eq-resp-conv M≃M' N≃N' = app-resp-conv (trans-conv (convl M≃M') (convr (co
 postulate R-creates-rep : creates' REP
 
 postulate R-respects-replacement : respects' REP
+
+osr-rep : ∀ {U} {V} {C} {K} {E E' : Subexpression U C K} {ρ : Rep U V} →
+  E ⇒ E' → E 〈 ρ 〉 ⇒ E' 〈 ρ 〉
+osr-rep = respects-osr REP R-respects-replacement
 
 postulate R-creates-replacement : creates' REP
 
