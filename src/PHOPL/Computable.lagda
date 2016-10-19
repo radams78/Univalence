@@ -8,6 +8,7 @@ open import Prelims
 open import PHOPL.Grammar
 open import PHOPL.PathSub
 open import PHOPL.Red
+open import PHOPL.Red.Confluent
 open import PHOPL.SN
 open import PHOPL.Rules
 open import PHOPL.Meta

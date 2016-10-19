@@ -7,8 +7,8 @@ open import Prelims
 open import PHOPL.Grammar
 open import PHOPL.Red
 
-Critical-Pairs : ∀ {V} {K} {C} {c : Constructor (SK C K)} {E : ListAbs V C} {F} {G} → R c E F → R c E G → Σ[ H ∈ Expression V K ] ((F ↠ H) × (G ↠ H))
-Critical-Pairs βT βT = _ ,p ref ,p ref
+postulate Critical-Pairs : ∀ {V} {K} {C} {c : Constructor (SK C K)} {E : ListAbs V C} {F} {G} → R c E F → R c E G → Σ[ H ∈ Expression V K ] ((F ↠ H) × (G ↠ H))
+{-Critical-Pairs βT βT = _ ,p ref ,p ref
 Critical-Pairs βR βR = _ ,p ref ,p ref
 Critical-Pairs plus-ref plus-ref = _ ,p ref ,p ref
 Critical-Pairs minus-ref minus-ref = _ ,p ref ,p ref
@@ -23,7 +23,7 @@ Critical-Pairs βE βE = _ ,p ref ,p ref
 Critical-Pairs reflamvar reflamvar = _ ,p ref ,p ref
 Critical-Pairs reflam⊃* reflam⊃* = _ ,p ref ,p ref
 Critical-Pairs reflamuniv reflamuniv = _ ,p ref ,p ref
-Critical-Pairs reflamλλλ reflamλλλ = _ ,p ref ,p ref
+Critical-Pairs reflamλλλ reflamλλλ = _ ,p ref ,p ref -}
 
 pre-confluent : ∀ {V} {K} {C} {c : Constructor (SK C K)} {E E' : ListAbs V C} {F} →
   R c E F → E ⇒ E' → Σ[ F' ∈ Expression V K ] R c E' F' × F ↠ F'
@@ -32,14 +32,53 @@ pre-confluent βT (appl (app (appl E⇒E'))) = _ ,p βT ,p red-subl (osr-red E�
 pre-confluent βT (appl (app (appr ())))
 pre-confluent (βT {M = M}) (appr (appl E⇒E')) = _ ,p βT ,p red-subr M (botsub-red E⇒E')
 pre-confluent βT (appr (appr ()))
-pre-confluent βR (appl (redex x)) = {!!}
-pre-confluent βR (appl (app E⇒E')) = {!!}
-pre-confluent βR (appr E⇒E') = {!!}
-pre-confluent plus-ref E⇒E' = {!!}
-pre-confluent minus-ref E⇒E' = {!!}
-pre-confluent plus-univ E⇒E' = {!!}
-pre-confluent minus-univ E⇒E' = {!!}
-pre-confluent ref⊃*univ E⇒E' = {!!}
+pre-confluent βR (appl (redex ()))
+pre-confluent βR (appl (app (appl _))) = _ ,p βR ,p ref
+pre-confluent βR (appl (app (appr (appl E⇒E')))) = _ ,p βR ,p red-subl (osr-red E⇒E')
+pre-confluent βR (appl (app (appr (appr ()))))
+pre-confluent (βR {δ = δ}) (appr (appl E⇒E')) = _ ,p βR ,p red-subr δ (botsub-red E⇒E')
+pre-confluent βR (appr (appr ()))
+pre-confluent plus-ref (appl (redex ()))
+pre-confluent plus-ref (appl (app (appl E⇒E'))) = _ ,p plus-ref ,p osr-red (app (appl E⇒E'))
+pre-confluent plus-ref (appl (app (appr ())))
+pre-confluent plus-ref (appr ())
+pre-confluent minus-ref (appl (redex ()))
+pre-confluent minus-ref (appl (app (appl E⇒E'))) = _ ,p minus-ref ,p osr-red (app (appl E⇒E'))
+pre-confluent minus-ref (appl (app (appr ())))
+pre-confluent minus-ref (appr ())
+pre-confluent plus-univ (appl (redex ()))
+pre-confluent plus-univ (appl (app (appl _))) = _ ,p plus-univ ,p ref
+pre-confluent plus-univ (appl (app (appr (appl _)))) = _ ,p plus-univ ,p ref
+pre-confluent plus-univ (appl (app (appr (appr (appl E⇒E'))))) = _ ,p plus-univ ,p osr-red E⇒E'
+pre-confluent plus-univ (appl (app (appr (appr (appr (appl _)))))) = _ ,p plus-univ ,p ref
+pre-confluent plus-univ (appl (app (appr (appr (appr (appr ()))))))
+pre-confluent plus-univ (appr ())
+pre-confluent minus-univ (appl (redex ()))
+pre-confluent minus-univ (appl (app (appl _))) = _ ,p minus-univ ,p ref
+pre-confluent minus-univ (appl (app (appr (appl _)))) = _ ,p minus-univ ,p ref
+pre-confluent minus-univ (appl (app (appr (appr (appl _))))) = _ ,p minus-univ ,p ref
+pre-confluent minus-univ (appl (app (appr (appr (appr (appl E⇒E')))))) = _ ,p minus-univ ,p osr-red E⇒E'
+pre-confluent minus-univ (appl (app (appr (appr (appr (appr ()))))))
+pre-confluent minus-univ (appr ())
+pre-confluent ref⊃*univ (appl (redex ()))
+pre-confluent (ref⊃*univ {φ = φ} {ψ = ψ} {χ = χ} {δ = δ} {ε = ε}) (appl (app (appl {E' = φ'} φ⇒φ'))) = {!!} ,p ref⊃*univ ,p 
+  subst₂ _↠_ (cong₄ univ (cong₂ _⊃_ refl (botSub-upRep {!!})) {!!} {!!} {!!}) {!!} (red-subr
+                          (univ (var x₀ ⊃ ψ ⇑) (var x₀ ⊃ χ ⇑)
+                           (ΛP (var x₀ ⊃ ψ ⇑)
+                            (ΛP (var x₁) (appP (δ ⇑ ⇑ ⇑) (appP (var x₁) (var x₀)))))
+                           (ΛP (var x₀ ⊃ χ ⇑)
+                            (ΛP (var x₁) (appP (ε ⇑ ⇑ ⇑) (appP (var x₁) (var x₀))))))
+                          (botsub-red φ⇒φ'))
+{-  let φ⊃θ↠φ'⊃θ : ∀ θ → φ ⊃ θ ↠ φ' ⊃ θ
+      φ⊃θ↠φ'⊃θ _ = osr-red (app (appl φ⇒φ')) in
+  let λφ↠λφ' : ∀ θ δ → ΛP (φ ⊃ θ) (ΛP (φ ⇑) (appP (δ ⇑ ⇑) (appP (var x₁) (var x₀)))) ↠ ΛP (φ' ⊃ θ) (ΛP (φ' ⇑) (appP (δ ⇑ ⇑) (appP (var x₁) (var x₀))))
+      λφ↠λφ' _ _ = ΛP-red (φ⊃θ↠φ'⊃θ _) (osr-red (app (appl (respects-osr REP R-respects-replacement φ⇒φ')))) in
+  _ ,p ref⊃*univ ,p univ-red (φ⊃θ↠φ'⊃θ _) (φ⊃θ↠φ'⊃θ _) (λφ↠λφ' _ δ) (λφ↠λφ' _ ε) -}
+pre-confluent ref⊃*univ (appl (app (appr ())))
+pre-confluent ref⊃*univ (appr (appl (redex ())))
+pre-confluent ref⊃*univ (appr (appl (app (appl ψ⇒ψ')))) = {!!} ,p ref⊃*univ ,p univ-red {!!} {!!} {!!} {!!}
+pre-confluent ref⊃*univ (appr (appl (app (appr E⇒E')))) = {!!}
+pre-confluent ref⊃*univ (appr (appr E⇒E')) = {!!}
 pre-confluent univ⊃*ref E⇒E' = {!!}
 pre-confluent univ⊃*univ E⇒E' = {!!}
 pre-confluent ref⊃*ref E⇒E' = {!!}
