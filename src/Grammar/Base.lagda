@@ -18,8 +18,8 @@ module Grammar.Base where
 record IsGrammar (T : Taxonomy) : Set₁ where
   open Taxonomy T
   field
-    Constructor    : ConKind → Set
-    parent         : VarKind → ExpKind
+    Con    : ConKind → Set
+    parent : VarKind → ExpKind
 
 record Grammar : Set₁ where
   field
@@ -46,7 +46,7 @@ record Grammar : Set₁ where
   infixr 5 _∷_
   data Subexp V where
     var : ∀ {K} → Var V K → VExpression V K
-    app : ∀ {AA} {K} → Constructor (SK AA K) → ListAbs V AA → Expression V K
+    app : ∀ {AA} {K} → Con (SK AA K) → ListAbs V AA → Expression V K
     [] : ListAbs V []
     _∷_ : ∀ {A} {AA} → Abs V A → ListAbs V AA → ListAbs V (A ∷ AA)
 \end{code}
@@ -75,6 +75,6 @@ $R\, c\, MM\, N$ iff $c[MM] \rhd N$.
 
 \begin{code}
   Reduction : Set₁
-  Reduction = ∀ {V} {AA} {K} → Constructor (SK AA K) → ListAbs V AA → Expression V K → Set
+  Reduction = ∀ {V} {AA} {K} → Con (SK AA K) → ListAbs V AA → Expression V K → Set
 \end{code}
 }
