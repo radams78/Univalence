@@ -190,8 +190,8 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
 
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{ap-comp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{E} \AgdaSymbol{:} \AgdaDatatype{Subexpression} \AgdaBound{U} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{→} \<[60]%
-\>[60]\<%
+\>[2]\AgdaFunction{ap-comp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{E} \AgdaSymbol{:} \AgdaDatatype{Subexp} \AgdaBound{U} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{→} \<[53]%
+\>[53]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaFunction{ap} \AgdaBound{H} \AgdaSymbol{(}\AgdaField{\_∘\_} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaBound{σ} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{E} \AgdaDatatype{≡} \AgdaFunction{ap} \AgdaBound{F} \AgdaBound{σ} \AgdaSymbol{(}\AgdaFunction{ap} \AgdaBound{G} \AgdaBound{ρ} \AgdaBound{E}\AgdaSymbol{)}\<%
@@ -258,7 +258,7 @@ then $E [\rho] [\sigma] \equiv E [\rho'] [\sigma']$ for every expression $E$.
 \>[2]\AgdaFunction{\_∼op\_} \AgdaBound{H} \AgdaSymbol{(}\AgdaField{Composition.\_∘\_} \AgdaBound{comp₁} \AgdaBound{σ} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaField{Composition.\_∘\_} \AgdaBound{comp₂} \AgdaBound{σ'} \AgdaBound{ρ'}\AgdaSymbol{)} \AgdaSymbol{→}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{E} \AgdaSymbol{:} \AgdaDatatype{Subexpression} \AgdaBound{U} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→}\<%
+\>[2]\AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{E} \AgdaSymbol{:} \AgdaDatatype{Subexp} \AgdaBound{U} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{ap} \AgdaBound{F} \AgdaBound{σ} \AgdaSymbol{(}\AgdaFunction{ap} \AgdaBound{G} \AgdaBound{ρ} \AgdaBound{E}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaFunction{ap} \AgdaBound{F'} \AgdaBound{σ'} \AgdaSymbol{(}\AgdaFunction{ap} \AgdaBound{G'} \AgdaBound{ρ'} \AgdaBound{E}\AgdaSymbol{)}\<%
@@ -315,10 +315,10 @@ $\uparrow_G(E)[F \uparrow] \equiv \uparrow_{F'}(\sigma(E))$ for every subexpress
 \>[2]\AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{F} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaSymbol{(∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{E} \AgdaSymbol{:} \AgdaDatatype{Subexpression} \AgdaBound{V} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{ap} \AgdaBound{F} \AgdaSymbol{(}\AgdaFunction{up} \AgdaBound{F} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\})} \AgdaBound{E} \AgdaDatatype{≡} \AgdaFunction{ap} \AgdaBound{F'} \AgdaSymbol{(}\AgdaFunction{up} \AgdaBound{F'} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\})} \AgdaBound{E}\AgdaSymbol{)} \AgdaSymbol{→}\<%
+\>[2]\AgdaSymbol{(∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{E} \AgdaSymbol{:} \AgdaDatatype{Subexp} \AgdaBound{V} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{ap} \AgdaBound{F} \AgdaSymbol{(}\AgdaFunction{up} \AgdaBound{F} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\})} \AgdaBound{E} \AgdaDatatype{≡} \AgdaFunction{ap} \AgdaBound{F'} \AgdaSymbol{(}\AgdaFunction{up} \AgdaBound{F'} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\})} \AgdaBound{E}\AgdaSymbol{)} \AgdaSymbol{→}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{E} \AgdaSymbol{:} \AgdaDatatype{Subexpression} \AgdaBound{U} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{ap} \AgdaBound{F} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{F} \AgdaBound{L} \AgdaBound{σ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{ap} \AgdaBound{G} \AgdaSymbol{(}\AgdaFunction{up} \AgdaBound{G}\AgdaSymbol{)} \AgdaBound{E}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaFunction{ap} \AgdaBound{F'} \AgdaSymbol{(}\AgdaFunction{up} \AgdaBound{F'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{ap} \AgdaBound{F} \AgdaBound{σ} \AgdaBound{E}\AgdaSymbol{)}\<%
+\>[2]\AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{E} \AgdaSymbol{:} \AgdaDatatype{Subexp} \AgdaBound{U} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{ap} \AgdaBound{F} \AgdaSymbol{(}\AgdaFunction{liftOp} \AgdaBound{F} \AgdaBound{L} \AgdaBound{σ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{ap} \AgdaBound{G} \AgdaSymbol{(}\AgdaFunction{up} \AgdaBound{G}\AgdaSymbol{)} \AgdaBound{E}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaFunction{ap} \AgdaBound{F'} \AgdaSymbol{(}\AgdaFunction{up} \AgdaBound{F'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{ap} \AgdaBound{F} \AgdaBound{σ} \AgdaBound{E}\AgdaSymbol{)}\<%
 \\
 \>\AgdaFunction{liftOp-up-mixed} \AgdaSymbol{\{}\AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{G}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{H}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{F'}\AgdaSymbol{\}} \AgdaBound{comp₁} \AgdaBound{comp₂} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ}\AgdaSymbol{\}} \AgdaBound{hyp} \AgdaSymbol{\{}\AgdaArgument{E} \AgdaSymbol{=} \AgdaBound{E}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{ap-comp-sim} \AgdaBound{comp₁} \AgdaBound{comp₂} \<[107]%
 \>[107]\<%

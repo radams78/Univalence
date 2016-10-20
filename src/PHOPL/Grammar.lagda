@@ -89,19 +89,19 @@ module PHOPLgrammar where
 
   data PHOPLcon : ConKind → Set where
     -ty : Type → PHOPLcon (-nvType ✧)
-    -appProof : PHOPLcon (-vProof ✧ ⟶ -vProof ✧ ⟶ -vProof ✧)
-    -lamProof : PHOPLcon (-vTerm ✧ ⟶ (-Proof ⟶ -vProof ✧) ⟶ -vProof ✧)
     -bot : PHOPLcon (-vTerm ✧)
     -imp : PHOPLcon (-vTerm ✧ ⟶ -vTerm ✧ ⟶ -vTerm ✧)
-    -appTerm : PHOPLcon (-vTerm ✧ ⟶ -vTerm ✧ ⟶ -vTerm ✧)
     -lamTerm : Type → PHOPLcon ((-Term ⟶ -vTerm ✧) ⟶ -vTerm ✧)
+    -appTerm : PHOPLcon (-vTerm ✧ ⟶ -vTerm ✧ ⟶ -vTerm ✧)
+    -lamProof : PHOPLcon (-vTerm ✧ ⟶ (-Proof ⟶ -vProof ✧) ⟶ -vProof ✧)
+    -appProof : PHOPLcon (-vProof ✧ ⟶ -vProof ✧ ⟶ -vProof ✧)
+    -plus : PHOPLcon (-vPath ✧ ⟶ -vProof ✧)
+    -minus : PHOPLcon (-vPath ✧ ⟶ -vProof ✧)
     -ref : PHOPLcon (-vTerm ✧ ⟶ -vPath ✧)
     -imp* : PHOPLcon (-vPath ✧ ⟶ -vPath ✧ ⟶ -vPath ✧)
     -univ : PHOPLcon (-vTerm ✧ ⟶ -vTerm ✧ ⟶ -vProof ✧ ⟶ -vProof ✧ ⟶ -vPath ✧)
     -lll : Type → PHOPLcon ((-Term ⟶ -Term ⟶ -Path ⟶ -vPath ✧) ⟶ -vPath ✧)
     -app* : PHOPLcon (-vTerm ✧ ⟶ -vTerm ✧ ⟶ -vPath ✧ ⟶ -vPath ✧ ⟶ -vPath ✧)
-    -plus : PHOPLcon (-vPath ✧ ⟶ -vProof ✧)
-    -minus : PHOPLcon (-vPath ✧ ⟶ -vProof ✧)
     -eq : Type → PHOPLcon (-vTerm ✧ ⟶ -vTerm ✧ ⟶ -nvEq ✧)
 
   PHOPLparent : PHOPLVarKind → ExpKind
@@ -113,9 +113,12 @@ module PHOPLgrammar where
   PHOPL = record { 
     taxonomy = PHOPLTaxonomy;
     isGrammar = record { 
-      Constructor = PHOPLcon; 
+      Con = PHOPLcon; 
       parent = PHOPLparent } }
+\end{code}
 
+\AgdaHide{
+\begin{code}
 open PHOPLgrammar public
 open import Grammar PHOPL public
 
@@ -131,11 +134,8 @@ Path V = Expression V -vPath
 Equation : Alphabet → Set
 Equation V = Expression V -nvEq
 
-appP : ∀ {V} → Proof V → Proof V → Proof V
-appP δ ε = app -appProof (δ ∷ ε ∷ [])
-
-ΛP : ∀ {V} → Term V → Proof (V , -Proof) → Proof V
-ΛP φ δ = app -lamProof (φ ∷ δ ∷ [])
+ty : ∀ {V} → Type → Expression V (nonVarKind -Type)
+ty A = app (-ty A) []
 
 ⊥ : ∀ {V} → Term V
 ⊥ = app -bot []
@@ -144,14 +144,23 @@ infix 65 _⊃_
 _⊃_ : ∀ {V} → Term V → Term V → Term V
 φ ⊃ ψ = app -imp (φ ∷ ψ ∷ [])
 
+ΛT : ∀ {V} → Type → Term (V , -Term) → Term V
+ΛT A M = app (-lamTerm A) (M ∷ [])
+
 appT : ∀ {V} → Term V → Term V → Term V
 appT M N = app -appTerm (M ∷ N ∷ [])
 
-appT-injl : ∀ {V} {M M' N N' : Term V} → appT M N ≡ appT M' N' → M ≡ M'
-appT-injl refl = refl
+ΛP : ∀ {V} → Term V → Proof (V , -Proof) → Proof V
+ΛP φ δ = app -lamProof (φ ∷ δ ∷ [])
 
-ΛT : ∀ {V} → Type → Term (V , -Term) → Term V
-ΛT A M = app (-lamTerm A) (M ∷ [])
+appP : ∀ {V} → Proof V → Proof V → Proof V
+appP δ ε = app -appProof (δ ∷ ε ∷ [])
+
+plus : ∀ {V} → Path V → Proof V
+plus P = app -plus (P ∷ [])
+
+minus : ∀ {V} → Path V → Proof V
+minus P = app -minus (P ∷ [])
 
 reff : ∀ {V} → Term V → Path V
 reff M = app -ref (M ∷ [])
@@ -169,20 +178,30 @@ univ φ ψ P Q = app -univ (φ ∷ ψ ∷ P ∷ Q ∷ [])
 app* : ∀ {V} → Term V → Term V → Path V → Path V → Path V
 app* M N P Q = app -app* (M ∷ N ∷ P ∷ Q ∷ [])
 
-plus : ∀ {V} → Path V → Proof V
-plus P = app -plus (P ∷ [])
+infix 60 _≡〈_〉_
+_≡〈_〉_ : ∀ {V} → Term V → Type → Term V → Equation V
+M ≡〈 A 〉 N = app (-eq A) (M ∷ N ∷ [])
 
-minus : ∀ {V} → Path V → Proof V
-minus P = app -minus (P ∷ [])
+infixl 59 _,T_
+_,T_ : ∀ {V} → Context V → Type → Context (V , -Term)
+Γ ,T A = Γ , ty A
 
-ty : ∀ {V} → Type → Expression V (nonVarKind -Type)
-ty A = app (-ty A) []
+infixl 59 _,P_
+_,P_ : ∀ {V} → Context V → Term V → Context (V , -Proof)
+_,P_ = _,_
+
+infixl 59 _,E_
+_,E_ : ∀ {V} → Context V → Equation V → Context (V , -Path)
+_,E_ = _,_
 
 yt : ∀ {V} → Expression V (nonVarKind -Type) → Type
 yt (app (-ty A) []) = A
 
 ty-yt : ∀ {V} {A : Expression V (nonVarKind -Type)} → ty (yt A) ≡ A
-ty-yt {A = app (-ty _) []} = refl
+ty-yt {A = app (-ty _) []} = refl --TODO Remove?
+
+appT-injl : ∀ {V} {M M' N N' : Term V} → appT M N ≡ appT M' N' → M ≡ M'
+appT-injl refl = refl
 
 Pi : ∀ {n} → snocVec Type n → Type → Type
 Pi [] B = B
@@ -200,30 +219,11 @@ APP* : ∀ {V n} → snocVec (Term V) n → snocVec (Term V) n → Path V → sn
 APP* [] [] P [] = P
 APP* (MM snoc M) (NN snoc N) P (QQ snoc Q) = app* M N (APP* MM NN P QQ) Q
 
-infix 60 _≡〈_〉_
-_≡〈_〉_ : ∀ {V} → Term V → Type → Term V → Equation V
-M ≡〈 A 〉 N = app (-eq A) (M ∷ N ∷ [])
-
-infixl 59 _,T_
-_,T_ : ∀ {V} → Context V → Type → Context (V , -Term)
-Γ ,T A = Γ , ty A
-
-infixl 59 _,P_
-_,P_ : ∀ {V} → Context V → Term V → Context (V , -Proof)
-_,P_ = _,_
-
-infixl 59 _,E_
-_,E_ : ∀ {V} → Context V → Equation V → Context (V , -Path)
-_,E_ = _,_
-\end{code}
-
-\AgdaHide{
-\begin{code}
 typeof' : ∀ {V} → Var V -Term → Context V → Type
 typeof' x Γ  = yt (typeof x Γ)
 
 typeof-typeof' : ∀ {V} {x : Var V -Term} {Γ} → typeof x Γ ≡ ty (typeof' x Γ)
-typeof-typeof' = sym ty-yt
+typeof-typeof' = sym ty-yt -- TODO Remove?
 
 addpath : ∀ {V} → Context V → Type → Context (V , -Term , -Term , -Path)
 addpath Γ A = Γ ,T A ,T A ,E var x₁ ≡〈 A 〉 var x₀
