@@ -1,7 +1,7 @@
 \AgdaHide{
 \begin{code}
 import Relation.Binary.PropositionalEquality.Core
-open import Prelims.RTClosure
+open import Prelims.Closure
 open import Relation.Binary hiding (_⇒_)
 open import Grammar.Base
 \end{code}
@@ -40,11 +40,8 @@ data _⇒_ {V} : ∀ {K} {C} → Subexp V K C → Subexp V K C → Set where
   appr : ∀ {A AA E F F'} → 
     F ⇒ F' → _∷_ {V} {A} {AA} E F ⇒ E ∷ F'
 
-data _↠⁺_ {V C K} (E : Subexp V C K) : Subexp V C K → Set where
-  osr-red+ : ∀ {F} → 
-    E ⇒ F → E ↠⁺ F
-  trans-red+ : ∀ {F} {G} → 
-    E ↠⁺ F → F ↠⁺ G → E ↠⁺ G
+_↠⁺_ : ∀ {V C K} → Relation (Subexp V C K)
+_↠⁺_ = TClose _⇒_
 
 _↠_ : ∀ {V C K} → Relation (Subexp V C K)
 _↠_ = RTClose _⇒_
@@ -57,7 +54,7 @@ RED V C K = record {
   isPreorder = record { 
     isEquivalence = Relation.Binary.PropositionalEquality.Core.isEquivalence ; 
     reflexive = λ { {M} .{M} refl → ref } ; 
-    trans = λ x → Prelims.RTClosure.trans x } }
+    trans = λ x → Prelims.Closure.trans x } }
 
 data _≃_ {V C K} : Subexp V C K → Subexp V C K → Set 
   where
@@ -129,9 +126,9 @@ respects-red+ : ∀ {U} {V} {K} {C} {L} {D} {f} →
 
 \AgdaHide{
 \begin{code}
-respects-red+ hyp (osr-red+ E→F) = osr-red+ (hyp E→F)
-respects-red+ hyp (trans-red+ E↠F F↠G) = 
-  trans-red+ (respects-red+ hyp E↠F) (respects-red+ hyp F↠G)
+respects-red+ hyp (inc E→F) = inc (hyp E→F)
+respects-red+ hyp (trans E↠F F↠G) = 
+  Prelims.Closure.trans (respects-red+ hyp E↠F) (respects-red+ hyp F↠G)
 \end{code}
 }
 
@@ -145,7 +142,7 @@ respects-red : ∀ {U} {V} {K} {C} {L} {D} {f} →
 respects-red hyp (inc E→F) = inc (hyp E→F)
 respects-red hyp ref = ref
 respects-red hyp (trans E↠F F↠G) = 
-  Prelims.RTClosure.trans (respects-red hyp E↠F) (respects-red hyp F↠G)
+  Prelims.Closure.trans (respects-red hyp E↠F) (respects-red hyp F↠G)
 \end{code}
 }
 
