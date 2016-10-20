@@ -32,23 +32,23 @@ record Grammar : Set₁ where
 
 %<*Expression>
 \begin{code}
-  data Subexpression (V : Alphabet) : ∀ C → Kind C → Set
+  data Subexp (V : Alphabet) : ∀ C → Kind C → Set
   Expression : Alphabet → ExpKind → Set
   VExpression : Alphabet → VarKind → Set
-  Abstraction : Alphabet → AbsKind → Set
+  Abs : Alphabet → AbsKind → Set
   ListAbs : Alphabet → List AbsKind → Set
 
-  Expression V K = Subexpression V -Expression K
+  Expression V K = Subexp V -Expression K
   VExpression V K = Expression V (varKind K)
-  Abstraction V (SK AA K) = Expression (extend V AA) K
-  ListAbs V AA = Subexpression V -ListAbs AA
+  Abs V (SK AA K) = Expression (extend V AA) K
+  ListAbs V AA = Subexp V -ListAbs AA
 
   infixr 5 _∷_
-  data Subexpression V where
+  data Subexp V where
     var : ∀ {K} → Var V K → VExpression V K
     app : ∀ {AA} {K} → Constructor (SK AA K) → ListAbs V AA → Expression V K
     [] : ListAbs V []
-    _∷_ : ∀ {A} {AA} → Abstraction V A → ListAbs V AA → ListAbs V (A ∷ AA)
+    _∷_ : ∀ {A} {AA} → Abs V A → ListAbs V AA → ListAbs V (A ∷ AA)
 \end{code}
 %</Expression>
 

@@ -44,7 +44,7 @@ the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \c
 This allows us to define the action of \emph{application} $E[\sigma]$:
 
 \begin{code}
-  ap : ∀ {U} {V} {C} {K} → Op U V → Subexpression U C K → Subexpression V C K
+  ap : ∀ {U} {V} {C} {K} → Op U V → Subexp U C K → Subexp V C K
   ap ρ (var x) = apV ρ x
   ap ρ (app c EE) = app c (ap ρ EE)
   ap _ [] = []
@@ -55,7 +55,7 @@ We prove that application respects $\sim$.
 
 \begin{code}
   ap-congl : ∀ {U} {V} {C} {K} 
-    {ρ σ : Op U V} → ρ ∼op σ → ∀ (E : Subexpression U C K) →
+    {ρ σ : Op U V} → ρ ∼op σ → ∀ (E : Subexp U C K) →
     ap ρ E ≡ ap σ E
 \end{code}
 
@@ -68,15 +68,15 @@ We prove that application respects $\sim$.
     cong₂ _∷_ (ap-congl (liftsOp-cong AA ρ-is-σ) E) (ap-congl ρ-is-σ F)
 
   ap-congr : ∀ {U} {V} {C} {K}
-    {σ : Op U V} {E F : Subexpression U C K} →
+    {σ : Op U V} {E F : Subexp U C K} →
     E ≡ F → ap σ E ≡ ap σ F
   ap-congr {σ = σ} = Prelims.cong (ap σ)
 
   ap-cong : ∀ {U} {V} {C} {K}
-    {ρ σ : Op U V} {M N : Subexpression U C K} →
+    {ρ σ : Op U V} {M N : Subexp U C K} →
     ρ ∼op σ → M ≡ N → ap ρ M ≡ ap σ N
   ap-cong {U} {V} {C} {K} =
-    cong2 {A = OP U V} {B = setoid (Subexpression U C K)} {C = setoid (Subexpression V C K)} 
+    cong2 {A = OP U V} {B = setoid (Subexp U C K)} {C = setoid (Subexp V C K)} 
     ap ap-congl (λ _ → ap-congr)
 \end{code}
 }

@@ -37,6 +37,6 @@ Then, given an expression $E$ of kind $K$ over $U$, we write $E[\sigma]$ for the
 \begin{code}    
 infix 70 _⟦_⟧
 _⟦_⟧ : ∀ {U} {V} {C} {K} → 
-  Subexpression U C K → Sub U V → Subexpression V C K
+  Subexp U C K → Sub U V → Subexp V C K
 E ⟦ σ ⟧ = Lifting.ap LIFTSUB σ E
 \end{code}

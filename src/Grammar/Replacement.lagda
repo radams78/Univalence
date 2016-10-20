@@ -70,7 +70,7 @@ Rep∶LF = record {
     liftOp-↑ = λ _ → refl } }
 
 infix 70 _〈_〉
-_〈_〉 : ∀ {U} {V} {C} {K} → Subexpression U C K → Rep U V → Subexpression V C K
+_〈_〉 : ∀ {U} {V} {C} {K} → Subexp U C K → Rep U V → Subexp V C K
 E 〈 ρ 〉 = LiftFamily.ap Rep∶LF ρ E
 
 infixl 75 _•R_
@@ -106,22 +106,22 @@ REP = record {
 •R-congr : ∀ {U V W} {ρ₁ : Rep V W} {ρ₂ ρ₃ : Rep U V} → ρ₂ ∼R ρ₃ → ρ₁ •R ρ₂ ∼R ρ₁ •R ρ₃
 •R-congr {ρ₁ = ρ₁} = OpFamily.comp-congr REP ρ₁
 
-rep-congr : ∀ {U V C K} {ρ ρ' : Rep U V} → ρ ∼R ρ' → ∀ (E : Subexpression U C K) → E 〈 ρ 〉 ≡ E 〈 ρ' 〉
+rep-congr : ∀ {U V C K} {ρ ρ' : Rep U V} → ρ ∼R ρ' → ∀ (E : Subexp U C K) → E 〈 ρ 〉 ≡ E 〈 ρ' 〉
 rep-congr = OpFamily.ap-congl REP
 
-rep-congl : ∀ {U V C K} {ρ : Rep U V} {E F : Subexpression U C K} → E ≡ F → E 〈 ρ 〉 ≡ F 〈 ρ 〉
+rep-congl : ∀ {U V C K} {ρ : Rep U V} {E F : Subexp U C K} → E ≡ F → E 〈 ρ 〉 ≡ F 〈 ρ 〉
 rep-congl = OpFamily.ap-congr REP
 
-ap-idRep : ∀ {V C K} {E : Subexpression V C K} → E 〈 idRep V 〉 ≡ E
+ap-idRep : ∀ {V C K} {E : Subexp V C K} → E 〈 idRep V 〉 ≡ E
 ap-idRep = OpFamily.ap-idOp REP
 
-rep-comp : ∀ {U V W C K} (E : Subexpression U C K) {σ : Rep V W} {ρ} → E 〈 σ •R ρ 〉 ≡ E 〈 ρ 〉 〈 σ 〉
+rep-comp : ∀ {U V W C K} (E : Subexp U C K) {σ : Rep V W} {ρ} → E 〈 σ •R ρ 〉 ≡ E 〈 ρ 〉 〈 σ 〉
 rep-comp = OpFamily.ap-comp REP
 
 liftRep-idRep : ∀ {V K} → liftRep K (idRep V) ∼R idRep (V , K)
 liftRep-idRep = OpFamily.liftOp-idOp REP
 
-liftRep-upRep : ∀ {U V C K L} {σ : Rep U V} (E : Subexpression U C K) → E 〈 upRep 〉 〈 liftRep L σ 〉 ≡ E 〈 σ 〉 〈 upRep 〉
+liftRep-upRep : ∀ {U V C K L} {σ : Rep U V} (E : Subexp U C K) → E 〈 upRep 〉 〈 liftRep L σ 〉 ≡ E 〈 σ 〉 〈 upRep 〉
 liftRep-upRep = OpFamily.liftOp-up REP
 
 liftRep-comp₄ : ∀ {U} {V1} {V2} {V3} {V4} {K} {ρ1 : Rep U V1} {ρ2 : Rep V1 V2} {ρ3 : Rep V2 V3} {ρ4 : Rep V3 V4} →
@@ -140,7 +140,7 @@ liftRep-comp₄ {U} {V1} {V2} {V3} {V4} {K} {ρ1} {ρ2} {ρ3} {ρ4} =
 
 rep-comp₄ : ∀ {U} {V1} {V2} {V3} {V4} 
             {ρ1 : Rep U V1} {ρ2 : Rep V1 V2} {ρ3 : Rep V2 V3} {ρ4 : Rep V3 V4} 
-            {C} {K} (E : Subexpression U C K) →
+            {C} {K} (E : Subexp U C K) →
             E 〈 ρ4 •R ρ3 •R ρ2 •R ρ1 〉 ≡ E 〈 ρ1 〉 〈 ρ2 〉 〈 ρ3 〉 〈 ρ4 〉
 rep-comp₄ {U} {V1} {V2} {V3} {V4} {ρ1} {ρ2} {ρ3} {ρ4} {C} {K} E = 
   let open ≡-Reasoning in 
@@ -160,7 +160,7 @@ We write $E \uparrow$ for $E \langle \uparrow \rangle$.
 
 \begin{code}
 infixl 70 _⇑
-_⇑ : ∀ {V} {K} {C} {L} → Subexpression V C L → Subexpression (V , K) C L
+_⇑ : ∀ {V} {K} {C} {L} → Subexp V C L → Subexp (V , K) C L
 E ⇑ = E 〈 upRep 〉
 \end{code}
 
@@ -181,7 +181,7 @@ magic-unique {V} {ρ} ()
 
 \begin{code}
 magic-unique' : ∀ {U} {V} {C} {K}
-  (E : Subexpression ∅ C K) {ρ : Rep U V} → 
+  (E : Subexp ∅ C K) {ρ : Rep U V} → 
   E 〈 magic 〉 〈 ρ 〉 ≡ E 〈 magic 〉
 \end{code}
 
@@ -196,7 +196,7 @@ magic-unique' E {ρ} = let open ≡-Reasoning in
     E 〈 magic 〉
   ∎
 
-liftRep-upRep₂ : ∀ {U} {V} {C} {K} {L} {M} (E : Subexpression U C M) {ρ : Rep U V} → E ⇑ ⇑ 〈 liftRep K (liftRep L ρ) 〉 ≡ E 〈 ρ 〉 ⇑ ⇑
+liftRep-upRep₂ : ∀ {U} {V} {C} {K} {L} {M} (E : Subexp U C M) {ρ : Rep U V} → E ⇑ ⇑ 〈 liftRep K (liftRep L ρ) 〉 ≡ E 〈 ρ 〉 ⇑ ⇑
 liftRep-upRep₂ {U} {V} {C} {K} {L} {M} E {ρ} = let open ≡-Reasoning in 
   begin
     E ⇑ ⇑ 〈 liftRep K (liftRep L ρ) 〉
@@ -206,7 +206,7 @@ liftRep-upRep₂ {U} {V} {C} {K} {L} {M} E {ρ} = let open ≡-Reasoning in
     E 〈 ρ 〉 ⇑ ⇑
   ∎
 
-liftRep-upRep₃ : ∀ {U} {V} {C} {K} {L} {M} {N} (E : Subexpression U C N) {ρ : Rep U V} → 
+liftRep-upRep₃ : ∀ {U} {V} {C} {K} {L} {M} {N} (E : Subexp U C N) {ρ : Rep U V} → 
   E ⇑ ⇑ ⇑ 〈 liftRep K (liftRep L (liftRep M ρ)) 〉 ≡ E 〈 ρ 〉 ⇑ ⇑ ⇑
 liftRep-upRep₃ {U} {V} {C} {K} {L} {M} E {ρ} = let open ≡-Reasoning in 
   begin

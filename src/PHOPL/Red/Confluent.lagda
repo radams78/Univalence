@@ -110,7 +110,14 @@ pre-confluent {V} (univ⊃*univ {φ = φ} {φ'} {ψ} {ψ'} {δ} {δ'} {ε} {ε'}
   (λ δ'' δ⇒δ'' → _ ,p univ⊃*univ ,p univ-red ref ref ref (osr-red (app (appr (appl (app (appr (appl (app (appr (appl (app (appr (appl (app (appl (osr-rep (osr-rep δ⇒δ'')))))))))))))))))) 
   (λ ε'' ε⇒ε'' → _ ,p univ⊃*univ ,p univ-red ref ref (osr-red (app (appr (appl (app (appr (appl (app (appr (appl (app (appr (appl (app (appl (osr-rep (osr-rep ε⇒ε''))))))))))))))))) ref) 
   univδε⇒P
-pre-confluent univ⊃*univ (appr (appl E⇒E')) = {!!}
+pre-confluent {V} (univ⊃*univ {φ = φ} {φ'} {ψ} {ψ'} {δ} {δ'} {ε} {ε'}) (appr (appl univδε⇒P)) = univ-osrE
+                                                                                              {C =
+                                                                                               λ P →
+                                                                                                 Σ-syntax (Path V)
+                                                                                                 (λ Q →
+                                                                                                    R -imp* (univ φ ψ δ ε ∷ P ∷ []) Q ×
+                                                                                                    (uu-redex φ φ' ψ ψ' δ δ' ε ε' ↠ Q))}
+              (λ φ'' φ'⇒φ'' → _ ,p univ⊃*univ ,p univ-red (osr-red (app (appr (appl φ'⇒φ'')))) ref (osr-red (app (appl (app (appr (appl φ'⇒φ'')))))) {!!}) {!!} {!!} {!!} univδε⇒P
 pre-confluent univ⊃*univ (appr (appr E⇒E')) = {!!}
 pre-confluent ref⊃*ref E⇒E' = {!!}
 pre-confluent refref E⇒E' = {!!}

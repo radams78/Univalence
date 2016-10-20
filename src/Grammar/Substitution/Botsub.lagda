@@ -59,7 +59,7 @@ botSub-up' {F} {V} {K} {E} comp x = let open ≡-Reasoning in
     var x
   ∎
 
-botSub-up : ∀ {F} {V} {K} {C} {L} {E : Expression V (varKind K)} (comp : Composition SubLF F SubLF) {E' : Subexpression V C L} →
+botSub-up : ∀ {F} {V} {K} {C} {L} {E : Expression V (varKind K)} (comp : Composition SubLF F SubLF) {E' : Subexp V C L} →
   ap F (up F) E' ⟦ x₀:= E ⟧ ≡ E'
 botSub-up {F} {V} {K} {C} {L} {E} comp {E'} = let open ≡-Reasoning in
   begin
@@ -105,13 +105,13 @@ comp-botSub' {F} {U} {V} {K} {E} comp₁ comp₂ {σ} (↑ x) = let open ≡-Rea
   ∎
 
 comp-botSub : ∀ {F} {U} {V} {K} {C} {L} 
-  {E : Expression U (varKind K)} {E' : Subexpression (U , K) C L} {σ : Op F U V} →
+  {E : Expression U (varKind K)} {E' : Subexp (U , K) C L} {σ : Op F U V} →
   Composition F SubLF SubLF →
   Composition SubLF F SubLF →
   ap F σ (E' ⟦ x₀:= E ⟧) ≡ (ap F (liftOp F K σ) E') ⟦ x₀:= (ap F σ E) ⟧
 comp-botSub {E' = E'} comp₁ comp₂ = ap-comp-sim comp₁ comp₂ (comp-botSub' comp₁ comp₂) E'
 
-compRS-botSub : ∀ {U} {V} {C} {K} {L} (E : Subexpression (U , K) C L) {F : Expression U (varKind K)} {ρ : Rep U V} →
+compRS-botSub : ∀ {U} {V} {C} {K} {L} (E : Subexp (U , K) C L) {F : Expression U (varKind K)} {ρ : Rep U V} →
   E ⟦ x₀:= F ⟧ 〈 ρ 〉 ≡ E 〈 liftRep K ρ 〉 ⟦ x₀:= (F 〈 ρ 〉) ⟧
 --TODO Common pattern with liftRep-botSub₃
 \end{code}
@@ -124,7 +124,7 @@ compRS-botSub E = comp-botSub {E' = E} COMPRS COMPSR
 
 \begin{code}
 comp-botSub'' : ∀ {U} {V} {C} {K} {L} 
-  {E : Expression U (varKind K)} {σ : Sub U V} (F : Subexpression (U , K) C L) →
+  {E : Expression U (varKind K)} {σ : Sub U V} (F : Subexp (U , K) C L) →
    F ⟦ x₀:= E ⟧ ⟦ σ ⟧ ≡ F ⟦ liftSub K σ ⟧ ⟦ x₀:= (E ⟦ σ ⟧) ⟧
 --TODO Better name
 \end{code}
@@ -137,7 +137,7 @@ comp-botSub'' F = let COMP = OpFamily.comp SUB in comp-botSub {E' = F} COMP COMP
 
 \begin{code}
 botSub-upRep : ∀ {U} {C} {K} {L}
-  (E : Subexpression U C K) {F : Expression U (varKind L)} → 
+  (E : Subexp U C K) {F : Expression U (varKind L)} → 
   E 〈 upRep 〉 ⟦ x₀:= F ⟧ ≡ E
 \end{code}
 

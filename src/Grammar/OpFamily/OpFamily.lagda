@@ -30,7 +30,7 @@ record OpFamily : Set₂ where
 
 \begin{code}
   liftOp-up : ∀ {U} {V} {C} {K} {L}
-    {σ : Op U V} (E : Subexpression U C K) →
+    {σ : Op U V} (E : Subexp U C K) →
     ap (liftOp L σ) (ap up E) ≡ ap up (ap σ E)
 \end{code}
 

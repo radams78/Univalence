@@ -98,7 +98,7 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
 }
 
 \begin{code}
-  ap-comp : ∀ {U V W C K} (E : Subexpression U C K) {σ ρ} → 
+  ap-comp : ∀ {U V W C K} (E : Subexp U C K) {σ ρ} → 
     ap H (_∘_ {U} {V} {W} σ ρ) E ≡ ap F σ (ap G ρ E)
 \end{code}
 
@@ -130,7 +130,7 @@ then $E [\rho] [\sigma] \equiv E [\rho'] [\sigma']$ for every expression $E$.
 ap-comp-sim : ∀ {F F' G G' H} (comp₁ : Composition F G H) (comp₂ : Composition F' G' H) {U} {V} {V'} {W}
   {σ : Op F V W} {ρ : Op G U V} {σ' : Op F' V' W} {ρ' : Op G' U V'} →
   _∼op_ H (Composition._∘_ comp₁ σ ρ) (Composition._∘_ comp₂ σ' ρ') →
-  ∀ {C} {K} (E : Subexpression U C K) →
+  ∀ {C} {K} (E : Subexp U C K) →
   ap F σ (ap G ρ E) ≡ ap F' σ' (ap G' ρ' E)
 \end{code}
 
@@ -160,8 +160,8 @@ $\uparrow_G(E)[F \uparrow] \equiv \uparrow_{F'}(\sigma(E))$ for every subexpress
 \begin{code}
 liftOp-up-mixed : ∀ {F} {G} {H} {F'} (comp₁ : Composition F G H) (comp₂ : Composition F' F H)
   {U} {V} {C} {K} {L} {σ : Op F U V} →
-  (∀ {V} {C} {K} {L} {E : Subexpression V C K} → ap F (up F {V} {L}) E ≡ ap F' (up F' {V} {L}) E) →
-  ∀ {E : Subexpression U C K} → ap F (liftOp F L σ) (ap G (up G) E) ≡ ap F' (up F') (ap F σ E)
+  (∀ {V} {C} {K} {L} {E : Subexp V C K} → ap F (up F {V} {L}) E ≡ ap F' (up F' {V} {L}) E) →
+  ∀ {E : Subexp U C K} → ap F (liftOp F L σ) (ap G (up G) E) ≡ ap F' (up F') (ap F σ E)
 liftOp-up-mixed {F} {G} {H} {F'} comp₁ comp₂ {U} {V} {C} {K} {L} {σ} hyp {E = E} = ap-comp-sim comp₁ comp₂ 
   (λ x → let open ≡-Reasoning in 
   begin

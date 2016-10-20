@@ -144,6 +144,14 @@ postulate univ-red : ∀ {V} {φ φ' ψ ψ' : Term V} {δ} {δ'} {ε} {ε'} →
 
 postulate ΛP-red : ∀ {V} {φ φ' : Term V} {δ} {δ'} → φ ↠ φ' → δ ↠ δ' → ΛP φ δ ↠ ΛP φ' δ'
 
+⊃-red : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ↠ φ' → ψ ↠ ψ' → φ ⊃ ψ ↠ φ' ⊃ ψ'
+⊃-red {V} {φ} {φ'} {ψ} {ψ'} φ↠φ' ψ↠ψ' = app-red {!!}
+
+uu-redex-red : ∀ {V} {φ φ₁ φ' φ'₁ ψ ψ₁ ψ' ψ'₁ : Term V} {δ δ₁ δ' δ'₁ ε ε₁ ε' ε'₁} →
+  φ ↠ φ₁ → φ' ↠ φ'₁ → ψ ↠ ψ₁ → ψ' ↠ ψ'₁ → δ ↠ δ₁ → δ' ↠ δ'₁ → ε ↠ ε₁ → ε' ↠ ε'₁ →
+  uu-redex φ φ' ψ ψ' δ δ' ε ε' ↠ uu-redex φ₁ φ'₁ ψ₁ ψ'₁ δ₁ δ'₁ ε₁ ε'₁
+uu-redex-red φ⇒φ₁ φ'⇒φ'₁ ψ⇒ψ₁ ψ'⇒ψ'₁ δ⇒δ₁ δ'⇒δ'₁ ε⇒ε₁ ε'⇒ε'₁ = 
+  univ-red {!⊃-red!} {!!} {!!} {!!}
 
 {-pre-Confluent βT (appl (redex ()))
 pre-Confluent βT (appl (app (appl M⇒M'))) = _ ,p βT ,p red-subl (osr-red M⇒M')

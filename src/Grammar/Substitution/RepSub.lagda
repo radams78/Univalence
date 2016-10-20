@@ -81,7 +81,7 @@ liftsOp-is-liftsOp {U} {V} {ρ} {K ∷ A} = let open EqReasoning (OP _ _) in
 }
 
 \begin{code}
-rep-is-sub : ∀ {U} {V} {K} {C} (E : Subexpression U K C) {ρ : Rep U V} → 
+rep-is-sub : ∀ {U} {V} {K} {C} (E : Subexp U K C) {ρ : Rep U V} → 
   E 〈 ρ 〉 ≡ E ⟦ rep2sub ρ ⟧
 \end{code}
 
@@ -91,7 +91,7 @@ rep-is-sub (var _) = refl
 rep-is-sub (app c E) = cong (app c) (rep-is-sub E)
 rep-is-sub [] = refl
 rep-is-sub {U} {V} (_∷_ {A = SK A _} E F) {ρ} = cong₂ _∷_ 
-  (let open ≡-Reasoning {A = Subexpression (extend V A) _ _} in
+  (let open ≡-Reasoning {A = Subexp (extend V A) _ _} in
   begin 
     E 〈 liftsOpR A ρ 〉
   ≡⟨ rep-is-sub E ⟩
@@ -104,7 +104,7 @@ rep-is-sub {U} {V} (_∷_ {A = SK A _} E F) {ρ} = cong₂ _∷_
 }
 
 \begin{code}
-up-is-up' : ∀ {V} {C} {K} {L} {E : Subexpression V C K} → 
+up-is-up' : ∀ {V} {C} {K} {L} {E : Subexp V C K} → 
   E 〈 upRep {K = L} 〉 ≡ E ⟦ upSub ⟧
 \end{code}
 

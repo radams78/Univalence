@@ -49,7 +49,7 @@ COMPRS = record {
   apV-comp = refl }
 
 sub-compRS : ∀ {U} {V} {W} {C} {K} 
-  (E : Subexpression U C K) {ρ : Rep V W} {σ : Sub U V} →
+  (E : Subexp U C K) {ρ : Rep V W} {σ : Sub U V} →
   E ⟦ ρ •RS σ ⟧ ≡ E ⟦ σ ⟧ 〈 ρ 〉
 sub-compRS E = Composition.ap-comp COMPRS E
 
@@ -76,7 +76,7 @@ COMPSR = record {
   apV-comp = refl }
 
 sub-compSR : ∀ {U} {V} {W} {C} {K} 
-  (E : Subexpression U C K) {σ : Sub V W} {ρ : Rep U V} → 
+  (E : Subexp U C K) {σ : Sub V W} {ρ : Rep U V} → 
   E ⟦ σ •SR ρ ⟧ ≡ E 〈 ρ 〉 ⟦ σ ⟧
 \end{code}
 
@@ -87,7 +87,7 @@ sub-compSR E = Composition.ap-comp COMPSR E
 }
 
 \begin{code}
-liftSub-upRep : ∀ {U} {V} {C} {K} {L} (E : Subexpression U C K) {σ : Sub U V} →
+liftSub-upRep : ∀ {U} {V} {C} {K} {L} (E : Subexp U C K) {σ : Sub U V} →
   E 〈 upRep 〉 ⟦ liftSub L σ ⟧ ≡ E ⟦ σ ⟧ 〈 upRep 〉
 \end{code}
 
@@ -118,7 +118,7 @@ liftSub-comp : ∀ {U} {V} {W} {ρ : Sub U V} {σ : Sub V W} {K} →
 liftSub-comp x₀ = refl
 liftSub-comp {W = W} {ρ = ρ} {σ = σ} {K = K} {L} (↑ x) = sym (liftSub-upRep (ρ L x))
 
-liftSub-upRep₂ : ∀ {U} {V} {C} {K} {L} {M} (E : Subexpression U C M) {σ : Sub U V} → E ⇑ ⇑ ⟦ liftSub K (liftSub L σ) ⟧ ≡ E ⟦ σ ⟧ ⇑ ⇑
+liftSub-upRep₂ : ∀ {U} {V} {C} {K} {L} {M} (E : Subexp U C M) {σ : Sub U V} → E ⇑ ⇑ ⟦ liftSub K (liftSub L σ) ⟧ ≡ E ⟦ σ ⟧ ⇑ ⇑
 liftSub-upRep₂ {U} {V} {C} {K} {L} {M} E {σ} = let open ≡-Reasoning in 
   begin
     E ⇑ ⇑ ⟦ liftSub K (liftSub L σ) ⟧
@@ -128,7 +128,7 @@ liftSub-upRep₂ {U} {V} {C} {K} {L} {M} E {σ} = let open ≡-Reasoning in
     E ⟦ σ ⟧ ⇑ ⇑
   ∎
 
-liftSub-upRep₃ : ∀ {U} {V} {C} {K} {L} {M} {N} (E : Subexpression U C N) {σ : Sub U V} → E ⇑ ⇑ ⇑ ⟦ liftSub K (liftSub L (liftSub M σ)) ⟧ ≡ E ⟦ σ ⟧ ⇑ ⇑ ⇑
+liftSub-upRep₃ : ∀ {U} {V} {C} {K} {L} {M} {N} (E : Subexp U C N) {σ : Sub U V} → E ⇑ ⇑ ⇑ ⟦ liftSub K (liftSub L (liftSub M σ)) ⟧ ≡ E ⟦ σ ⟧ ⇑ ⇑ ⇑
 liftSub-upRep₃ {U} {V} {C} {K} {L} {M} {N} E {σ} = let open ≡-Reasoning in 
   begin
     E ⇑ ⇑ ⇑ ⟦ liftSub K (liftSub L (liftSub M σ)) ⟧
@@ -139,7 +139,7 @@ liftSub-upRep₃ {U} {V} {C} {K} {L} {M} {N} E {σ} = let open ≡-Reasoning in
   ∎
 
 liftRep-liftSub-upRep₃ : ∀ {U} {V} {W} {K1} {K2} {K3} {C} {K4} 
-                   (M : Subexpression U C K4)
+                   (M : Subexp U C K4)
                    (σ : Sub U V) (ρ : Rep V W) →
                     M ⇑ ⇑ ⇑ ⟦ liftSub K1 (liftSub K2 (liftSub K3 σ)) ⟧ 〈 liftRep K1 (liftRep K2 (liftRep K3 ρ)) 〉
                     ≡ M ⟦ σ ⟧ 〈 ρ 〉 ⇑ ⇑ ⇑
@@ -184,7 +184,7 @@ We can now prove general results such as:
 
 \begin{code}
 sub-comp : ∀ {U} {V} {W} {C} {K}
-  (E : Subexpression U C K) {σ : Sub V W} {ρ : Sub U V} →
+  (E : Subexp U C K) {σ : Sub V W} {ρ : Sub U V} →
   E ⟦ σ • ρ ⟧ ≡ E ⟦ ρ ⟧ ⟦ σ ⟧
 \end{code}
 \end{frame}
