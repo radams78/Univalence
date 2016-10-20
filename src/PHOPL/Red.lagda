@@ -6,6 +6,7 @@ open import Data.Vec
 open import Data.Product renaming (_,_ to _,p_)
 open import Data.List
 open import Prelims
+open import Prelims.RTClosure
 open import PHOPL.Grammar
 open import PHOPL.PathSub
 \end{code}
@@ -116,21 +117,25 @@ postulate R-creates-rep : creates' REP
 
 postulate R-respects-replacement : respects' REP
 
-osr-rep : ∀ {U} {V} {C} {K} {E E' : Subexpression U C K} {ρ : Rep U V} →
+osr-rep : ∀ {U} {V} {C} {K} {E E' : Subexp U C K} {ρ : Rep U V} →
   E ⇒ E' → E 〈 ρ 〉 ⇒ E' 〈 ρ 〉
 osr-rep = respects-osr REP R-respects-replacement
+
+red-rep : ∀ {U} {V} {C} {K} {E E' : Subexp U C K} {ρ : Rep U V} →
+  E ↠ E' → E 〈 ρ 〉 ↠ E' 〈 ρ 〉
+red-rep = respects-red {!R-respects-replacement!}
 
 postulate R-creates-replacement : creates' REP
 
 postulate R-respects-sub : respects' SUB
 
-osr-subl : ∀ {U} {V} {C} {K} {E F : Subexpression U C K} {σ : Sub U V} → E ⇒ F → E ⟦ σ ⟧ ⇒ F ⟦ σ ⟧
+osr-subl : ∀ {U} {V} {C} {K} {E F : Subexp U C K} {σ : Sub U V} → E ⇒ F → E ⟦ σ ⟧ ⇒ F ⟦ σ ⟧
 osr-subl = respects-osr SUB R-respects-sub
 
-red-subl : ∀ {U} {V} {C} {K} {E F : Subexpression U C K} {σ : Sub U V} → E ↠ F → E ⟦ σ ⟧ ↠ F ⟦ σ ⟧
+red-subl : ∀ {U} {V} {C} {K} {E F : Subexp U C K} {σ : Sub U V} → E ↠ F → E ⟦ σ ⟧ ↠ F ⟦ σ ⟧
 red-subl E↠F = respects-red (respects-osr SUB R-respects-sub) E↠F
 
-postulate red-subr : ∀ {U} {V} {C} {K} (E : Subexpression U C K) {ρ σ : Sub U V} → _↠s_ SUB ρ σ → E ⟦ ρ ⟧ ↠ E ⟦ σ ⟧
+postulate red-subr : ∀ {U} {V} {C} {K} (E : Subexp U C K) {ρ σ : Sub U V} → _↠s_ SUB ρ σ → E ⟦ ρ ⟧ ↠ E ⟦ σ ⟧
 
 postulate ⊥SN : ∀ {V} → SN {V} ⊥
 
@@ -145,13 +150,15 @@ postulate univ-red : ∀ {V} {φ φ' ψ ψ' : Term V} {δ} {δ'} {ε} {ε'} →
 postulate ΛP-red : ∀ {V} {φ φ' : Term V} {δ} {δ'} → φ ↠ φ' → δ ↠ δ' → ΛP φ δ ↠ ΛP φ' δ'
 
 ⊃-red : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ↠ φ' → ψ ↠ ψ' → φ ⊃ ψ ↠ φ' ⊃ ψ'
-⊃-red {V} {φ} {φ'} {ψ} {ψ'} φ↠φ' ψ↠ψ' = app-red {!!}
+⊃-red {V} {φ} {φ'} {ψ} {ψ'} φ↠φ' ψ↠ψ' = app-red (∷-red φ↠φ' (∷-redl ψ↠ψ'))
 
 uu-redex-red : ∀ {V} {φ φ₁ φ' φ'₁ ψ ψ₁ ψ' ψ'₁ : Term V} {δ δ₁ δ' δ'₁ ε ε₁ ε' ε'₁} →
   φ ↠ φ₁ → φ' ↠ φ'₁ → ψ ↠ ψ₁ → ψ' ↠ ψ'₁ → δ ↠ δ₁ → δ' ↠ δ'₁ → ε ↠ ε₁ → ε' ↠ ε'₁ →
   uu-redex φ φ' ψ ψ' δ δ' ε ε' ↠ uu-redex φ₁ φ'₁ ψ₁ ψ'₁ δ₁ δ'₁ ε₁ ε'₁
-uu-redex-red φ⇒φ₁ φ'⇒φ'₁ ψ⇒ψ₁ ψ'⇒ψ'₁ δ⇒δ₁ δ'⇒δ'₁ ε⇒ε₁ ε'⇒ε'₁ = 
-  univ-red {!⊃-red!} {!!} {!!} {!!}
+uu-redex-red {φ = φ} {φ₁} {φ'} {φ'₁} φ⇒φ₁ φ'⇒φ'₁ ψ⇒ψ₁ ψ'⇒ψ'₁ δ⇒δ₁ δ'⇒δ'₁ ε⇒ε₁ ε'⇒ε'₁ = 
+  let φ⊃φ'↠φ₁⊃φ'₁ : φ ⊃ φ' ↠ φ₁ ⊃ φ'₁
+      φ⊃φ'↠φ₁⊃φ'₁ = ⊃-red φ⇒φ₁ φ'⇒φ'₁ in
+  univ-red φ⊃φ'↠φ₁⊃φ'₁ (⊃-red ψ⇒ψ₁ ψ'⇒ψ'₁) (ΛP-red φ⊃φ'↠φ₁⊃φ'₁ (ΛP-red {!rep-red!} {!!})) {!!}
 
 {-pre-Confluent βT (appl (redex ()))
 pre-Confluent βT (appl (app (appl M⇒M'))) = _ ,p βT ,p red-subl (osr-red M⇒M')
@@ -248,59 +255,57 @@ The second of these paths does \emph{not} reduce to the first, because $\reff{\b
 
 \AgdaHide{
 \begin{code}
-postulate SNE : ∀ {V} {C} {K} (P : Subexpression V C K → Set) →
-              (∀ {M : Subexpression V C K} → SN M → (∀ N → M ↠⁺ N → P N) → P M) →
-              ∀ {M : Subexpression V C K} → SN M → P M
+postulate SNE : ∀ {V} {C} {K} (P : Subexp V C K → Set) →
+              (∀ {M : Subexp V C K} → SN M → (∀ N → M ↠⁺ N → P N) → P M) →
+              ∀ {M : Subexp V C K} → SN M → P M
 
 private var-red' : ∀ {V} {K} {x : Var V K} {M} {N} → M ↠ N → M ≡ var x → N ≡ var x
-var-red' (osr-red (redex _)) ()
-var-red' (osr-red (app _)) ()
+var-red' (inc (redex _)) ()
+var-red' (inc (app _)) ()
 var-red' ref M≡x = M≡x
-var-red' (trans-red M↠N N↠P) M≡x = var-red' N↠P (var-red' M↠N M≡x)
+var-red' (trans M↠N N↠P) M≡x = var-red' N↠P (var-red' M↠N M≡x)
 
 var-red : ∀ {V} {K} {x : Var V K} {M} → var x ↠ M → M ≡ var x
 var-red x↠M = var-red' x↠M refl
 
 private bot-red' : ∀ {V} {φ ψ : Term V} → φ ↠ ψ → φ ≡ ⊥ → ψ ≡ ⊥
-bot-red' (osr-red (redex βT)) ()
-bot-red' (osr-red (app {c = -bot} {F = []} x)) _ = refl
-bot-red' (osr-red (app {c = -imp} _)) ()
-bot-red' (osr-red (app {c = -appTerm} _)) ()
-bot-red' (osr-red (app {c = -lamTerm _} _)) ()
+bot-red' (inc (redex βT)) ()
+bot-red' (inc (app {c = -bot} {F = []} x)) _ = refl
+bot-red' (inc (app {c = -imp} _)) ()
+bot-red' (inc (app {c = -appTerm} _)) ()
+bot-red' (inc (app {c = -lamTerm _} _)) ()
 bot-red' ref φ≡⊥ = φ≡⊥
-bot-red' (trans-red φ↠ψ ψ↠χ) φ≡⊥ = bot-red' ψ↠χ (bot-red' φ↠ψ φ≡⊥)
+bot-red' (trans φ↠ψ ψ↠χ) φ≡⊥ = bot-red' ψ↠χ (bot-red' φ↠ψ φ≡⊥)
 
 bot-red : ∀ {V} {φ : Term V} → ⊥ ↠ φ → φ ≡ ⊥
 bot-red ⊥↠φ = bot-red' ⊥↠φ refl
 
 imp-red' : ∀ {V} {φ ψ χ θ : Term V} → φ ↠ ψ → φ ≡ χ ⊃ θ →
   Σ[ χ' ∈ Term V ] Σ[ θ' ∈ Term V ] χ ↠ χ' × θ ↠ θ' × ψ ≡ χ' ⊃ θ'
-imp-red' (osr-red (redex βT)) ()
-imp-red' (osr-red (app {c = -bot} _)) ()
-imp-red' {θ = θ} (osr-red (app {c = -imp} (appl {E' = χ'} {F = _ ∷ []} χ⇒χ'))) φ≡χ⊃θ = 
-  χ' ,p θ ,p subst (λ x → x ↠ χ') (imp-injl φ≡χ⊃θ) (osr-red χ⇒χ') ,p 
+imp-red' (inc (redex βT)) ()
+imp-red' (inc (app {c = -bot} _)) ()
+imp-red' {θ = θ} (inc (app {c = -imp} (appl {E' = χ'} {F = _ ∷ []} χ⇒χ'))) φ≡χ⊃θ = 
+  χ' ,p θ ,p subst (λ x → x ↠ χ') (imp-injl φ≡χ⊃θ) (inc χ⇒χ') ,p 
   ref ,p (cong (λ x → χ' ⊃ x) (imp-injr φ≡χ⊃θ))
-imp-red' {χ = χ} (osr-red (app {c = -imp} (appr (appl {E' = θ'} {F = []} θ⇒θ')))) φ≡χ⊃θ = 
-  χ ,p θ' ,p ref ,p (subst (λ x → x ↠ θ') (imp-injr φ≡χ⊃θ) (osr-red θ⇒θ')) ,p 
+imp-red' {χ = χ} (inc (app {c = -imp} (appr (appl {E' = θ'} {F = []} θ⇒θ')))) φ≡χ⊃θ = 
+  χ ,p θ' ,p ref ,p (subst (λ x → x ↠ θ') (imp-injr φ≡χ⊃θ) (inc θ⇒θ')) ,p 
   cong (λ x → x ⊃ θ') (imp-injl φ≡χ⊃θ)
-imp-red' (osr-red (app {c = -imp} (appr (appr ())))) _
-imp-red' (osr-red (app {c = -appTerm} _)) ()
-imp-red' (osr-red (app {c = -lamTerm _} _)) ()
+imp-red' (inc (app {c = -imp} (appr (appr ())))) _
+imp-red' (inc (app {c = -appTerm} _)) ()
+imp-red' (inc (app {c = -lamTerm _} _)) ()
 imp-red' {χ = χ} {θ} ref φ≡χ⊃θ = χ ,p θ ,p ref ,p ref ,p φ≡χ⊃θ
-imp-red' (trans-red φ↠ψ ψ↠ψ') φ≡χ⊃θ = 
+imp-red' (trans φ↠ψ ψ↠ψ') φ≡χ⊃θ = 
   let (χ' ,p θ' ,p χ↠χ' ,p θ↠θ' ,p ψ≡χ'⊃θ') = imp-red' φ↠ψ φ≡χ⊃θ in 
   let (χ'' ,p θ'' ,p χ'↠χ'' ,p θ'↠θ'' ,p ψ'≡χ''⊃θ'') = imp-red' ψ↠ψ' ψ≡χ'⊃θ' in 
-  χ'' ,p θ'' ,p trans-red χ↠χ' χ'↠χ'' ,p trans-red θ↠θ' θ'↠θ'' ,p ψ'≡χ''⊃θ''
+  χ'' ,p θ'' ,p RTClose.trans χ↠χ' χ'↠χ'' ,p RTClose.trans θ↠θ' θ'↠θ'' ,p ψ'≡χ''⊃θ''
 
 imp-red : ∀ {V} {χ θ ψ : Term V} → χ ⊃ θ ↠ ψ →
   Σ[ χ' ∈ Term V ] Σ[ θ' ∈ Term V ] χ ↠ χ' × θ ↠ θ' × ψ ≡ χ' ⊃ θ'
 imp-red χ⊃θ↠ψ = imp-red' χ⊃θ↠ψ refl
 
-postulate red-rep : ∀ {U} {V} {C} {K} {ρ : Rep U V} {M N : Subexpression U C K} → M ↠ N → M 〈 ρ 〉 ↠ N 〈 ρ 〉
+postulate conv-rep : ∀ {U} {V} {C} {K} {ρ : Rep U V} {M N : Subexp U C K} → M ≃ N → M 〈 ρ 〉 ≃ N 〈 ρ 〉
 
-postulate conv-rep : ∀ {U} {V} {C} {K} {ρ : Rep U V} {M N : Subexpression U C K} → M ≃ N → M 〈 ρ 〉 ≃ N 〈 ρ 〉
-
-postulate conv-sub : ∀ {U} {V} {C} {K} {σ : Sub U V} {M N : Subexpression U C K} → M ≃ N → M ⟦ σ ⟧ ≃ N ⟦ σ ⟧
+postulate conv-sub : ∀ {U} {V} {C} {K} {σ : Sub U V} {M N : Subexp U C K} → M ≃ N → M ⟦ σ ⟧ ≃ N ⟦ σ ⟧
 
 postulate appT-convl : ∀ {V} {M M' N : Term V} → M ≃ M' → appT M N ≃ appT M' N
 

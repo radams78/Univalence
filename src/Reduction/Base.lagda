@@ -193,20 +193,20 @@ module OpFamilies (Ops : OpFamily) where
   respects' = ∀ {U V C K c M N σ} → 
     R {U} {C} {K} c M N → R {V} c (ap σ M) (ap σ N)
 
-  respects-osr : ∀ {U} {V} {C} {K} {σ : Op U V} → 
+  aposrr : ∀ {U} {V} {C} {K} {σ : Op U V} → 
     respects' → respects _⇒_ (ap {C = C} {K = K} σ)
 \end{code}
 
 \AgdaHide{
 \begin{code}
-  respects-osr hyp (redex M▷N) = redex (hyp M▷N)
-  respects-osr hyp (app MM→NN) = app (respects-osr hyp MM→NN)
-  respects-osr hyp (appl M→N) = appl (respects-osr hyp M→N)
-  respects-osr hyp (appr NN→PP) = appr (respects-osr hyp NN→PP)
+  aposrr hyp (redex M▷N) = redex (hyp M▷N)
+  aposrr hyp (app MM→NN) = app (aposrr hyp MM→NN)
+  aposrr hyp (appl M→N) = appl (aposrr hyp M→N)
+  aposrr hyp (appr NN→PP) = appr (aposrr hyp NN→PP)
 
-  apredr : ∀ {U} {V} {C} {K} {σ : Op U V} {E F : Subexp U C K} → respects' →
-         E ↠ F → ap σ E ↠ ap σ F
-  apredr resp = respects-red (respects-osr resp)
+  apredr : ∀ {U} {V} {C} {K} {σ : Op U V} {E F : Subexp U C K} → 
+    respects' → E ↠ F → ap σ E ↠ ap σ F
+  apredr resp = respects-red (aposrr resp)
 \end{code}
 }
 
@@ -231,7 +231,8 @@ $E[\rho] \twoheadrightarrow_R E[\sigma]$ for all $K$, $A$, $E$.
 \AgdaHide{
 \begin{code}
   liftOp-red _ _ _ x₀ = subst₂ _↠_ (sym liftOp-x₀) (sym liftOp-x₀) ref
-  liftOp-red hyp ρ↠σ K (↑ x) = subst₂ _↠_ (sym (liftOp-↑ x)) (sym (liftOp-↑ x)) (apredr hyp (ρ↠σ K x))
+  liftOp-red hyp ρ↠σ K (↑ x) = subst₂ _↠_ (sym (liftOp-↑ x)) (sym (liftOp-↑ x)) 
+    (apredr hyp (ρ↠σ K x))
 \end{code}
 }
 
