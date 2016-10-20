@@ -175,7 +175,7 @@ app-red = respects-red app
 ∷-redr = respects-red appr
 
 ∷-red : ∀ {V} {AA} {A} {E E' : Abs V A} {FF FF' : ListAbs V AA} → E ↠ E' → FF ↠ FF' → (_∷_ {V} {A} {AA} E FF) ↠ (E' ∷ FF')
-∷-red E↠E' FF↠FF' = Prelims.RTClosure.trans (∷-redl E↠E') (∷-redr FF↠FF')
+∷-red E↠E' FF↠FF' = Prelims.Closure.trans (∷-redl E↠E') (∷-redr FF↠FF')
 \end{code}
 
 \begin{lemma}
@@ -255,7 +255,7 @@ $E[\rho] \twoheadrightarrow_R E[\sigma]$ for all $K$, $A$, $E$.
   apredl {E = var x} hyp ρ↠σ = ρ↠σ _ x
   apredl {E = app _ E} hyp ρ↠σ = respects-red app (apredl {E = E} hyp ρ↠σ)
   apredl {E = []} _ _ = ref
-  apredl {E = _∷_ {A = SK A _} E F} hyp ρ↠σ = Prelims.RTClosure.trans (respects-red appl (apredl {E = E} hyp (liftsOp-red {A = A} hyp ρ↠σ))) (respects-red appr (apredl {E = F} hyp ρ↠σ))
+  apredl {E = _∷_ {A = SK A _} E F} hyp ρ↠σ = Prelims.Closure.trans (respects-red appl (apredl {E = E} hyp (liftsOp-red {A = A} hyp ρ↠σ))) (respects-red appr (apredl {E = F} hyp ρ↠σ))
 \end{code}
 }
 

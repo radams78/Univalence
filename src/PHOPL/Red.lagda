@@ -6,7 +6,7 @@ open import Data.Vec
 open import Data.Product renaming (_,_ to _,p_)
 open import Data.List
 open import Prelims
-open import Prelims.RTClosure
+open import Prelims.Closure
 open import PHOPL.Grammar
 open import PHOPL.PathSub
 \end{code}
@@ -62,9 +62,11 @@ ru-redex φ ψ χ δ ε = univ (φ ⊃ ψ) (φ ⊃ χ) (ΛP (φ ⊃ ψ) (ΛP (φ
 ur-redex : ∀ {V} → Term V → Term V → Term V → Proof V → Proof V → Path V
 ur-redex φ ψ χ δ ε = univ (φ ⊃ χ) (ψ ⊃ χ) (ΛP (φ ⊃ χ) (ΛP (ψ ⇑) (appP (var x₁) (appP (ε ⇑ ⇑) (var x₀))))) (ΛP (ψ ⊃ χ) (ΛP (φ ⇑) (appP (var x₁) (appP (δ ⇑ ⇑) (var x₀)))))
 
+uu-redex-half : ∀ {V} → Term V → Term V → Term V → Proof V → Proof V → Proof V
+uu-redex-half φ φ' ψ δ ε = ΛP (φ ⊃ φ') (ΛP (ψ ⇑) (appP (δ ⇑ ⇑) (appP (var x₁) (appP (ε ⇑ ⇑) (var x₀)))))
+
 uu-redex : ∀ {V} → Term V → Term V → Term V → Term V → Proof V → Proof V → Proof V → Proof V → Path V
-uu-redex φ φ' ψ ψ' δ δ' ε ε' = univ (φ ⊃ φ') (ψ ⊃ ψ') (ΛP (φ ⊃ φ') (ΛP (ψ ⇑) (appP (δ' ⇑ ⇑) (appP (var x₁) (appP (ε ⇑ ⇑) (var x₀))))))
-  (ΛP (ψ ⊃ ψ') (ΛP (φ ⇑) (appP (ε' ⇑ ⇑) (appP (var x₁) (appP (δ ⇑ ⇑) (var x₀))))))
+uu-redex φ φ' ψ ψ' δ δ' ε ε' = univ (φ ⊃ φ') (ψ ⊃ ψ') (uu-redex-half φ φ' ψ δ' ε) (uu-redex-half ψ ψ' φ ε' δ)
 
 data R : Reduction where
   βT : ∀ {V} {A} {M} {N} → R {V} -appTerm (ΛT A M ∷ N ∷ []) (M ⟦ x₀:= N ⟧)
@@ -119,21 +121,21 @@ postulate R-respects-replacement : respects' REP
 
 osr-rep : ∀ {U} {V} {C} {K} {E E' : Subexp U C K} {ρ : Rep U V} →
   E ⇒ E' → E 〈 ρ 〉 ⇒ E' 〈 ρ 〉
-osr-rep = respects-osr REP R-respects-replacement
+osr-rep = aposrr REP R-respects-replacement
 
 red-rep : ∀ {U} {V} {C} {K} {E E' : Subexp U C K} {ρ : Rep U V} →
   E ↠ E' → E 〈 ρ 〉 ↠ E' 〈 ρ 〉
-red-rep = respects-red {!R-respects-replacement!}
+red-rep = apredr REP R-respects-replacement
 
 postulate R-creates-replacement : creates' REP
 
 postulate R-respects-sub : respects' SUB
 
 osr-subl : ∀ {U} {V} {C} {K} {E F : Subexp U C K} {σ : Sub U V} → E ⇒ F → E ⟦ σ ⟧ ⇒ F ⟦ σ ⟧
-osr-subl = respects-osr SUB R-respects-sub
+osr-subl = aposrr SUB R-respects-sub
 
 red-subl : ∀ {U} {V} {C} {K} {E F : Subexp U C K} {σ : Sub U V} → E ↠ F → E ⟦ σ ⟧ ↠ F ⟦ σ ⟧
-red-subl E↠F = respects-red (respects-osr SUB R-respects-sub) E↠F
+red-subl E↠F = respects-red (aposrr SUB R-respects-sub) E↠F
 
 postulate red-subr : ∀ {U} {V} {C} {K} (E : Subexp U C K) {ρ σ : Sub U V} → _↠s_ SUB ρ σ → E ⟦ ρ ⟧ ↠ E ⟦ σ ⟧
 
@@ -152,13 +154,19 @@ postulate ΛP-red : ∀ {V} {φ φ' : Term V} {δ} {δ'} → φ ↠ φ' → δ �
 ⊃-red : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ↠ φ' → ψ ↠ ψ' → φ ⊃ ψ ↠ φ' ⊃ ψ'
 ⊃-red {V} {φ} {φ'} {ψ} {ψ'} φ↠φ' ψ↠ψ' = app-red (∷-red φ↠φ' (∷-redl ψ↠ψ'))
 
+appP-red : ∀ {V} {δ δ' ε ε' : Proof V} → δ ↠ δ' → ε ↠ ε' → appP δ ε ↠ appP δ' ε'
+appP-red δ↠δ' ε↠ε' = app-red (∷-red δ↠δ' (∷-redl ε↠ε'))
+
+uu-redex-half-red : ∀ {V} {φ φ₁ φ' φ'₁ ψ ψ₁ : Term V} {δ δ₁ ε ε₁} →
+  φ ↠ φ₁ → φ' ↠ φ'₁ → ψ ↠ ψ₁ → δ ↠ δ₁ → ε ↠ ε₁ →
+  uu-redex-half φ φ' ψ δ ε ↠ uu-redex-half φ₁ φ'₁ ψ₁ δ₁ ε₁
+uu-redex-half-red φ↠φ₁ φ'↠φ'₁ ψ↠ψ₁ δ↠δ₁ ε↠ε₁ = ΛP-red (⊃-red φ↠φ₁ φ'↠φ'₁) (ΛP-red (red-rep ψ↠ψ₁) (appP-red (red-rep (red-rep δ↠δ₁)) (appP-red ref (appP-red (red-rep (red-rep ε↠ε₁)) ref))))
+
 uu-redex-red : ∀ {V} {φ φ₁ φ' φ'₁ ψ ψ₁ ψ' ψ'₁ : Term V} {δ δ₁ δ' δ'₁ ε ε₁ ε' ε'₁} →
   φ ↠ φ₁ → φ' ↠ φ'₁ → ψ ↠ ψ₁ → ψ' ↠ ψ'₁ → δ ↠ δ₁ → δ' ↠ δ'₁ → ε ↠ ε₁ → ε' ↠ ε'₁ →
   uu-redex φ φ' ψ ψ' δ δ' ε ε' ↠ uu-redex φ₁ φ'₁ ψ₁ ψ'₁ δ₁ δ'₁ ε₁ ε'₁
-uu-redex-red {φ = φ} {φ₁} {φ'} {φ'₁} φ⇒φ₁ φ'⇒φ'₁ ψ⇒ψ₁ ψ'⇒ψ'₁ δ⇒δ₁ δ'⇒δ'₁ ε⇒ε₁ ε'⇒ε'₁ = 
-  let φ⊃φ'↠φ₁⊃φ'₁ : φ ⊃ φ' ↠ φ₁ ⊃ φ'₁
-      φ⊃φ'↠φ₁⊃φ'₁ = ⊃-red φ⇒φ₁ φ'⇒φ'₁ in
-  univ-red φ⊃φ'↠φ₁⊃φ'₁ (⊃-red ψ⇒ψ₁ ψ'⇒ψ'₁) (ΛP-red φ⊃φ'↠φ₁⊃φ'₁ (ΛP-red {!rep-red!} {!!})) {!!}
+uu-redex-red {φ = φ} {φ₁} {φ'} {φ'₁} {ψ} {ψ₁} {ψ'} {ψ'₁} φ↠φ₁ φ'↠φ'₁ ψ↠ψ₁ ψ'↠ψ'₁ δ↠δ₁ δ'↠δ'₁ ε↠ε₁ ε'↠ε'₁ = 
+  univ-red (⊃-red φ↠φ₁ φ'↠φ'₁) (⊃-red ψ↠ψ₁ ψ'↠ψ'₁) (uu-redex-half-red φ↠φ₁ φ'↠φ'₁ ψ↠ψ₁ δ'↠δ'₁ ε↠ε₁) (uu-redex-half-red ψ↠ψ₁ ψ'↠ψ'₁ φ↠φ₁ ε'↠ε'₁ δ↠δ₁)
 
 {-pre-Confluent βT (appl (redex ()))
 pre-Confluent βT (appl (app (appl M⇒M'))) = _ ,p βT ,p red-subl (osr-red M⇒M')
@@ -197,8 +205,8 @@ pre-Confluent ref⊃*univ (appl (redex ()))
 pre-Confluent ref⊃*univ (appl (app (appl {E = φ} {E' = φ'} φ⇒φ'))) = 
   let φ⊃ψ↠φ'⊃ψ : ∀ x → (φ ⊃ x) ↠ (φ' ⊃ x)
       φ⊃ψ↠φ'⊃ψ = λ _ → osr-red (app (appl φ⇒φ')) in
-  _ ,p ref⊃*univ ,p univ-red (φ⊃ψ↠φ'⊃ψ _) (φ⊃ψ↠φ'⊃ψ _) (ΛP-red (φ⊃ψ↠φ'⊃ψ _) (osr-red (app (appl (respects-osr replacement R-respects-replacement φ⇒φ'))))) 
-  (ΛP-red (φ⊃ψ↠φ'⊃ψ _) (osr-red (app (appl (respects-osr replacement R-respects-replacement φ⇒φ')))))
+  _ ,p ref⊃*univ ,p univ-red (φ⊃ψ↠φ'⊃ψ _) (φ⊃ψ↠φ'⊃ψ _) (ΛP-red (φ⊃ψ↠φ'⊃ψ _) (osr-red (app (appl (aposrr replacement R-respects-replacement φ⇒φ'))))) 
+  (ΛP-red (φ⊃ψ↠φ'⊃ψ _) (osr-red (app (appl (aposrr replacement R-respects-replacement φ⇒φ')))))
 pre-Confluent ref⊃*univ (appl (app (appr ())))
 pre-Confluent ref⊃*univ (appr (appl (redex ())))
 pre-Confluent ref⊃*univ (appr (appl (app (appl ψ⇒ψ')))) = _ ,p ref⊃*univ ,p (univ-red (osr-red (app (appr (appl ψ⇒ψ')))) ref 
@@ -206,9 +214,9 @@ pre-Confluent ref⊃*univ (appr (appl (app (appl ψ⇒ψ')))) = _ ,p ref⊃*univ
 pre-Confluent ref⊃*univ (appr (appl (app (appr (appl χ⇒χ'))))) = _ ,p (ref⊃*univ ,p (univ-red ref (osr-red (app (appr (appl χ⇒χ')))) 
   ref (osr-red (app (appl (app (appr (appl χ⇒χ'))))))))
 pre-Confluent ref⊃*univ (appr (appl (app (appr (appr (appl δ⇒δ')))))) = _ ,p ref⊃*univ ,p osr-red (app (appr (appr (appl (app (appr (appl (app (appr (appl 
-  (app (appl (respects-osr replacement R-respects-replacement (respects-osr replacement R-respects-replacement δ⇒δ'))))))))))))))
+  (app (appl (aposrr replacement R-respects-replacement (aposrr replacement R-respects-replacement δ⇒δ'))))))))))))))
 pre-Confluent ref⊃*univ (appr (appl (app (appr (appr (appr (appl ε⇒ε'))))))) = _ ,p ref⊃*univ ,p osr-red (app (appr (appr (appr (appl (app (appr (appl (app (appr 
-  (appl (app (appl (respects-osr replacement R-respects-replacement (respects-osr replacement R-respects-replacement ε⇒ε')))))))))))))))
+  (appl (app (appl (aposrr replacement R-respects-replacement (aposrr replacement R-respects-replacement ε⇒ε')))))))))))))))
 pre-Confluent ref⊃*univ (appr (appl (app (appr (appr (appr (appr ())))))))
 pre-Confluent ref⊃*univ (appr (appr ()))
 pre-Confluent univ⊃*ref E⇒E' = {!!}

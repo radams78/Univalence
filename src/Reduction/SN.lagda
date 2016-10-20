@@ -5,7 +5,7 @@ open import Grammar.Base
 module Reduction.SN (G : Grammar) (R : Grammar.Reduction G) where
 
 open import Prelims
-open import Prelims.RTClosure
+open import Prelims.Closure
 open import Grammar G
 open import Reduction.Base G R
 \end{code}
@@ -69,7 +69,7 @@ SNap' : ∀ {Ops U V C K} {E : Subexp U C K} {σ : OpFamily.Op Ops U V} →
 \AgdaHide{
 \begin{code}
 SNap' {Ops} {E = E} {σ = σ} hyp (SNI _ SNσE) = 
-  SNI E (λ F E→F → SNap' {Ops} hyp (SNσE _ (respects-osr Ops hyp E→F)))
+  SNI E (λ F E→F → SNap' {Ops} hyp (SNσE _ (aposrr Ops hyp E→F)))
 \end{code}
 }
 
