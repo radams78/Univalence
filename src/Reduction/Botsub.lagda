@@ -1,4 +1,5 @@
 \begin{code}
+open import Prelims.Closure
 open import Grammar.Base
 module Reduction.Botsub (G : Grammar) (R : Grammar.Reduction G) where
 open import Grammar G

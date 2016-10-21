@@ -47,14 +47,7 @@ _↠_ : ∀ {V C K} → Relation (Subexp V C K)
 _↠_ = RTClose _⇒_
 
 RED : Alphabet → ∀ C → Kind C → Preorder _ _ _
-RED V C K = record { 
-  Carrier = Subexp V C K ; 
-  _≈_ = _≡_ ; 
-  _∼_ = _↠_ ; 
-  isPreorder = record { 
-    isEquivalence = Relation.Binary.PropositionalEquality.Core.isEquivalence ; 
-    reflexive = λ { {M} .{M} refl → ref } ; 
-    trans = λ x → Prelims.Closure.trans x } }
+RED V C K = RTCLOSE (_⇒_ {V} {C} {K})
 
 data _≃_ {V C K} : Subexp V C K → Subexp V C K → Set 
   where

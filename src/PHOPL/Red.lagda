@@ -59,9 +59,11 @@ An expression $s$ is in \emph{normal form} iff there is no expression $t$ such t
 ru-redex : ∀ {V} → Term V → Term V → Term V → Proof V → Proof V → Path V
 ru-redex φ ψ χ δ ε = univ (φ ⊃ ψ) (φ ⊃ χ) (ΛP (φ ⊃ ψ) (ΛP (φ ⇑) (appP (δ ⇑ ⇑) (appP (var x₁) (var x₀))))) (ΛP (φ ⊃ χ) (ΛP (φ ⇑) (appP (ε ⇑ ⇑) (appP (var x₁) (var x₀)))))
 
+--Redex for a path univ ⊃* ref:
 ur-redex : ∀ {V} → Term V → Term V → Term V → Proof V → Proof V → Path V
 ur-redex φ ψ χ δ ε = univ (φ ⊃ χ) (ψ ⊃ χ) (ΛP (φ ⊃ χ) (ΛP (ψ ⇑) (appP (var x₁) (appP (ε ⇑ ⇑) (var x₀))))) (ΛP (ψ ⊃ χ) (ΛP (φ ⇑) (appP (var x₁) (appP (δ ⇑ ⇑) (var x₀)))))
 
+--Redex for a path univ ⊃* univ;
 uu-redex-half : ∀ {V} → Term V → Term V → Term V → Proof V → Proof V → Proof V
 uu-redex-half φ φ' ψ δ ε = ΛP (φ ⊃ φ') (ΛP (ψ ⇑) (appP (δ ⇑ ⇑) (appP (var x₁) (appP (ε ⇑ ⇑) (var x₀)))))
 
@@ -97,7 +99,14 @@ let \emph{reduction} $\twoheadrightarrow$ be the reflexive, transitive closure; 
 \AgdaHide{
 \begin{code}
 open import Reduction PHOPL R public 
+\end{code}
 
+\begin{lm}
+If $\univ{\phi}{\psi}{\delta}{\epsilon} \rightarrow E$ then $E$ is formed by reducing
+one of $\phi$, $\psi$, $\delta$, $\epsilon$.
+\end{lm}
+
+\begin{code}
 univ-osrE : ∀ {V} {φ} {ψ} {δ} {ε} {C : Path V → Set} →
   (∀ φ' → φ ⇒ φ' → C (univ φ' ψ δ ε)) →
   (∀ ψ' → ψ ⇒ ψ' → C (univ φ ψ' δ ε)) →
@@ -162,10 +171,10 @@ uu-redex-half-red : ∀ {V} {φ φ₁ φ' φ'₁ ψ ψ₁ : Term V} {δ δ₁ ε
   uu-redex-half φ φ' ψ δ ε ↠ uu-redex-half φ₁ φ'₁ ψ₁ δ₁ ε₁
 uu-redex-half-red φ↠φ₁ φ'↠φ'₁ ψ↠ψ₁ δ↠δ₁ ε↠ε₁ = ΛP-red (⊃-red φ↠φ₁ φ'↠φ'₁) (ΛP-red (red-rep ψ↠ψ₁) (appP-red (red-rep (red-rep δ↠δ₁)) (appP-red ref (appP-red (red-rep (red-rep ε↠ε₁)) ref))))
 
-uu-redex-red : ∀ {V} {φ φ₁ φ' φ'₁ ψ ψ₁ ψ' ψ'₁ : Term V} {δ δ₁ δ' δ'₁ ε ε₁ ε' ε'₁} →
+uu-redex-red : ∀ {V} {φ φ₁ φ' φ'₁ ψ ψ₁ ψ' ψ'₁ : Term V} δ {δ₁} δ' {δ'₁} ε {ε₁} ε' {ε'₁} →
   φ ↠ φ₁ → φ' ↠ φ'₁ → ψ ↠ ψ₁ → ψ' ↠ ψ'₁ → δ ↠ δ₁ → δ' ↠ δ'₁ → ε ↠ ε₁ → ε' ↠ ε'₁ →
   uu-redex φ φ' ψ ψ' δ δ' ε ε' ↠ uu-redex φ₁ φ'₁ ψ₁ ψ'₁ δ₁ δ'₁ ε₁ ε'₁
-uu-redex-red {φ = φ} {φ₁} {φ'} {φ'₁} {ψ} {ψ₁} {ψ'} {ψ'₁} φ↠φ₁ φ'↠φ'₁ ψ↠ψ₁ ψ'↠ψ'₁ δ↠δ₁ δ'↠δ'₁ ε↠ε₁ ε'↠ε'₁ = 
+uu-redex-red {φ = φ} {φ₁} {φ'} {φ'₁} {ψ} {ψ₁} {ψ'} {ψ'₁} _ _ _ _ φ↠φ₁ φ'↠φ'₁ ψ↠ψ₁ ψ'↠ψ'₁ δ↠δ₁ δ'↠δ'₁ ε↠ε₁ ε'↠ε'₁ = 
   univ-red (⊃-red φ↠φ₁ φ'↠φ'₁) (⊃-red ψ↠ψ₁ ψ'↠ψ'₁) (uu-redex-half-red φ↠φ₁ φ'↠φ'₁ ψ↠ψ₁ δ'↠δ'₁ ε↠ε₁) (uu-redex-half-red ψ↠ψ₁ ψ'↠ψ'₁ φ↠φ₁ ε'↠ε'₁ δ↠δ₁)
 
 {-pre-Confluent βT (appl (redex ()))

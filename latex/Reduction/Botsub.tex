@@ -1,4 +1,6 @@
 \begin{code}%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims.Closure}\<%
+\\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar.Base}\<%
 \\
 \>\AgdaKeyword{module} \AgdaModule{Reduction.Botsub} \AgdaSymbol{(}\AgdaBound{G} \AgdaSymbol{:} \AgdaRecord{Grammar}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{R} \AgdaSymbol{:} \AgdaFunction{Grammar.Reduction} \AgdaBound{G}\AgdaSymbol{)} \AgdaKeyword{where}\<%
@@ -16,7 +18,7 @@
 \>[14]\AgdaSymbol{\{}\AgdaBound{M1} \AgdaBound{M1'} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K1}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{M2} \AgdaBound{M2'} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K2}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{M3} \AgdaBound{M3'} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K3}\AgdaSymbol{)\}} \AgdaSymbol{→}\<%
 \\
 \>[0]\AgdaIndent{14}{}\<[14]%
-\>[14]\AgdaBound{M1} \AgdaDatatype{↠} \AgdaBound{M1'} \AgdaSymbol{→} \AgdaBound{M2} \AgdaDatatype{↠} \AgdaBound{M2'} \AgdaSymbol{→} \AgdaBound{M3} \AgdaDatatype{↠} \AgdaBound{M3'} \AgdaSymbol{→} \AgdaFunction{\_↠s\_} \AgdaFunction{SUB} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{M1} \AgdaFunction{,x₁:=} \AgdaBound{M2} \AgdaFunction{,x₀:=} \AgdaBound{M3}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{M1'} \AgdaFunction{,x₁:=} \AgdaBound{M2'} \AgdaFunction{,x₀:=} \AgdaBound{M3'}\AgdaSymbol{)}\<%
+\>[14]\AgdaBound{M1} \AgdaFunction{↠} \AgdaBound{M1'} \AgdaSymbol{→} \AgdaBound{M2} \AgdaFunction{↠} \AgdaBound{M2'} \AgdaSymbol{→} \AgdaBound{M3} \AgdaFunction{↠} \AgdaBound{M3'} \AgdaSymbol{→} \AgdaFunction{\_↠s\_} \AgdaFunction{SUB} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{M1} \AgdaFunction{,x₁:=} \AgdaBound{M2} \AgdaFunction{,x₀:=} \AgdaBound{M3}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{x₂:=} \AgdaBound{M1'} \AgdaFunction{,x₁:=} \AgdaBound{M2'} \AgdaFunction{,x₀:=} \AgdaBound{M3'}\AgdaSymbol{)}\<%
 \\
 \>\AgdaFunction{botsub₃-red} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaBound{M3↠M3'} \AgdaSymbol{\_} \AgdaInductiveConstructor{x₀} \AgdaSymbol{=} \AgdaBound{M3↠M3'}\<%
 \\
