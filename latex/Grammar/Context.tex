@@ -12,6 +12,8 @@
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Fin}\<%
 \\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Relation.Binary.PropositionalEquality}\<%
+\\
 \>\AgdaKeyword{open} \AgdaModule{Grammar} \AgdaBound{G}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar.Replacement} \AgdaBound{G}\<%
@@ -50,16 +52,9 @@ The \emph{domain} of this context is the alphabet $\{ x_1, \ldots, x_n \}$.
 \\
 \>\AgdaComment{-- M 〈 upRep 〉, even if x is not in canonical form}\<%
 \\
-\>\AgdaFunction{pretypeof} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{x} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{)} \AgdaBound{L}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\>\AgdaFunction{pretypeof} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{x} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{)} \AgdaBound{L}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{))} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaFunction{parent} \AgdaBound{L}\AgdaSymbol{)}\<%
 \\
-\>[4]\AgdaIndent{12}{}\<[12]%
-\>[12]\AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaFunction{parent} \AgdaBound{L}\AgdaSymbol{)}\<%
-\\
-\>\AgdaFunction{typeof} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{x} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{V} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{)} \AgdaSymbol{→} \<[51]%
-\>[51]\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaFunction{parent} \AgdaBound{K}\AgdaSymbol{)}\<%
+\>\AgdaFunction{typeof} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{x} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{V} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaFunction{parent} \AgdaBound{K}\AgdaSymbol{)}\<%
 \\
 %
 \\
@@ -71,5 +66,15 @@ The \emph{domain} of this context is the alphabet $\{ x_1, \ldots, x_n \}$.
 \\
 \>\AgdaFunction{typeof} \AgdaSymbol{\{}\AgdaInductiveConstructor{∅}\AgdaSymbol{\}} \AgdaSymbol{()}\<%
 \\
-\>\AgdaFunction{typeof} \AgdaSymbol{\{\_} \AgdaInductiveConstructor{,} \AgdaSymbol{\_\}} \AgdaBound{x} \AgdaBound{Γ} \AgdaSymbol{=} \AgdaFunction{pretypeof} \AgdaBound{x} \AgdaBound{Γ} \AgdaFunction{〈} \AgdaFunction{upRep} \AgdaFunction{〉}\<%
+\>\AgdaFunction{typeof} \AgdaSymbol{\{\_} \AgdaInductiveConstructor{,} \AgdaSymbol{\_\}} \AgdaBound{x} \AgdaBound{Γ} \AgdaSymbol{=} \AgdaFunction{pretypeof} \AgdaBound{x} \AgdaBound{Γ} \AgdaFunction{⇑}\<%
+\end{code}
+
+We say that a replacement $\rho$ is a \emph{(well-typed) replacement from $\Gamma$ to $\Delta$},
+$\rho : \Gamma \rightarrow \Delta$, iff, for each entry $x : A$ in $\Gamma$, we have that
+$\rho(x) : A \langle ρ \rangle$ is an entry in $\Delta$.
+
+\begin{code}%
+\>\AgdaFunction{\_∶\_⇒R\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaBound{U} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaBound{V} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\\
+\>\AgdaBound{ρ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒R} \AgdaBound{Δ} \AgdaSymbol{=} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaBound{x} \AgdaSymbol{→} \AgdaFunction{typeof} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaBound{K} \AgdaBound{x}\AgdaSymbol{)} \AgdaBound{Δ} \AgdaDatatype{≡} \AgdaFunction{typeof} \AgdaBound{x} \AgdaBound{Γ} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\<%
 \end{code}
