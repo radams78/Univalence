@@ -10,7 +10,7 @@
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims}\<%
 \\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims.RTClosure}\<%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims.Closure}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar} \AgdaBound{G}\<%
 \\
@@ -89,7 +89,7 @@ If $E[\sigma]$ is strongly normalizable and $R$ respects $F$ then $E$ is strongl
 \>[47]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaInductiveConstructor{SNI} \AgdaBound{E} \AgdaSymbol{(λ} \AgdaBound{F} \AgdaBound{E→F} \AgdaSymbol{→} \AgdaFunction{SNap'} \AgdaSymbol{\{}\AgdaBound{Ops}\AgdaSymbol{\}} \AgdaBound{hyp} \AgdaSymbol{(}\AgdaBound{SNσE} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaFunction{respects-osr} \AgdaBound{Ops} \AgdaBound{hyp} \AgdaBound{E→F}\AgdaSymbol{)))}\<%
+\>[2]\AgdaInductiveConstructor{SNI} \AgdaBound{E} \AgdaSymbol{(λ} \AgdaBound{F} \AgdaBound{E→F} \AgdaSymbol{→} \AgdaFunction{SNap'} \AgdaSymbol{\{}\AgdaBound{Ops}\AgdaSymbol{\}} \AgdaBound{hyp} \AgdaSymbol{(}\AgdaBound{SNσE} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaFunction{aposrr} \AgdaBound{Ops} \AgdaBound{hyp} \AgdaBound{E→F}\AgdaSymbol{)))}\<%
 \end{code}
 }
 
