@@ -11,6 +11,9 @@ open import PHOPL.PathSub
 
 valid-addpath : ∀ {V} {Γ : Context V} {A} → valid Γ → valid (addpath Γ A)
 valid-addpath validΓ = ctxER (varR x₁ (ctxTR (ctxTR validΓ))) (varR x₀ (ctxTR (ctxTR validΓ)))
+
+context-validity' : ∀ {V} {Γ : Context V} {A} → valid (addpath Γ A) → valid Γ
+context-validity' (ctxER (varR _ (ctxTR (ctxTR validΓ))) _) = validΓ
 \end{code}
 }
 
@@ -22,27 +25,19 @@ In the lemmas that follow, the letter $\mathcal{J}$ stands for any of the expres
 
 \begin{lemma}[Context Validity]
 $ $
-\begin{enumerate}
-\item
 Every derivation of $\Gamma, \Delta \vdash \mathcal{J}$ has a subderivation of $\Gamma \vald$.
-\item
-Every derivation of $\Gamma, p : \phi, \Delta \vdash \mathcal{J}$ has a subderivation of $\Gamma \vdash \phi : \Omega$.
-\item
-Every derivation of $\Gamma, e : M =_A N, \Delta \vdash \mathcal{J}$ has subderivations of $\Gamma \vdash M : A$ and $\Gamma \vdash N : A$.
-\end{enumerate}
-\end{lemma}
 
-\begin{proof}
-Part 1 is proven by induction on derivations.  Parts 2 and 3 follow by inversion.
-\end{proof}
-
-\AgdaHide{
 \begin{code}
 context-validity : ∀ {V} {Γ} {K} {M : Expression V (varKind K)} {A} →
                    Γ ⊢ M ∶ A → valid Γ
-context-validity'' : ∀ {V} {Γ : Context V} {A} → valid (addpath Γ A) → valid Γ
---BUG "with" does not work on lines 8 and 15 below
+\end{code}
+\end{lemma}
 
+\begin{proof}
+Induction on derivations.
+
+\AgdaHide{
+\begin{code}
 context-validity (varR _ validΓ) = validΓ
 context-validity (appR Γ⊢M∶A⇛B _) = context-validity Γ⊢M∶A⇛B
 context-validity (ΛR Γ,A⊢M∶B) with context-validity Γ,A⊢M∶B
@@ -57,31 +52,26 @@ context-validity (⊃*R Γ⊢φ∶Ω _) = context-validity Γ⊢φ∶Ω
 context-validity (univR Γ⊢δ∶φ⊃ψ _) = context-validity Γ⊢δ∶φ⊃ψ
 context-validity (plusR Γ⊢P∶φ≡ψ) = context-validity Γ⊢P∶φ≡ψ
 context-validity (minusR Γ⊢P∶φ≡ψ) = context-validity Γ⊢P∶φ≡ψ
-context-validity (lllR addpathΓ⊢P∶M≡N) = context-validity'' (context-validity addpathΓ⊢P∶M≡N)
+context-validity (lllR addpathΓ⊢P∶M≡N) = context-validity' (context-validity addpathΓ⊢P∶M≡N)
 context-validity (app*R Γ⊢N∶A _ _ _) = context-validity Γ⊢N∶A
 context-validity (convER Γ⊢P∶M≡N _ _ _ _) = context-validity Γ⊢P∶M≡N
-
-context-validity'' (ctxER (varR .(↑ x₀) (ctxTR (ctxTR validΓ))) _) = validΓ
 \end{code}
 }
+\end{proof}
 
 \begin{lemma}[Weakening]
 If $\Gamma \vdash \mathcal{J}$, $\Gamma \subseteq \Delta$ and $\Delta \vald$ then $\Delta \vdash \mathcal{J}$.
+
+\begin{code}
+postulate weakening : ∀ {U} {V} {ρ : Rep U V} {K}
+                    {Γ : Context U} {M : Expression U (varKind K)} {A} {Δ} →
+                    Γ ⊢ M ∶ A → valid Δ → ρ ∶ Γ ⇒R Δ → Δ ⊢ M 〈 ρ 〉 ∶ A 〈 ρ 〉
+\end{code}
 \end{lemma}
 
 \begin{proof}
 Induction on derivations.
 \end{proof}
-
-\AgdaHide{
-\begin{code}
-postulate _∶_⇒R_ : ∀ {U} {V} → Rep U V → Context U → Context V → Set
-
-postulate weakening : ∀ {U} {V} {ρ : Rep U V} {K}
-                    {Γ : Context U} {M : Expression U (varKind K)} {A} {Δ} →
-                    Γ ⊢ M ∶ A → valid Δ → ρ ∶ Γ ⇒R Δ → Δ ⊢ M 〈 ρ 〉 ∶ A 〈 ρ 〉
-\end{code}
-}
 
 \begin{lemma}[Type Validity]
 $ $
@@ -254,7 +244,7 @@ extendSub σ M _ (↑ x) = σ _ x
 postulate extendSub-typed : ∀ {U} {V} {σ : Sub U V} {M : Term V} {Γ} {Δ} {A} →
                           σ ∶ Γ ⇒ Δ → Δ ⊢ M ∶ ty A → extendSub σ M ∶ Γ ,T A ⇒ Δ
                                                                               
-postulate extendSub-decomp : ∀ {U} {V} {σ : Sub U V} {M : Term V} {C} {K} (E : Subexpression (U , -Term) C K) →
+postulate extendSub-decomp : ∀ {U} {V} {σ : Sub U V} {M : Term V} {C} {K} (E : Subexp (U , -Term) C K) →
                            E ⟦ liftSub -Term σ ⟧ ⟦ x₀:= M ⟧ ≡ E ⟦ extendSub σ M ⟧
 
 postulate ⊃-gen₁ : ∀ {V} {Γ : Context V} {φ} {ψ} → Γ ⊢ φ ⊃ ψ ∶ ty Ω → Γ ⊢ φ ∶ ty Ω
@@ -292,10 +282,10 @@ liftPathSub-typed {U} {Γ = Γ} {A} τ∶ρ∼σ validΔ (↑ x) = change-type (
                                                                 (valid-addpath validΔ) upRep-typed) 
                                                     (cong₃ _≡〈_〉_ refl (sym (typeof'-up {U} {Γ = Γ} {A} {x = x})) refl)
 
-postulate sub↖-decomp : ∀ {U} {V} {C} {K} (M : Subexpression (U , -Term) C K) {ρ : Sub U V} → 
+postulate sub↖-decomp : ∀ {U} {V} {C} {K} (M : Subexp (U , -Term) C K) {ρ : Sub U V} → 
                      M ⟦ liftSub _ ρ ⟧ 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 ⟦ x₀:= var x₂ ⟧ ≡ M ⟦ sub↖ ρ ⟧
 
-postulate sub↗-decomp : ∀ {U} {V} {C} {K} (M : Subexpression (U , -Term) C K) {ρ : Sub U V} → 
+postulate sub↗-decomp : ∀ {U} {V} {C} {K} (M : Subexp (U , -Term) C K) {ρ : Sub U V} → 
                      M ⟦ liftSub _ ρ ⟧ 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 ⟦ x₀:= var x₁ ⟧ ≡ M ⟦ sub↗ ρ ⟧
 \end{code}
 }
@@ -420,7 +410,7 @@ It is sufficient to prove the case $s \rightarrow t$.  The proof is by a case an
 \AgdaHide{
 \begin{code}
 postulate Subject-Reduction-R : ∀ {V} {K} {C} 
-                              {c : Constructor (SK C (varKind K))} {E : ListAbs V C} {F : Expression V (varKind K)} {Γ} {A} →
+                              {c : Con (SK C (varKind K))} {E : ListAbs V C} {F : Expression V (varKind K)} {Γ} {A} →
                               Γ ⊢ app c E ∶ A → R c E F → Γ ⊢ F ∶ A
 
 {-Subject-Reduction-R : ∀ {V} {K} {C} 
