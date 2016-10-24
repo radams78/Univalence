@@ -28,34 +28,46 @@ Critical-Pairs reflamλλλ reflamλλλ = _ ,p ref ,p ref -}
 
 postulate pre-confluent-case₁ : ∀ {V φ ψ χ δ ε P} → univ ψ χ δ ε ⇒ P →
                               Σ[ Q ∈ Path V ] R -imp* (reff φ ∷ P ∷ []) Q × ru-redex φ ψ χ δ ε ↠ Q
-{- pre-confluent-case₁ {V} {φ} {ψ} {χ} {δ} {ε} {P} = univ-osrE 
+{-pre-confluent-case₁ {V} {φ} {ψ} {χ} {δ} {ε} {P} = univ-osrE 
     {C = λ P → Σ[ Q ∈ Path V ] R -imp* (reff φ ∷ P ∷ []) Q × ru-redex φ ψ χ δ ε ↠ Q}
-    (λ ψ' ψ⇒ψ' → _ ,p ref⊃*univ ,p univ-red (osr-red (app (appr (appl ψ⇒ψ')))) ref (osr-red (app (appl (app (appr (appl ψ⇒ψ')))))) ref)
-    (λ χ' χ⇒χ' → _ ,p ref⊃*univ ,p univ-red ref (osr-red (app (appr (appl χ⇒χ')))) ref (osr-red (app (appl (app (appr (appl χ⇒χ'))))))) 
-    (λ δ' δ⇒δ' → _ ,p ref⊃*univ ,p osr-red (app (appr (appr (appl (app (appr (appl (app (appr (appl (app (appl 
-      (osr-rep (osr-rep δ⇒δ'))))))))))))))) 
-    (λ ε' ε⇒ε' → _ ,p ref⊃*univ ,p osr-red (app (appr (appr (appr (appl (app (appr (appl (app (appr (appl (app (appl 
-      (osr-rep (osr-rep ε⇒ε')))))))))))))))) -}
+    (λ ψ' ψ⇒ψ' → _ ,p ref⊃*univ ,p ru-redex-red δ δ ε ε ref (inc ψ⇒ψ') ref ref ref)
+    (λ χ' χ⇒χ' → _ ,p ref⊃*univ ,p ru-redex-red δ δ ε ε ref ref (inc χ⇒χ') ref ref)
+    (λ δ' δ⇒δ' → _ ,p ref⊃*univ ,p ru-redex-red δ δ' ε ε ref ref ref (inc δ⇒δ') ref)
+    (λ ε' ε⇒ε' → _ ,p ref⊃*univ ,p ru-redex-red δ δ ε ε' ref ref ref ref (inc ε⇒ε')) -}
 
 postulate pre-confluent-case₂ : ∀ {V φ φ' ψ χ δ ε} → φ ⇒ φ' → Σ[ Q ∈ Path V ] R -imp* (reff φ' ∷ univ ψ χ δ ε ∷ []) Q × ru-redex φ ψ χ δ ε ↠ Q
-{- pre-confluent-case₂ {V} {φ} {φ'} {ψ} {χ} {δ} {ε} φ⇒φ' = 
-  let φ⊃θ↠φ'⊃θ : ∀ θ → φ ⊃ θ ↠ φ' ⊃ θ
-      φ⊃θ↠φ'⊃θ _ = osr-red (app (appl φ⇒φ')) in
-  let λφ↠λφ' : ∀ θ δ → ΛP (φ ⊃ θ) (ΛP (φ ⇑) (appP (δ ⇑ ⇑) (appP (var x₁) (var x₀)))) ↠ ΛP (φ' ⊃ θ) (ΛP (φ' ⇑) (appP (δ ⇑ ⇑) (appP (var x₁) (var x₀))))
-      λφ↠λφ' _ _ = ΛP-red (φ⊃θ↠φ'⊃θ _) (osr-red (app (appl (respects-osr REP R-respects-replacement φ⇒φ')))) in
-  _ ,p ref⊃*univ ,p univ-red (φ⊃θ↠φ'⊃θ _) (φ⊃θ↠φ'⊃θ _) (λφ↠λφ' _ δ) (λφ↠λφ' _ ε) -}
+--pre-confluent-case₂ {V} {φ} {φ'} {ψ} {χ} {δ} {ε} φ⇒φ' = _ ,p ref⊃*univ ,p ru-redex-red δ δ ε ε (inc φ⇒φ') ref ref ref ref
 
 postulate pre-confluent-case₃ : ∀ {V φ ψ χ δ ε P} → univ φ ψ δ ε ⇒ P → Σ[ Q ∈ Path V ] R -imp* (P ∷ reff χ ∷ []) Q × ur-redex φ ψ χ δ ε ↠ Q
 {- pre-confluent-case₃ {V} {φ} {ψ} {χ} {δ} {ε} {P} = univ-osrE
   {C = λ P → Σ-syntax (Path V) (λ Q →
     R -imp* (P ∷ reff χ ∷ []) Q × ur-redex φ ψ χ δ ε ↠ Q)}
-  (λ φ' φ⇒φ' → _ ,p univ⊃*ref ,p univ-red (osr-red (app (appl φ⇒φ'))) ref (osr-red (app (appl (app (appl φ⇒φ'))))) (osr-red (app (appr (appl (app (appl (osr-rep φ⇒φ')))))))) 
-  (λ ψ' ψ⇒ψ' → _ ,p univ⊃*ref ,p (univ-red ref (osr-red (app (appl ψ⇒ψ'))) (osr-red (app (appr (appl (app (appl (osr-rep ψ⇒ψ'))))))) (osr-red (app (appl (app (appl ψ⇒ψ'))))))) 
-  (λ δ' δ⇒δ' → _ ,p (univ⊃*ref ,p (osr-red (app (appr (appr (appr (appl (app (appr (appl (app (appr (appl (app (appr (appl (app (appl (osr-rep (osr-rep δ⇒δ'))))))))))))))))))))) 
-  (λ ε' ε⇒ε' → _ ,p univ⊃*ref ,p (osr-red (app (appr (appr (appl (app (appr (appl (app (appr (appl (app (appr (appl (app (appl (osr-rep (osr-rep ε⇒ε'))))))))))))))))))) -}
+  (λ φ' φ⇒φ' → _ ,p univ⊃*ref ,p ur-redex-red δ δ ε ε (inc φ⇒φ') ref ref ref ref)
+  (λ ψ' ψ⇒ψ' → _ ,p univ⊃*ref ,p ur-redex-red δ δ ε ε ref (inc ψ⇒ψ') ref ref ref)
+  (λ δ' δ⇒δ' → _ ,p univ⊃*ref ,p ur-redex-red δ δ' ε ε ref ref ref (inc δ⇒δ') ref)
+  (λ ε' ε⇒ε' → _ ,p univ⊃*ref ,p ur-redex-red δ δ ε ε' ref ref ref ref (inc ε⇒ε')) -}
+
+postulate pre-confluent-case₄ : ∀ {V} {φ φ' ψ ψ' : Term V} {δ δ' ε ε' P} → univ φ ψ δ ε ⇒ P → 
+                              Σ[ Q ∈ Path V ] R -imp* (P ∷ univ φ' ψ' δ' ε' ∷ []) Q × uu-redex φ φ' ψ ψ' δ δ' ε ε' ↠ Q
+{- pre-confluent-case₄ {V} {φ} {φ'} {ψ} {ψ'} {δ} {δ'} {ε} {ε'} {P} = univ-osrE
+  {C = λ P → Σ[ Q ∈ Path V ] R -imp* (P ∷ univ φ' ψ' δ' ε' ∷ []) Q × uu-redex φ φ' ψ ψ' δ δ' ε ε' ↠ Q}
+  (λ φ'' φ⇒φ'' → _ ,p univ⊃*univ ,p uu-redex-red δ δ' ε ε' (inc φ⇒φ'') ref ref ref ref ref ref ref)
+  (λ ψ'' ψ⇒ψ'' → _ ,p univ⊃*univ ,p uu-redex-red δ δ' ε ε' ref ref (inc ψ⇒ψ'') ref ref ref ref ref)
+  (λ δ'' δ⇒δ'' → _ ,p univ⊃*univ ,p uu-redex-red δ δ' ε ε' ref ref ref ref (inc δ⇒δ'') ref ref ref)
+  (λ ε'' ε⇒ε'' → _ ,p univ⊃*univ ,p uu-redex-red δ δ' ε ε' ref ref ref ref ref ref (inc ε⇒ε'') ref) -}
+
+postulate pre-confluent-case₅ : ∀ {V} {φ φ' ψ ψ' : Term V} {δ δ' ε ε' P} → univ φ' ψ' δ' ε' ⇒ P →
+                              Σ[ Q ∈ Path V ] R -imp* (univ φ ψ δ ε ∷ P ∷ []) Q × uu-redex φ φ' ψ ψ' δ δ' ε ε' ↠ Q
+{-univ-osrE
+  {C = λ P → Σ[ Q ∈ Path V ] R -imp* (univ φ ψ δ ε ∷ P ∷ []) Q × uu-redex φ φ' ψ ψ' δ δ' ε ε' ↠ Q}
+  (λ φ'' φ'⇒φ'' → _ ,p univ⊃*univ ,p uu-redex-red δ δ' ε ε' ref (inc φ'⇒φ'') ref ref ref ref ref ref)
+  (λ ψ'' ψ'⇒ψ'' → _ ,p (univ⊃*univ ,p uu-redex-red δ δ' ε ε' ref ref ref (inc ψ'⇒ψ'') ref ref ref ref)) 
+  (λ δ'' δ'⇒δ'' → _ ,p (univ⊃*univ ,p (uu-redex-red δ δ' ε ε' ref ref ref ref ref (inc δ'⇒δ'') ref ref))) 
+  (λ ε'' ε'⇒ε'' → _ ,p (univ⊃*univ ,p (uu-redex-red δ δ' ε ε' ref ref ref ref ref ref ref (inc ε'⇒ε'')))) 
+  univδε⇒P-}
 
 pre-confluent : ∀ {V} {K} {C} {c : Con (SK C K)} {E E' : ListAbs V C} {F} →
-                        R c E F → E ⇒ E' → Σ[ F' ∈ Expression V K ] R c E' F' × F ↠ F'
+                R c E F → E ⇒ E' → Σ[ F' ∈ Expression V K ] R c E' F' × F ↠ F'
 pre-confluent βT (appl (redex ()))
 pre-confluent βT (appl (app (appl E⇒E'))) = _ ,p βT ,p red-subl (inc E⇒E')
 pre-confluent βT (appl (app (appr ())))
@@ -90,38 +102,24 @@ pre-confluent minus-univ (appl (app (appr (appr (appr (appl E⇒E')))))) = _ ,p 
 pre-confluent minus-univ (appl (app (appr (appr (appr (appr ()))))))
 pre-confluent minus-univ (appr ())
 pre-confluent ref⊃*univ (appl (redex ()))
-pre-confluent (ref⊃*univ {φ = φ} {ψ = ψ} {χ = χ} {δ = δ} {ε = ε}) (appl (app (appl {E' = φ'} φ⇒φ'))) = pre-confluent-case₂ φ⇒φ'
+pre-confluent ref⊃*univ (appl (app (appl φ⇒φ'))) = pre-confluent-case₂ φ⇒φ'
 pre-confluent ref⊃*univ (appl (app (appr ())))
-pre-confluent {V = V} (ref⊃*univ {φ = φ} {ψ = ψ} {χ = χ} {δ = δ} {ε = ε}) (appr (appl {E' = P'} univδε⇒P')) = pre-confluent-case₁ univδε⇒P'
+pre-confluent ref⊃*univ (appr (appl univδε⇒P')) = pre-confluent-case₁ univδε⇒P'
 pre-confluent ref⊃*univ (appr (appr ()))
-pre-confluent {V} (univ⊃*ref {φ = φ} {ψ} {χ} {δ} {ε}) (appl univδε⇒P') = pre-confluent-case₃ univδε⇒P'
+pre-confluent univ⊃*ref (appl univδε⇒P') = pre-confluent-case₃ univδε⇒P'
 pre-confluent univ⊃*ref (appr (appl (redex ())))
-pre-confluent univ⊃*ref (appr (appl (app (appl χ⇒χ')))) = _ ,p univ⊃*ref ,p univ-red (inc (app (appr (appl χ⇒χ')))) (inc (app (appr (appl χ⇒χ')))) 
-  (inc (app (appl (app (appr (appl χ⇒χ')))))) (inc (app (appl (app (appr (appl χ⇒χ'))))))
+pre-confluent (univ⊃*ref {δ = δ} {ε}) (appr (appl (app (appl χ⇒χ')))) = _ ,p univ⊃*ref ,p ur-redex-red δ δ ε ε ref ref (inc χ⇒χ') ref ref
 pre-confluent univ⊃*ref (appr (appl (app (appr ()))))
 pre-confluent univ⊃*ref (appr (appr ()))
-pre-confluent {V} (univ⊃*univ {φ = φ} {φ'} {ψ} {ψ'} {δ} {δ'} {ε} {ε'}) (appl univδε⇒P) = univ-osrE
-  {C = λ P → Σ-syntax (Path V)
-    (λ Q → R -imp* (P ∷ univ φ' ψ' δ' ε' ∷ []) Q ×
-      (uu-redex φ φ' ψ ψ' δ δ' ε ε' ↠ Q))}
-  (λ φ'' φ⇒φ'' → _ ,p univ⊃*univ ,p univ-red (inc (app (appl φ⇒φ''))) ref (inc (app (appl (app (appl φ⇒φ''))))) 
-    (inc (app (appr (appl (app (appl (osr-rep φ⇒φ'')))))))) 
-  (λ ψ'' ψ⇒ψ'' → _ ,p univ⊃*univ ,p univ-red ref (inc (app (appl ψ⇒ψ''))) (inc (app (appr (appl (app (appl (osr-rep ψ⇒ψ''))))))) 
-    (inc (app (appl (app (appl ψ⇒ψ'')))))) 
-  (λ δ'' δ⇒δ'' → _ ,p univ⊃*univ ,p univ-red ref ref ref (inc (app (appr (appl (app (appr (appl (app (appr (appl (app (appr (appl (app (appl (osr-rep (osr-rep δ⇒δ'')))))))))))))))))) 
-  (λ ε'' ε⇒ε'' → _ ,p univ⊃*univ ,p univ-red ref ref (inc (app (appr (appl (app (appr (appl (app (appr (appl (app (appr (appl (app (appl (osr-rep (osr-rep ε⇒ε''))))))))))))))))) ref) 
-  univδε⇒P
-pre-confluent {V} (univ⊃*univ {φ = φ} {φ'} {ψ} {ψ'} {δ} {δ'} {ε} {ε'}) (appr (appl univδε⇒P)) = univ-osrE
-                                                                                              {C =
-                                                                                               λ P →
-                                                                                                 Σ-syntax (Path V)
-                                                                                                 (λ Q →
-                                                                                                    R -imp* (univ φ ψ δ ε ∷ P ∷ []) Q ×
-                                                                                                    (uu-redex φ φ' ψ ψ' δ δ' ε ε' ↠ Q))}
-              (λ φ'' φ'⇒φ'' → _ ,p univ⊃*univ ,p uu-redex-red {δ = δ} {δ' = δ'} {ε = ε} {ε' = ε'} ref (inc φ'⇒φ'') ref ref ref ref ref ref)
-              (λ ψ'' ψ'⇒ψ'' → _ ,p (univ⊃*univ ,p uu-redex-red {δ = δ} {δ' = δ'} {ε = ε} {ε' = ε'} ref ref ref (inc ψ'⇒ψ'') ref ref ref ref)) {!!} {!!} univδε⇒P
-pre-confluent univ⊃*univ (appr (appr E⇒E')) = {!!}
-pre-confluent ref⊃*ref E⇒E' = {!!}
+pre-confluent {V} (univ⊃*univ {φ = φ} {φ'} {ψ} {ψ'} {δ} {δ'} {ε} {ε'}) (appl univδε⇒P) = pre-confluent-case₄ univδε⇒P
+pre-confluent {V} (univ⊃*univ {φ = φ} {φ'} {ψ} {ψ'} {δ} {δ'} {ε} {ε'}) (appr (appl univδε⇒P)) = pre-confluent-case₅ univδε⇒P
+pre-confluent univ⊃*univ (appr (appr ()))
+pre-confluent ref⊃*ref (appl (redex ()))
+pre-confluent ref⊃*ref (appl (app (appl φ⇒φ'))) = _ ,p ref⊃*ref ,p inc (app (appl (app (appl φ⇒φ'))))
+pre-confluent ref⊃*ref (appl (app (appr ())))
+pre-confluent ref⊃*ref (appr (appl (redex ())))
+pre-confluent ref⊃*ref (appr (appl (app E⇒E'))) = {!!}
+pre-confluent ref⊃*ref (appr (appr E⇒E')) = {!!}
 pre-confluent refref E⇒E' = {!!}
 pre-confluent βE E⇒E' = {!!}
 pre-confluent reflamvar E⇒E' = {!!}
