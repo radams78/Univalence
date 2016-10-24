@@ -314,7 +314,7 @@ one of $\phi$, $\psi$, $\delta$, $\epsilon$.
 \\
 %
 \\
-\>\AgdaFunction{ru-redex-red} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaBound{φ'} \AgdaBound{ψ} \AgdaBound{ψ'} \AgdaBound{χ} \AgdaBound{χ'} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δ} \AgdaBound{δ'} \AgdaBound{ε} \AgdaBound{ε'}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\>\AgdaFunction{ru-redex-red} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaBound{φ'} \AgdaBound{ψ} \AgdaBound{ψ'} \AgdaBound{χ} \AgdaBound{χ'} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{δ} \AgdaBound{δ'} \AgdaBound{ε} \AgdaBound{ε'} \AgdaSymbol{→}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaBound{φ} \AgdaFunction{↠} \AgdaBound{φ'} \AgdaSymbol{→} \AgdaBound{ψ} \AgdaFunction{↠} \AgdaBound{ψ'} \AgdaSymbol{→} \AgdaBound{χ} \AgdaFunction{↠} \AgdaBound{χ'} \AgdaSymbol{→} \AgdaBound{δ} \AgdaFunction{↠} \AgdaBound{δ'} \AgdaSymbol{→} \AgdaBound{ε} \AgdaFunction{↠} \AgdaBound{ε'} \AgdaSymbol{→}\<%
@@ -322,7 +322,7 @@ one of $\phi$, $\psi$, $\delta$, $\epsilon$.
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{ru-redex} \AgdaBound{φ} \AgdaBound{ψ} \AgdaBound{χ} \AgdaBound{δ} \AgdaBound{ε} \AgdaFunction{↠} \AgdaFunction{ru-redex} \AgdaBound{φ'} \AgdaBound{ψ'} \AgdaBound{χ'} \AgdaBound{δ'} \AgdaBound{ε'}\<%
 \\
-\>\AgdaFunction{ru-redex-red} \AgdaBound{φ↠φ'} \AgdaBound{ψ↠ψ'} \AgdaBound{χ↠χ'} \AgdaBound{δ↠δ'} \AgdaBound{ε↠ε'} \AgdaSymbol{=} \AgdaPostulate{univ-red} \AgdaSymbol{(}\AgdaPostulate{⊃-red} \AgdaBound{φ↠φ'} \AgdaBound{ψ↠ψ'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{⊃-red} \AgdaBound{φ↠φ'} \AgdaBound{χ↠χ'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{ru-redex-half-red} \AgdaBound{φ↠φ'} \AgdaBound{ψ↠ψ'} \AgdaBound{δ↠δ'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{ru-redex-half-red} \AgdaBound{φ↠φ'} \AgdaBound{χ↠χ'} \AgdaBound{ε↠ε'}\AgdaSymbol{)}\<%
+\>\AgdaFunction{ru-redex-red} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaBound{φ↠φ'} \AgdaBound{ψ↠ψ'} \AgdaBound{χ↠χ'} \AgdaBound{δ↠δ'} \AgdaBound{ε↠ε'} \AgdaSymbol{=} \AgdaPostulate{univ-red} \AgdaSymbol{(}\AgdaPostulate{⊃-red} \AgdaBound{φ↠φ'} \AgdaBound{ψ↠ψ'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{⊃-red} \AgdaBound{φ↠φ'} \AgdaBound{χ↠χ'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{ru-redex-half-red} \AgdaBound{φ↠φ'} \AgdaBound{ψ↠ψ'} \AgdaBound{δ↠δ'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{ru-redex-half-red} \AgdaBound{φ↠φ'} \AgdaBound{χ↠χ'} \AgdaBound{ε↠ε'}\AgdaSymbol{)}\<%
 \\
 %
 \\
@@ -338,7 +338,7 @@ one of $\phi$, $\psi$, $\delta$, $\epsilon$.
 \\
 %
 \\
-\>\AgdaKeyword{postulate} \AgdaPostulate{ur-redex-red} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaBound{φ'} \AgdaBound{ψ} \AgdaBound{ψ'} \AgdaBound{χ} \AgdaBound{χ'} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δ} \AgdaBound{δ'} \AgdaBound{ε} \AgdaBound{ε'}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\>\AgdaKeyword{postulate} \AgdaPostulate{ur-redex-red} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaBound{φ'} \AgdaBound{ψ} \AgdaBound{ψ'} \AgdaBound{χ} \AgdaBound{χ'} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{δ} \AgdaBound{δ'} \AgdaBound{ε} \AgdaBound{ε'} \AgdaSymbol{→}\<%
 \\
 \>[0]\AgdaIndent{23}{}\<[23]%
 \>[23]\AgdaBound{φ} \AgdaFunction{↠} \AgdaBound{φ'} \AgdaSymbol{→} \AgdaBound{ψ} \AgdaFunction{↠} \AgdaBound{ψ'} \AgdaSymbol{→} \AgdaBound{χ} \AgdaFunction{↠} \AgdaBound{χ'} \AgdaSymbol{→} \AgdaBound{δ} \AgdaFunction{↠} \AgdaBound{δ'} \AgdaSymbol{→} \AgdaBound{ε} \AgdaFunction{↠} \AgdaBound{ε'} \AgdaSymbol{→}\<%
@@ -346,7 +346,7 @@ one of $\phi$, $\psi$, $\delta$, $\epsilon$.
 \>[0]\AgdaIndent{23}{}\<[23]%
 \>[23]\AgdaFunction{ur-redex} \AgdaBound{φ} \AgdaBound{ψ} \AgdaBound{χ} \AgdaBound{δ} \AgdaBound{ε} \AgdaFunction{↠} \AgdaFunction{ur-redex} \AgdaBound{φ'} \AgdaBound{ψ'} \AgdaBound{χ'} \AgdaBound{δ'} \AgdaBound{ε'}\<%
 \\
-\>\AgdaComment{--ur-redex-red \{φ = φ\} \{φ'\} \{ψ\} \{ψ'\} \{χ\} \{χ'\} φ↠φ' ψ↠ψ' χ↠χ' δ↠δ' ε↠ε' = univ-red (⊃-red φ↠φ' χ↠χ') (⊃-red ψ↠ψ' χ↠χ') (ur-redex-half-red φ↠φ' χ↠χ' ψ↠ψ' ε↠ε') (ur-redex-half-red ψ↠ψ' χ↠χ' φ↠φ' δ↠δ')}\<%
+\>\AgdaComment{--ur-redex-red \{φ = φ\} \{φ'\} \{ψ\} \{ψ'\} \{χ\} \{χ'\} \_ \_ \_ \_ φ↠φ' ψ↠ψ' χ↠χ' δ↠δ' ε↠ε' = univ-red (⊃-red φ↠φ' χ↠χ') (⊃-red ψ↠ψ' χ↠χ') (ur-redex-half-red φ↠φ' χ↠χ' ψ↠ψ' ε↠ε') (ur-redex-half-red ψ↠ψ' χ↠χ' φ↠φ' δ↠δ')}\<%
 \\
 %
 \\
