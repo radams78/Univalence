@@ -122,7 +122,14 @@ pre-confluent ref⊃*ref (appr (appl (app E⇒E'))) = {!!}
 pre-confluent ref⊃*ref (appr (appr E⇒E')) = {!!}
 pre-confluent refref E⇒E' = {!!}
 pre-confluent βE E⇒E' = {!!}
-pre-confluent reflamvar E⇒E' = {!!}
+pre-confluent (reflamvar {M = M}) (appl N⇒N') = _ ,p reflamvar ,p red-pathsub-endl M (botsub-red N⇒N')
+pre-confluent (reflamvar {M = M}) (appr (appl N'⇒N₁')) = _ ,p reflamvar ,p red-pathsub-endr M (botsub-red N'⇒N₁')
+pre-confluent reflamvar (appr (appr (appl (redex ()))))
+pre-confluent reflamvar (appr (appr (appl (app (appl (redex ()))))))
+pre-confluent reflamvar (appr (appr (appl (app (appl (app (appl M⇒M'))))))) = {!!} ,p reflamvar ,p red-pathsub {!!} {!!}
+pre-confluent reflamvar (appr (appr (appl (app (appl (app (appr E⇒E'))))))) = {!!}
+pre-confluent reflamvar (appr (appr (appl (app (appr E⇒E'))))) = {!!}
+pre-confluent reflamvar (appr (appr (appr E⇒E'))) = {!!}
 pre-confluent reflam⊃* E⇒E' = {!!}
 pre-confluent reflamuniv E⇒E' = {!!}
 pre-confluent reflamλλλ E⇒E' = {!!}

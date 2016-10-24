@@ -1,6 +1,7 @@
 t\AgdaHide{
 \begin{code}
 module PHOPL.Red where
+open import Data.Empty renaming (⊥ to False)
 open import Data.Unit
 open import Data.Vec
 open import Data.Product renaming (_,_ to _,p_)
@@ -20,6 +21,7 @@ We make the following definitions simultaneously:
 \item
 Let \emph{contraction} $\rhd$ be the relation consisting of the pairs $s \rhd t$ shown in Figure \ref{fig:red}, 
 such that $s$ is closed, and every proper subexpression of $s$ is in normal form.
+%The only time we need this restriction is that M is in normal form when reducing ref(λx:A.M)_NN' P
 
 \begin{figure}
 \begin{framed}
@@ -76,25 +78,29 @@ uu-redex-half φ φ' ψ δ ε = ΛP (φ ⊃ φ') (ΛP (ψ ⇑) (appP (δ ⇑ ⇑
 uu-redex : ∀ {V} → Term V → Term V → Term V → Term V → Proof V → Proof V → Proof V → Proof V → Path V
 uu-redex φ φ' ψ ψ' δ δ' ε ε' = univ (φ ⊃ φ') (ψ ⊃ ψ') (uu-redex-half φ φ' ψ δ' ε) (uu-redex-half ψ ψ' φ ε' δ)
 
-data R : Reduction where
-  βT : ∀ {V} {A} {M} {N} → R {V} -appTerm (ΛT A M ∷ N ∷ []) (M ⟦ x₀:= N ⟧)
-  βR : ∀ {V} {φ} {δ} {ε} → R {V} -appProof (ΛP φ δ ∷ ε ∷ []) (δ ⟦ x₀:= ε ⟧)
-  plus-ref : ∀ {V} {φ} → R {V} -plus (reff φ ∷ []) (ΛP φ (var x₀))
-  minus-ref : ∀ {V} {φ} → R {V} -minus (reff φ ∷ []) (ΛP φ (var x₀))
-  plus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → R {V} -plus (univ φ ψ δ ε ∷ []) δ 
-  minus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → R {V} -minus (univ φ ψ δ ε ∷ []) ε
-  ref⊃*univ : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → R {V} -imp* (reff φ ∷ univ ψ χ δ ε ∷ []) (ru-redex φ ψ χ δ ε)
-  univ⊃*ref : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → R {V} -imp* (univ φ ψ δ ε ∷ reff χ ∷ []) (ur-redex φ ψ χ δ ε)
-  univ⊃*univ : ∀ {V} {φ} {φ'} {ψ} {ψ'} {δ} {δ'} {ε} {ε'} →
+data R : Reduction
+data nf : ∀ {V} {K} {C} → Subexp V K C → Set
+
+data R where
+  βT : ∀ {V} {A} {M} {N} → nf (ΛT A M) → nf N → R {V} -appTerm (ΛT A M ∷ N ∷ []) (M ⟦ x₀:= N ⟧)
+  βR : ∀ {V} {φ} {δ} {ε} → nf (ΛP φ δ) → nf ε → R {V} -appProof (ΛP φ δ ∷ ε ∷ []) (δ ⟦ x₀:= ε ⟧)
+  plus-ref : ∀ {V} {φ} → nf (reff φ) → R {V} -plus (reff φ ∷ []) (ΛP φ (var x₀))
+  minus-ref : ∀ {V} {φ} → nf (reff φ) → R {V} -minus (reff φ ∷ []) (ΛP φ (var x₀))
+  plus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → nf (univ φ ψ δ ε) → R {V} -plus (univ φ ψ δ ε ∷ []) δ 
+  minus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → nf (univ φ ψ δ ε) → R {V} -minus (univ φ ψ δ ε ∷ []) ε
+  ref⊃*univ : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → nf (reff φ) → nf (univ φ χ δ ε) → R {V} -imp* (reff φ ∷ univ ψ χ δ ε ∷ []) (ru-redex φ ψ χ δ ε)
+  univ⊃*ref : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → nf (univ φ ψ δ ε) → nf (reff χ) → R {V} -imp* (univ φ ψ δ ε ∷ reff χ ∷ []) (ur-redex φ ψ χ δ ε)
+  univ⊃*univ : ∀ {V} {φ} {φ'} {ψ} {ψ'} {δ} {δ'} {ε} {ε'} → nf (univ φ ψ δ ε) → nf (univ φ' ψ' δ' ε') →
     R {V} -imp* (univ φ ψ δ ε ∷ univ φ' ψ' δ' ε' ∷ []) (uu-redex φ φ' ψ ψ' δ δ' ε ε')
-  ref⊃*ref : ∀ {V} {φ} {ψ} → R {V} -imp* (reff φ ∷ reff ψ ∷ []) (reff (φ ⊃ ψ))
-  refref : ∀ {V} {M} {N} → R {V} -app* (N ∷ N ∷ reff M ∷ reff N ∷ []) (reff (appT M N))
-  βE : ∀ {V} {M} {N} {A} {P} {Q} → R {V} -app* (M ∷ N ∷ λλλ A P ∷ Q ∷ []) 
+  ref⊃*ref : ∀ {V} {φ} {ψ} → nf (reff φ) → nf (reff ψ) → R {V} -imp* (reff φ ∷ reff ψ ∷ []) (reff (φ ⊃ ψ))
+  refref : ∀ {V} {M} {N} → nf (reff M) → nf (reff N) → R {V} -app* (N ∷ N ∷ reff M ∷ reff N ∷ []) (reff (appT M N))
+  βE : ∀ {V} {M} {N} {A} {P} {Q} → nf M → nf N → nf (λλλ A P) → nf Q → R {V} -app* (M ∷ N ∷ λλλ A P ∷ Q ∷ []) 
     (P ⟦ x₂:= M ,x₁:= N ,x₀:= Q ⟧)
-  reflamvar : ∀ {V} {N} {N'} {A} {M} {e} → R {V} -app* (N ∷ N' ∷ reff (ΛT A M) ∷ var e ∷ []) (M ⟦⟦ x₀::= (var e) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
-  reflam⊃* : ∀ {V} {N} {N'} {A} {M} {P} {Q} → R {V} -app* (N ∷ N' ∷ reff (ΛT A M) ∷ (P ⊃* Q) ∷ []) (M ⟦⟦ x₀::= (P ⊃* Q) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
-  reflamuniv : ∀ {V} {N} {N'} {A} {M} {φ} {ψ} {δ} {ε} → R {V} -app* (N ∷ N' ∷ reff (ΛT A M) ∷ univ φ ψ δ ε ∷ []) (M ⟦⟦ x₀::= (univ φ ψ δ ε) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
-  reflamλλλ : ∀ {V} {N} {N'} {A} {M} {B} {P} → R {V} -app* (N ∷ N' ∷ reff (ΛT A M) ∷ λλλ B P ∷ []) (M ⟦⟦ x₀::= (λλλ B P) ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
+  reflam : ∀ {V} {N} {N'} {A} {M} {P} → nf N → nf N' → nf (reff (ΛT A M)) → nf P →  R {V} -app* (N ∷ N' ∷ reff (ΛT A M) ∷ P ∷ []) (M ⟦⟦ x₀::= P ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
+
+data nf where
+  var : ∀ x → nf (var x)
+  
 \end{code}
 
 Let $\rightarrow^?$ be the reflexive closure of $\rightarrow$;
@@ -152,7 +158,7 @@ postulate osr-subl : ∀ {U} {V} {C} {K} {E F : Subexp U C K} {σ : Sub U V} →
 postulate red-subl : ∀ {U} {V} {C} {K} {E F : Subexp U C K} {σ : Sub U V} → E ↠ F → E ⟦ σ ⟧ ↠ F ⟦ σ ⟧
 --red-subl E↠F = respects-red (aposrr SUB R-respects-sub) E↠F
 
-postulate red-subr : ∀ {U} {V} {C} {K} (E : Subexp U C K) {ρ σ : Sub U V} → _↠s_ SUB ρ σ → E ⟦ ρ ⟧ ↠ E ⟦ σ ⟧
+postulate red-subr : ∀ {U} {V} {C} {K} (E : Subexp U C K) {ρ σ : Sub U V} → ρ ↠s σ → E ⟦ ρ ⟧ ↠ E ⟦ σ ⟧
 
 postulate ⊥SN : ∀ {V} → SN {V} ⊥
 
@@ -171,6 +177,13 @@ postulate ⊃-red : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ↠ φ' → ψ ↠ �
 
 postulate appP-red : ∀ {V} {δ δ' ε ε' : Proof V} → δ ↠ δ' → ε ↠ ε' → appP δ ε ↠ appP δ' ε'
 --appP-red δ↠δ' ε↠ε' = app-red (∷-red δ↠δ' (∷-redl ε↠ε'))
+
+postulate ⊃*-red : ∀ {V} {P P' Q Q' : Path V} → P ↠ P' → Q ↠ Q' → (P ⊃* Q) ↠ (P' ⊃* Q')
+
+postulate λλλ-red : ∀ {V A} {P Q : Path (V , -Term , -Term , -Path)} → P ↠ Q → λλλ A P ↠ λλλ A Q
+
+postulate app*-red : ∀ {V} {M M' N N' : Term V} {P P' Q Q'} → M ↠ M' → N ↠ N' → P ↠ P' → Q ↠ Q' →
+                   app* M N P Q ↠ app* M' N' P' Q'
 
 postulate ru-redex-half-red : ∀ {V} {φ φ' ψ ψ' : Term V} {δ δ'} →
                             φ ↠ φ' → ψ ↠ ψ' → δ ↠ δ' → ru-redex-half φ ψ δ ↠ ru-redex-half φ' ψ' δ'
@@ -278,6 +291,26 @@ If $t \rightarrow t'$ then $t[x:=s] \rightarrow t'[x:=s]$.
 If $t \rightarrow t'$ then $s[x:=t] \twoheadrightarrow s[x:=t']$.
 \item
 If $P \rightarrow P'$ then $M \{ x:= P : N \sim N' \} \twoheadrightarrow M \{ x:=P' : N \sim N' \}$.
+\begin{code}
+_↠p_ : ∀ {U V} → PathSub U V → PathSub U V → Set
+τ ↠p τ' = ∀ x → τ x ↠ τ' x
+
+postulate liftPathSub-red : ∀ {U V} {τ τ' : PathSub U V} → τ ↠p τ' → liftPathSub τ ↠p liftPathSub τ'
+
+red-pathsub : ∀ {U V} (M : Term U) {ρ σ : Sub U V} {τ τ' : PathSub U V} →
+            τ ↠p τ' → M ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ ↠ M ⟦⟦ τ' ∶ ρ ∼ σ ⟧⟧
+red-pathsub (var x) τ↠pτ' = τ↠pτ' x
+red-pathsub (app -bot []) τ↠pτ' = ref
+red-pathsub (app -imp (φ ∷ ψ ∷ [])) τ↠pτ' = ⊃*-red (red-pathsub φ τ↠pτ') (red-pathsub ψ τ↠pτ')
+red-pathsub (app (-lamTerm A) (M ∷ [])) τ↠pτ' = λλλ-red (red-pathsub M (liftPathSub-red τ↠pτ'))
+red-pathsub (app -appTerm (M ∷ N ∷ [])) τ↠pτ' = app*-red ref ref (red-pathsub M τ↠pτ') (red-pathsub N τ↠pτ')
+
+postulate red-pathsub-endl : ∀ {U V} (M : Term U) {ρ ρ' σ : Sub U V} {τ : PathSub U V} →
+                      ρ ↠s ρ' → M ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ ↠ M ⟦⟦ τ ∶ ρ' ∼ σ ⟧⟧
+
+postulate red-pathsub-endr : ∀ {U V} (M : Term U) {ρ σ σ' : Sub U V} {τ : PathSub U V} →
+                      σ ↠s σ' → M ⟦⟦ τ ∶ ρ ∼ σ ⟧⟧ ↠ M ⟦⟦ τ ∶ ρ ∼ σ' ⟧⟧
+\end{code}
 \end{enumerate}
 \end{lm}
 

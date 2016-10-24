@@ -204,8 +204,8 @@ Let $\sigma, \tau : U \Rightarrow V$.  We say that $\sigma$ \emph{reduces} to $\
 iff $\sigma(x) \twoheadrightarrow_R \tau(x)$ for all $x$.
 
 \begin{code}
-  _↠s_ : ∀ {U V} → Op U V → Op U V → Set
-  _↠s_ {U} {V} σ τ = ∀ K (x : Var U K) → apV σ x ↠ apV τ x
+  _↠op_ : ∀ {U V} → Op U V → Op U V → Set
+  _↠op_ {U} {V} σ τ = ∀ K (x : Var U K) → apV σ x ↠ apV τ x
 \end{code}
 
 \begin{lemma}$ $
@@ -215,7 +215,7 @@ $E[\rho] \twoheadrightarrow_R E[\sigma]$ for all $K$, $A$, $E$.
 
 \begin{code}
   liftOp-red : ∀ {U V K} {ρ σ : Op U V} → respects' →
-    ρ ↠s σ → liftOp K ρ ↠s liftOp K σ
+    ρ ↠op σ → liftOp K ρ ↠op liftOp K σ
 \end{code}
 
 \AgdaHide{
@@ -228,7 +228,7 @@ $E[\rho] \twoheadrightarrow_R E[\sigma]$ for all $K$, $A$, $E$.
 
 \begin{code}
   liftsOp-red : ∀ {U V A} {ρ σ : Op U V} → respects' → 
-    ρ ↠s σ → liftsOp A ρ ↠s liftsOp A σ
+    ρ ↠op σ → liftsOp A ρ ↠op liftsOp A σ
 \end{code}
 
 \AgdaHide{
@@ -240,7 +240,7 @@ $E[\rho] \twoheadrightarrow_R E[\sigma]$ for all $K$, $A$, $E$.
 
 \begin{code}
   apredl : ∀ {U V C K} {ρ σ : Op U V} {E : Subexp U C K} → 
-    respects' → ρ ↠s σ → ap ρ E ↠ ap σ E
+    respects' → ρ ↠op σ → ap ρ E ↠ ap σ E
 \end{code}
 
 \AgdaHide{
@@ -285,6 +285,9 @@ We say $\rhd$ \emph{creates} $Op$s iff, whenever $M [ \sigma ] \rhd N$, then the
     creation' {U} {V} {C} {K} {c} M {N} {σ} δ
 
 open OpFamilies public
+
+_↠s_ : ∀ {U V} → Sub U V → Sub U V → Set
+_↠s_ = _↠op_ SUB
 \end{code}
 
 \begin{lemma}
@@ -293,7 +296,7 @@ If $E \rightarrow_R F$ then $[x := E] \twoheadrightarrow_R [x := F]$.
 
 \begin{code}
 botsub-red : ∀ {V} {K} {E F : Expression V (varKind K)} → 
-  E ⇒ F → _↠s_ SUB (x₀:= E) (x₀:= F)
+  E ⇒ F → x₀:= E ↠s x₀:= F
 \end{code}
 
 \AgdaHide{
