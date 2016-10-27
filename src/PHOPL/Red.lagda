@@ -1,4 +1,4 @@
-t\AgdaHide{
+\AgdaHide{
 \begin{code}
 module PHOPL.Red where
 open import Data.Empty renaming (⊥ to False)
@@ -78,11 +78,35 @@ uu-redex-half φ φ' ψ δ ε = ΛP (φ ⊃ φ') (ΛP (ψ ⇑) (appP (δ ⇑ ⇑
 uu-redex : ∀ {V} → Term V → Term V → Term V → Term V → Proof V → Proof V → Proof V → Proof V → Path V
 uu-redex φ φ' ψ ψ' δ δ' ε ε' = univ (φ ⊃ φ') (ψ ⊃ ψ') (uu-redex-half φ φ' ψ δ' ε) (uu-redex-half ψ ψ' φ ε' δ)
 
+data NeutralT (V : Alphabet) : Set
+data NfT (V : Alphabet) : Set where
+
+data NeutralT V where
+  var : Var V -Term → Neutral V
+  app : NeutralT V → NfT V → NeutralT V
+  ⊥   : NeutralT V
+  _⊃_ : NfT V → NfT V → NeutralT V
+
+data NfT V where
+  neutral : NeutralT V → NfT V
+  ΛT      : Type → NfT (V , -Term) → NfT V
+
+data NeutralP (V : Alphabet) : Set
+data NfP (V : Alphabet) : Set
+
+data NeutralP V where
+  var : Var V -Proof → Neutral V
+  app : NeutralP V → NfP V → NeutralP V
+
+data NfP V where
+  neutral : NeutralP V → NfP V
+  ΛP      : NfT V → NfP V → NfP V
+  plus    : NeutralP V → NfP V
+
 data R : Reduction
-data nf : ∀ {V} {K} {C} → Subexp V K C → Set
 
 data R where
-  βT : ∀ {V} {A} {M} {N} → nf (ΛT A M) → nf N → R {V} -appTerm (ΛT A M ∷ N ∷ []) (M ⟦ x₀:= N ⟧)
+  βT : ∀ {V} {A} {M} {N} → NfT M → NfT N → R {V} -appTerm (ΛT A M ∷ N ∷ []) (M ⟦ x₀:= N ⟧)
   βR : ∀ {V} {φ} {δ} {ε} → nf (ΛP φ δ) → nf ε → R {V} -appProof (ΛP φ δ ∷ ε ∷ []) (δ ⟦ x₀:= ε ⟧)
   plus-ref : ∀ {V} {φ} → nf (reff φ) → R {V} -plus (reff φ ∷ []) (ΛP φ (var x₀))
   minus-ref : ∀ {V} {φ} → nf (reff φ) → R {V} -minus (reff φ ∷ []) (ΛP φ (var x₀))
@@ -98,9 +122,16 @@ data R where
     (P ⟦ x₂:= M ,x₁:= N ,x₀:= Q ⟧)
   reflam : ∀ {V} {N} {N'} {A} {M} {P} → nf N → nf N' → nf (reff (ΛT A M)) → nf P →  R {V} -app* (N ∷ N' ∷ reff (ΛT A M) ∷ P ∷ []) (M ⟦⟦ x₀::= P ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
 
+data neutral where
+
 data nf where
-  var : ∀ x → nf (var x)
-  
+  nfvar : ∀ {V} {K} (x : Var V K) → nf (var x)
+  nfty  : ∀ {V} A → nf {V} (ty A)
+  nfbot : ∀ {V} → nf {V} ⊥
+  nfimp : ∀ {V} {φ ψ : Term V} → nf φ → nf ψ → nf (φ ⊃ ψ)
+  nflam : ∀ {V} {A} {M : Term (V , -Term)} → nf M → nf (ΛT A M)
+  nfappvar : ∀ {V} {x} {M : Term V} → nf M → nf (appT x M)
+  nfappcon : ∀ {V} 
 \end{code}
 
 Let $\rightarrow^?$ be the reflexive closure of $\rightarrow$;
