@@ -8,7 +8,6 @@ open import Prelims.Closure
 open import PHOPL.Grammar
 open import PHOPL.Red
 
-postulate Critical-Pairs : ∀ {V} {K} {C} {c : Con (SK C K)} {E : ListAbs V C} {F} {G} → R c E F → R c E G → Σ[ H ∈ Expression V K ] ((F ↠ H) × (G ↠ H))
 {-Critical-Pairs βT βT = _ ,p ref ,p ref
 Critical-Pairs βR βR = _ ,p ref ,p ref
 Critical-Pairs plus-ref plus-ref = _ ,p ref ,p ref
@@ -73,13 +72,23 @@ pre-confluent βT (appl (app (appl E⇒E'))) = _ ,p βT ,p red-subl (inc E⇒E')
 pre-confluent βT (appl (app (appr ())))
 pre-confluent (βT {M = M}) (appr (appl E⇒E')) = _ ,p βT ,p red-subr M (botsub-red E⇒E')
 pre-confluent βT (appr (appr ()))
-pre-confluent βR (appl (redex ()))
-pre-confluent βR (appl (app (appl _))) = _ ,p βR ,p ref
-pre-confluent βR (appl (app (appr (appl E⇒E')))) = _ ,p βR ,p red-subl (inc E⇒E')
-pre-confluent βR (appl (app (appr (appr ()))))
-pre-confluent (βR {δ = δ}) (appr (appl E⇒E')) = _ ,p βR ,p red-subr δ (botsub-red E⇒E')
-pre-confluent βR (appr (appr ()))
-pre-confluent plus-ref (appl (redex ()))
+pre-confluent (βR _ _) (appl (redex ()))
+pre-confluent (βR nfφ nfδ) (appl (app (appl _))) = _ ,p βR {!nfφ!} {!!} ,p ref
+pre-confluent (βR nfφ nfδ) (appl (app (appr (appl E⇒E')))) = _ ,p βR {!!} {!!} ,p red-subl (inc E⇒E')
+pre-confluent (βR _ _) (appl (app (appr (appr ()))))
+pre-confluent (βR {δ = δ} nfφ nfδ) (appr (appl E⇒E')) = _ ,p βR {!!} {!!} ,p red-subr δ (botsub-red E⇒E')
+pre-confluent (βR _ _) (appr (appr ()))
+pre-confluent (dir-ref x) E⇒E' = {!!}
+pre-confluent (plus-univ x) E⇒E' = {!!}
+pre-confluent (minus-univ x) E⇒E' = {!!}
+pre-confluent (ref⊃*univ x x₁) E⇒E' = {!!}
+pre-confluent (univ⊃*ref x x₁) E⇒E' = {!!}
+pre-confluent (univ⊃*univ x x₁) E⇒E' = {!!}
+pre-confluent (ref⊃*ref x x₁) E⇒E' = {!!}
+pre-confluent (refref x x₁) E⇒E' = {!!}
+pre-confluent (βE x x₁ x₂ x₃) E⇒E' = {!!}
+pre-confluent (reflam x x₁ x₂ x₃ x₄) E⇒E' = {!!}
+{-pre-confluent plus-ref (appl (redex ()))
 pre-confluent plus-ref (appl (app (appl E⇒E'))) = _ ,p plus-ref ,p inc (app (appl E⇒E'))
 pre-confluent plus-ref (appl (app (appr ())))
 pre-confluent plus-ref (appr ())
@@ -132,7 +141,7 @@ pre-confluent reflamvar (appr (appr (appl (app (appr E⇒E'))))) = {!!}
 pre-confluent reflamvar (appr (appr (appr E⇒E'))) = {!!}
 pre-confluent reflam⊃* E⇒E' = {!!}
 pre-confluent reflamuniv E⇒E' = {!!}
-pre-confluent reflamλλλ E⇒E' = {!!}
+pre-confluent reflamλλλ E⇒E' = {!!}-}
 \end{code}
 }
 
@@ -158,14 +167,27 @@ If $r \simeq s$, then there exists $t$ such that $r \twoheadrightarrow t$ and $s
 
 %<*Local-Confluent>
 \begin{code}
-postulate Local-Confluent : ∀ {V} {C} {K} 
-                          {E F G : Subexp V C K} → E ⇒ F → E ⇒ G → 
-                            Σ[ H ∈ Subexp V C K ] (F ↠ H × G ↠ H)
+Local-Confluent : ∀ {V} {C} {K} 
+                  {E F G : Subexp V C K} → E ⇒ F → E ⇒ G → 
+                  Σ[ H ∈ Subexp V C K ] (F ↠ H × G ↠ H)
 \end{code}
 %</Local-Confluent>
 
 \AgdaHide{
 \begin{code}
+Local-Confluent {F = F} (redex E▷F) (redex E▷G) = F ,p ref ,p (subst (λ x → x ↠ F) (R-det E▷F E▷G) ref)
+Local-Confluent {K = varKind -Proof} (redex cE▷F) (app E⇒G) with nfredexproof cE▷F E⇒G
+Local-Confluent {K = varKind -Proof} (redex cE▷F) (app E⇒G) | ()
+Local-Confluent {K = varKind -Term} (redex βT) (app (appl (redex ())))
+Local-Confluent {K = varKind -Term} (redex (βT {N = N})) (app (appl (app (appl {E' = M'} M⇒M')))) = M' ⟦ x₀:= N ⟧ ,p red-subl (inc M⇒M') ,p inc (redex βT)
+Local-Confluent {K = varKind -Term} (redex βT) (app (appl (app (appr ()))))
+Local-Confluent {K = varKind -Term} (redex (βT {A = A} {M} {N})) (app (appr (appl {E' = N'} N⇒N'))) = M ⟦ x₀:= N' ⟧ ,p (red-subr M (botsub-red N⇒N')) ,p (inc (redex βT))
+Local-Confluent {K = varKind -Term} (redex βT) (app (appr (appr ())))
+Local-Confluent {K = varKind -Path} (redex x₁) (app E⇒G) = {!!}
+Local-Confluent {K = nonVarKind x} (redex ()) (app E⇒G)
+Local-Confluent (app E⇒F) E⇒G = {!!}
+Local-Confluent (appl E⇒F) E⇒G = {!!}
+Local-Confluent (appr E⇒F) E⇒G = {!!}
 {- Local-Confluent (redex x) (redex y) = Critical-Pairs x y
 Local-Confluent (redex r) (app E⇒G) = let (H ,p r⇒H ,p G↠H) = pre-confluent r E⇒G in 
   H ,p G↠H ,p inc (redex r⇒H)
@@ -188,16 +210,16 @@ Local-Confluent (redex (βT {M = M})) (app (appr (appl {E' = N'} N⇒N'))) =
   M ⟦ x₀:= N' ⟧ ,p red-subr M (botsub-red N⇒N') ,p 
   (inc (redex βT))
 Local-Confluent (redex βT) (app (appr (appr ())))
-Local-Confluent (redex βR) (redex βR) = _ ,p ref ,p ref
-Local-Confluent (redex βR) (app (appl (redex ())))
-Local-Confluent (redex βR) (app (appl (app (appl ψ⇒ψ')))) = _ ,p ref ,p (inc (redex βR))
-Local-Confluent (redex (βR {δ = δ} {ε = ε})) 
+Local-Confluent (redex (βR _ _)) (redex (βR _ _)) = _ ,p ref ,p ref
+Local-Confluent (redex (βR _ _)) (app (appl (redex ())))
+Local-Confluent (redex (βR _ _)) (app (appl (app (appl ψ⇒ψ')))) = _ ,p ref ,p (inc (redex (βR _ _)))
+Local-Confluent (redex ((βR _ _) {δ = δ} {ε = ε})) 
   (app (appl (app (appr (appl {E' = δ'} δ⇒δ'))))) = 
-  δ' ⟦ x₀:= ε ⟧ ,p red-subl (inc δ⇒δ') ,p inc (redex βR)
-Local-Confluent (redex βR) (app (appl (app (appr (appr ())))))
-Local-Confluent (redex (βR {δ = δ})) (app (appr (appl {E' = ε'} ε⇒ε'))) = 
-  δ ⟦ x₀:= ε' ⟧ ,p red-subr δ (botsub-red ε⇒ε') ,p inc (redex βR)
-Local-Confluent (redex βR) (app (appr (appr ())))
+  δ' ⟦ x₀:= ε ⟧ ,p red-subl (inc δ⇒δ') ,p inc (redex (βR _ _))
+Local-Confluent (redex (βR _ _)) (app (appl (app (appr (appr ())))))
+Local-Confluent (redex ((βR _ _) {δ = δ})) (app (appr (appl {E' = ε'} ε⇒ε'))) = 
+  δ ⟦ x₀:= ε' ⟧ ,p red-subr δ (botsub-red ε⇒ε') ,p inc (redex (βR _ _))
+Local-Confluent (redex (βR _ _)) (app (appr (appr ())))
 Local-Confluent (redex βE) (redex βE) = _ ,p ref ,p ref
 Local-Confluent (redex (βE {N = N} {A = A} {P = P} {Q = Q})) (app (appl {E' = M'} M⇒M')) = 
   P ⟦ x₂:= M' ,x₁:= N ,x₀:= Q ⟧ ,p red-subr P (botsub₃-red (inc M⇒M') ref ref) ,p inc (redex βE)

@@ -87,6 +87,10 @@ module PHOPLgrammar where
     Ω : Type
     _⇛_ : Type → Type → Type
 
+  data Dir : Set where
+    -plus : Dir
+    -minus : Dir
+
   data PHOPLcon : ConKind → Set where
     -ty : Type → PHOPLcon (-nvType ✧)
     -bot : PHOPLcon (-vTerm ✧)
@@ -95,8 +99,7 @@ module PHOPLgrammar where
     -appTerm : PHOPLcon (-vTerm ✧ ⟶ -vTerm ✧ ⟶ -vTerm ✧)
     -lamProof : PHOPLcon (-vTerm ✧ ⟶ (-Proof ⟶ -vProof ✧) ⟶ -vProof ✧)
     -appProof : PHOPLcon (-vProof ✧ ⟶ -vProof ✧ ⟶ -vProof ✧)
-    -plus : PHOPLcon (-vPath ✧ ⟶ -vProof ✧)
-    -minus : PHOPLcon (-vPath ✧ ⟶ -vProof ✧)
+    -dir : Dir → PHOPLcon (-vPath ✧ ⟶ -vProof ✧)
     -ref : PHOPLcon (-vTerm ✧ ⟶ -vPath ✧)
     -imp* : PHOPLcon (-vPath ✧ ⟶ -vPath ✧ ⟶ -vPath ✧)
     -univ : PHOPLcon (-vTerm ✧ ⟶ -vTerm ✧ ⟶ -vProof ✧ ⟶ -vProof ✧ ⟶ -vPath ✧)
@@ -156,11 +159,14 @@ appT M N = app -appTerm (M ∷ N ∷ [])
 appP : ∀ {V} → Proof V → Proof V → Proof V
 appP δ ε = app -appProof (δ ∷ ε ∷ [])
 
+dir : ∀ {V} → Dir → Path V → Proof V
+dir d P = app (-dir d) (P ∷ [])
+
 plus : ∀ {V} → Path V → Proof V
-plus P = app -plus (P ∷ [])
+plus P = dir -plus P
 
 minus : ∀ {V} → Path V → Proof V
-minus P = app -minus (P ∷ [])
+minus P = dir -minus P
 
 reff : ∀ {V} → Term V → Path V
 reff M = app -ref (M ∷ [])

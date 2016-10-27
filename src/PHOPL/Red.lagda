@@ -78,41 +78,37 @@ uu-redex-half φ φ' ψ δ ε = ΛP (φ ⊃ φ') (ΛP (ψ ⇑) (appP (δ ⇑ ⇑
 uu-redex : ∀ {V} → Term V → Term V → Term V → Term V → Proof V → Proof V → Proof V → Proof V → Path V
 uu-redex φ φ' ψ ψ' δ δ' ε ε' = univ (φ ⊃ φ') (ψ ⊃ ψ') (uu-redex-half φ φ' ψ δ' ε) (uu-redex-half ψ ψ' φ ε' δ)
 
-data NeutralT (V : Alphabet) : Set
-data NfT (V : Alphabet) : Set where
+data not-ref-univ {V} : Path V → Set where
+  nruvar : ∀ e → not-ref-univ (var e)
+  nru⊃*  : ∀ {P} {Q} → not-ref-univ (P ⊃* Q)
+  nruλλλ : ∀ {A P} → not-ref-univ (λλλ A P)
+  nruapp* : ∀ {M N P Q} → not-ref-univ (app* M N P Q)
 
-data NeutralT V where
-  var : Var V -Term → Neutral V
-  app : NeutralT V → NfT V → NeutralT V
-  ⊥   : NeutralT V
-  _⊃_ : NfT V → NfT V → NeutralT V
+data not-ref-λλλ {V} : Path V → Set where
+  nrλvar : ∀ e → not-ref-λλλ (var e)
+  nrλ⊃*  : ∀ {P Q} → not-ref-λλλ (P ⊃* Q)
+  nrλuniv : ∀ {φ ψ δ ε} → not-ref-λλλ (univ φ ψ δ ε)
+  nrλapp* : ∀ {M N P Q} → not-ref-λλλ (app* M N P Q)
 
-data NfT V where
-  neutral : NeutralT V → NfT V
-  ΛT      : Type → NfT (V , -Term) → NfT V
+data not-ref {V} : Path V → Set where
+  nrλvar : ∀ e → not-ref (var e)
+  nrλ⊃*  : ∀ {P Q} → not-ref (P ⊃* Q)
+  nrλuniv : ∀ {φ ψ δ ε} → not-ref (univ φ ψ δ ε)
+  nrλλλλ : ∀ {A P} → not-ref (λλλ A P)
+  nrλapp* : ∀ {M N P Q} → not-ref (app* M N P Q)
 
-data NeutralP (V : Alphabet) : Set
-data NfP (V : Alphabet) : Set
-
-data NeutralP V where
-  var : Var V -Proof → Neutral V
-  app : NeutralP V → NfP V → NeutralP V
-
-data NfP V where
-  neutral : NeutralP V → NfP V
-  ΛP      : NfT V → NfP V → NfP V
-  plus    : NeutralP V → NfP V
+--TODO Do the same for nfappT and nfappP
 
 data R : Reduction
+data nf : ∀ {V} {K} → Expression V K → Set
 
 data R where
-  βT : ∀ {V} {A} {M} {N} → NfT M → NfT N → R {V} -appTerm (ΛT A M ∷ N ∷ []) (M ⟦ x₀:= N ⟧)
+  βT : ∀ {V} {A} {M} {N} → R {V} -appTerm (ΛT A M ∷ N ∷ []) (M ⟦ x₀:= N ⟧)
   βR : ∀ {V} {φ} {δ} {ε} → nf (ΛP φ δ) → nf ε → R {V} -appProof (ΛP φ δ ∷ ε ∷ []) (δ ⟦ x₀:= ε ⟧)
-  plus-ref : ∀ {V} {φ} → nf (reff φ) → R {V} -plus (reff φ ∷ []) (ΛP φ (var x₀))
-  minus-ref : ∀ {V} {φ} → nf (reff φ) → R {V} -minus (reff φ ∷ []) (ΛP φ (var x₀))
-  plus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → nf (univ φ ψ δ ε) → R {V} -plus (univ φ ψ δ ε ∷ []) δ 
-  minus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → nf (univ φ ψ δ ε) → R {V} -minus (univ φ ψ δ ε ∷ []) ε
-  ref⊃*univ : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → nf (reff φ) → nf (univ φ χ δ ε) → R {V} -imp* (reff φ ∷ univ ψ χ δ ε ∷ []) (ru-redex φ ψ χ δ ε)
+  dir-ref : ∀ {V} {φ} {d} → nf (reff φ) → R {V} (-dir d) (reff φ ∷ []) (ΛP φ (var x₀))
+  plus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → nf (univ φ ψ δ ε) → R {V} (-dir -plus) (univ φ ψ δ ε ∷ []) δ 
+  minus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → nf (univ φ ψ δ ε) → R {V} (-dir -minus) (univ φ ψ δ ε ∷ []) ε
+  ref⊃*univ : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → nf (reff φ) → nf (univ ψ χ δ ε) → R {V} -imp* (reff φ ∷ univ ψ χ δ ε ∷ []) (ru-redex φ ψ χ δ ε)
   univ⊃*ref : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → nf (univ φ ψ δ ε) → nf (reff χ) → R {V} -imp* (univ φ ψ δ ε ∷ reff χ ∷ []) (ur-redex φ ψ χ δ ε)
   univ⊃*univ : ∀ {V} {φ} {φ'} {ψ} {ψ'} {δ} {δ'} {ε} {ε'} → nf (univ φ ψ δ ε) → nf (univ φ' ψ' δ' ε') →
     R {V} -imp* (univ φ ψ δ ε ∷ univ φ' ψ' δ' ε' ∷ []) (uu-redex φ φ' ψ ψ' δ δ' ε ε')
@@ -120,18 +116,44 @@ data R where
   refref : ∀ {V} {M} {N} → nf (reff M) → nf (reff N) → R {V} -app* (N ∷ N ∷ reff M ∷ reff N ∷ []) (reff (appT M N))
   βE : ∀ {V} {M} {N} {A} {P} {Q} → nf M → nf N → nf (λλλ A P) → nf Q → R {V} -app* (M ∷ N ∷ λλλ A P ∷ Q ∷ []) 
     (P ⟦ x₂:= M ,x₁:= N ,x₀:= Q ⟧)
-  reflam : ∀ {V} {N} {N'} {A} {M} {P} → nf N → nf N' → nf (reff (ΛT A M)) → nf P →  R {V} -app* (N ∷ N' ∷ reff (ΛT A M) ∷ P ∷ []) (M ⟦⟦ x₀::= P ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
-
-data neutral where
+  reflam : ∀ {V} {N} {N'} {A} {M} {P} → nf N → nf N' → nf (reff (ΛT A M)) → nf P → not-ref P → R {V} -app* (N ∷ N' ∷ reff (ΛT A M) ∷ P ∷ []) (M ⟦⟦ x₀::= P ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
 
 data nf where
-  nfvar : ∀ {V} {K} (x : Var V K) → nf (var x)
-  nfty  : ∀ {V} A → nf {V} (ty A)
-  nfbot : ∀ {V} → nf {V} ⊥
-  nfimp : ∀ {V} {φ ψ : Term V} → nf φ → nf ψ → nf (φ ⊃ ψ)
-  nflam : ∀ {V} {A} {M : Term (V , -Term)} → nf M → nf (ΛT A M)
-  nfappvar : ∀ {V} {x} {M : Term V} → nf M → nf (appT x M)
-  nfappcon : ∀ {V} 
+  nfvar  : ∀ {V} {K} (x : Var V K) → nf (var x)
+  nf⊥    : ∀ {V} → nf {V} ⊥
+  nf⊃    : ∀ {V} {φ ψ : Term V} → nf φ → nf ψ → nf (φ ⊃ ψ)
+  nfΛT   : ∀ {V} A {M : Term (V , -Term)} → nf M → nf (ΛT A M)
+  nfappTvar : ∀ {V} (x : Var V -Term) {M} → nf M → nf (appT (var x) M)
+  nfappT⊥   : ∀ {V} {M : Term V} → nf M → nf (appT ⊥ M)
+  nfappT⊃   : ∀ {V} {M N P : Term V} → nf M → nf N → nf P → nf (appT (M ⊃ N) P)
+  nfappTappT : ∀ {V} {M N P : Term V} → nf (appT M N) → nf P → nf (appT (appT M N) P)
+  nfΛP   : ∀ {V} {φ : Term V} {δ} → nf φ → nf δ → nf (ΛP φ δ)
+  nfappPvar : ∀ {V} (p : Var V -Proof) {δ} → nf δ → nf (appP (var p) δ)
+  nfappPappP : ∀ {V} {δ ε ε' : Proof V} → nf (appP δ ε) → nf ε' → nf (appP (appP δ ε) ε')
+  nfappPdir : ∀ {V d} {P : Path V} {δ} → nf (dir d P) → nf δ → nf (appP (dir d P) δ)
+  nfdirvar : ∀ {V d} (P : Path V) → nf P → not-ref-univ P → nf (dir d P)
+  nfreff : ∀ {V} {M : Term V} → nf M → nf (reff M)
+  nf⊃*l  : ∀ {V} {P Q : Path V} → nf P → nf Q → not-ref-univ P → nf (P ⊃* Q)
+  nf⊃*r  : ∀ {V} {P Q : Path V} → nf P → nf Q → not-ref-univ Q → nf (P ⊃* Q)
+  nfuniv : ∀ {V} {φ ψ : Term V} {δ ε} → nf φ → nf ψ → nf δ → nf ε → nf (univ φ ψ δ ε)
+  nfλλλ  : ∀ {V A} {P : Path (V , -Term , -Term , -Path)} → nf P → nf (λλλ A P)
+  nfapp* : ∀ {V} {M N : Term V} {P Q} → nf M → nf N → nf P → nf Q → not-ref-λλλ P → nf (app* M N P Q)
+
+postulate R-det : ∀ {V} {K} {C} {c : Con (SK C K)} {E : ListAbs V C} {F} {G} → R c E F → R c E G → F ≡ G
+{- R-det βT βT = refl
+R-det (βR _ _) (βR _ _) = refl
+R-det (dir-ref _) (dir-ref _) = refl
+R-det (plus-univ _) (plus-univ _) = refl
+R-det (minus-univ _) (minus-univ _) = refl
+R-det (ref⊃*univ _ _) (ref⊃*univ _ _) = refl
+R-det (univ⊃*ref _ _) (univ⊃*ref _ _) = refl
+R-det (univ⊃*univ _ _) (univ⊃*univ _ _) = refl
+R-det (ref⊃*ref _ _) (ref⊃*ref _ _) = refl
+R-det (refref _ _) (refref _ _) = refl
+R-det (refref _ _) (reflam _ _ _ _ ())
+R-det (βE _ _ _ _) (βE _ _ _ _) = refl
+R-det (reflam _ _ _ _ _) (reflam _ _ _ _ _) = refl
+R-det (reflam _ _ _ _ ()) (refref _ _) -}
 \end{code}
 
 Let $\rightarrow^?$ be the reflexive closure of $\rightarrow$;
@@ -142,13 +164,123 @@ let \emph{reduction} $\twoheadrightarrow$ be the reflexive, transitive closure; 
 \AgdaHide{
 \begin{code}
 open import Reduction PHOPL R public 
+
+postulate nf-is-nf : ∀ {V K} {E E' : Expression V K} → nf E → E ⇒ E' → False
+{- nf-is-nf (nfvar _) ()
+nf-is-nf nf⊥ (redex ())
+nf-is-nf nf⊥ (app ())
+nf-is-nf (nf⊃ _ _) (redex ())
+nf-is-nf (nf⊃ nfφ _) (app (appl φ⇒φ')) = nf-is-nf nfφ φ⇒φ'
+nf-is-nf (nf⊃ _ nfψ) (app (appr (appl ψ⇒ψ'))) = nf-is-nf nfψ ψ⇒ψ'
+nf-is-nf (nf⊃ _ _) (app (appr (appr ())))
+nf-is-nf (nfΛT _ _) (redex ())
+nf-is-nf (nfΛT _ nfM) (app (appl M⇒M')) = nf-is-nf nfM M⇒M'
+nf-is-nf (nfΛT _ _) (app (appr ()))
+nf-is-nf (nfappTvar _ _) (redex ())
+nf-is-nf (nfappTvar _ _) (app (appl ()))
+nf-is-nf (nfappTvar _ nfM) (app (appr (appl M⇒M'))) = nf-is-nf nfM M⇒M'
+nf-is-nf (nfappTvar _ _) (app (appr (appr ())))
+nf-is-nf (nfappT⊥ _) (redex ())
+nf-is-nf (nfappT⊥ _) (app (appl ⊥⇒E')) = nf-is-nf nf⊥ ⊥⇒E'
+nf-is-nf (nfappT⊥ nfM) (app (appr (appl M⇒M'))) = nf-is-nf nfM M⇒M'
+nf-is-nf (nfappT⊥ _) (app (appr (appr ())))
+nf-is-nf (nfappT⊃ _ _ _) (redex ())
+nf-is-nf (nfappT⊃ nfM nfM' _) (app (appl M⊃M'⇒E')) = nf-is-nf (nf⊃ nfM nfM') M⊃M'⇒E'
+nf-is-nf (nfappT⊃ _ _ nfN) (app (appr (appl N⇒N'))) = nf-is-nf nfN N⇒N'
+nf-is-nf (nfappT⊃ _ _ _) (app (appr (appr ())))
+nf-is-nf (nfappTappT _ _) (redex ())
+nf-is-nf (nfappTappT nfMM' _) (app (appl MM'⇒E')) = nf-is-nf nfMM' MM'⇒E'
+nf-is-nf (nfappTappT _ nfN) (app (appr (appl N⇒N'))) = nf-is-nf nfN N⇒N'
+nf-is-nf (nfappTappT nfE nfE₁) (app (appr (appr ())))
+nf-is-nf (nfΛP _ _) (redex ())
+nf-is-nf (nfΛP nfφ _) (app (appl φ⇒φ')) = nf-is-nf nfφ φ⇒φ'
+nf-is-nf (nfΛP _ nfδ) (app (appr (appl δ⇒δ'))) = nf-is-nf nfδ δ⇒δ'
+nf-is-nf (nfΛP _ _) (app (appr (appr ())))
+nf-is-nf (nfappPvar _ _) (redex ())
+nf-is-nf (nfappPvar _ _) (app (appl ()))
+nf-is-nf (nfappPvar _ nfδ) (app (appr (appl δ⇒δ'))) = nf-is-nf nfδ δ⇒δ'
+nf-is-nf (nfappPvar _ _) (app (appr (appr ())))
+nf-is-nf (nfappPappP _ _) (redex ())
+nf-is-nf (nfappPappP nfδε _) (app (appl δε⇒E')) = nf-is-nf nfδε δε⇒E'
+nf-is-nf (nfappPappP _ nfε') (app (appr (appl ε'⇒E'))) = nf-is-nf nfε' ε'⇒E'
+nf-is-nf (nfappPappP _ _) (app (appr (appr ())))
+nf-is-nf (nfappPdir _ _) (redex ())
+nf-is-nf (nfappPdir nfdP _) (app (appl dP⇒E')) = nf-is-nf nfdP dP⇒E'
+nf-is-nf (nfappPdir _ nfδ) (app (appr (appl δ⇒δ'))) = nf-is-nf nfδ δ⇒δ'
+nf-is-nf (nfappPdir _ _) (app (appr (appr ())))
+nf-is-nf (nfdirvar (var _) _ (nruvar _)) (redex ())
+nf-is-nf (nfdirvar _ _ nru⊃*) (redex ())
+nf-is-nf (nfdirvar _ _ nruλλλ) (redex ())
+nf-is-nf (nfdirvar _ _ nruapp*) (redex ())
+nf-is-nf (nfdirvar _ nfP _) (app (appl P⇒P')) = nf-is-nf nfP P⇒P'
+nf-is-nf (nfdirvar _ _ _) (app (appr ()))
+nf-is-nf (nfreff _) (redex ())
+nf-is-nf (nfreff nfM) (app (appl M⇒M')) = nf-is-nf nfM M⇒M'
+nf-is-nf (nfreff _) (app (appr ()))
+nf-is-nf (nf⊃*l _ _ (nruvar _)) (redex ()) 
+nf-is-nf (nf⊃*l _ _ nru⊃*) (redex ()) 
+nf-is-nf (nf⊃*l _ _ nruλλλ) (redex ()) 
+nf-is-nf (nf⊃*l _ _ nruapp*) (redex ()) 
+nf-is-nf (nf⊃*l nfP _ _) (app (appl P⇒P')) = nf-is-nf nfP P⇒P'
+nf-is-nf (nf⊃*l _ nfQ _) (app (appr (appl Q⇒Q'))) = nf-is-nf nfQ Q⇒Q'
+nf-is-nf (nf⊃*l _ _ _) (app (appr (appr ())))
+nf-is-nf (nf⊃*r _ _ (nruvar _)) (redex ()) 
+nf-is-nf (nf⊃*r _ _ nru⊃*) (redex ()) 
+nf-is-nf (nf⊃*r _ _ nruλλλ) (redex ()) 
+nf-is-nf (nf⊃*r _ _ nruapp*) (redex ()) 
+nf-is-nf (nf⊃*r nfP _ _) (app (appl P⇒P')) = nf-is-nf nfP P⇒P'
+nf-is-nf (nf⊃*r _ nfQ _) (app (appr (appl Q⇒Q'))) = nf-is-nf nfQ Q⇒Q'
+nf-is-nf (nf⊃*r _ _ _) (app (appr (appr ())))
+nf-is-nf (nfuniv _ _ _ _) (redex ())
+nf-is-nf (nfuniv nfφ _ _ _) (app (appl φ⇒φ')) = nf-is-nf nfφ φ⇒φ'
+nf-is-nf (nfuniv _ nfψ _ _) (app (appr (appl ψ⇒ψ'))) = nf-is-nf nfψ ψ⇒ψ'
+nf-is-nf (nfuniv _ _ nfδ _) (app (appr (appr (appl δ⇒δ')))) = nf-is-nf nfδ δ⇒δ'
+nf-is-nf (nfuniv _ _ _ nfε) (app (appr (appr (appr (appl ε⇒ε'))))) = nf-is-nf nfε ε⇒ε'
+nf-is-nf (nfuniv _ _ _ _) (app (appr (appr (appr (appr ())))))
+nf-is-nf (nfλλλ _) (redex ())
+nf-is-nf (nfλλλ nfP) (app (appl P⇒P')) = nf-is-nf nfP P⇒P'
+nf-is-nf (nfλλλ _) (app (appr ()))
+nf-is-nf (nfapp* _ _ _ _ (nrλvar _)) (redex ())
+nf-is-nf (nfapp* _ _ _ _ nrλ⊃*) (redex ())
+nf-is-nf (nfapp* _ _ _ _ nrλuniv) (redex ())
+nf-is-nf (nfapp* _ _ _ _ nrλapp*) (redex ())
+nf-is-nf (nfapp* nfM _ _ _ _) (app (appl M⇒M')) = nf-is-nf nfM M⇒M'
+nf-is-nf (nfapp* _ nfN _ _ _) (app (appr (appl N⇒N'))) = nf-is-nf nfN N⇒N'
+nf-is-nf (nfapp* _ _ nfP _ _) (app (appr (appr (appl P⇒P')))) = nf-is-nf nfP P⇒P'
+nf-is-nf (nfapp* _ _ _ nfQ _) (app (appr (appr (appr (appl Q⇒Q'))))) = nf-is-nf nfQ Q⇒Q'
+nf-is-nf (nfapp* _ _ _ _ _) (app (appr (appr (appr (appr ()))))) -}
+
+nfredexproof : ∀ {V} {AA} {c : Con (SK AA (varKind -Proof))} {EE EE' : ListAbs V AA} {δ} → R c EE δ → EE ⇒ EE' → False
+nfredexproof (βR nfΛPφδ _) (appl ΛPφδ⇒E') = nf-is-nf nfΛPφδ ΛPφδ⇒E'
+nfredexproof (βR _ nfε) (appr (appl ε⇒ε')) = nf-is-nf nfε ε⇒ε'
+nfredexproof (βR _ _) (appr (appr ()))
+nfredexproof (dir-ref nfrefφ) (appl refφ⇒E') = nf-is-nf nfrefφ refφ⇒E'
+nfredexproof (dir-ref _) (appr ())
+nfredexproof (plus-univ nfP) (appl P⇒P') = nf-is-nf nfP P⇒P'
+nfredexproof (plus-univ _) (appr ())
+nfredexproof (minus-univ nfP) (appl P⇒P') = nf-is-nf nfP P⇒P'
+nfredexproof (minus-univ _) (appr ())
+
+nfredexpath : ∀ {V} {AA} {c : Con (SK AA (varKind -Path))} {EE EE' : ListAbs V AA} {P} → R c EE P → EE ⇒ EE' → False
+nfredexpath (ref⊃*univ nfrefφ _) (appl refφ⇒EE') = nf-is-nf nfrefφ refφ⇒EE'
+nfredexpath (ref⊃*univ _ nfunivδε) (appr (appl univδε⇒EE')) = nf-is-nf nfunivδε univδε⇒EE'
+nfredexpath (ref⊃*univ _ _) (appr (appr ()))
+nfredexpath (univ⊃*ref x x₁) (appl EE⇒EE') = {!!}
+nfredexpath (univ⊃*ref x x₁) (appr EE⇒EE') = {!!}
+nfredexpath (univ⊃*univ x x₁) EE⇒EE' = {!!}
+nfredexpath (ref⊃*ref x x₁) EE⇒EE' = {!!}
+nfredexpath (refref x x₁) EE⇒EE' = {!!}
+nfredexpath (βE x x₁ x₂ x₃) EE⇒EE' = {!!}
+nfredexpath (reflam x x₁ x₂ x₃ x₄) EE⇒EE' = {!!}
 \end{code}
+}
 
 \begin{lm}
 If $\univ{\phi}{\psi}{\delta}{\epsilon} \rightarrow E$ then $E$ is formed by reducing
 one of $\phi$, $\psi$, $\delta$, $\epsilon$.
 \end{lm}
 
+\AgdaHide{
 \begin{code}
 postulate univ-osrE : ∀ {V} {φ} {ψ} {δ} {ε} {C : Path V → Set} →
                     (∀ φ' → φ ⇒ φ' → C (univ φ' ψ δ ε)) →
