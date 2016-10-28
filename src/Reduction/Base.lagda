@@ -40,6 +40,9 @@ data _⇒_ {V} : ∀ {K} {C} → Subexp V K C → Subexp V K C → Set where
   appr : ∀ {A AA E F F'} → 
     F ⇒ F' → _∷_ {V} {A} {AA} E F ⇒ E ∷ F'
 
+_⇒?_ : ∀ {V C K} → Relation (Subexp V C K)
+_⇒?_ = RClose _⇒_
+
 _↠⁺_ : ∀ {V C K} → Relation (Subexp V C K)
 _↠⁺_ = TClose _⇒_
 
@@ -82,6 +85,18 @@ convr (osr-conv x) = osr-conv (appr x)
 convr ref = ref
 convr (sym-conv E≃E') = sym-conv (convr E≃E')
 convr (trans-conv E≃E' E'≃E'') = trans-conv (convr E≃E') (convr E'≃E'')
+
+app-resp-red? : ∀ {V AA K} {c : Con (SK AA K)} {EE FF : ListAbs V AA} → EE ⇒? FF → app c EE ⇒? app c FF
+app-resp-red? (inc EE⇒FF) = inc (app EE⇒FF)
+app-resp-red? ref = ref
+
+appl-resp-red? : ∀ {V A AA} {E E' : Abs V A} {FF : ListAbs V AA} → E ⇒? E' → (_∷_ {A = A} {AA} E FF) ⇒? (E' ∷ FF)
+appl-resp-red? (inc E⇒E') = inc (appl E⇒E')
+appl-resp-red? ref = ref
+
+appr-resp-red? : ∀ {V A AA} {E : Abs V A} {FF FF' : ListAbs V AA} → FF ⇒? FF' → (_∷_ {A = A} {AA} E FF) ⇒? (E ∷ FF')
+appr-resp-red? (inc FF⇒FF') = inc (appr FF⇒FF')
+appr-resp-red? ref = ref
 
 app-resp-conv : ∀ {V} {AA} {K} {c : Con (SK AA K)} {EE FF : ListAbs V AA} → EE ≃ FF → app c EE ≃ app c FF
 app-resp-conv (osr-conv EE⇒FF) = osr-conv (app EE⇒FF)
@@ -158,17 +173,17 @@ The constructors in the grammar all respect $\twoheadrightarrow^+$, $\twoheadrig
 \end{corollary}
 
 \begin{code}
-app-red : ∀ {V} {AA} {K} {c : Con (SK AA K)} {EE FF : ListAbs V AA} → EE ↠ FF → app c EE ↠ app c FF
-app-red = respects-red app
+app-resp-red : ∀ {V} {AA} {K} {c : Con (SK AA K)} {EE FF : ListAbs V AA} → EE ↠ FF → app c EE ↠ app c FF
+app-resp-red = respects-red app
 
-∷-redl : ∀ {V} {AA} {A} {E E' : Abs V A} {FF : ListAbs V AA} → E ↠ E' → (_∷_ {V} {A} {AA} E FF) ↠ (E' ∷ FF)
-∷-redl = respects-red appl
+appl-resp-red : ∀ {V} {AA} {A} {E E' : Abs V A} {FF : ListAbs V AA} → E ↠ E' → (_∷_ {V} {A} {AA} E FF) ↠ (E' ∷ FF)
+appl-resp-red = respects-red appl
 
-∷-redr : ∀ {V} {AA} {A} {E : Abs V A} {FF FF' : ListAbs V AA} → FF ↠ FF' → (_∷_ {V} {A} {AA} E FF) ↠ (E ∷ FF')
-∷-redr = respects-red appr
+appr-resp-red : ∀ {V} {AA} {A} {E : Abs V A} {FF FF' : ListAbs V AA} → FF ↠ FF' → (_∷_ {V} {A} {AA} E FF) ↠ (E ∷ FF')
+appr-resp-red = respects-red appr
 
 ∷-red : ∀ {V} {AA} {A} {E E' : Abs V A} {FF FF' : ListAbs V AA} → E ↠ E' → FF ↠ FF' → (_∷_ {V} {A} {AA} E FF) ↠ (E' ∷ FF')
-∷-red E↠E' FF↠FF' = Prelims.Closure.trans (∷-redl E↠E') (∷-redr FF↠FF')
+∷-red E↠E' FF↠FF' = Prelims.Closure.trans (appl-resp-red E↠E') (appr-resp-red FF↠FF')
 \end{code}
 
 \begin{lemma}

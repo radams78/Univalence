@@ -92,24 +92,26 @@ data not-ref {V} : Path V → Set where
 
 --TODO Do the same for nfappT and nfappP
 
-data R : Reduction
+data β : Reduction where
+  βT : ∀ {V} {A} {M} {N} → β {V} -appTerm (ΛT A M ∷ N ∷ []) (M ⟦ x₀:= N ⟧)
+  
+data R₀ : Reduction
 data nf : ∀ {V} {K} → Expression V K → Set
 
-data R where
-  βT : ∀ {V} {A} {M} {N} → R {V} -appTerm (ΛT A M ∷ N ∷ []) (M ⟦ x₀:= N ⟧)
-  βR : ∀ {V} {φ} {δ} {ε} → nf (ΛP φ δ) → nf ε → R {V} -appProof (ΛP φ δ ∷ ε ∷ []) (δ ⟦ x₀:= ε ⟧)
-  dir-ref : ∀ {V} {φ} {d} → nf (reff φ) → R {V} (-dir d) (reff φ ∷ []) (ΛP φ (var x₀))
-  plus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → nf (univ φ ψ δ ε) → R {V} (-dir -plus) (univ φ ψ δ ε ∷ []) δ 
-  minus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → nf (univ φ ψ δ ε) → R {V} (-dir -minus) (univ φ ψ δ ε ∷ []) ε
-  ref⊃*univ : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → nf (reff φ) → nf (univ ψ χ δ ε) → R {V} -imp* (reff φ ∷ univ ψ χ δ ε ∷ []) (ru-redex φ ψ χ δ ε)
-  univ⊃*ref : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → nf (univ φ ψ δ ε) → nf (reff χ) → R {V} -imp* (univ φ ψ δ ε ∷ reff χ ∷ []) (ur-redex φ ψ χ δ ε)
+data R₀ where
+  βR : ∀ {V} {φ} {δ} {ε} → nf (ΛP φ δ) → nf ε → R₀ {V} -appProof (ΛP φ δ ∷ ε ∷ []) (δ ⟦ x₀:= ε ⟧)
+  dir-ref : ∀ {V} {φ} {d} → nf (reff φ) → R₀ {V} (-dir d) (reff φ ∷ []) (ΛP φ (var x₀))
+  plus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → nf (univ φ ψ δ ε) → R₀ {V} (-dir -plus) (univ φ ψ δ ε ∷ []) δ 
+  minus-univ : ∀ {V} {φ} {ψ} {δ} {ε} → nf (univ φ ψ δ ε) → R₀ {V} (-dir -minus) (univ φ ψ δ ε ∷ []) ε
+  ref⊃*univ : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → nf (reff φ) → nf (univ ψ χ δ ε) → R₀ {V} -imp* (reff φ ∷ univ ψ χ δ ε ∷ []) (ru-redex φ ψ χ δ ε)
+  univ⊃*ref : ∀ {V} {φ} {ψ} {χ} {δ} {ε} → nf (univ φ ψ δ ε) → nf (reff χ) → R₀ {V} -imp* (univ φ ψ δ ε ∷ reff χ ∷ []) (ur-redex φ ψ χ δ ε)
   univ⊃*univ : ∀ {V} {φ} {φ'} {ψ} {ψ'} {δ} {δ'} {ε} {ε'} → nf (univ φ ψ δ ε) → nf (univ φ' ψ' δ' ε') →
-    R {V} -imp* (univ φ ψ δ ε ∷ univ φ' ψ' δ' ε' ∷ []) (uu-redex φ φ' ψ ψ' δ δ' ε ε')
-  ref⊃*ref : ∀ {V} {φ} {ψ} → nf (reff φ) → nf (reff ψ) → R {V} -imp* (reff φ ∷ reff ψ ∷ []) (reff (φ ⊃ ψ))
-  refref : ∀ {V} {M} {N} → nf (reff M) → nf (reff N) → R {V} -app* (N ∷ N ∷ reff M ∷ reff N ∷ []) (reff (appT M N))
-  βE : ∀ {V} {M} {N} {A} {P} {Q} → nf M → nf N → nf (λλλ A P) → nf Q → R {V} -app* (M ∷ N ∷ λλλ A P ∷ Q ∷ []) 
+    R₀ {V} -imp* (univ φ ψ δ ε ∷ univ φ' ψ' δ' ε' ∷ []) (uu-redex φ φ' ψ ψ' δ δ' ε ε')
+  ref⊃*ref : ∀ {V} {φ} {ψ} → nf (reff φ) → nf (reff ψ) → R₀ {V} -imp* (reff φ ∷ reff ψ ∷ []) (reff (φ ⊃ ψ))
+  refref : ∀ {V} {M} {N} → nf (reff M) → nf (reff N) → R₀ {V} -app* (N ∷ N ∷ reff M ∷ reff N ∷ []) (reff (appT M N))
+  βE : ∀ {V} {M} {N} {A} {P} {Q} → nf M → nf N → nf (λλλ A P) → nf Q → R₀ {V} -app* (M ∷ N ∷ λλλ A P ∷ Q ∷ []) 
     (P ⟦ x₂:= M ,x₁:= N ,x₀:= Q ⟧)
-  reflam : ∀ {V} {N} {N'} {A} {M} {P} → nf N → nf N' → nf (reff (ΛT A M)) → nf P → not-ref P → R {V} -app* (N ∷ N' ∷ reff (ΛT A M) ∷ P ∷ []) (M ⟦⟦ x₀::= P ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
+  reflam : ∀ {V} {N} {N'} {A} {M} {P} → nf N → nf N' → nf (reff (ΛT A M)) → nf P → not-ref P → R₀ {V} -app* (N ∷ N' ∷ reff (ΛT A M) ∷ P ∷ []) (M ⟦⟦ x₀::= P ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
 
 data nf where
   nfvar  : ∀ {V} {K} (x : Var V K) → nf (var x)
@@ -131,6 +133,10 @@ data nf where
   nfuniv : ∀ {V} {φ ψ : Term V} {δ ε} → nf φ → nf ψ → nf δ → nf ε → nf (univ φ ψ δ ε)
   nfλλλ  : ∀ {V A} {P : Path (V , -Term , -Term , -Path)} → nf P → nf (λλλ A P)
   nfapp* : ∀ {V} {M N : Term V} {P Q} → nf M → nf N → nf P → nf Q → not-ref-λλλ P → nf (app* M N P Q)
+
+data R : Reduction where
+  βR : ∀ {V AA K} {c : Con (SK AA K)} {EE : ListAbs V AA} {F} → β c EE F → R c EE F
+  R₀R : ∀ {V AA K} {c : Con (SK AA K)} {EE : ListAbs V AA} {F} → R₀ c EE F → R c EE F
 
 open import Reduction PHOPL R public 
 \end{code}

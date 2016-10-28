@@ -11,10 +11,25 @@ open import Prelims.Closure
 open import PHOPL.Grammar
 open import PHOPL.PathSub
 open import PHOPL.Red.Base
+open import Reduction PHOPL β as Redβ
+open import Reduction PHOPL R₀ as Red₀
+open import Reduction PHOPL R as Red
 \end{code}
 }
 
 \begin{code}
+R₀-imp-R : ∀ {V C K} {E F : Subexp V C K} → E Red₀.⇒ F → E Red.⇒ F
+R₀-imp-R (Red₀.redex cE▷F) = Red.redex (R₀R cE▷F)
+R₀-imp-R (Red₀.app EE⇒FF) = Red.app (R₀-imp-R EE⇒FF)
+R₀-imp-R (Red₀.appl E⇒F) = Red.appl (R₀-imp-R E⇒F)
+R₀-imp-R (Red₀.appr EE⇒FF) = Red.appr (R₀-imp-R EE⇒FF)
+
+β-imp-R : ∀ {V C K} {E F : Subexp V C K} → E Redβ.⇒ F → E Red.⇒ F
+β-imp-R (Redβ.redex cE▷F) = Red.redex (βR cE▷F)
+β-imp-R (Redβ.app EE⇒FF) = Red.app (β-imp-R EE⇒FF)
+β-imp-R (Redβ.appl E⇒F) = Red.appl (β-imp-R E⇒F)
+β-imp-R (Redβ.appr EE⇒FF) = Red.appr (β-imp-R EE⇒FF)
+
 postulate R-det : ∀ {V} {K} {C} {c : Con (SK C K)} {E : ListAbs V C} {F} {G} → R c E F → R c E G → F ≡ G
 {- R-det βT βT = refl
 R-det (βR _ _) (βR _ _) = refl
@@ -39,7 +54,7 @@ let \emph{reduction} $\twoheadrightarrow$ be the reflexive, transitive closure; 
 
 \AgdaHide{
 \begin{code}
-postulate nf-is-nf : ∀ {V K} {E E' : Expression V K} → nf E → E ⇒ E' → False
+postulate nf-is-nf : ∀ {V K} {E E' : Expression V K} → nf E → E Red.⇒ E' → False
 {- nf-is-nf (nfvar _) ()
 nf-is-nf nf⊥ (redex ())
 nf-is-nf nf⊥ (app ())
@@ -124,7 +139,7 @@ nf-is-nf (nfapp* _ _ nfP _ _) (app (appr (appr (appl P⇒P')))) = nf-is-nf nfP P
 nf-is-nf (nfapp* _ _ _ nfQ _) (app (appr (appr (appr (appl Q⇒Q'))))) = nf-is-nf nfQ Q⇒Q'
 nf-is-nf (nfapp* _ _ _ _ _) (app (appr (appr (appr (appr ()))))) -}
 
-postulate nfredexproof : ∀ {V} {AA} {c : Con (SK AA (varKind -Proof))} {EE EE' : ListAbs V AA} {δ} → R c EE δ → EE ⇒ EE' → False
+postulate nfredexproof : ∀ {V} {AA} {c : Con (SK AA (varKind -Proof))} {EE EE' : ListAbs V AA} {δ} → R₀ c EE δ → EE Red.⇒ EE' → False
 {-nfredexproof (βR nfΛPφδ _) (appl ΛPφδ⇒E') = nf-is-nf nfΛPφδ ΛPφδ⇒E'
 nfredexproof (βR _ nfε) (appr (appl ε⇒ε')) = nf-is-nf nfε ε⇒ε'
 nfredexproof (βR _ _) (appr (appr ()))
@@ -135,34 +150,34 @@ nfredexproof (plus-univ _) (appr ())
 nfredexproof (minus-univ nfP) (appl P⇒P') = nf-is-nf nfP P⇒P'
 nfredexproof (minus-univ _) (appr ())-}
 
-nfredexpath : ∀ {V} {AA} {c : Con (SK AA (varKind -Path))} {EE EE' : ListAbs V AA} {P} → R c EE P → EE ⇒ EE' → False
-nfredexpath (ref⊃*univ nfrefφ _) (appl refφ⇒EE') = nf-is-nf nfrefφ refφ⇒EE'
-nfredexpath (ref⊃*univ _ nfunivδε) (appr (appl univδε⇒EE')) = nf-is-nf nfunivδε univδε⇒EE'
-nfredexpath (ref⊃*univ _ _) (appr (appr ()))
-nfredexpath (univ⊃*ref nfunivδε _) (appl univδε⇒EE') = nf-is-nf nfunivδε univδε⇒EE'
-nfredexpath (univ⊃*ref _ nfrefχ) (appr (appl refχ⇒EE')) = nf-is-nf nfrefχ refχ⇒EE'
-nfredexpath (univ⊃*ref _ _) (appr (appr ()))
-nfredexpath (univ⊃*univ nfunivδε _) (appl univδε⇒EE') = nf-is-nf nfunivδε univδε⇒EE'
-nfredexpath (univ⊃*univ _ nfunivδ'ε') (appr (appl univδ'ε'⇒EE')) = nf-is-nf nfunivδ'ε' univδ'ε'⇒EE'
-nfredexpath (univ⊃*univ _ _) (appr (appr ())) 
-nfredexpath (ref⊃*ref nfrefφ _) (appl refφ⇒EE') = nf-is-nf nfrefφ refφ⇒EE'
-nfredexpath (ref⊃*ref _ nfrefψ) (appr (appl refψ⇒EE')) = nf-is-nf nfrefψ refψ⇒EE'
-nfredexpath (ref⊃*ref _ _) (appr (appr ()))
-nfredexpath (refref _ nfrefN) (appl N⇒EE') = nf-is-nf nfrefN (app (appl N⇒EE'))
-nfredexpath (refref _ nfrefN) (appr (appl N⇒EE')) = nf-is-nf nfrefN (app (appl N⇒EE'))
-nfredexpath (refref nfrefM _) (appr (appr (appl refM⇒EE'))) = nf-is-nf nfrefM refM⇒EE'
-nfredexpath (refref _ nfrefN) (appr (appr (appr (appl refN⇒EE')))) = nf-is-nf nfrefN refN⇒EE'
-nfredexpath (refref _ _) (appr (appr (appr (appr ()))))
-nfredexpath (βE nfM _ _ _) (appl M⇒EE') = nf-is-nf nfM M⇒EE'
-nfredexpath (βE _ nfN _ _) (appr (appl N⇒EE')) = nf-is-nf nfN N⇒EE'
-nfredexpath (βE _ _ nfΛAP _) (appr (appr (appl ΛAP⇒EE'))) = nf-is-nf nfΛAP ΛAP⇒EE'
-nfredexpath (βE _ _ _ nfQ) (appr (appr (appr (appl Q⇒EE')))) = nf-is-nf nfQ Q⇒EE'
-nfredexpath (βE _ _ _ _) (appr (appr (appr (appr ()))))
-nfredexpath (reflam nfN _ _ _ _) (appl N⇒EE') = nf-is-nf nfN N⇒EE'
-nfredexpath (reflam _ nfN' _ _ _) (appr (appl N'⇒EE')) = nf-is-nf nfN' N'⇒EE'
-nfredexpath (reflam _ _ nfΛAM _ _) (appr (appr (appl ΛAM⇒EE'))) = nf-is-nf nfΛAM ΛAM⇒EE'
-nfredexpath (reflam _ _ _ nfP _) (appr (appr (appr (appl P⇒EE')))) = nf-is-nf nfP P⇒EE'
-nfredexpath (reflam _ _ _ _ _) (appr (appr (appr (appr ()))))
+nfredexpath : ∀ {V} {AA} {c : Con (SK AA (varKind -Path))} {EE EE' : ListAbs V AA} {P} → R₀ c EE P → EE Red.⇒ EE' → False
+nfredexpath (ref⊃*univ nfrefφ _) (Red.appl refφ⇒EE') = nf-is-nf nfrefφ refφ⇒EE'
+nfredexpath (ref⊃*univ _ nfunivδε) (Red.appr (Red.appl univδε⇒EE')) = nf-is-nf nfunivδε univδε⇒EE'
+nfredexpath (ref⊃*univ _ _) (Red.appr (Red.appr ()))
+nfredexpath (univ⊃*ref nfunivδε _) (Red.appl univδε⇒EE') = nf-is-nf nfunivδε univδε⇒EE'
+nfredexpath (univ⊃*ref _ nfrefχ) (Red.appr (Red.appl refχ⇒EE')) = nf-is-nf nfrefχ refχ⇒EE'
+nfredexpath (univ⊃*ref _ _)(Red.appr (Red.appr ()))
+nfredexpath (univ⊃*univ nfunivδε _)(Red.appl univδε⇒EE') = nf-is-nf nfunivδε univδε⇒EE'
+nfredexpath (univ⊃*univ _ nfunivδ'ε')(Red.appr (Red.appl univδ'ε'⇒EE')) = nf-is-nf nfunivδ'ε' univδ'ε'⇒EE'
+nfredexpath (univ⊃*univ _ _)(Red.appr (Red.appr ())) 
+nfredexpath (ref⊃*ref nfrefφ _)(Red.appl refφ⇒EE') = nf-is-nf nfrefφ refφ⇒EE'
+nfredexpath (ref⊃*ref _ nfrefψ)(Red.appr (Red.appl refψ⇒EE')) = nf-is-nf nfrefψ refψ⇒EE'
+nfredexpath (ref⊃*ref _ _)(Red.appr (Red.appr ()))
+nfredexpath (refref _ nfrefN)(Red.appl N⇒EE') = nf-is-nf nfrefN (Red.app (Red.appl N⇒EE'))
+nfredexpath (refref _ nfrefN)(Red.appr (Red.appl N⇒EE')) = nf-is-nf nfrefN (Red.app (Red.appl N⇒EE'))
+nfredexpath (refref nfrefM _)(Red.appr (Red.appr (Red.appl refM⇒EE'))) = nf-is-nf nfrefM refM⇒EE'
+nfredexpath (refref _ nfrefN)(Red.appr (Red.appr (Red.appr (Red.appl refN⇒EE')))) = nf-is-nf nfrefN refN⇒EE'
+nfredexpath (refref _ _)(Red.appr (Red.appr (Red.appr (Red.appr ()))))
+nfredexpath (βE nfM _ _ _)(Red.appl M⇒EE') = nf-is-nf nfM M⇒EE'
+nfredexpath (βE _ nfN _ _)(Red.appr (Red.appl N⇒EE')) = nf-is-nf nfN N⇒EE'
+nfredexpath (βE _ _ nfΛAP _)(Red.appr (Red.appr (Red.appl ΛAP⇒EE'))) = nf-is-nf nfΛAP ΛAP⇒EE'
+nfredexpath (βE _ _ _ nfQ)(Red.appr (Red.appr (Red.appr (Red.appl Q⇒EE')))) = nf-is-nf nfQ Q⇒EE'
+nfredexpath (βE _ _ _ _)(Red.appr (Red.appr (Red.appr (Red.appr ()))))
+nfredexpath (reflam nfN _ _ _ _)(Red.appl N⇒EE') = nf-is-nf nfN N⇒EE'
+nfredexpath (reflam _ nfN' _ _ _)(Red.appr (Red.appl N'⇒EE')) = nf-is-nf nfN' N'⇒EE'
+nfredexpath (reflam _ _ nfΛAM _ _)(Red.appr (Red.appr (Red.appl ΛAM⇒EE'))) = nf-is-nf nfΛAM ΛAM⇒EE'
+nfredexpath (reflam _ _ _ nfP _)(Red.appr (Red.appr (Red.appr (Red.appl P⇒EE')))) = nf-is-nf nfP P⇒EE'
+nfredexpath (reflam _ _ _ _ _)(Red.appr (Red.appr (Red.appr (Red.appr ()))))
 \end{code}
 }
 
@@ -174,98 +189,100 @@ one of $\phi$, $\psi$, $\delta$, $\epsilon$.
 \AgdaHide{
 \begin{code}
 postulate univ-osrE : ∀ {V} {φ} {ψ} {δ} {ε} {C : Path V → Set} →
-                    (∀ φ' → φ ⇒ φ' → C (univ φ' ψ δ ε)) →
-                    (∀ ψ' → ψ ⇒ ψ' → C (univ φ ψ' δ ε)) →
-                    (∀ δ' → δ ⇒ δ' → C (univ φ ψ δ' ε)) →
-                    (∀ ε' → ε ⇒ ε' → C (univ φ ψ δ ε')) →
-                    ∀ {P} → univ φ ψ δ ε ⇒ P → C P
+                    (∀ φ' → φ Red.⇒ φ' → C (univ φ' ψ δ ε)) →
+                    (∀ ψ' → ψ Red.⇒ ψ' → C (univ φ ψ' δ ε)) →
+                    (∀ δ' → δ Red.⇒ δ' → C (univ φ ψ δ' ε)) →
+                    (∀ ε' → ε Red.⇒ ε' → C (univ φ ψ δ ε')) →
+                    ∀ {P} → univ φ ψ δ ε Red.⇒ P → C P
 {- univ-osrE _ _ _ _ (redex ())
-univ-osrE hypφ _ _ _ (app (appl φ⇒φ')) = hypφ _ φ⇒φ'
-univ-osrE _ hypψ _ _ (app (appr (appl ψ⇒ψ'))) = hypψ _ ψ⇒ψ'
-univ-osrE _ _ hypδ _ (app (appr (appr (appl δ⇒δ')))) = hypδ _ δ⇒δ'
-univ-osrE _ _ _ hypε (app (appr (appr (appr (appl ε⇒ε'))))) = hypε _ ε⇒ε'
+univ-osrE hypφ _ _ _ (app (appl φRed.⇒φ')) = hypφ _ φRed.⇒φ'
+univ-osrE _ hypψ _ _ (app (appr (appl ψRed.⇒ψ'))) = hypψ _ ψRed.⇒ψ'
+univ-osrE _ _ hypδ _ (app (appr (appr (appl δRed.⇒δ')))) = hypδ _ δRed.⇒δ'
+univ-osrE _ _ _ hypε (app (appr (appr (appr (appl εRed.⇒ε'))))) = hypε _ εRed.⇒ε'
 univ-osrE _ _ _ _ (app (appr (appr (appr (appr ()))))) -}
 
 postulate eq-resp-conv : ∀ {V} {M M' N N' : Term V} {A : Type} →
-                       M ≃ M' → N ≃ N' → M ≡〈 A 〉 N ≃ M' ≡〈 A 〉 N'
+                       M Red.≃ M' → N Red.≃ N' → M ≡〈 A 〉 N Red.≃ M' ≡〈 A 〉 N'
 {- eq-resp-conv M≃M' N≃N' = app-resp-conv (trans-conv (convl M≃M') (convr (convl N≃N'))) -}
 
-postulate R-creates-rep : creates' REP
+postulate R-creates-rep : Red.creates' REP
 
-postulate R-respects-replacement : respects' REP
+postulate R-respects-replacement : Red.respects' REP
 
 postulate osr-rep : ∀ {U} {V} {C} {K} {E E' : Subexp U C K} {ρ : Rep U V} →
-                  E ⇒ E' → E 〈 ρ 〉 ⇒ E' 〈 ρ 〉
+                  E Red.⇒ E' → E 〈 ρ 〉 Red.⇒ E' 〈 ρ 〉
 --osr-rep = aposrr REP R-respects-replacement
 
 postulate red-rep : ∀ {U} {V} {C} {K} {E E' : Subexp U C K} {ρ : Rep U V} →
-                  E ↠ E' → E 〈 ρ 〉 ↠ E' 〈 ρ 〉
+                  E Red.↠ E' → E 〈 ρ 〉 Red.↠ E' 〈 ρ 〉
 -- red-rep = apredr REP R-respects-replacement
 
-postulate R-creates-replacement : creates' REP
+postulate R-creates-replacement : Red.creates' REP
 
-postulate R-respects-sub : respects' SUB
+postulate R-respects-sub : Red.respects' SUB
+postulate R₀-respects-sub : Red₀.respects' SUB
 
-postulate osr-subl : ∀ {U} {V} {C} {K} {E F : Subexp U C K} {σ : Sub U V} → E ⇒ F → E ⟦ σ ⟧ ⇒ F ⟦ σ ⟧
+postulate osr-subl : ∀ {U} {V} {C} {K} {E F : Subexp U C K} {σ : Sub U V} → E Red.⇒ F → E ⟦ σ ⟧ Red.⇒ F ⟦ σ ⟧
 --osr-subl = aposrr SUB R-respects-sub
 
-postulate red-subl : ∀ {U} {V} {C} {K} {E F : Subexp U C K} {σ : Sub U V} → E ↠ F → E ⟦ σ ⟧ ↠ F ⟦ σ ⟧
---red-subl E↠F = respects-red (aposrr SUB R-respects-sub) E↠F
+postulate red-subl : ∀ {U} {V} {C} {K} {E F : Subexp U C K} {σ : Sub U V} → E Red.↠ F → E ⟦ σ ⟧ Red.↠ F ⟦ σ ⟧
+--red-subl ERed.↠F = respects-red (aposrr SUB R-respects-sub) ERed.↠F
 
-postulate red-subr : ∀ {U} {V} {C} {K} (E : Subexp U C K) {ρ σ : Sub U V} → ρ ↠s σ → E ⟦ ρ ⟧ ↠ E ⟦ σ ⟧
+postulate red-subr : ∀ {U} {V} {C} {K} (E : Subexp U C K) {ρ σ : Sub U V} → ρ Red.↠s σ → E ⟦ ρ ⟧ Red.↠ E ⟦ σ ⟧
+postulate red₀-subr : ∀ {U} {V} {C} {K} (E : Subexp U C K) {ρ σ : Sub U V} → ρ Red₀.↠s σ → E ⟦ ρ ⟧ Red₀.↠ E ⟦ σ ⟧
 
-postulate ⊥SN : ∀ {V} → SN {V} ⊥
+postulate ⊥SN : ∀ {V} → Red.SN {V} ⊥
 
-postulate ⊃SN : ∀ {V} {φ ψ : Term V} → SN φ → SN ψ → SN (φ ⊃ ψ)
+postulate ⊃SN : ∀ {V} {φ ψ : Term V} → Red.SN φ → Red.SN ψ → Red.SN (φ ⊃ ψ)
 
 postulate SN-βexp : ∀ {V} {φ : Term V} {δ : Proof (V , -Proof)} {ε : Proof V} →
-                  SN ε → SN (δ ⟦ x₀:= ε ⟧) → SN (appP (ΛP φ δ) ε) 
+                        Red.SN ε → Red.SN (δ ⟦ x₀:= ε ⟧) → Red.SN (appP (ΛP φ δ) ε) 
 
 postulate univ-red : ∀ {V} {φ φ' ψ ψ' : Term V} {δ} {δ'} {ε} {ε'} → 
-                   φ ↠ φ' → ψ ↠ ψ' → δ ↠ δ' → ε ↠ ε' → univ φ ψ δ ε ↠ univ φ' ψ' δ' ε'
+                     φ Red.↠ φ' → ψ Red.↠ ψ' → δ Red.↠ δ' → ε Red.↠ ε' → univ φ ψ δ ε Red.↠ univ φ' ψ' δ' ε'
 
-postulate ΛP-red : ∀ {V} {φ φ' : Term V} {δ} {δ'} → φ ↠ φ' → δ ↠ δ' → ΛP φ δ ↠ ΛP φ' δ'
+postulate ΛP-red : ∀ {V} {φ φ' : Term V} {δ} {δ'} → φ Red.↠ φ' → δ Red.↠ δ' → ΛP φ δ Red.↠ ΛP φ' δ'
 
-postulate ⊃-red : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ↠ φ' → ψ ↠ ψ' → φ ⊃ ψ ↠ φ' ⊃ ψ'
---⊃-red {V} {φ} {φ'} {ψ} {ψ'} φ↠φ' ψ↠ψ' = app-red (∷-red φ↠φ' (∷-redl ψ↠ψ'))
+postulate ⊃-red : ∀ {V} {φ φ' ψ ψ' : Term V} → φ Red.↠ φ' → ψ Red.↠ ψ' → φ ⊃ ψ Red.↠ φ' ⊃ ψ'
+--⊃-red {V} {φ} {φ'} {ψ} {ψ'} φRed.↠φ' ψRed.↠ψ' = app-red (∷-red φRed.↠φ' (∷-redl ψRed.↠ψ'))
 
-postulate appP-red : ∀ {V} {δ δ' ε ε' : Proof V} → δ ↠ δ' → ε ↠ ε' → appP δ ε ↠ appP δ' ε'
---appP-red δ↠δ' ε↠ε' = app-red (∷-red δ↠δ' (∷-redl ε↠ε'))
+postulate appP-red : ∀ {V} {δ δ' ε ε' : Proof V} → δ Red.↠ δ' → ε Red.↠ ε' → appP δ ε Red.↠ appP δ' ε'
+--appP-red δRed.↠δ' εRed.↠ε' = app-red (∷-red δRed.↠δ' (∷-redl εRed.↠ε'))
 
-postulate ⊃*-red : ∀ {V} {P P' Q Q' : Path V} → P ↠ P' → Q ↠ Q' → (P ⊃* Q) ↠ (P' ⊃* Q')
+postulate ⊃*-red : ∀ {V} {P P' Q Q' : Path V} → P Red.↠ P' → Q Red.↠ Q' → (P ⊃* Q) Red.↠ (P' ⊃* Q')
 
-postulate λλλ-red : ∀ {V A} {P Q : Path (V , -Term , -Term , -Path)} → P ↠ Q → λλλ A P ↠ λλλ A Q
+postulate λλλ-red : ∀ {V A} {P Q : Path (V , -Term , -Term , -Path)} → P Red.↠ Q → λλλ A P Red.↠ λλλ A Q
 
-postulate app*-red : ∀ {V} {M M' N N' : Term V} {P P' Q Q'} → M ↠ M' → N ↠ N' → P ↠ P' → Q ↠ Q' →
-                   app* M N P Q ↠ app* M' N' P' Q'
+postulate app*-red : ∀ {V} {M M' N N' : Term V} {P P' Q Q'} → M Red.↠ M' → N Red.↠ N' → P Red.↠ P' → Q Red.↠ Q' →
+                   app* M N P Q Red.↠ app* M' N' P' Q'
 
 postulate ru-redex-half-red : ∀ {V} {φ φ' ψ ψ' : Term V} {δ δ'} →
-                            φ ↠ φ' → ψ ↠ ψ' → δ ↠ δ' → ru-redex-half φ ψ δ ↠ ru-redex-half φ' ψ' δ'
---ru-redex-half-red φ↠φ' ψ↠ψ' δ↠δ' = ΛP-red (⊃-red φ↠φ' ψ↠ψ') (ΛP-red (red-rep φ↠φ') (appP-red (red-rep (red-rep δ↠δ')) ref))
+                            φ Red.↠ φ' → ψ Red.↠ ψ' → δ Red.↠ δ' → ru-redex-half φ ψ δ Red.↠ ru-redex-half φ' ψ' δ'
+--ru-redex-half-red φRed.↠φ' ψRed.↠ψ' δRed.↠δ' = ΛP-red (⊃-red φRed.↠φ' ψRed.↠ψ') (ΛP-red (red-rep φRed.↠φ') (appP-red (red-rep (red-rep δRed.↠δ')) ref))
 
 ru-redex-red : ∀ {V} {φ φ' ψ ψ' χ χ' : Term V} δ δ' ε ε' →
-  φ ↠ φ' → ψ ↠ ψ' → χ ↠ χ' → δ ↠ δ' → ε ↠ ε' →
-  ru-redex φ ψ χ δ ε ↠ ru-redex φ' ψ' χ' δ' ε'
+  φ Red.↠ φ' → ψ Red.↠ ψ' → χ Red.↠ χ' → δ Red.↠ δ' → ε Red.↠ ε' →
+  ru-redex φ ψ χ δ ε Red.↠ ru-redex φ' ψ' χ' δ' ε'
 ru-redex-red _ _ _ _ φ↠φ' ψ↠ψ' χ↠χ' δ↠δ' ε↠ε' = univ-red (⊃-red φ↠φ' ψ↠ψ') (⊃-red φ↠φ' χ↠χ') (ru-redex-half-red φ↠φ' ψ↠ψ' δ↠δ') (ru-redex-half-red φ↠φ' χ↠χ' ε↠ε')
 
 postulate ur-redex-half-red : ∀ {V} {φ φ' ψ ψ' : Term V} {χ χ' δ δ'} →
-                            φ ↠ φ' → ψ ↠ ψ' → χ ↠ χ' → δ ↠ δ' →
-                            ur-redex-half φ ψ χ δ ↠ ur-redex-half φ' ψ' χ' δ'
+                            φ Red.↠ φ' → ψ Red.↠ ψ' → χ Red.↠ χ' → δ Red.↠ δ' →
+                            ur-redex-half φ ψ χ δ Red.↠ ur-redex-half φ' ψ' χ' δ'
 --ur-redex-half-red φ↠φ' ψ↠ψ' χ↠χ' δ↠δ' = ΛP-red (⊃-red φ↠φ' ψ↠ψ') (ΛP-red (red-rep χ↠χ') (appP-red ref (appP-red (red-rep (red-rep δ↠δ')) ref)))
 
 postulate ur-redex-red : ∀ {V} {φ φ' ψ ψ' χ χ' : Term V} δ δ' ε ε' →
-                       φ ↠ φ' → ψ ↠ ψ' → χ ↠ χ' → δ ↠ δ' → ε ↠ ε' →
-                       ur-redex φ ψ χ δ ε ↠ ur-redex φ' ψ' χ' δ' ε'
+                       φ Red.↠ φ' → ψ Red.↠ ψ' → χ Red.↠ χ' → δ Red.↠ δ' → ε Red.↠ ε' →
+                       ur-redex φ ψ χ δ ε Red.↠ ur-redex φ' ψ' χ' δ' ε'
 --ur-redex-red {φ = φ} {φ'} {ψ} {ψ'} {χ} {χ'} _ _ _ _ φ↠φ' ψ↠ψ' χ↠χ' δ↠δ' ε↠ε' = univ-red (⊃-red φ↠φ' χ↠χ') (⊃-red ψ↠ψ' χ↠χ') (ur-redex-half-red φ↠φ' χ↠χ' ψ↠ψ' ε↠ε') (ur-redex-half-red ψ↠ψ' χ↠χ' φ↠φ' δ↠δ')
 
 postulate uu-redex-half-red : ∀ {V} {φ φ₁ φ' φ'₁ ψ ψ₁ : Term V} {δ δ₁ ε ε₁} →
-                            φ ↠ φ₁ → φ' ↠ φ'₁ → ψ ↠ ψ₁ → δ ↠ δ₁ → ε ↠ ε₁ →
-                            uu-redex-half φ φ' ψ δ ε ↠ uu-redex-half φ₁ φ'₁ ψ₁ δ₁ ε₁
+                            φ Red.↠ φ₁ → φ' Red.↠ φ'₁ → ψ Red.↠ ψ₁ → δ Red.↠ δ₁ → ε Red.↠ ε₁ →
+                            uu-redex-half φ φ' ψ δ ε Red.↠ uu-redex-half φ₁ φ'₁ ψ₁ δ₁ ε₁
 --uu-redex-half-red φ↠φ₁ φ'↠φ'₁ ψ↠ψ₁ δ↠δ₁ ε↠ε₁ = ΛP-red (⊃-red φ↠φ₁ φ'↠φ'₁) (ΛP-red (red-rep ψ↠ψ₁) (appP-red (red-rep (red-rep δ↠δ₁)) (appP-red ref (appP-red (red-rep (red-rep ε↠ε₁)) ref))))
 
 postulate uu-redex-red : ∀ {V} {φ φ₁ φ' φ'₁ ψ ψ₁ ψ' ψ'₁ : Term V} δ {δ₁} δ' {δ'₁} ε {ε₁} ε' {ε'₁} →
-                       φ ↠ φ₁ → φ' ↠ φ'₁ → ψ ↠ ψ₁ → ψ' ↠ ψ'₁ → δ ↠ δ₁ → δ' ↠ δ'₁ → ε ↠ ε₁ → ε' ↠ ε'₁ →
-                       uu-redex φ φ' ψ ψ' δ δ' ε ε' ↠ uu-redex φ₁ φ'₁ ψ₁ ψ'₁ δ₁ δ'₁ ε₁ ε'₁
+                       φ Red.↠ φ₁ → φ' Red.↠ φ'₁ → ψ Red.↠ ψ₁ → ψ' Red.↠ ψ'₁ → δ Red.↠ δ₁ → δ' Red.↠ δ'₁ → ε Red.↠ ε₁ → ε' Red.↠ ε'₁ →
+                       uu-redex φ φ' ψ ψ' δ δ' ε ε' Red.↠ uu-redex φ₁ φ'₁ ψ₁ ψ'₁ δ₁ δ'₁ ε₁ ε'₁
 --uu-redex-red {φ = φ} {φ₁} {φ'} {φ'₁} {ψ} {ψ₁} {ψ'} {ψ'₁} _ _ _ _ φ↠φ₁ φ'↠φ'₁ ψ↠ψ₁ ψ'↠ψ'₁ δ↠δ₁ δ'↠δ'₁ ε↠ε₁ ε'↠ε'₁ = 
 --  univ-red (⊃-red φ↠φ₁ φ'↠φ'₁) (⊃-red ψ↠ψ₁ ψ'↠ψ'₁) (uu-redex-half-red φ↠φ₁ φ'↠φ'₁ ψ↠ψ₁ δ'↠δ'₁ ε↠ε₁) (uu-redex-half-red ψ↠ψ₁ ψ'↠ψ'₁ φ↠φ₁ ε'↠ε'₁ δ↠δ₁)
 \end{code}

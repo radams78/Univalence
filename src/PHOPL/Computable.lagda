@@ -140,9 +140,9 @@ conv-computeE : ∀ {V} {Γ : Context V} {M} {M'} {A} {N} {N'} {P} →
   computeE Γ M' A N' P
 conv-computeE {Γ = Γ} {M = M} {M' = M'} {A = Ω} {N' = N'} {P} (S ,p T ,p φ ,p ψ ,p M↠φ ,p N↠ψ ,p computeP+ ,p computeP-) 
   Γ⊢M∶A Γ⊢N∶A Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N' = 
-    let (Q ,p φ↠Q ,p M'↠Q) = confluenceT (trans-conv (sym-conv (red-conv M↠φ)) M≃M') in
+    let (Q ,p φ↠Q ,p M'↠Q) = local-confluent (trans-conv (sym-conv (red-conv M↠φ)) M≃M') in
     let (φ' ,p φ'≡Q) = leaves-red {L = φ} φ↠Q in
-    let (R ,p ψ↠R ,p N'↠R) = confluenceT (trans-conv (sym-conv (red-conv N↠ψ)) N≃N') in
+    let (R ,p ψ↠R ,p N'↠R) = local-confluent (trans-conv (sym-conv (red-conv N↠ψ)) N≃N') in
     let (ψ' ,p ψ'≡R) = leaves-red {L = ψ} ψ↠R in
     S ,p T ,p φ' ,p ψ' ,p subst (_↠_ M') (sym φ'≡Q) M'↠Q ,p 
     subst (_↠_ N') (sym ψ'≡R) N'↠R ,p 

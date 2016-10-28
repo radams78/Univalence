@@ -3,6 +3,8 @@
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Empty} \AgdaKeyword{renaming} \AgdaSymbol{(}\AgdaDatatype{⊥} \AgdaSymbol{to} \AgdaDatatype{Empty}\AgdaSymbol{)}\<%
 \\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims.Closure}\<%
+\\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Grammar}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Red}\<%
@@ -16,7 +18,7 @@
 \>[0]\AgdaIndent{9}{}\<[9]%
 \>[9]\AgdaDatatype{SN} \AgdaSymbol{(}\AgdaBound{δ} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{ε} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaFunction{appP} \AgdaSymbol{(}\AgdaFunction{ΛP} \AgdaBound{φ} \AgdaBound{δ}\AgdaSymbol{)} \AgdaBound{ε} \AgdaDatatype{⇒} \AgdaBound{χ} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{χ}\<%
 \\
-\>\AgdaFunction{βR-exp'} \AgdaBound{SNφ} \AgdaBound{SNδ} \AgdaBound{SNε} \AgdaBound{SNδε} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaInductiveConstructor{βR}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaBound{SNδε}\<%
+\>\AgdaFunction{βR-exp'} \AgdaBound{SNφ} \AgdaBound{SNδ} \AgdaBound{SNε} \AgdaBound{SNδε} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaSymbol{\_} \AgdaSymbol{\_))} \AgdaSymbol{=} \AgdaBound{SNδε}\<%
 \\
 \>\AgdaFunction{βR-exp'} \AgdaBound{SNφ} \AgdaBound{SNδ} \AgdaBound{SNε} \AgdaBound{SNδε} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{())))}\<%
 \\
@@ -31,7 +33,7 @@
 \>[73]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaSymbol{(λ} \AgdaBound{\_} \AgdaSymbol{→} \AgdaFunction{βR-exp'} \AgdaBound{SNφ} \AgdaSymbol{(}\AgdaBound{SNδ} \AgdaSymbol{\_} \AgdaBound{δ⇒δ'}\AgdaSymbol{)} \AgdaBound{SNε} \AgdaSymbol{(}\AgdaFunction{SNred} \AgdaBound{SNδε} \AgdaSymbol{(}\AgdaFunction{apredr} \AgdaFunction{SUB} \AgdaPostulate{R-respects-sub} \AgdaSymbol{(}\AgdaInductiveConstructor{osr-red} \AgdaBound{δ⇒δ'}\AgdaSymbol{))))}\<%
+\>[2]\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaSymbol{(λ} \AgdaBound{\_} \AgdaSymbol{→} \AgdaFunction{βR-exp'} \AgdaBound{SNφ} \AgdaSymbol{(}\AgdaBound{SNδ} \AgdaSymbol{\_} \AgdaBound{δ⇒δ'}\AgdaSymbol{)} \AgdaBound{SNε} \AgdaSymbol{(}\AgdaFunction{SNred} \AgdaBound{SNδε} \AgdaSymbol{(}\AgdaFunction{apredr} \AgdaFunction{SUB} \AgdaPostulate{R-respects-sub} \AgdaSymbol{(}\AgdaInductiveConstructor{inc} \AgdaBound{δ⇒δ'}\AgdaSymbol{))))}\<%
 \\
 \>\AgdaFunction{βR-exp'} \AgdaBound{SNφ} \AgdaBound{SNδ} \AgdaBound{SNε} \AgdaBound{SNδε} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{())))))}\<%
 \\
@@ -72,7 +74,7 @@
 \>[2]\AgdaIndent{17}{}\<[17]%
 \>[17]\AgdaDatatype{SN} \AgdaBound{R}\<%
 \\
-\>\AgdaFunction{βE-exp'} \AgdaBound{SNM} \AgdaBound{SNN} \AgdaBound{SNP} \AgdaBound{SNQ} \AgdaBound{SNPMNQ} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaInductiveConstructor{βE}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaBound{SNPMNQ}\<%
+\>\AgdaFunction{βE-exp'} \AgdaBound{SNM} \AgdaBound{SNN} \AgdaBound{SNP} \AgdaBound{SNQ} \AgdaBound{SNPMNQ} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{βE} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_))} \AgdaSymbol{=} \AgdaBound{SNPMNQ}\<%
 \\
 \>\AgdaFunction{βE-exp'} \AgdaSymbol{\{}\AgdaArgument{P} \AgdaSymbol{=} \AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaBound{M} \AgdaBound{SNM}\AgdaSymbol{)} \AgdaBound{SNN} \AgdaBound{SNP} \AgdaBound{SNQ} \AgdaBound{SNPMNQ} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaBound{M⇒M'}\AgdaSymbol{))} \AgdaSymbol{=} \<[67]%
 \>[67]\<%
@@ -86,8 +88,8 @@
 \>[53]\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaSymbol{(}\AgdaFunction{botsub₃-red} \AgdaSymbol{(}\AgdaInductiveConstructor{osr-red} \AgdaBound{M⇒M'}\AgdaSymbol{)} \AgdaInductiveConstructor{ref} \AgdaInductiveConstructor{ref}\AgdaSymbol{))))} \<[46]%
-\>[46]\<%
+\>[6]\AgdaSymbol{(}\AgdaFunction{botsub₃-red} \AgdaSymbol{(}\AgdaInductiveConstructor{inc} \AgdaBound{M⇒M'}\AgdaSymbol{)} \AgdaInductiveConstructor{ref} \AgdaInductiveConstructor{ref}\AgdaSymbol{))))} \<[42]%
+\>[42]\<%
 \\
 \>\AgdaFunction{βE-exp'} \AgdaSymbol{\{}\AgdaArgument{P} \AgdaSymbol{=} \AgdaBound{P}\AgdaSymbol{\}} \AgdaBound{SNM} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNN}\AgdaSymbol{)} \AgdaBound{SNP} \AgdaBound{SNQ} \AgdaBound{SNPMNQ} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaBound{N⇒N'}\AgdaSymbol{)))} \AgdaSymbol{=} \<[74]%
 \>[74]\<%
@@ -101,7 +103,7 @@
 \>[53]\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaSymbol{(}\AgdaFunction{botsub₃-red} \AgdaInductiveConstructor{ref} \AgdaSymbol{(}\AgdaInductiveConstructor{osr-red} \AgdaBound{N⇒N'}\AgdaSymbol{)} \AgdaInductiveConstructor{ref}\AgdaSymbol{))))}\<%
+\>[6]\AgdaSymbol{(}\AgdaFunction{botsub₃-red} \AgdaInductiveConstructor{ref} \AgdaSymbol{(}\AgdaInductiveConstructor{inc} \AgdaBound{N⇒N'}\AgdaSymbol{)} \AgdaInductiveConstructor{ref}\AgdaSymbol{))))}\<%
 \\
 \>\AgdaFunction{βE-exp'} \AgdaBound{SNM} \AgdaBound{SNN} \AgdaBound{SNP} \AgdaBound{SNQ} \AgdaBound{SNPMNQ} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{())))))}\<%
 \\
@@ -112,7 +114,7 @@
 \>[2]\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaSymbol{(λ} \AgdaBound{\_} \AgdaSymbol{→} \AgdaFunction{βE-exp'} \AgdaBound{SNM} \AgdaBound{SNN} \AgdaSymbol{(}\AgdaBound{SNP} \AgdaSymbol{\_} \AgdaBound{P⇒P'}\AgdaSymbol{)} \AgdaBound{SNQ}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaSymbol{(}\AgdaFunction{SNred} \AgdaBound{SNPMNQ} \AgdaSymbol{(}\AgdaFunction{apredr} \AgdaFunction{SUB} \AgdaPostulate{R-respects-sub} \AgdaSymbol{(}\AgdaInductiveConstructor{osr-red} \AgdaBound{P⇒P'}\AgdaSymbol{))))}\<%
+\>[4]\AgdaSymbol{(}\AgdaFunction{SNred} \AgdaBound{SNPMNQ} \AgdaSymbol{(}\AgdaFunction{apredr} \AgdaFunction{SUB} \AgdaPostulate{R-respects-sub} \AgdaSymbol{(}\AgdaInductiveConstructor{inc} \AgdaBound{P⇒P'}\AgdaSymbol{))))}\<%
 \\
 \>\AgdaFunction{βE-exp'} \AgdaBound{SNM} \AgdaBound{SNN} \AgdaBound{SNP} \AgdaBound{SNQ} \AgdaBound{SNPMNQ} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{()))))))}\<%
 \\
@@ -128,7 +130,7 @@
 \>[53]\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaSymbol{(}\AgdaFunction{botsub₃-red} \AgdaInductiveConstructor{ref} \AgdaInductiveConstructor{ref} \AgdaSymbol{(}\AgdaInductiveConstructor{osr-red} \AgdaBound{Q⇒Q'}\AgdaSymbol{)))))}\<%
+\>[6]\AgdaSymbol{(}\AgdaFunction{botsub₃-red} \AgdaInductiveConstructor{ref} \AgdaInductiveConstructor{ref} \AgdaSymbol{(}\AgdaInductiveConstructor{inc} \AgdaBound{Q⇒Q'}\AgdaSymbol{)))))}\<%
 \\
 \>\AgdaFunction{βE-exp'} \AgdaBound{SNM} \AgdaBound{SNN} \AgdaBound{SNP} \AgdaBound{SNQ} \AgdaBound{SNPMNQ} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{())))))}\<%
 \\

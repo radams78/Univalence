@@ -8,6 +8,10 @@ open import Relation.Binary
 Relation : Set → Set₁
 Relation A = A → A → Set
 
+data RClose {A : Set} (R : Relation A) : Relation A where
+  inc : ∀ {x} {y} → R x y → RClose R x y
+  ref : ∀ {x} → RClose R x x
+
 data TClose {A : Set} (R : Relation A) : Relation A where
   inc : ∀ {x} {y} → R x y → TClose R x y
   trans : ∀ {x} {y} {z} → TClose R x y → TClose R y z → TClose R x z
