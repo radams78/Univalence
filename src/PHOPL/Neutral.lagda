@@ -38,9 +38,12 @@ nrep-comp {N = app N N'} = cong₂ app nrep-comp (rep-comp N')
 
 private neutral-red' : ∀ {V} {N : Neutral V} {M₁} {M₂} → M₁ ↠ M₂ → decode-Neutral N ≡ M₁ →
                      Σ[ N' ∈ Neutral V ] decode-Neutral N' ≡ M₂
-neutral-red' {N = var _} (inc (redex βT)) ()
-neutral-red' {N = app (var _) _} (inc (redex βT)) xF≡ΛMN = ⊥-elim (var-not-Λ (appT-injl xF≡ΛMN))
-neutral-red' {N = app (app _ _) _} (inc (redex βT)) EF≡ΛMN = ⊥-elim (app-not-Λ (appT-injl EF≡ΛMN))
+neutral-red' {N = var _} (inc (redex (R₀R ()))) _
+neutral-red' {N = var _} (inc (redex (βR βT))) ()
+neutral-red' {N = app (var _) _} (inc (redex (R₀R ()))) _
+neutral-red' {N = app (var _) _} (inc (redex (βR βT))) xF≡ΛMN = ⊥-elim (var-not-Λ (appT-injl xF≡ΛMN))
+neutral-red' {N = app (app _ _) _} (inc (redex (R₀R ()))) _
+neutral-red' {N = app (app _ _) _} (inc (redex (βR βT))) EF≡ΛMN = ⊥-elim (app-not-Λ (appT-injl EF≡ΛMN))
 neutral-red' {N = var _} (inc (app _)) ()
 neutral-red' {N = app _ _} (inc (app {c = -bot} _)) ()
 neutral-red' {N = app _ _} (inc (app {c = -imp} _)) ()

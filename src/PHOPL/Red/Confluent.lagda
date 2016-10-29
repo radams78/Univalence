@@ -11,6 +11,27 @@ open import Reduction PHOPL β as Redβ
 open import Reduction PHOPL R₀ as Red₀
 open import Reduction PHOPL R as Red
 
+R-is-R₀∪β : ∀ {V C K} {P : Subexp V C K → Subexp V C K → Set} →
+  (∀ {E F} → E Red₀.⇒ F → P E F) →
+  (∀ {E F} → E Redβ.⇒ F → P E F) →
+  ∀ {E F} → E Red.⇒ F → P E F
+R-is-R₀∪β hyp₀ hypβ (Red.redex (βR E▷F)) = hypβ (Redβ.redex E▷F)
+R-is-R₀∪β hyp₀ hypβ (Red.redex (R₀R E▷F)) = hyp₀ (Red₀.redex E▷F)
+R-is-R₀∪β {P = P} hyp₀ hypβ (Red.app {c = c} EE⇒FF) = 
+  R-is-R₀∪β {P = λ x y → P (app c x) (app c y)} 
+    (λ E⇒F → hyp₀ (Red₀.app E⇒F)) 
+    (λ E⇒F → hypβ (Redβ.app E⇒F)) EE⇒FF
+R-is-R₀∪β {P = P} hyp₀ hypβ (Red.appl {F = FF} E⇒E') = 
+  R-is-R₀∪β {P = λ x y → P (x ∷ FF) (y ∷ FF)} 
+  (λ E⇒E' → hyp₀ (Red₀.appl E⇒E')) 
+  (λ E⇒E' → hypβ (Redβ.appl E⇒E')) 
+  E⇒E'
+R-is-R₀∪β {P = P} hyp₀ hypβ (Red.appr {E = E} FF⇒FF') = 
+  R-is-R₀∪β {P = λ x y → P (E ∷ x) (E ∷ y)} 
+  (λ FF⇒FF' → hyp₀ (Red₀.appr FF⇒FF')) 
+  (λ FF⇒FF' → hypβ (Redβ.appr FF⇒FF')) 
+  FF⇒FF'
+
 postulate β-confluent : ∀ {V C K} {E F G : Subexp V C K} → E Redβ.↠ F → E Redβ.↠ G → Σ[ H ∈ Subexp V C K ] F Redβ.↠ H × G Redβ.↠ H
 
 R₀-det : ∀ {V AA K} {c : Con (SK AA K)} {EE : ListAbs V AA} {F G} → R₀ c EE F → app c EE Red.⇒ G → F ≡ G
@@ -62,6 +83,18 @@ R₀-β-diamond (Red₀.appl E⇒F) (Redβ.appl E⇒G) = let H ,p F⇒H ,p G↠H
 R₀-β-diamond (Red₀.appl E⇒F) (Redβ.appr EE⇒GG) = _ ,p Redβ.appr EE⇒GG ,p inc (Red₀.appl E⇒F)
 R₀-β-diamond (Red₀.appr EE⇒FF) (Redβ.appl E⇒G) = _ ,p Redβ.appl E⇒G ,p inc (Red₀.appr EE⇒FF)
 R₀-β-diamond (Red₀.appr EE⇒FF) (Redβ.appr EE⇒GG) = let HH ,p FF⇒HH ,p GG↠HH = R₀-β-diamond EE⇒FF EE⇒GG in _ ,p Redβ.appr FF⇒HH ,p Red₀.appr-resp-red GG↠HH
+
+R₀-R-diamond : ∀ {V C K} {E F G : Subexp V C K} → E Red₀.⇒ F → E Red.⇒ G → Σ[ H ∈ Subexp V C K ] F Red.↠ H × G Red₀.↠ H
+R₀-R-diamond E⇒₀F E⇒G = {!!}
+
+R₀-confluent : ∀ {V C K} {E F G : Subexp V C K} → E Red₀.⇒ F → E Red.↠ G → Σ[ H ∈ Subexp V C K ] F Red.↠ H × G Red₀.↠ H
+R₀-confluent E⇒₀F (inc (Red.redex (βR x))) = {!!}
+R₀-confluent E⇒₀F (inc (Red.redex (R₀R x))) = {!!}
+R₀-confluent E⇒₀F (inc (Red.app x₁)) = {!!}
+R₀-confluent E⇒₀F (inc (Red.appl x₁)) = {!!}
+R₀-confluent E⇒₀F (inc (Red.appr x₁)) = {!!}
+R₀-confluent E⇒₀F ref = {!!}
+R₀-confluent E⇒₀F (RTClose.trans E↠G E↠G₁) = {!!}
 
 {-                R c EE F → app c EE ⇒ G → Σ[ H ∈ Expression V K ] F ↠ H × G ↠ H
 confluent▷⇒ {F = F} cEE▷F (redex E▷G) = F ,p ref ,p (subst (λ x → x ↠ F) (R-det cEE▷F E▷G) ref)
