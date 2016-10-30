@@ -3,6 +3,7 @@
 module PHOPL.Red.PathSub where
 open import Data.Product
 open import Prelims
+open import Prelims.Closure
 open import PHOPL.Grammar
 open import PHOPL.PathSub
 open import PHOPL.Red.Base
@@ -123,19 +124,24 @@ data redVPa {V} : ∀ {n} → snocVec (Path V) n → snocVec (Path V) n → Set 
   redleft : ∀ {n} {PP PP' : snocVec (Path V) n} {Q} → redVPa PP PP' → redVPa (PP snoc Q) (PP' snoc Q)
   redright : ∀ {n} {PP : snocVec (Path V) n} {Q Q'} → Q ⇒ Q' → redVPa (PP snoc Q) (PP snoc Q')
 
-postulate APPP-redl : ∀ {V n δ δ'} {εε : snocVec (Proof V) n} → δ ⇒ δ' → APPP δ εε ⇒ APPP δ' εε
-{-APPP-redl {εε = []} δ⇒δ' = δ⇒δ'
-APPP-redl {εε = εε snoc _} δ⇒δ' = app (appl (APPP-redl {εε = εε} δ⇒δ'))-}
+postulate APPP-osrl : ∀ {V n δ δ'} {εε : snocVec (Proof V) n} → δ ⇒ δ' → APPP δ εε ⇒ APPP δ' εε
+{-APPP-osrl {εε = []} δ⇒δ' = δ⇒δ'
+APPP-osrl {εε = εε snoc _} δ⇒δ' = app (appl (APPP-osrl {εε = εε} δ⇒δ'))-}
 
-postulate APP*-red₁ : ∀ {V n} {MM MM' NN : snocVec (Term V) n} {P PP} → redVT MM MM' → APP* MM NN P PP ⇒ APP* MM' NN P PP
---APP*-red₁ {NN = _ snoc _} {PP = _ snoc _} (redleft MM⇒MM') = app (appr (appr (appl (APP*-red₁ MM⇒MM'))))
---APP*-red₁ {NN = _ snoc _} {PP = _ snoc _} (redright M⇒M') = app (appl M⇒M')
+postulate APP*-osr₁ : ∀ {V n} {MM MM' NN : snocVec (Term V) n} {P PP} → redVT MM MM' → APP* MM NN P PP ⇒ APP* MM' NN P PP
+--APP*-osr₁ {NN = _ snoc _} {PP = _ snoc _} (osrleft MM⇒MM') = app (appr (appr (appl (APP*-osr₁ MM⇒MM'))))
+--APP*-osr₁ {NN = _ snoc _} {PP = _ snoc _} (osrright M⇒M') = app (appl M⇒M')
 
-postulate APP*-red₂ : ∀ {V n} MM {NN NN' : snocVec (Term V) n} {P PP} → redVT NN NN' → APP* MM NN P PP ⇒ APP* MM NN' P PP
---APP*-red₂ (MM snoc _) {_ snoc _} {_ snoc _} {PP = _ snoc _} (redleft NN⇒NN') = app (appr (appr (appl (APP*-red₂ MM NN⇒NN'))))
---APP*-red₂ (_ snoc _) {PP = _ snoc _} (redright N⇒N') = app (appr (appl N⇒N'))
+postulate APP*-osr₂ : ∀ {V n} MM {NN NN' : snocVec (Term V) n} {P PP} → redVT NN NN' → APP* MM NN P PP ⇒ APP* MM NN' P PP
+--APP*-osr₂ (MM snoc _) {_ snoc _} {_ snoc _} {PP = _ snoc _} (osrleft NN⇒NN') = app (appr (appr (appl (APP*-osr₂ MM NN⇒NN'))))
+--APP*-osr₂ (_ snoc _) {PP = _ snoc _} (osrright N⇒N') = app (appr (appl N⇒N'))
 
-postulate APP*-red₃ : ∀ {V n} MM {NN : snocVec (Term V) n} {P P' PP} → P ⇒ P' → APP* MM NN P PP ⇒ APP* MM NN P' PP
---APP*-red₃ [] {[]} {PP = []} P⇒P' = P⇒P'
---APP*-red₃ (MM snoc M) {NN snoc N} {PP = PP snoc P} P⇒P' = app (appr (appr (appl (APP*-red₃ MM P⇒P'))))
+postulate APP*-osr₃ : ∀ {V n} MM {NN : snocVec (Term V) n} {P P' PP} → P ⇒ P' → APP* MM NN P PP ⇒ APP* MM NN P' PP
+--APP*-osr₃ [] {[]} {PP = []} P⇒P' = P⇒P'
+--APP*-osr₃ (MM snoc M) {NN snoc N} {PP = PP snoc P} P⇒P' = app (appr (appr (appl (APP*-osr₃ MM P⇒P'))))
+
+APP*-red₃ : ∀ {V n} MM {NN : snocVec (Term V) n} {P P' PP} → P ↠ P' → APP* MM NN P PP ↠ APP* MM NN P' PP
+APP*-red₃ MM (inc P⇒P') = inc (APP*-osr₃ MM P⇒P')
+APP*-red₃ MM ref = ref
+APP*-red₃ MM (trans P₁↠P₂ P₂↠P₃) = RTClose.trans (APP*-red₃ MM P₁↠P₂) (APP*-red₃ MM P₂↠P₃)
 \end{code}

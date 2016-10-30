@@ -145,9 +145,9 @@ lmSNE : ∀ {m n V} {L L' : Term V} {P Q A} {MM NN : snocVec (Term V) n} {PP} {�
   SN (APPP (plus (APP* MM NN (app* L L' (λλλ A P) Q) PP)) δδ) -- TODO Change this to use strong induction over first hypothesis
 lmSNE {L = L} {L'} {P} {Q} {A} {MM} {NN} {PP} {δδ} (SNI _ SNPPPδδ) (SNI _ SNL) (SNI _ SNL') (SNI _ SNQ) = SNI _ (λ F plusPQPPδδ⇒F →
   pre-lmSNE₄ {L = L} {L'} {P} {Q} {A} {F} {MM} {NN} {PP} {δδ} {C = SN} (SNI _ SNPPPδδ) 
-  (λ MM' MM⇒MM' → lmSNE {MM = MM'} {δδ = δδ} (SNPPPδδ _ (APPP-redl {εε = δδ} (app (appl (APP*-red₁ MM⇒MM'))))) (SNI _ SNL) (SNI _ SNL') (SNI _ SNQ)) 
-  (λ NN' NN⇒NN' → lmSNE {MM = MM} {δδ = δδ} (SNPPPδδ _ (APPP-redl {εε = δδ} (app (appl (APP*-red₂ MM NN⇒NN'))))) (SNI _ SNL) (SNI _ SNL') (SNI _ SNQ)) 
-  (λ L₁ L⇒L₁ → lmSNE {MM = MM} {δδ = δδ} (SNPPPδδ _ (APPP-redl {εε = δδ} (app (appl {!!})))) {!!} {!!} {!!}) {!!} {!!} {!!} {!!} {!!} plusPQPPδδ⇒F)
+  (λ MM' MM⇒MM' → lmSNE {MM = MM'} {δδ = δδ} (SNPPPδδ _ (APPP-osrl {εε = δδ} (app (appl (APP*-osr₁ MM⇒MM'))))) (SNI _ SNL) (SNI _ SNL') (SNI _ SNQ)) 
+  (λ NN' NN⇒NN' → lmSNE {MM = MM} {δδ = δδ} (SNPPPδδ _ (APPP-osrl {εε = δδ} (app (appl (APP*-osr₂ MM NN⇒NN'))))) (SNI _ SNL) (SNI _ SNL') (SNI _ SNQ)) 
+  (λ L₁ L⇒L₁ → lmSNE {MM = MM} {δδ = δδ} (SNred (SNI _ SNPPPδδ) {!APPP-red!}) {!!} {!!} {!!}) {!!} {!!} {!!} {!!} {!!} plusPQPPδδ⇒F)
 
 {-lmSNE₁ : ∀ {V} {L L' : Term V} {P} {Q} {A} → 
   SN (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) → SN L → SN L' → SN Q →
