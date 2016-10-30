@@ -1,7 +1,7 @@
 \AgdaHide{
 \begin{code}
 module Prelims.Closure where
-open import Relation.Binary.PropositionalEquality hiding (trans)
+open import Relation.Binary.PropositionalEquality hiding (sym;trans)
 import Relation.Binary.PropositionalEquality.Core
 open import Relation.Binary
 
@@ -30,5 +30,19 @@ RTCLOSE {A} R = record {
     isEquivalence = Relation.Binary.PropositionalEquality.Core.isEquivalence ; 
     reflexive = λ { {x} .{x} refl → ref } ; 
     trans = trans } }
+
+R-sub-RT : ∀ {A} {R} {x} {y} → RClose {A} R x y → RTClose R x y
+R-sub-RT (inc xRy) = inc xRy
+R-sub-RT ref = ref
+
+T-sub-RT : ∀ {A} {R} {x} {y} → TClose {A} R x y → RTClose R x y
+T-sub-RT (inc xRy) = inc xRy
+T-sub-RT (trans xRy yRz) = trans (T-sub-RT xRy) (T-sub-RT yRz)
+
+data RSTClose {A : Set} (R : Relation A) : Relation A where
+  inc : ∀ {x y} → R x y → RSTClose R x y
+  ref : ∀ {x} → RSTClose R x x
+  sym : ∀ {x y} → RSTClose R x y → RSTClose R y x
+  trans : ∀ {x y z} → RSTClose R x y → RSTClose R y z → RSTClose R x z
 \end{code}
 }

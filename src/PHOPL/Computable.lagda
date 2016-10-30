@@ -5,6 +5,7 @@ import Relation.Binary.PreorderReasoning
 open import Data.Empty renaming (⊥ to Empty)
 open import Data.Product renaming (_,_ to _,p_)
 open import Prelims
+open import Prelims.Closure
 open import PHOPL.Grammar
 open import PHOPL.PathSub
 open import PHOPL.Red
@@ -91,12 +92,12 @@ leaves-red : ∀ {V} {S} {L : Leaves V S} {φ : Term V} →
   Σ[ L' ∈ Leaves V S ] decode-Prop L' ≡ φ
 leaves-red {S = neutral} {L = neutral N} L↠φ = 
   let (N ,p N≡φ) = neutral-red {N = N} L↠φ in neutral N ,p N≡φ
-leaves-red {S = bot} {L = bot} L↠φ = bot ,p sym (bot-red L↠φ)
+leaves-red {S = bot} {L = bot} L↠φ = bot ,p Prelims.sym (bot-red L↠φ)
 leaves-red {S = imp S T} {L = imp φ ψ} φ⊃ψ↠χ = 
   let (φ' ,p ψ' ,p φ↠φ' ,p ψ↠ψ' ,p χ≡φ'⊃ψ') = imp-red φ⊃ψ↠χ in 
   let (L₁ ,p L₁≡φ') = leaves-red {L = φ} φ↠φ' in 
   let (L₂ ,p L₂≡ψ') = leaves-red {L = ψ} ψ↠ψ' in 
-  (imp L₁ L₂) ,p (trans (cong₂ _⊃_ L₁≡φ' L₂≡ψ') (sym χ≡φ'⊃ψ'))
+  (imp L₁ L₂) ,p (Prelims.trans (cong₂ _⊃_ L₁≡φ' L₂≡ψ') (Prelims.sym χ≡φ'⊃ψ'))
 
 computeP : ∀ {V} {S} → Context V → Leaves V S → Proof V → Set
 computeP {S = neutral} Γ (neutral _) δ = SN δ
@@ -140,22 +141,22 @@ conv-computeE : ∀ {V} {Γ : Context V} {M} {M'} {A} {N} {N'} {P} →
   computeE Γ M' A N' P
 conv-computeE {Γ = Γ} {M = M} {M' = M'} {A = Ω} {N' = N'} {P} (S ,p T ,p φ ,p ψ ,p M↠φ ,p N↠ψ ,p computeP+ ,p computeP-) 
   Γ⊢M∶A Γ⊢N∶A Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N' = 
-    let (Q ,p φ↠Q ,p M'↠Q) = local-confluent (trans-conv (sym-conv (red-conv M↠φ)) M≃M') in
+    let (Q ,p φ↠Q ,p M'↠Q) = Church-Rosser (RSTClose.trans (RSTClose.sym (red-conv M↠φ)) M≃M') in
     let (φ' ,p φ'≡Q) = leaves-red {L = φ} φ↠Q in
-    let (R ,p ψ↠R ,p N'↠R) = local-confluent (trans-conv (sym-conv (red-conv N↠ψ)) N≃N') in
+    let (R ,p ψ↠R ,p N'↠R) = Church-Rosser (RSTClose.trans (RSTClose.sym (red-conv N↠ψ)) N≃N') in
     let (ψ' ,p ψ'≡R) = leaves-red {L = ψ} ψ↠R in
-    S ,p T ,p φ' ,p ψ' ,p subst (_↠_ M') (sym φ'≡Q) M'↠Q ,p 
-    subst (_↠_ N') (sym ψ'≡R) N'↠R ,p 
+    S ,p T ,p φ' ,p ψ' ,p subst (_↠_ M') (Prelims.sym φ'≡Q) M'↠Q ,p 
+    subst (_↠_ N') (Prelims.sym ψ'≡R) N'↠R ,p 
     (λ Δ {ρ} {ε} ρ∶Γ⇒RΔ Δ⊢ε∶φ'ρ computeε → 
       let step1 : Δ ⊢ decode-Prop (lrep ρ φ) ∶ ty Ω
           step1 = subst (λ x → Δ ⊢ x ∶ ty Ω) 
-            (sym (decode-rep φ)) 
+            (Prelims.sym (decode-rep φ)) 
             (weakening 
               (subject-reduction 
                 Γ⊢M∶A M↠φ) (context-validity Δ⊢ε∶φ'ρ) ρ∶Γ⇒RΔ) in
       let step1a : decode-Prop (lrep ρ φ') ≃ decode-Prop (lrep ρ φ)
-          step1a = subst₂ _≃_ (sym (trans (decode-rep φ') (rep-congl φ'≡Q))) (sym (decode-rep φ)) (conv-rep {M = Q} {N = decode-Prop φ} 
-            (sym-conv (red-conv φ↠Q))) in 
+          step1a = subst₂ _≃_ (Prelims.sym (Prelims.trans (decode-rep φ') (rep-congl φ'≡Q))) (Prelims.sym (decode-rep φ)) (conv-rep {M = Q} {N = decode-Prop φ} 
+            (RSTClose.sym (red-conv φ↠Q))) in 
       let step2 : Δ ⊢ ε ∶ decode-Prop (lrep ρ φ)
           step2 = convR Δ⊢ε∶φ'ρ step1 step1a in
       let step3 : computeP Δ (lrep ρ φ) ε
@@ -163,26 +164,26 @@ conv-computeE {Γ = Γ} {M = M} {M' = M'} {A = Ω} {N' = N'} {P} (S ,p T ,p φ ,
       let step4 : computeP Δ (lrep ρ ψ) (appP (plus P 〈 ρ 〉) ε)
           step4 = computeP+ Δ ρ∶Γ⇒RΔ step2 step3 in 
       let step5 : decode-Prop (lrep ρ ψ') ≃ decode-Prop (lrep ρ ψ)
-          step5 = subst₂ _≃_ (sym (trans (decode-rep ψ') (rep-congl ψ'≡R))) (sym (decode-rep ψ)) (conv-rep {M = R} {N = decode-Prop ψ} 
-            (sym-conv (red-conv ψ↠R))) in
+          step5 = subst₂ _≃_ (Prelims.sym (Prelims.trans (decode-rep ψ') (rep-congl ψ'≡R))) (Prelims.sym (decode-rep ψ)) (conv-rep {M = R} {N = decode-Prop ψ} 
+            (RSTClose.sym (red-conv ψ↠R))) in
       let step6 : Δ ⊢ decode-Prop (lrep ρ ψ') ∶ ty Ω
-          step6 = subst (λ x → Δ ⊢ x ∶ ty Ω) (sym (decode-rep ψ')) 
+          step6 = subst (λ x → Δ ⊢ x ∶ ty Ω) (Prelims.sym (decode-rep ψ')) 
                 (weakening 
-                  (subst (λ x → Γ ⊢ x ∶ ty Ω) (sym ψ'≡R) 
+                  (subst (λ x → Γ ⊢ x ∶ ty Ω) (Prelims.sym ψ'≡R) 
                   (subject-reduction Γ⊢N'∶A N'↠R)) 
                 (context-validity Δ⊢ε∶φ'ρ) 
                 ρ∶Γ⇒RΔ) in
-      conv-computeP {L = lrep ρ ψ} {M = lrep ρ ψ'} step4 (sym-conv step5) step6) ,p 
+      conv-computeP {L = lrep ρ ψ} {M = lrep ρ ψ'} step4 (RSTClose.sym step5) step6) ,p 
     (    (λ Δ {ρ} {ε} ρ∶Γ⇒RΔ Δ⊢ε∶ψ'ρ computeε → 
       let step1 : Δ ⊢ decode-Prop (lrep ρ ψ) ∶ ty Ω
           step1 = subst (λ x → Δ ⊢ x ∶ ty Ω) 
-            (sym (decode-rep ψ)) 
+            (Prelims.sym (decode-rep ψ)) 
             (weakening 
               (subject-reduction 
                 Γ⊢N∶A N↠ψ) (context-validity Δ⊢ε∶ψ'ρ) ρ∶Γ⇒RΔ) in
       let step1a : decode-Prop (lrep ρ ψ') ≃ decode-Prop (lrep ρ ψ)
-          step1a = subst₂ _≃_ (sym (trans (decode-rep ψ') (rep-congl ψ'≡R))) (sym (decode-rep ψ)) (conv-rep {M = R} {N = decode-Prop ψ} 
-            (sym-conv (red-conv ψ↠R))) in 
+          step1a = subst₂ _≃_ (Prelims.sym (Prelims.trans (decode-rep ψ') (rep-congl ψ'≡R))) (Prelims.sym (decode-rep ψ)) (conv-rep {M = R} {N = decode-Prop ψ} 
+            (RSTClose.sym (red-conv ψ↠R))) in 
       let step2 : Δ ⊢ ε ∶ decode-Prop (lrep ρ ψ)
           step2 = convR Δ⊢ε∶ψ'ρ step1 step1a in
       let step3 : computeP Δ (lrep ρ ψ) ε
@@ -190,16 +191,16 @@ conv-computeE {Γ = Γ} {M = M} {M' = M'} {A = Ω} {N' = N'} {P} (S ,p T ,p φ ,
       let step4 : computeP Δ (lrep ρ φ) (appP (minus P 〈 ρ 〉) ε)
           step4 = computeP- Δ ρ∶Γ⇒RΔ step2 step3 in 
       let step5 : decode-Prop (lrep ρ φ') ≃ decode-Prop (lrep ρ φ)
-          step5 = subst₂ _≃_ (sym (trans (decode-rep φ') (rep-congl φ'≡Q))) (sym (decode-rep φ)) (conv-rep {M = Q} {N = decode-Prop φ} 
-            (sym-conv (red-conv φ↠Q))) in
+          step5 = subst₂ _≃_ (Prelims.sym (Prelims.trans (decode-rep φ') (rep-congl φ'≡Q))) (Prelims.sym (decode-rep φ)) (conv-rep {M = Q} {N = decode-Prop φ} 
+            (RSTClose.sym (red-conv φ↠Q))) in
       let step6 : Δ ⊢ decode-Prop (lrep ρ φ') ∶ ty Ω
-          step6 = subst (λ x → Δ ⊢ x ∶ ty Ω) (sym (decode-rep φ')) 
+          step6 = subst (λ x → Δ ⊢ x ∶ ty Ω) (Prelims.sym (decode-rep φ')) 
                 (weakening 
-                  (subst (λ x → Γ ⊢ x ∶ ty Ω) (sym φ'≡Q) 
+                  (subst (λ x → Γ ⊢ x ∶ ty Ω) (Prelims.sym φ'≡Q) 
                   (subject-reduction Γ⊢M'∶A M'↠Q)) 
                 (context-validity Δ⊢ε∶ψ'ρ) 
                 ρ∶Γ⇒RΔ) in
-      conv-computeP {L = lrep ρ φ} {M = lrep ρ φ'} step4 (sym-conv step5) step6))
+      conv-computeP {L = lrep ρ φ} {M = lrep ρ φ'} step4 (RSTClose.sym step5) step6))
 conv-computeE {A = A ⇛ B} computeP Γ⊢M∶A Γ⊢N∶A Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N' Δ ρ∶Γ⇒RΔ Δ⊢Q∶N≡N' computeQ = 
   conv-computeE {A = B} 
   (computeP Δ ρ∶Γ⇒RΔ Δ⊢Q∶N≡N' computeQ) 
@@ -242,7 +243,7 @@ expand-computeT {A = A ⇛ B} {M} {M'} (computeM'app ,p computeM'eq) Γ⊢M∶A�
     let Δ⊢N'∶A : Δ ⊢ N' ∶ ty A
         Δ⊢N'∶A = equation-validity₂ Δ⊢P∶N≡N' in
     let M'ρX≃MρX : ∀ X → appT (M' 〈 ρ 〉) X ≃ appT (M 〈 ρ 〉) X
-        M'ρX≃MρX = λ _ → sym-conv (appT-convl (red-conv (red-rep (key-redex-red M▷M')))) in
+        M'ρX≃MρX = λ _ → RSTClose.sym (appT-convl (red-conv (red-rep (key-redex-red M▷M')))) in
     expand-computeE 
       (conv-computeE 
         (computeM'eq Δ ρ∶Γ⇒Δ Δ⊢P∶N≡N' computeN computeN' computeP₁) 
@@ -391,8 +392,8 @@ computeP-rep {S = imp S T} {ρ = ρ} {L = imp φ ψ} {δ} computeδ ρ∶Γ⇒R�
   (cong (λ x → appP x ε) (rep-comp δ)) 
   (computeδ Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) 
     (change-type Θ⊢ε∶φ 
-      (cong decode-Prop {x = lrep ρ' (lrep ρ φ)} (sym lrep-comp))) 
-    (subst (λ x → computeP Θ x ε) {x = lrep ρ' (lrep ρ φ)} (sym lrep-comp) computeε))
+      (cong decode-Prop {x = lrep ρ' (lrep ρ φ)} (Prelims.sym lrep-comp))) 
+    (subst (λ x → computeP Θ x ε) {x = lrep ρ' (lrep ρ φ)} (Prelims.sym lrep-comp) computeε))
 
 red-decode-rep : ∀ {U} {V} {φ : Term U} {S} (L : Leaves U S) {ρ : Rep U V} →
   φ ↠ decode-Prop L → φ 〈 ρ 〉 ↠ decode-Prop (lrep ρ L)
@@ -401,7 +402,7 @@ red-decode-rep {V = V} {φ} L {ρ} φ↠L = let open Relation.Binary.PreorderRea
     φ 〈 ρ 〉
   ∼⟨ red-rep φ↠L ⟩
     decode-Prop L 〈 ρ 〉
-  ≈⟨ sym (decode-rep L) ⟩
+  ≈⟨ Prelims.sym (decode-rep L) ⟩
     decode-Prop (lrep ρ L)
   ∎
 
@@ -424,15 +425,15 @@ compute-rep {V = V} {ρ = ρ} {K = -Path} {app (-eq Ω) (φ ∷ ψ ∷ [])} {P} 
   (λ Θ {ρ'} {ε} ρ'∶Δ⇒RΘ Θ⊢ε∶Lρρ' computeε → subst₂ (λ a b → computeP Θ a (appP (plus b) ε)) {lrep (ρ' •R ρ) L'}
                                               {lrep ρ' (lrep ρ L')} {P 〈 ρ' •R ρ 〉} {(P 〈 ρ 〉) 〈 ρ' 〉} 
   lrep-comp (rep-comp P) (computeP+ Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) 
-    (change-type Θ⊢ε∶Lρρ' (cong decode-Prop {lrep ρ' (lrep ρ L)} {lrep (ρ' •R ρ) L} (sym lrep-comp))) 
+    (change-type Θ⊢ε∶Lρρ' (cong decode-Prop {lrep ρ' (lrep ρ L)} {lrep (ρ' •R ρ) L} (Prelims.sym lrep-comp))) 
     (subst (λ a → computeP Θ a ε) {lrep ρ' (lrep ρ L)}
-       {lrep (ρ' •R ρ) L} (sym lrep-comp) computeε))) ,p 
+       {lrep (ρ' •R ρ) L} (Prelims.sym lrep-comp) computeε))) ,p 
   (λ Θ {ρ'} {ε} ρ'∶Δ⇒RΘ Θ⊢ε∶L'ρρ' computeε → subst₂ (λ a b → computeP Θ a (appP (minus b) ε)) {lrep (ρ' •R ρ) L}
                                               {lrep ρ' (lrep ρ L)} {P 〈 ρ' •R ρ 〉} {(P 〈 ρ 〉) 〈 ρ' 〉} 
   lrep-comp (rep-comp P) (computeP- Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) 
-    (change-type Θ⊢ε∶L'ρρ' (cong decode-Prop {lrep ρ' (lrep ρ L')} {lrep (ρ' •R ρ) L'} (sym lrep-comp))) 
+    (change-type Θ⊢ε∶L'ρρ' (cong decode-Prop {lrep ρ' (lrep ρ L')} {lrep (ρ' •R ρ) L'} (Prelims.sym lrep-comp))) 
     (subst (λ a → computeP Θ a ε) {lrep ρ' (lrep ρ L')}
-       {lrep (ρ' •R ρ) L'} (sym lrep-comp) computeε)))
+       {lrep (ρ' •R ρ) L'} (Prelims.sym lrep-comp) computeε)))
 --TODO Tidy up this proof
 compute-rep {K = -Path} {app (-eq (A ⇛ B)) (F ∷ G ∷ [])} {P} (E'I Γ⊢P∶F≡G computeP) ρ∶Γ⇒RΔ validΔ Θ {ρ'} {N} {N'} {Q} ρ'∶Δ⇒RΘ Θ⊢Q∶N≡N' computeQ = 
   subst₃
@@ -463,13 +464,13 @@ func-EP {δ = δ} {φ = φ} {ψ = ψ} hyp Γ⊢δ∶φ⊃ψ = let Γ⊢φ⊃ψ�
                       let Γ⊢ψ∶Ω = ⊃-gen₂ Γ⊢φ⊃ψ∶Ω in
                       let φ' = NF Γ⊢φ∶Ω in
                       Γ⊢δ∶φ⊃ψ ,p NF Γ⊢φ∶Ω ⊃C NF Γ⊢ψ∶Ω ,p 
-                      trans-red (respects-red {f = λ x → x ⊃ ψ} (λ x → app (appl x)) (red-NF Γ⊢φ∶Ω)) 
+                      Prelims.trans-red (respects-red {f = λ x → x ⊃ ψ} (λ x → app (appl x)) (red-NF Γ⊢φ∶Ω)) 
                                 (respects-red {f = λ x → cp2term (NF Γ⊢φ∶Ω) ⊃ x} (λ x → app (appr (appl x))) (red-NF Γ⊢ψ∶Ω)) ,p  --TODO Extract lemma for reduction
                       (λ W Δ ρ ε ρ∶Γ⇒Δ Δ⊢ε∶φ computeε →
                       let φρ↠φ' : φ 〈 ρ 〉 ↠ cp2term φ'
                           φρ↠φ' = subst (λ x → (φ 〈 ρ 〉) ↠ x) (closed-rep φ') (respects-red (respects-osr replacement β-respects-rep) (red-NF Γ⊢φ∶Ω)) in
                       let ε∈EΔψ = hyp W Δ ρ ε (context-validity Δ⊢ε∶φ) ρ∶Γ⇒Δ        
-                                  ((convR Δ⊢ε∶φ (weakening Γ⊢φ∶Ω (context-validity Δ⊢ε∶φ) ρ∶Γ⇒Δ) (sym-conv (red-conv φρ↠φ')) ) ,p φ' ,p φρ↠φ' ,p computeε ) in 
+                                  ((convR Δ⊢ε∶φ (weakening Γ⊢φ∶Ω (context-validity Δ⊢ε∶φ) ρ∶Γ⇒Δ) (RSTClose.sym (red-conv φρ↠φ')) ) ,p φ' ,p φρ↠φ' ,p computeε ) in 
                       let ψ' = proj₁ (proj₂ ε∈EΔψ) in 
                       let ψρ↠ψ' : ψ 〈 ρ 〉 ↠ cp2term ψ'
                           ψρ↠ψ' = proj₁ (proj₂ (proj₂ ε∈EΔψ)) in 

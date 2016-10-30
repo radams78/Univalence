@@ -4,6 +4,7 @@ module PHOPL.Meta where
 open import Data.Fin
 open import Data.Product renaming (_,_ to _,p_)
 open import Prelims
+open import Prelims.Closure
 open import PHOPL.Grammar
 open import PHOPL.Red
 open import PHOPL.Rules
@@ -307,7 +308,7 @@ liftPathSub-typed : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {A} {Δ} →
   τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → valid Δ → liftPathSub τ ∶ sub↖ ρ ∼ sub↗ σ ∶ Γ ,T A ⇒ Δ ,T  A ,T  A ,E var x₁ ≡〈 A 〉 var x₀
 liftPathSub-typed _ validΔ x₀ = varR x₀ (valid-addpath validΔ)
 liftPathSub-typed {U} {Γ = Γ} {A} {Δ = Δ} τ∶ρ∼σ validΔ (↑ x) = change-type (weakening-addpath (τ∶ρ∼σ x)) 
-  (cong₃ _≡〈_〉_ refl (sym (typeof'-up {U} {Γ = Γ} {A} {x = x})) refl)
+  (cong₃ _≡〈_〉_ refl (Prelims.sym (typeof'-up {U} {Γ = Γ} {A} {x = x})) refl)
 
 postulate sub↖-decomp : ∀ {U} {V} {C} {K} (M : Subexp (U , -Term) C K) {ρ : Sub U V} → 
                      M ⟦ liftSub _ ρ ⟧ 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 〈 liftRep _ upRep 〉 ⟦ x₀:= var x₂ ⟧ ≡ M ⟦ sub↖ ρ ⟧
@@ -369,7 +370,7 @@ path-substitution {U} {V} {Γ} {Δ} {ρ} {σ} {τ} (ΛR .{U} .{Γ} {A} {M} {B} �
                  validΔAAE)
                  (Mσ-typed ρ∶Γ⇒Δ refl)
                  (Mσ-typed σ∶Γ⇒Δ refl)
-                 (sym-conv (redex-conv (subst (R -appTerm ((ΛT A M ⟦ ρ ⟧) ⇑ ⇑ ⇑ ∷ var x₂ ∷ [])) (sub↖-decomp M) (βR βT)))) (sym-conv (redex-conv (subst (R -appTerm ((ΛT A M ⟦ σ ⟧) ⇑ ⇑ ⇑ ∷ var x₁ ∷ [])) (sub↗-decomp M) (βR βT))))
+                 (RSTClose.sym (redex-conv (subst (R -appTerm ((ΛT A M ⟦ ρ ⟧) ⇑ ⇑ ⇑ ∷ var x₂ ∷ [])) (sub↖-decomp M) (βR βT)))) (RSTClose.sym (redex-conv (subst (R -appTerm ((ΛT A M ⟦ σ ⟧) ⇑ ⇑ ⇑ ∷ var x₁ ∷ [])) (sub↗-decomp M) (βR βT))))
   in lllR step1
 
 postulate idPathSub : ∀ V → PathSub V V

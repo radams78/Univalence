@@ -24,6 +24,15 @@ R₀-imp-R (Red₀.app EE⇒FF) = Red.app (R₀-imp-R EE⇒FF)
 R₀-imp-R (Red₀.appl E⇒F) = Red.appl (R₀-imp-R E⇒F)
 R₀-imp-R (Red₀.appr EE⇒FF) = Red.appr (R₀-imp-R EE⇒FF)
 
+↠₀-imp-↠ : ∀ {V C K} {E F : Subexp V C K} → E Red₀.↠ F → E Red.↠ F
+↠₀-imp-↠ (inc E⇒F) = inc (R₀-imp-R E⇒F)
+↠₀-imp-↠ ref = ref
+↠₀-imp-↠ (trans E↠F F↠G) = RTClose.trans (↠₀-imp-↠ E↠F) (↠₀-imp-↠ F↠G)
+
+R₀?-imp-R? : ∀ {V C K} {E F : Subexp V C K} → E Red₀.⇒? F → E Red.⇒? F
+R₀?-imp-R? (inc E⇒F) = inc (R₀-imp-R E⇒F)
+R₀?-imp-R? ref = ref
+
 β-imp-R : ∀ {V C K} {E F : Subexp V C K} → E Redβ.⇒ F → E Red.⇒ F
 β-imp-R (Redβ.redex cE▷F) = Red.redex (βR cE▷F)
 β-imp-R (Redβ.app EE⇒FF) = Red.app (β-imp-R EE⇒FF)

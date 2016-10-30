@@ -61,10 +61,12 @@ pre-lmSNE₁ : ∀ {V} {L L' : Term V} {P Q A F} {C : Path V → Set} →
   (∀ P₁ → P ⇒ P₁ → C (app* L L' (λλλ A P₁) Q)) →
   (∀ Q₁ → Q ⇒ Q₁ → C (app* L L' (λλλ A P) Q₁)) →
   app* L L' (λλλ A P) Q ⇒ F → C F
-pre-lmSNE₁ hyp-red _ _ _ _ (redex βE) = hyp-red
+pre-lmSNE₁ hyp-red _ _ _ _ (redex (βR ()))
+pre-lmSNE₁ hyp-red _ _ _ _ (redex (R₀R (βE _ _ _ _))) = hyp-red
 pre-lmSNE₁ _ hypL _ _ _ (app (appl L⇒L')) = hypL _ L⇒L'
 pre-lmSNE₁ _ _ hypL' _ _ (app (appr (appl L₁⇒L'₁))) = hypL' _ L₁⇒L'₁
-pre-lmSNE₁ _ _ _ _ _ (app (appr (appr (appl (redex ())))))
+pre-lmSNE₁ _ _ _ _ _ (app (appr (appr (appl (redex (βR ()))))))
+pre-lmSNE₁ _ _ _ _ _ (app (appr (appr (appl (redex (R₀R ()))))))
 pre-lmSNE₁ _ _ _ hypP _ (app (appr (appr (appl (app (appl P⇒P')))))) = hypP _ P⇒P'
 pre-lmSNE₁ _ _ _ _ _ (app (appr (appr (appl (app (appr ()))))))
 pre-lmSNE₁ _ _ _ _ hypQ (app (appr (appr (appr (appl Q⇒Q'))))) = hypQ _ Q⇒Q'
@@ -82,12 +84,14 @@ pre-lmSNE₂ : ∀ {n} {V} {L L' : Term V} {P Q A F} {MM NN : snocVec (Term V) n
   (∀ PP' → redVPa PP PP' → C (APP* MM NN (app* L L' (λλλ A P) Q) PP')) →
   APP* MM NN (app* L L' (λλλ A P) Q) PP ⇒ F → C F
 pre-lmSNE₂ {MM = []} {[]} {[]} hyp-red _ _ hypL hypL' hypP hypQ _ PQPP⇒F = pre-lmSNE₁ hyp-red hypL hypL' hypP hypQ PQPP⇒F
-pre-lmSNE₂ {MM = [] snoc _} {[] snoc _} {[] snoc _} _ _ _ _ _ _ _ _ (redex ())
+pre-lmSNE₂ {MM = [] snoc _} {[] snoc _} {[] snoc _} _ _ _ _ _ _ _ _ (redex (R₀R ()))
+pre-lmSNE₂ {MM = [] snoc _} {[] snoc _} {[] snoc _} _ _ _ _ _ _ _ _ (redex (βR ()))
 pre-lmSNE₂ {MM = _ snoc _} {_ snoc _} {_ snoc _} _ hypMM _ _ _ _ _ _ (app (appl M⇒M')) = hypMM _ (redright M⇒M')
 pre-lmSNE₂ {MM = _ snoc _} {_ snoc _} {_ snoc _} _ _ hypNN _ _ _ _ _ (app (appr (appl N⇒N'))) = hypNN _ (redright N⇒N')
 pre-lmSNE₂ {MM = _ snoc _} {_ snoc _} {_ snoc P} _ _ _ _ _ _ _ hypPP (app (appr (appr (appr (appl P⇒P'))))) = hypPP _ (redright P⇒P')
 pre-lmSNE₂ {MM = _ snoc _} {_ snoc _} {_ snoc _} _ _ _ _ _ _ _ _ (app (appr (appr (appr (appr ())))))
-pre-lmSNE₂ {MM = _ snoc _ snoc _} {_ snoc _ snoc _} {_ snoc _ snoc _} _ _ _ _ _ _ _ _ (redex ())
+pre-lmSNE₂ {MM = _ snoc _ snoc _} {_ snoc _ snoc _} {_ snoc _ snoc _} _ _ _ _ _ _ _ _ (redex (βR ()))
+pre-lmSNE₂ {MM = _ snoc _ snoc _} {_ snoc _ snoc _} {_ snoc _ snoc _} _ _ _ _ _ _ _ _ (redex (R₀R ()))
 pre-lmSNE₂ {MM = MM snoc M} {NN snoc N} {PP snoc P} {C = C} hyp-red hypMM hypNN hypL hypL' hypP hypQ hypPP (app (appr (appr (appl PQPP⇒F)))) = 
   pre-lmSNE₂ {MM = MM} {NN} {PP} {C = λ x → C (app* M N x P)} 
     hyp-red 
@@ -106,8 +110,10 @@ pre-lmSNE₃ : ∀ {n} {V} {L L' : Term V} {P Q A F} {MM NN : snocVec (Term V) n
   (∀ Q₁ → Q ⇒ Q₁ → C (plus (APP* MM NN (app* L L' (λλλ A P) Q₁) PP))) →
   (∀ PP' → redVPa PP PP' → C (plus (APP* MM NN (app* L L' (λλλ A P) Q) PP'))) →
   plus (APP* MM NN (app* L L' (λλλ A P) Q) PP) ⇒ F → C F
-pre-lmSNE₃ {MM = []} {[]} {[]} _ _ _ _ _ _ _ _ (redex ())
-pre-lmSNE₃ {MM = _ snoc _} {_ snoc _} {_ snoc _} _ _ _ _ _ _ _ _ (redex ())
+pre-lmSNE₃ {MM = []} {[]} {[]} _ _ _ _ _ _ _ _ (redex (βR ()))
+pre-lmSNE₃ {MM = []} {[]} {[]} _ _ _ _ _ _ _ _ (redex (R₀R ()))
+pre-lmSNE₃ {MM = _ snoc _} {_ snoc _} {_ snoc _} _ _ _ _ _ _ _ _ (redex (βR ()))
+pre-lmSNE₃ {MM = _ snoc _} {_ snoc _} {_ snoc _} _ _ _ _ _ _ _ _ (redex (R₀R ()))
 pre-lmSNE₃ {C = C} hyp-red hypMM hypNN hypL hypL' hypP hypQ hypPP (app (appl plusPQPP⇒F)) = 
   pre-lmSNE₂ {C = λ x → C (plus x)} hyp-red hypMM hypNN hypL hypL' hypP hypQ hypPP plusPQPP⇒F
 pre-lmSNE₃ hyp-red hypMM hypNN hypL hypL' hypP hypQ hypPP (app (appr ()))
@@ -124,8 +130,10 @@ pre-lmSNE₄ : ∀ {m n V} {L L' : Term V} {P Q A F} {MM NN : snocVec (Term V) n
   (∀ δδ' → redVP δδ δδ' → C (APPP (plus (APP* MM NN (app* L L' (λλλ A P) Q) PP)) δδ')) →
   APPP (plus (APP* MM NN (app* L L' (λλλ A P) Q) PP)) δδ ⇒ F → C F
 pre-lmSNE₄ {δδ = []} {C = C} hyp-red hypMM hypNN hypL hypL' hypP hypQ hypPP _ plusPQPP⇒F = pre-lmSNE₃ {C = C} hyp-red hypMM hypNN hypL hypL' hypP hypQ hypPP plusPQPP⇒F
-pre-lmSNE₄ {δδ = [] snoc _} _ _ _ _ _ _ _ _ _ (redex ())
-pre-lmSNE₄ {δδ = _ snoc _ snoc _} _ _ _ _ _ _ _ _ _ (redex ())
+pre-lmSNE₄ {δδ = [] snoc _} _ _ _ _ _ _ _ _ _ (redex (βR ()))
+pre-lmSNE₄ {δδ = [] snoc _} _ _ _ _ _ _ _ _ _ (redex (R₀R ()))
+pre-lmSNE₄ {δδ = _ snoc _ snoc _} _ _ _ _ _ _ _ _ _ (redex (βR ()))
+pre-lmSNE₄ {δδ = _ snoc _ snoc _} _ _ _ _ _ _ _ _ _ (redex (R₀R ()))
 pre-lmSNE₄ {δδ = δδ snoc δ} {C = C} hyp-red hypMM hypNN hypL hypL' hypP hypQ hypPP hypδδ (app (appl plusPQPPδδ⇒F)) = 
   pre-lmSNE₄ {δδ = δδ} {C = λ x → C (appP x δ)} hyp-red hypMM hypNN hypL hypL' hypP hypQ hypPP 
   (λ _ δδ⇒δδ' → hypδδ _ (redleft δδ⇒δδ')) plusPQPPδδ⇒F

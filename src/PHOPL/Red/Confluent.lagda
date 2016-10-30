@@ -11,11 +11,11 @@ open import Reduction PHOPL β as Redβ
 open import Reduction PHOPL R₀ as Red₀
 open import Reduction PHOPL R as Red
 
-R-is-R₀∪β : ∀ {V C K} {P : Subexp V C K → Subexp V C K → Set} →
-  (∀ {E F} → E Red₀.⇒ F → P E F) →
-  (∀ {E F} → E Redβ.⇒ F → P E F) →
-  ∀ {E F} → E Red.⇒ F → P E F
-R-is-R₀∪β hyp₀ hypβ (Red.redex (βR E▷F)) = hypβ (Redβ.redex E▷F)
+postulate R-is-R₀∪β : ∀ {V C K} {P : Subexp V C K → Set} {E} →
+                    (∀ {F} → E Red₀.⇒ F → P F) →
+                    (∀ {F} → E Redβ.⇒ F → P F) →
+                    ∀ {F} → E Red.⇒ F → P F
+{- R-is-R₀∪β hyp₀ hypβ (Red.redex (βR E▷F)) = hypβ (Redβ.redex E▷F)
 R-is-R₀∪β hyp₀ hypβ (Red.redex (R₀R E▷F)) = hyp₀ (Red₀.redex E▷F)
 R-is-R₀∪β {P = P} hyp₀ hypβ (Red.app {c = c} EE⇒FF) = 
   R-is-R₀∪β {P = λ x y → P (app c x) (app c y)} 
@@ -30,12 +30,12 @@ R-is-R₀∪β {P = P} hyp₀ hypβ (Red.appr {E = E} FF⇒FF') =
   R-is-R₀∪β {P = λ x y → P (E ∷ x) (E ∷ y)} 
   (λ FF⇒FF' → hyp₀ (Red₀.appr FF⇒FF')) 
   (λ FF⇒FF' → hypβ (Redβ.appr FF⇒FF')) 
-  FF⇒FF'
+  FF⇒FF' -}
 
 postulate β-confluent : ∀ {V C K} {E F G : Subexp V C K} → E Redβ.↠ F → E Redβ.↠ G → Σ[ H ∈ Subexp V C K ] F Redβ.↠ H × G Redβ.↠ H
 
-R₀-det : ∀ {V AA K} {c : Con (SK AA K)} {EE : ListAbs V AA} {F G} → R₀ c EE F → app c EE Red.⇒ G → F ≡ G
-R₀-det () (Red.redex (βR βT))
+postulate R₀-det : ∀ {V AA K} {c : Con (SK AA K)} {EE : ListAbs V AA} {F G} → R₀ c EE F → app c EE Red.⇒ G → F ≡ G
+{- R₀-det () (Red.redex (βR βT))
 R₀-det (βR x x₁) (Red.redex (R₀R (βR x₂ x₃))) = refl
 R₀-det (dir-ref x) (Red.redex (R₀R (dir-ref x₁))) = refl
 R₀-det (plus-univ x) (Red.redex (R₀R (plus-univ x₁))) = refl
@@ -54,7 +54,7 @@ R₀-det {K = varKind -Proof} cEE▷F (Red.app cEE⇒G) with nfredexproof cEE▷
 R₀-det {K = varKind -Proof} cEE▷F (Red.app cEE⇒G) | ()
 R₀-det {K = varKind -Path} cEE▷F (Red.app cEE⇒G) with nfredexpath cEE▷F cEE⇒G
 R₀-det {K = varKind -Path} cEE▷F (Red.app cEE⇒G) | ()
-R₀-det {K = nonVarKind _} () _
+R₀-det {K = nonVarKind _} () _ -}
 
 R₀-diamond : ∀ {V C K} {E F G : Subexp V C K} → E Red₀.⇒ F → E Red₀.⇒ G → Σ[ H ∈ Subexp V C K ] F Red₀.⇒? H × G Red₀.⇒? H
 R₀-diamond {F = F} {G} (Red₀.redex E▷F) E⇒G = F ,p ref ,p subst (λ x → x Red₀.⇒? F) (R₀-det E▷F (R₀-imp-R E⇒G)) ref
@@ -84,17 +84,56 @@ R₀-β-diamond (Red₀.appl E⇒F) (Redβ.appr EE⇒GG) = _ ,p Redβ.appr EE⇒
 R₀-β-diamond (Red₀.appr EE⇒FF) (Redβ.appl E⇒G) = _ ,p Redβ.appl E⇒G ,p inc (Red₀.appr EE⇒FF)
 R₀-β-diamond (Red₀.appr EE⇒FF) (Redβ.appr EE⇒GG) = let HH ,p FF⇒HH ,p GG↠HH = R₀-β-diamond EE⇒FF EE⇒GG in _ ,p Redβ.appr FF⇒HH ,p Red₀.appr-resp-red GG↠HH
 
-R₀-R-diamond : ∀ {V C K} {E F G : Subexp V C K} → E Red₀.⇒ F → E Red.⇒ G → Σ[ H ∈ Subexp V C K ] F Red.↠ H × G Red₀.↠ H
-R₀-R-diamond E⇒₀F E⇒G = {!!}
+R₀-R-diamond : ∀ {V C K} {E F : Subexp V C K} → E Red.⇒ F → ∀ {G} → E Red₀.⇒ G → Σ[ H ∈ Subexp V C K ] F Red₀.↠ H × G Red.⇒? H
+R₀-R-diamond {V} {C} {K} {E} = R-is-R₀∪β {P = λ F → ∀ {G} → E Red₀.⇒ G → Σ[ H ∈ Subexp V C K ] F Red₀.↠ H × G Red.⇒? H} 
+  (λ E⇒F E⇒G → let H ,p F⇒?H ,p G⇒?H = R₀-diamond E⇒F E⇒G in 
+    H ,p R-sub-RT F⇒?H ,p R₀?-imp-R? G⇒?H) 
+  (λ E⇒F E⇒G → let H ,p G⇒H ,p F⇒H = R₀-β-diamond E⇒G E⇒F in
+    H ,p F⇒H ,p inc (β-imp-R G⇒H))
 
-R₀-confluent : ∀ {V C K} {E F G : Subexp V C K} → E Red₀.⇒ F → E Red.↠ G → Σ[ H ∈ Subexp V C K ] F Red.↠ H × G Red₀.↠ H
-R₀-confluent E⇒₀F (inc (Red.redex (βR x))) = {!!}
-R₀-confluent E⇒₀F (inc (Red.redex (R₀R x))) = {!!}
-R₀-confluent E⇒₀F (inc (Red.app x₁)) = {!!}
-R₀-confluent E⇒₀F (inc (Red.appl x₁)) = {!!}
-R₀-confluent E⇒₀F (inc (Red.appr x₁)) = {!!}
-R₀-confluent E⇒₀F ref = {!!}
-R₀-confluent E⇒₀F (RTClose.trans E↠G E↠G₁) = {!!}
+↠₀-R-diamond : ∀ {V C K} {E F G : Subexp V C K} → 
+  E Red₀.↠ F → E Red.⇒ G →
+  Σ[ H ∈ Subexp V C K ] F Red.⇒? H × G Red₀.↠ H
+↠₀-R-diamond (inc E⇒F) E⇒G = let H ,p G↠H ,p F⇒H = R₀-R-diamond E⇒G E⇒F in 
+  H ,p F⇒H ,p G↠H
+↠₀-R-diamond {G = G} ref E⇒G = G ,p inc E⇒G ,p ref
+↠₀-R-diamond (trans E↠F F↠F') E⇒G with ↠₀-R-diamond E↠F E⇒G
+↠₀-R-diamond (trans E↠F F↠F') E⇒G | H ,p inc F⇒H ,p G↠H with ↠₀-R-diamond F↠F' F⇒H
+↠₀-R-diamond (trans E↠F F↠F') E⇒G | H ,p inc F⇒H ,p G↠H | H' ,p F'⇒?H' ,p H↠H' = H' ,p F'⇒?H' ,p RTClose.trans G↠H H↠H'
+↠₀-R-diamond {F = F'} (trans E↠F F↠F') E⇒G | F ,p ref ,p G↠F = F' ,p ref ,p RTClose.trans G↠F F↠F'
+
+↠₀-β-diamond : ∀ {V C K} {E F G : Subexp V C K} →
+  E Red₀.↠ F → E Redβ.⇒ G → 
+  Σ[ H ∈ Subexp V C K ] F Redβ.⇒ H × G Red₀.↠ H
+↠₀-β-diamond (inc E⇒₀F) E⇒βG = R₀-β-diamond E⇒₀F E⇒βG
+↠₀-β-diamond {G = G} ref E⇒βG = G ,p E⇒βG ,p ref
+↠₀-β-diamond (RTClose.trans E↠₀F F↠₀F') E⇒βG = 
+  let H ,p F⇒βH ,p G↠₀H = ↠₀-β-diamond E↠₀F E⇒βG in 
+  let H' ,p F'⇒βH' ,p H↠₀H' = ↠₀-β-diamond F↠₀F' F⇒βH in 
+  H' ,p F'⇒βH' ,p RTClose.trans G↠₀H H↠₀H'
+
+R₀-R-confluent : ∀ {V C K} {E F G : Subexp V C K} → 
+  E Red₀.↠ F → E Red.↠ G →
+  Σ[ H ∈ Subexp V C K ] F Red.↠ H × G Red₀.↠ H
+R₀-R-confluent E↠₀F (inc E⇒G) = let H ,p F⇒?H ,p G↠H = ↠₀-R-diamond E↠₀F E⇒G in
+  H ,p R-sub-RT F⇒?H ,p G↠H
+R₀-R-confluent {F = F} E↠₀F ref = F ,p ref ,p E↠₀F
+R₀-R-confluent E↠₀F (trans E↠G G↠G') = 
+  let H ,p F↠H ,p G↠₀H = R₀-R-confluent E↠₀F E↠G in 
+  let H' ,p H↠H' ,p G'↠₀H' = R₀-R-confluent G↠₀H G↠G' in 
+  H' ,p RTClose.trans F↠H H↠H' ,p G'↠₀H'
+
+postulate confluent : ∀ {V C K} {E F G : Subexp V C K} → E Red.↠ F → E Red.↠ G → Σ[ H ∈ Subexp V C K ] F Red.↠ H × G Red.↠ H
+{- confluent {V} {C} {K} {E} {F} {G} (inc E⇒F) E↠G = R-is-R₀∪β
+  {P = λ F → Σ-syntax (Subexp V C K) (λ H → (F Red.↠ H) × (G Red.↠ H))}
+  (λ E⇒F → let H ,p F↠H ,p G↠H = R₀-R-confluent (inc E⇒F) E↠G in 
+    H ,p F↠H ,p ↠₀-imp-↠ G↠H) 
+  (λ E⇒F → {!!}) 
+  E⇒F
+confluent ref E↠G = {!!}
+confluent (RTClose.trans E↠F E↠F₁) E↠G = {!!} -}
+
+postulate Church-Rosser : ∀ {V C K} {E F : Subexp V C K} → E Red.≃ F → Σ[ H ∈ Subexp V C K ] E Red.↠ H × F Red.↠ H
 
 {-                R c EE F → app c EE ⇒ G → Σ[ H ∈ Expression V K ] F ↠ H × G ↠ H
 confluent▷⇒ {F = F} cEE▷F (redex E▷G) = F ,p ref ,p (subst (λ x → x ↠ F) (R-det cEE▷F E▷G) ref)
