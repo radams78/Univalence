@@ -28,11 +28,11 @@ decode-Neutral : ∀ {V} → Neutral V → Term V
 decode-Neutral (var x) = var x
 decode-Neutral (app M N) = appT (decode-Neutral M) N
 
-nrep : ∀ {U} {V} → Rep U V → Neutral U → Neutral V
-nrep ρ (var x) = var (ρ -Term x)
-nrep ρ (app M N) = app (nrep ρ M) (N 〈 ρ 〉)
+nrep : ∀ {U} {V} → Neutral U → Rep U V → Neutral V
+nrep (var x) ρ = var (ρ -Term x)
+nrep (app M N) ρ = app (nrep M ρ) (N 〈 ρ 〉)
 
-nrep-comp : ∀ {U V W} {ρ' : Rep V W} {ρ : Rep U V} {N} → nrep (ρ' •R ρ) N ≡ nrep ρ' (nrep ρ N)
+nrep-comp : ∀ {U V W} {ρ' : Rep V W} {ρ : Rep U V} {N} → nrep N (ρ' •R ρ) ≡ nrep (nrep N ρ) ρ'
 nrep-comp {N = var x} = refl
 nrep-comp {N = app N N'} = cong₂ app nrep-comp (rep-comp N')
 
