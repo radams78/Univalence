@@ -8,6 +8,8 @@
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims}\<%
 \\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims.Closure}\<%
+\\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Grammar}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Red}\<%
@@ -279,7 +281,7 @@ Induction on derivations.
 \>[42]\<%
 \\
 \>[24]\AgdaIndent{26}{}\<[26]%
-\>[26]\AgdaSymbol{(}\AgdaBound{ψ} \AgdaDatatype{≃} \AgdaBound{φ} \AgdaFunction{⊃} \AgdaBound{χ} \AgdaFunction{×} \AgdaBound{Γ} \AgdaFunction{,P} \AgdaBound{φ} \AgdaDatatype{⊢} \AgdaBound{δ} \AgdaDatatype{∶} \AgdaBound{χ} \AgdaFunction{⇑}\AgdaSymbol{)}\<%
+\>[26]\AgdaSymbol{(}\AgdaBound{ψ} \AgdaFunction{≃} \AgdaBound{φ} \AgdaFunction{⊃} \AgdaBound{χ} \AgdaFunction{×} \AgdaBound{Γ} \AgdaFunction{,P} \AgdaBound{φ} \AgdaDatatype{⊢} \AgdaBound{δ} \AgdaDatatype{∶} \AgdaBound{χ} \AgdaFunction{⇑}\AgdaSymbol{)}\<%
 \end{code}
 }
 
@@ -527,7 +529,7 @@ Induction on derivations.
 \>[105]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaSymbol{(}\AgdaFunction{cong₃} \AgdaFunction{\_≡〈\_〉\_} \AgdaInductiveConstructor{refl} \AgdaSymbol{(}\AgdaFunction{sym} \AgdaSymbol{(}\AgdaPostulate{typeof'-up} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{Γ} \AgdaSymbol{=} \AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{x} \AgdaSymbol{=} \AgdaBound{x}\AgdaSymbol{\}))} \AgdaInductiveConstructor{refl}\AgdaSymbol{)}\<%
+\>[2]\AgdaSymbol{(}\AgdaFunction{cong₃} \AgdaFunction{\_≡〈\_〉\_} \AgdaInductiveConstructor{refl} \AgdaSymbol{(}\AgdaFunction{Prelims.sym} \AgdaSymbol{(}\AgdaPostulate{typeof'-up} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{Γ} \AgdaSymbol{=} \AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{x} \AgdaSymbol{=} \AgdaBound{x}\AgdaSymbol{\}))} \AgdaInductiveConstructor{refl}\AgdaSymbol{)}\<%
 \\
 %
 \\
@@ -662,7 +664,7 @@ Induction on derivations.
 \>[17]\AgdaSymbol{(}\AgdaBound{Mσ-typed} \AgdaBound{σ∶Γ⇒Δ} \AgdaInductiveConstructor{refl}\AgdaSymbol{)}\<%
 \\
 \>[15]\AgdaIndent{17}{}\<[17]%
-\>[17]\AgdaSymbol{(}\AgdaInductiveConstructor{sym-conv} \AgdaSymbol{(}\AgdaFunction{redex-conv} \AgdaSymbol{(}\AgdaFunction{subst} \AgdaSymbol{(}\AgdaDatatype{R} \AgdaInductiveConstructor{-appTerm} \AgdaSymbol{((}\AgdaFunction{ΛT} \AgdaBound{A} \AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{ρ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{var} \AgdaFunction{x₂} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaPostulate{sub↖-decomp} \AgdaBound{M}\AgdaSymbol{)} \AgdaInductiveConstructor{βT}\AgdaSymbol{)))} \AgdaSymbol{(}\AgdaInductiveConstructor{sym-conv} \AgdaSymbol{(}\AgdaFunction{redex-conv} \AgdaSymbol{(}\AgdaFunction{subst} \AgdaSymbol{(}\AgdaDatatype{R} \AgdaInductiveConstructor{-appTerm} \AgdaSymbol{((}\AgdaFunction{ΛT} \AgdaBound{A} \AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{var} \AgdaFunction{x₁} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaPostulate{sub↗-decomp} \AgdaBound{M}\AgdaSymbol{)} \AgdaInductiveConstructor{βT}\AgdaSymbol{)))}\<%
+\>[17]\AgdaSymbol{(}\AgdaInductiveConstructor{RSTClose.sym} \AgdaSymbol{(}\AgdaFunction{redex-conv} \AgdaSymbol{(}\AgdaFunction{subst} \AgdaSymbol{(}\AgdaDatatype{R} \AgdaInductiveConstructor{-appTerm} \AgdaSymbol{((}\AgdaFunction{ΛT} \AgdaBound{A} \AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{ρ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{var} \AgdaFunction{x₂} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaPostulate{sub↖-decomp} \AgdaBound{M}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaInductiveConstructor{βT}\AgdaSymbol{))))} \AgdaSymbol{(}\AgdaInductiveConstructor{RSTClose.sym} \AgdaSymbol{(}\AgdaFunction{redex-conv} \AgdaSymbol{(}\AgdaFunction{subst} \AgdaSymbol{(}\AgdaDatatype{R} \AgdaInductiveConstructor{-appTerm} \AgdaSymbol{((}\AgdaFunction{ΛT} \AgdaBound{A} \AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaFunction{⇑} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{var} \AgdaFunction{x₁} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaPostulate{sub↗-decomp} \AgdaBound{M}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaInductiveConstructor{βT}\AgdaSymbol{))))}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{in} \AgdaInductiveConstructor{lllR} \AgdaBound{step1}\<%

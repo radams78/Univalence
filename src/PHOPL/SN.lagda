@@ -4,7 +4,6 @@ open import Data.Empty renaming (⊥ to Empty)
 open import Prelims.Closure
 open import PHOPL.Grammar
 open import PHOPL.Red
-open import Reduction.Botsub PHOPL R
 
 private βR-exp' : ∀ {V} {φ : Term V} {δ} {ε} {χ} → SN φ → SN δ → SN ε →
          SN (δ ⟦ x₀:= ε ⟧) → appP (ΛP φ δ) ε ⇒ χ → SN χ

@@ -2,6 +2,7 @@
 \begin{code}
 module PHOPL.KeyRedex2 where
 open import Prelims
+open import Prelims.Closure
 open import Data.Nat
 open import Data.Vec
 open import PHOPL.Grammar
@@ -54,14 +55,14 @@ pre-lmSNE₁ {P = P} SNPQ SNL SNL' (SNI _ SNQ) (app (appr (appr (appr (appl Q⇒
   (SNred SNPQ (apredl SUB {E = P} R-respects-sub (botsub₃-red ref ref (osr-red Q⇒Q')))) SNL SNL' (SNQ _ Q⇒Q'))
 pre-lmSNE₁ (SNI _ PQ) (SNI E₂ SNL) (SNI E SNL') (SNI E₁ SNQ) (app (appr (appr (appr (appr ())))))-}
 
-pre-lmSNE₁ : ∀ {V} {L L' : Term V} {P Q A F} {C : Path V → Set} →
-  C (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) →
-  (∀ L₁ → L ⇒ L₁ → C (app* L₁ L' (λλλ A P) Q)) →
-  (∀ L'₁ → L' ⇒ L'₁ → C (app* L L'₁ (λλλ A P) Q)) →
-  (∀ P₁ → P ⇒ P₁ → C (app* L L' (λλλ A P₁) Q)) →
-  (∀ Q₁ → Q ⇒ Q₁ → C (app* L L' (λλλ A P) Q₁)) →
-  app* L L' (λλλ A P) Q ⇒ F → C F
-pre-lmSNE₁ hyp-red _ _ _ _ (redex (βR ()))
+postulate pre-lmSNE₁ : ∀ {V} {L L' : Term V} {P Q A F} {C : Path V → Set} →
+                     C (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) →
+                     (∀ L₁ → L ⇒ L₁ → C (app* L₁ L' (λλλ A P) Q)) →
+                     (∀ L'₁ → L' ⇒ L'₁ → C (app* L L'₁ (λλλ A P) Q)) →
+                     (∀ P₁ → P ⇒ P₁ → C (app* L L' (λλλ A P₁) Q)) →
+                     (∀ Q₁ → Q ⇒ Q₁ → C (app* L L' (λλλ A P) Q₁)) →
+                     app* L L' (λλλ A P) Q ⇒ F → C F
+{- pre-lmSNE₁ hyp-red _ _ _ _ (redex (βR ()))
 pre-lmSNE₁ hyp-red _ _ _ _ (redex (R₀R (βE _ _ _ _))) = hyp-red
 pre-lmSNE₁ _ hypL _ _ _ (app (appl L⇒L')) = hypL _ L⇒L'
 pre-lmSNE₁ _ _ hypL' _ _ (app (appr (appl L₁⇒L'₁))) = hypL' _ L₁⇒L'₁
@@ -70,7 +71,7 @@ pre-lmSNE₁ _ _ _ _ _ (app (appr (appr (appl (redex (R₀R ()))))))
 pre-lmSNE₁ _ _ _ hypP _ (app (appr (appr (appl (app (appl P⇒P')))))) = hypP _ P⇒P'
 pre-lmSNE₁ _ _ _ _ _ (app (appr (appr (appl (app (appr ()))))))
 pre-lmSNE₁ _ _ _ _ hypQ (app (appr (appr (appr (appl Q⇒Q'))))) = hypQ _ Q⇒Q'
-pre-lmSNE₁ _ _ _ _ _ (app (appr (appr (appr (appr ())))))
+pre-lmSNE₁ _ _ _ _ _ (app (appr (appr (appr (appr ()))))) -}
 
 pre-lmSNE₂ : ∀ {n} {V} {L L' : Term V} {P Q A F} {MM NN : snocVec (Term V) n} {PP} 
   {C : Path V → Set} →
@@ -81,7 +82,7 @@ pre-lmSNE₂ : ∀ {n} {V} {L L' : Term V} {P Q A F} {MM NN : snocVec (Term V) n
   (∀ L'₁ → L' ⇒ L'₁ → C (APP* MM NN (app* L L'₁ (λλλ A P) Q) PP)) →
   (∀ P₁ → P ⇒ P₁ → C (APP* MM NN (app* L L' (λλλ A P₁) Q) PP)) →
   (∀ Q₁ → Q ⇒ Q₁ → C (APP* MM NN (app* L L' (λλλ A P) Q₁) PP)) →
-  (∀ PP' → redVPa PP PP' → C (APP* MM NN (app* L L' (λλλ A P) Q) PP')) →
+  (∀ PP' → osrVPa PP PP' → C (APP* MM NN (app* L L' (λλλ A P) Q) PP')) →
   APP* MM NN (app* L L' (λλλ A P) Q) PP ⇒ F → C F
 pre-lmSNE₂ {MM = []} {[]} {[]} hyp-red _ _ hypL hypL' hypP hypQ _ PQPP⇒F = pre-lmSNE₁ hyp-red hypL hypL' hypP hypQ PQPP⇒F
 pre-lmSNE₂ {MM = [] snoc _} {[] snoc _} {[] snoc _} _ _ _ _ _ _ _ _ (redex (R₀R ()))
@@ -108,7 +109,7 @@ pre-lmSNE₃ : ∀ {n} {V} {L L' : Term V} {P Q A F} {MM NN : snocVec (Term V) n
   (∀ L'₁ → L' ⇒ L'₁ → C (plus (APP* MM NN (app* L L'₁ (λλλ A P) Q) PP))) →
   (∀ P₁ → P ⇒ P₁ → C (plus (APP* MM NN (app* L L' (λλλ A P₁) Q) PP))) →
   (∀ Q₁ → Q ⇒ Q₁ → C (plus (APP* MM NN (app* L L' (λλλ A P) Q₁) PP))) →
-  (∀ PP' → redVPa PP PP' → C (plus (APP* MM NN (app* L L' (λλλ A P) Q) PP'))) →
+  (∀ PP' → osrVPa PP PP' → C (plus (APP* MM NN (app* L L' (λλλ A P) Q) PP'))) →
   plus (APP* MM NN (app* L L' (λλλ A P) Q) PP) ⇒ F → C F
 pre-lmSNE₃ {MM = []} {[]} {[]} _ _ _ _ _ _ _ _ (redex (βR ()))
 pre-lmSNE₃ {MM = []} {[]} {[]} _ _ _ _ _ _ _ _ (redex (R₀R ()))
@@ -126,8 +127,8 @@ pre-lmSNE₄ : ∀ {m n V} {L L' : Term V} {P Q A F} {MM NN : snocVec (Term V) n
   (∀ L'₁ → L' ⇒ L'₁ → C (APPP (plus (APP* MM NN (app* L L'₁ (λλλ A P) Q) PP)) δδ)) →
   (∀ P₁ → P ⇒ P₁ → C (APPP (plus (APP* MM NN (app* L L' (λλλ A P₁) Q) PP)) δδ)) →
   (∀ Q₁ → Q ⇒ Q₁ → C (APPP (plus (APP* MM NN (app* L L' (λλλ A P) Q₁) PP)) δδ)) →
-  (∀ PP' → redVPa PP PP' → C (APPP (plus (APP* MM NN (app* L L' (λλλ A P) Q) PP')) δδ)) →
-  (∀ δδ' → redVP δδ δδ' → C (APPP (plus (APP* MM NN (app* L L' (λλλ A P) Q) PP)) δδ')) →
+  (∀ PP' → osrVPa PP PP' → C (APPP (plus (APP* MM NN (app* L L' (λλλ A P) Q) PP')) δδ)) →
+  (∀ δδ' → osrVP δδ δδ' → C (APPP (plus (APP* MM NN (app* L L' (λλλ A P) Q) PP)) δδ')) →
   APPP (plus (APP* MM NN (app* L L' (λλλ A P) Q) PP)) δδ ⇒ F → C F
 pre-lmSNE₄ {δδ = []} {C = C} hyp-red hypMM hypNN hypL hypL' hypP hypQ hypPP _ plusPQPP⇒F = pre-lmSNE₃ {C = C} hyp-red hypMM hypNN hypL hypL' hypP hypQ hypPP plusPQPP⇒F
 pre-lmSNE₄ {δδ = [] snoc _} _ _ _ _ _ _ _ _ _ (redex (βR ()))
@@ -140,14 +141,20 @@ pre-lmSNE₄ {δδ = δδ snoc δ} {C = C} hyp-red hypMM hypNN hypL hypL' hypP h
 pre-lmSNE₄ {δδ = _ snoc _} _ _ _ _ _ _ _ _ hypδδ (app (appr (appl δ⇒δ'))) = hypδδ _ (redright δ⇒δ')
 pre-lmSNE₄ {δδ = _ snoc _} _ _ _ _ _ _ _ _ _ (app (appr (appr ())))
 
-lmSNE : ∀ {m n V} {L L' : Term V} {P Q A} {MM NN : snocVec (Term V) n} {PP} {δδ : snocVec (Proof V) m} →
+lmSNE : ∀ {m n V} {L L' : Term V} {P Q A} MM {NN : snocVec (Term V) n} {PP} (δδ : snocVec (Proof V) m) →
   SN (APPP (plus (APP* MM NN (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) PP)) δδ) → SN L → SN L' → SN Q →
   SN (APPP (plus (APP* MM NN (app* L L' (λλλ A P) Q) PP)) δδ) -- TODO Change this to use strong induction over first hypothesis
-lmSNE {L = L} {L'} {P} {Q} {A} {MM} {NN} {PP} {δδ} (SNI _ SNPPPδδ) (SNI _ SNL) (SNI _ SNL') (SNI _ SNQ) = SNI _ (λ F plusPQPPδδ⇒F →
+lmSNE {L = L} {L'} {P} {Q} {A} MM {NN} {PP} δδ (SNI _ SNPPPδδ) (SNI _ SNL) (SNI _ SNL') (SNI _ SNQ) = SNI _ (λ F plusPQPPδδ⇒F →
   pre-lmSNE₄ {L = L} {L'} {P} {Q} {A} {F} {MM} {NN} {PP} {δδ} {C = SN} (SNI _ SNPPPδδ) 
-  (λ MM' MM⇒MM' → lmSNE {MM = MM'} {δδ = δδ} (SNPPPδδ _ (APPP-osrl {εε = δδ} (app (appl (APP*-osr₁ MM⇒MM'))))) (SNI _ SNL) (SNI _ SNL') (SNI _ SNQ)) 
-  (λ NN' NN⇒NN' → lmSNE {MM = MM} {δδ = δδ} (SNPPPδδ _ (APPP-osrl {εε = δδ} (app (appl (APP*-osr₂ MM NN⇒NN'))))) (SNI _ SNL) (SNI _ SNL') (SNI _ SNQ)) 
-  (λ L₁ L⇒L₁ → lmSNE {MM = MM} {δδ = δδ} (SNred (SNI _ SNPPPδδ) {!APPP-red!}) {!!} {!!} {!!}) {!!} {!!} {!!} {!!} {!!} plusPQPPδδ⇒F)
+  (λ MM' MM⇒MM' → lmSNE MM' δδ (SNPPPδδ _ (APPP-osrl (app (appl (APP*-osr₁ MM⇒MM'))) δδ)) (SNI _ SNL) (SNI _ SNL') (SNI _ SNQ)) 
+  (λ NN' NN⇒NN' → lmSNE MM δδ (SNPPPδδ _ (APPP-osrl (app (appl (APP*-osr₂ MM NN⇒NN'))) δδ)) (SNI _ SNL) (SNI _ SNL') (SNI _ SNQ)) 
+  (λ L₁ L⇒L₁ → lmSNE MM δδ (SNred (SNI _ SNPPPδδ) (APPP-redl (plus-red (APP*-red₃ MM (red-subr P (botsub₃-red (inc L⇒L₁) ref ref)))) δδ)) (SNL _ L⇒L₁) (SNI _ SNL') (SNI _ SNQ))
+  (λ L'₁ L'⇒L'₁ → lmSNE MM δδ (SNred (SNI _ SNPPPδδ) (APPP-redl (plus-red (APP*-red₃ MM (red-subr P (botsub₃-red ref (inc L'⇒L'₁) ref)))) δδ)) (SNI _ SNL) (SNL' _ L'⇒L'₁) (SNI _ SNQ)) 
+  (λ P' P⇒P' → lmSNE MM δδ (SNPPPδδ _ (APPP-osrl (app (appl (APP*-osr₃ MM (osr-subl P⇒P')))) δδ)) (SNI _ SNL) (SNI _ SNL') (SNI _ SNQ)) 
+  (λ Q' Q⇒Q' → lmSNE MM δδ (SNred (SNI _ SNPPPδδ) (APPP-redl (plus-red (APP*-red₃ MM (red-subr P (botsub₃-red ref ref (inc Q⇒Q'))))) δδ)) (SNI _ SNL) (SNI _ SNL') (SNQ _ Q⇒Q')) 
+  (λ PP' PP⇒PP' → lmSNE MM δδ (SNPPPδδ _ (APPP-osrl (app (appl (APP*-osr₄ MM PP⇒PP'))) δδ)) (SNI _ SNL) (SNI _ SNL') (SNI _ SNQ)) 
+  (λ δδ' δδ⇒δδ' → lmSNE MM δδ' (SNPPPδδ _ (APPP-osrr δδ⇒δδ')) (SNI _ SNL) (SNI _ SNL') (SNI _ SNQ)) 
+  plusPQPPδδ⇒F)
 
 {-lmSNE₁ : ∀ {V} {L L' : Term V} {P} {Q} {A} → 
   SN (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) → SN L → SN L' → SN Q →
