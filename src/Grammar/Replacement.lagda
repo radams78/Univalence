@@ -73,6 +73,9 @@ infix 70 _〈_〉
 _〈_〉 : ∀ {U} {V} {C} {K} → Subexp U C K → Rep U V → Subexp V C K
 E 〈 ρ 〉 = LiftFamily.ap Rep∶LF ρ E
 
+liftsRep : ∀ {U V} AA → Rep U V → Rep (extend U AA) (extend V AA)
+liftsRep = LiftFamily.liftsOp Rep∶LF
+
 infixl 75 _•R_
 _•R_ : ∀ {U} {V} {W} → Rep V W → Rep U V → Rep U W
 (ρ' •R ρ) K x = ρ' K (ρ K x)
@@ -218,5 +221,13 @@ liftRep-upRep₃ {U} {V} {C} {K} {L} {M} E {ρ} = let open ≡-Reasoning in
   ∎
 
 postulate liftRep-upRep₄' : ∀ {U} {V} (ρ : Rep U V) {K1} {K2} {K3} → upRep •R upRep •R upRep •R ρ ∼R liftRep K1 (liftRep K2 (liftRep K3 ρ)) •R upRep •R upRep •R upRep
+
+Types-rep : ∀ {U V AA} → Types U AA → Rep U V → Types V AA
+Types-rep [] _ = []
+Types-rep (B , BB) ρ = B 〈 ρ 〉 , Types-rep BB (liftRep _ ρ)
+
+snocVec-rep : ∀ {U V C K n} → snocVec (Subexp U C K) n → Rep U V → snocVec (Subexp V C K) n
+snocVec-rep [] ρ = []
+snocVec-rep (EE snoc E) ρ = snocVec-rep EE ρ snoc E 〈 ρ 〉
 \end{code}
 }

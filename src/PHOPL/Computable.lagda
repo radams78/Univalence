@@ -123,7 +123,7 @@ computeT Γ (A ⇛ B) M =
 computeE {V} Γ M Ω N P = Σ[ S ∈ Shape ] Σ[ T ∈ Shape ] Σ[ L ∈ Leaves V S ] Σ[ L' ∈ Leaves V T ] M ↠ decode-Prop L × N ↠ decode-Prop L' × computeP Γ (imp L L') (plus P) × computeP Γ (imp L' L) (minus P)
 computeE Γ M (A ⇛ B) M' P =
   ∀ {W} (Δ : Context W) {ρ} {N} {N'} {Q} (ρ∶Γ⇒RΔ : ρ ∶ Γ ⇒R Δ) (Δ⊢Q∶N≡N' : Δ ⊢ Q ∶ N ≡〈 A 〉 N')
-  (computeQ : computeE Δ N A N' Q) → computeE Δ (appT (M 〈 ρ 〉) N) B (appT (M' 〈 ρ 〉)  N') 
+  (computeN : computeT Δ A N) (computeN' : computeT Δ A N') (computeQ : computeE Δ N A N' Q) → computeE Δ (appT (M 〈 ρ 〉) N) B (appT (M' 〈 ρ 〉)  N') 
     (app* N N' (P 〈 ρ 〉) Q)
 
 postulate computeT-SN : ∀ {V} {Γ : Context V} {A M} → computeT Γ A M → valid Γ → SN M
@@ -203,9 +203,9 @@ conv-computeE {Γ = Γ} {M = M} {M' = M'} {A = Ω} {N' = N'} {P} (S ,p T ,p φ ,
                 (context-validity Δ⊢ε∶ψ'ρ) 
                 ρ∶Γ⇒RΔ) in
       conv-computeP {L = lrep φ ρ} {M = lrep φ' ρ} step4 (RSTClose.sym step5) step6))
-conv-computeE {A = A ⇛ B} computeP Γ⊢M∶A Γ⊢N∶A Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N' Δ ρ∶Γ⇒RΔ Δ⊢Q∶N≡N' computeQ = 
+conv-computeE {A = A ⇛ B} computeP Γ⊢M∶A Γ⊢N∶A Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N' Δ ρ∶Γ⇒RΔ Δ⊢Q∶N≡N' computeN computeN' computeQ = 
   conv-computeE {A = B} 
-  (computeP Δ ρ∶Γ⇒RΔ Δ⊢Q∶N≡N' computeQ) 
+  (computeP Δ ρ∶Γ⇒RΔ Δ⊢Q∶N≡N' computeN computeN' computeQ) 
     (appR (weakening Γ⊢M∶A (context-validity Δ⊢Q∶N≡N') ρ∶Γ⇒RΔ) 
       (equation-validity₁ Δ⊢Q∶N≡N')) 
     (appR (weakening Γ⊢N∶A (context-validity Δ⊢Q∶N≡N') ρ∶Γ⇒RΔ) 
@@ -437,15 +437,18 @@ compute-rep {V = V} {ρ = ρ} {K = -Path} {app (-eq Ω) (φ ∷ ψ ∷ [])} {P} 
     (subst (λ a → computeP Θ a ε) {lrep (lrep L' ρ) ρ'}
        {lrep L' (ρ' •R ρ)} (Prelims.sym lrep-comp) computeε)))
 --TODO Tidy up this proof
-compute-rep {K = -Path} {app (-eq (A ⇛ B)) (F ∷ G ∷ [])} {P} (E'I Γ⊢P∶F≡G computeP) ρ∶Γ⇒RΔ validΔ Θ {ρ'} {N} {N'} {Q} ρ'∶Δ⇒RΘ Θ⊢Q∶N≡N' computeQ = 
+compute-rep {K = -Path} {app (-eq (A ⇛ B)) (F ∷ G ∷ [])} {P} (E'I Γ⊢P∶F≡G computeP) ρ∶Γ⇒RΔ validΔ Θ {ρ'} {N} {N'} {Q} ρ'∶Δ⇒RΘ Θ⊢Q∶N≡N' computeN computeN' computeQ = 
   subst₃
     (λ a b c → computeE Θ (appT a N) B (appT b N') (app* N N' c Q)) 
     (rep-comp F) (rep-comp G) (rep-comp P) 
-    (computeP Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) Θ⊢Q∶N≡N' computeQ)
+    (computeP Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) Θ⊢Q∶N≡N' computeN computeN' computeQ)
 
 E'-rep : ∀ {U V Γ Δ} {ρ : Rep U V} {K} {A : Expression U (parent K)} {M : Expression U (varKind K)} → 
   E' Γ A M → ρ ∶ Γ ⇒R Δ → valid Δ → E' Δ (A 〈 ρ 〉) (M 〈 ρ 〉)
 E'-rep (E'I Γ⊢M∶A computeM) ρ∶Γ⇒RΔ validΔ = E'I (weakening Γ⊢M∶A validΔ ρ∶Γ⇒RΔ) (compute-rep (E'I Γ⊢M∶A computeM) ρ∶Γ⇒RΔ validΔ)
+
+postulate wteT : ∀ {V} {Γ : Context V} {A M B N} → Γ ,T A ⊢ M ∶ ty B → E Γ A N → E Γ B (M ⟦ x₀:= N ⟧) →
+                 E Γ B (appT (ΛT A M) N)
 
 {-
 postulate Neutral-computeE : ∀ {V} {Γ : Context V} {M} {A} {N} {P : NeutralP V} →

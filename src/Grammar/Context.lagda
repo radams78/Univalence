@@ -48,4 +48,9 @@ $\rho(x) : A \langle ρ \rangle$ is an entry in $\Delta$.
 \begin{code}
 _∶_⇒R_ : ∀ {U} {V} → Rep U V → Context U → Context V → Set
 ρ ∶ Γ ⇒R Δ = ∀ {K} x → typeof (ρ K x) Δ ≡ typeof x Γ 〈 ρ 〉
+
+infix 25 _,,_
+_,,_ : ∀ {V} {AA} → Context V → Types V AA → Context (extend V AA)
+Γ ,, [] = Γ
+Γ ,, (A , AA) = (Γ , A) ,, AA
 \end{code}

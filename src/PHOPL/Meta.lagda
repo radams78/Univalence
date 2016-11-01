@@ -21,6 +21,9 @@ postulate change-type : ∀ {V} {Γ} {K} {M : Expression V (varKind K)} {A} {B} 
 
 postulate liftRep-typed : ∀ {U} {V} {ρ : Rep U V} {K} {Γ} {Δ} {A} →
                      ρ ∶ Γ ⇒R Δ → liftRep K ρ ∶ (Γ , A) ⇒R (Δ , A 〈 ρ 〉)
+
+postulate liftsRep-typed : ∀ {U} {V} {ρ : Rep U V} {Γ} {Δ} {A} →
+                           ρ ∶ Γ ⇒R Δ → liftsRep pathDom ρ ∶ addpath Γ A ⇒R addpath Δ A
 \end{code}
 }
 

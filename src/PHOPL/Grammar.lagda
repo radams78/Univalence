@@ -91,6 +91,9 @@ module PHOPLgrammar where
     -plus : Dir
     -minus : Dir
 
+  pathDom : List VarKind
+  pathDom = -Term ∷ -Term ∷ -Path ∷ []
+
   data PHOPLcon : ConKind → Set where
     -ty : Type → PHOPLcon (-nvType ✧)
     -bot : PHOPLcon (-vTerm ✧)
@@ -103,7 +106,7 @@ module PHOPLgrammar where
     -ref : PHOPLcon (-vTerm ✧ ⟶ -vPath ✧)
     -imp* : PHOPLcon (-vPath ✧ ⟶ -vPath ✧ ⟶ -vPath ✧)
     -univ : PHOPLcon (-vTerm ✧ ⟶ -vTerm ✧ ⟶ -vProof ✧ ⟶ -vProof ✧ ⟶ -vPath ✧)
-    -lll : Type → PHOPLcon ((-Term ⟶ -Term ⟶ -Path ⟶ -vPath ✧) ⟶ -vPath ✧)
+    -lll : Type → PHOPLcon (SK pathDom -vPath ⟶ -vPath ✧)
     -app* : PHOPLcon (-vTerm ✧ ⟶ -vTerm ✧ ⟶ -vPath ✧ ⟶ -vPath ✧ ⟶ -vPath ✧)
     -eq : Type → PHOPLcon (-vTerm ✧ ⟶ -vTerm ✧ ⟶ -nvEq ✧)
 
@@ -217,9 +220,17 @@ APP : ∀ {V n} → Term V → snocVec (Term V) n → Term V
 APP M [] = M
 APP M (NN snoc N) = appT (APP M NN) N
 
+postulate APP-rep : ∀ {U V n M} (NN : snocVec (Term U) n) {ρ : Rep U V} →
+                  (APP M NN) 〈 ρ 〉 ≡ APP (M 〈 ρ 〉) (snocVec-rep NN ρ)
+
 APPP : ∀ {V} {n} → Proof V → snocVec (Proof V) n → Proof V
 APPP δ [] = δ
 APPP δ (εε snoc ε) = appP (APPP δ εε) ε
+
+APPP-rep : ∀ {U V n δ} (εε : snocVec (Proof U) n) {ρ : Rep U V} →
+  (APPP δ εε) 〈 ρ 〉 ≡ APPP (δ 〈 ρ 〉) (snocVec-rep εε ρ)
+APPP-rep [] = refl
+APPP-rep (εε snoc ε) {ρ} = cong (λ x → appP x (ε 〈 ρ 〉)) (APPP-rep εε)
 
 APP* : ∀ {V n} → snocVec (Term V) n → snocVec (Term V) n → Path V → snocVec (Path V) n → Path V
 APP* [] [] P [] = P

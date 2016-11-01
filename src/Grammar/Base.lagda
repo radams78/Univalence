@@ -76,5 +76,17 @@ $R\, c\, MM\, N$ iff $c[MM] \rhd N$.
 \begin{code}
   Reduction : Set₁
   Reduction = ∀ {V} {AA} {K} → Con (SK AA K) → ListAbs V AA → Expression V K → Set
+
+  data ListExp (V : Alphabet) : List VarKind → Set where
+    [] : ListExp V []
+    _∷_ : ∀ {K AA} → Expression V (varKind K) → ListExp V AA → ListExp V (K ∷ AA)
+
+  data Types : Alphabet → List VarKind → Set where
+    [] : ∀ {V} → Types V []
+    _,_ : ∀ {V K AA} → Expression V (parent K) → Types (V , K) AA → Types V (K ∷ AA)
+
+  data snocTypes : Alphabet → snocList VarKind → Set where
+    [] : ∀ {V} → snocTypes V []
+    _snoc_ : ∀ {V AA K} → snocTypes V AA → Expression (snoc-extend V AA) (parent K) → snocTypes V (AA snoc K)
 \end{code}
 }
