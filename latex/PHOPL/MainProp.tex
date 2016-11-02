@@ -52,25 +52,68 @@ and $\rho$ are all computable, and $\Delta \vald$, then $M \{ \tau : \sigma \sim
 
 %<*Computable-Sub>
 \begin{code}%
-\>\AgdaKeyword{postulate} \AgdaPostulate{Computable-Sub} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}} \<[63]%
-\>[63]\<%
+\>\AgdaKeyword{postulate} \AgdaPostulate{Computable-Sub} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaBound{Δ}\AgdaSymbol{\}} \<[57]%
+\>[57]\<%
 \\
-\>[0]\AgdaIndent{25}{}\<[25]%
-\>[25]\AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{U} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\>[0]\AgdaIndent{17}{}\<[17]%
+\>[17]\AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{U} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
-\>[0]\AgdaIndent{25}{}\<[25]%
-\>[25]\AgdaBound{σ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒C} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{valid} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaRecord{E'} \AgdaBound{Δ} \AgdaSymbol{(}\AgdaBound{A} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)}\<%
+\>[0]\AgdaIndent{17}{}\<[17]%
+\>[17]\AgdaBound{σ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒C} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{valid} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaRecord{E'} \AgdaBound{Δ} \AgdaSymbol{(}\AgdaBound{A} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)}\<%
 \end{code}
 %</Computable-Sub>
 
 \AgdaHide{
 \begin{code}%
-\>\AgdaKeyword{postulate} \AgdaPostulate{computable-path-substitution} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{τ} \AgdaSymbol{:} \AgdaFunction{PathSub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{)} \AgdaBound{σ} \AgdaBound{σ'} \AgdaBound{Γ} \AgdaBound{Δ} \AgdaBound{M} \AgdaBound{A} \AgdaSymbol{→} \AgdaBound{σ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒C} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{σ'} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒C} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{σ} \AgdaFunction{∼} \AgdaBound{σ'} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒C} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{valid} \AgdaBound{Δ} \AgdaSymbol{→} \<[151]%
-\>[151]\<%
+\>\AgdaKeyword{postulate} \AgdaPostulate{computable-path-substitution} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{τ} \AgdaSymbol{:} \AgdaFunction{PathSub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaBound{σ'} \AgdaBound{Γ} \AgdaBound{Δ} \AgdaBound{M} \AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{σ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒C} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{σ'} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒C} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{σ} \AgdaFunction{∼} \AgdaBound{σ'} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒C} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{valid} \AgdaBound{Δ} \AgdaSymbol{→} \<[155]%
+\>[155]\<%
 \\
-\>[25]\AgdaIndent{39}{}\<[39]%
-\>[39]\AgdaFunction{EE} \AgdaBound{Δ} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{≡〈} \AgdaFunction{yt} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ'} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{σ} \AgdaFunction{∼} \AgdaBound{σ'} \AgdaFunction{⟧⟧}\AgdaSymbol{)} \<[94]%
-\>[94]\<%
+\>[17]\AgdaIndent{31}{}\<[31]%
+\>[31]\AgdaFunction{EE} \AgdaBound{Δ} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{≡〈} \AgdaFunction{yt} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ'} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{σ} \AgdaFunction{∼} \AgdaBound{σ'} \AgdaFunction{⟧⟧}\AgdaSymbol{)} \<[86]%
+\>[86]\<%
+\\
+%
+\\
+\>\AgdaComment{\{- Computable-Sub \_ σ∶Γ⇒CΔ (varR x \_) \_ = σ∶Γ⇒CΔ x\<\\
+\>Computable-Sub σ σ∶Γ⇒CΔ (appR Γ⊢M∶A⇛B Γ⊢N∶A) validΔ = appT-E validΔ (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢M∶A⇛B validΔ) (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢N∶A validΔ)\<\\
+\>Computable-Sub σ \{Δ = Δ\} σ∶Γ⇒CΔ (ΛR \{A = A\} \{M\} \{B\} Γ,A⊢M∶B) validΔ = \<\\
+\>  let Δ,A⊢M⟦σ⟧∶B : Δ ,T A ⊢ M ⟦ liftSub \_ σ ⟧ ∶ ty B\<\\
+\>      Δ,A⊢M⟦σ⟧∶B = substitution Γ,A⊢M∶B (ctxTR validΔ) (liftSub-typed (subC-typed σ∶Γ⇒CΔ)) in\<\\
+\>  E'I \<\\
+\>  (ΛR Δ,A⊢M⟦σ⟧∶B) \<\\
+\>  ((λ Θ \{ρ\} \{N\} ρ∶Δ⇒RΘ Θ⊢N∶A computeN → \<\\
+\>    let validΘ : valid Θ\<\\
+\>        validΘ = context-validity Θ⊢N∶A in\<\\
+\>    E'.computable (wteT (weakening Δ,A⊢M⟦σ⟧∶B (ctxTR validΘ) (liftRep-typed ρ∶Δ⇒RΘ)) (E'I Θ⊢N∶A computeN) \<\\
+\>    (subst (E Θ B) \<\\
+\>      (let open ≡-Reasoning in \<\\
+\>      begin\<\\
+\>        M ⟦ x₀:= N • liftSub \_ (ρ •RS σ) ⟧\<\\
+\>      ≡⟨ sub-comp M ⟩\<\\
+\>        M ⟦ liftSub \_ (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧\<\\
+\>      ≡⟨ sub-congl (sub-congr M liftSub-compRS) ⟩\<\\
+\>        M ⟦ liftRep \_ ρ •RS liftSub \_ σ ⟧ ⟦ x₀:= N ⟧\<\\
+\>      ≡⟨ sub-congl (sub-compRS M) ⟩\<\\
+\>        M ⟦ liftSub \_ σ ⟧ 〈 liftRep \_ ρ 〉 ⟦ x₀:= N ⟧\<\\
+\>      ∎) \<\\
+\>      (Computable-Sub (x₀:= N • liftSub \_ (ρ •RS σ)) \<\\
+\>      (extend-subC (subCRS ρ∶Δ⇒RΘ σ∶Γ⇒CΔ validΘ) (E'I Θ⊢N∶A computeN)) Γ,A⊢M∶B validΘ)))) ,p \<\\
+\>  (λ Θ ρ∶Γ⇒RΔ Θ⊢Q∶N≡N' computeN computeN' computeQ → \{!!\}))\<\\
+\>Computable-Sub σ σ∶Γ⇒CΔ (⊥R validΓ) validΔ = \{!!\}\<\\
+\>Computable-Sub σ σ∶Γ⇒CΔ (⊃R Γ⊢M∶A Γ⊢M∶A₁) validΔ = \{!!\}\<\\
+\>Computable-Sub σ σ∶Γ⇒CΔ (appPR Γ⊢M∶A Γ⊢M∶A₁) validΔ = \{!!\}\<\\
+\>Computable-Sub σ σ∶Γ⇒CΔ (ΛPR Γ⊢M∶A Γ⊢M∶A₁) validΔ = \{!!\}\<\\
+\>Computable-Sub σ σ∶Γ⇒CΔ (convR Γ⊢M∶A Γ⊢M∶A₁ x) validΔ = \{!!\}\<\\
+\>Computable-Sub σ σ∶Γ⇒CΔ (refR Γ⊢M∶A) validΔ = \{!!\}\<\\
+\>Computable-Sub σ σ∶Γ⇒CΔ (⊃*R Γ⊢M∶A Γ⊢M∶A₁) validΔ = \{!!\}\<\\
+\>Computable-Sub σ σ∶Γ⇒CΔ (univR Γ⊢M∶A Γ⊢M∶A₁) validΔ = \{!!\}\<\\
+\>Computable-Sub σ σ∶Γ⇒CΔ (plusR Γ⊢M∶A) validΔ = \{!!\}\<\\
+\>Computable-Sub σ σ∶Γ⇒CΔ (minusR Γ⊢M∶A) validΔ = \{!!\}\<\\
+\>Computable-Sub σ σ∶Γ⇒CΔ (lllR Γ⊢M∶A) validΔ = \{!!\}\<\\
+\>Computable-Sub σ σ∶Γ⇒CΔ (app*R Γ⊢M∶A Γ⊢M∶A₁ Γ⊢M∶A₂ Γ⊢M∶A₃) validΔ = \{!!\}\<\\
+\>Computable-Sub σ σ∶Γ⇒CΔ (convER Γ⊢M∶A Γ⊢M∶A₁ Γ⊢M∶A₂ M≃M' N≃N') validΔ = \{!!\}\<\\
+\>\<\\
+\>computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' Γ⊢M∶A validΔ = \{!!\} -\}}\<%
 \\
 %
 \\
@@ -868,7 +911,7 @@ Every well-typed term, proof and path is strongly normalizing.
 \>[45]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaSymbol{(}\AgdaFunction{subst} \AgdaSymbol{(}\AgdaRecord{E'} \AgdaBound{Γ} \AgdaSymbol{\_)} \AgdaFunction{sub-idOp}\<%
+\>[2]\AgdaSymbol{(}\AgdaFunction{subst} \AgdaSymbol{(}\AgdaRecord{E'} \AgdaBound{Γ} \AgdaSymbol{\_)} \AgdaFunction{sub-idSub}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaSymbol{(}\AgdaPostulate{Computable-Sub} \AgdaSymbol{(}\AgdaFunction{idSub} \AgdaBound{V}\AgdaSymbol{)} \AgdaFunction{idSubC} \AgdaBound{Γ⊢M∶A} \AgdaSymbol{(}\AgdaFunction{context-validity} \AgdaBound{Γ⊢M∶A}\AgdaSymbol{)))}\<%

@@ -36,7 +36,7 @@ and $\rho$ are all computable, and $\Delta \vald$, then $M \{ \tau : \sigma \sim
 
 %<*Computable-Sub>
 \begin{code}
-Computable-Sub : ∀ {U V K} (σ : Sub U V) {Γ Δ} 
+postulate Computable-Sub : ∀ {U V K} (σ : Sub U V) {Γ Δ} 
                  {M : Expression U (varKind K)} {A} →
                  σ ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → E' Δ (A ⟦ σ ⟧) (M ⟦ σ ⟧)
 \end{code}
@@ -44,10 +44,10 @@ Computable-Sub : ∀ {U V K} (σ : Sub U V) {Γ Δ}
 
 \AgdaHide{
 \begin{code}
-computable-path-substitution : ∀ {U V} (τ : PathSub U V) {σ σ' Γ Δ M A} → σ ∶ Γ ⇒C Δ → σ' ∶ Γ ⇒C Δ → τ ∶ σ ∼ σ' ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → 
+postulate computable-path-substitution : ∀ {U V} (τ : PathSub U V) {σ σ' Γ Δ M A} → σ ∶ Γ ⇒C Δ → σ' ∶ Γ ⇒C Δ → τ ∶ σ ∼ σ' ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → 
                                EE Δ (M ⟦ σ ⟧ ≡〈 yt A 〉 M ⟦ σ' ⟧) (M ⟦⟦ τ ∶ σ ∼ σ' ⟧⟧) 
 
-Computable-Sub _ σ∶Γ⇒CΔ (varR x _) _ = σ∶Γ⇒CΔ x
+{- Computable-Sub _ σ∶Γ⇒CΔ (varR x _) _ = σ∶Γ⇒CΔ x
 Computable-Sub σ σ∶Γ⇒CΔ (appR Γ⊢M∶A⇛B Γ⊢N∶A) validΔ = appT-E validΔ (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢M∶A⇛B validΔ) (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢N∶A validΔ)
 Computable-Sub σ {Δ = Δ} σ∶Γ⇒CΔ (ΛR {A = A} {M} {B} Γ,A⊢M∶B) validΔ = 
   let Δ,A⊢M⟦σ⟧∶B : Δ ,T A ⊢ M ⟦ liftSub _ σ ⟧ ∶ ty B
@@ -64,7 +64,7 @@ Computable-Sub σ {Δ = Δ} σ∶Γ⇒CΔ (ΛR {A = A} {M} {B} Γ,A⊢M∶B) val
         M ⟦ x₀:= N • liftSub _ (ρ •RS σ) ⟧
       ≡⟨ sub-comp M ⟩
         M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧
-      ≡⟨ sub-congl (sub-congr liftSub-compRS M) ⟩
+      ≡⟨ sub-congl (sub-congr M liftSub-compRS) ⟩
         M ⟦ liftRep _ ρ •RS liftSub _ σ ⟧ ⟦ x₀:= N ⟧
       ≡⟨ sub-congl (sub-compRS M) ⟩
         M ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 ⟦ x₀:= N ⟧
@@ -86,7 +86,7 @@ Computable-Sub σ σ∶Γ⇒CΔ (lllR Γ⊢M∶A) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (app*R Γ⊢M∶A Γ⊢M∶A₁ Γ⊢M∶A₂ Γ⊢M∶A₃) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (convER Γ⊢M∶A Γ⊢M∶A₁ Γ⊢M∶A₂ M≃M' N≃N') validΔ = {!!}
 
-computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' Γ⊢M∶A validΔ = {!!}
+computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' Γ⊢M∶A validΔ = {!!} -}
 
 {- Computable-Sub σ σ∶Γ⇒Δ (varR x validΓ) validΔ _ = σ∶Γ⇒Δ x
 Computable-Sub {V = V} σ {Δ = Δ} σ∶Γ⇒Δ (appR Γ⊢M∶A⇛B Γ⊢N∶A) validΔ _ = 
@@ -876,7 +876,7 @@ Strong-Normalization : ∀ V K (Γ : Context V)
 \AgdaHide{
 \begin{code}
 Strong-Normalization V K Γ M A Γ⊢M∶A = E'-SN 
-  (subst (E' Γ _) sub-idOp
+  (subst (E' Γ _) sub-idSub
   (Computable-Sub (idSub V) idSubC Γ⊢M∶A (context-validity Γ⊢M∶A)))
 \end{code}
 }

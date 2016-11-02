@@ -177,4 +177,4 @@ subCRS {ρ = ρ} {σ = σ} {Γ} {Θ = Θ} ρ∶Δ⇒RΘ σ∶Γ⇒CΔ validΘ x 
     (sym (sub-compRS (typeof x Γ))) (E'-rep (σ∶Γ⇒CΔ x) ρ∶Δ⇒RΘ validΘ)
 \end{code}
 }
-
+\end{lemma}
