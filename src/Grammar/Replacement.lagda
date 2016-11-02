@@ -73,8 +73,12 @@ infix 70 _〈_〉
 _〈_〉 : ∀ {U} {V} {C} {K} → Subexp U C K → Rep U V → Subexp V C K
 E 〈 ρ 〉 = LiftFamily.ap Rep∶LF ρ E
 
-liftsRep : ∀ {U V} AA → Rep U V → Rep (extend U AA) (extend V AA)
+liftsRep : ∀ {U V} KK → Rep U V → Rep (extend U KK) (extend V KK)
 liftsRep = LiftFamily.liftsOp Rep∶LF
+
+liftsnocRep : ∀ {U V} KK → Rep U V → Rep (snoc-extend U KK) (snoc-extend V KK)
+liftsnocRep [] ρ = ρ
+liftsnocRep (KK snoc K) ρ = liftRep K (liftsnocRep KK ρ)
 
 infixl 75 _•R_
 _•R_ : ∀ {U} {V} {W} → Rep V W → Rep U V → Rep U W
@@ -115,8 +119,8 @@ rep-congr = OpFamily.ap-congl REP
 rep-congl : ∀ {U V C K} {ρ : Rep U V} {E F : Subexp U C K} → E ≡ F → E 〈 ρ 〉 ≡ F 〈 ρ 〉
 rep-congl = OpFamily.ap-congr REP
 
-ap-idRep : ∀ {V C K} {E : Subexp V C K} → E 〈 idRep V 〉 ≡ E
-ap-idRep = OpFamily.ap-idOp REP
+rep-idRep : ∀ {V C K} {E : Subexp V C K} → E 〈 idRep V 〉 ≡ E
+rep-idRep = OpFamily.ap-idOp REP
 
 rep-comp : ∀ {U V W C K} (E : Subexp U C K) {σ : Rep V W} {ρ} → E 〈 σ •R ρ 〉 ≡ E 〈 ρ 〉 〈 σ 〉
 rep-comp = OpFamily.ap-comp REP
@@ -165,6 +169,36 @@ We write $E \uparrow$ for $E \langle \uparrow \rangle$.
 infixl 70 _⇑
 _⇑ : ∀ {V} {K} {C} {L} → Subexp V C L → Subexp (V , K) C L
 E ⇑ = E 〈 upRep 〉
+
+ups : ∀ {V} KK → Rep V (snoc-extend V KK)
+ups [] = idRep _
+ups (KK snoc K) = upRep •R ups KK
+
+infix 70 _⇑⇑
+_⇑⇑ : ∀ {V C K KK} → Subexp V C K → Subexp (snoc-extend V KK) C K
+_⇑⇑ {KK = KK} E = E 〈 ups KK 〉
+
+liftsnocRep-ups : ∀ {U V C K} KK (E : Subexp U C K) {ρ : Rep U V} → (_⇑⇑ {KK = KK} E) 〈 liftsnocRep KK ρ 〉 ≡ (_⇑⇑ {KK = KK} (E 〈 ρ 〉))
+liftsnocRep-ups {U} {V} [] E {ρ} = let open ≡-Reasoning in
+  begin
+    E 〈 idRep U 〉 〈 ρ 〉
+  ≡⟨ rep-congl (rep-idRep {E = E}) ⟩
+    E 〈 ρ 〉
+  ≡⟨⟨ rep-idRep ⟩⟩
+    E 〈 ρ 〉 〈 idRep V 〉
+  ∎
+liftsnocRep-ups (KK snoc K) E {ρ} = let open ≡-Reasoning in 
+  begin
+    E 〈 upRep •R ups KK 〉 〈 liftRep K (liftsnocRep KK ρ) 〉
+  ≡⟨ rep-congl (rep-comp E) ⟩
+    E 〈 ups KK 〉 ⇑ 〈 liftRep K (liftsnocRep KK ρ) 〉
+  ≡⟨ liftRep-upRep (E 〈 ups KK 〉) ⟩
+    E 〈 ups KK 〉 〈 liftsnocRep KK ρ 〉 ⇑
+  ≡⟨ rep-congl (liftsnocRep-ups KK E) ⟩
+    E 〈 ρ 〉 〈 ups KK 〉 ⇑
+  ≡⟨⟨ rep-comp (E 〈 ρ 〉) ⟩⟩
+    E 〈 ρ 〉 〈 upRep •R ups KK 〉
+  ∎
 \end{code}
 
 We define the unique replacement $\emptyset \rightarrow V$ for any V, and prove it unique:
@@ -222,9 +256,17 @@ liftRep-upRep₃ {U} {V} {C} {K} {L} {M} E {ρ} = let open ≡-Reasoning in
 
 postulate liftRep-upRep₄' : ∀ {U} {V} (ρ : Rep U V) {K1} {K2} {K3} → upRep •R upRep •R upRep •R ρ ∼R liftRep K1 (liftRep K2 (liftRep K3 ρ)) •R upRep •R upRep •R upRep
 
-Types-rep : ∀ {U V AA} → Types U AA → Rep U V → Types V AA
+Types-rep : ∀ {U V KK} → Types U KK → Rep U V → Types V KK
 Types-rep [] _ = []
 Types-rep (B , BB) ρ = B 〈 ρ 〉 , Types-rep BB (liftRep _ ρ)
+
+snocTypes-rep : ∀ {U V KK} → snocTypes U KK → Rep U V → snocTypes V KK
+snocTypes-rep [] _ = []
+snocTypes-rep {KK = KK snoc _} (AA snoc A) ρ = snocTypes-rep AA ρ snoc A 〈 liftsnocRep KK ρ 〉
+
+snocListExp-rep : ∀ {U V KK} → snocListExp U KK → Rep U V → snocListExp V KK
+snocListExp-rep [] _ = []
+snocListExp-rep (MM snoc M) ρ = snocListExp-rep MM ρ snoc (M 〈 ρ 〉)
 
 snocVec-rep : ∀ {U V C K n} → snocVec (Subexp U C K) n → Rep U V → snocVec (Subexp V C K) n
 snocVec-rep [] ρ = []

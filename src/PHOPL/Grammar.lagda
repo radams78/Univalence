@@ -2,9 +2,10 @@
 \begin{code}
 module PHOPL.Grammar where
 
+open import Data.Nat
 open import Data.Empty renaming (⊥ to Empty)
-open import Data.List
-open import Data.Vec
+open import Data.List hiding (replicate)
+open import Data.Vec hiding (replicate)
 open import Prelims
 open import Grammar.Taxonomy
 open import Grammar.Base
@@ -236,6 +237,12 @@ APP* : ∀ {V n} → snocVec (Term V) n → snocVec (Term V) n → Path V → sn
 APP* [] [] P [] = P
 APP* (MM snoc M) (NN snoc N) P (QQ snoc Q) = app* M N (APP* MM NN P QQ) Q
 
+APP*-rep : ∀ {U V n} MM {NN : snocVec (Term U) n} {P QQ} {ρ : Rep U V} →
+  (APP* MM NN P QQ) 〈 ρ 〉 ≡ APP* (snocVec-rep MM ρ) (snocVec-rep NN ρ) (P 〈 ρ 〉) (snocVec-rep QQ ρ)
+APP*-rep [] {[]} {QQ = []} = refl
+APP*-rep (MM snoc M) {NN snoc N} {QQ = QQ snoc Q} {ρ = ρ} = 
+  cong (λ x → app* (M 〈 ρ 〉) (N 〈 ρ 〉) x (Q 〈 ρ 〉)) (APP*-rep MM)
+
 typeof' : ∀ {V} → Var V -Term → Context V → Type
 typeof' x Γ  = yt (typeof x Γ)
 
@@ -280,6 +287,34 @@ imp-injl refl = refl
 imp-injr : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ⊃ ψ ≡ φ' ⊃ ψ' → ψ ≡ ψ'
 imp-injr refl = refl
 --REFACTOR General pattern
+
+toSnocTypes : ∀ {V n} → snocVec Type n → snocTypes V (replicate n -Term)
+toSnocTypes [] = []
+toSnocTypes (AA snoc A) = toSnocTypes AA snoc ty A
+
+toSnocTypes-rep : ∀ {U V n} {AA : snocVec Type n} {ρ : Rep U V} → snocTypes-rep (toSnocTypes AA) ρ ≡ toSnocTypes AA
+toSnocTypes-rep {AA = []} = refl
+toSnocTypes-rep {AA = AA snoc A} = cong (λ x → x snoc ty A) toSnocTypes-rep
+
+eqmult : ∀ {V n} → snocVec (Term V) n → snocVec Type n → snocVec (Term V) n → snocTypes V (Prelims.replicate n -Path)
+eqmult [] [] [] = []
+eqmult {n = suc n} (MM snoc M) (AA snoc A) (NN snoc N) = eqmult MM AA NN snoc (_⇑⇑ {KK = Prelims.replicate n -Path} M) ≡〈 A 〉 (_⇑⇑ {KK = Prelims.replicate n -Path} N)
+
+eqmult-rep : ∀ {U V n} {MM : snocVec (Term U) n} {AA NN} {ρ : Rep U V} →
+  snocTypes-rep (eqmult MM AA NN) ρ ≡ eqmult (snocVec-rep MM ρ) AA (snocVec-rep NN ρ)
+eqmult-rep {MM = []} {[]} {[]} = refl
+eqmult-rep {n = suc n} {MM = MM snoc M} {AA snoc A} {NN snoc N} = cong₃ (λ a b c → a snoc b ≡〈 A 〉 c) 
+  eqmult-rep 
+  (liftsnocRep-ups (Prelims.replicate n -Path) M) (liftsnocRep-ups (Prelims.replicate n -Path) N)
+
+toSnocListExp : ∀ {V K n} → snocVec (Expression V (varKind K)) n → snocListExp V (replicate n K)
+toSnocListExp [] = []
+toSnocListExp (MM snoc M) = toSnocListExp MM snoc M
+
+toSnocListExp-rep : ∀ {U V K n} {MM : snocVec (Expression U (varKind K)) n} {ρ : Rep U V} →
+  snocListExp-rep (toSnocListExp MM) ρ ≡ toSnocListExp (snocVec-rep MM ρ)
+toSnocListExp-rep {MM = []} = refl
+toSnocListExp-rep {MM = MM snoc M} {ρ} = cong (λ x → x snoc M 〈 ρ 〉) toSnocListExp-rep
 \end{code}
 }
 

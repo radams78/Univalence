@@ -53,4 +53,9 @@ infix 25 _,,_
 _,,_ : ∀ {V} {AA} → Context V → Types V AA → Context (extend V AA)
 Γ ,, [] = Γ
 Γ ,, (A , AA) = (Γ , A) ,, AA
+
+infix 25 _,,,_
+_,,,_ : ∀ {V AA} → Context V → snocTypes V AA → Context (snoc-extend V AA)
+Γ ,,, [] = Γ
+Γ ,,, (AA snoc A) = (Γ ,,, AA) , A
 \end{code}

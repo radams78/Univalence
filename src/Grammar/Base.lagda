@@ -66,7 +66,7 @@ such that $M_i$ is of type $K_i$, given a snoc-list of variable kinds $(K_1, \ld
   infixl 20 _snoc_
   data snocListExp V : snocList VarKind → Set where
     [] : snocListExp V []
-    _snoc_ : ∀ {A} {K} → snocListExp V A → Expression V (varKind K) → snocListExp V (A snoc K)
+    _snoc_ : ∀ {KK} {K} → snocListExp V KK → Expression V (varKind K) → snocListExp V (KK snoc K)
 \end{code}
 
 A \emph{reduction} is a relation $\rhd$ between expressions such that, if $E \rhd F$,

@@ -149,5 +149,38 @@ $R\, c\, MM\, N$ iff $c[MM] \rhd N$.
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{Reduction} \AgdaSymbol{=} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{AA}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Con} \AgdaSymbol{(}\AgdaInductiveConstructor{SK} \AgdaBound{AA} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaFunction{ListAbs} \AgdaBound{V} \AgdaBound{AA} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{data} \AgdaDatatype{ListExp} \AgdaSymbol{(}\AgdaBound{V} \AgdaSymbol{:} \AgdaDatatype{Alphabet}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaDatatype{List} \AgdaFunction{VarKind} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{[]} \AgdaSymbol{:} \AgdaDatatype{ListExp} \AgdaBound{V} \AgdaInductiveConstructor{[]}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{\_∷\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K} \AgdaBound{AA}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{ListExp} \AgdaBound{V} \AgdaBound{AA} \AgdaSymbol{→} \AgdaDatatype{ListExp} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{∷} \AgdaBound{AA}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{data} \AgdaDatatype{Types} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaDatatype{List} \AgdaFunction{VarKind} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{[]} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Types} \AgdaBound{V} \AgdaInductiveConstructor{[]}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{\_,\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{K} \AgdaBound{AA}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaFunction{parent} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{Types} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{)} \AgdaBound{AA} \AgdaSymbol{→} \AgdaDatatype{Types} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{∷} \AgdaBound{AA}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{data} \AgdaDatatype{snocTypes} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaDatatype{snocList} \AgdaFunction{VarKind} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{[]} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{snocTypes} \AgdaBound{V} \AgdaInductiveConstructor{[]}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{\_snoc\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{AA} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{snocTypes} \AgdaBound{V} \AgdaBound{AA} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaSymbol{(}\AgdaFunction{snoc-extend} \AgdaBound{V} \AgdaBound{AA}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{parent} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{snocTypes} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{AA} \AgdaInductiveConstructor{snoc} \AgdaBound{K}\AgdaSymbol{)}\<%
 \end{code}
 }

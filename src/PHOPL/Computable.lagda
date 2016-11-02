@@ -679,6 +679,15 @@ conv-EE (Γ⊢P∶M≡N ,p computeP) M≃M' N≃N' Γ⊢M'∶A Γ⊢N'∶A = con
 --REFACTOR Duplication                      
                  
 EE-SN (app (-eq _) (_ ,, _ ,, out)) (Γ⊢P∶E ,p computeP) = computeE-SN computeP (context-validity Γ⊢P∶E) -}
+
+data Emult {V} (Γ : Context V) : ∀ {AA} → snocTypes V AA → snocListExp V AA → Set where
+  [] : Emult Γ [] []
+  _snoc_ : ∀ {KK K AA} {A : Expression (snoc-extend V KK) (parent K)} {MM M} → Emult Γ {KK} AA MM → E' {K = K} Γ (A ⟦ xx₀:= MM ⟧) M → Emult Γ (AA snoc A) (MM snoc M)
+
+Emult-rep : ∀ {U V Γ Δ KK AA} {MM : snocListExp U KK} {ρ : Rep U V} → Emult Γ AA MM → ρ ∶ Γ ⇒R Δ → valid Δ → Emult Δ (snocTypes-rep AA ρ) (snocListExp-rep MM ρ)
+Emult-rep [] _ _ = []
+Emult-rep {U} {V} {Γ} {Δ = Δ} {KK snoc K} {AA = AA snoc A} {MM = MM snoc M} {ρ} (MM∈EΓAA snoc M∈EΓA) ρ∶Γ⇒RΔ validΔ = 
+  (Emult-rep MM∈EΓAA ρ∶Γ⇒RΔ validΔ) snoc subst (λ x → E' Δ x (M 〈 ρ 〉)) (liftsnocRep-botSub {U} {V} {KK} {E = A}) (E'-rep M∈EΓA ρ∶Γ⇒RΔ validΔ)
 \end{code}
 }
 

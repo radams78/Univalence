@@ -79,7 +79,7 @@ pathsub-cong (app -imp (φ ∷ ψ ∷ [])) τ∼∼τ' ρ∼ρ' σ∼σ' =
   cong₂ _⊃*_ (pathsub-cong φ τ∼∼τ' ρ∼ρ' σ∼σ') 
              (pathsub-cong ψ τ∼∼τ' ρ∼ρ' σ∼σ')
 pathsub-cong (app -appTerm (M ∷ N ∷ [])) τ∼∼τ' ρ∼ρ' σ∼σ' = 
-  cong₄ app* (sub-congr ρ∼ρ' N) (sub-congr σ∼σ' N) 
+  cong₄ app* (sub-congr N ρ∼ρ') (sub-congr N σ∼σ')
              (pathsub-cong M τ∼∼τ' ρ∼ρ' σ∼σ') 
              (pathsub-cong N τ∼∼τ' ρ∼ρ' σ∼σ')
 pathsub-cong (app (-lamTerm A) (M ∷ [])) τ∼∼τ' ρ∼ρ' σ∼σ' = 

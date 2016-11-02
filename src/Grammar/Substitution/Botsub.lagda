@@ -32,6 +32,43 @@ botSub {A = _ snoc _} (EE snoc _) L (↑ x) = botSub EE L x
 infix 65 x₀:=_
 x₀:=_ : ∀ {V} {K} → Expression V (varKind K) → Sub (V , K) V
 x₀:= E = botSub ([] snoc E)
+
+infix 65 xx₀:=_
+xx₀:=_ : ∀ {V KK} → snocListExp V KK → Sub (snoc-extend V KK) V
+xx₀:=_ = botSub -- TODO Inline
+
+liftsnocRep-botSub' : ∀ {U V} KK {MM : snocListExp U KK} {ρ : Rep U V} → ρ •RS xx₀:= MM ∼ xx₀:= snocListExp-rep MM ρ •SR liftsnocRep KK ρ
+liftsnocRep-botSub' [] _ = refl
+liftsnocRep-botSub' (_ snoc _) {_ snoc _} x₀ = refl
+liftsnocRep-botSub' (KK snoc _) {_ snoc _} (↑ x) = liftsnocRep-botSub' KK x
+
+liftsnocRep-botSub : ∀ {U V KK} {MM : snocListExp U KK} {ρ : Rep U V} {C K} {E : Subexp (snoc-extend U KK) C K} → E ⟦ xx₀:= MM ⟧ 〈 ρ 〉 ≡ E 〈 liftsnocRep KK ρ 〉 ⟦ xx₀:= snocListExp-rep MM ρ ⟧
+liftsnocRep-botSub {KK = KK} {MM = MM} {ρ = ρ} {E = E} = let open ≡-Reasoning in
+  begin
+    E ⟦ xx₀:= MM ⟧ 〈 ρ 〉
+  ≡⟨⟨ sub-compRS E ⟩⟩
+    E ⟦ ρ •RS xx₀:= MM ⟧
+  ≡⟨ sub-congr E (liftsnocRep-botSub' KK) ⟩
+    E ⟦ xx₀:= snocListExp-rep MM ρ •SR liftsnocRep KK ρ ⟧
+  ≡⟨ sub-compSR E ⟩
+    E 〈 liftsnocRep KK ρ 〉 ⟦ xx₀:= snocListExp-rep MM ρ ⟧
+  ∎
+
+botSub-ups' : ∀ {V} KK {MM : snocListExp V KK} → xx₀:= MM •SR ups KK ∼ idSub V
+botSub-ups' [] _ = refl
+botSub-ups' (KK snoc _) {_ snoc _} x = botSub-ups' KK x
+
+botSub-ups : ∀ {V KK C K} {MM : snocListExp V KK} {E : Subexp V C K} → E 〈 ups KK 〉 ⟦ xx₀:= MM ⟧ ≡ E
+botSub-ups {V} {KK} {C} {K} {MM} {E} = let open ≡-Reasoning in 
+  begin
+    E 〈 ups KK 〉 ⟦ xx₀:= MM ⟧
+  ≡⟨⟨ sub-compSR E ⟩⟩
+    E ⟦ xx₀:= MM •SR ups KK ⟧
+  ≡⟨ sub-congr E (botSub-ups' KK) ⟩
+    E ⟦ idSub V ⟧
+  ≡⟨ sub-idSub ⟩
+    E
+  ∎
 \end{code}
 
 \begin{lemma}$ $
@@ -66,9 +103,9 @@ botSub-up {F} {V} {K} {C} {L} {E} comp {E'} = let open ≡-Reasoning in
     ap F (up F) E' ⟦ x₀:= E ⟧
   ≡⟨⟨ Composition.ap-comp comp E' ⟩⟩
     E' ⟦ Composition._∘_ comp (x₀:= E) (up F) ⟧
-  ≡⟨ sub-congr (botSub-up' comp) E' ⟩
+  ≡⟨ sub-congr E' (botSub-up' comp)⟩
     E' ⟦ idSub V ⟧
-  ≡⟨ sub-idOp ⟩
+  ≡⟨ sub-idSub ⟩
     E'
   ∎
 
@@ -92,9 +129,9 @@ comp-botSub' {F} {U} {V} {K} {E} comp₁ comp₂ {σ} (↑ x) = let open ≡-Rea
     (Composition._∘_ comp₁ σ (x₀:= E)) _ (↑ x)
   ≡⟨ Composition.apV-comp comp₁ ⟩
     apV F σ x
-  ≡⟨⟨ sub-idOp ⟩⟩
+  ≡⟨⟨ sub-idSub ⟩⟩
     apV F σ x ⟦ idSub V ⟧
-  ≡⟨⟨ sub-congr (botSub-up' comp₂) (apV F σ x) ⟩⟩
+  ≡⟨⟨ sub-congr (apV F σ x) (botSub-up' comp₂) ⟩⟩
     apV F σ x ⟦ Composition._∘_ comp₂ (x₀:= (ap F σ E)) (up F) ⟧
   ≡⟨ Composition.ap-comp comp₂ (apV F σ x) ⟩
     ap F (up F) (apV F σ x) ⟦ x₀:= (ap F σ E) ⟧
@@ -179,7 +216,7 @@ botSub₃-liftRep₃ {M2 = M2} {M1} {M0} {ρ} N = let open ≡-Reasoning in
                 N 〈 liftRep _ (liftRep _ (liftRep _ ρ)) 〉 ⟦ x₂:= M2 〈 ρ 〉 ,x₁:= M1 〈 ρ 〉 ,x₀:= M0 〈 ρ 〉 ⟧
               ≡⟨⟨ sub-compSR N ⟩⟩
                 N ⟦ (x₂:= M2 〈 ρ 〉 ,x₁:= M1 〈 ρ 〉 ,x₀:= M0 〈 ρ 〉) •SR liftRep _ (liftRep _ (liftRep _ ρ)) ⟧
-              ≡⟨ sub-congr botSub₃-liftRep₃' N ⟩
+              ≡⟨ sub-congr N botSub₃-liftRep₃' ⟩
                 N ⟦ ρ •RS (x₂:= M2 ,x₁:= M1 ,x₀:= M0) ⟧
               ≡⟨ sub-compRS N ⟩
                 N ⟦ x₂:= M2 ,x₁:= M1 ,x₀:= M0 ⟧ 〈 ρ 〉

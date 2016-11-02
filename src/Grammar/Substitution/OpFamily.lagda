@@ -166,8 +166,7 @@ SUB = record {
 \begin{code}
 open OpFamily SUB using (comp-congl;comp-congr)
   renaming (liftOp-idOp to liftSub-idOp;
-           ap-idOp to sub-idOp;
-           ap-congl to sub-congr;
+           ap-idOp to sub-idSub;
            ap-congr to sub-congl;
            unitl to sub-unitl;
            unitr to sub-unitr;
@@ -175,6 +174,9 @@ open OpFamily SUB using (comp-congl;comp-congr)
            ∼-trans to sub-trans;
            assoc to sub-assoc)
   public
+
+sub-congr : ∀ {U V C K} {ρ σ : Sub U V} (E : Subexp U C K) → ρ ∼ σ → E ⟦ ρ ⟧ ≡ E ⟦ σ ⟧
+sub-congr E ρ∼σ = OpFamily.ap-congl SUB ρ∼σ E
 \end{code}
 }
 

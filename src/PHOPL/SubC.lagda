@@ -3,7 +3,7 @@
 module PHOPL.SubC where
 open import Data.Nat
 open import Data.Fin
-open import Data.List
+open import Data.List hiding (replicate)
 open import Data.Product renaming (_,_ to _,p_)
 open import Prelims
 open import PHOPL.Grammar
@@ -48,7 +48,7 @@ idSubC : ∀ {V} {Γ : Context V} → idSub V ∶ Γ ⇒C Γ
 
 \AgdaHide{
 \begin{code}
-idSubC {V} {Γ} x = subst (λ a → E' Γ a (var x)) (sym sub-idOp) var-E'
+idSubC {V} {Γ} x = subst (λ a → E' Γ a (var x)) (sym sub-idSub) var-E'
 \end{code}
 }
 
@@ -141,119 +141,15 @@ postulate extendPSC : ∀ {U} {V} {τ : PathSub U V} {ρ σ : Sub U V} {Γ : Con
 postulate compRPC : ∀ {U} {V} {W} {ρ : Rep V W} {τ : PathSub U V} {σ} {σ'} {Γ} {Δ} {Θ} →
                          τ ∶ σ ∼ σ' ∶ Γ ⇒C Δ → ρ ∶ Δ ⇒R Θ → ρ •RP τ ∶ ρ •RS σ ∼ ρ •RS σ' ∶ Γ ⇒C Θ
 
-APP*-rep : ∀ {U V n} MM {NN : snocVec (Term U) n} {P QQ} {ρ : Rep U V} →
-  (APP* MM NN P QQ) 〈 ρ 〉 ≡ APP* (snocVec-rep MM ρ) (snocVec-rep NN ρ) (P 〈 ρ 〉) (snocVec-rep QQ ρ)
-APP*-rep [] {[]} {QQ = []} = refl
-APP*-rep (MM snoc M) {NN snoc N} {QQ = QQ snoc Q} {ρ = ρ} = 
-  cong (λ x → app* (M 〈 ρ 〉) (N 〈 ρ 〉) x (Q 〈 ρ 〉)) (APP*-rep MM)
-
-private pre-wte+-computeP : ∀ {m} {n} {V} {Γ : Context V} {S} {L₁ : Leaves V S}
-                          {MM NN : snocVec (Term V) m} {P L L' Q RR} {εε : snocVec (Proof V) n} {A} →
-                          computeP Γ L₁ (APPP (plus (APP* MM NN (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR)) εε) →
-                          valid Γ → SN L → SN L' → SN Q →
-                          computeP Γ L₁ (APPP (plus (APP* MM NN (app* L L' (λλλ A P) Q) RR)) εε)
-pre-wte+-computeP {L₁ = neutral x} {MM} {NN} {P} {L} {L'} {Q} {RR} {εε} computePRRεε validΓ SNL SNL' SNQ = 
-  lmSNE MM εε (computeP-SN {L = neutral x} computePRRεε validΓ) SNL SNL' SNQ
-pre-wte+-computeP {L₁ = bot} {MM} {NN} {P} {L} {L'} {Q} {RR} {εε} computePRRεε validΓ SNL SNL' SNQ = 
-  lmSNE MM εε (computeP-SN {L = bot} computePRRεε validΓ) SNL SNL' SNQ
-pre-wte+-computeP {m} {n} {V} {Γ} {imp S₁ S₂} {L₁ = imp L₁ L₂} {MM} {NN} {P} {L} {L'} {Q} {RR} {εε} {A} computePRRεε validΓ SNL SNL' SNQ {W} Δ {ρ = ρ} {ε = ε} ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = 
-  subst (computeP Δ (lrep L₂ ρ)) (let open ≡-Reasoning in 
-  begin
-    appP (APPP (plus (APP* (snocVec-rep MM ρ) (snocVec-rep NN ρ) (app* (L 〈 ρ 〉) (L' 〈 ρ 〉) (λλλ A (P 〈 liftsRep pathDom ρ 〉)) (Q 〈 ρ 〉)) (snocVec-rep RR ρ))) (snocVec-rep εε ρ)) ε
-  ≡⟨⟨ cong (λ x → appP (APPP (plus x) (snocVec-rep εε ρ)) ε) (APP*-rep MM) ⟩⟩
-    appP (APPP (plus ((APP* MM NN (app* L L' (λλλ A P) Q) RR) 〈 ρ 〉)) (snocVec-rep εε ρ)) ε
-  ≡⟨⟨ cong (λ x → appP x ε) (APPP-rep εε) ⟩⟩
-    appP (APPP (plus (APP* MM NN (app* L L' (λλλ A P) Q) RR)) εε 〈 ρ 〉) ε
-  ∎)
-  (pre-wte+-computeP {m} {suc n} {W} {Δ} {S₂} {lrep L₂ ρ} {snocVec-rep MM ρ} {snocVec-rep NN ρ} {P 〈 liftsRep pathDom ρ 〉} {L 〈 ρ 〉} {L' 〈 ρ 〉} {Q 〈 ρ 〉} {snocVec-rep RR ρ} {εε = snocVec-rep εε ρ snoc ε} {A}
-  (subst (computeP Δ (lrep L₂ ρ)) 
-  (let open ≡-Reasoning in 
-  begin
-    appP (APPP (plus (APP* MM NN (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR)) εε 〈 ρ 〉) ε
-  ≡⟨ cong (λ x → appP x ε) (APPP-rep εε) ⟩
-    appP (APPP (plus (APP* MM NN (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR) 〈 ρ 〉) (snocVec-rep εε ρ)) ε
-  ≡⟨ cong (λ x → appP (APPP (plus x) (snocVec-rep εε ρ)) ε) (APP*-rep MM) ⟩
-    appP (APPP (plus (APP* (snocVec-rep MM ρ) (snocVec-rep NN ρ) (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧ 〈 ρ 〉) (snocVec-rep RR ρ))) (snocVec-rep εε ρ)) ε
-  ≡⟨⟨ cong (λ x → appP (APPP (plus (APP* (snocVec-rep MM ρ) (snocVec-rep NN ρ) x (snocVec-rep RR ρ))) (snocVec-rep εε ρ)) ε) (botSub₃-liftRep₃ P) ⟩⟩
-    appP (APPP (plus (APP* (snocVec-rep MM ρ) (snocVec-rep NN ρ) (P 〈 liftsRep pathDom ρ 〉 ⟦ x₂:= L 〈 ρ 〉 ,x₁:= L' 〈 ρ 〉 ,x₀:= Q 〈 ρ 〉 ⟧) (snocVec-rep RR ρ))) (snocVec-rep εε ρ)) ε
-  ∎) 
-  (computePRRεε Δ ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε))
-  (context-validity Δ⊢ε∶φ) 
-  (SNrep R-creates-rep SNL) 
-  (SNrep R-creates-rep SNL') 
-  (SNrep R-creates-rep SNQ))
-
-private postulate pre-wte--computeP : ∀ {m} {n} {V} {Γ : Context V} {S} {L₁ : Leaves V S}
-                                    {MM NN : snocVec (Term V) m} {P L L' Q RR} {εε : snocVec (Proof V) n} {A} →
-                                    computeP Γ L₁ (APPP (minus (APP* MM NN (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR)) εε) →
-                                    valid Γ → SN L → SN L' → SN Q →
-                                    computeP Γ L₁ (APPP (minus (APP* MM NN (app* L L' (λλλ A P) Q) RR)) εε)
-
-data Emult {V} (Γ : Context V) : ∀ {AA} → snocTypes V AA → snocListExp V AA → Set where
-  [] : Emult Γ [] []
-  _snoc_ : ∀ {n AA A MM M} → Emult Γ {n} AA MM → E' Γ A M → Emult Γ (AA snoc A) (MM snoc M)
-
-Emult-rep : ∀ {U V Γ Δ n AA} {MM : snocVec (Term U) n} {ρ : Rep U V} → Emult Γ AA MM → ρ ∶ Γ ⇒R Δ → valid Δ → Emult Δ AA (snocVec-rep MM ρ)
-Emult-rep [] _ _ = []
-Emult-rep (MM∈EΓAA snoc M∈EΓA) ρ∶Γ⇒RΔ validΔ = (Emult-rep MM∈EΓAA ρ∶Γ⇒RΔ validΔ) snoc (E'-rep M∈EΓA ρ∶Γ⇒RΔ validΔ)
-
-private pre-wte-compute : ∀ {n} {V} {Γ : Context V} {A P M} {BB : snocVec Type n} {C M' L L' Q NN NN' RR} →
-                 addpath Γ A ⊢ P ∶ appT (M ⇑ ⇑ ⇑) (var x₂) ≡〈 Pi BB C 〉 appT (M' ⇑ ⇑ ⇑) (var x₁) →
-                 E Γ A L → E Γ A L' → E' Γ (L ≡〈 A 〉 L') Q →
-                 Emult Γ BB NN → Emult Γ BB NN' → (∀ i → E' Γ (lookup i NN ≡〈 lookup i BB 〉 lookup i NN') (lookup i RR)) →
-                 E' Γ (APP (appT M L) NN ≡〈 C 〉 APP (appT M' L') NN') (APP* NN NN' (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR) →
-                 computeE Γ (APP (appT M L) NN) C (APP (appT M' L') NN') (APP* NN NN' (app* L L' (λλλ A P) Q) RR)
-pre-wte-compute {A = A} {P} {C = Ω} {L = L} {L'} {Q} {NN} {NN'} {RR} ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' Ni∈EΓBi N'i∈EΓBi Ri∈EΓNi≡N'i (E'I Γ⊢PLL'Q∶MNN≡M'NN' (S₁ ,p S₂ ,p L₁ ,p L₂ ,p MLNN↠L₁ ,p M'L'NN'↠L₂ ,p computeP+ ,p computeP- )) =
-  S₁ ,p S₂ ,p L₁ ,p L₂ ,p MLNN↠L₁ ,p M'L'NN'↠L₂ ,p 
-  (λ Δ {ρ} {ε} ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε → subst (computeP Δ (lrep L₂ ρ)) 
-    (cong (λ x → appP (plus x) ε) (sym (APP*-rep NN))) 
-    (pre-wte+-computeP {Γ = Δ} {S₂} {lrep L₂ ρ} {snocVec-rep NN ρ} {snocVec-rep NN' ρ} {P 〈 liftsRep pathDom ρ 〉} {L 〈 ρ 〉} {L' 〈 ρ 〉} {Q 〈 ρ 〉} {snocVec-rep RR ρ} {εε = [] snoc ε} {A}
-      (subst (computeP Δ (lrep L₂ ρ)) 
-        (cong (λ x → appP (plus x) ε) (let open ≡-Reasoning in 
-          begin
-            (APP* NN NN' (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR) 〈 ρ 〉
-          ≡⟨ APP*-rep NN ⟩
-            APP* (snocVec-rep NN ρ) (snocVec-rep NN' ρ) (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧ 〈 ρ 〉) (snocVec-rep RR ρ)
-          ≡⟨⟨ cong (λ x → APP* (snocVec-rep NN ρ) (snocVec-rep NN' ρ) x (snocVec-rep RR ρ)) (botSub₃-liftRep₃ P) ⟩⟩
-            APP* (snocVec-rep NN ρ) (snocVec-rep NN' ρ) (P 〈 liftsRep pathDom ρ 〉 ⟦ x₂:= L 〈 ρ 〉 ,x₁:= L' 〈 ρ 〉 ,x₀:= Q 〈 ρ 〉 ⟧) (snocVec-rep RR ρ)
-          ∎)) 
-        (computeP+ Δ ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε)) (context-validity Δ⊢ε∶φ) (SNrep R-creates-rep (E-SN A L∈EΓA)) (SNrep R-creates-rep (E-SN A L'∈EΓA)) (SNrep R-creates-rep (EE-SN _ Q∈EΓL≡L')))) ,p
-  (λ Δ {ρ} {ε} ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε → subst (computeP Δ (lrep L₁ ρ)) 
-    (cong (λ x → appP (minus x) ε) (sym (APP*-rep NN))) 
-    (pre-wte--computeP {Γ = Δ} {S₁} {lrep L₁ ρ} {snocVec-rep NN ρ} {snocVec-rep NN' ρ} {P 〈 liftsRep pathDom ρ 〉} {L 〈 ρ 〉} {L' 〈 ρ 〉} {Q 〈 ρ 〉} {snocVec-rep RR ρ} {εε = [] snoc ε} {A}
-      (subst (computeP Δ (lrep L₁ ρ)) 
-        (cong (λ x → appP (minus x) ε) (let open ≡-Reasoning in 
-          begin
-            (APP* NN NN' (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR) 〈 ρ 〉
-          ≡⟨ APP*-rep NN ⟩
-            APP* (snocVec-rep NN ρ) (snocVec-rep NN' ρ) (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧ 〈 ρ 〉) (snocVec-rep RR ρ)
-          ≡⟨⟨ cong (λ x → APP* (snocVec-rep NN ρ) (snocVec-rep NN' ρ) x (snocVec-rep RR ρ)) (botSub₃-liftRep₃ P) ⟩⟩
-            APP* (snocVec-rep NN ρ) (snocVec-rep NN' ρ) (P 〈 liftsRep pathDom ρ 〉 ⟦ x₂:= L 〈 ρ 〉 ,x₁:= L' 〈 ρ 〉 ,x₀:= Q 〈 ρ 〉 ⟧) (snocVec-rep RR ρ)
-          ∎)) 
-        (computeP- Δ ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε)) (context-validity Δ⊢ε∶φ) (SNrep R-creates-rep (E-SN A L∈EΓA)) (SNrep R-creates-rep (E-SN A L'∈EΓA)) (SNrep R-creates-rep (EE-SN _ Q∈EΓL≡L'))))
-pre-wte-compute {Γ = Γ} {A} {P} {M} {BB} {C ⇛ C₁} {M'} {L} {L'} {Q} {NN} {NN'} {RR} 
-  ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' NN∈EΓBB N'i∈EΓBi Ri∈EΓNi≡N'i PLL'QRR∈EΓMLNN≡M'L'NN' Δ {ρ} {N} {N'} {Q'} ρ∶Γ⇒RΔ Δ⊢Q∶N≡N' computeN computeN' computeQ = 
-  let validΔ : valid Δ
-      validΔ = context-validity Δ⊢Q∶N≡N' in
-  subst₃ (λ a b c → computeE Δ a C₁ b c) (cong (λ x → appT x N) (sym (APP-rep NN))) (cong (λ x → appT x N') (sym (APP-rep NN'))) 
-    (cong (λ x → app* N N' x Q') (sym (APP*-rep NN))) 
-  (pre-wte-compute {Γ = Δ} {A} {P 〈 liftsRep pathDom ρ 〉} {M 〈 ρ 〉} {BB snoc C} {C₁} {M' 〈 ρ 〉} {L 〈 ρ 〉} {L' 〈 ρ 〉} {Q 〈 ρ 〉} {snocVec-rep NN ρ snoc N} {snocVec-rep NN' ρ snoc N'} {snocVec-rep RR ρ snoc Q'} 
-  (change-type (weakening ΓAAE⊢P∶Mx≡Ny (valid-addpath validΔ) (liftsRep-typed ρ∶Γ⇒RΔ)) 
-    (cong₂ (λ a b → appT a (var x₂) ≡〈 Pi BB (C ⇛ C₁) 〉 appT b (var x₁)) (liftRep-upRep₃ M) (liftRep-upRep₃ M'))) 
-  (E'-rep L∈EΓA ρ∶Γ⇒RΔ validΔ) (E'-rep L'∈EΓA ρ∶Γ⇒RΔ validΔ) (E'-rep Q∈EΓL≡L' ρ∶Γ⇒RΔ validΔ) 
-  (Emult-rep NN∈EΓBB ρ∶Γ⇒RΔ validΔ snoc E'I (equation-validity₁ Δ⊢Q∶N≡N') computeN) 
-  (Emult-rep N'i∈EΓBi ρ∶Γ⇒RΔ validΔ snoc E'I (equation-validity₂ Δ⊢Q∶N≡N') computeN') 
-  {!!} {!!})
-
 private pre-wteE : ∀ {n} {V} {Γ : Context V} {A P M} {BB : snocVec Type n} {C M' L L' Q NN NN' RR} →
                  addpath Γ A ⊢ P ∶ appT (M ⇑ ⇑ ⇑) (var x₂) ≡〈 Pi BB C 〉 appT (M' ⇑ ⇑ ⇑) (var x₁) →
                  E Γ A L → E Γ A L' → E' Γ (L ≡〈 A 〉 L') Q →
-                 Emult Γ BB NN → Emult Γ BB NN' → (∀ i → E' Γ (lookup i NN ≡〈 lookup i BB 〉 lookup i NN') (lookup i RR)) →
+                 Emult Γ (toSnocTypes BB) (toSnocListExp NN) → Emult Γ (toSnocTypes BB) (toSnocListExp NN') → Emult Γ (eqmult NN BB NN') (toSnocListExp RR) →
                  E' Γ (APP (appT M L) NN ≡〈 C 〉 APP (appT M' L') NN') (APP* NN NN' (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR) →
                  E' Γ (APP (appT M L) NN ≡〈 C 〉 APP (appT M' L') NN') (APP* NN NN' (app* L L' (λλλ A P) Q) RR)
 pre-wteE ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' Ni∈EΓBi N'i∈EΓBi Ri∈EΓNi≡N'i PLL'QRR∈EΓMLNN≡M'L'NN' = E'I (APP*-typed (app*R (E'.typed L∈EΓA) (E'.typed L'∈EΓA) 
   (lllR ΓAAE⊢P∶Mx≡Ny) (E'.typed Q∈EΓL≡L')) 
-  (λ i → E'.typed (Ri∈EΓNi≡N'i i))) (pre-wte-compute ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' Ni∈EΓBi N'i∈EΓBi Ri∈EΓNi≡N'i PLL'QRR∈EΓMLNN≡M'L'NN')
+  {!!}) (pre-wte-compute ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' Ni∈EΓBi N'i∈EΓBi Ri∈EΓNi≡N'i PLL'QRR∈EΓMLNN≡M'L'NN')
 
 wteE : ∀ {V} {Γ : Context V} {A P M B N L L' Q} →
   addpath Γ A ⊢ P ∶ appT (M ⇑ ⇑ ⇑) (var x₂) ≡〈 B 〉 appT (N ⇑ ⇑ ⇑) (var x₁) → 
@@ -261,7 +157,7 @@ wteE : ∀ {V} {Γ : Context V} {A P M B N L L' Q} →
   E' Γ (appT M L ≡〈 B 〉 appT N L') (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) →
   E' Γ (appT M L ≡〈 B 〉 appT N L') (app* L L' (λλλ A P) Q)
 wteE {V} {Γ} {A} {P} {M} {B} {N} {L} {L'} {Q} ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' PLL'P∈EΓML≡NL' = 
-  pre-wteE {BB = []} {NN = []} {[]} {[]} ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' [] [] (λ ()) PLL'P∈EΓML≡NL'
+  pre-wteE {BB = []} {NN = []} {[]} {[]} ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' [] [] [] PLL'P∈EΓML≡NL'
 
 --TODO Duplications with PL
 postulate extend-subC : ∀ {U} {V} {σ : Sub U V} {Γ : Context U} {Δ : Context V} {K} {M : Expression V (varKind K)} {A : Expression U (parent K)} →

@@ -77,4 +77,14 @@ $\rho(x) : A \langle ρ \rangle$ is an entry in $\Delta$.
 \>\AgdaFunction{\_∶\_⇒R\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaBound{U} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaBound{V} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
 \\
 \>\AgdaBound{ρ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒R} \AgdaBound{Δ} \AgdaSymbol{=} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaBound{x} \AgdaSymbol{→} \AgdaFunction{typeof} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaBound{K} \AgdaBound{x}\AgdaSymbol{)} \AgdaBound{Δ} \AgdaDatatype{≡} \AgdaFunction{typeof} \AgdaBound{x} \AgdaBound{Γ} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\<%
+\\
+%
+\\
+\>\AgdaKeyword{infix} \AgdaNumber{25} \AgdaFixityOp{\_,,\_}\<%
+\\
+\>\AgdaFunction{\_,,\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{AA}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Types} \AgdaBound{V} \AgdaBound{AA} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaSymbol{(}\AgdaFunction{extend} \AgdaBound{V} \AgdaBound{AA}\AgdaSymbol{)}\<%
+\\
+\>\AgdaBound{Γ} \AgdaFunction{,,} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaBound{Γ}\<%
+\\
+\>\AgdaBound{Γ} \AgdaFunction{,,} \AgdaSymbol{(}\AgdaBound{A} \AgdaInductiveConstructor{,} \AgdaBound{AA}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaSymbol{(}\AgdaBound{Γ} \AgdaInductiveConstructor{,} \AgdaBound{A}\AgdaSymbol{)} \AgdaFunction{,,} \AgdaBound{AA}\<%
 \end{code}
