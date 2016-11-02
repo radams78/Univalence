@@ -141,15 +141,21 @@ postulate extendPSC : ∀ {U} {V} {τ : PathSub U V} {ρ σ : Sub U V} {Γ : Con
 postulate compRPC : ∀ {U} {V} {W} {ρ : Rep V W} {τ : PathSub U V} {σ} {σ'} {Γ} {Δ} {Θ} →
                          τ ∶ σ ∼ σ' ∶ Γ ⇒C Δ → ρ ∶ Δ ⇒R Θ → ρ •RP τ ∶ ρ •RS σ ∼ ρ •RS σ' ∶ Γ ⇒C Θ
 
+Emult-lookup : ∀ {V n} {Γ : Context V} {MM NN : snocVec (Term V) n} {AA PP i} →
+  Emult Γ (eqmult MM AA NN) (toSnocListExp PP) → E' Γ (lookup i MM ≡〈 lookup i AA 〉 lookup i NN) (lookup i PP)
+Emult-lookup {n = suc n} {Γ} {_ snoc _} {_ snoc _} {_ snoc A} {_ snoc P} {zero} (_ snoc P∈EΓM≡N) = 
+  subst₂ (λ a b → E' Γ (a ≡〈 A 〉 b) P) (botSub-ups (replicate n -Path)) (botSub-ups (replicate n -Path)) P∈EΓM≡N
+Emult-lookup {MM = _ snoc _} {_ snoc _} {_ snoc _} {_ snoc _} {suc i} (PP∈EΓMM≡NN snoc _) = Emult-lookup {i = i} PP∈EΓMM≡NN
+
 private pre-wteE : ∀ {n} {V} {Γ : Context V} {A P M} {BB : snocVec Type n} {C M' L L' Q NN NN' RR} →
                  addpath Γ A ⊢ P ∶ appT (M ⇑ ⇑ ⇑) (var x₂) ≡〈 Pi BB C 〉 appT (M' ⇑ ⇑ ⇑) (var x₁) →
                  E Γ A L → E Γ A L' → E' Γ (L ≡〈 A 〉 L') Q →
                  Emult Γ (toSnocTypes BB) (toSnocListExp NN) → Emult Γ (toSnocTypes BB) (toSnocListExp NN') → Emult Γ (eqmult NN BB NN') (toSnocListExp RR) →
                  E' Γ (APP (appT M L) NN ≡〈 C 〉 APP (appT M' L') NN') (APP* NN NN' (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR) →
                  E' Γ (APP (appT M L) NN ≡〈 C 〉 APP (appT M' L') NN') (APP* NN NN' (app* L L' (λλλ A P) Q) RR)
-pre-wteE ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' Ni∈EΓBi N'i∈EΓBi Ri∈EΓNi≡N'i PLL'QRR∈EΓMLNN≡M'L'NN' = E'I (APP*-typed (app*R (E'.typed L∈EΓA) (E'.typed L'∈EΓA) 
-  (lllR ΓAAE⊢P∶Mx≡Ny) (E'.typed Q∈EΓL≡L')) 
-  {!!}) (pre-wte-compute ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' Ni∈EΓBi N'i∈EΓBi Ri∈EΓNi≡N'i PLL'QRR∈EΓMLNN≡M'L'NN')
+pre-wteE ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' Ni∈EΓBi N'i∈EΓBi Ri∈EΓNi≡N'i PLL'QRR∈EΓMLNN≡M'L'NN' = E'I (APP*-typed (app*R (E'-typed L∈EΓA) (E'-typed L'∈EΓA) 
+  (lllR ΓAAE⊢P∶Mx≡Ny) (E'-typed Q∈EΓL≡L')) 
+  (λ i → E'-typed (Emult-lookup {i = i} Ri∈EΓNi≡N'i))) (pre-wte-compute ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' Ni∈EΓBi N'i∈EΓBi Ri∈EΓNi≡N'i PLL'QRR∈EΓMLNN≡M'L'NN')
 
 wteE : ∀ {V} {Γ : Context V} {A P M B N L L' Q} →
   addpath Γ A ⊢ P ∶ appT (M ⇑ ⇑ ⇑) (var x₂) ≡〈 B 〉 appT (N ⇑ ⇑ ⇑) (var x₁) → 

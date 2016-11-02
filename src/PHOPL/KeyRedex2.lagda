@@ -94,7 +94,7 @@ postulate pre-wte--computeP : ∀ {m} {n} {V} {Γ : Context V} {S} {L₁ : Leave
                               valid Γ → SN L → SN L' → SN Q →
                               computeP Γ L₁ (APPP (minus (APP* MM NN (app* L L' (λλλ A P) Q) RR)) εε)
 
-private pre-wte-compute : ∀ {n} {V} {Γ : Context V} {A P M} {BB : snocVec Type n} {C M' L L' Q NN NN' RR} →
+pre-wte-compute : ∀ {n} {V} {Γ : Context V} {A P M} {BB : snocVec Type n} {C M' L L' Q NN NN' RR} →
                         addpath Γ A ⊢ P ∶ appT (M ⇑ ⇑ ⇑) (var x₂) ≡〈 Pi BB C 〉 appT (M' ⇑ ⇑ ⇑) (var x₁) →
                         E Γ A L → E Γ A L' → E' Γ (L ≡〈 A 〉 L') Q →
                         Emult Γ (toSnocTypes BB) (toSnocListExp NN) → Emult Γ (toSnocTypes BB) (toSnocListExp NN') → Emult Γ (eqmult NN BB NN') (toSnocListExp RR) →
@@ -145,7 +145,7 @@ pre-wte-compute {n} {Γ = Γ} {A} {P} {M} {BB} {C ⇛ C₁} {M'} {L} {L'} {Q} {N
   (subst₂ (Emult Δ) toSnocTypes-rep toSnocListExp-rep (Emult-rep NN∈EΓBB ρ∶Γ⇒RΔ validΔ) snoc E'I Δ⊢N∶C computeN) 
   (subst₂ (Emult Δ) toSnocTypes-rep toSnocListExp-rep (Emult-rep NN'∈EΓBB ρ∶Γ⇒RΔ validΔ) snoc E'I Δ⊢N'∶C computeN') 
   ((subst₂ (Emult Δ) eqmult-rep toSnocListExp-rep (Emult-rep RR∈EΓNN≡NN' ρ∶Γ⇒RΔ validΔ)) snoc subst₂ (λ a b → E' Δ (a ≡〈 C 〉 b) Q') 
-    (Prelims.sym (botSub-ups {KK = Prelims.replicate n -Path})) (Prelims.sym (botSub-ups {KK = Prelims.replicate n -Path})) (E'I Δ⊢Q∶N≡N' computeQ))
+    (Prelims.sym (botSub-ups (Prelims.replicate n -Path))) (Prelims.sym (botSub-ups (Prelims.replicate n -Path))) (E'I Δ⊢Q∶N≡N' computeQ))
   (subst₃ (λ a b c → E' Δ (a ≡〈 C₁ 〉 b) c) (cong (λ x → appT x N) (APP-rep NN)) (cong (λ x → appT x N') (APP-rep NN')) 
     (cong (λ x → app* N N' x Q') (let open ≡-Reasoning in 
       begin

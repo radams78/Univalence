@@ -58,8 +58,8 @@ botSub-ups' : ∀ {V} KK {MM : snocListExp V KK} → xx₀:= MM •SR ups KK ∼
 botSub-ups' [] _ = refl
 botSub-ups' (KK snoc _) {_ snoc _} x = botSub-ups' KK x
 
-botSub-ups : ∀ {V KK C K} {MM : snocListExp V KK} {E : Subexp V C K} → E 〈 ups KK 〉 ⟦ xx₀:= MM ⟧ ≡ E
-botSub-ups {V} {KK} {C} {K} {MM} {E} = let open ≡-Reasoning in 
+botSub-ups : ∀ {V} KK {C K} {MM : snocListExp V KK} {E : Subexp V C K} → E 〈 ups KK 〉 ⟦ xx₀:= MM ⟧ ≡ E
+botSub-ups {V} KK {MM = MM} {E} = let open ≡-Reasoning in 
   begin
     E 〈 ups KK 〉 ⟦ xx₀:= MM ⟧
   ≡⟨⟨ sub-compSR E ⟩⟩

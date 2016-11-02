@@ -328,8 +328,7 @@ able to prove that this is a composition $\mathrm{substitution} ; \mathrm{substi
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{renaming} \AgdaSymbol{(}liftOp-idOp \AgdaSymbol{to} liftSub-idOp\AgdaSymbol{;}\<\\
-\>           ap-idOp \AgdaSymbol{to} sub-idOp\AgdaSymbol{;}\<\\
-\>           ap-congl \AgdaSymbol{to} sub-congr\AgdaSymbol{;}\<\\
+\>           ap-idOp \AgdaSymbol{to} sub-idSub\AgdaSymbol{;}\<\\
 \>           ap-congr \AgdaSymbol{to} sub-congl\AgdaSymbol{;}\<\\
 \>           unitl \AgdaSymbol{to} sub-unitl\AgdaSymbol{;}\<\\
 \>           unitr \AgdaSymbol{to} sub-unitr\AgdaSymbol{;}\<\\
@@ -339,6 +338,12 @@ able to prove that this is a composition $\mathrm{substitution} ; \mathrm{substi
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{public}\<%
+\\
+%
+\\
+\>\AgdaFunction{sub-congr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{E} \AgdaSymbol{:} \AgdaDatatype{Subexp} \AgdaBound{U} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaBound{ρ} \AgdaFunction{∼} \AgdaBound{σ} \AgdaSymbol{→} \AgdaBound{E} \AgdaFunction{⟦} \AgdaBound{ρ} \AgdaFunction{⟧} \AgdaDatatype{≡} \AgdaBound{E} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\<%
+\\
+\>\AgdaFunction{sub-congr} \AgdaBound{E} \AgdaBound{ρ∼σ} \AgdaSymbol{=} \AgdaFunction{OpFamily.ap-congl} \AgdaFunction{SUB} \AgdaBound{ρ∼σ} \AgdaBound{E}\<%
 \end{code}
 }
 

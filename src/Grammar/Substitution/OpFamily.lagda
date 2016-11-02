@@ -175,7 +175,7 @@ open OpFamily SUB using (comp-congl;comp-congr)
            assoc to sub-assoc)
   public
 
-sub-congr : ∀ {U V C K} {ρ σ : Sub U V} (E : Subexp U C K) → ρ ∼ σ → E ⟦ ρ ⟧ ≡ E ⟦ σ ⟧
+sub-congr : ∀ {U V C K} {ρ σ : Sub U V} (E : Subexp U C K) → ρ ∼ σ → E ⟦ ρ ⟧ ≡ E ⟦ σ ⟧
 sub-congr E ρ∼σ = OpFamily.ap-congl SUB ρ∼σ E
 \end{code}
 }

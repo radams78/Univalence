@@ -87,4 +87,14 @@ $\rho(x) : A \langle ρ \rangle$ is an entry in $\Delta$.
 \>\AgdaBound{Γ} \AgdaFunction{,,} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaBound{Γ}\<%
 \\
 \>\AgdaBound{Γ} \AgdaFunction{,,} \AgdaSymbol{(}\AgdaBound{A} \AgdaInductiveConstructor{,} \AgdaBound{AA}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaSymbol{(}\AgdaBound{Γ} \AgdaInductiveConstructor{,} \AgdaBound{A}\AgdaSymbol{)} \AgdaFunction{,,} \AgdaBound{AA}\<%
+\\
+%
+\\
+\>\AgdaKeyword{infix} \AgdaNumber{25} \AgdaFixityOp{\_,,,\_}\<%
+\\
+\>\AgdaFunction{\_,,,\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{AA}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{snocTypes} \AgdaBound{V} \AgdaBound{AA} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaSymbol{(}\AgdaFunction{snoc-extend} \AgdaBound{V} \AgdaBound{AA}\AgdaSymbol{)}\<%
+\\
+\>\AgdaBound{Γ} \AgdaFunction{,,,} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaBound{Γ}\<%
+\\
+\>\AgdaBound{Γ} \AgdaFunction{,,,} \AgdaSymbol{(}\AgdaBound{AA} \AgdaInductiveConstructor{snoc} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaSymbol{(}\AgdaBound{Γ} \AgdaFunction{,,,} \AgdaBound{AA}\AgdaSymbol{)} \AgdaInductiveConstructor{,} \AgdaBound{A}\<%
 \end{code}
