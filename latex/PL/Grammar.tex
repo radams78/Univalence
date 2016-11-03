@@ -121,8 +121,8 @@ The syntax of the system called \emph{propositional logic} is given by the follo
 \>[23]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaField{Constructor} \AgdaSymbol{=} \AgdaDatatype{PLCon}\AgdaSymbol{;} \<[25]%
-\>[25]\<%
+\>[4]\AgdaField{Con} \AgdaSymbol{=} \AgdaDatatype{PLCon}\AgdaSymbol{;} \<[17]%
+\>[17]\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaField{parent} \AgdaSymbol{=} \AgdaFunction{PLparent} \AgdaSymbol{\}} \AgdaSymbol{\}}\<%
@@ -171,7 +171,7 @@ The relation of \emph{$\beta$-reduction} is defined by: $(\lambda x \delta) \eps
 \>\AgdaKeyword{data} \AgdaDatatype{β} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{Constructor} \AgdaSymbol{(}\AgdaInductiveConstructor{SK} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaFunction{ListAbs} \AgdaBound{V} \AgdaBound{C} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\>[2]\AgdaFunction{Con} \AgdaSymbol{(}\AgdaInductiveConstructor{SK} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaFunction{ListAbs} \AgdaBound{V} \AgdaBound{C} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaInductiveConstructor{βI} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{φ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ε}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{β} \AgdaInductiveConstructor{-app} \AgdaSymbol{(}\AgdaFunction{ΛP} \AgdaBound{φ} \AgdaBound{δ} \AgdaInductiveConstructor{∷} \AgdaBound{ε} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{δ} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{ε} \AgdaFunction{⟧}\AgdaSymbol{)}\<%

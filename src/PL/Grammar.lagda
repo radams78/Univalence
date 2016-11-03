@@ -56,7 +56,7 @@ Propositional-Logic : Grammar
 Propositional-Logic = record { 
   taxonomy = PLtaxonomy; 
   isGrammar = record { 
-    Constructor = PLCon; 
+    Con = PLCon; 
     parent = PLparent } }
 
 open import Grammar Propositional-Logic
@@ -84,7 +84,7 @@ The relation of \emph{$\beta$-reduction} is defined by: $(\lambda x \delta) \eps
 
 \begin{code}
 data β {V} : ∀ {K} {C} →
-  Constructor (SK C K) → ListAbs V C → Expression V K → Set where
+  Con (SK C K) → ListAbs V C → Expression V K → Set where
   βI : ∀ {φ} {δ} {ε} → β -app (ΛP φ δ ∷ ε ∷ []) (δ ⟦ x₀:= ε ⟧)
 
 open import Reduction Propositional-Logic β

@@ -1,0 +1,170 @@
+%%%%%%%%%%%%%%%%%%%%%%% file template.tex %%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This is a general template file for the LaTeX package SVJour3
+% for Springer journals.          Springer Heidelberg 2010/09/16
+%
+% Copy it to a new file with a new name and use it as the basis
+% for your article. Delete % signs as needed.
+%
+% This template includes a few options for different layouts and
+% content for various journals. Please consult a previous issue of
+% your journal as needed.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% First comes an example EPS file -- just ignore it and
+% proceed on the \documentclass line
+% your LaTeX will extract the file if required
+\begin{filecontents*}{example.eps}
+%!PS-Adobe-3.0 EPSF-3.0
+%%BoundingBox: 19 19 221 221
+%%CreationDate: Mon Sep 29 1997
+%%Creator: programmed by hand (JK)
+%%EndComments
+gsave
+newpath
+  20 20 moveto
+  20 220 lineto
+  220 220 lineto
+  220 20 lineto
+closepath
+2 setlinewidth
+gsave
+  .4 setgray fill
+grestore
+stroke
+grestore
+\end{filecontents*}
+%
+\RequirePackage{fix-cm}
+%
+%\documentclass{svjour3}                     % onecolumn (standard format)
+\documentclass[smallcondensed,draft]{svjour3}     % onecolumn (ditto)
+%TODO Remove 'draft' before submitting
+%\documentclass[smallextended]{svjour3}       % onecolumn (second format)
+%\documentclass[twocolumn]{svjour3}          % twocolumn
+%
+\smartqed  % flush right qed marks, e.g. at end of proof
+%
+\usepackage{graphicx}
+%
+ \usepackage{mathptmx}      % use Times fonts if available on your TeX system
+%
+% insert here the call for the packages your document requires
+%\usepackage{latexsym}
+% etc.
+%
+% please place your own definitions here and don't use \def but
+% \newcommand{}{}
+%
+% Insert the name of "your journal" with
+% \journalname{myjournal}
+\journalname{Journal of Automated Reasoning}
+%
+\begin{document}
+\input{unicode}
+
+\title{A Formalised Proof of Strong Normalisation for Higher-Order Minimal Logic with Univalence}
+%TODO Insert details of CAU grant
+
+%\subtitle{Do you have a subtitle?\\ If so, write it here}
+
+\titlerunning{Higher-Order Minimal Logic with Univalence}        % if too long for running head
+
+\author{Robin Adams \and Marc Bezem \and Thierry Coquand}
+
+%\authorrunning{Short form of author list} % if too long for running head
+
+\institute{Robin Adams \at
+              Universitetet i Bergen \\
+              Institutt for Informatikk \\
+              Postboks 7800 \\
+              N-5020 BERGEN \\
+              Norway \\
+              \email{robin.adams@uib.no}           %  \\
+%             \emph{Present address:} of F. Author  %  if needed
+           \and
+           Marc Bezem \at
+              Universitetet i Bergen \\
+              Institutt for Informatikk \\
+              Postboks 7800 \\
+              N-5020 BERGEN \\
+              Norway \\
+              \email{bezem@ii.uib.no}           %  \\
+           \and
+           Thierry Coquand \at
+              Chalmers tekniska h\"{o}gskola \\
+              Data- och informationsteknik \\
+              412 96 G\"{o}teborg \\
+              Sweden \\
+              \email{coquand@chalmers.se}
+}
+
+\date{Received: date / Accepted: date}
+% The correct dates will be entered by the editor
+
+
+\maketitle
+
+\begin{abstract}
+    Homotopy type theory offers the promise of a formal system for the univalent foundations of mathematics. However, if we simply add the univalence axiom to type theory, then we lose the property of canonicity --- that every term computes to a normal form. A computation becomes `stuck' when it reaches the point that it needs to evaluate a proof term that is an application of the univalence axiom. So we wish to find a way to compute with the univalence axiom.
+
+    As a first step, we present here a system of higher-order propositional logic, with a universe Omega of propositions closed under implication and quantification over any simple type over Omega. We add a type $M =_A N$ for any terms $M$, $N$ of type $A$, and two ways to prove an equality: reflexivity, and the univalence axiom. We present reduction relations for this system, and prove the reduction confluent and strongly normalizing on the well-typed terms. 
+
+This proof has been formalised in Agda.  The formalisation provides a general notion of grammar for a syntax with binding and reduction relation.
+\end{abstract}
+
+\section{Introduction}
+\label{intro}
+The rules of deduction of a type theory are traditionally justified by a \emph{meaning explanation} \cite{ML:ITT}, in which to know that a given term has a given type is to know that it computes to a \emph{canonical object} of that type.  For such a meaning explanation to be possible, the type theory should have the following properties:
+\begin{itemize}
+\item \textbf{Confluence} --- The reduction relation should be confluent.
+\item \textbf{Normalization} --- Every well-typed term should reduce to a normal form.
+\item Every closed normal form of type $A$ is a canonical object of type $A$.
+\end{itemize}
+From these three properties, we have:
+\begin{itemize}
+\item \textbf{Canonicity} --- Every term of type $A$ reduces to a unique canonical object of type $A$.
+\end{itemize}
+
+It is desirable to have, in addition, \emph{strong normalization}, so that we know that we are free to choose whatever reduction strategy we please.
+
+The \emph{univalence axiom} of Homotopy Type theory (HoTT) \cite{hottbook} breaks the property of canonicity.  It postulates a
+constant
+\[ \isotoid : A \simeq B \rightarrow A = B \]
+that is an inverse to the canonical function $A = B \rightarrow A \simeq B$.  When a computation reaches a point
+where we eliminate a path (proof of equality) formed by $\isotoid$, it gets 'stuck'.
+
+As possible solutions to this problem, we may try to do with a weaker property than canonicity, such as \emph{propositional canonicity}.
+We may attempt to prove that every closed term of type $\mathbb{N}$ is \emph{propositionally} equal to a numeral, as conjectured by Voevodsky.  Or we may attempt to change the definition of equality to make $\isotoid$ definable\cite{Polonsky14a}, or
+shift to an entirely different type theory such as Cubical Type Theory\cite{cchm:cubical}.
+
+We could also try a more conservative approach, and simply attempt to find a reduction relation for a type theory involving $\isotoid$ that satisfies
+all three of the properties above.  There seems to be no reason \emph{a priori} to believe this is not possible, but it is difficult to do because
+the full Homotopy Type Theory is a complex and interdependent system.  We can tackle the problem by adding univalence to a much simpler system, finding
+a well-behaved reduction relation, then doing the same for more and more complex systems, gradually approaching the full strength of HoTT.
+
+In this paper, we present a system we call $\lambda o e$, or predicative higher-order minimal logic.  It is a type theory with two universes: the universe $\Omega$
+of \emph{propositions}, and the universe of \emph{types}.  The propositions are closed under $\supset$ (implication) and include $\bot$ (falsehood), and an equality proposition $M =_A N$ for
+any type $A$ and terms $M : A$ and $N : A$.  The types include $\Omega$ itself and are closed under $\rightarrow$ (non-dependent function type).
+
+There are two canonical forms for proofs of $M =_\Omega N$.  For any term $M : \Omega$, we have $\reff{M} : M =_\Omega M$.  We also add univalence for this system, in this form:
+if $\delta : \phi \supset \psi$ and $\epsilon : \psi \supset\phi$, then $\univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi$.  
+
+We present a reduction relation for this system, and prove it satisfies confluence (Corollary \ref{cor:confluence}), strong normalization (Corollary \ref{cor:SN}) and canonicity (Corollary \ref{cor:canon}).
+
+For the future, we wish to expand the system with universal quantification, and expand it to a 2-dimensional system (with equations between proofs).
+
+%\begin{acknowledgements}
+%If you'd like to thank anyone, place your comments here
+%and remove the percent signs.
+%\end{acknowledgements}
+
+% BibTeX users please use one of
+%\bibliographystyle{spbasic}      % basic style, author-year citations
+\bibliographystyle{spmpsci}      % mathematics and physical sciences
+%\bibliographystyle{spphys}       % APS-like style for physics
+\bibliography{type}   % name your BibTeX data base
+
+\end{document}
+

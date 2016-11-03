@@ -6,7 +6,7 @@ module Grammar.Context (G : Grammar) where
 
 open import Data.Nat
 open import Data.Fin
-open import Relation.Binary.PropositionalEquality
+open import Prelims
 open Grammar G
 open import Grammar.Replacement G
 \end{code}
@@ -59,3 +59,81 @@ _,,,_ : ∀ {V AA} → Context V → snocTypes V AA → Context (snoc-extend V A
 Γ ,,, [] = Γ
 Γ ,,, (AA snoc A) = (Γ ,,, AA) , A
 \end{code}
+
+\begin{lemma}
+\begin{enumerate}
+\item
+$\id{P}$ is a replacement $\Gamma \rightarrow \Gamma$.
+
+\begin{code}
+idRep-typed : ∀ {V} {Γ : Context V} → idRep V ∶ Γ ⇒R Γ
+\end{code}
+
+\AgdaHide{
+\begin{code}
+idRep-typed _ = sym rep-idRep
+\end{code}
+}
+
+\item
+$\uparrow$ is a replacement $\Gamma \rightarrow \Gamma , \phi$.
+
+\begin{code}
+↑-typed : ∀ {V Γ K} {A : Expression V (parent K)} → upRep ∶ Γ ⇒R (Γ , A)
+\end{code}
+
+\AgdaHide{
+\begin{code}
+↑-typed _ = refl
+\end{code}
+}
+
+\item
+If $\rho : \Gamma \rightarrow \Delta$ then $(\rho , K) : (\Gamma , x : A) \rightarrow (\Delta , x : A 〈 ρ 〉)$.
+
+\begin{code}
+liftRep-typed : ∀ {U V ρ K} {Γ : Context U} {Δ : Context V} {A : Expression U (parent K)} → 
+  ρ ∶ Γ ⇒R Δ → liftRep K ρ ∶ (Γ , A) ⇒R (Δ , A 〈 ρ 〉)
+\end{code}
+
+\AgdaHide{
+\begin{code}
+--TODO Refactor?
+liftRep-typed {A = A} ρ∶Γ⇒Δ x₀ = sym (liftRep-upRep A)
+liftRep-typed {ρ = ρ} {K} {Γ} {Δ} {A} ρ∶Γ⇒Δ {L} (↑ x) = let open ≡-Reasoning in 
+  begin
+    typeof (ρ L x) Δ ⇑
+  ≡⟨ rep-congl (ρ∶Γ⇒Δ x) ⟩
+    typeof x Γ 〈 ρ 〉 ⇑
+  ≡⟨⟨ liftRep-upRep (typeof x Γ) ⟩⟩
+    (typeof x Γ ⇑) 〈 liftRep K ρ 〉
+  ∎
+\end{code}
+}
+
+\item
+If $\rho : \Gamma \rightarrow \Delta$ and $\sigma : \Delta \rightarrow \Theta$ then $\sigma \circ \rho : \Gamma \rightarrow \Delta$.
+
+\begin{code}
+•R-typed : ∀ {U V W} {σ : Rep V W} {ρ : Rep U V} {Γ} {Δ} {Θ} → 
+  ρ ∶ Γ ⇒R Δ → σ ∶ Δ ⇒R Θ → (σ •R ρ) ∶ Γ ⇒R Θ
+\end{code}
+
+\AgdaHide{
+\begin{code}
+•R-typed {U} {V} {W} {σ} {ρ} {Γ} {Δ} {Θ} ρ∶Γ⇒RΔ σ∶Δ⇒RΘ {K} x = let open ≡-Reasoning in 
+  begin
+    typeof (σ K (ρ K x)) Θ
+  ≡⟨ σ∶Δ⇒RΘ (ρ K x) ⟩
+    typeof (ρ K x) Δ 〈 σ 〉
+  ≡⟨ rep-congl (ρ∶Γ⇒RΔ x) ⟩
+    typeof x Γ 〈 ρ 〉 〈 σ 〉
+  ≡⟨⟨ rep-comp (typeof x Γ) ⟩⟩
+    typeof x Γ 〈 σ •R ρ 〉
+  ∎
+\end{code}
+}
+
+\end{enumerate}
+\end{lemma}
+

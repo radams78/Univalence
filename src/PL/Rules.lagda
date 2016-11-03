@@ -42,104 +42,30 @@ change-type = subst (λ A → _ ⊢ _ ∶ A)
 Let $\rho$ be a replacement.  We say $\rho$ is a replacement from $\Gamma$ to $\Delta$, $\rho : \Gamma \rightarrow \Delta$,
 iff for all $x : \phi \in \Gamma$ we have $\rho(x) : \phi \in \Delta$.
 
-\begin{code}
-_∶_⇒R_ : ∀ {P} {Q} → Rep P Q → Context P → Context Q → Set
-ρ ∶ Γ ⇒R Δ = ∀ x → unprp (typeof {K = -proof} (ρ _ x) Δ) ≡ unprp (typeof x Γ )
-\end{code}
-
 \begin{lemma}$ $
-\begin{enumerate}
-\item
-$\id{P}$ is a replacement $\Gamma \rightarrow \Gamma$.
-\item
-$\uparrow$ is a replacement $\Gamma \rightarrow \Gamma , \phi$.
-\item
-If $\rho : \Gamma \rightarrow \Delta$ then $(\rho , \mathrm{Proof}) : (\Gamma , x : \phi) \rightarrow (\Delta , x : \phi)$.
-\item
-If $\rho : \Gamma \rightarrow \Delta$ and $\sigma : \Delta \rightarrow \Theta$ then $\sigma \circ \rho : \Gamma \rightarrow \Delta$.
-\item
 (\textbf{Weakening})
 If $\rho : \Gamma \rightarrow \Delta$ and $\Gamma \vdash \delta : \phi$ then $\Delta \vdash \delta \langle \rho \rangle : \phi$.
 \end{enumerate}
 \end{lemma}
 
 \begin{code}
-idRep-typed : ∀ {P} {Γ : Context P} → idRep P ∶ Γ ⇒R Γ
-\end{code}
-
-\AgdaHide{
-\begin{code}
-idRep-typed {P} {Γ} x = refl
-\end{code}
-}
-
-\begin{code}
 unprp-rep : ∀ {U V} φ (ρ : Rep U V) → unprp (φ 〈 ρ 〉) ≡ unprp φ
 unprp-rep (app (-prp _) []) _ = refl
 
-↑-typed : ∀ {P} {Γ : Context P} {φ : Prop} → upRep ∶ Γ ⇒R (Γ ,P φ)
-\end{code}
-
-\AgdaHide{
-\begin{code}
-↑-typed {P} {Γ} {φ} x = unprp-rep (typeof x Γ) upRep
-\end{code}
-}
-
-\begin{code}
-liftRep-typed : ∀ {P} {Q} {ρ} {Γ : Context P} {Δ : Context Q} {φ : Prop} → 
-  ρ ∶ Γ ⇒R Δ → liftRep -proof ρ ∶ (Γ ,P φ) ⇒R (Δ ,P φ)
-\end{code}
-
-\AgdaHide{
-\begin{code}
-liftRep-typed {P} {Q = Q} {ρ = ρ} {Γ} {Δ = Δ} {φ = φ} ρ∶Γ→Δ x₀ = refl
-liftRep-typed {Q = Q} {ρ = ρ} {Γ = Γ} {Δ = Δ} {φ} ρ∶Γ→Δ (↑ x) = 
-  let open ≡-Reasoning in 
-  begin
-    unprp (typeof (liftRep -proof ρ -proof (↑ x)) (Δ ,P φ))
-  ≡⟨⟩
-    unprp (typeof (↑ (ρ -proof x)) (Δ ,P φ))
-  ≡⟨⟩
-    unprp (typeof (ρ -proof x) Δ 〈 upRep 〉)
-  ≡⟨ unprp-rep (typeof (ρ -proof x) Δ) upRep ⟩
-    unprp (typeof (ρ -proof x) Δ)
-  ≡⟨ ρ∶Γ→Δ x ⟩
-    unprp (typeof x Γ)
-  ≡⟨⟨ unprp-rep (typeof x Γ) upRep ⟩⟩
-    unprp (typeof x Γ 〈 upRep 〉)
-  ≡⟨⟩
-    unprp (typeof (↑ x) (Γ ,P φ))
-  ∎
-\end{code}
-}
-
-\begin{code}
-•R-typed : ∀ {P} {Q} {R} {σ : Rep Q R} {ρ : Rep P Q} {Γ} {Δ} {Θ} → 
-  ρ ∶ Γ ⇒R Δ → σ ∶ Δ ⇒R Θ → (σ •R ρ) ∶ Γ ⇒R Θ
-\end{code}
-
-\AgdaHide{
-\begin{code}
-•R-typed {R = R} {σ} {ρ} {Γ} {Δ} {Θ} ρ∶Γ→Δ σ∶Δ→Θ x = let open ≡-Reasoning in 
-  begin 
-    unprp (typeof (σ -proof (ρ -proof x)) Θ)
-  ≡⟨ σ∶Δ→Θ (ρ -proof x) ⟩
-    unprp (typeof (ρ -proof x) Δ)
-  ≡⟨ ρ∶Γ→Δ x ⟩
-    unprp (typeof x Γ)
-  ∎
-\end{code}
-}
-
-\begin{code}
 weakening : ∀ {P} {Q} {Γ : Context P} {Δ : Context Q} {ρ} {δ} {φ} → 
   Γ ⊢ δ ∶ φ → ρ ∶ Γ ⇒R Δ → Δ ⊢ δ 〈 ρ 〉 ∶ φ
 \end{code}
 
 \AgdaHide{
 \begin{code}
-weakening {P} {Q} {Γ} {Δ} {ρ} (var p) ρ∶Γ→Δ = change-type (ρ∶Γ→Δ p) (var (ρ _ p))
+weakening {P} {Q} {Γ} {Δ} {ρ} (var p) ρ∶Γ⇒RΔ = change-type (let open ≡-Reasoning in 
+  begin
+    unprp (typeof (ρ -proof p) Δ)
+  ≡⟨ cong unprp (ρ∶Γ⇒RΔ p) ⟩
+    unprp (typeof p Γ 〈 ρ 〉)
+  ≡⟨ unprp-rep (typeof p Γ) ρ ⟩
+    unprp (typeof p Γ)
+  ∎) (var (ρ -proof p))
 weakening (app Γ⊢δ∶φ→ψ Γ⊢ε∶φ) ρ∶Γ→Δ = app (weakening Γ⊢δ∶φ→ψ ρ∶Γ→Δ) (weakening Γ⊢ε∶φ ρ∶Γ→Δ)
 weakening .{P} {Q} .{Γ} {Δ} {ρ} (Λ {P} {Γ} {φ} {δ} {ψ} Γ,φ⊢δ∶ψ) ρ∶Γ→Δ = Λ 
   (weakening {P , -proof} {Q , -proof} {Γ ,P φ} {Δ ,P φ} {liftRep -proof ρ} {δ} {ψ} 
@@ -179,7 +105,7 @@ liftSub-typed {σ = σ} {Γ} {Δ} {φ} σ∶Γ⇒Δ x =
   change-type (sym (unprp-rep (pretypeof x (Γ ,P φ)) upRep)) (pre-LiftSub-typed x) where
   pre-LiftSub-typed : ∀ x → Δ ,P φ ⊢ liftSub -proof σ -proof x ∶ unprp (pretypeof x (Γ ,P φ))
   pre-LiftSub-typed x₀ = var x₀
-  pre-LiftSub-typed (↑ x) = weakening (σ∶Γ⇒Δ x) (↑-typed {φ = φ})
+  pre-LiftSub-typed (↑ x) = weakening (σ∶Γ⇒Δ x) (↑-typed {K = -proof} {A = app (-prp φ) []})
 \end{code}
 }
 
