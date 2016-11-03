@@ -5,6 +5,7 @@ module PL.Computable where
 open import Data.Empty
 open import Data.Product renaming (_,_ to _,p_)
 open import Prelims
+open import Prelims.Closure
 open import PL.Grammar
 open PLgrammar
 open import Grammar Propositional-Logic
@@ -70,9 +71,9 @@ If $\delta \in C_\Gamma(\phi)$ and $\delta \twoheadrightarrow_\beta \epsilon$ th
 \AgdaHide{
 \begin{code}
 C-osr : ∀ {P} {Γ : Context P} φ {δ} {ε} → C Γ φ δ → δ ⇒ ε → C Γ φ ε
-C-osr (⊥P) (Γ⊢δ∶x₀ ,p SNδ) δ→ε = (subject-reduction Γ⊢δ∶x₀ δ→ε) ,p (SNred SNδ (osr-red δ→ε))
+C-osr (⊥P) (Γ⊢δ∶x₀ ,p SNδ) δ→ε = (subject-reduction Γ⊢δ∶x₀ δ→ε) ,p (SNred SNδ (inc δ→ε))
 C-osr {Γ = Γ} (φ ⇛ ψ) {δ = δ} (Γ⊢δ∶φ⇒ψ ,p Cδ) δ→δ' = subject-reduction Γ⊢δ∶φ⇒ψ δ→δ' ,p 
-  (λ Q ρ ε ρ∶Γ→Δ ε∈Cφ → C-osr ψ (Cδ Q ρ ε ρ∶Γ→Δ ε∈Cφ) (app (appl (respects-osr REP β-respects-rep δ→δ'))))
+  (λ Q ρ ε ρ∶Γ→Δ ε∈Cφ → C-osr ψ (Cδ Q ρ ε ρ∶Γ→Δ ε∈Cφ) (app (appl (aposrr REP β-respects-rep δ→δ'))))
 \end{code}
 }
 
@@ -82,9 +83,9 @@ C-red : ∀ {P} {Γ : Context P} φ {δ} {ε} → C Γ φ δ → δ ↠ ε → C
 
 \AgdaHide{
 \begin{code}
-C-red φ δ∈CΓφ (osr-red δ⇒ε) = C-osr φ δ∈CΓφ δ⇒ε
+C-red φ δ∈CΓφ (inc δ⇒ε) = C-osr φ δ∈CΓφ δ⇒ε
 C-red _ δ∈CΓφ ref = δ∈CΓφ
-C-red φ δ∈CΓφ (trans-red δ↠ε ε↠χ) = C-red φ (C-red φ δ∈CΓφ δ↠ε) ε↠χ
+C-red φ δ∈CΓφ (trans δ↠ε ε↠χ) = C-red φ (C-red φ δ∈CΓφ δ↠ε) ε↠χ
 \end{code}
 }
 
@@ -127,8 +128,8 @@ NeutralC {P} {Γ} {δ} {φ ⇛ ψ} Γ⊢δ∶φ→ψ neutralδ hyp = Γ⊢δ∶�
 CsubSN {P} {Γ} {⊥P} = proj₂
 CsubSN {P} {Γ} {φ ⇛ ψ} {δ} P₁ = 
     SNap' {REP} {P} {P , -proof} {E = δ} {σ = upRep} β-respects-rep
-      (SNsubbodyl (SNsubexp (CsubSN {Γ = Γ ,P φ} ψ
-      (proj₂ P₁ (P , -proof) upRep (var x₀) (↑-typed {φ = φ})
+      (SNappl' (SNapp' (CsubSN {Γ = Γ ,P φ} ψ
+      (proj₂ P₁ (P , -proof) upRep (var x₀) (↑-typed {K = -proof} {A = app (-prp φ) []})
       (NeutralC φ (var _)
         (varNeutral x₀) 
         (λ _ ()))))))
@@ -173,7 +174,7 @@ WTEaux {Γ = Γ} {φ = φ} ψ Γ,p∶φ⊢δ∶ψ Γ⊢ε∶φ δ[p∶=ε]∈CΓ
     (λ δ' δ⇒δ' → WTEaux ψ
       (subject-reduction Γ,p∶φ⊢δ∶ψ δ⇒δ') 
       Γ⊢ε∶φ 
-      (C-osr ψ δ[p∶=ε]∈CΓψ (respects-osr SUB β-respects-sub δ⇒δ')) 
+      (C-osr ψ δ[p∶=ε]∈CΓψ (aposrr SUB β-respects-sub δ⇒δ')) 
       (SNδ δ' δ⇒δ') (SNI ε SNε)) 
     (λ ε' ε⇒ε' → WTEaux ψ
     Γ,p∶φ⊢δ∶ψ 
@@ -205,7 +206,7 @@ If $\delta \in C_\Gamma(\phi \rightarrow \psi)$ and $\epsilon \in C_\Gamma(\phi)
 \begin{code}
 C-app : ∀ {P} {Γ : Context P} {δ ε φ ψ} → C Γ (φ ⇛ ψ) δ → C Γ φ ε → C Γ ψ (appP δ ε)
 C-app {P} {Γ} {δ} {ε} {φ} {ψ} (Γ⊢δ∶φ⇛ψ ,p δ∈CΓφ⇛ψ) ε∈CΓφ =
-  subst (λ x → C Γ ψ (appP x ε)) ap-idRep (δ∈CΓφ⇛ψ P (idRep P) ε idRep-typed ε∈CΓφ)
+  subst (λ x → C Γ ψ (appP x ε)) rep-idRep (δ∈CΓφ⇛ψ P (idRep P) ε idRep-typed ε∈CΓφ)
 \end{code}
 
 A substitution $\sigma$ is a \emph{computable} substitution from $\Gamma$ to $\Delta$, $\sigma : \Gamma \rightarrow_C \Delta$,
@@ -274,7 +275,7 @@ SNmainlemma {P} {Γ = Γ} {σ = σ} {Δ} (Λ {φ = φ} {δ = δ} {ψ} Γ,φ⊢δ
             δ ⟦ x₀:= ε • liftSub _ (ρ •RS σ) ⟧
           ≡⟨ sub-comp δ ⟩
             δ ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= ε ⟧
-          ≡⟨ sub-congl (sub-congr liftSub-compRS δ) ⟩
+          ≡⟨ sub-congl (sub-congr δ liftSub-compRS) ⟩
             δ ⟦ liftRep _ ρ •RS liftSub _ σ ⟧ ⟦ x₀:= ε ⟧
           ≡⟨ sub-congl (sub-compRS δ) ⟩
             δ ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 ⟦ x₀:= ε ⟧
@@ -299,7 +300,7 @@ Strong-Normalization : ∀ {P} {Γ : Context P} {δ} {φ} → Γ ⊢ δ ∶ φ �
 \AgdaHide{
 \begin{code}
 Strong-Normalization {P} {Γ} {δ} {φ} Γ⊢δ:φ = subst SN 
-  sub-idOp 
+  sub-idSub
   (CsubSN (φ) {δ ⟦ idSub P ⟧}
   (SNmainlemma Γ⊢δ:φ (λ x → varC {x = x})))
 \end{code}

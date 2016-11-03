@@ -19,9 +19,6 @@ context-validity' (ctxER (varR _ (ctxTR (ctxTR validΓ))) _) = validΓ
 postulate change-type : ∀ {V} {Γ} {K} {M : Expression V (varKind K)} {A} {B} →
                       Γ ⊢ M ∶ A → A ≡ B → Γ ⊢ M ∶ B
 
-postulate liftRep-typed : ∀ {U} {V} {ρ : Rep U V} {K} {Γ} {Δ} {A} →
-                     ρ ∶ Γ ⇒R Δ → liftRep K ρ ∶ (Γ , A) ⇒R (Δ , A 〈 ρ 〉)
-
 postulate liftsRep-typed : ∀ {U} {V} {ρ : Rep U V} {Γ} {Δ} {A} →
                            ρ ∶ Γ ⇒R Δ → liftsRep pathDom ρ ∶ addpath Γ A ⇒R addpath Δ A
 \end{code}
@@ -126,8 +123,6 @@ postulate Prop-Validity : ∀ {V} {Γ : Context V} {δ : Proof V} {φ : Term V} 
 
 postulate change-codR : ∀ {U} {V} {ρ : Rep U V} {Γ : Context U} {Δ Δ' : Context V} →
                       ρ ∶ Γ ⇒R Δ → Δ ≡ Δ' → ρ ∶ Γ ⇒R Δ'
-
-postulate idRep-typed : ∀ {V} {Γ : Context V} → idRep V ∶ Γ ⇒R Γ
 
 postulate upRep-typed : ∀ {V} {Γ : Context V} {K} A → upRep ∶ Γ ⇒R _,_ {K = K} Γ A
 

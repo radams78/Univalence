@@ -39,16 +39,9 @@
 \\
 %
 \\
-\>\AgdaKeyword{postulate} \AgdaPostulate{liftRep-typed} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
-\\
-\>[0]\AgdaIndent{21}{}\<[21]%
-\>[21]\AgdaBound{ρ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒R} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaFunction{liftRep} \AgdaBound{K} \AgdaBound{ρ} \AgdaFunction{∶} \AgdaSymbol{(}\AgdaBound{Γ} \AgdaInductiveConstructor{,} \AgdaBound{A}\AgdaSymbol{)} \AgdaFunction{⇒R} \AgdaSymbol{(}\AgdaBound{Δ} \AgdaInductiveConstructor{,} \AgdaBound{A} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)}\<%
-\\
-%
-\\
 \>\AgdaKeyword{postulate} \AgdaPostulate{liftsRep-typed} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
-\>[21]\AgdaIndent{27}{}\<[27]%
+\>[22]\AgdaIndent{27}{}\<[27]%
 \>[27]\AgdaBound{ρ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒R} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaFunction{liftsRep} \AgdaFunction{pathDom} \AgdaBound{ρ} \AgdaFunction{∶} \AgdaFunction{addpath} \AgdaBound{Γ} \AgdaBound{A} \AgdaFunction{⇒R} \AgdaFunction{addpath} \AgdaBound{Δ} \AgdaBound{A}\<%
 \end{code}
 }
@@ -129,7 +122,7 @@ If $\Gamma \vdash \mathcal{J}$, $\Gamma \subseteq \Delta$ and $\Delta \vald$ the
 \\
 \>\AgdaFunction{weakening} \AgdaSymbol{(}\AgdaInductiveConstructor{appR} \AgdaBound{Γ⊢M∶A⇛B} \AgdaBound{Γ⊢N∶A}\AgdaSymbol{)} \AgdaBound{validΔ} \AgdaBound{ρ∶Γ⇒RΔ} \AgdaSymbol{=} \AgdaInductiveConstructor{appR} \AgdaSymbol{(}\AgdaFunction{weakening} \AgdaBound{Γ⊢M∶A⇛B} \AgdaBound{validΔ} \AgdaBound{ρ∶Γ⇒RΔ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{weakening} \AgdaBound{Γ⊢N∶A} \AgdaBound{validΔ} \AgdaBound{ρ∶Γ⇒RΔ}\AgdaSymbol{)}\<%
 \\
-\>\AgdaFunction{weakening} \AgdaSymbol{(}\AgdaInductiveConstructor{ΛR} \AgdaBound{Γ,A⊢M∶B}\AgdaSymbol{)} \AgdaBound{validΔ} \AgdaBound{ρ∶Γ⇒RΔ} \AgdaSymbol{=} \AgdaInductiveConstructor{ΛR} \AgdaSymbol{(}\AgdaFunction{weakening} \AgdaBound{Γ,A⊢M∶B} \AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validΔ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaBound{ρ∶Γ⇒RΔ}\AgdaSymbol{))}\<%
+\>\AgdaFunction{weakening} \AgdaSymbol{(}\AgdaInductiveConstructor{ΛR} \AgdaBound{Γ,A⊢M∶B}\AgdaSymbol{)} \AgdaBound{validΔ} \AgdaBound{ρ∶Γ⇒RΔ} \AgdaSymbol{=} \AgdaInductiveConstructor{ΛR} \AgdaSymbol{(}\AgdaFunction{weakening} \AgdaBound{Γ,A⊢M∶B} \AgdaSymbol{(}\AgdaInductiveConstructor{ctxTR} \AgdaBound{validΔ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{liftRep-typed} \AgdaBound{ρ∶Γ⇒RΔ}\AgdaSymbol{))}\<%
 \\
 \>\AgdaFunction{weakening} \AgdaSymbol{(}\AgdaInductiveConstructor{⊥R} \AgdaSymbol{\_)} \AgdaBound{validΔ} \AgdaSymbol{\_} \AgdaSymbol{=} \AgdaInductiveConstructor{⊥R} \AgdaBound{validΔ}\<%
 \\
@@ -147,7 +140,7 @@ If $\Gamma \vdash \mathcal{J}$, $\Gamma \subseteq \Delta$ and $\Delta \vald$ the
 \>[6]\AgdaBound{Δ⊢φ∶Ω} \AgdaSymbol{=} \AgdaFunction{weakening} \AgdaBound{Γ⊢φ∶Ω} \AgdaBound{validΔ} \AgdaBound{ρ∶Γ⇒RΔ} \AgdaKeyword{in}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaInductiveConstructor{ΛPR} \AgdaBound{Δ⊢φ∶Ω} \AgdaSymbol{(}\AgdaPostulate{change-type} \AgdaSymbol{(}\AgdaFunction{weakening} \AgdaBound{Γ,φ⊢δ∶ψ} \AgdaSymbol{(}\AgdaInductiveConstructor{ctxPR} \AgdaBound{Δ⊢φ∶Ω}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaBound{ρ∶Γ⇒RΔ}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{liftRep-upRep} \AgdaBound{ψ}\AgdaSymbol{))}\<%
+\>[2]\AgdaInductiveConstructor{ΛPR} \AgdaBound{Δ⊢φ∶Ω} \AgdaSymbol{(}\AgdaPostulate{change-type} \AgdaSymbol{(}\AgdaFunction{weakening} \AgdaBound{Γ,φ⊢δ∶ψ} \AgdaSymbol{(}\AgdaInductiveConstructor{ctxPR} \AgdaBound{Δ⊢φ∶Ω}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{liftRep-typed} \AgdaBound{ρ∶Γ⇒RΔ}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{liftRep-upRep} \AgdaBound{ψ}\AgdaSymbol{))}\<%
 \\
 \>\AgdaFunction{weakening} \AgdaSymbol{(}\AgdaInductiveConstructor{convR} \AgdaBound{Γ⊢δ∶φ} \AgdaBound{Γ⊢ψ∶Ω} \AgdaBound{φ≃ψ}\AgdaSymbol{)} \AgdaBound{validΔ} \AgdaBound{ρ∶Γ⇒RΔ} \AgdaSymbol{=} \AgdaInductiveConstructor{convR} \AgdaSymbol{(}\AgdaFunction{weakening} \AgdaBound{Γ⊢δ∶φ} \AgdaBound{validΔ} \AgdaBound{ρ∶Γ⇒RΔ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{weakening} \AgdaBound{Γ⊢ψ∶Ω} \AgdaBound{validΔ} \AgdaBound{ρ∶Γ⇒RΔ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{conv-rep} \AgdaBound{φ≃ψ}\AgdaSymbol{)}\<%
 \\
@@ -161,7 +154,7 @@ If $\Gamma \vdash \mathcal{J}$, $\Gamma \subseteq \Delta$ and $\Delta \vald$ the
 \\
 \>\AgdaFunction{weakening} \AgdaSymbol{(}\AgdaInductiveConstructor{minusR} \AgdaBound{Γ⊢P∶φ≡ψ}\AgdaSymbol{)} \AgdaBound{validΔ} \AgdaBound{ρ∶Γ⇒RΔ} \AgdaSymbol{=} \AgdaInductiveConstructor{minusR} \AgdaSymbol{(}\AgdaFunction{weakening} \AgdaBound{Γ⊢P∶φ≡ψ} \AgdaBound{validΔ} \AgdaBound{ρ∶Γ⇒RΔ}\AgdaSymbol{)}\<%
 \\
-\>\AgdaFunction{weakening} \AgdaSymbol{(}\AgdaInductiveConstructor{lllR} \AgdaSymbol{\{}\AgdaArgument{B} \AgdaSymbol{=} \AgdaBound{B}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaBound{ΓAAE⊢P∶Mx≡Ny}\AgdaSymbol{)} \AgdaBound{validΔ} \AgdaBound{ρ∶Γ⇒RΔ} \AgdaSymbol{=} \AgdaInductiveConstructor{lllR} \AgdaSymbol{(}\AgdaPostulate{change-type} \AgdaSymbol{(}\AgdaFunction{weakening} \AgdaBound{ΓAAE⊢P∶Mx≡Ny} \AgdaSymbol{(}\AgdaFunction{valid-addpath} \AgdaBound{validΔ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaSymbol{(}\AgdaPostulate{liftRep-typed} \AgdaBound{ρ∶Γ⇒RΔ}\AgdaSymbol{))))} \<[187]%
+\>\AgdaFunction{weakening} \AgdaSymbol{(}\AgdaInductiveConstructor{lllR} \AgdaSymbol{\{}\AgdaArgument{B} \AgdaSymbol{=} \AgdaBound{B}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaBound{ΓAAE⊢P∶Mx≡Ny}\AgdaSymbol{)} \AgdaBound{validΔ} \AgdaBound{ρ∶Γ⇒RΔ} \AgdaSymbol{=} \AgdaInductiveConstructor{lllR} \AgdaSymbol{(}\AgdaPostulate{change-type} \AgdaSymbol{(}\AgdaFunction{weakening} \AgdaBound{ΓAAE⊢P∶Mx≡Ny} \AgdaSymbol{(}\AgdaFunction{valid-addpath} \AgdaBound{validΔ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{liftRep-typed} \AgdaSymbol{(}\AgdaFunction{liftRep-typed} \AgdaSymbol{(}\AgdaFunction{liftRep-typed} \AgdaBound{ρ∶Γ⇒RΔ}\AgdaSymbol{))))} \<[187]%
 \>[187]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
@@ -212,10 +205,6 @@ Induction on derivations.  The cases where $\delta$ or $P$ is a variable use Con
 \\
 \>[0]\AgdaIndent{22}{}\<[22]%
 \>[22]\AgdaBound{ρ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒R} \AgdaBound{Δ} \AgdaSymbol{→} \AgdaBound{Δ} \AgdaDatatype{≡} \AgdaBound{Δ'} \AgdaSymbol{→} \AgdaBound{ρ} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒R} \AgdaBound{Δ'}\<%
-\\
-%
-\\
-\>\AgdaKeyword{postulate} \AgdaPostulate{idRep-typed} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{idRep} \AgdaBound{V} \AgdaFunction{∶} \AgdaBound{Γ} \AgdaFunction{⇒R} \AgdaBound{Γ}\<%
 \\
 %
 \\

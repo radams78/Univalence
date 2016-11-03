@@ -10,6 +10,8 @@
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims}\<%
 \\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims.Closure}\<%
+\\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PL.Grammar}\<%
 \\
 \>\AgdaKeyword{open} \AgdaModule{PLgrammar}\<%
@@ -101,27 +103,27 @@ If $\delta \in C_\Gamma(\phi)$ and $\delta \twoheadrightarrow_\beta \epsilon$ th
 \begin{code}%
 \>\AgdaFunction{C-osr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{P}\AgdaSymbol{\}} \AgdaBound{φ} \AgdaSymbol{\{}\AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ε}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{C} \AgdaBound{Γ} \AgdaBound{φ} \AgdaBound{δ} \AgdaSymbol{→} \AgdaBound{δ} \AgdaDatatype{⇒} \AgdaBound{ε} \AgdaSymbol{→} \AgdaFunction{C} \AgdaBound{Γ} \AgdaBound{φ} \AgdaBound{ε}\<%
 \\
-\>\AgdaFunction{C-osr} \AgdaSymbol{(}\AgdaInductiveConstructor{⊥P}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{Γ⊢δ∶x₀} \AgdaInductiveConstructor{,p} \AgdaBound{SNδ}\AgdaSymbol{)} \AgdaBound{δ→ε} \AgdaSymbol{=} \AgdaSymbol{(}\AgdaFunction{subject-reduction} \AgdaBound{Γ⊢δ∶x₀} \AgdaBound{δ→ε}\AgdaSymbol{)} \AgdaInductiveConstructor{,p} \AgdaSymbol{(}\AgdaFunction{SNred} \AgdaBound{SNδ} \AgdaSymbol{(}\AgdaInductiveConstructor{osr-red} \AgdaBound{δ→ε}\AgdaSymbol{))}\<%
+\>\AgdaFunction{C-osr} \AgdaSymbol{(}\AgdaInductiveConstructor{⊥P}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{Γ⊢δ∶x₀} \AgdaInductiveConstructor{,p} \AgdaBound{SNδ}\AgdaSymbol{)} \AgdaBound{δ→ε} \AgdaSymbol{=} \AgdaSymbol{(}\AgdaFunction{subject-reduction} \AgdaBound{Γ⊢δ∶x₀} \AgdaBound{δ→ε}\AgdaSymbol{)} \AgdaInductiveConstructor{,p} \AgdaSymbol{(}\AgdaFunction{SNred} \AgdaBound{SNδ} \AgdaSymbol{(}\AgdaInductiveConstructor{inc} \AgdaBound{δ→ε}\AgdaSymbol{))}\<%
 \\
 \>\AgdaFunction{C-osr} \AgdaSymbol{\{}\AgdaArgument{Γ} \AgdaSymbol{=} \AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{φ} \AgdaInductiveConstructor{⇛} \AgdaBound{ψ}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaArgument{δ} \AgdaSymbol{=} \AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{Γ⊢δ∶φ⇒ψ} \AgdaInductiveConstructor{,p} \AgdaBound{Cδ}\AgdaSymbol{)} \AgdaBound{δ→δ'} \AgdaSymbol{=} \AgdaFunction{subject-reduction} \AgdaBound{Γ⊢δ∶φ⇒ψ} \AgdaBound{δ→δ'} \AgdaInductiveConstructor{,p} \<[87]%
 \>[87]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaSymbol{(λ} \AgdaBound{Q} \AgdaBound{ρ} \AgdaBound{ε} \AgdaBound{ρ∶Γ→Δ} \AgdaBound{ε∈Cφ} \AgdaSymbol{→} \AgdaFunction{C-osr} \AgdaBound{ψ} \AgdaSymbol{(}\AgdaBound{Cδ} \AgdaBound{Q} \AgdaBound{ρ} \AgdaBound{ε} \AgdaBound{ρ∶Γ→Δ} \AgdaBound{ε∈Cφ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaSymbol{(}\AgdaFunction{respects-osr} \AgdaFunction{REP} \AgdaFunction{β-respects-rep} \AgdaBound{δ→δ'}\AgdaSymbol{))))}\<%
+\>[2]\AgdaSymbol{(λ} \AgdaBound{Q} \AgdaBound{ρ} \AgdaBound{ε} \AgdaBound{ρ∶Γ→Δ} \AgdaBound{ε∈Cφ} \AgdaSymbol{→} \AgdaFunction{C-osr} \AgdaBound{ψ} \AgdaSymbol{(}\AgdaBound{Cδ} \AgdaBound{Q} \AgdaBound{ρ} \AgdaBound{ε} \AgdaBound{ρ∶Γ→Δ} \AgdaBound{ε∈Cφ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaSymbol{(}\AgdaFunction{aposrr} \AgdaFunction{REP} \AgdaFunction{β-respects-rep} \AgdaBound{δ→δ'}\AgdaSymbol{))))}\<%
 \end{code}
 }
 
 \begin{code}%
-\>\AgdaFunction{C-red} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{P}\AgdaSymbol{\}} \AgdaBound{φ} \AgdaSymbol{\{}\AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ε}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{C} \AgdaBound{Γ} \AgdaBound{φ} \AgdaBound{δ} \AgdaSymbol{→} \AgdaBound{δ} \AgdaDatatype{↠} \AgdaBound{ε} \AgdaSymbol{→} \AgdaFunction{C} \AgdaBound{Γ} \AgdaBound{φ} \AgdaBound{ε}\<%
+\>\AgdaFunction{C-red} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{P}\AgdaSymbol{\}} \AgdaBound{φ} \AgdaSymbol{\{}\AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ε}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{C} \AgdaBound{Γ} \AgdaBound{φ} \AgdaBound{δ} \AgdaSymbol{→} \AgdaBound{δ} \AgdaFunction{↠} \AgdaBound{ε} \AgdaSymbol{→} \AgdaFunction{C} \AgdaBound{Γ} \AgdaBound{φ} \AgdaBound{ε}\<%
 \end{code}
 
 \AgdaHide{
 \begin{code}%
-\>\AgdaFunction{C-red} \AgdaBound{φ} \AgdaBound{δ∈CΓφ} \AgdaSymbol{(}\AgdaInductiveConstructor{osr-red} \AgdaBound{δ⇒ε}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{C-osr} \AgdaBound{φ} \AgdaBound{δ∈CΓφ} \AgdaBound{δ⇒ε}\<%
+\>\AgdaFunction{C-red} \AgdaBound{φ} \AgdaBound{δ∈CΓφ} \AgdaSymbol{(}\AgdaInductiveConstructor{inc} \AgdaBound{δ⇒ε}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{C-osr} \AgdaBound{φ} \AgdaBound{δ∈CΓφ} \AgdaBound{δ⇒ε}\<%
 \\
 \>\AgdaFunction{C-red} \AgdaSymbol{\_} \AgdaBound{δ∈CΓφ} \AgdaInductiveConstructor{ref} \AgdaSymbol{=} \AgdaBound{δ∈CΓφ}\<%
 \\
-\>\AgdaFunction{C-red} \AgdaBound{φ} \AgdaBound{δ∈CΓφ} \AgdaSymbol{(}\AgdaInductiveConstructor{trans-red} \AgdaBound{δ↠ε} \AgdaBound{ε↠χ}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{C-red} \AgdaBound{φ} \AgdaSymbol{(}\AgdaFunction{C-red} \AgdaBound{φ} \AgdaBound{δ∈CΓφ} \AgdaBound{δ↠ε}\AgdaSymbol{)} \AgdaBound{ε↠χ}\<%
+\>\AgdaFunction{C-red} \AgdaBound{φ} \AgdaBound{δ∈CΓφ} \AgdaSymbol{(}\AgdaInductiveConstructor{trans} \AgdaBound{δ↠ε} \AgdaBound{ε↠χ}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{C-red} \AgdaBound{φ} \AgdaSymbol{(}\AgdaFunction{C-red} \AgdaBound{φ} \AgdaBound{δ∈CΓφ} \AgdaBound{δ↠ε}\AgdaSymbol{)} \AgdaBound{ε↠χ}\<%
 \end{code}
 }
 
@@ -224,10 +226,10 @@ If $\delta \in C_\Gamma(\phi)$ then $\delta$ is strongly normalizable.
 \>[4]\AgdaFunction{SNap'} \AgdaSymbol{\{}\AgdaFunction{REP}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-proof}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{E} \AgdaSymbol{=} \AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{σ} \AgdaSymbol{=} \AgdaFunction{upRep}\AgdaSymbol{\}} \AgdaFunction{β-respects-rep}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaSymbol{(}\AgdaFunction{SNsubbodyl} \AgdaSymbol{(}\AgdaFunction{SNsubexp} \AgdaSymbol{(}\AgdaFunction{CsubSN} \AgdaSymbol{\{}\AgdaArgument{Γ} \AgdaSymbol{=} \AgdaBound{Γ} \AgdaFunction{,P} \AgdaBound{φ}\AgdaSymbol{\}} \AgdaBound{ψ}\<%
+\>[6]\AgdaSymbol{(}\AgdaFunction{SNappl'} \AgdaSymbol{(}\AgdaFunction{SNapp'} \AgdaSymbol{(}\AgdaFunction{CsubSN} \AgdaSymbol{\{}\AgdaArgument{Γ} \AgdaSymbol{=} \AgdaBound{Γ} \AgdaFunction{,P} \AgdaBound{φ}\AgdaSymbol{\}} \AgdaBound{ψ}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaSymbol{(}\AgdaField{proj₂} \AgdaBound{P₁} \AgdaSymbol{(}\AgdaBound{P} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-proof}\AgdaSymbol{)} \AgdaFunction{upRep} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaInductiveConstructor{x₀}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{↑-typed} \AgdaSymbol{\{}\AgdaArgument{φ} \AgdaSymbol{=} \AgdaBound{φ}\AgdaSymbol{\})}\<%
+\>[6]\AgdaSymbol{(}\AgdaField{proj₂} \AgdaBound{P₁} \AgdaSymbol{(}\AgdaBound{P} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-proof}\AgdaSymbol{)} \AgdaFunction{upRep} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaInductiveConstructor{x₀}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{↑-typed} \AgdaSymbol{\{}\AgdaArgument{K} \AgdaSymbol{=} \AgdaInductiveConstructor{-proof}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-prp} \AgdaBound{φ}\AgdaSymbol{)} \AgdaInductiveConstructor{[]}\AgdaSymbol{\})}\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
 \>[6]\AgdaSymbol{(}\AgdaFunction{NeutralC} \AgdaBound{φ} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaSymbol{\_)}\<%
@@ -311,8 +313,8 @@ $\delta[p:=\epsilon] \in C_\Gamma(\psi)$ and $\epsilon \in SN$, then $(\lambda p
 \>[12]\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
-\>[6]\AgdaSymbol{(}\AgdaFunction{C-osr} \AgdaBound{ψ} \AgdaBound{δ[p∶=ε]∈CΓψ} \AgdaSymbol{(}\AgdaFunction{respects-osr} \AgdaFunction{SUB} \AgdaFunction{β-respects-sub} \AgdaBound{δ⇒δ'}\AgdaSymbol{))} \<[67]%
-\>[67]\<%
+\>[6]\AgdaSymbol{(}\AgdaFunction{C-osr} \AgdaBound{ψ} \AgdaBound{δ[p∶=ε]∈CΓψ} \AgdaSymbol{(}\AgdaFunction{aposrr} \AgdaFunction{SUB} \AgdaFunction{β-respects-sub} \AgdaBound{δ⇒δ'}\AgdaSymbol{))} \<[61]%
+\>[61]\<%
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
 \>[6]\AgdaSymbol{(}\AgdaBound{SNδ} \AgdaBound{δ'} \AgdaBound{δ⇒δ'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaBound{ε} \AgdaBound{SNε}\AgdaSymbol{))} \<[33]%
@@ -373,7 +375,7 @@ If $\delta \in C_\Gamma(\phi \rightarrow \psi)$ and $\epsilon \in C_\Gamma(\phi)
 \>\AgdaFunction{C-app} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ε}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ψ}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{Γ⊢δ∶φ⇛ψ} \AgdaInductiveConstructor{,p} \AgdaBound{δ∈CΓφ⇛ψ}\AgdaSymbol{)} \AgdaBound{ε∈CΓφ} \AgdaSymbol{=}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{subst} \AgdaSymbol{(λ} \AgdaBound{x} \AgdaSymbol{→} \AgdaFunction{C} \AgdaBound{Γ} \AgdaBound{ψ} \AgdaSymbol{(}\AgdaFunction{appP} \AgdaBound{x} \AgdaBound{ε}\AgdaSymbol{))} \AgdaFunction{ap-idRep} \AgdaSymbol{(}\AgdaBound{δ∈CΓφ⇛ψ} \AgdaBound{P} \AgdaSymbol{(}\AgdaFunction{idRep} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{ε} \AgdaFunction{idRep-typed} \AgdaBound{ε∈CΓφ}\AgdaSymbol{)}\<%
+\>[2]\AgdaFunction{subst} \AgdaSymbol{(λ} \AgdaBound{x} \AgdaSymbol{→} \AgdaFunction{C} \AgdaBound{Γ} \AgdaBound{ψ} \AgdaSymbol{(}\AgdaFunction{appP} \AgdaBound{x} \AgdaBound{ε}\AgdaSymbol{))} \AgdaFunction{rep-idRep} \AgdaSymbol{(}\AgdaBound{δ∈CΓφ⇛ψ} \AgdaBound{P} \AgdaSymbol{(}\AgdaFunction{idRep} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{ε} \AgdaFunction{idRep-typed} \AgdaBound{ε∈CΓφ}\AgdaSymbol{)}\<%
 \end{code}
 
 A substitution $\sigma$ is a \emph{computable} substitution from $\Gamma$ to $\Delta$, $\sigma : \Gamma \rightarrow_C \Delta$,
@@ -519,7 +521,7 @@ If $\Gamma \vdash \delta : \phi$ and $\sigma : \Gamma \rightarrow_C \Delta$ then
 \>[12]\AgdaBound{δ} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaFunction{•RS} \AgdaBound{σ}\AgdaSymbol{)} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{ε} \AgdaFunction{⟧}\<%
 \\
 \>[0]\AgdaIndent{10}{}\<[10]%
-\>[10]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{sub-congr} \AgdaFunction{liftSub-compRS} \AgdaBound{δ}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
+\>[10]\AgdaFunction{≡⟨} \AgdaFunction{sub-congl} \AgdaSymbol{(}\AgdaFunction{sub-congr} \AgdaBound{δ} \AgdaFunction{liftSub-compRS}\AgdaSymbol{)} \AgdaFunction{⟩}\<%
 \\
 \>[10]\AgdaIndent{12}{}\<[12]%
 \>[12]\AgdaBound{δ} \AgdaFunction{⟦} \AgdaFunction{liftRep} \AgdaSymbol{\_} \AgdaBound{ρ} \AgdaFunction{•RS} \AgdaFunction{liftSub} \AgdaSymbol{\_} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{ε} \AgdaFunction{⟧}\<%
@@ -571,8 +573,7 @@ Propositional Logic is strongly normalizing.
 \>[54]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{sub-idOp} \<[11]%
-\>[11]\<%
+\>[2]\AgdaFunction{sub-idSub}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaSymbol{(}\AgdaFunction{CsubSN} \AgdaSymbol{(}\AgdaBound{φ}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{δ} \AgdaFunction{⟦} \AgdaFunction{idSub} \AgdaBound{P} \AgdaFunction{⟧}\AgdaSymbol{\}}\<%
