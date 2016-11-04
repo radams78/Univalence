@@ -19,7 +19,7 @@ open import PHOPL.KeyRedex2.SNE
 
 Let $\SN$ be the set of all strongly normalizing expressions.
 
-\begin{prop}
+\begin{proposition}
 \label{prop:SN}
 $ $
 \begin{enumerate}
@@ -32,7 +32,7 @@ If $\delta[p:=\epsilon], \phi, \epsilon \in \SN$ then $(\lambda p:\phi.\delta)\e
 \item
 If $(P[x:=L, y:=L', e:=Q]_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^- \delta_1 \cdots \delta_m \in \SN$ and $L, L', Q \in \SN$ then $((\triplelambda e:x =_A y.P)_{L L'} Q_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^- \delta_1 \cdots \delta_m \in \SN$.
 \end{enumerate}
-\end{prop}
+\end{proposition}
 
 \begin{proof}
 +We prove part \ref{prop:SNT}; the proofs of the other parts are similar.
@@ -52,12 +52,12 @@ In this case, the result follows immediately from the hypothesis.
 \end{proof}
 
 \begin{code}
-postulate pre-wte+-computeP : ∀ {m} {n} {V} {Γ : Context V} {S} {L₁ : Leaves V S}
+pre-wte+-computeP : ∀ {m} {n} {V} {Γ : Context V} {S} {L₁ : Leaves V S}
                           {MM NN : snocVec (Term V) m} {P L L' Q RR} {εε : snocVec (Proof V) n} {A} →
                           computeP Γ L₁ (APPP (plus (APP* MM NN (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR)) εε) →
                           valid Γ → SN L → SN L' → SN Q →
                           computeP Γ L₁ (APPP (plus (APP* MM NN (app* L L' (λλλ A P) Q) RR)) εε)
-{- pre-wte+-computeP {L₁ = neutral x} {MM} {NN} {P} {L} {L'} {Q} {RR} {εε} computePRRεε validΓ SNL SNL' SNQ = 
+pre-wte+-computeP {L₁ = neutral x} {MM} {NN} {P} {L} {L'} {Q} {RR} {εε} computePRRεε validΓ SNL SNL' SNQ = 
   lmSNE MM εε (computeP-SN {L = neutral x} computePRRεε validΓ) SNL SNL' SNQ
 pre-wte+-computeP {L₁ = bot} {MM} {NN} {P} {L} {L'} {Q} {RR} {εε} computePRRεε validΓ SNL SNL' SNQ = 
   lmSNE MM εε (computeP-SN {L = bot} computePRRεε validΓ) SNL SNL' SNQ
@@ -86,7 +86,7 @@ pre-wte+-computeP {m} {n} {V} {Γ} {imp S₁ S₂} {L₁ = imp L₁ L₂} {MM} {
   (context-validity Δ⊢ε∶φ) 
   (SNrep R-creates-rep SNL) 
   (SNrep R-creates-rep SNL') 
-  (SNrep R-creates-rep SNQ)) -}
+  (SNrep R-creates-rep SNQ))
 
 postulate pre-wte--computeP : ∀ {m} {n} {V} {Γ : Context V} {S} {L₁ : Leaves V S}
                               {MM NN : snocVec (Term V) m} {P L L' Q RR} {εε : snocVec (Proof V) n} {A} →

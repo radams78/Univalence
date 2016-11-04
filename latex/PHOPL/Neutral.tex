@@ -113,9 +113,9 @@ A term is \emph{neutral} iff it has the form $x M_1 \cdots M_n$.
 \end{code}
 }
 
-\begin{lm}
+\begin{lemma}
 If $M \twoheadrightarrow N$ and $M$ is neutral, then $N$ is neutral.
-\end{lm}
+\end{lemma}
 
 \begin{code}%
 \>\AgdaFunction{neutral-red} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N} \AgdaSymbol{:} \AgdaDatatype{Neutral} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{decode-Neutral} \AgdaBound{N} \AgdaFunction{↠} \AgdaBound{M} \AgdaSymbol{→}\<%

@@ -23,10 +23,6 @@
 A \emph{substitution} $\sigma$ from alphabet $U$ to alphabet $V$, $\sigma : U \Rightarrow V$, is a function $\sigma$ that maps every variable $x$ of kind $K$ in $U$ to an
 \emph{expression} $\sigma(x)$ of kind $K$ over $V$.  We now aim to prov that the substitutions form a family of operations, with application and identity being simply function application and identity.
 
-\begin{frame}[fragile]
-\frametitle{Substitution}
-\mode<beamer>{A \emph{substitution} between alphabets $U$ and $V$ maps variables of $U$ to expressions of $V$.}
-
 \begin{code}%
 \>\AgdaFunction{Sub} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
 \\
@@ -73,4 +69,4 @@ A \emph{substitution} $\sigma$ from alphabet $U$ to alphabet $V$, $\sigma : U \R
 \>\AgdaKeyword{open} \AgdaModule{PreOpFamily} \AgdaFunction{pre-substitution} \AgdaKeyword{using} \AgdaSymbol{()} \AgdaKeyword{renaming} \AgdaSymbol{(}\_∼op\_ \AgdaSymbol{to} \_∼\_\AgdaSymbol{;}idOp \AgdaSymbol{to} idSub\AgdaSymbol{)} \AgdaKeyword{public}\<%
 \end{code}
 }
-\end{frame}
+

@@ -53,14 +53,14 @@ key-redex-rep {ρ = ρ} (appTkr M▷N) = appTkr (key-redex-rep M▷N)
 \end{code}
 }
 
-\begin{lm}
+\begin{lemma}
 If $s \kr t \in \SN$ then $s \in \SN$.
-\end{lm}
+\end{lemma}
 
 \begin{proof}
 The proof is by induction on $s \kr t$.  We deal with the following cases; the others are similar.
 
-\subparagraph{$(\lambda x:A.M)N \kr M[x:=N]$} where $N \in \SN$.
+\paragraph{$(\lambda x:A.M)N \kr M[x:=N]$} where $N \in \SN$.
 
 We must show that, if $M[x:=N], N \in \SN$, then $(\lambda x:A.M)N \in \SN$.  The proof is by
 double induction on $N \in \SN$, then on $M[x:=N] \in \SN$.  The possible one-step reductions from $(\lambda x:A.M)N$ are:
@@ -73,7 +73,7 @@ $N \rightarrow N'$, and we apply the primary induction hypothesis.
 \item[$(\lambda x:A.M)N \rightarrow M{[x:=N]}$]  We have $M[x:=N] \in \SN$ by hypothesis.
 \end{description}
 
-\subparagraph{$P_{L L'} Q \kr P'_{L L'} Q$, where $P \kr P'$}  By case analysis, if $P_{L L'} Q$ is a redex then it is of the form $\reff{M}_{L L'} \reff{N}$.
+\paragraph{$P_{L L'} Q \kr P'_{L L'} Q$, where $P \kr P'$}  By case analysis, if $P_{L L'} Q$ is a redex then it is of the form $\reff{M}_{L L'} \reff{N}$.
 Therefore, the following are the possible one-step reductions from $P_{L L'} Q$:
 
 \begin{description}

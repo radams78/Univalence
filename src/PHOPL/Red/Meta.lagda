@@ -39,21 +39,23 @@ R₀?-imp-R? ref = ref
 β-imp-R (Redβ.appl E⇒F) = Red.appl (β-imp-R E⇒F)
 β-imp-R (Redβ.appr EE⇒FF) = Red.appr (β-imp-R EE⇒FF)
 
-postulate R-det : ∀ {V} {K} {C} {c : Con (SK C K)} {E : ListAbs V C} {F} {G} → R c E F → R c E G → F ≡ G
-{- R-det βT βT = refl
-R-det (βR _ _) (βR _ _) = refl
-R-det (dir-ref _) (dir-ref _) = refl
-R-det (plus-univ _) (plus-univ _) = refl
-R-det (minus-univ _) (minus-univ _) = refl
-R-det (ref⊃*univ _ _) (ref⊃*univ _ _) = refl
-R-det (univ⊃*ref _ _) (univ⊃*ref _ _) = refl
-R-det (univ⊃*univ _ _) (univ⊃*univ _ _) = refl
-R-det (ref⊃*ref _ _) (ref⊃*ref _ _) = refl
-R-det (refref _ _) (refref _ _) = refl
-R-det (refref _ _) (reflam _ _ _ _ ())
-R-det (βE _ _ _ _) (βE _ _ _ _) = refl
-R-det (reflam _ _ _ _ _) (reflam _ _ _ _ _) = refl
-R-det (reflam _ _ _ _ ()) (refref _ _) -}
+R-det : ∀ {V} {K} {C} {c : Con (SK C K)} {E : ListAbs V C} {F} {G} → R c E F → R c E G → F ≡ G
+R-det (βR βT) (R₀R ())
+R-det (R₀R ()) (βR βT)
+R-det (βR βT) (βR βT) = refl
+R-det (R₀R (βR _ _)) (R₀R (βR _ _)) = refl
+R-det (R₀R (dir-ref _)) (R₀R (dir-ref _)) = refl
+R-det (R₀R (plus-univ _)) (R₀R (plus-univ _)) = refl
+R-det (R₀R (minus-univ _)) (R₀R (minus-univ _)) = refl
+R-det (R₀R (ref⊃*univ _ _)) (R₀R (ref⊃*univ _ _)) = refl
+R-det (R₀R (univ⊃*ref _ _)) (R₀R (univ⊃*ref _ _)) = refl
+R-det (R₀R (univ⊃*univ _ _)) (R₀R (univ⊃*univ _ _)) = refl
+R-det (R₀R (ref⊃*ref _ _)) (R₀R (ref⊃*ref _ _)) = refl
+R-det (R₀R (refref _ _)) (R₀R (refref _ _)) = refl
+R-det (R₀R (refref _ _)) (R₀R (reflam _ _ _ _ ()))
+R-det (R₀R (βE _ _ _ _)) (R₀R (βE _ _ _ _)) = refl
+R-det (R₀R (reflam _ _ _ _ _)) (R₀R (reflam _ _ _ _ _)) = refl
+R-det (R₀R (reflam _ _ _ _ ())) (R₀R (refref _ _))
 \end{code}
 
 Let $\rightarrow^?$ be the reflexive closure of $\rightarrow$;
@@ -190,10 +192,10 @@ nfredexpath (reflam _ _ _ _ _)(Red.appr (Red.appr (Red.appr (Red.appr ()))))
 \end{code}
 }
 
-\begin{lm}
+\begin{lemma}
 If $\univ{\phi}{\psi}{\delta}{\epsilon} \rightarrow E$ then $E$ is formed by reducing
 one of $\phi$, $\psi$, $\delta$, $\epsilon$.
-\end{lm}
+\end{lemma}
 
 \AgdaHide{
 \begin{code}
@@ -397,3 +399,4 @@ APP*-red₃ MM (inc P⇒P') = inc (APP*-osr₃ MM P⇒P')
 APP*-red₃ MM ref = ref
 APP*-red₃ MM (trans P₁↠P₂ P₂↠P₃) = RTClose.trans (APP*-red₃ MM P₁↠P₂) (APP*-red₃ MM P₂↠P₃)
 \end{code}
+}

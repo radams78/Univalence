@@ -239,7 +239,7 @@ The rules of deduction of $\lambda o e$ are given in Figure \ref{fig:lambdaoe}.
 \>[2]\AgdaInductiveConstructor{convR} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δ} \AgdaSymbol{:} \AgdaFunction{Proof} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaBound{ψ} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{δ} \AgdaDatatype{∶} \AgdaBound{φ} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{ψ} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaInductiveConstructor{Ω} \AgdaSymbol{→} \AgdaBound{φ} \AgdaDatatype{≃} \AgdaBound{ψ} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{δ} \AgdaDatatype{∶} \AgdaBound{ψ}\<%
+\>[4]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{δ} \AgdaDatatype{∶} \AgdaBound{φ} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{ψ} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaInductiveConstructor{Ω} \AgdaSymbol{→} \AgdaBound{φ} \AgdaFunction{≃} \AgdaBound{ψ} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{δ} \AgdaDatatype{∶} \AgdaBound{ψ}\<%
 \\
 %
 \\
@@ -381,7 +381,7 @@ The rules of deduction of $\lambda o e$ are given in Figure \ref{fig:lambdaoe}.
 \>[103]\AgdaSymbol{(}\AgdaBound{Γ⊢N'∶A} \AgdaSymbol{:} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{N'} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{A}\AgdaSymbol{)}\<%
 \\
 \>[0]\AgdaIndent{9}{}\<[9]%
-\>[9]\AgdaSymbol{(}\AgdaBound{M≃M'} \AgdaSymbol{:} \AgdaBound{M} \AgdaDatatype{≃} \AgdaBound{M'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{N≃N'} \AgdaSymbol{:} \AgdaBound{N} \AgdaDatatype{≃} \AgdaBound{N'}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaComment{------------------------------------------------------------------------------------}\<%
+\>[9]\AgdaSymbol{(}\AgdaBound{M≃M'} \AgdaSymbol{:} \AgdaBound{M} \AgdaFunction{≃} \AgdaBound{M'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{N≃N'} \AgdaSymbol{:} \AgdaBound{N} \AgdaFunction{≃} \AgdaBound{N'}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaComment{------------------------------------------------------------------------------------}\<%
 \\
 \>[9]\AgdaIndent{77}{}\<[77]%
 \>[77]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{P} \AgdaDatatype{∶} \AgdaBound{M'} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{N'}\<%

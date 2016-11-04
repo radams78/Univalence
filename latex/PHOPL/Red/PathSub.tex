@@ -13,10 +13,12 @@
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.PathSub}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Red.Base}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Red.Meta}\<%
 \end{code}
 }
 
-\begin{lm}[Reduction respects substitution]
+\begin{lemma}[Reduction respects substitution]
 $ $
 \begin{enumerate}
 \item
@@ -36,16 +38,20 @@ If $P \rightarrow P'$ then $M \{ x:= P : N \sim N' \} \twoheadrightarrow M \{ x:
 \\
 %
 \\
-\>\AgdaKeyword{postulate} \AgdaPostulate{red-pathsub} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{M} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{U}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{τ} \AgdaBound{τ'} \AgdaSymbol{:} \AgdaFunction{PathSub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\>\AgdaFunction{red-pathsub} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{M} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{U}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{τ} \AgdaBound{τ'} \AgdaSymbol{:} \AgdaFunction{PathSub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[0]\AgdaIndent{12}{}\<[12]%
 \>[12]\AgdaBound{τ} \AgdaFunction{↠p} \AgdaBound{τ'} \AgdaSymbol{→} \AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{ρ} \AgdaFunction{∼} \AgdaBound{σ} \AgdaFunction{⟧⟧} \AgdaFunction{↠} \AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaBound{τ'} \AgdaFunction{∶} \AgdaBound{ρ} \AgdaFunction{∼} \AgdaBound{σ} \AgdaFunction{⟧⟧}\<%
 \\
-\>\AgdaComment{\{-red-pathsub (var x) τ↠pτ' = τ↠pτ' x\<\\
-\>red-pathsub (app -bot []) τ↠pτ' = ref\<\\
-\>red-pathsub (app -imp (φ ∷ ψ ∷ [])) τ↠pτ' = ⊃*-red (red-pathsub φ τ↠pτ') (red-pathsub ψ τ↠pτ')\<\\
-\>red-pathsub (app (-lamTerm A) (M ∷ [])) τ↠pτ' = λλλ-red (red-pathsub M (liftPathSub-red τ↠pτ'))\<\\
-\>red-pathsub (app -appTerm (M ∷ N ∷ [])) τ↠pτ' = app*-red ref ref (red-pathsub M τ↠pτ') (red-pathsub N τ↠pτ')-\}}\<%
+\>\AgdaFunction{red-pathsub} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaBound{x}\AgdaSymbol{)} \AgdaBound{τ↠pτ'} \AgdaSymbol{=} \AgdaBound{τ↠pτ'} \AgdaBound{x}\<%
+\\
+\>\AgdaFunction{red-pathsub} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-bot} \AgdaInductiveConstructor{[]}\AgdaSymbol{)} \AgdaBound{τ↠pτ'} \AgdaSymbol{=} \AgdaInductiveConstructor{ref}\<%
+\\
+\>\AgdaFunction{red-pathsub} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-imp} \AgdaSymbol{(}\AgdaBound{φ} \AgdaInductiveConstructor{∷} \AgdaBound{ψ} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{))} \AgdaBound{τ↠pτ'} \AgdaSymbol{=} \AgdaPostulate{⊃*-red} \AgdaSymbol{(}\AgdaFunction{red-pathsub} \AgdaBound{φ} \AgdaBound{τ↠pτ'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{red-pathsub} \AgdaBound{ψ} \AgdaBound{τ↠pτ'}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{red-pathsub} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-lamTerm} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{))} \AgdaBound{τ↠pτ'} \AgdaSymbol{=} \AgdaPostulate{λλλ-red} \AgdaSymbol{(}\AgdaFunction{red-pathsub} \AgdaBound{M} \AgdaSymbol{(}\AgdaPostulate{liftPathSub-red} \AgdaBound{τ↠pτ'}\AgdaSymbol{))}\<%
+\\
+\>\AgdaFunction{red-pathsub} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaInductiveConstructor{-appTerm} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{∷} \AgdaBound{N} \AgdaInductiveConstructor{∷} \AgdaInductiveConstructor{[]}\AgdaSymbol{))} \AgdaBound{τ↠pτ'} \AgdaSymbol{=} \AgdaPostulate{app*-red} \AgdaInductiveConstructor{ref} \AgdaInductiveConstructor{ref} \AgdaSymbol{(}\AgdaFunction{red-pathsub} \AgdaBound{M} \AgdaBound{τ↠pτ'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{red-pathsub} \AgdaBound{N} \AgdaBound{τ↠pτ'}\AgdaSymbol{)}\<%
 \\
 %
 \\
@@ -62,7 +68,7 @@ If $P \rightarrow P'$ then $M \{ x:= P : N \sim N' \} \twoheadrightarrow M \{ x:
 \>[22]\AgdaBound{σ} \AgdaFunction{↠s} \AgdaBound{σ'} \AgdaSymbol{→} \AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{ρ} \AgdaFunction{∼} \AgdaBound{σ} \AgdaFunction{⟧⟧} \AgdaFunction{↠} \AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaBound{τ} \AgdaFunction{∶} \AgdaBound{ρ} \AgdaFunction{∼} \AgdaBound{σ'} \AgdaFunction{⟧⟧}\<%
 \end{code}
 \end{enumerate}
-\end{lm}
+\end{lemma}
 
 \begin{proof}
 A straightforward induction in each case.
@@ -77,4 +83,3 @@ but
 ((\lambda x:\Omega.x)(\bot \supset \bot)) \{ \} & \equiv (\triplelambda e:x =_\Omega x'.e)(\reff{\bot} \supset^* \reff{\bot})
 \end{align*}
 The second of these paths does \emph{not} reduce to the first, because $\reff{\bot} \supset^* \reff{\bot}$ is not a normal form.
-

@@ -73,22 +73,39 @@
 \\
 %
 \\
-\>\AgdaKeyword{postulate} \AgdaPostulate{R-det} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{c} \AgdaSymbol{:} \AgdaFunction{Con} \AgdaSymbol{(}\AgdaInductiveConstructor{SK} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{E} \AgdaSymbol{:} \AgdaFunction{ListAbs} \AgdaBound{V} \AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{G}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{R} \AgdaBound{c} \AgdaBound{E} \AgdaBound{F} \AgdaSymbol{→} \AgdaDatatype{R} \AgdaBound{c} \AgdaBound{E} \AgdaBound{G} \AgdaSymbol{→} \AgdaBound{F} \AgdaDatatype{≡} \AgdaBound{G}\<%
+\>\AgdaFunction{R-det} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{c} \AgdaSymbol{:} \AgdaFunction{Con} \AgdaSymbol{(}\AgdaInductiveConstructor{SK} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{E} \AgdaSymbol{:} \AgdaFunction{ListAbs} \AgdaBound{V} \AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{G}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{R} \AgdaBound{c} \AgdaBound{E} \AgdaBound{F} \AgdaSymbol{→} \AgdaDatatype{R} \AgdaBound{c} \AgdaBound{E} \AgdaBound{G} \AgdaSymbol{→} \AgdaBound{F} \AgdaDatatype{≡} \AgdaBound{G}\<%
 \\
-\>\AgdaComment{\{- R-det βT βT = refl\<\\
-\>R-det (βR \_ \_) (βR \_ \_) = refl\<\\
-\>R-det (dir-ref \_) (dir-ref \_) = refl\<\\
-\>R-det (plus-univ \_) (plus-univ \_) = refl\<\\
-\>R-det (minus-univ \_) (minus-univ \_) = refl\<\\
-\>R-det (ref⊃*univ \_ \_) (ref⊃*univ \_ \_) = refl\<\\
-\>R-det (univ⊃*ref \_ \_) (univ⊃*ref \_ \_) = refl\<\\
-\>R-det (univ⊃*univ \_ \_) (univ⊃*univ \_ \_) = refl\<\\
-\>R-det (ref⊃*ref \_ \_) (ref⊃*ref \_ \_) = refl\<\\
-\>R-det (refref \_ \_) (refref \_ \_) = refl\<\\
-\>R-det (refref \_ \_) (reflam \_ \_ \_ \_ ())\<\\
-\>R-det (βE \_ \_ \_ \_) (βE \_ \_ \_ \_) = refl\<\\
-\>R-det (reflam \_ \_ \_ \_ \_) (reflam \_ \_ \_ \_ \_) = refl\<\\
-\>R-det (reflam \_ \_ \_ \_ ()) (refref \_ \_) -\}}\<%
+\>\AgdaFunction{R-det} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaInductiveConstructor{βT}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{())}\<%
+\\
+\>\AgdaFunction{R-det} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{())} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaInductiveConstructor{βT}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{R-det} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaInductiveConstructor{βT}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaInductiveConstructor{βT}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>\AgdaFunction{R-det} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaSymbol{\_} \AgdaSymbol{\_))} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaSymbol{\_} \AgdaSymbol{\_))} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>\AgdaFunction{R-det} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{dir-ref} \AgdaSymbol{\_))} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{dir-ref} \AgdaSymbol{\_))} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>\AgdaFunction{R-det} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{plus-univ} \AgdaSymbol{\_))} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{plus-univ} \AgdaSymbol{\_))} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>\AgdaFunction{R-det} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{minus-univ} \AgdaSymbol{\_))} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{minus-univ} \AgdaSymbol{\_))} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>\AgdaFunction{R-det} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{ref⊃*univ} \AgdaSymbol{\_} \AgdaSymbol{\_))} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{ref⊃*univ} \AgdaSymbol{\_} \AgdaSymbol{\_))} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>\AgdaFunction{R-det} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{univ⊃*ref} \AgdaSymbol{\_} \AgdaSymbol{\_))} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{univ⊃*ref} \AgdaSymbol{\_} \AgdaSymbol{\_))} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>\AgdaFunction{R-det} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{univ⊃*univ} \AgdaSymbol{\_} \AgdaSymbol{\_))} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{univ⊃*univ} \AgdaSymbol{\_} \AgdaSymbol{\_))} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>\AgdaFunction{R-det} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{ref⊃*ref} \AgdaSymbol{\_} \AgdaSymbol{\_))} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{ref⊃*ref} \AgdaSymbol{\_} \AgdaSymbol{\_))} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>\AgdaFunction{R-det} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{refref} \AgdaSymbol{\_} \AgdaSymbol{\_))} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{refref} \AgdaSymbol{\_} \AgdaSymbol{\_))} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>\AgdaFunction{R-det} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{refref} \AgdaSymbol{\_} \AgdaSymbol{\_))} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{reflam} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{R-det} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{βE} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_))} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{βE} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_))} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>\AgdaFunction{R-det} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{reflam} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_))} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{reflam} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_))} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>\AgdaFunction{R-det} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{reflam} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{()))} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{refref} \AgdaSymbol{\_} \AgdaSymbol{\_))}\<%
 \end{code}
 
 Let $\rightarrow^?$ be the reflexive closure of $\rightarrow$;
@@ -259,10 +276,10 @@ let \emph{reduction} $\twoheadrightarrow$ be the reflexive, transitive closure; 
 \end{code}
 }
 
-\begin{lm}
+\begin{lemma}
 If $\univ{\phi}{\psi}{\delta}{\epsilon} \rightarrow E$ then $E$ is formed by reducing
 one of $\phi$, $\psi$, $\delta$, $\epsilon$.
-\end{lm}
+\end{lemma}
 
 \AgdaHide{
 \begin{code}%
@@ -661,3 +678,4 @@ Contraction is a relation between closed expressions only: if $s \rhd t$ then $s
 \\
 \>\AgdaFunction{APP*-red₃} \AgdaBound{MM} \AgdaSymbol{(}\AgdaInductiveConstructor{trans} \AgdaBound{P₁↠P₂} \AgdaBound{P₂↠P₃}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{RTClose.trans} \AgdaSymbol{(}\AgdaFunction{APP*-red₃} \AgdaBound{MM} \AgdaBound{P₁↠P₂}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{APP*-red₃} \AgdaBound{MM} \AgdaBound{P₂↠P₃}\AgdaSymbol{)}\<%
 \end{code}
+}

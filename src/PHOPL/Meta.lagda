@@ -188,7 +188,7 @@ postulate Generation-ΛP : ∀ {V} {Γ : Context V} {φ} {δ} {ε} {ψ} →
 
 \subsubsection{Substitutions}
 
-\begin{df}
+\begin{definition}
 Let $\Gamma$ and $\Delta$ be contexts.  A \emph{substitution from $\Gamma$ to $\Delta$}\footnote{These have also been called \emph{context morphisms}, for example in Hoffman \cite{Hofmann97syntaxand}.  Note however that what we call a substitution from $\Gamma$ to $\Delta$ is what Hoffman calls a context morphism from $\Delta$ to $\Gamma$.}, $\sigma : \Gamma \Rightarrow \Delta$,
 is a substitution whose domain is $\dom \Gamma$ such that:
 \begin{itemize}
@@ -199,7 +199,7 @@ for every proof variable $p : \phi \in \Gamma$, we have $\Delta \vdash \sigma(p)
 \item
 for every path variable $e : M =_A N \in \Gamma$, we have $\Delta \vdash \sigma(e) : M [ \sigma ] =_A N [ \sigma ]$.
 \end{itemize}
-\end{df}
+\end{definition}
 
 \begin{code}
 postulate _∶_⇒_ : ∀ {U} {V} → Sub U V → Context U → Context V → Set
@@ -316,12 +316,12 @@ postulate sub↗-decomp : ∀ {U} {V} {C} {K} (M : Subexp (U , -Term) C K) {ρ :
 \end{code}
 }
 
-\begin{df}
+\begin{definition}
 If $\rho, \sigma : \Gamma \rightarrow \Delta$ and $\tau$ is a path substitution whose domain
 is the term variables in $\dom \Gamma$, then we write
 $\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$ iff, for each variable $x : A \in \Gamma$, we have
 $\Delta \vdash \tau(x) : \sigma(x) =_A \rho(x)$.
-\end{df}
+\end{definition}
 
 \begin{lemma}[Path Substitution]
 \label{lm:pathsub}
@@ -421,9 +421,9 @@ Let $x : A \in \Gamma$.
 We have $\Delta \vdash \sigma(x) : A$, hence $\Theta \vdash \sigma(x) \{ \tau : \rho \sim \rho' \} : \sigma(x) [ \rho ] =_A \sigma(x) [ \rho' ]$.
 \end{proof}
 
-\begin{prop}[Subject Reduction]
+\begin{proposition}[Subject Reduction]
 If $\Gamma \vdash s : T$ and $s \twoheadrightarrow t$ then $\Gamma \vdash t : T$.
-\end{prop}
+\end{proposition}
 
 \begin{proof}
 It is sufficient to prove the case $s \rightarrow t$.  The proof is by a case analysis on $s \rightarrow t$, using the Generation Lemma.
@@ -512,9 +512,9 @@ A canonical path of $F =_{A \rightarrow B} G$ is either $\reff{F}$ if $F \simeq 
 \end{itemize}
 \end{definition}
 
-\begin{prop}[Canonicity]
+\begin{proposition}[Canonicity]
 If $\vdash t : T$ and $t$ is in normal form, then $t$ is a canonical object (proof, path) of $T$.
-\end{prop}
+\end{proposition}
 
 \begin{proof}
 This follows easily from the Generation Lemma.

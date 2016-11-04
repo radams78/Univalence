@@ -15,8 +15,6 @@ open import PHOPL.Meta
 open import PHOPL.Computable
 open import PHOPL.SubC
 open import PHOPL.SN
-open import PHOPL.MainProp1
-open import PHOPL.KeyRedex
 \end{code}
 }
 
@@ -34,13 +32,11 @@ and $\rho$ are all computable, and $\Delta \vald$, then $M \{ \tau : \sigma \sim
 \end{enumerate}
 \end{theorem}
 
-%<*Computable-Sub>
 \begin{code}
 postulate Computable-Sub : ∀ {U V K} (σ : Sub U V) {Γ Δ} 
                  {M : Expression U (varKind K)} {A} →
                  σ ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → E' Δ (A ⟦ σ ⟧) (M ⟦ σ ⟧)
 \end{code}
-%</Computable-Sub>
 
 \AgdaHide{
 \begin{code}

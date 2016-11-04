@@ -1,0 +1,30 @@
+\AgdaHide{
+\begin{code}%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar.Base}\<%
+\\
+%
+\\
+\>\AgdaKeyword{module} \AgdaModule{Reduction} \AgdaSymbol{(}\AgdaBound{G} \AgdaSymbol{:} \AgdaRecord{Grammar}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{R} \AgdaSymbol{:} \AgdaFunction{Grammar.Reduction} \AgdaBound{G}\AgdaSymbol{)} \AgdaKeyword{where}\<%
+\end{code}
+}
+
+\input{Reduction/Base}
+\AgdaHide{
+\begin{code}%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Reduction.Base} \AgdaBound{G} \AgdaBound{R} \AgdaKeyword{public}\<%
+\end{code}
+}
+
+\input{Reduction/SN}
+\AgdaHide{
+\begin{code}%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Reduction.SN} \AgdaBound{G} \AgdaBound{R} \AgdaKeyword{public}\<%
+\end{code}
+}
+
+\input{Reduction/Botsub}
+\AgdaHide{
+\begin{code}%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Reduction.Botsub} \AgdaBound{G} \AgdaBound{R} \AgdaKeyword{public}\<%
+\end{code}
+}

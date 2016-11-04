@@ -9,10 +9,10 @@ open import PHOPL.Red
 \end{code}
 }
 
-\begin{prop}
+\begin{proposition}
 \label{prop:SNE}
 If $(P[x:=L, y:=L', e:=Q]_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^+ \delta_1 \cdots \delta_m \in \SN$ and $L, L', Q \in \SN$ then $((\triplelambda e:x =_A y.P)_{L L'} Q_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^+ \delta_1 \cdots \delta_m \in \SN$.
-\end{prop}
+\end{proposition}
 
 \AgdaHide{
 \begin{code}

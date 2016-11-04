@@ -60,9 +60,9 @@ neutral-red' (trans M₁↠M₂ M₂↠M₃) N≡M₁ =
 \end{code}
 }
 
-\begin{lm}
+\begin{lemma}
 If $M \twoheadrightarrow N$ and $M$ is neutral, then $N$ is neutral.
-\end{lm}
+\end{lemma}
 
 \begin{code}
 neutral-red : ∀ {V} {N : Neutral V} {M} → decode-Neutral N ↠ M →

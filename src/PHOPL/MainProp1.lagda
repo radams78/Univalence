@@ -23,8 +23,6 @@ postulate subrepbotsub-up : ∀ {U} {V} {W} {K} {L} (M : Expression U K) {N : Ex
                             M ⇑ ⟦ x₀:= N •SR liftRep _ ρ • liftSub _ σ ⟧ ≡ M ⟦ σ ⟧ 〈 ρ 〉
 
 postulate ΛR' : ∀ {V} {Γ : Context V} {φ} {δ} {ψ} → Γ ,P φ ⊢ δ ∶ ψ ⇑ → Γ ⊢ ΛP φ δ ∶ ψ
-\end{code}
-}
 
 {-Computable-Proof-Substitution : ∀ U V (σ : Sub U V) Γ Δ δ φ →
   σ ∶ Γ ⇒C Δ → Γ ⊢ δ ∶ φ → valid Δ → EP Δ (φ ⟦ σ ⟧) (δ ⟦ σ ⟧)
