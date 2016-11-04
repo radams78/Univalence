@@ -59,7 +59,6 @@
 \end{code}
 }
 
-%<*Expression>
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{data} \AgdaDatatype{Subexp} \AgdaSymbol{(}\AgdaBound{V} \AgdaSymbol{:} \AgdaDatatype{Alphabet}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaBound{C} \AgdaSymbol{→} \AgdaFunction{Kind} \AgdaBound{C} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
@@ -110,7 +109,6 @@
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaInductiveConstructor{\_∷\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{AA}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Abs} \AgdaBound{V} \AgdaBound{A} \AgdaSymbol{→} \AgdaFunction{ListAbs} \AgdaBound{V} \AgdaBound{AA} \AgdaSymbol{→} \AgdaFunction{ListAbs} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{A} \AgdaInductiveConstructor{∷} \AgdaBound{AA}\AgdaSymbol{)}\<%
 \end{code}
-%</Expression>
 
 We prove that the constructor \AgdaRef{var} is injective.
 
@@ -183,4 +181,3 @@ $R\, c\, MM\, N$ iff $c[MM] \rhd N$.
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaInductiveConstructor{\_snoc\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{AA} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{snocTypes} \AgdaBound{V} \AgdaBound{AA} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaSymbol{(}\AgdaFunction{snoc-extend} \AgdaBound{V} \AgdaBound{AA}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{parent} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{snocTypes} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{AA} \AgdaInductiveConstructor{snoc} \AgdaBound{K}\AgdaSymbol{)}\<%
 \end{code}
-}

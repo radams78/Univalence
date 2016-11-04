@@ -51,6 +51,7 @@ grestore
 \usepackage{mathptmx}      % use Times fonts if available on your TeX system
 %
 % insert here the call for the packages your document requires
+\usepackage{agda}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{autofe}
@@ -65,17 +66,30 @@ grestore
 \usepackage{textalpha}
 \usepackage{todo}
 \usepackage{ucs}
+\usepackage{comment}
 % etc.
 %
 % please place your own definitions here and don't use \def but
 % \newcommand{}{}
+\input{unicode}
+\newcommand{\frametitle}[1]{}
+
+% \newif\ifagda
+% \agdatrue
+% % Set to true to produce literate Agda document
+
+% \ifagda
+% \usepackage{fancyvrb}
+% \DefineVerbatimEnvironment{code}{Verbatim}{fontsize=\footnotesize}
+% \else
+% \excludecomment{code}
+% \fi
 %
 % Insert the name of "your journal" with
 % \journalname{myjournal}
 \journalname{Journal of Automated Reasoning}
 %
 \begin{document}
-\input{unicode}
 
 \title{A Formalised Proof of Strong Normalisation for Higher-Order Minimal Logic with Univalence}
 %TODO Insert details of CAU grant
@@ -167,6 +181,15 @@ if $\delta : \phi \supset \psi$ and $\epsilon : \psi \supset\phi$, then $\univ{\
 We present a reduction relation for this system, and prove it satisfies confluence (Corollary \ref{cor:confluence}), strong normalization (Corollary \ref{cor:SN}) and canonicity (Corollary \ref{cor:canon}).
 
 For the future, we wish to expand the system with universal quantification, and expand it to a 2-dimensional system (with equations between proofs).
+
+\input{Grammar/Taxonomy}
+\input{Grammar/Base}
+\input{Grammar/OpFamily/PreOpFamily}
+\input{Grammar/OpFamily/Lifting}
+\input{Grammar/OpFamily/LiftFamily}
+\input{Grammar/OpFamily/Composition}
+\input{Grammar/OpFamily/OpFamily}
+\input{Grammar/Replacement}
 
 %\begin{acknowledgements}
 %If you'd like to thank anyone, place your comments here

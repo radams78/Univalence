@@ -1,0 +1,62 @@
+\begin{code}%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Relation.Binary} \AgdaKeyword{public}\<%
+\\
+%
+\\
+\>\AgdaKeyword{module} \AgdaModule{Prelims.Bifunction}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{\{}\AgdaBound{r₁} \AgdaBound{r₂} \AgdaBound{s₁} \AgdaBound{s₂} \AgdaBound{t₁} \AgdaBound{t₂}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A} \AgdaSymbol{:} \AgdaRecord{Setoid} \AgdaBound{r₁} \AgdaBound{r₂}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{B} \AgdaSymbol{:} \AgdaRecord{Setoid} \AgdaBound{s₁} \AgdaBound{s₂}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C} \AgdaSymbol{:} \AgdaRecord{Setoid} \AgdaBound{t₁} \AgdaBound{t₂}\AgdaSymbol{\}} \<[79]%
+\>[79]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{(}\AgdaBound{f} \AgdaSymbol{:} \AgdaField{Setoid.Carrier} \AgdaBound{A} \AgdaSymbol{→} \AgdaField{Setoid.Carrier} \AgdaBound{B} \AgdaSymbol{→} \AgdaField{Setoid.Carrier} \AgdaBound{C}\AgdaSymbol{)} \AgdaKeyword{where}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{wdl} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaSymbol{\_}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{wdl} \AgdaSymbol{=} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{a} \AgdaBound{a'}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaField{Setoid.\_≈\_} \AgdaBound{A} \AgdaBound{a} \AgdaBound{a'} \AgdaSymbol{→} \AgdaSymbol{∀} \AgdaBound{b} \AgdaSymbol{→} \AgdaField{Setoid.\_≈\_} \AgdaBound{C} \AgdaSymbol{(}\AgdaBound{f} \AgdaBound{a} \AgdaBound{b}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{f} \AgdaBound{a'} \AgdaBound{b}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{wdr} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaSymbol{\_}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{wdr} \AgdaSymbol{=} \AgdaSymbol{∀} \AgdaBound{a} \AgdaSymbol{\{}\AgdaBound{b} \AgdaBound{b'}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaField{Setoid.\_≈\_} \AgdaBound{B} \AgdaBound{b} \AgdaBound{b'} \AgdaSymbol{→} \AgdaField{Setoid.\_≈\_} \AgdaBound{C} \AgdaSymbol{(}\AgdaBound{f} \AgdaBound{a} \AgdaBound{b}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{f} \AgdaBound{a} \AgdaBound{b'}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{wd2} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaSymbol{\_}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{wd2} \AgdaSymbol{=} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{a} \AgdaBound{a'} \AgdaBound{b} \AgdaBound{b'}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaField{Setoid.\_≈\_} \AgdaBound{A} \AgdaBound{a} \AgdaBound{a'} \AgdaSymbol{→} \AgdaField{Setoid.\_≈\_} \AgdaBound{B} \AgdaBound{b} \AgdaBound{b'} \AgdaSymbol{→} \AgdaField{Setoid.\_≈\_} \AgdaBound{C} \AgdaSymbol{(}\AgdaBound{f} \AgdaBound{a} \AgdaBound{b}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{f} \AgdaBound{a'} \AgdaBound{b'}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{congl} \AgdaSymbol{:} \AgdaFunction{wd2} \AgdaSymbol{→} \AgdaFunction{wdl}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{congl} \AgdaBound{wd} \AgdaBound{a≈a'} \AgdaSymbol{\_} \AgdaSymbol{=} \AgdaBound{wd} \AgdaBound{a≈a'} \AgdaSymbol{(}\AgdaFunction{Setoid.refl} \AgdaBound{B}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{congr} \AgdaSymbol{:} \AgdaFunction{wd2} \AgdaSymbol{→} \AgdaFunction{wdr}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{congr} \AgdaBound{wd} \AgdaSymbol{\_} \AgdaBound{b≈b'} \AgdaSymbol{=} \AgdaBound{wd} \AgdaSymbol{(}\AgdaFunction{Setoid.refl} \AgdaBound{A}\AgdaSymbol{)} \AgdaBound{b≈b'}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{cong2} \AgdaSymbol{:} \AgdaFunction{wdl} \AgdaSymbol{→} \AgdaFunction{wdr} \AgdaSymbol{→} \AgdaFunction{wd2}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{cong2} \AgdaBound{wdl} \AgdaBound{wdr} \AgdaSymbol{\{\_\}} \AgdaSymbol{\{}\AgdaBound{a'}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{b}\AgdaSymbol{\}} \AgdaBound{a≈a'} \AgdaBound{b≈b'} \AgdaSymbol{=} \AgdaFunction{Setoid.trans} \AgdaBound{C} \AgdaSymbol{(}\AgdaBound{wdl} \AgdaBound{a≈a'} \AgdaBound{b}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{wdr} \AgdaBound{a'} \AgdaBound{b≈b'}\AgdaSymbol{)}\<%
+\end{code}

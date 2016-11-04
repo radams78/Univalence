@@ -30,7 +30,6 @@ record Grammar : Set₁ where
 \end{code}
 }
 
-%<*Expression>
 \begin{code}
   data Subexp (V : Alphabet) : ∀ C → Kind C → Set
   Expression : Alphabet → ExpKind → Set
@@ -50,7 +49,6 @@ record Grammar : Set₁ where
     [] : ListAbs V []
     _∷_ : ∀ {A} {AA} → Abs V A → ListAbs V AA → ListAbs V (A ∷ AA)
 \end{code}
-%</Expression>
 
 We prove that the constructor \AgdaRef{var} is injective.
 
@@ -89,4 +87,3 @@ $R\, c\, MM\, N$ iff $c[MM] \rhd N$.
     [] : ∀ {V} → snocTypes V []
     _snoc_ : ∀ {V AA K} → snocTypes V AA → Expression (snoc-extend V AA) (parent K) → snocTypes V (AA snoc K)
 \end{code}
-}

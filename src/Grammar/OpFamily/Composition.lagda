@@ -120,11 +120,11 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
 \end{code}
 }
 
-\begin{lm}
+\begin{lemma}
 Let $\circ_1 : F;G \rightarrow H$ and $\circ_2 : F';G' \rightarrow H$.  If
-\[ \sigma \circ_1 \rho \sim \simga' \circ_2 \rho' \]
+\[ \sigma \circ_1 \rho \sim \sigma' \circ_2 \rho' \]
 then $E [\rho] [\sigma] \equiv E [\rho'] [\sigma']$ for every expression $E$.
-\end{lm}
+\end{lemma}
 
 \begin{code}
 ap-comp-sim : ∀ {F F' G G' H} (comp₁ : Composition F G H) (comp₂ : Composition F' G' H) {U} {V} {V'} {W}
@@ -150,12 +150,12 @@ ap-comp-sim {F} {F'} {G} {G'} {H} comp₁ comp₂ {U} {V} {V'} {W} {σ} {ρ} {σ
 \end{code}
 }
 
-\begin{lm}
+\begin{lemma}
 Suppose there exist compositions $F;G \rightarrow H$ and $F';F \rightarrow H$.
 Let $\uparrow_F$, $\uparrow_{F'}$ and $\uparrow_G$ be the lifting operations of $F$, $F'$ and $G$.
-Suppose $\up_F(E) \equiv \up_{F'}(E)$ for every subexpression $E$.  Then
+Suppose $\uparrow_F(E) \equiv \uparrow_{F'}(E)$ for every subexpression $E$.  Then
 $\uparrow_G(E)[F \uparrow] \equiv \uparrow_{F'}(\sigma(E))$ for every subexpression $E$.
-\end{lm}
+\end{lemma}
 
 \begin{code}
 liftOp-up-mixed : ∀ {F} {G} {H} {F'} (comp₁ : Composition F G H) (comp₂ : Composition F' F H)
@@ -179,4 +179,3 @@ liftOp-up-mixed {F} {G} {H} {F'} comp₁ comp₂ {U} {V} {C} {K} {L} {σ} hyp {E
   ∎) 
   E
 \end{code}
-}

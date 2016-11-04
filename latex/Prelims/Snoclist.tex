@@ -1,0 +1,45 @@
+\begin{code}%
+\>\AgdaKeyword{module} \AgdaModule{Prelims.Snoclist} \AgdaKeyword{where}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Nat}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Fin}\<%
+\\
+%
+\\
+\>\AgdaKeyword{infixl} \AgdaNumber{20} \AgdaFixityOp{\_snoc\_}\<%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{snocList} \AgdaSymbol{(}\AgdaBound{A} \AgdaSymbol{:} \AgdaPrimitiveType{Set}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{[]} \AgdaSymbol{:} \AgdaDatatype{snocList} \AgdaBound{A}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{\_snoc\_} \AgdaSymbol{:} \AgdaDatatype{snocList} \AgdaBound{A} \AgdaSymbol{→} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{snocList} \AgdaBound{A}\<%
+\\
+%
+\\
+\>\AgdaFunction{replicate} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{ℕ} \AgdaSymbol{→} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{snocList} \AgdaBound{A}\<%
+\\
+\>\AgdaFunction{replicate} \AgdaInductiveConstructor{zero} \AgdaSymbol{\_} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\<%
+\\
+\>\AgdaFunction{replicate} \AgdaSymbol{(}\AgdaInductiveConstructor{suc} \AgdaBound{n}\AgdaSymbol{)} \AgdaBound{a} \AgdaSymbol{=} \AgdaFunction{replicate} \AgdaBound{n} \AgdaBound{a} \AgdaInductiveConstructor{snoc} \AgdaBound{a}\<%
+\\
+%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{snocVec} \AgdaSymbol{(}\AgdaBound{A} \AgdaSymbol{:} \AgdaPrimitiveType{Set}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaDatatype{ℕ} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{[]} \AgdaSymbol{:} \AgdaDatatype{snocVec} \AgdaBound{A} \AgdaInductiveConstructor{zero}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{\_snoc\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{n}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{snocVec} \AgdaBound{A} \AgdaBound{n} \AgdaSymbol{→} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{snocVec} \AgdaBound{A} \AgdaSymbol{(}\AgdaInductiveConstructor{suc} \AgdaBound{n}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaFunction{lookup} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{A} \AgdaSymbol{:} \AgdaPrimitiveType{Set}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{n}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Fin} \AgdaBound{n} \AgdaSymbol{→} \AgdaDatatype{snocVec} \AgdaBound{A} \AgdaBound{n} \AgdaSymbol{→} \AgdaBound{A}\<%
+\\
+\>\AgdaFunction{lookup} \AgdaInductiveConstructor{zero} \AgdaSymbol{(\_} \AgdaInductiveConstructor{snoc} \AgdaBound{x}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaBound{x}\<%
+\\
+\>\AgdaFunction{lookup} \AgdaSymbol{(}\AgdaInductiveConstructor{suc} \AgdaBound{i}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{v} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_)} \AgdaSymbol{=} \AgdaFunction{lookup} \AgdaBound{i} \AgdaBound{v}\<%
+\end{code}

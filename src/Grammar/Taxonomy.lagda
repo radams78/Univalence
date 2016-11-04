@@ -1,5 +1,3 @@
-\newcommand{\id}[1]{\mathsf{id}_{#1}}
-
 \section{Grammars}
 
 \subsection{Taxonomy}
@@ -21,7 +19,6 @@ A \emph{taxononmy} consists of:
 \item a subset of expression kinds, called the \emph{variable kinds}.  We refer to the other expession kinds as \emph{non-variable kinds}.
 \end{itemize}
 
-%<*Taxonomy>
 \begin{code}
 record Taxonomy : Set₁ where
   field
@@ -32,15 +29,11 @@ record Taxonomy : Set₁ where
     varKind : VarKind → ExpKind
     nonVarKind : NonVarKind → ExpKind
 \end{code}
-%</Taxonomy>
 
-\begin{frame}[fragile]
-\frametitle{Alphabets}
 An \emph{alphabet} $A$ consists of a finite set of \emph{variables},
-\mode<article>{to each of which is assigned a variable kind $K$.
+to each of which is assigned a variable kind $K$.
 Let $\emptyset$ be the empty alphabet, and $(A , K)$ be the result of extending the alphabet $A$ with one
-fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of all variables in $A$ of kind $K$.}
-\mode<beamer>{each with a variable kind.}
+fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of all variables in $A$ of kind $K$.
 
 \begin{code}
   infixl 55 _,_
@@ -86,7 +79,6 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
 \begin{code}
   x₂ = ↑ x₁
 \end{code}
-\end{frame}
 
 A \emph{constructor kind} is an expression of the form
 
