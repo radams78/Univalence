@@ -25,36 +25,70 @@ Our main theorem is as follows.
 \begin{enumerate}
 \item
 If $\Gamma \vdash t : T$ and $\sigma : \Gamma \Rightarrow \Delta$ is computable, and $\Delta \vald$, then $t[\sigma] \in E_\Delta(T[\sigma])$.
+
+\begin{code}
+Computable-Sub : ∀ {U V K} (σ : Sub U V) {Γ Δ} 
+  {M : Expression U (varKind K)} {A} →
+  σ ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → E Δ (A ⟦ σ ⟧) (M ⟦ σ ⟧)
+\end{code}
+
 \item
 \label{computable-path-sub}
 If $\Gamma \vdash M : A$, $\tau : \sigma \sim \rho : \Gamma \Rightarrow \Delta$, and $\tau$, $\sigma$
 and $\rho$ are all computable, and $\Delta \vald$, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delta(M [ \sigma ] =_A M [ \rho ])$.
+
+\begin{code}
+computable-path-substitution : ∀ {U V} (τ : PathSub U V) {σ σ' Γ Δ M A} → 
+  σ ∶ Γ ⇒C Δ → σ' ∶ Γ ⇒C Δ → τ ∶ σ ∼ σ' ∶ Γ ⇒C Δ → Γ ⊢ M ∶ ty A → valid Δ → 
+  E Δ (M ⟦ σ ⟧ ≡〈 A 〉 M ⟦ σ' ⟧) (M ⟦⟦ τ ∶ σ ∼ σ' ⟧⟧) 
+\end{code}
+
 \end{enumerate}
 \end{theorem}
 
+\begin{proof}
+The four parts are proved simultaneously by induction on derivations.
+
+\begin{itemize}
+\item
+$$ \infer[(x : A \in \Gamma)]{\Gamma \vdash x : A}{\Gamma \vald} $$
+
+We have that $\sigma(x) \in E_\Delta(A)$ and $\tau(x) \in E_\Delta(\rho(x) =_A \sigma(x))$ by hypothesis.
+\item
+$$ \infer[(p : \phi \in \Gamma)]{\Gamma \vdash p : \phi}{\Gamma \vald}$$
+
+We have that $\sigma(p) \in E_\Delta(\phi[\sigma])$ by hypothesis.
+\AgdaHide{
 \begin{code}
-postulate Computable-Sub : ∀ {U V K} (σ : Sub U V) {Γ Δ} 
-                 {M : Expression U (varKind K)} {A} →
-                 σ ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → E' Δ (A ⟦ σ ⟧) (M ⟦ σ ⟧)
+Computable-Sub _ σ∶Γ⇒CΔ (varR x _) _ = σ∶Γ⇒CΔ x
 \end{code}
+}
+
+\item
+$$ \infer{\Gamma \vdash \bot : \Omega}{\Gamma \vald} $$
+
+From Lemma \ref{lm:Ebot}, we have $\bot \in E_\Delta(\Omega)$ and therefore
+$\bot\{\} \in E_\Delta(\bot =_\Omega \bot)$.
 
 \AgdaHide{
 \begin{code}
-postulate computable-path-substitution : ∀ {U V} (τ : PathSub U V) {σ σ' Γ Δ M A} → σ ∶ Γ ⇒C Δ → σ' ∶ Γ ⇒C Δ → τ ∶ σ ∼ σ' ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → 
-                               EE Δ (M ⟦ σ ⟧ ≡〈 yt A 〉 M ⟦ σ' ⟧) (M ⟦⟦ τ ∶ σ ∼ σ' ⟧⟧) 
+Computable-Sub σ σ∶Γ⇒CΔ (⊥R validΓ) validΔ = {!!}
+\end{code}
+}
 
-{- Computable-Sub _ σ∶Γ⇒CΔ (varR x _) _ = σ∶Γ⇒CΔ x
+\AgdaHide{
+\begin{code}
 Computable-Sub σ σ∶Γ⇒CΔ (appR Γ⊢M∶A⇛B Γ⊢N∶A) validΔ = appT-E validΔ (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢M∶A⇛B validΔ) (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢N∶A validΔ)
 Computable-Sub σ {Δ = Δ} σ∶Γ⇒CΔ (ΛR {A = A} {M} {B} Γ,A⊢M∶B) validΔ = 
   let Δ,A⊢M⟦σ⟧∶B : Δ ,T A ⊢ M ⟦ liftSub _ σ ⟧ ∶ ty B
       Δ,A⊢M⟦σ⟧∶B = substitution Γ,A⊢M∶B (ctxTR validΔ) (liftSub-typed (subC-typed σ∶Γ⇒CΔ)) in
-  E'I 
+  EI 
   (ΛR Δ,A⊢M⟦σ⟧∶B) 
   ((λ Θ {ρ} {N} ρ∶Δ⇒RΘ Θ⊢N∶A computeN → 
     let validΘ : valid Θ
         validΘ = context-validity Θ⊢N∶A in
-    E'.computable (wteT (weakening Δ,A⊢M⟦σ⟧∶B (ctxTR validΘ) (liftRep-typed ρ∶Δ⇒RΘ)) (E'I Θ⊢N∶A computeN) 
-    (subst (E Θ B) 
+    E.computable (wteT (weakening Δ,A⊢M⟦σ⟧∶B (ctxTR validΘ) (liftRep-typed ρ∶Δ⇒RΘ)) (EI Θ⊢N∶A computeN) 
+    (subst (E Θ (ty B)) 
       (let open ≡-Reasoning in 
       begin
         M ⟦ x₀:= N • liftSub _ (ρ •RS σ) ⟧
@@ -66,9 +100,8 @@ Computable-Sub σ {Δ = Δ} σ∶Γ⇒CΔ (ΛR {A = A} {M} {B} Γ,A⊢M∶B) val
         M ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 ⟦ x₀:= N ⟧
       ∎) 
       (Computable-Sub (x₀:= N • liftSub _ (ρ •RS σ)) 
-      (extend-subC (subCRS ρ∶Δ⇒RΘ σ∶Γ⇒CΔ validΘ) (E'I Θ⊢N∶A computeN)) Γ,A⊢M∶B validΘ)))) ,p 
+      (extend-subC (subCRS ρ∶Δ⇒RΘ σ∶Γ⇒CΔ validΘ) (EI Θ⊢N∶A computeN)) Γ,A⊢M∶B validΘ)))) ,p 
   (λ Θ ρ∶Γ⇒RΔ Θ⊢Q∶N≡N' computeN computeN' computeQ → {!!}))
-Computable-Sub σ σ∶Γ⇒CΔ (⊥R validΓ) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (⊃R Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (appPR Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (ΛPR Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
@@ -82,7 +115,7 @@ Computable-Sub σ σ∶Γ⇒CΔ (lllR Γ⊢M∶A) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (app*R Γ⊢M∶A Γ⊢M∶A₁ Γ⊢M∶A₂ Γ⊢M∶A₃) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (convER Γ⊢M∶A Γ⊢M∶A₁ Γ⊢M∶A₂ M≃M' N≃N') validΔ = {!!}
 
-computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' Γ⊢M∶A validΔ = {!!} -}
+computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' Γ⊢M∶A validΔ = {!!}
 
 {- Computable-Sub σ σ∶Γ⇒Δ (varR x validΓ) validΔ _ = σ∶Γ⇒Δ x
 Computable-Sub {V = V} σ {Δ = Δ} σ∶Γ⇒Δ (appR Γ⊢M∶A⇛B Γ⊢N∶A) validΔ _ = 
@@ -119,7 +152,7 @@ Computable-Sub σ {Γ = Γ} {Δ = Δ} σ∶Γ⇒Δ (ΛPR {δ = δ} {φ} {ψ} Γ�
     expand-EP δε∈EΘψ (appPR (weakening Δ⊢Λφδσ∶φ⊃ψ (context-validity (EP-typed ε∈EΔφ)) ρ∶Δ⇒Θ) (EP-typed ε∈EΔφ)) (βR-exp {!!} (EP-SN ε∈EΔφ) (EP-SN δε∈EΘψ))
       (βPkr (SNrep R-creates-rep (E-SN Ω (Computable-Sub σ σ∶Γ⇒Δ Γ⊢φ∶Ω validΔ))) (EP-SN ε∈EΔφ)))
   Δ⊢Λφδσ∶φ⊃ψ
-Computable-Sub σ σ∶Γ⇒Δ (convR Γ⊢δ∶φ Γ⊢ψ∶Ω φ≃ψ) validΔ = conv-E' (respects-conv (respects-osr SUB R-respects-sub) φ≃ψ) 
+Computable-Sub σ σ∶Γ⇒Δ (convR Γ⊢δ∶φ Γ⊢ψ∶Ω φ≃ψ) validΔ = conv-E (respects-conv (respects-osr SUB R-respects-sub) φ≃ψ) 
   (Computable-Sub σ σ∶Γ⇒Δ Γ⊢δ∶φ validΔ) (ctxPR (substitution Γ⊢ψ∶Ω validΔ (subC-typed σ∶Γ⇒Δ)))
 Computable-Sub σ σ∶Γ⇒Δ (refR Γ⊢M∶A) validΔ = ref-EE (Computable-Sub σ σ∶Γ⇒Δ Γ⊢M∶A validΔ)
 Computable-Sub σ σ∶Γ⇒Δ (⊃*R Γ⊢φ∶Ω Γ⊢ψ∶Ω) validΔ = ⊃*-EE (Computable-Sub σ σ∶Γ⇒Δ Γ⊢φ∶Ω validΔ) (Computable-Sub σ σ∶Γ⇒Δ Γ⊢ψ∶Ω validΔ)
@@ -138,7 +171,7 @@ Computable-Sub σ {Δ = Δ} σ∶Γ⇒Δ (lllR {A = A} {B = B} {M = M} {N = N} {
    (lllR ΔAAE⊢P∶Mx≡Ny)
    (λ V Θ L L' Q ρ ρ∶Δ⇒RΘ L∈EΘA L'∈EΘA Q∈EΘL≡L' → 
      let validΘ : valid Θ
-         validΘ = context-validity (E'-typed L∈EΘA) in
+         validΘ = context-validity (E.typed L∈EΘA) in
      let liftRepρ∶apΔ⇒RapΘ : liftRep _ (liftRep _ (liftRep _ ρ)) ∶ addpath Δ A ⇒R addpath Θ A
          liftRepρ∶apΔ⇒RapΘ = liftRep-typed (liftRep-typed (liftRep-typed ρ∶Δ⇒RΘ)) in --TODO General lemma
      expand-EE 
@@ -196,7 +229,7 @@ Computable-Sub σ {Δ = Δ} σ∶Γ⇒Δ (lllR {A = A} {B = B} {M = M} {N = N} {
          (cong₂ (λ x y → appT x (var x₂) ≡〈 B 〉 appT y (var x₁)) 
            (liftRep-upRep₃ (M ⟦ σ ⟧)) (liftRep-upRep₃ (N ⟦ σ ⟧)))))
          (EE-typed Q∈EΘL≡L')) 
-       (βEkr (E'-SN L∈EΘA) (E'-SN L'∈EΘA) (E'-SN Q∈EΘL≡L')))
+       (βEkr (E-SN L∈EΘA) (E-SN L'∈EΘA) (E-SN Q∈EΘL≡L')))
 Computable-Sub σ σ∶Γ⇒Δ (app*R Γ⊢N∶A Γ⊢N'∶A Γ⊢P∶M≡M' Γ⊢Q∶N≡N') validΔ = 
   app*-EE (Computable-Sub σ σ∶Γ⇒Δ Γ⊢P∶M≡M' validΔ) (Computable-Sub σ σ∶Γ⇒Δ Γ⊢Q∶N≡N' validΔ) 
   (Computable-Sub σ σ∶Γ⇒Δ Γ⊢N∶A validΔ) (Computable-Sub σ σ∶Γ⇒Δ Γ⊢N'∶A validΔ)
@@ -276,7 +309,7 @@ computable-path-substitution U V τ σ σ' Γ Δ ._ ._ σ∶Γ⇒CΔ σ'∶Γ⇒
                                   (sub↗-decomp M) βT)))))) 
    (λ W Θ N N' Q ρ ρ∶Δ⇒RΘ N∈EΘA N'∈EΘA Q∈EΘN≡N' → 
    let validΘ : valid Θ
-       validΘ = context-validity (E'-typed N∈EΘA) in
+       validΘ = context-validity (E.typed N∈EΘA) in
    let validΘA : valid (Θ ,T A)
        validΘA = ctxTR validΘ in
    let validΘAA : valid (Θ ,T A ,T A)
@@ -385,27 +418,10 @@ computable-path-substitution U V τ σ σ' Γ Δ ._ ._ σ∶Γ⇒CΔ σ'∶Γ⇒
        M ⟦⟦ liftPathSub (ρ •RP τ) ∶ sub↖ (ρ •RS σ) ∼ sub↗ (ρ •RS σ') ⟧⟧ ⟦ x₂:= N ,x₁:= N' ,x₀:= Q ⟧
      ≡⟨⟨ pathsub-extendPS M ⟩⟩
        M ⟦⟦ extendPS (ρ •RP τ) Q ∶ extendSub (ρ •RS σ) N ∼ extendSub (ρ •RS σ') N' ⟧⟧
-     ∎) (βEkr (E'-SN N∈EΘA) (E'-SN N'∈EΘA) (E'-SN Q∈EΘN≡N')))) -}
+     ∎) (βEkr (E-SN N∈EΘA) (E-SN N'∈EΘA) (E-SN Q∈EΘN≡N')))) -}
 \end{code}
 }
 
-\begin{proof}
-The four parts are proved simultaneously by induction on derivations.
-
-\begin{itemize}
-\item
-$$ \infer[(x : A \in \Gamma)]{\Gamma \vdash x : A}{\Gamma \vald} $$
-
-We have that $\sigma(x) \in E_\Delta(A)$ and $\tau(x) \in E_\Delta(\rho(x) =_A \sigma(x))$ by hypothesis.
-\item
-$$ \infer[(p : \phi \in \Gamma)]{\Gamma \vdash p : \phi}{\Gamma \vald}$$
-
-We have that $\sigma(p) \in E_\Delta(\phi[\sigma])$ by hypothesis.
-\item
-$$ \infer{\Gamma \vdash \bot : \Omega}{\Gamma \vald} $$
-
-From Lemma \ref{lm:Ebot}, we have $\bot \in E_\Delta(\Omega)$ and therefore
-$\bot\{\} \in E_\Delta(\bot =_\Omega \bot)$.
 \item
 $$ \infer{\Gamma \vdash \phi \supset \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} $$
 
@@ -871,8 +887,8 @@ Strong-Normalization : ∀ V K (Γ : Context V)
 
 \AgdaHide{
 \begin{code}
-Strong-Normalization V K Γ M A Γ⊢M∶A = E'-SN 
-  (subst (E' Γ _) sub-idSub
+Strong-Normalization V K Γ M A Γ⊢M∶A = E-SN 
+  (subst (E Γ _) sub-idSub
   (Computable-Sub (idSub V) idSubC Γ⊢M∶A (context-validity Γ⊢M∶A)))
 \end{code}
 }

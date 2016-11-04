@@ -23,11 +23,63 @@ al}
 We define a model of the type theory with types as sets of terms.  For every type (proposition, equation) $T$ in context $\Gamma$, define
 the set of \emph{computable} terms (proofs, paths) $E_\Gamma(T)$.
 
-\begin{definition}[Neutral]
-A term is \emph{neutral} iff it has the form $x M_1 \cdots M_n$, where each $M_i$ is in normal form.
-\end{definition}
+Note first that (using Generation) a normal form of type $\Omega$ is either $\bot$, or a neutral term, or $\phi \supset \psi$ where $\phi$ and $\psi$ are normal forms of type $\Omega$.
 
-Note that (using Generation) a normal form of type $\Omega$ is either $\bot$, or a neutral term, or $\phi \supset \psi$ where $\phi$ and $\psi$ are normal forms of type $\Omega$.
+\AgdaHide{
+\begin{code}
+data Shape : Set where
+  neutral : Shape
+  bot : Shape
+  imp : Shape → Shape → Shape
+
+data Leaves (V : Alphabet) : Shape → Set where
+  neutral : Neutral V → Leaves V neutral
+  bot : Leaves V bot
+  imp : ∀ {S} {T} → Leaves V S → Leaves V T → Leaves V (imp S T)
+
+lrep : ∀ {U} {V} {S} → Leaves U S → Rep U V → Leaves V S
+lrep (neutral N) ρ = neutral (nrep N ρ)
+lrep bot _ = bot
+lrep (imp φ ψ) ρ = imp (lrep φ ρ) (lrep ψ ρ)
+
+lrep-comp : ∀ {U V W S} {ρ' : Rep V W} {ρ} {L : Leaves U S} →
+  lrep L (ρ' •R ρ) ≡ lrep (lrep L ρ) ρ'
+lrep-comp {L = neutral _} = cong neutral nrep-comp
+lrep-comp {L = bot} = refl
+lrep-comp {L = imp φ ψ} = cong₂ imp lrep-comp lrep-comp
+
+decode-Prop : ∀ {V} {S} → Leaves V S → Term V
+decode-Prop (neutral N) = decode-Neutral N
+decode-Prop bot = ⊥
+decode-Prop (imp φ ψ) = decode-Prop φ ⊃ decode-Prop ψ
+
+postulate decode-rep : ∀ {U} {V} {S} (L : Leaves U S) {ρ : Rep U V} →
+                     decode-Prop (lrep L ρ) ≡ decode-Prop L 〈 ρ 〉
+
+leaves-red : ∀ {V} {S} {L : Leaves V S} {φ : Term V} →
+  decode-Prop L ↠ φ →
+  Σ[ L' ∈ Leaves V S ] decode-Prop L' ≡ φ
+leaves-red {S = neutral} {L = neutral N} L↠φ = 
+  let (N ,p N≡φ) = neutral-red {N = N} L↠φ in neutral N ,p N≡φ
+leaves-red {S = bot} {L = bot} L↠φ = bot ,p Prelims.sym (bot-red L↠φ)
+leaves-red {S = imp S T} {L = imp φ ψ} φ⊃ψ↠χ = 
+  let (φ' ,p ψ' ,p φ↠φ' ,p ψ↠ψ' ,p χ≡φ'⊃ψ') = imp-red φ⊃ψ↠χ in 
+  let (L₁ ,p L₁≡φ') = leaves-red {L = φ} φ↠φ' in 
+  let (L₂ ,p L₂≡ψ') = leaves-red {L = ψ} ψ↠ψ' in 
+  (imp L₁ L₂) ,p (Prelims.trans (cong₂ _⊃_ L₁≡φ' L₂≡ψ') (Prelims.sym χ≡φ'⊃ψ'))
+
+red-decode-rep : ∀ {U} {V} {φ : Term U} {S} (L : Leaves U S) {ρ : Rep U V} →
+  φ ↠ decode-Prop L → φ 〈 ρ 〉 ↠ decode-Prop (lrep L ρ)
+red-decode-rep {V = V} {φ} L {ρ} φ↠L = let open Relation.Binary.PreorderReasoning (RED V -Expression (varKind -Term)) in 
+  begin
+    φ 〈 ρ 〉
+  ∼⟨ red-rep φ↠L ⟩
+    decode-Prop L 〈 ρ 〉
+  ≈⟨ Prelims.sym (decode-rep L) ⟩
+    decode-Prop (lrep L ρ)
+  ∎
+\end{code}
+}
 
 \newcommand{\ldot}{\, . \,}
 \begin{definition}[Computable Expressions]
@@ -59,46 +111,13 @@ E_\Gamma(M =_{A \rightarrow B} M') \eqdef \{ P \mid & \Gamma \vdash P : M =_{A \
 \end{align*}
 \end{definition}
 
-\AgdaHide{
+If $\phi$ is a term that is not weakly normalizable, then $E_\Gamma(\phi)$ is undefined.  Similarly, $E_\Gamma(\phi =_\Omega \psi)$ is undefined if $\phi$ and $\psi$ are
+not both weakly normalizable.
+
+The Agda code for this definition is shown in Figure \ref{fig:compute}
+
+\begin{figure}
 \begin{code}
-data Shape : Set where
-  neutral : Shape
-  bot : Shape
-  imp : Shape → Shape → Shape
-
-data Leaves (V : Alphabet) : Shape → Set where
-  neutral : Neutral V → Leaves V neutral
-  bot : Leaves V bot
-  imp : ∀ {S} {T} → Leaves V S → Leaves V T → Leaves V (imp S T)
-
-lrep : ∀ {U} {V} {S} → Leaves U S → Rep U V → Leaves V S
-lrep (neutral N) ρ = neutral (nrep N ρ)
-lrep bot _ = bot
-lrep (imp φ ψ) ρ = imp (lrep φ ρ) (lrep ψ ρ)
-
-lrep-comp : ∀ {U V W S} {ρ' : Rep V W} {ρ} {L : Leaves U S} →
-  lrep L (ρ' •R ρ) ≡ lrep (lrep L ρ) ρ'
-lrep-comp {L = neutral _} = cong neutral nrep-comp
-lrep-comp {L = bot} = refl
-lrep-comp {L = imp φ ψ} = cong₂ imp lrep-comp lrep-comp
-
-decode-Prop : ∀ {V} {S} → Leaves V S → Term V
-decode-Prop (neutral N) = decode-Neutral N
-decode-Prop bot = ⊥
-decode-Prop (imp φ ψ) = decode-Prop φ ⊃ decode-Prop ψ
-
-leaves-red : ∀ {V} {S} {L : Leaves V S} {φ : Term V} →
-  decode-Prop L ↠ φ →
-  Σ[ L' ∈ Leaves V S ] decode-Prop L' ≡ φ
-leaves-red {S = neutral} {L = neutral N} L↠φ = 
-  let (N ,p N≡φ) = neutral-red {N = N} L↠φ in neutral N ,p N≡φ
-leaves-red {S = bot} {L = bot} L↠φ = bot ,p Prelims.sym (bot-red L↠φ)
-leaves-red {S = imp S T} {L = imp φ ψ} φ⊃ψ↠χ = 
-  let (φ' ,p ψ' ,p φ↠φ' ,p ψ↠ψ' ,p χ≡φ'⊃ψ') = imp-red φ⊃ψ↠χ in 
-  let (L₁ ,p L₁≡φ') = leaves-red {L = φ} φ↠φ' in 
-  let (L₂ ,p L₂≡ψ') = leaves-red {L = ψ} ψ↠ψ' in 
-  (imp L₁ L₂) ,p (Prelims.trans (cong₂ _⊃_ L₁≡φ' L₂≡ψ') (Prelims.sym χ≡φ'⊃ψ'))
-
 computeP : ∀ {V} {S} → Context V → Leaves V S → Proof V → Set
 computeP {S = neutral} Γ (neutral _) δ = SN δ
 computeP {S = bot} Γ bot δ = SN δ
@@ -126,17 +145,247 @@ computeE Γ M (A ⇛ B) M' P =
   (computeN : computeT Δ A N) (computeN' : computeT Δ A N') (computeQ : computeE Δ N A N' Q) → computeE Δ (appT (M 〈 ρ 〉) N) B (appT (M' 〈 ρ 〉)  N') 
     (app* N N' (P 〈 ρ 〉) Q)
 
-postulate computeT-SN : ∀ {V} {Γ : Context V} {A M} → computeT Γ A M → valid Γ → SN M
+compute : ∀ {V} {K} → Context V → Expression V (parent K) → Expression V (varKind K) → Set
+compute {K = -Term} Γ (app (-ty A) out) M = computeT Γ A M
+compute {V} {K = -Proof} Γ φ δ = Σ[ S ∈ Shape ] Σ[ L ∈ Leaves V S ] φ ↠ decode-Prop L × computeP Γ L δ
+compute {K = -Path} Γ (app (-eq A) (M ∷ N ∷ [])) P = computeE Γ M A N P
 
-postulate computeP-SN : ∀ {V} {Γ : Context V} {S} {L : Leaves V S} {δ} → computeP Γ L δ → valid Γ → SN δ
+record E {V} {K} (Γ : Context V) (A : Expression V (parent K)) (M : Expression V (varKind K)) : Set where
+  constructor EI
+  field
+    typed : Γ ⊢ M ∶ A
+    computable : compute Γ A M
+\end{code}
+\caption{Agda definition of the computable expressions}
+\label{fig:compute}
+\end{figure}
 
-postulate decode-rep : ∀ {U} {V} {S} (L : Leaves U S) {ρ : Rep U V} →
-                     decode-Prop (lrep L ρ) ≡ decode-Prop L 〈 ρ 〉
+Note that, if $\Gamma \subseteq \Delta$, then $E_\Gamma(T) \subseteq E_\Delta(T)$.  Note also that, if $M \in E_\Gamma(A)$,
+then $M \{\} \in E_\Gamma(M =_A M)$. %TODO Agda
 
+\AgdaHide{
+\begin{code}
+computeP-rep : ∀ {U V S Γ Δ} {ρ : Rep U V} {L : Leaves U S} {δ} →
+  computeP Γ L δ → ρ ∶ Γ ⇒R Δ → computeP Δ (lrep L ρ) (δ 〈 ρ 〉)
+computeP-rep {S = neutral} {L = neutral _} computeδ _ = SNrep R-creates-rep computeδ
+computeP-rep {S = bot} {L = bot} computeδ ρ∶Γ⇒RΔ = SNrep R-creates-rep computeδ
+computeP-rep {S = imp S T} {ρ = ρ} {L = imp φ ψ} {δ} computeδ ρ∶Γ⇒RΔ Θ {ρ'} {ε} ρ'∶Δ⇒RΘ Θ⊢ε∶φ computeε = 
+  subst₂ (computeP Θ) (let open ≡-Reasoning in 
+  begin
+    lrep ψ (ρ' •R ρ)
+  ≡⟨ lrep-comp ⟩
+    lrep (lrep ψ ρ) ρ'
+  ∎) 
+  (cong (λ x → appP x ε) (rep-comp δ)) 
+  (computeδ Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) 
+    (change-type Θ⊢ε∶φ 
+      (cong decode-Prop {x = lrep (lrep φ ρ) ρ'} (Prelims.sym lrep-comp))) 
+    (subst (λ x → computeP Θ x ε) {x = lrep (lrep φ ρ) ρ'} (Prelims.sym lrep-comp) computeε))
+
+compute-rep : ∀ {U V Γ Δ} {ρ : Rep U V} {K} {A : Expression U (parent K)} {M : Expression U (varKind K)} → 
+  E Γ A M → ρ ∶ Γ ⇒R Δ → valid Δ → compute Δ (A 〈 ρ 〉) (M 〈 ρ 〉)
+compute-rep {V = V} {ρ = ρ} {K = -Proof} {φ} {M} (EI typed (S ,p L ,p φ↠L ,p computeM)) ρ∶Γ⇒RΔ validΔ = S ,p lrep L ρ ,p 
+  red-decode-rep L φ↠L ,p
+  computeP-rep {ρ = ρ} {L} {δ = M} computeM ρ∶Γ⇒RΔ
+compute-rep {K = -Term} {app (-ty Ω) []} (EI _ SNM) _ _ = SNrep R-creates-rep SNM
+compute-rep {K = -Term} {app (-ty (φ ⇛ ψ)) []} {δ} (EI Γ⊢δ∶φ⊃ψ (δapp ,p δeq)) ρ∶Γ⇒RΔ validΔ = (λ {W} Θ {ρ'} {ε} ρ'∶Δ⇒RΘ Θ⊢ε∶φ computeε → 
+  subst (computeT Θ ψ) (cong (λ x → appT x ε) (rep-comp δ)) (δapp Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) Θ⊢ε∶φ computeε)) ,p 
+  (λ Θ {ρ'} {ε} {ε'} {P} ρ'∶Δ⇒RΘ Θ⊢P∶ε≡ε' computeε computeε' computeP → subst
+    (λ a → computeE Θ (appT a ε) ψ (appT a ε') (a ⋆[ P ∶ ε ∼ ε' ]))
+    (rep-comp δ) 
+    (δeq Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) Θ⊢P∶ε≡ε' computeε computeε' computeP))
+compute-rep {V = V} {ρ = ρ} {K = -Path} {app (-eq Ω) (φ ∷ ψ ∷ [])} {P} (EI Γ⊢P∶φ≡ψ (S ,p S' ,p L ,p L' ,p φ↠L ,p ψ↠L' ,p computeP+ ,p computeP- )) ρ∶Γ⇒RΔ validΔ = 
+  S ,p S' ,p lrep L ρ ,p lrep L' ρ ,p 
+  red-decode-rep L φ↠L ,p
+  red-decode-rep L' ψ↠L' ,p 
+  (λ Θ {ρ'} {ε} ρ'∶Δ⇒RΘ Θ⊢ε∶Lρρ' computeε → subst₂ (λ a b → computeP Θ a (appP (plus b) ε)) {lrep L' (ρ' •R ρ)}
+                                              {lrep (lrep L' ρ) ρ'} {P 〈 ρ' •R ρ 〉} {(P 〈 ρ 〉) 〈 ρ' 〉} 
+  lrep-comp (rep-comp P) (computeP+ Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) 
+    (change-type Θ⊢ε∶Lρρ' (cong decode-Prop {lrep (lrep L ρ) ρ'} {lrep L (ρ' •R ρ)} (Prelims.sym lrep-comp))) 
+    (subst (λ a → computeP Θ a ε) {lrep (lrep L ρ) ρ'}
+       {lrep L (ρ' •R ρ)} (Prelims.sym lrep-comp) computeε))) ,p 
+  (λ Θ {ρ'} {ε} ρ'∶Δ⇒RΘ Θ⊢ε∶L'ρρ' computeε → subst₂ (λ a b → computeP Θ a (appP (minus b) ε)) {lrep L (ρ' •R ρ)}
+                                              {lrep (lrep L ρ) ρ'} {P 〈 ρ' •R ρ 〉} {(P 〈 ρ 〉) 〈 ρ' 〉} 
+  lrep-comp (rep-comp P) (computeP- Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) 
+    (change-type Θ⊢ε∶L'ρρ' (cong decode-Prop {lrep (lrep L' ρ) ρ'} {lrep L' (ρ' •R ρ)} (Prelims.sym lrep-comp))) 
+    (subst (λ a → computeP Θ a ε) {lrep (lrep L' ρ) ρ'}
+       {lrep L' (ρ' •R ρ)} (Prelims.sym lrep-comp) computeε)))
+--TODO Tidy up this proof
+compute-rep {K = -Path} {app (-eq (A ⇛ B)) (F ∷ G ∷ [])} {P} (EI Γ⊢P∶F≡G computeP) ρ∶Γ⇒RΔ validΔ Θ {ρ'} {N} {N'} {Q} ρ'∶Δ⇒RΘ Θ⊢Q∶N≡N' computeN computeN' computeQ = 
+  subst₃
+    (λ a b c → computeE Θ (appT a N) B (appT b N') (app* N N' c Q)) 
+    (rep-comp F) (rep-comp G) (rep-comp P) 
+    (computeP Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) Θ⊢Q∶N≡N' computeN computeN' computeQ)
+\end{code}
+}
+
+\begin{code}
+E-rep : ∀ {U V Γ Δ} {ρ : Rep U V} {K} {A : Expression U (parent K)} {M : Expression U (varKind K)} → 
+  E Γ A M → ρ ∶ Γ ⇒R Δ → valid Δ → E Δ (A 〈 ρ 〉) (M 〈 ρ 〉)
+\end{code}
+
+\AgdaHide{
+\begin{code}
+E-rep (EI Γ⊢M∶A computeM) ρ∶Γ⇒RΔ validΔ = EI (weakening Γ⊢M∶A validΔ ρ∶Γ⇒RΔ) (compute-rep (EI Γ⊢M∶A computeM) ρ∶Γ⇒RΔ validΔ)
+\end{code}
+}
+
+\begin{lm}
+\label{lm:varcompute1}
+Let $\phi$ be a weakly normalizable term.
+\begin{enumerate}
+\item
+If $\Gamma \vald$, $φ$ is weakly normalizable and $p : \phi \in \Gamma$ then $p \in E_\Gamma(\phi)$.
+
+\AgdaHide{
+\begin{code}
+postulate var-computePnf : ∀ {V S} {Γ : Context V} {L : Leaves V S} {p : Var V -Proof} → computeP Γ L (var p)
+postulate E-SNPnf : ∀ {V S} {Γ : Context V} {L : Leaves V S} {δ : Proof V} → valid Γ → computeP Γ L δ → SN δ
+\end{code}
+}
+
+\begin{code}
+E-varP : ∀ {V S} {L : Leaves V S} {Γ : Context V} {p : Var V -Proof} → 
+         valid Γ → typeof p Γ ↠ decode-Prop L → E Γ (typeof p Γ) (var p)
+E-varP {S = S} {L} {p = p} validΓ φ↠L = EI (varR p validΓ) (S ,p L ,p φ↠L ,p var-computePnf {S = S})
+\end{code}
+
+\item
+$E_\Gamma(\phi) \subseteq \SN$.
+
+\begin{code}
+E-SNP : ∀ {V S} {Γ : Context V} {L : Leaves V S} {φ : Term V} {δ : Proof V} → 
+      E Γ φ δ → SN δ
+\end{code}
+
+\AgdaHide{
+\begin{code}
+E-SNP (EI Γ⊢δ∶φ (S ,p L ,p _ ,p computeδ)) = E-SNPnf {S = S} {L = L} (context-validity Γ⊢δ∶φ) computeδ
+\end{code}
+}
+\end{enumerate}
+\end{lm}
+
+\begin{proof}
+The two parts are proved simultaneously by induction on $\nf{\phi}$.
+Let $\nf{\phi} \equiv \psi_1 \supset \cdots \supset \psi_n \supset \chi$,
+where $\chi$ is either $\bot$ or a neutral term.  
+\begin{enumerate}
+\item
+Let $\Delta \supseteq \Gamma$ and $\epsilon_i \in E_\Delta(\psi_i)$ for
+each $i$.  We must show that
+\[ p \epsilon_1 \cdots \epsilon_n \in E_\Delta(\chi) \]
+It is easy to see that $p \vec{\epsilon}$ is well-typed, so it remains to show that $p \vec{\epsilon} \in \SN$.
+This holds because each $\epsilon_i$ is strongly normalizing by the induction hypothesis (2).
+\item
+Let $\delta \in E_\Gamma(\phi)$.  Consider the context $\Delta \equiv \Gamma, p_1 : \psi_1, \ldots, p_n : \psi_n$.
+By the induction hypothesis (1), we have that $p_i \in E_\Delta(\psi_i)$, hence
+$\delta p_1 \cdots p_n \in E_\Gamma(\chi)$, and so $\delta p_1 \cdots p_n \in \SN$.
+It follows that $\delta \in \SN$.
+\end{enumerate}
+\end{proof}
+
+\begin{lemma}
+\label{lm:varcompute2}
+Let $A$ be a type.
+\begin{enumerate}
+\item
+If $\Gamma \vald$ and $x : A \in \Gamma$ then $x \in E_\Gamma(A)$.
+
+\begin{code}
+postulate E-varT : ∀ {V} {Γ : Context V} {x : Var V -Term} → valid Γ → E Γ (typeof x Γ) (var x)
+\end{code}
+\item
+$E_\Gamma(A) \subseteq \SN$.
+
+\begin{code}
+postulate E-SNT : ∀ {V} {Γ : Context V} {A} {M : Term V} → E Γ (ty A) M → SN M
+\end{code}
+\item
+If $\Gamma \vald$ and $e : M =_A N \in \Gamma$ and $M, N \in E_\Gamma(A)$ then $e \in E_\Gamma(M =_A N)$.
+
+\begin{code}
+postulate E-varE : ∀ {V} {Γ : Context V} {x : Var V -Path} → valid Γ → E Γ (typeof x Γ) (var x)
+\end{code}
+\item
+For all $M$, $N$, we have $E_\Gamma(M =_A N) \subseteq \SN$.
+
+\begin{code}
+postulate E-SNE : ∀ {V} {Γ : Context V} {Eq : Equation V} {P : Path V} → E Γ Eq P → SN P
+\end{code}
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+The four parts are proved simultaneously by induction on $A$.  Let $A \equiv A_1 \rightarrow \cdots \rightarrow A_n \rightarrow \Omega$,
+and suppose the lemma holds for each $A_i$.
+\begin{enumerate}
+\item
+Let $\Delta \supseteq \Gamma$.  We must prove the following:
+\begin{enumerate}
+\item
+Given $M_i \in E_\Delta(A_i)$ for $1 \leq i \leq n$, we must show that $x M_1 \cdots M_n \in E_\Delta(\Omega)$.  We have that
+each $M_i \in \SN$ by the induction hypothesis, hence $x \vec{M} \in \SN$.
+
+Now, let $\delta \in E_\Delta(x \vec{M})$.  We must show that $(x \vec{M}) \{\} ^+ \delta \in E_\Delta(x \vec{M})$,
+i.e. $(\reff{x}_{M_1 M_1} M_1 \{\}_{M_2 M_2} \cdots_{M_n M_n} M_n\{\})^+ \delta \in E_\Delta(x \vec{M})$.
+Well-typedness is easy, and strong normalization follows from the fact that each $M_i$ and $M_i \{\}$ is strongly
+normalizing by the induction hypothesis (2) and (4).  (Note that $\reff{x}$ cannot be part of a redex, as it is not closed.)
+\item
+Given $M_i \in E_\Delta(A_i)$ for $1 \leq i \leq k$, and $N_j, N_j' \in E_\Delta(A_j)$ and $P_j \in E_\Delta(M_j =_{A_j} N_j)$ for
+$k < j \leq n$, we must show that \\
+$(x M_1 \cdots M_k)\{\}_{N_{k+1}N_{k+1}'} (P_{k+1})_{N_{k+2}N_{k+2}'} \cdots_{N_n N_n'} P_n \in E_\Delta(x \vec{M} \vec{N} =_\Omega x \vec{M} \vec{N'})$,
+i.e.
+\begin{align*}
+(\reff{x}_{M_1 M_1} M_1\{\} \cdots_{M_k M_k} M_k\{\}_{M_{k+1} N_{k+1}} P_{k+1} \cdots_{M_n N_n} P_n)^+ \\
+\in E_\Delta(x \vec{M} \vec{N} \supset x \vec{M} \vec{N'}) \\
+(\reff{x}_{M_1 M_1} M_1\{\} \cdots_{M_k M_k} M_k\{\}_{M_{k+1} N_{k+1}} P_{k+1} \cdots_{M_n N_n} P_n)^- \\
+\in E_\Delta(x \vec{M} \vec{N'} \supset x \vec{M} \vec{N})
+\end{align*}
+The proof is similar to the previous part.
+\end{enumerate}
+\item
+Let $M \in E_\Gamma(A)$.  Then using the induction hypothesis $M x_1 \cdots x_n \in E_{\Gamma, x_1 : A_1, \ldots, x_n : A_n}(\Omega) \subseteq \SN$,
+hence $M \in \SN$.
+\item
+Let $\Delta \supseteq \Gamma$.  Let $L_i, L_i' \in E_\Delta(A_i)$ and
+$P_i \in E_\Delta(L_i =_{A_i} L_i')$ for $i = 1, \ldots, n$.  We must show that
+$e \vec{P} \equiv e_{L_1 L_1'} P_1 \cdots_{L_n L_n'} P_n \in E_\Delta(M L_1 \cdots L_n =_{\Omega} N L_1' \cdots L_n')$, i.e. that
+\begin{align*}
+(e \vec{P})^+ \in E_\Delta(M \vec{L} \supset N \vec{L'}) \\
+(e \vec{P})^- \in E_\Delta(N \vec{L'} \supset M \vec{L})
+\end{align*}
+We prove the first of these; the second is similar.
+
+Let $\Theta \supseteq \Delta$.  Let $\delta \in E_\Theta(M \vec{L})$.
+Let $\nf{N \vec{L'}} \equiv \phi_1 \supset \cdots \supset \phi_m \supset \chi$,
+where $\chi$ is $\bot$ or neutral.  (We know $\nf{N \vec{L'}}$ exists because
+$N \vec{L'} \in E_\Delta(\Omega)$.)  Let $\epsilon_j \in E_\Theta(\phi_j)$ for
+$j = 1, \ldots, m$.  Then we must show that
+\[ (e \vec{P})^+ \delta \epsilon_1 \cdots \epsilon_m \in E_\Theta(\chi) \]
+Well-typedness is easy to show, so it remains to show $(e \vec{P})^+ \delta \vec{\epsilon} \in \SN$.  This holds as each $P_i$, $\delta$ and $\epsilon_j$ is
+strongly normalizing.
+\item
+Let $P \in E_\Gamma(M =_A N)$.  Let $\Delta$ be the context
+\[ \Gamma, x_1 : A_1, y_1 : A_1, e_1 : x_1 =_{A_1} y_1, \ldots, x_n : A_n, y_n : A_n, e_n : x_n =_{A_n} y_n \enspace \]
+Then using the induction hypothesis $P \vec{e} \equiv P_{x_1 y_1} e_1 \cdots_{x_n y_n} e_n \in E_\Gamma(M \vec{x} =_\Omega N \vec{y})$ and so
+$(P \vec{e})^+ \in E_\Gamma(M \vec{x} \supset N \vec{y}) \subseteq \SN$, hence $P \in \SN$.
+\end{enumerate}
+\end{proof}
+
+\begin{proposition}
+\begin{enumerate}
+\item
+If $\delta \in E_\Gamma(\phi)$, $\phi \simeq \psi$ and $\Gamma \vdash \psi : \Omega$, then $\delta \in E_\Gamma(\psi)$.
+\begin{code}
 postulate conv-computeP : ∀ {V} {Γ : Context V} {S} {L M : Leaves V S} {δ} →
                         computeP Γ L δ → decode-Prop L ≃ decode-Prop M →
                         Γ ⊢ decode-Prop M ∶ ty Ω → computeP Γ M δ
-
+\end{code}
+\item
+If $P \in E_\Gamma(M =_A N)$, $M \simeq M'$, $N \simeq N'$ and $\Gamma \vdash M : A$ and $\Gamma \vdash N : A$, then $P \in E_\Gamma(M' =_A N')$.
+\AgdaHide{
+\begin{code}
 conv-computeE : ∀ {V} {Γ : Context V} {M} {M'} {A} {N} {N'} {P} →
   computeE Γ M A N P → 
   Γ ⊢ M ∶ ty A → Γ ⊢ N ∶ ty A → Γ ⊢ M' ∶ ty A → Γ ⊢ N' ∶ ty A → M ≃ M' → N ≃ N' →
@@ -214,241 +463,72 @@ conv-computeE {A = A ⇛ B} computeP Γ⊢M∶A Γ⊢N∶A Γ⊢M'∶A Γ⊢N'�
     (appR (weakening Γ⊢N'∶A (context-validity Δ⊢Q∶N≡N') ρ∶Γ⇒RΔ) (equation-validity₂ Δ⊢Q∶N≡N')) 
     (appT-convl (conv-rep M≃M')) (appT-convl (conv-rep N≃N'))
 --TODO Common pattern
-
-postulate expand-computeE : ∀ {V} {Γ : Context V} {M} {A} {N} {P} {Q} →
-                          computeE Γ M A N Q → Γ ⊢ P ∶ M ≡〈 A 〉 N → key-redex P Q → computeE Γ M A N P
-
-postulate expand-computeT : ∀ {V} {Γ : Context V} {A} {M} {N} → computeT Γ A N → Γ ⊢ M ∶ ty A → SN M → key-redex M N → computeT Γ A M
-{- expand-computeT {A = Ω} computeψ _ SNM φ▷ψ = SNM
-expand-computeT {A = A ⇛ B} {M} {M'} (computeM'app ,p computeM'eq) Γ⊢M∶A⇛B SNM M▷M' = 
-  (λ Δ {ρ} {N} ρ∶Γ⇒Δ Δ⊢N∶A computeN → 
-    let computeM'N : computeT Δ B (appT (M' 〈 ρ 〉) N)
-        computeM'N = computeM'app Δ ρ∶Γ⇒Δ Δ⊢N∶A computeN in
-    let validΔ : valid Δ
-        validΔ = context-validity Δ⊢N∶A in
-    expand-computeT computeM'N 
-    (appR (weakening Γ⊢M∶A⇛B validΔ ρ∶Γ⇒Δ) Δ⊢N∶A)
-    (expand-lemma (SNrep R-creates-rep SNM) 
-         (key-redex-rep M▷M') (compute-SN computeM'N validΔ))
-         (appTkr (key-redex-rep M▷M'))) ,p 
-  (λ Δ {ρ} {N} {N'} ρ∶Γ⇒Δ Δ⊢P∶N≡N' computeN computeN' computeP₁ → 
-    let validΔ : valid Δ
-        validΔ = context-validity Δ⊢P∶N≡N' in
-    let Γ⊢M'∶A⇛B : Γ ⊢ M' ∶ ty (A ⇛ B)
-        Γ⊢M'∶A⇛B = subject-reduction Γ⊢M∶A⇛B (key-redex-red M▷M') in
-    let Δ⊢M'ρ∶A⇛B : Δ ⊢ M' 〈 ρ 〉 ∶ ty (A ⇛ B)
-        Δ⊢M'ρ∶A⇛B = weakening Γ⊢M'∶A⇛B validΔ ρ∶Γ⇒Δ in
-    let Δ⊢Mρ∶A⇛B : Δ ⊢ M 〈 ρ 〉 ∶ ty (A ⇛ B)
-        Δ⊢Mρ∶A⇛B = weakening Γ⊢M∶A⇛B validΔ ρ∶Γ⇒Δ in
-    let Δ⊢N∶A : Δ ⊢ N ∶ ty A
-        Δ⊢N∶A = equation-validity₁ Δ⊢P∶N≡N' in
-    let Δ⊢N'∶A : Δ ⊢ N' ∶ ty A
-        Δ⊢N'∶A = equation-validity₂ Δ⊢P∶N≡N' in
-    let M'ρX≃MρX : ∀ X → appT (M' 〈 ρ 〉) X ≃ appT (M 〈 ρ 〉) X
-        M'ρX≃MρX = λ _ → RSTClose.sym (appT-convl (red-conv (red-rep (key-redex-red M▷M')))) in
-    expand-computeE 
-      (conv-computeE 
-        (computeM'eq Δ ρ∶Γ⇒Δ Δ⊢P∶N≡N' computeN computeN' computeP₁) 
-        (appR Δ⊢M'ρ∶A⇛B Δ⊢N∶A) 
-        (appR Δ⊢M'ρ∶A⇛B Δ⊢N'∶A)
-        (appR Δ⊢Mρ∶A⇛B Δ⊢N∶A) 
-        (appR Δ⊢Mρ∶A⇛B Δ⊢N'∶A)
-        (M'ρX≃MρX N) (M'ρX≃MρX N'))
-      (⋆-typed Δ⊢Mρ∶A⇛B Δ⊢P∶N≡N') 
-      (key-redex-⋆ (key-redex-rep M▷M'))) -}
-
-compute : ∀ {V} {K} → Context V → Expression V (parent K) → Expression V (varKind K) → Set
-compute {K = -Term} Γ (app (-ty A) out) M = computeT Γ A M
-compute {V} {K = -Proof} Γ φ δ = Σ[ S ∈ Shape ] Σ[ L ∈ Leaves V S ] φ ↠ decode-Prop L × computeP Γ L δ
-compute {K = -Path} Γ (app (-eq A) (M ∷ N ∷ [])) P = computeE Γ M A N P
-
-postulate expand-computeP : ∀ {V} {Γ : Context V} {S} {L : Leaves V S} {δ ε} →
-                          computeP Γ L ε → Γ ⊢ δ ∶ decode-Prop L → key-redex δ ε → computeP Γ L δ
-
-record E' {V} {K} (Γ : Context V) (A : Expression V (parent K)) (E : Expression V (varKind K)) : Set where
-  constructor E'I
-  field
-    typed : Γ ⊢ E ∶ A
-    computable : compute Γ A E
-
---TODO Inline the following?
-E : ∀ {V} → Context V → Type → Term V → Set
-E Γ A M = E' Γ (ty A) M
-
-EP : ∀ {V} → Context V → Term V → Proof V → Set
-EP Γ φ δ = E' Γ φ δ
-
-EE : ∀ {V} → Context V → Equation V → Path V → Set
-EE Γ E P = E' Γ E P
-
-E'-typed : ∀ {V} {K} {Γ : Context V} {A} {M : Expression V (varKind K)} → 
-           E' Γ A M → Γ ⊢ M ∶ A
-E'-typed = E'.typed
-
-postulate func-E : ∀ {U} {Γ : Context U} {M : Term U} {A} {B} →
-                   (∀ V Δ (ρ : Rep U V) (N : Term V) → valid Δ → ρ ∶ Γ ⇒R Δ → E Δ A N → E Δ B (appT (M 〈 ρ 〉) N)) →
-                   E Γ (A ⇛ B) M
-\end{code}
-}
-
-If $\phi$ is a term that is not weakly normalizable, then $E_\Gamma(\phi)$ is undefined.  Similarly, $E_\Gamma(\phi =_\Omega \psi)$ is undefined if $\phi$ and $\psi$ are
-not both weakly normalizable.
-
-Note that each $E_\Gamma(T)$ is closed under reduction, and that, if $\Gamma \subseteq \Delta$, then $E_\Gamma(T) \subseteq E_\Delta(T)$.  Note also that, if $M \in E_\Gamma(A)$,
-then $M \{\} \in E_\Gamma(M =_A M)$.  
-
-
-\begin{code}
-postulate conv-E' : ∀ {V} {K} {Γ} {A} {B} {M : Expression V (varKind K)} →
-                  A ≃ B → E' Γ A M → valid (_,_ {K = K} Γ B) → E' Γ B M
-\end{code}
-
-\AgdaHide{
-\begin{code}
-postulate E'-SN : ∀ {V} {K} {Γ} {A} {M : Expression V (varKind K)} → E' Γ A M → SN M
 \end{code}
 }
 
 \begin{code}
-postulate var-E' : ∀ {V} {K} {x : Var V K} {Γ : Context V} → E' Γ (typeof x Γ) (var x)
+convE-E : ∀ {V} {Γ : Context V} {M N M' N' : Term V} {A} {P : Path V} →
+          E Γ (M ≡〈 A 〉 N) P → M ≃ M' → N ≃ N' → Γ ⊢ M' ∶ ty A → Γ ⊢ N' ∶ ty A → 
+          E Γ (M' ≡〈 A 〉 N') P
 \end{code}
 
 \AgdaHide{
 \begin{code}
-postulate ⊥-E : ∀ {V} {Γ : Context V} → valid Γ → E' Γ (ty Ω) ⊥
+convE-E (EI Γ⊢P∶M≡N computeP) M≃M' N≃N' Γ⊢M'∶A Γ⊢N'∶A = EI (convER Γ⊢P∶M≡N Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N') 
+  (conv-computeE computeP (equation-validity₁ Γ⊢P∶M≡N) (equation-validity₂ Γ⊢P∶M≡N) Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N')
+\end{code}
+}
+\end{enumerate}
+\end{proposition}
 
-postulate ⊃-E : ∀ {V} {Γ : Context V} {φ} {ψ} → E Γ Ω φ → E Γ Ω ψ → E Γ Ω (φ ⊃ ψ)
+\AgdaHide{
+\begin{code}
+E-var : ∀ {V} {K} {Γ : Context V} {x : Var V K} → valid Γ → E Γ (typeof x Γ) (var x)
+E-var {K = -Proof} validΓ = E-varP validΓ {!!}
+E-var {K = -Term} = E-varT
+E-var {K = -Path} = E-varE
+\end{code}
+}
+
+\AgdaHide{
+\begin{code}
+postulate ⊥-E : ∀ {V} {Γ : Context V} → valid Γ → E Γ (ty Ω) ⊥
+
+postulate ⊃-E : ∀ {V} {Γ : Context V} {φ} {ψ} → E Γ (ty Ω) φ → E Γ (ty Ω) ψ → E Γ (ty Ω) (φ ⊃ ψ)
 
 postulate appT-E : ∀ {V} {Γ : Context V} {M N : Term V} {A} {B} →
-                 valid Γ → E Γ (A ⇛ B) M → E Γ A N → E Γ B (appT M N)
+                 valid Γ → E Γ (ty (A ⇛ B)) M → E Γ (ty A) N → E Γ (ty B) (appT M N)
 
-E-typed : ∀ {V} {Γ : Context V} {A} {M} → E Γ A M → Γ ⊢ M ∶ ty A
-E-typed = E'-typed
+postulate appP-E : ∀ {V} {Γ : Context V} {δ ε : Proof V} {φ} {ψ} →
+                  E Γ (φ ⊃ ψ) δ → E Γ φ ε → E Γ ψ (appP δ ε)
+postulate plus-E : ∀ {V} {Γ : Context V} {P : Path V} {φ ψ : Term V} →
+                  E Γ (φ ≡〈 Ω 〉 ψ) P → E Γ (φ ⊃ ψ) (plus P)
+postulate minus-E : ∀ {V} {Γ : Context V} {P : Path V} {φ ψ : Term V} →
+                   E Γ (φ ≡〈 Ω 〉 ψ) P → E Γ (ψ ⊃ φ) (minus P)
 
-E-SN : ∀ {V} {Γ : Context V} A {M} → E Γ A M → SN M
-E-SN _ = E'-SN
---TODO Inline
+postulate funcP-E : ∀ {U} {Γ : Context U} {δ : Proof U} {φ} {ψ} →
+                  (∀ V Δ (ρ : Rep U V) (ε : Proof V) → ρ ∶ Γ ⇒R Δ → E Δ (φ 〈 ρ 〉) ε → E Δ (ψ 〈 ρ 〉) (appP (δ 〈 ρ 〉) ε)) → 
+                  Γ ⊢ δ ∶ φ ⊃ ψ → E Γ (φ ⊃ ψ) δ
 
-postulate appP-EP : ∀ {V} {Γ : Context V} {δ ε : Proof V} {φ} {ψ} →
-                  EP Γ (φ ⊃ ψ) δ → EP Γ φ ε → EP Γ ψ (appP δ ε)
-postulate plus-EP : ∀ {V} {Γ : Context V} {P : Path V} {φ ψ : Term V} →
-                  EE Γ (φ ≡〈 Ω 〉 ψ) P → EP Γ (φ ⊃ ψ) (plus P)
-postulate minus-EP : ∀ {V} {Γ : Context V} {P : Path V} {φ ψ : Term V} →
-                   EE Γ (φ ≡〈 Ω 〉 ψ) P → EP Γ (ψ ⊃ φ) (minus P)
+postulate ref-E : ∀ {V} {Γ : Context V} {M : Term V} {A : Type} → E Γ (ty A) M → E Γ (M ≡〈 A 〉 M) (reff M)
+postulate ⊃*-E : ∀ {V} {Γ : Context V} {φ φ' ψ ψ' : Term V} {P Q : Path V} →
+                  E Γ (φ ≡〈 Ω 〉 φ') P → E Γ (ψ ≡〈 Ω 〉 ψ') Q → E Γ (φ ⊃ ψ ≡〈 Ω 〉 φ' ⊃ ψ') (P ⊃* Q)
+postulate univ-E : ∀ {V} {Γ : Context V} {φ ψ : Term V} {δ ε : Proof V} →
+                  E Γ (φ ⊃ ψ) δ → E Γ (ψ ⊃ φ) ε → E Γ (φ ≡〈 Ω 〉 ψ) (univ φ ψ δ ε)
+postulate app*-E : ∀ {V} {Γ : Context V} {M} {M'} {N} {N'} {A} {B} {P} {Q} →
+                  E Γ (M ≡〈 A ⇛ B 〉 M') P → E Γ (N ≡〈 A 〉 N') Q →
+                  E Γ (ty A) N → E Γ (ty A) N' →
+                  E Γ (appT M N ≡〈 B 〉 appT M' N') (app* N N' P Q)
 
-postulate func-EP : ∀ {U} {Γ : Context U} {δ : Proof U} {φ} {ψ} →
-                  (∀ V Δ (ρ : Rep U V) (ε : Proof V) → ρ ∶ Γ ⇒R Δ → EP Δ (φ 〈 ρ 〉) ε → EP Δ (ψ 〈 ρ 〉) (appP (δ 〈 ρ 〉) ε)) → 
-                  Γ ⊢ δ ∶ φ ⊃ ψ → EP Γ (φ ⊃ ψ) δ
-
-conv-EP : ∀ {V} {Γ : Context V} {φ ψ : Term V} {δ : Proof V} →
-          φ ≃ ψ → EP Γ φ δ → Γ ⊢ ψ ∶ ty Ω → EP Γ ψ δ
-conv-EP φ≃ψ δ∈EΓφ Γ⊢ψ∶Ω = conv-E' φ≃ψ δ∈EΓφ (ctxPR Γ⊢ψ∶Ω)
-
-EP-typed : ∀ {V} {Γ : Context V} {δ : Proof V} {φ : Term V} →
-         EP Γ φ δ → Γ ⊢ δ ∶ φ
-EP-typed = E'-typed
-
-EP-SN : ∀ {V} {Γ : Context V} {δ} {φ} → EP Γ φ δ → SN δ
-EP-SN = E'-SN
-
-postulate ref-EE : ∀ {V} {Γ : Context V} {M : Term V} {A : Type} → E Γ A M → EE Γ (M ≡〈 A 〉 M) (reff M)
-postulate ⊃*-EE : ∀ {V} {Γ : Context V} {φ φ' ψ ψ' : Term V} {P Q : Path V} →
-                  EE Γ (φ ≡〈 Ω 〉 φ') P → EE Γ (ψ ≡〈 Ω 〉 ψ') Q → EE Γ (φ ⊃ ψ ≡〈 Ω 〉 φ' ⊃ ψ') (P ⊃* Q)
-postulate univ-EE : ∀ {V} {Γ : Context V} {φ ψ : Term V} {δ ε : Proof V} →
-                  EP Γ (φ ⊃ ψ) δ → EP Γ (ψ ⊃ φ) ε → EE Γ (φ ≡〈 Ω 〉 ψ) (univ φ ψ δ ε)
-postulate app*-EE : ∀ {V} {Γ : Context V} {M} {M'} {N} {N'} {A} {B} {P} {Q} →
-                  EE Γ (M ≡〈 A ⇛ B 〉 M') P → EE Γ (N ≡〈 A 〉 N') Q →
-                  E Γ A N → E Γ A N' →
-                  EE Γ (appT M N ≡〈 B 〉 appT M' N') (app* N N' P Q)
-
-postulate func-EE : ∀ {U} {Γ : Context U} {A} {B} {M} {M'} {P} →
+postulate funcE-E : ∀ {U} {Γ : Context U} {A} {B} {M} {M'} {P} →
                   Γ ⊢ P ∶ M ≡〈 A ⇛ B 〉 M' →
                   (∀ V (Δ : Context V) (N N' : Term V) Q ρ → ρ ∶ Γ ⇒R Δ → 
-                  E Δ A N → E Δ A N' → EE Δ (N ≡〈 A 〉 N') Q →
-                  EE Δ (appT (M 〈 ρ 〉) N ≡〈 B 〉 appT (M' 〈 ρ 〉) N') (app* N N' (P 〈 ρ 〉) Q)) →
-                  EE Γ (M ≡〈 A ⇛ B 〉 M') P
+                  E Δ (ty A) N → E Δ (ty A) N' → E Δ (N ≡〈 A 〉 N') Q →
+                  E Δ (appT (M 〈 ρ 〉) N ≡〈 B 〉 appT (M' 〈 ρ 〉) N') (app* N N' (P 〈 ρ 〉) Q)) →
+                  E Γ (M ≡〈 A ⇛ B 〉 M') P
 
-conv-EE : ∀ {V} {Γ : Context V} {M} {N} {M'} {N'} {A} {P} →
-          EE Γ (M ≡〈 A 〉 N) P → M ≃ M' → N ≃ N' → Γ ⊢ M' ∶ ty A → Γ ⊢ N' ∶ ty A → 
-          EE Γ (M' ≡〈 A 〉 N') P
-conv-EE P∈EΓM≡N M≃M' N≃N' Γ⊢M'∶A Γ⊢N'∶A = 
-  conv-E' (eq-resp-conv  M≃M' N≃N') P∈EΓM≡N (ctxER Γ⊢M'∶A Γ⊢N'∶A)
-
-EE-typed : ∀ {V} {Γ : Context V} {E} {P} → EE Γ E P → Γ ⊢ P ∶ E
-EE-typed = E'-typed
-
-EE-SN : ∀ {V} {Γ : Context V} E {P} → EE Γ E P → SN P
-EE-SN _ = E'-SN
-
-computeP-rep : ∀ {U V S Γ Δ} {ρ : Rep U V} {L : Leaves U S} {δ} →
-  computeP Γ L δ → ρ ∶ Γ ⇒R Δ → computeP Δ (lrep L ρ) (δ 〈 ρ 〉)
-computeP-rep {S = neutral} {L = neutral _} computeδ _ = SNrep R-creates-rep computeδ
-computeP-rep {S = bot} {L = bot} computeδ ρ∶Γ⇒RΔ = SNrep R-creates-rep computeδ
-computeP-rep {S = imp S T} {ρ = ρ} {L = imp φ ψ} {δ} computeδ ρ∶Γ⇒RΔ Θ {ρ'} {ε} ρ'∶Δ⇒RΘ Θ⊢ε∶φ computeε = 
-  subst₂ (computeP Θ) (let open ≡-Reasoning in 
-  begin
-    lrep ψ (ρ' •R ρ)
-  ≡⟨ lrep-comp ⟩
-    lrep (lrep ψ ρ) ρ'
-  ∎) 
-  (cong (λ x → appP x ε) (rep-comp δ)) 
-  (computeδ Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) 
-    (change-type Θ⊢ε∶φ 
-      (cong decode-Prop {x = lrep (lrep φ ρ) ρ'} (Prelims.sym lrep-comp))) 
-    (subst (λ x → computeP Θ x ε) {x = lrep (lrep φ ρ) ρ'} (Prelims.sym lrep-comp) computeε))
-
-red-decode-rep : ∀ {U} {V} {φ : Term U} {S} (L : Leaves U S) {ρ : Rep U V} →
-  φ ↠ decode-Prop L → φ 〈 ρ 〉 ↠ decode-Prop (lrep L ρ)
-red-decode-rep {V = V} {φ} L {ρ} φ↠L = let open Relation.Binary.PreorderReasoning (RED V -Expression (varKind -Term)) in 
-  begin
-    φ 〈 ρ 〉
-  ∼⟨ red-rep φ↠L ⟩
-    decode-Prop L 〈 ρ 〉
-  ≈⟨ Prelims.sym (decode-rep L) ⟩
-    decode-Prop (lrep L ρ)
-  ∎
-
-compute-rep : ∀ {U V Γ Δ} {ρ : Rep U V} {K} {A : Expression U (parent K)} {M : Expression U (varKind K)} → 
-  E' Γ A M → ρ ∶ Γ ⇒R Δ → valid Δ → compute Δ (A 〈 ρ 〉) (M 〈 ρ 〉)
-compute-rep {V = V} {ρ = ρ} {K = -Proof} {φ} {M} (E'I typed (S ,p L ,p φ↠L ,p computeM)) ρ∶Γ⇒RΔ validΔ = S ,p lrep L ρ ,p 
-  red-decode-rep L φ↠L ,p
-  computeP-rep {ρ = ρ} {L} {δ = M} computeM ρ∶Γ⇒RΔ
-compute-rep {K = -Term} {app (-ty Ω) []} (E'I _ SNM) _ _ = SNrep R-creates-rep SNM
-compute-rep {K = -Term} {app (-ty (φ ⇛ ψ)) []} {δ} (E'I Γ⊢δ∶φ⊃ψ (δapp ,p δeq)) ρ∶Γ⇒RΔ validΔ = (λ {W} Θ {ρ'} {ε} ρ'∶Δ⇒RΘ Θ⊢ε∶φ computeε → 
-  subst (computeT Θ ψ) (cong (λ x → appT x ε) (rep-comp δ)) (δapp Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) Θ⊢ε∶φ computeε)) ,p 
-  (λ Θ {ρ'} {ε} {ε'} {P} ρ'∶Δ⇒RΘ Θ⊢P∶ε≡ε' computeε computeε' computeP → subst
-    (λ a → computeE Θ (appT a ε) ψ (appT a ε') (a ⋆[ P ∶ ε ∼ ε' ]))
-    (rep-comp δ) 
-    (δeq Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) Θ⊢P∶ε≡ε' computeε computeε' computeP))
-compute-rep {V = V} {ρ = ρ} {K = -Path} {app (-eq Ω) (φ ∷ ψ ∷ [])} {P} (E'I Γ⊢P∶φ≡ψ (S ,p S' ,p L ,p L' ,p φ↠L ,p ψ↠L' ,p computeP+ ,p computeP- )) ρ∶Γ⇒RΔ validΔ = 
-  S ,p S' ,p lrep L ρ ,p lrep L' ρ ,p 
-  red-decode-rep L φ↠L ,p
-  red-decode-rep L' ψ↠L' ,p 
-  (λ Θ {ρ'} {ε} ρ'∶Δ⇒RΘ Θ⊢ε∶Lρρ' computeε → subst₂ (λ a b → computeP Θ a (appP (plus b) ε)) {lrep L' (ρ' •R ρ)}
-                                              {lrep (lrep L' ρ) ρ'} {P 〈 ρ' •R ρ 〉} {(P 〈 ρ 〉) 〈 ρ' 〉} 
-  lrep-comp (rep-comp P) (computeP+ Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) 
-    (change-type Θ⊢ε∶Lρρ' (cong decode-Prop {lrep (lrep L ρ) ρ'} {lrep L (ρ' •R ρ)} (Prelims.sym lrep-comp))) 
-    (subst (λ a → computeP Θ a ε) {lrep (lrep L ρ) ρ'}
-       {lrep L (ρ' •R ρ)} (Prelims.sym lrep-comp) computeε))) ,p 
-  (λ Θ {ρ'} {ε} ρ'∶Δ⇒RΘ Θ⊢ε∶L'ρρ' computeε → subst₂ (λ a b → computeP Θ a (appP (minus b) ε)) {lrep L (ρ' •R ρ)}
-                                              {lrep (lrep L ρ) ρ'} {P 〈 ρ' •R ρ 〉} {(P 〈 ρ 〉) 〈 ρ' 〉} 
-  lrep-comp (rep-comp P) (computeP- Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) 
-    (change-type Θ⊢ε∶L'ρρ' (cong decode-Prop {lrep (lrep L' ρ) ρ'} {lrep L' (ρ' •R ρ)} (Prelims.sym lrep-comp))) 
-    (subst (λ a → computeP Θ a ε) {lrep (lrep L' ρ) ρ'}
-       {lrep L' (ρ' •R ρ)} (Prelims.sym lrep-comp) computeε)))
---TODO Tidy up this proof
-compute-rep {K = -Path} {app (-eq (A ⇛ B)) (F ∷ G ∷ [])} {P} (E'I Γ⊢P∶F≡G computeP) ρ∶Γ⇒RΔ validΔ Θ {ρ'} {N} {N'} {Q} ρ'∶Δ⇒RΘ Θ⊢Q∶N≡N' computeN computeN' computeQ = 
-  subst₃
-    (λ a b c → computeE Θ (appT a N) B (appT b N') (app* N N' c Q)) 
-    (rep-comp F) (rep-comp G) (rep-comp P) 
-    (computeP Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) Θ⊢Q∶N≡N' computeN computeN' computeQ)
-
-E'-rep : ∀ {U V Γ Δ} {ρ : Rep U V} {K} {A : Expression U (parent K)} {M : Expression U (varKind K)} → 
-  E' Γ A M → ρ ∶ Γ ⇒R Δ → valid Δ → E' Δ (A 〈 ρ 〉) (M 〈 ρ 〉)
-E'-rep (E'I Γ⊢M∶A computeM) ρ∶Γ⇒RΔ validΔ = E'I (weakening Γ⊢M∶A validΔ ρ∶Γ⇒RΔ) (compute-rep (E'I Γ⊢M∶A computeM) ρ∶Γ⇒RΔ validΔ)
-
-postulate wteT : ∀ {V} {Γ : Context V} {A M B N} → Γ ,T A ⊢ M ∶ ty B → E Γ A N → E Γ B (M ⟦ x₀:= N ⟧) →
-                 E Γ B (appT (ΛT A M) N)
+postulate wteT : ∀ {V} {Γ : Context V} {A M B N} → Γ ,T A ⊢ M ∶ ty B → E Γ (ty A) N → E Γ (ty B) (M ⟦ x₀:= N ⟧) →
+                 E Γ (ty B) (appT (ΛT A M) N)
 
 {-
 postulate Neutral-computeE : ∀ {V} {Γ : Context V} {M} {A} {N} {P : NeutralP V} →
@@ -464,7 +544,7 @@ postulate red-conv : ∀ {V} {C} {K} {E F : Subexpression V C K} → E ↠ F →
 
 postulate confluent : ∀ {V} {φ : Term V} {ψ ψ' : closed-prop} → φ ↠ cp2term ψ → φ ↠ cp2term ψ' → ψ ≡ ψ'
 
-func-EP {δ = δ} {φ = φ} {ψ = ψ} hyp Γ⊢δ∶φ⊃ψ = let Γ⊢φ⊃ψ∶Ω = Prop-Validity Γ⊢δ∶φ⊃ψ in
+func-E {δ = δ} {φ = φ} {ψ = ψ} hyp Γ⊢δ∶φ⊃ψ = let Γ⊢φ⊃ψ∶Ω = Prop-Validity Γ⊢δ∶φ⊃ψ in
                       let Γ⊢φ∶Ω = ⊃-gen₁ Γ⊢φ⊃ψ∶Ω in
                       let Γ⊢ψ∶Ω = ⊃-gen₂ Γ⊢φ⊃ψ∶Ω in
                       let φ' = NF Γ⊢φ∶Ω in
@@ -503,7 +583,7 @@ postulate ref-compute : ∀ {V} {Γ : Context V} {M : Term V} {A : Type} → E �
 
 postulate Neutral-E : ∀ {V} {Γ : Context V} {A} {M} → Neutral M → Γ ⊢ M ∶ ty A → E Γ A M
 
-var-E' : ∀ {V} {A} (Γ : Context V) (x : Var V -Term) → 
+var-E : ∀ {V} {A} (Γ : Context V) (x : Var V -Term) → 
   valid Γ → typeof x Γ ≡ ty A → E Γ A (var x)
 var-E : ∀ {V} (Γ : Context V) (x : Var V -Term) → 
         valid Γ → E Γ (typeof' x Γ) (var x)
@@ -511,11 +591,11 @@ computeE-SN : ∀ {V} {Γ : Context V} {M} {N} {A} {P} → computeE Γ M A N P �
 
 computeE-SN {A = Ω} {P} (P+∈EΓM⊃N ,p _) _ = 
   let SNplusP : SN (plus P)
-      SNplusP = EP-SN P+∈EΓM⊃N 
+      SNplusP = E-SN P+∈EΓM⊃N 
   in SNsubbodyl (SNsubexp SNplusP)
 computeE-SN {V} {Γ} {A = A ⇛ B} {P} computeP validΓ =
   let x₀∈EΓ,AA : E (Γ ,T A) A (var x₀)
-      x₀∈EΓ,AA = var-E' {A = A} (Γ ,T A) x₀ (ctxTR validΓ) refl in
+      x₀∈EΓ,AA = var-E {A = A} (Γ ,T A) x₀ (ctxTR validΓ) refl in
   let SNapp*xxPref : SN (app* (var x₀) (var x₀) (P ⇑) (reff (var x₀)))
       SNapp*xxPref = computeE-SN {A = B} (computeP (V , -Term) (Γ ,T A ) upRep 
           (var x₀) (var x₀) (app -ref (var x₀ ,, out)) upRep-typed 
@@ -530,7 +610,7 @@ E-SN {V} {Γ} (A ⇛ B) {M} (Γ⊢M∶A⇛B ,p computeM ,p computeMpath) =
   let SNMx : SN (appT (M ⇑) (var x₀))
       SNMx = E-SN B 
              (computeM (V , -Term) (Γ ,T A) upRep (var x₀) upRep-typed 
-             (var-E' {A = A} (Γ ,T A) x₀ (ctxTR (context-validity Γ⊢M∶A⇛B)) refl)) 
+             (var-E {A = A} (Γ ,T A) x₀ (ctxTR (context-validity Γ⊢M∶A⇛B)) refl)) 
   in SNap' {Ops = replacement} {σ = upRep} R-respects-replacement (SNsubbodyl (SNsubexp SNMx)) 
 
 {- Neutral-E {A = Ω} neutralM Γ⊢M∶A = record { 
@@ -545,9 +625,9 @@ Neutral-E {A = A ⇛ B} {M} neutralM Γ⊢M∶A⇛B =
     Neutral-computeE (Neutral-⋆ (Neutral-rep M ρ neutralM) (computeE-SN computeP validΔ) (E-SN A N∈EΔA) (E-SN A N'∈EΔA)) 
     (⋆-typed (weakening Γ⊢M∶A⇛B validΔ ρ∶Γ⇒Δ) Δ⊢P∶N≡N')) -}
 
-var-E' {A = A} Γ x validΓ x∶A∈Γ = Neutral-E (var x) (change-type (varR x validΓ) x∶A∈Γ)
+var-E {A = A} Γ x validΓ x∶A∈Γ = Neutral-E (var x) (change-type (varR x validΓ) x∶A∈Γ)
 
-var-E Γ x validΓ = var-E' {A = typeof' x Γ} Γ x validΓ typeof-typeof'
+var-E Γ x validΓ = var-E {A = typeof' x Γ} Γ x validΓ typeof-typeof'
 
 ⊥-E validΓ = record { typed = ⊥R validΓ ; sn = ⊥SN }
 
@@ -567,77 +647,77 @@ postulate ⊃-inj₂ : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ⊃ ψ ↠ φ' �
 
 postulate confluent₂ : ∀ {V} {φ ψ : Term V} {χ : closed-prop} → φ ≃ ψ → φ ↠ cp2term χ → ψ ↠ cp2term χ
 
-appP-EP (_ ,p ⊥C ,p φ⊃ψ↠⊥ ,p _) _ = ⊥-elim (⊃-not-⊥ φ⊃ψ↠⊥)
-appP-EP {V} {Γ} {ε = ε} {φ} {ψ = ψ} (Γ⊢δ∶φ⊃ψ ,p (φ' ⊃C ψ') ,p φ⊃ψ↠φ'⊃ψ' ,p computeδ) (Γ⊢ε∶φ ,p φ'' ,p φ↠φ'' ,p computeε) = 
+appP-E (_ ,p ⊥C ,p φ⊃ψ↠⊥ ,p _) _ = ⊥-elim (⊃-not-⊥ φ⊃ψ↠⊥)
+appP-E {V} {Γ} {ε = ε} {φ} {ψ = ψ} (Γ⊢δ∶φ⊃ψ ,p (φ' ⊃C ψ') ,p φ⊃ψ↠φ'⊃ψ' ,p computeδ) (Γ⊢ε∶φ ,p φ'' ,p φ↠φ'' ,p computeε) = 
   (appPR Γ⊢δ∶φ⊃ψ Γ⊢ε∶φ) ,p ψ' ,p ⊃-inj₂ φ⊃ψ↠φ'⊃ψ' ,p 
   subst (λ x → compute Γ ψ' (appP x ε)) rep-idOp 
   (computeδ V Γ (idRep V) ε idRep-typed 
     (convR Γ⊢ε∶φ (cp-typed φ' (context-validity Γ⊢ε∶φ)) (red-conv (⊃-inj₁ φ⊃ψ↠φ'⊃ψ')))
   (subst (λ x → compute Γ x ε) (confluent φ↠φ'' (⊃-inj₁ φ⊃ψ↠φ'⊃ψ')) computeε))
 
-conv-EP φ≃ψ (Γ⊢δ∶φ ,p φ' ,p φ↠φ' ,p computeδ) Γ⊢ψ∶Ω = convR Γ⊢δ∶φ Γ⊢ψ∶Ω φ≃ψ ,p φ' ,p confluent₂ {χ = φ'} φ≃ψ φ↠φ' ,p computeδ
+conv-E φ≃ψ (Γ⊢δ∶φ ,p φ' ,p φ↠φ' ,p computeδ) Γ⊢ψ∶Ω = convR Γ⊢δ∶φ Γ⊢ψ∶Ω φ≃ψ ,p φ' ,p confluent₂ {χ = φ'} φ≃ψ φ↠φ' ,p computeδ
 
 
-postulate rep-EP : ∀ {U} {V} {Γ} {Δ} {ρ : Rep U V} {φ} {δ} →
-                 EP Γ φ δ → ρ ∶ Γ ⇒R Δ → EP Δ (φ 〈 ρ 〉) (δ 〈 ρ 〉)
+postulate rep-E : ∀ {U} {V} {Γ} {Δ} {ρ : Rep U V} {φ} {δ} →
+                 E Γ φ δ → ρ ∶ Γ ⇒R Δ → E Δ (φ 〈 ρ 〉) (δ 〈 ρ 〉)
 
-univ-EE {V} {Γ} {φ} {ψ} {δ} {ε} δ∈EΓφ⊃ψ ε∈EΓψ⊃φ = 
+univ-E {V} {Γ} {φ} {ψ} {δ} {ε} δ∈EΓφ⊃ψ ε∈EΓψ⊃φ = 
   let Γ⊢univ∶φ≡ψ : Γ ⊢ univ φ ψ δ ε ∶ φ ≡〈 Ω 〉 ψ
-      Γ⊢univ∶φ≡ψ = (univR (EP-typed δ∈EΓφ⊃ψ) (EP-typed ε∈EΓψ⊃φ)) in
+      Γ⊢univ∶φ≡ψ = (univR (E-typed δ∈EΓφ⊃ψ) (E-typed ε∈EΓψ⊃φ)) in
       (Γ⊢univ∶φ≡ψ ,p 
-      expand-EP δ∈EΓφ⊃ψ (plusR Γ⊢univ∶φ≡ψ) plus-univ ,p 
-      expand-EP ε∈EΓψ⊃φ (minusR Γ⊢univ∶φ≡ψ) minus-univ)
+      expand-E δ∈EΓφ⊃ψ (plusR Γ⊢univ∶φ≡ψ) plus-univ ,p 
+      expand-E ε∈EΓψ⊃φ (minusR Γ⊢univ∶φ≡ψ) minus-univ)
 
-postulate rep-EE : ∀ {U} {V} {Γ} {Δ} {ρ : Rep U V} {E} {P} →
-                 EE Γ E P → ρ ∶ Γ ⇒R Δ → EE Δ (E 〈 ρ 〉) (P 〈 ρ 〉)
+postulate rep-E : ∀ {U} {V} {Γ} {Δ} {ρ : Rep U V} {E} {P} →
+                 E Γ E P → ρ ∶ Γ ⇒R Δ → E Δ (E 〈 ρ 〉) (P 〈 ρ 〉)
 
-imp*-EE {Γ = Γ} {φ} {φ'} {ψ = ψ} {ψ'} {P} {Q = Q} P∈EΓφ≡φ' Q∈EΓψ≡ψ' = (⊃*R (EE-typed P∈EΓφ≡φ') (EE-typed Q∈EΓψ≡ψ')) ,p 
-  func-EP (λ V Δ ρ ε validΔ ρ∶Γ⇒RΔ ε∈EΔφ⊃ψ →
-    let Pρ : EE Δ (φ 〈 ρ 〉 ≡〈 Ω 〉 φ' 〈 ρ 〉) (P 〈 ρ 〉)
-        Pρ = rep-EE P∈EΓφ≡φ' ρ∶Γ⇒RΔ in
-    let Qρ : EE Δ (ψ 〈 ρ 〉 ≡〈 Ω 〉 ψ' 〈 ρ 〉) (Q 〈 ρ 〉)
-        Qρ = rep-EE Q∈EΓψ≡ψ' ρ∶Γ⇒RΔ in
-    func-EP (λ W Θ σ χ validΘ σ∶Δ⇒RΘ χ∈EΘφ' → 
-    let Pρσ : EE Θ (φ 〈 ρ 〉 〈 σ 〉 ≡〈 Ω 〉 φ' 〈 ρ 〉 〈 σ 〉) (P 〈 ρ 〉 〈 σ 〉)
-        Pρσ = rep-EE Pρ σ∶Δ⇒RΘ in
-    let Pρσ- : EP Θ (φ' 〈 ρ 〉 〈 σ 〉 ⊃ φ 〈 ρ 〉 〈 σ 〉) (minus (P 〈 ρ 〉 〈 σ 〉))
-        Pρσ- = minus-EP Pρσ in
-    let Qρσ : EE Θ (ψ 〈 ρ 〉 〈 σ 〉 ≡〈 Ω 〉 ψ' 〈 ρ 〉 〈 σ 〉) (Q 〈 ρ 〉 〈 σ 〉)
-        Qρσ = rep-EE Qρ σ∶Δ⇒RΘ in
-    let Qρσ+ : EP Θ (ψ 〈 ρ 〉 〈 σ 〉 ⊃ ψ' 〈 ρ 〉 〈 σ 〉) (plus (Q 〈 ρ 〉 〈 σ 〉))
-        Qρσ+ = plus-EP Qρσ in
-    let εσ : EP Θ (φ 〈 ρ 〉 〈 σ 〉 ⊃ ψ 〈 ρ 〉 〈 σ 〉) (ε 〈 σ 〉)
-        εσ = rep-EP ε∈EΔφ⊃ψ σ∶Δ⇒RΘ in
-    expand-EP 
-    (appP-EP Qρσ+ (appP-EP εσ (appP-EP Pρσ- χ∈EΘφ')))
-    (appPR (appPR (plusR (⊃*R (EE-typed Pρσ) (EE-typed Qρσ))) (EP-typed εσ)) (EP-typed χ∈EΘφ')) 
+imp*-E {Γ = Γ} {φ} {φ'} {ψ = ψ} {ψ'} {P} {Q = Q} P∈EΓφ≡φ' Q∈EΓψ≡ψ' = (⊃*R (E-typed P∈EΓφ≡φ') (E-typed Q∈EΓψ≡ψ')) ,p 
+  func-E (λ V Δ ρ ε validΔ ρ∶Γ⇒RΔ ε∈EΔφ⊃ψ →
+    let Pρ : E Δ (φ 〈 ρ 〉 ≡〈 Ω 〉 φ' 〈 ρ 〉) (P 〈 ρ 〉)
+        Pρ = rep-E P∈EΓφ≡φ' ρ∶Γ⇒RΔ in
+    let Qρ : E Δ (ψ 〈 ρ 〉 ≡〈 Ω 〉 ψ' 〈 ρ 〉) (Q 〈 ρ 〉)
+        Qρ = rep-E Q∈EΓψ≡ψ' ρ∶Γ⇒RΔ in
+    func-E (λ W Θ σ χ validΘ σ∶Δ⇒RΘ χ∈EΘφ' → 
+    let Pρσ : E Θ (φ 〈 ρ 〉 〈 σ 〉 ≡〈 Ω 〉 φ' 〈 ρ 〉 〈 σ 〉) (P 〈 ρ 〉 〈 σ 〉)
+        Pρσ = rep-E Pρ σ∶Δ⇒RΘ in
+    let Pρσ- : E Θ (φ' 〈 ρ 〉 〈 σ 〉 ⊃ φ 〈 ρ 〉 〈 σ 〉) (minus (P 〈 ρ 〉 〈 σ 〉))
+        Pρσ- = minus-E Pρσ in
+    let Qρσ : E Θ (ψ 〈 ρ 〉 〈 σ 〉 ≡〈 Ω 〉 ψ' 〈 ρ 〉 〈 σ 〉) (Q 〈 ρ 〉 〈 σ 〉)
+        Qρσ = rep-E Qρ σ∶Δ⇒RΘ in
+    let Qρσ+ : E Θ (ψ 〈 ρ 〉 〈 σ 〉 ⊃ ψ' 〈 ρ 〉 〈 σ 〉) (plus (Q 〈 ρ 〉 〈 σ 〉))
+        Qρσ+ = plus-E Qρσ in
+    let εσ : E Θ (φ 〈 ρ 〉 〈 σ 〉 ⊃ ψ 〈 ρ 〉 〈 σ 〉) (ε 〈 σ 〉)
+        εσ = rep-E ε∈EΔφ⊃ψ σ∶Δ⇒RΘ in
+    expand-E 
+    (appP-E Qρσ+ (appP-E εσ (appP-E Pρσ- χ∈EΘφ')))
+    (appPR (appPR (plusR (⊃*R (E-typed Pρσ) (E-typed Qρσ))) (E-typed εσ)) (E-typed χ∈EΘφ')) 
     imp*-plus) 
-    (appPR (plusR (⊃*R (EE-typed Pρ) (EE-typed Qρ))) (EP-typed ε∈EΔφ⊃ψ))) 
-  (plusR (⊃*R (EE-typed P∈EΓφ≡φ') (EE-typed Q∈EΓψ≡ψ'))) ,p 
-  func-EP (λ V Δ ρ ε validΔ ρ∶Γ⇒RΔ ε∈EΔφ'⊃ψ' →
-    let Pρ : EE Δ (φ 〈 ρ 〉 ≡〈 Ω 〉 φ' 〈 ρ 〉) (P 〈 ρ 〉)
-        Pρ = rep-EE P∈EΓφ≡φ' ρ∶Γ⇒RΔ in
-    let Qρ : EE Δ (ψ 〈 ρ 〉 ≡〈 Ω 〉 ψ' 〈 ρ 〉) (Q 〈 ρ 〉)
-        Qρ = rep-EE Q∈EΓψ≡ψ' ρ∶Γ⇒RΔ in
-    func-EP (λ W Θ σ χ validΘ σ∶Δ⇒RΘ χ∈EΘφ' → 
-      let Pρσ : EE Θ (φ 〈 ρ 〉 〈 σ 〉 ≡〈 Ω 〉 φ' 〈 ρ 〉 〈 σ 〉) (P 〈 ρ 〉 〈 σ 〉)
-          Pρσ = rep-EE Pρ σ∶Δ⇒RΘ in
-      let Pρσ+ : EP Θ (φ 〈 ρ 〉 〈 σ 〉 ⊃ φ' 〈 ρ 〉 〈 σ 〉) (plus (P 〈 ρ 〉 〈 σ 〉))
-          Pρσ+ = plus-EP Pρσ in
-      let Qρσ : EE Θ (ψ 〈 ρ 〉 〈 σ 〉 ≡〈 Ω 〉 ψ' 〈 ρ 〉 〈 σ 〉) (Q 〈 ρ 〉 〈 σ 〉)
-          Qρσ = rep-EE Qρ σ∶Δ⇒RΘ in
-      let Qρσ- : EP Θ (ψ' 〈 ρ 〉 〈 σ 〉 ⊃ ψ 〈 ρ 〉 〈 σ 〉) (minus (Q 〈 ρ 〉 〈 σ 〉))
-          Qρσ- = minus-EP Qρσ in
-      let εσ : EP Θ (φ' 〈 ρ 〉 〈 σ 〉 ⊃ ψ' 〈 ρ 〉 〈 σ 〉) (ε 〈 σ 〉)
-          εσ = rep-EP ε∈EΔφ'⊃ψ' σ∶Δ⇒RΘ in 
-      expand-EP 
-        (appP-EP Qρσ- (appP-EP εσ (appP-EP Pρσ+ χ∈EΘφ'))) 
-          (appPR (appPR (minusR (⊃*R (EE-typed Pρσ) (EE-typed Qρσ))) (EP-typed εσ)) (EP-typed χ∈EΘφ')) 
+    (appPR (plusR (⊃*R (E-typed Pρ) (E-typed Qρ))) (E-typed ε∈EΔφ⊃ψ))) 
+  (plusR (⊃*R (E-typed P∈EΓφ≡φ') (E-typed Q∈EΓψ≡ψ'))) ,p 
+  func-E (λ V Δ ρ ε validΔ ρ∶Γ⇒RΔ ε∈EΔφ'⊃ψ' →
+    let Pρ : E Δ (φ 〈 ρ 〉 ≡〈 Ω 〉 φ' 〈 ρ 〉) (P 〈 ρ 〉)
+        Pρ = rep-E P∈EΓφ≡φ' ρ∶Γ⇒RΔ in
+    let Qρ : E Δ (ψ 〈 ρ 〉 ≡〈 Ω 〉 ψ' 〈 ρ 〉) (Q 〈 ρ 〉)
+        Qρ = rep-E Q∈EΓψ≡ψ' ρ∶Γ⇒RΔ in
+    func-E (λ W Θ σ χ validΘ σ∶Δ⇒RΘ χ∈EΘφ' → 
+      let Pρσ : E Θ (φ 〈 ρ 〉 〈 σ 〉 ≡〈 Ω 〉 φ' 〈 ρ 〉 〈 σ 〉) (P 〈 ρ 〉 〈 σ 〉)
+          Pρσ = rep-E Pρ σ∶Δ⇒RΘ in
+      let Pρσ+ : E Θ (φ 〈 ρ 〉 〈 σ 〉 ⊃ φ' 〈 ρ 〉 〈 σ 〉) (plus (P 〈 ρ 〉 〈 σ 〉))
+          Pρσ+ = plus-E Pρσ in
+      let Qρσ : E Θ (ψ 〈 ρ 〉 〈 σ 〉 ≡〈 Ω 〉 ψ' 〈 ρ 〉 〈 σ 〉) (Q 〈 ρ 〉 〈 σ 〉)
+          Qρσ = rep-E Qρ σ∶Δ⇒RΘ in
+      let Qρσ- : E Θ (ψ' 〈 ρ 〉 〈 σ 〉 ⊃ ψ 〈 ρ 〉 〈 σ 〉) (minus (Q 〈 ρ 〉 〈 σ 〉))
+          Qρσ- = minus-E Qρσ in
+      let εσ : E Θ (φ' 〈 ρ 〉 〈 σ 〉 ⊃ ψ' 〈 ρ 〉 〈 σ 〉) (ε 〈 σ 〉)
+          εσ = rep-E ε∈EΔφ'⊃ψ' σ∶Δ⇒RΘ in 
+      expand-E 
+        (appP-E Qρσ- (appP-E εσ (appP-E Pρσ+ χ∈EΘφ'))) 
+          (appPR (appPR (minusR (⊃*R (E-typed Pρσ) (E-typed Qρσ))) (E-typed εσ)) (E-typed χ∈EΘφ')) 
         imp*-minus)
-    (appPR (minusR (⊃*R (EE-typed Pρ) (EE-typed Qρ))) (EP-typed ε∈EΔφ'⊃ψ'))) 
-  (minusR (⊃*R (EE-typed P∈EΓφ≡φ') (EE-typed Q∈EΓψ≡ψ')))
+    (appPR (minusR (⊃*R (E-typed Pρ) (E-typed Qρ))) (E-typed ε∈EΔφ'⊃ψ'))) 
+  (minusR (⊃*R (E-typed P∈EΓφ≡φ') (E-typed Q∈EΓψ≡ψ')))
 
-app*-EE {V} {Γ} {M} {M'} {N} {N'} {A} {B} {P} {Q} (Γ⊢P∶M≡M' ,p computeP) (Γ⊢Q∶N≡N' ,p computeQ) N∈EΓA N'∈EΓA = (app*R (E-typed N∈EΓA) (E-typed N'∈EΓA) Γ⊢P∶M≡M' Γ⊢Q∶N≡N') ,p 
+app*-E {V} {Γ} {M} {M'} {N} {N'} {A} {B} {P} {Q} (Γ⊢P∶M≡M' ,p computeP) (Γ⊢Q∶N≡N' ,p computeQ) N∈EΓA N'∈EΓA = (app*R (E-typed N∈EΓA) (E-typed N'∈EΓA) Γ⊢P∶M≡M' Γ⊢Q∶N≡N') ,p 
   subst₃
     (λ a b c →
        computeE Γ (appT a N) B (appT b N') (app* N N' c Q))
@@ -645,12 +725,12 @@ app*-EE {V} {Γ} {M} {M'} {N} {N'} {A} {B} {P} {Q} (Γ⊢P∶M≡M' ,p computeP)
     (computeP V Γ (idRep V) N N' Q idRep-typed Γ⊢Q∶N≡N' 
       N∈EΓA N'∈EΓA computeQ)
 
-func-EE {U} {Γ} {A} {B} {M} {M'} {P} Γ⊢P∶M≡M' hyp = Γ⊢P∶M≡M' ,p (λ W Δ ρ N N' Q ρ∶Γ⇒Δ Δ⊢Q∶N≡N' N∈EΔA N'∈EΔA computeQ → 
+func-E {U} {Γ} {A} {B} {M} {M'} {P} Γ⊢P∶M≡M' hyp = Γ⊢P∶M≡M' ,p (λ W Δ ρ N N' Q ρ∶Γ⇒Δ Δ⊢Q∶N≡N' N∈EΔA N'∈EΔA computeQ → 
   proj₂ (hyp W Δ N N' Q ρ ρ∶Γ⇒Δ N∈EΔA N'∈EΔA (Δ⊢Q∶N≡N' ,p computeQ)))
 
-ref-EE {V} {Γ} {M} {A} M∈EΓA = refR (E-typed M∈EΓA) ,p ref-compute M∈EΓA
+ref-E {V} {Γ} {M} {A} M∈EΓA = refR (E-typed M∈EΓA) ,p ref-compute M∈EΓA
 
-expand-EE {V} {Γ} {A} {M} {N} {P} {Q} (Γ⊢Q∶M≡N ,p computeQ) Γ⊢P∶M≡N P▷Q = Γ⊢P∶M≡N ,p expand-computeE computeQ Γ⊢P∶M≡N P▷Q
+expand-E {V} {Γ} {A} {M} {N} {P} {Q} (Γ⊢Q∶M≡N ,p computeQ) Γ⊢P∶M≡N P▷Q = Γ⊢P∶M≡N ,p expand-computeE computeQ Γ⊢P∶M≡N P▷Q
 
 postulate ⊃-respects-conv : ∀ {V} {φ} {φ'} {ψ} {ψ' : Term V} → φ ≃ φ' → ψ ≃ ψ' →
                           φ ⊃ ψ ≃ φ' ⊃ ψ'
@@ -662,10 +742,10 @@ conv-computeE : ∀ {V} {Γ : Context V} {M} {M'} {N} {N'} {A} {P} →
              Γ ⊢ M' ∶ ty A  → Γ ⊢ N' ∶ ty A  →
              computeE Γ M' A N' P
 conv-computeE {M = M} {A = Ω} 
-  (EPΓM⊃NP+ ,p EPΓN⊃MP-) M≃M' N≃N' Γ⊢M'∶Ω Γ⊢N'∶Ω = 
-  (conv-EP (⊃-respects-conv M≃M' N≃N')
-    EPΓM⊃NP+ (⊃R Γ⊢M'∶Ω Γ⊢N'∶Ω)) ,p 
-  conv-EP (⊃-respects-conv N≃N' M≃M') EPΓN⊃MP- (⊃R Γ⊢N'∶Ω Γ⊢M'∶Ω)
+  (EΓM⊃NP+ ,p EΓN⊃MP-) M≃M' N≃N' Γ⊢M'∶Ω Γ⊢N'∶Ω = 
+  (conv-E (⊃-respects-conv M≃M' N≃N')
+    EΓM⊃NP+ (⊃R Γ⊢M'∶Ω Γ⊢N'∶Ω)) ,p 
+  conv-E (⊃-respects-conv N≃N' M≃M') EΓN⊃MP- (⊃R Γ⊢N'∶Ω Γ⊢M'∶Ω)
 conv-computeE {M = M} {M'} {N} {N'} {A = A ⇛ B} computeP M≃M' N≃N' Γ⊢M'∶A⇛B Γ⊢N'∶A⇛B =
   λ W Δ ρ L L' Q ρ∶Γ⇒RΔ Δ⊢Q∶L≡L' L∈EΔA L'∈EΔA computeQ → conv-computeE {A = B} 
   (computeP W Δ ρ L L' Q ρ∶Γ⇒RΔ Δ⊢Q∶L≡L' L∈EΔA L'∈EΔA computeQ) 
@@ -675,19 +755,19 @@ conv-computeE {M = M} {M'} {N} {N'} {A = A ⇛ B} computeP M≃M' N≃N' Γ⊢M'
   (appR (weakening Γ⊢N'∶A⇛B (context-validity Δ⊢Q∶L≡L') ρ∶Γ⇒RΔ) (E-typed L'∈EΔA)) 
 --REFACTOR Duplication
 
-conv-EE (Γ⊢P∶M≡N ,p computeP) M≃M' N≃N' Γ⊢M'∶A Γ⊢N'∶A = convER Γ⊢P∶M≡N Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N' ,p conv-computeE computeP M≃M' N≃N' Γ⊢M'∶A Γ⊢N'∶A
+conv-E (Γ⊢P∶M≡N ,p computeP) M≃M' N≃N' Γ⊢M'∶A Γ⊢N'∶A = convER Γ⊢P∶M≡N Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N' ,p conv-computeE computeP M≃M' N≃N' Γ⊢M'∶A Γ⊢N'∶A
 --REFACTOR Duplication                      
                  
-EE-SN (app (-eq _) (_ ,, _ ,, out)) (Γ⊢P∶E ,p computeP) = computeE-SN computeP (context-validity Γ⊢P∶E) -}
+E-SN (app (-eq _) (_ ,, _ ,, out)) (Γ⊢P∶E ,p computeP) = computeE-SN computeP (context-validity Γ⊢P∶E) -}
 
 data Emult {V} (Γ : Context V) : ∀ {AA} → snocTypes V AA → snocListExp V AA → Set where
   [] : Emult Γ [] []
-  _snoc_ : ∀ {KK K AA} {A : Expression (snoc-extend V KK) (parent K)} {MM M} → Emult Γ {KK} AA MM → E' {K = K} Γ (A ⟦ xx₀:= MM ⟧) M → Emult Γ (AA snoc A) (MM snoc M)
+  _snoc_ : ∀ {KK K AA} {A : Expression (snoc-extend V KK) (parent K)} {MM M} → Emult Γ {KK} AA MM → E {K = K} Γ (A ⟦ xx₀:= MM ⟧) M → Emult Γ (AA snoc A) (MM snoc M)
 
 Emult-rep : ∀ {U V Γ Δ KK AA} {MM : snocListExp U KK} {ρ : Rep U V} → Emult Γ AA MM → ρ ∶ Γ ⇒R Δ → valid Δ → Emult Δ (snocTypes-rep AA ρ) (snocListExp-rep MM ρ)
 Emult-rep [] _ _ = []
 Emult-rep {U} {V} {Γ} {Δ = Δ} {KK snoc K} {AA = AA snoc A} {MM = MM snoc M} {ρ} (MM∈EΓAA snoc M∈EΓA) ρ∶Γ⇒RΔ validΔ = 
-  (Emult-rep MM∈EΓAA ρ∶Γ⇒RΔ validΔ) snoc subst (λ x → E' Δ x (M 〈 ρ 〉)) (liftsnocRep-botSub {U} {V} {KK} {E = A}) (E'-rep M∈EΓA ρ∶Γ⇒RΔ validΔ)
+  (Emult-rep MM∈EΓAA ρ∶Γ⇒RΔ validΔ) snoc subst (λ x → E Δ x (M 〈 ρ 〉)) (liftsnocRep-botSub {U} {V} {KK} {E = A}) (E-rep M∈EΓA ρ∶Γ⇒RΔ validΔ)
 \end{code}
 }
 

@@ -44,5 +44,10 @@ data RSTClose {A : Set} (R : Relation A) : Relation A where
   ref : ∀ {x} → RSTClose R x x
   sym : ∀ {x y} → RSTClose R x y → RSTClose R y x
   trans : ∀ {x y z} → RSTClose R x y → RSTClose R y z → RSTClose R x z
+
+RT-sub-RST : ∀ {A R x y} → RTClose {A} R x y → RSTClose R x y
+RT-sub-RST (inc xRy) = inc xRy
+RT-sub-RST ref = ref
+RT-sub-RST (trans xRTy yRTz) = trans (RT-sub-RST xRTy) (RT-sub-RST yRTz)
 \end{code}
 }
