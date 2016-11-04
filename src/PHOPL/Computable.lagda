@@ -3,6 +3,7 @@
 module PHOPL.Computable where
 import Relation.Binary.PreorderReasoning
 open import Data.Empty renaming (⊥ to Empty)
+open import Data.Unit
 open import Data.Product renaming (_,_ to _,p_)
 open import Prelims
 open import Prelims.Closure
@@ -42,11 +43,11 @@ lrep (neutral N) ρ = neutral (nrep N ρ)
 lrep bot _ = bot
 lrep (imp φ ψ) ρ = imp (lrep φ ρ) (lrep ψ ρ)
 
-lrep-comp : ∀ {U V W S} {ρ' : Rep V W} {ρ} {L : Leaves U S} →
-  lrep L (ρ' •R ρ) ≡ lrep (lrep L ρ) ρ'
-lrep-comp {L = neutral _} = cong neutral nrep-comp
+postulate lrep-comp : ∀ {U V W S} {ρ' : Rep V W} {ρ} {L : Leaves U S} →
+                    lrep L (ρ' •R ρ) ≡ lrep (lrep L ρ) ρ'
+{- lrep-comp {L = neutral _} = cong neutral nrep-comp
 lrep-comp {L = bot} = refl
-lrep-comp {L = imp φ ψ} = cong₂ imp lrep-comp lrep-comp
+lrep-comp {L = imp φ ψ} = cong₂ imp lrep-comp lrep-comp -}
 
 decode-Prop : ∀ {V} {S} → Leaves V S → Term V
 decode-Prop (neutral N) = decode-Neutral N
@@ -56,28 +57,28 @@ decode-Prop (imp φ ψ) = decode-Prop φ ⊃ decode-Prop ψ
 postulate decode-rep : ∀ {U} {V} {S} (L : Leaves U S) {ρ : Rep U V} →
                      decode-Prop (lrep L ρ) ≡ decode-Prop L 〈 ρ 〉
 
-leaves-red : ∀ {V} {S} {L : Leaves V S} {φ : Term V} →
-  decode-Prop L ↠ φ →
-  Σ[ L' ∈ Leaves V S ] decode-Prop L' ≡ φ
-leaves-red {S = neutral} {L = neutral N} L↠φ = 
+postulate leaves-red : ∀ {V} {S} {L : Leaves V S} {φ : Term V} →
+                     decode-Prop L ↠ φ →
+                     Σ[ L' ∈ Leaves V S ] decode-Prop L' ≡ φ
+{- leaves-red {S = neutral} {L = neutral N} L↠φ = 
   let (N ,p N≡φ) = neutral-red {N = N} L↠φ in neutral N ,p N≡φ
 leaves-red {S = bot} {L = bot} L↠φ = bot ,p Prelims.sym (bot-red L↠φ)
 leaves-red {S = imp S T} {L = imp φ ψ} φ⊃ψ↠χ = 
   let (φ' ,p ψ' ,p φ↠φ' ,p ψ↠ψ' ,p χ≡φ'⊃ψ') = imp-red φ⊃ψ↠χ in 
   let (L₁ ,p L₁≡φ') = leaves-red {L = φ} φ↠φ' in 
   let (L₂ ,p L₂≡ψ') = leaves-red {L = ψ} ψ↠ψ' in 
-  (imp L₁ L₂) ,p (Prelims.trans (cong₂ _⊃_ L₁≡φ' L₂≡ψ') (Prelims.sym χ≡φ'⊃ψ'))
+  (imp L₁ L₂) ,p (Prelims.trans (cong₂ _⊃_ L₁≡φ' L₂≡ψ') (Prelims.sym χ≡φ'⊃ψ')) -}
 
-red-decode-rep : ∀ {U} {V} {φ : Term U} {S} (L : Leaves U S) {ρ : Rep U V} →
-  φ ↠ decode-Prop L → φ 〈 ρ 〉 ↠ decode-Prop (lrep L ρ)
-red-decode-rep {V = V} {φ} L {ρ} φ↠L = let open Relation.Binary.PreorderReasoning (RED V -Expression (varKind -Term)) in 
+postulate red-decode-rep : ∀ {U} {V} {φ : Term U} {S} (L : Leaves U S) {ρ : Rep U V} →
+                         φ ↠ decode-Prop L → φ 〈 ρ 〉 ↠ decode-Prop (lrep L ρ)
+{- red-decode-rep {V = V} {φ} L {ρ} φ↠L = let open Relation.Binary.PreorderReasoning (RED V -Expression (varKind -Term)) in 
   begin
     φ 〈 ρ 〉
   ∼⟨ red-rep φ↠L ⟩
     decode-Prop L 〈 ρ 〉
   ≈⟨ Prelims.sym (decode-rep L) ⟩
     decode-Prop (lrep L ρ)
-  ∎
+  ∎ -}
 \end{code}
 }
 
@@ -160,14 +161,35 @@ record E {V} {K} (Γ : Context V) (A : Expression V (parent K)) (M : Expression 
 \label{fig:compute}
 \end{figure}
 
+\begin{lemma}
+Every strongly normalizable term is weakly normalizable.
+\end{lemma}
+
+%TODO Agda
+
+\begin{lemma}
+If $M, N \in E_\Gamma(A)$ then $E_\Gamma(M =_A N)$ is defined.
+\end{lemma}
+
+\begin{proof}
+The proof is by induction on $A$.
+
+If $M, N \in E_\Gamma(\Omega)$ then $M$ and $N$ are strongly nomalizable, hence weakly normalizable, hence $E_\Gamma(M =_A N)$ is defined.
+
+If $M, M' \in E_\Gamma(A \rightarrow B)$, then let $\Delta \supseteq \Gamma$ and $N, N' \in E_\Gamma(A)$.  We have that $MN, M'N' \in E_\Gamma(B)$,
+and so $E_\Delta(N =_A N')$ and $E_\Delta(MN =_B M'N')$ are both defined by the induction hypothesis.
+\end{proof}
+
+%TODO Agda
+
 Note that, if $\Gamma \subseteq \Delta$, then $E_\Gamma(T) \subseteq E_\Delta(T)$.  Note also that, if $M \in E_\Gamma(A)$,
 then $M \{\} \in E_\Gamma(M =_A M)$. %TODO Agda
 
 \AgdaHide{
 \begin{code}
-computeP-rep : ∀ {U V S Γ Δ} {ρ : Rep U V} {L : Leaves U S} {δ} →
-  computeP Γ L δ → ρ ∶ Γ ⇒R Δ → computeP Δ (lrep L ρ) (δ 〈 ρ 〉)
-computeP-rep {S = neutral} {L = neutral _} computeδ _ = SNrep R-creates-rep computeδ
+postulate computeP-rep : ∀ {U V S Γ Δ} {ρ : Rep U V} {L : Leaves U S} {δ} →
+                       computeP Γ L δ → ρ ∶ Γ ⇒R Δ → computeP Δ (lrep L ρ) (δ 〈 ρ 〉)
+{- computeP-rep {S = neutral} {L = neutral _} computeδ _ = SNrep R-creates-rep computeδ
 computeP-rep {S = bot} {L = bot} computeδ ρ∶Γ⇒RΔ = SNrep R-creates-rep computeδ
 computeP-rep {S = imp S T} {ρ = ρ} {L = imp φ ψ} {δ} computeδ ρ∶Γ⇒RΔ Θ {ρ'} {ε} ρ'∶Δ⇒RΘ Θ⊢ε∶φ computeε = 
   subst₂ (computeP Θ) (let open ≡-Reasoning in 
@@ -180,11 +202,11 @@ computeP-rep {S = imp S T} {ρ = ρ} {L = imp φ ψ} {δ} computeδ ρ∶Γ⇒R�
   (computeδ Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) 
     (change-type Θ⊢ε∶φ 
       (cong decode-Prop {x = lrep (lrep φ ρ) ρ'} (Prelims.sym lrep-comp))) 
-    (subst (λ x → computeP Θ x ε) {x = lrep (lrep φ ρ) ρ'} (Prelims.sym lrep-comp) computeε))
+    (subst (λ x → computeP Θ x ε) {x = lrep (lrep φ ρ) ρ'} (Prelims.sym lrep-comp) computeε)) -}
 
-compute-rep : ∀ {U V Γ Δ} {ρ : Rep U V} {K} {A : Expression U (parent K)} {M : Expression U (varKind K)} → 
-  E Γ A M → ρ ∶ Γ ⇒R Δ → valid Δ → compute Δ (A 〈 ρ 〉) (M 〈 ρ 〉)
-compute-rep {V = V} {ρ = ρ} {K = -Proof} {φ} {M} (EI typed (S ,p L ,p φ↠L ,p computeM)) ρ∶Γ⇒RΔ validΔ = S ,p lrep L ρ ,p 
+postulate compute-rep : ∀ {U V Γ Δ} {ρ : Rep U V} {K} {A : Expression U (parent K)} {M : Expression U (varKind K)} → 
+                      E Γ A M → ρ ∶ Γ ⇒R Δ → valid Δ → compute Δ (A 〈 ρ 〉) (M 〈 ρ 〉)
+{- compute-rep {V = V} {ρ = ρ} {K = -Proof} {φ} {M} (EI typed (S ,p L ,p φ↠L ,p computeM)) ρ∶Γ⇒RΔ validΔ = S ,p lrep L ρ ,p 
   red-decode-rep L φ↠L ,p
   computeP-rep {ρ = ρ} {L} {δ = M} computeM ρ∶Γ⇒RΔ
 compute-rep {K = -Term} {app (-ty Ω) []} (EI _ SNM) _ _ = SNrep R-creates-rep SNM
@@ -215,7 +237,7 @@ compute-rep {K = -Path} {app (-eq (A ⇛ B)) (F ∷ G ∷ [])} {P} (EI Γ⊢P∶
   subst₃
     (λ a b c → computeE Θ (appT a N) B (appT b N') (app* N N' c Q)) 
     (rep-comp F) (rep-comp G) (rep-comp P) 
-    (computeP Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) Θ⊢Q∶N≡N' computeN computeN' computeQ)
+    (computeP Θ (compR-typed ρ'∶Δ⇒RΘ ρ∶Γ⇒RΔ) Θ⊢Q∶N≡N' computeN computeN' computeQ) -}
 \end{code}
 }
 
@@ -308,7 +330,7 @@ If $\Gamma \vald$ and $e : M =_A N \in \Gamma$ and $M, N \in E_\Gamma(A)$ then $
 postulate E-varE : ∀ {V} {Γ : Context V} {x : Var V -Path} → valid Γ → E Γ (typeof x Γ) (var x)
 \end{code}
 \item
-For all $M$, $N$, we have $E_\Gamma(M =_A N) \subseteq \SN$.
+For all $M, N \in E_\Gamma(A)$, we have $E_\Gamma(M =_A N) \subseteq \SN$.
 
 \begin{code}
 postulate E-SNE : ∀ {V} {Γ : Context V} {Eq : Equation V} {P : Path V} → E Γ Eq P → SN P
@@ -483,6 +505,12 @@ convE-E (EI Γ⊢P∶M≡N computeP) M≃M' N≃N' Γ⊢M'∶A Γ⊢N'∶A = EI 
 
 \AgdaHide{
 \begin{code}
+WN : ∀ {V K} → Expression V (parent K) → Set
+WN {V} {K = -Proof} φ = Σ[ S ∈ Shape ] Σ[ L ∈ Leaves V S ] φ ↠ decode-Prop L
+WN {K = -Term} _ = ⊤
+WN {K = -Path} (app (-eq Ω) (φ ∷ ψ ∷ x₁)) = {!!}
+WN {K = -Path} (app (-eq (x ⇛ x₁)) x₂) = {!!}
+
 E-var : ∀ {V} {K} {Γ : Context V} {x : Var V K} → valid Γ → E Γ (typeof x Γ) (var x)
 E-var {K = -Proof} validΓ = E-varP validΓ {!!}
 E-var {K = -Term} = E-varT
