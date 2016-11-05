@@ -505,21 +505,6 @@ convE-E (EI Γ⊢P∶M≡N computeP) M≃M' N≃N' Γ⊢M'∶A Γ⊢N'∶A = EI 
 
 \AgdaHide{
 \begin{code}
-WN : ∀ {V K} → Expression V (parent K) → Set
-WN {V} {K = -Proof} φ = Σ[ S ∈ Shape ] Σ[ L ∈ Leaves V S ] φ ↠ decode-Prop L
-WN {K = -Term} _ = ⊤
-WN {K = -Path} (app (-eq Ω) (φ ∷ ψ ∷ x₁)) = {!!}
-WN {K = -Path} (app (-eq (x ⇛ x₁)) x₂) = {!!}
-
-E-var : ∀ {V} {K} {Γ : Context V} {x : Var V K} → valid Γ → E Γ (typeof x Γ) (var x)
-E-var {K = -Proof} validΓ = E-varP validΓ {!!}
-E-var {K = -Term} = E-varT
-E-var {K = -Path} = E-varE
-\end{code}
-}
-
-\AgdaHide{
-\begin{code}
 postulate ⊥-E : ∀ {V} {Γ : Context V} → valid Γ → E Γ (ty Ω) ⊥
 
 postulate ⊃-E : ∀ {V} {Γ : Context V} {φ} {ψ} → E Γ (ty Ω) φ → E Γ (ty Ω) ψ → E Γ (ty Ω) (φ ⊃ ψ)
