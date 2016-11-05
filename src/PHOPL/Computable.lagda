@@ -16,7 +16,6 @@ open import PHOPL.SN
 open import PHOPL.Rules
 open import PHOPL.Meta
 open import PHOPL.KeyRedex
-open import PHOPL.Neutral
 \end{code}
 
 \section{Computable Expressions}
@@ -27,7 +26,7 @@ the set of \emph{computable} terms (proofs, paths) $E_\Gamma(T)$.
 \input{Computable/NProof}
 \AgdaHide{
 \begin{code}
-open import PHOPL.Computable.NFProof
+open import PHOPL.Computable.NFProp
 \end{code}
 }
 
@@ -68,7 +67,7 @@ The Agda code for this definition is shown in Figure \ref{fig:compute}
 
 \begin{figure}
 \begin{code}
-computeP : ∀ {V} → Context V → Nf V → Proof V → Set
+computeP : ∀ {V S} → Context V → Nf V S → Proof V → Set
 computeP Γ (nf₀ _) δ = SN δ
 computeP Γ (φ imp ψ) δ = 
   ∀ {W} (Δ : Context W) {ρ} {ε}
@@ -88,7 +87,7 @@ computeT Γ (A ⇛ B) M =
     (computeN : computeT Δ A N) (computeN' : computeT Δ A N') (computeP : computeE Δ N A N' P) →
     computeE Δ (appT (M 〈 ρ 〉) N) B (appT (M 〈 ρ 〉) N') (M 〈 ρ 〉 ⋆[ P ∶ N ∼ N' ]))
 
-computeE {V} Γ M Ω N P = Σ[ φ ∈ Nf V ] Σ[ ψ ∈ Nf V ] M ↠ decode-Nf φ × N ↠ decode-Nf ψ × computeP Γ (φ imp ψ) (plus P) × computeP Γ (ψ imp φ) (minus P)
+computeE {V} Γ M Ω N P = Σ[ S ∈ NfShape ] Σ[ φ ∈ Nf V S ] Σ[ ψ ∈ Nf V S ] M ↠ decode-Nf φ × N ↠ decode-Nf ψ × computeP Γ (φ imp ψ) (plus P) × computeP Γ (ψ imp φ) (minus P)
 computeE Γ M (A ⇛ B) M' P =
   ∀ {W} (Δ : Context W) {ρ} {N} {N'} {Q} (ρ∶Γ⇒RΔ : ρ ∶ Γ ⇒R Δ) (Δ⊢Q∶N≡N' : Δ ⊢ Q ∶ N ≡〈 A 〉 N')
   (computeN : computeT Δ A N) (computeN' : computeT Δ A N') (computeQ : computeE Δ N A N' Q) → computeE Δ (appT (M 〈 ρ 〉) N) B (appT (M' 〈 ρ 〉)  N') 
@@ -96,7 +95,7 @@ computeE Γ M (A ⇛ B) M' P =
 
 compute : ∀ {V} {K} → Context V → Expression V (parent K) → Expression V (varKind K) → Set
 compute {K = -Term} Γ (app (-ty A) out) M = computeT Γ A M
-compute {V} {K = -Proof} Γ φ δ = Σ[ ψ ∈ Nf V ] φ ↠ decode-Nf ψ × computeP Γ ψ δ
+compute {V} {K = -Proof} Γ φ δ = Σ[ S ∈ NfShape ] Σ[ ψ ∈ Nf V S ] φ ↠ decode-Nf ψ × computeP Γ ψ δ
 compute {K = -Path} Γ (app (-eq A) (M ∷ N ∷ [])) P = computeE Γ M A N P
 
 record E {V} {K} (Γ : Context V) (A : Expression V (parent K)) (M : Expression V (varKind K)) : Set where
@@ -135,7 +134,7 @@ then $M \{\} \in E_\Gamma(M =_A M)$. %TODO Agda
 
 \AgdaHide{
 \begin{code}
-postulate computeP-rep : ∀ {U V S Γ Δ} {ρ : Rep U V} {L : Nf U} {δ} →
+postulate computeP-rep : ∀ {U V S Γ Δ} {ρ : Rep U V} {L : Nf U S} {δ} →
                        computeP Γ L δ → ρ ∶ Γ ⇒R Δ → computeP Δ (nfrep L ρ) (δ 〈 ρ 〉)
 {- computeP-rep {S = neutral} {L = neutral _} computeδ _ = SNrep R-creates-rep computeδ
 computeP-rep {S = bot} {L = bot} computeδ ρ∶Γ⇒RΔ = SNrep R-creates-rep computeδ
@@ -208,7 +207,7 @@ Let $\phi$ be a weakly normalizable term.
 If $\Gamma \vald$, $φ$ is weakly normalizable and $p : \phi \in \Gamma$ then $p \in E_\Gamma(\phi)$.
 
 \begin{code}
-E-varP : ∀ {V S} {L : Nf V} {Γ : Context V} {p : Var V -Proof} → 
+E-varP : ∀ {V S} {L : Nf V S} {Γ : Context V} {p : Var V -Proof} → 
          valid Γ → typeof p Γ ↠ decode-Nf L → E Γ (typeof p Γ) (var p)
 \end{code}
 
@@ -216,7 +215,7 @@ E-varP : ∀ {V S} {L : Nf V} {Γ : Context V} {p : Var V -Proof} →
 $E_\Gamma(\phi) \subseteq \SN$.
 
 \begin{code}
-E-SNP : ∀ {V S} {Γ : Context V} {L : Nf V} {φ : Term V} {δ : Proof V} → 
+E-SNP : ∀ {V S} {Γ : Context V} {L : Nf V S} {φ : Term V} {δ : Proof V} → 
       E Γ φ δ → SN δ
 \end{code}
 \end{enumerate}
@@ -226,8 +225,8 @@ E-SNP : ∀ {V S} {Γ : Context V} {L : Nf V} {φ : Term V} {δ : Proof V} →
 The two parts are proved simultaneously by induction on $\nf{\phi}$.
 \AgdaHide{
 \begin{code}
-var-computePnf : ∀ {V S} {Γ : Context V} {L : Nf V} {p : Var V -Proof} → computeP Γ L (var p)
-E-SNPnf : ∀ {V S} {Γ : Context V} {L : Nf V} {δ : Proof V} → valid Γ → computeP Γ L δ → SN δ
+var-computePnf : ∀ {V S} {Γ : Context V} {L : Nf V S} {p : Var V -Proof} → computeP Γ L (var p)
+E-SNPnf : ∀ {V S} {Γ : Context V} {L : Nf V S} {δ : Proof V} → valid Γ → computeP Γ L δ → SN δ
 
 var-computePnf = {!!}
 E-SNPnf = {!!}
@@ -236,42 +235,75 @@ E-SNPnf = {!!}
 
 Let $\nf{\phi} \equiv \psi_1 \supset \cdots \supset \psi_n \supset \chi$,
 where $\chi$ is either $\bot$ or a neutral term.  
-\begin{code}
-domNf : ∀ {V} {S} → Nf V → List (Nf V)
-domNf φ = ?
-
-codNf : ∀ {V} {S} → Nf V → Nf₀ V
-codNf φ = ?
-\end{code}
 \begin{enumerate}
 \item
 Let $\Delta \supseteq \Gamma$ and $\epsilon_i \in E_\Delta(\psi_i)$ for
 each $i$.
 \begin{code}
-data allE {V} (Γ : Context V) : ∀ {S} → List (Nf V) → List (Proof V) → Set where
+data allE {V} (Γ : Context V) : ∀ {SS} → ListNf V SS → List (Proof V) → Set where
   [] : allE Γ [] []
-  _∷_ : ∀ {S T} {L : Nf V} {LL : List (Nf V)} {δ εε} → E Γ (decode-Nf L) δ → allE Γ LL εε → allE Γ (L ∷ LL) (δ ∷ εε)
+  _∷_ : ∀ {S SS} {L : Nf V S} {LL : ListNf V SS} {δ εε} → 
+    E Γ (decode-Nf L) δ → allE Γ LL εε → allE Γ (L ∷ LL) (δ ∷ εε)
 \end{code}
 We must show that
 \[ p \epsilon_1 \cdots \epsilon_n \in E_\Delta(\chi) \]
 \begin{code}
-EPropE : ∀ {V} {Γ : Context V} {φ : Nf V} {δ} {εε} →
-  computeP Γ φ δ → allE Γ (domNf φ) εε → computeP Γ (nf₀ (codNf φ)) (APPP' δ εε)
-EPropE {φ = neutral _} {εε = []} computeδ [] = computeδ
-EPropE {φ = bot} {εε = []} computeδ [] = computeδ
-EPropE {Γ = Γ} {φ = φ imp φ₁} {εε = ε ∷ εε} computeδ (Eε ∷ Eεε) = EPropE 
-  (subst₂ (computeP Γ) {!!} {!!} (computeδ Γ idRep-typed 
-    (change-type (E.typed Eε) (cong decode-Nf {!Prelims.sym nfrep-id!})) 
-    {!!})) 
-  Eεε
+private pre-nf-is-nf-red : ∀ {V S} (φ : Nf V S) {ψ χ : Term V} → χ ↠ ψ → χ ≡ decode-Nf φ → χ ≡ ψ
+pre-nf-is-nf-red φ {ψ} (inc χ⇒ψ) χ≡φ with PHOPL.Computable.NFProp.nf-is-nf {M = φ} (subst (λ x → x ⇒ ψ) χ≡φ χ⇒ψ)
+pre-nf-is-nf-red φ (inc φ⇒ψ) _ | ()
+pre-nf-is-nf-red _ ref _ = refl
+pre-nf-is-nf-red {V} {S} φ {χ = χ} (RTClose.trans {y = ψ} {z = ψ'} φ↠ψ ψ↠ψ') χ≡φ = 
+  let χ≡ψ : χ ≡ ψ
+      χ≡ψ = pre-nf-is-nf-red φ φ↠ψ χ≡φ in
+  let ψ≡φ : ψ ≡ decode-Nf φ
+      ψ≡φ = Prelims.trans (Prelims.sym χ≡ψ) χ≡φ in 
+  let ψ≡ψ' : ψ ≡ ψ'
+      ψ≡ψ' = pre-nf-is-nf-red φ ψ↠ψ' ψ≡φ in 
+  Prelims.trans χ≡ψ ψ≡ψ'
 
-EPropI : ∀ {V} {Γ : Context V} {S} {φ : Nf V} {δ} → valid Γ →
-  (∀ {W} {Δ : Context W} {ρ} {εε} → ρ ∶ Γ ⇒R Δ → valid Δ → allE Δ (nfrep (domNf φ) ρ) εε → computeP Δ (nfrep (nf₀ (codNf φ)) ρ) (APPP' (δ 〈 ρ 〉) εε)) →
-  computeP Γ φ δ
-EPropI {φ = neutral N} validΓ hyp = subst SN rep-idRep (hyp idRep-typed validΓ [])
-EPropI {φ = bot} validΓ hyp = subst SN rep-idRep (hyp idRep-typed validΓ []) -- TODO Refactor
+nf-is-nf-red : ∀ {V S} {φ : Nf V S} {ψ : Term V} → decode-Nf φ ↠ ψ → decode-Nf φ ≡ ψ
+nf-is-nf-red {φ = φ} φ↠ψ = pre-nf-is-nf-red φ φ↠ψ refl
+
+
+decode-Neutral-inj : ∀ {V S} {φ ψ : Neutral V S} → decode-Neutral φ ≡ decode-Neutral ψ → φ ≡ ψ
+decode-Nf₀-inj : ∀ {V S} {φ ψ : Nf₀ V S} → decode-Nf₀ φ ≡ decode-Nf₀ ψ → φ ≡ ψ
+decode-Nf-inj : ∀ {V S} {φ ψ : Nf V S} → decode-Nf φ ≡ decode-Nf ψ → φ ≡ ψ
+
+decode-Neutral-inj {φ = var _} {var _} x≡y = cong var (var-inj x≡y)
+decode-Neutral-inj {φ = app _ _} {app _ _} φ≡ψ = cong₂ app (decode-Neutral-inj (appT-injl φ≡ψ)) (decode-Nf-inj (appT-injr φ≡ψ))
+
+decode-Nf₀-inj {φ = neutral _} {ψ = neutral _} φ≡ψ = cong neutral (decode-Neutral-inj φ≡ψ)
+decode-Nf₀-inj {φ = bot} {bot} _ = refl
+
+⊃-injl : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ⊃ ψ ≡ φ' ⊃ ψ' → φ ≡ φ'
+⊃-injl refl = refl
+
+⊃-injr : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ⊃ ψ ≡ φ' ⊃ ψ' → ψ ≡ ψ'
+⊃-injr refl = refl
+
+decode-Nf-inj {S = nf₀ _} {nf₀ φ} {nf₀ ψ} φ≡ψ = cong nf₀ (decode-Nf₀-inj φ≡ψ)
+decode-Nf-inj {S = S imp T} {φ imp φ'} {ψ imp ψ'} φ≡ψ = cong₂ _imp_ (decode-Nf-inj (⊃-injl φ≡ψ)) (decode-Nf-inj (⊃-injr φ≡ψ))
+
+computeP-wd : ∀ {V S T Γ} {φ : Nf V S} {ψ : Nf V T} {δ} → computeP Γ φ δ → decode-Nf φ ≡ decode-Nf ψ → computeP Γ ψ δ
+computeP-wd {S = nf₀ x} {T} computeδ φ≡ψ = {!!}
+computeP-wd {S = S imp S₁} computeδ φ≡ψ = {!!}
+
+Enf : ∀ {V Γ S} {φ : Nf V S} {δ} → E Γ (decode-Nf φ) δ → computeP Γ φ δ
+Enf {Γ = Γ} {δ = δ} (EI _ (S ,p ψ ,p φ↠ψ ,p computeδ)) = {!!}
+
+EPropE : ∀ {V S} {Γ : Context V} {φ : Nf V S} {δ} {εε} →
+                 computeP Γ φ δ → allE Γ (domNf φ) εε → SN (APPP' δ εε)
+EPropE {φ = nf₀ _} computeδ [] = computeδ
+EPropE {Γ = Γ} {φ = φ imp ψ} {εε = ε ∷ εε} computeδ (Eε ∷ Eεε) = EPropE (computeδ Γ idRep-typed 
+  (change-type (E.typed Eε) (Prelims.sym (cong decode-Nf nfrep-id))) 
+  (subst (λ x → computeP Γ x ε) (Prelims.sym nfrep-id) {!E.computable Eε!})) {!!} 
+
+postulate EPropI : ∀ {V} {Γ : Context V} {S} {φ : Nf V S} {δ} → valid Γ →
+                 (∀ {W} {Δ : Context W} {ρ} {εε} → ρ ∶ Γ ⇒R Δ → valid Δ → allE Δ (listnfrep (domNf φ) ρ) εε → SN (APPP' (δ 〈 ρ 〉) εε)) →
+                 computeP Γ φ δ
+{- EPropI {φ = nf₀ N} validΓ hyp = subst SN rep-idRep (hyp idRep-typed validΓ [])
 EPropI {φ = φ imp ψ} validΓ hyp Δ {ρ} {ε} ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = EPropI {φ = nfrep ψ ρ} (context-validity Δ⊢ε∶φ)
-  (λ {W'} {Θ} {σ} {εε} σ∶Δ⇒RΘ validΘ allEεε → {!!})
+  (λ {W'} {Θ} {σ} {εε} σ∶Δ⇒RΘ validΘ allEεε → {!!}) -}
 -- TODO Swap arguments in •R-typed
 \end{code}
 It is easy to see that $p \vec{\epsilon}$ is well-typed, so it remains to show that $p \vec{\epsilon} \in \SN$.
@@ -384,7 +416,7 @@ $(P \vec{e})^+ \in E_\Gamma(M \vec{x} \supset N \vec{y}) \subseteq \SN$, hence $
 \item
 If $\delta \in E_\Gamma(\phi)$, $\phi \simeq \psi$ and $\Gamma \vdash \psi : \Omega$, then $\delta \in E_\Gamma(\psi)$.
 \begin{code}
-postulate conv-computeP : ∀ {V} {Γ : Context V} {L M : Nf V} {δ} →
+postulate conv-computeP : ∀ {V S} {Γ : Context V} {L M : Nf V S} {δ} →
                         computeP Γ L δ → decode-Nf L ≃ decode-Nf M →
                         Γ ⊢ decode-Nf M ∶ ty Ω → computeP Γ M δ
 \end{code}
