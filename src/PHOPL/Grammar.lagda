@@ -233,6 +233,10 @@ APPP-rep : ∀ {U V n δ} (εε : snocVec (Proof U) n) {ρ : Rep U V} →
 APPP-rep [] = refl
 APPP-rep (εε snoc ε) {ρ} = cong (λ x → appP x (ε 〈 ρ 〉)) (APPP-rep εε)
 
+APPP' : ∀ {V} → Proof V → List (Proof V) → Proof V
+APPP' δ [] = δ
+APPP' δ (ε ∷ εε) = APPP' (appP δ ε) εε
+
 APP* : ∀ {V n} → snocVec (Term V) n → snocVec (Term V) n → Path V → snocVec (Path V) n → Path V
 APP* [] [] P [] = P
 APP* (MM snoc M) (NN snoc N) P (QQ snoc Q) = app* M N (APP* MM NN P QQ) Q

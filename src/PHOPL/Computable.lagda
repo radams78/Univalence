@@ -5,6 +5,7 @@ import Relation.Binary.PreorderReasoning
 open import Data.Empty renaming (⊥ to Empty)
 open import Data.Unit
 open import Data.Product renaming (_,_ to _,p_)
+open import Data.List
 open import Prelims
 open import Prelims.Closure
 open import PHOPL.Grammar
@@ -17,68 +18,16 @@ open import PHOPL.Meta
 open import PHOPL.KeyRedex
 open import PHOPL.Neutral
 \end{code}
-al}
 
 \section{Computable Expressions}
 
 We define a model of the type theory with types as sets of terms.  For every type (proposition, equation) $T$ in context $\Gamma$, define
 the set of \emph{computable} terms (proofs, paths) $E_\Gamma(T)$.
 
-Note first that (using Generation) a normal form of type $\Omega$ is either $\bot$, or a neutral term, or $\phi \supset \psi$ where $\phi$ and $\psi$ are normal forms of type $\Omega$.
-
+\input{Computable/NProof}
 \AgdaHide{
 \begin{code}
-data Shape : Set where
-  neutral : Shape
-  bot : Shape
-  imp : Shape → Shape → Shape
-
-data Leaves (V : Alphabet) : Shape → Set where
-  neutral : Neutral V → Leaves V neutral
-  bot : Leaves V bot
-  imp : ∀ {S} {T} → Leaves V S → Leaves V T → Leaves V (imp S T)
-
-lrep : ∀ {U} {V} {S} → Leaves U S → Rep U V → Leaves V S
-lrep (neutral N) ρ = neutral (nrep N ρ)
-lrep bot _ = bot
-lrep (imp φ ψ) ρ = imp (lrep φ ρ) (lrep ψ ρ)
-
-postulate lrep-comp : ∀ {U V W S} {ρ' : Rep V W} {ρ} {L : Leaves U S} →
-                    lrep L (ρ' •R ρ) ≡ lrep (lrep L ρ) ρ'
-{- lrep-comp {L = neutral _} = cong neutral nrep-comp
-lrep-comp {L = bot} = refl
-lrep-comp {L = imp φ ψ} = cong₂ imp lrep-comp lrep-comp -}
-
-decode-Prop : ∀ {V} {S} → Leaves V S → Term V
-decode-Prop (neutral N) = decode-Neutral N
-decode-Prop bot = ⊥
-decode-Prop (imp φ ψ) = decode-Prop φ ⊃ decode-Prop ψ
-
-postulate decode-rep : ∀ {U} {V} {S} (L : Leaves U S) {ρ : Rep U V} →
-                     decode-Prop (lrep L ρ) ≡ decode-Prop L 〈 ρ 〉
-
-postulate leaves-red : ∀ {V} {S} {L : Leaves V S} {φ : Term V} →
-                     decode-Prop L ↠ φ →
-                     Σ[ L' ∈ Leaves V S ] decode-Prop L' ≡ φ
-{- leaves-red {S = neutral} {L = neutral N} L↠φ = 
-  let (N ,p N≡φ) = neutral-red {N = N} L↠φ in neutral N ,p N≡φ
-leaves-red {S = bot} {L = bot} L↠φ = bot ,p Prelims.sym (bot-red L↠φ)
-leaves-red {S = imp S T} {L = imp φ ψ} φ⊃ψ↠χ = 
-  let (φ' ,p ψ' ,p φ↠φ' ,p ψ↠ψ' ,p χ≡φ'⊃ψ') = imp-red φ⊃ψ↠χ in 
-  let (L₁ ,p L₁≡φ') = leaves-red {L = φ} φ↠φ' in 
-  let (L₂ ,p L₂≡ψ') = leaves-red {L = ψ} ψ↠ψ' in 
-  (imp L₁ L₂) ,p (Prelims.trans (cong₂ _⊃_ L₁≡φ' L₂≡ψ') (Prelims.sym χ≡φ'⊃ψ')) -}
-
-postulate red-decode-rep : ∀ {U} {V} {φ : Term U} {S} (L : Leaves U S) {ρ : Rep U V} →
-                         φ ↠ decode-Prop L → φ 〈 ρ 〉 ↠ decode-Prop (lrep L ρ)
-{- red-decode-rep {V = V} {φ} L {ρ} φ↠L = let open Relation.Binary.PreorderReasoning (RED V -Expression (varKind -Term)) in 
-  begin
-    φ 〈 ρ 〉
-  ∼⟨ red-rep φ↠L ⟩
-    decode-Prop L 〈 ρ 〉
-  ≈⟨ Prelims.sym (decode-rep L) ⟩
-    decode-Prop (lrep L ρ)
-  ∎ -}
+open import PHOPL.Computable.NFProof
 \end{code}
 }
 
@@ -242,13 +191,13 @@ compute-rep {K = -Path} {app (-eq (A ⇛ B)) (F ∷ G ∷ [])} {P} (EI Γ⊢P∶
 }
 
 \begin{code}
-E-rep : ∀ {U V Γ Δ} {ρ : Rep U V} {K} {A : Expression U (parent K)} {M : Expression U (varKind K)} → 
-  E Γ A M → ρ ∶ Γ ⇒R Δ → valid Δ → E Δ (A 〈 ρ 〉) (M 〈 ρ 〉)
+postulate E-rep : ∀ {U V Γ Δ} {ρ : Rep U V} {K} {A : Expression U (parent K)} {M : Expression U (varKind K)} → 
+                E Γ A M → ρ ∶ Γ ⇒R Δ → valid Δ → E Δ (A 〈 ρ 〉) (M 〈 ρ 〉)
 \end{code}
 
 \AgdaHide{
 \begin{code}
-E-rep (EI Γ⊢M∶A computeM) ρ∶Γ⇒RΔ validΔ = EI (weakening Γ⊢M∶A validΔ ρ∶Γ⇒RΔ) (compute-rep (EI Γ⊢M∶A computeM) ρ∶Γ⇒RΔ validΔ)
+--E-rep (EI Γ⊢M∶A computeM) ρ∶Γ⇒RΔ validΔ = EI (weakening Γ⊢M∶A validΔ ρ∶Γ⇒RΔ) (compute-rep (EI Γ⊢M∶A computeM) ρ∶Γ⇒RΔ validΔ)
 \end{code}
 }
 
@@ -259,17 +208,9 @@ Let $\phi$ be a weakly normalizable term.
 \item
 If $\Gamma \vald$, $φ$ is weakly normalizable and $p : \phi \in \Gamma$ then $p \in E_\Gamma(\phi)$.
 
-\AgdaHide{
-\begin{code}
-postulate var-computePnf : ∀ {V S} {Γ : Context V} {L : Leaves V S} {p : Var V -Proof} → computeP Γ L (var p)
-postulate E-SNPnf : ∀ {V S} {Γ : Context V} {L : Leaves V S} {δ : Proof V} → valid Γ → computeP Γ L δ → SN δ
-\end{code}
-}
-
 \begin{code}
 E-varP : ∀ {V S} {L : Leaves V S} {Γ : Context V} {p : Var V -Proof} → 
          valid Γ → typeof p Γ ↠ decode-Prop L → E Γ (typeof p Γ) (var p)
-E-varP {S = S} {L} {p = p} validΓ φ↠L = EI (varR p validΓ) (S ,p L ,p φ↠L ,p var-computePnf {S = S})
 \end{code}
 
 \item
@@ -279,24 +220,105 @@ $E_\Gamma(\phi) \subseteq \SN$.
 E-SNP : ∀ {V S} {Γ : Context V} {L : Leaves V S} {φ : Term V} {δ : Proof V} → 
       E Γ φ δ → SN δ
 \end{code}
-
-\AgdaHide{
-\begin{code}
-E-SNP (EI Γ⊢δ∶φ (S ,p L ,p _ ,p computeδ)) = E-SNPnf {S = S} {L = L} (context-validity Γ⊢δ∶φ) computeδ
-\end{code}
-}
 \end{enumerate}
 \end{lm}
 
 \begin{proof}
 The two parts are proved simultaneously by induction on $\nf{\phi}$.
+\AgdaHide{
+\begin{code}
+var-computePnf : ∀ {V S} {Γ : Context V} {L : Leaves V S} {p : Var V -Proof} → computeP Γ L (var p)
+E-SNPnf : ∀ {V S} {Γ : Context V} {L : Leaves V S} {δ : Proof V} → valid Γ → computeP Γ L δ → SN δ
+
+var-computePnf = {!!}
+E-SNPnf = {!!}
+\end{code}
+}
+
 Let $\nf{\phi} \equiv \psi_1 \supset \cdots \supset \psi_n \supset \chi$,
 where $\chi$ is either $\bot$ or a neutral term.  
+\begin{code}
+data Shape₀ : Set where
+  neutral : Shape₀
+  bot : Shape₀
+
+Shape↑ : Shape₀ → Shape
+Shape↑ neutral = neutral
+Shape↑ bot = bot
+
+data Leaves₀ (V : Alphabet) : Shape₀ → Set where
+  neutral : Neutral V → Leaves₀ V neutral
+  bot : Leaves₀ V bot
+--TODO Refactor
+
+Leaves↑ : ∀ {V} {S} → Leaves₀ V S → Leaves V (Shape↑ S)
+Leaves↑ (neutral N) = neutral N
+Leaves↑ bot = bot
+
+decode-Prop₀ : ∀ {V} {S} → Leaves₀ V S → Term V
+decode-Prop₀ (neutral N) = decode-Neutral N
+decode-Prop₀ bot = ⊥
+
+domS : Shape → List Shape
+domS neutral = []
+domS bot = []
+domS (imp S T) = S ∷ domS T
+
+codS : Shape → Shape₀
+codS neutral = neutral
+codS bot = bot
+codS (imp _ T) = codS T
+
+data ListLeaves (V : Alphabet) : List Shape → Set where
+  [] : ListLeaves V []
+  _∷_ : ∀ {S} {T} → Leaves V S → ListLeaves V T → ListLeaves V (S ∷ T)
+--TODO Refactor
+
+llrep : ∀ {U} {V} {S} → ListLeaves U S → Rep U V → ListLeaves V S
+llrep [] _ = []
+llrep (L ∷ LL) ρ = lrep L ρ ∷ llrep LL ρ
+
+domL : ∀ {V} {S} → Leaves V S → ListLeaves V (domS S)
+domL (neutral _) = []
+domL bot = []
+domL (imp L L') = L ∷ domL L'
+
+codL : ∀ {V} {S} → Leaves V S → Leaves₀ V (codS S)
+codL (neutral φ) = neutral φ
+codL bot = bot
+codL (imp _ ψ) = codL ψ
+\end{code}
 \begin{enumerate}
 \item
 Let $\Delta \supseteq \Gamma$ and $\epsilon_i \in E_\Delta(\psi_i)$ for
-each $i$.  We must show that
+each $i$.
+\begin{code}
+data allE {V} (Γ : Context V) : ∀ {S} → ListLeaves V S → List (Proof V) → Set where
+  [] : allE Γ [] []
+  _∷_ : ∀ {S T} {L : Leaves V S} {LL : ListLeaves V T} {δ εε} → E Γ (decode-Prop L) δ → allE Γ LL εε → allE Γ (L ∷ LL) (δ ∷ εε)
+\end{code}
+We must show that
 \[ p \epsilon_1 \cdots \epsilon_n \in E_\Delta(\chi) \]
+\begin{code}
+EPropE : ∀ {V} {Γ : Context V} {S} {φ : Leaves V S} {δ} {εε} →
+  computeP Γ φ δ → allE Γ (domL φ) εε → computeP Γ (Leaves↑ (codL φ)) (APPP' δ εε)
+EPropE {S = neutral} {φ = neutral _} {εε = []} computeδ [] = computeδ
+EPropE {S = bot} {φ = bot} {εε = []} computeδ [] = computeδ
+EPropE {Γ = Γ} {S = imp S T} {φ = imp φ φ₁} {εε = ε ∷ εε} computeδ (Eε ∷ Eεε) = EPropE {S = T} 
+  (subst₂ (computeP Γ) {!!} {!!} (computeδ Γ idRep-typed 
+    (change-type (E.typed Eε) (cong decode-Prop {!Prelims.sym lrep-id!})) 
+    {!!})) 
+  Eεε
+
+EPropI : ∀ {V} {Γ : Context V} {S} {φ : Leaves V S} {δ} → valid Γ →
+  (∀ {W} {Δ : Context W} {ρ} {εε} → ρ ∶ Γ ⇒R Δ → valid Δ → allE Δ (llrep (domL φ) ρ) εε → computeP Δ (lrep (Leaves↑ (codL φ)) ρ) (APPP' (δ 〈 ρ 〉) εε)) →
+  computeP Γ φ δ
+EPropI {φ = neutral N} validΓ hyp = subst SN rep-idRep (hyp idRep-typed validΓ [])
+EPropI {φ = bot} validΓ hyp = subst SN rep-idRep (hyp idRep-typed validΓ []) -- TODO Refactor
+EPropI {φ = imp φ ψ} validΓ hyp Δ {ρ} {ε} ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = EPropI {φ = lrep ψ ρ} (context-validity Δ⊢ε∶φ)
+  (λ {W'} {Θ} {σ} {εε} σ∶Δ⇒RΘ validΘ allEεε → {!!})
+-- TODO Swap arguments in •R-typed
+\end{code}
 It is easy to see that $p \vec{\epsilon}$ is well-typed, so it remains to show that $p \vec{\epsilon} \in \SN$.
 This holds because each $\epsilon_i$ is strongly normalizing by the induction hypothesis (2).
 \item
@@ -305,6 +327,13 @@ By the induction hypothesis (1), we have that $p_i \in E_\Delta(\psi_i)$, hence
 $\delta p_1 \cdots p_n \in E_\Gamma(\chi)$, and so $\delta p_1 \cdots p_n \in \SN$.
 It follows that $\delta \in \SN$.
 \end{enumerate}
+\AgdaHide{
+\begin{code}
+E-varP {S = S} {L} {p = p} validΓ φ↠L = EI (varR p validΓ) (S ,p L ,p φ↠L ,p var-computePnf {S = S})
+
+E-SNP (EI Γ⊢δ∶φ (S ,p L ,p _ ,p computeδ)) = E-SNPnf {S = S} {L = L} (context-validity Γ⊢δ∶φ) computeδ
+\end{code}
+}
 \end{proof}
 
 \begin{lemma}
@@ -408,11 +437,11 @@ postulate conv-computeP : ∀ {V} {Γ : Context V} {S} {L M : Leaves V S} {δ} �
 If $P \in E_\Gamma(M =_A N)$, $M \simeq M'$, $N \simeq N'$ and $\Gamma \vdash M : A$ and $\Gamma \vdash N : A$, then $P \in E_\Gamma(M' =_A N')$.
 \AgdaHide{
 \begin{code}
-conv-computeE : ∀ {V} {Γ : Context V} {M} {M'} {A} {N} {N'} {P} →
-  computeE Γ M A N P → 
-  Γ ⊢ M ∶ ty A → Γ ⊢ N ∶ ty A → Γ ⊢ M' ∶ ty A → Γ ⊢ N' ∶ ty A → M ≃ M' → N ≃ N' →
-  computeE Γ M' A N' P
-conv-computeE {Γ = Γ} {M = M} {M' = M'} {A = Ω} {N' = N'} {P} (S ,p T ,p φ ,p ψ ,p M↠φ ,p N↠ψ ,p computeP+ ,p computeP-) 
+postulate conv-computeE : ∀ {V} {Γ : Context V} {M} {M'} {A} {N} {N'} {P} →
+                        computeE Γ M A N P → 
+                        Γ ⊢ M ∶ ty A → Γ ⊢ N ∶ ty A → Γ ⊢ M' ∶ ty A → Γ ⊢ N' ∶ ty A → M ≃ M' → N ≃ N' →
+                        computeE Γ M' A N' P
+{- conv-computeE {Γ = Γ} {M = M} {M' = M'} {A = Ω} {N' = N'} {P} (S ,p T ,p φ ,p ψ ,p M↠φ ,p N↠ψ ,p computeP+ ,p computeP-) 
   Γ⊢M∶A Γ⊢N∶A Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N' = 
     let (Q ,p φ↠Q ,p M'↠Q) = Church-Rosser (RSTClose.trans (RSTClose.sym (red-conv M↠φ)) M≃M') in
     let (φ' ,p φ'≡Q) = leaves-red {L = φ} φ↠Q in
@@ -483,21 +512,21 @@ conv-computeE {A = A ⇛ B} computeP Γ⊢M∶A Γ⊢N∶A Γ⊢M'∶A Γ⊢N'�
       (equation-validity₂ Δ⊢Q∶N≡N'))
     (appR (weakening Γ⊢M'∶A (context-validity Δ⊢Q∶N≡N') ρ∶Γ⇒RΔ) (equation-validity₁ Δ⊢Q∶N≡N')) 
     (appR (weakening Γ⊢N'∶A (context-validity Δ⊢Q∶N≡N') ρ∶Γ⇒RΔ) (equation-validity₂ Δ⊢Q∶N≡N')) 
-    (appT-convl (conv-rep M≃M')) (appT-convl (conv-rep N≃N'))
+    (appT-convl (conv-rep M≃M')) (appT-convl (conv-rep N≃N')) -}
 --TODO Common pattern
 \end{code}
 }
 
 \begin{code}
-convE-E : ∀ {V} {Γ : Context V} {M N M' N' : Term V} {A} {P : Path V} →
-          E Γ (M ≡〈 A 〉 N) P → M ≃ M' → N ≃ N' → Γ ⊢ M' ∶ ty A → Γ ⊢ N' ∶ ty A → 
-          E Γ (M' ≡〈 A 〉 N') P
+postulate convE-E : ∀ {V} {Γ : Context V} {M N M' N' : Term V} {A} {P : Path V} →
+                  E Γ (M ≡〈 A 〉 N) P → M ≃ M' → N ≃ N' → Γ ⊢ M' ∶ ty A → Γ ⊢ N' ∶ ty A → 
+                  E Γ (M' ≡〈 A 〉 N') P
 \end{code}
 
 \AgdaHide{
 \begin{code}
-convE-E (EI Γ⊢P∶M≡N computeP) M≃M' N≃N' Γ⊢M'∶A Γ⊢N'∶A = EI (convER Γ⊢P∶M≡N Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N') 
-  (conv-computeE computeP (equation-validity₁ Γ⊢P∶M≡N) (equation-validity₂ Γ⊢P∶M≡N) Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N')
+--convE-E (EI Γ⊢P∶M≡N computeP) M≃M' N≃N' Γ⊢M'∶A Γ⊢N'∶A = EI (convER Γ⊢P∶M≡N Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N') 
+--  (conv-computeE computeP (equation-validity₁ Γ⊢P∶M≡N) (equation-validity₂ Γ⊢P∶M≡N) Γ⊢M'∶A Γ⊢N'∶A M≃M' N≃N')
 \end{code}
 }
 \end{enumerate}
@@ -777,10 +806,10 @@ data Emult {V} (Γ : Context V) : ∀ {AA} → snocTypes V AA → snocListExp V 
   [] : Emult Γ [] []
   _snoc_ : ∀ {KK K AA} {A : Expression (snoc-extend V KK) (parent K)} {MM M} → Emult Γ {KK} AA MM → E {K = K} Γ (A ⟦ xx₀:= MM ⟧) M → Emult Γ (AA snoc A) (MM snoc M)
 
-Emult-rep : ∀ {U V Γ Δ KK AA} {MM : snocListExp U KK} {ρ : Rep U V} → Emult Γ AA MM → ρ ∶ Γ ⇒R Δ → valid Δ → Emult Δ (snocTypes-rep AA ρ) (snocListExp-rep MM ρ)
-Emult-rep [] _ _ = []
+postulate Emult-rep : ∀ {U V Γ Δ KK AA} {MM : snocListExp U KK} {ρ : Rep U V} → Emult Γ AA MM → ρ ∶ Γ ⇒R Δ → valid Δ → Emult Δ (snocTypes-rep AA ρ) (snocListExp-rep MM ρ)
+{- Emult-rep [] _ _ = []
 Emult-rep {U} {V} {Γ} {Δ = Δ} {KK snoc K} {AA = AA snoc A} {MM = MM snoc M} {ρ} (MM∈EΓAA snoc M∈EΓA) ρ∶Γ⇒RΔ validΔ = 
-  (Emult-rep MM∈EΓAA ρ∶Γ⇒RΔ validΔ) snoc subst (λ x → E Δ x (M 〈 ρ 〉)) (liftsnocRep-botSub {U} {V} {KK} {E = A}) (E-rep M∈EΓA ρ∶Γ⇒RΔ validΔ)
+  (Emult-rep MM∈EΓAA ρ∶Γ⇒RΔ validΔ) snoc subst (λ x → E Δ x (M 〈 ρ 〉)) (liftsnocRep-botSub {U} {V} {KK} {E = A}) (E-rep M∈EΓA ρ∶Γ⇒RΔ validΔ) -}
 \end{code}
 }
 
