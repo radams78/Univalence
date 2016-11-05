@@ -558,11 +558,11 @@ Contraction is a relation between closed expressions only: if $s \rhd t$ then $s
 \>\AgdaComment{\{-imp-red' (inc (redex βT)) ()\<\\
 \>imp-red' (inc (app \{c = -bot\} \_)) ()\<\\
 \>imp-red' \{θ = θ\} (inc (app \{c = -imp\} (appl \{E' = χ'\} \{F = \_ ∷ []\} χ⇒χ'))) φ≡χ⊃θ = \<\\
-\>  χ' ,p θ ,p subst (λ x → x Red.↠ χ') (imp-injl φ≡χ⊃θ) (inc χ⇒χ') ,p \<\\
-\>  ref ,p (cong (λ x → χ' ⊃ x) (imp-injr φ≡χ⊃θ))\<\\
+\>  χ' ,p θ ,p subst (λ x → x Red.↠ χ') (⊃-injl φ≡χ⊃θ) (inc χ⇒χ') ,p \<\\
+\>  ref ,p (cong (λ x → χ' ⊃ x) (⊃-injr φ≡χ⊃θ))\<\\
 \>imp-red' \{χ = χ\} (inc (app \{c = -imp\} (appr (appl \{E' = θ'\} \{F = []\} θ⇒θ')))) φ≡χ⊃θ = \<\\
-\>  χ ,p θ' ,p ref ,p (subst (λ x → x Red.↠ θ') (imp-injr φ≡χ⊃θ) (inc θ⇒θ')) ,p \<\\
-\>  cong (λ x → x ⊃ θ') (imp-injl φ≡χ⊃θ)\<\\
+\>  χ ,p θ' ,p ref ,p (subst (λ x → x Red.↠ θ') (⊃-injr φ≡χ⊃θ) (inc θ⇒θ')) ,p \<\\
+\>  cong (λ x → x ⊃ θ') (⊃-injl φ≡χ⊃θ)\<\\
 \>imp-red' (inc (app \{c = -imp\} (appr (appr ())))) \_\<\\
 \>imp-red' (inc (app \{c = -appTerm\} \_)) ()\<\\
 \>imp-red' (inc (app \{c = -lamTerm \_\} \_)) ()\<\\

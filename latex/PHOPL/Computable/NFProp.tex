@@ -328,5 +328,75 @@ Note first that (using Generation) a normal form of type $\Omega$ is either $\bo
 \>\AgdaFunction{codNf} \AgdaSymbol{(}\AgdaInductiveConstructor{nf₀} \AgdaBound{M}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaBound{M}\<%
 \\
 \>\AgdaFunction{codNf} \AgdaSymbol{(\_} \AgdaInductiveConstructor{imp} \AgdaBound{ψ}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{codNf} \AgdaBound{ψ}\<%
+\\
+%
+\\
+\>\AgdaKeyword{private} \AgdaFunction{pre-nf-is-nf-red} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{φ} \AgdaSymbol{:} \AgdaDatatype{Nf} \AgdaBound{V} \AgdaBound{S}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{ψ} \AgdaBound{χ} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{χ} \AgdaFunction{↠} \AgdaBound{ψ} \AgdaSymbol{→} \AgdaBound{χ} \AgdaDatatype{≡} \AgdaFunction{decode-Nf} \AgdaBound{φ} \AgdaSymbol{→} \AgdaBound{χ} \AgdaDatatype{≡} \AgdaBound{ψ}\<%
+\\
+\>\AgdaFunction{pre-nf-is-nf-red} \AgdaBound{φ} \AgdaSymbol{\{}\AgdaBound{ψ}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{inc} \AgdaBound{χ⇒ψ}\AgdaSymbol{)} \AgdaBound{χ≡φ} \AgdaKeyword{with} \AgdaFunction{nf-is-nf} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaBound{φ}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaFunction{subst} \AgdaSymbol{(λ} \AgdaBound{x} \AgdaSymbol{→} \AgdaBound{x} \AgdaDatatype{⇒} \AgdaBound{ψ}\AgdaSymbol{)} \AgdaBound{χ≡φ} \AgdaBound{χ⇒ψ}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{pre-nf-is-nf-red} \AgdaBound{φ} \AgdaSymbol{(}\AgdaInductiveConstructor{inc} \AgdaBound{φ⇒ψ}\AgdaSymbol{)} \AgdaSymbol{\_} \AgdaSymbol{|} \AgdaSymbol{()}\<%
+\\
+\>\AgdaFunction{pre-nf-is-nf-red} \AgdaSymbol{\_} \AgdaInductiveConstructor{ref} \AgdaSymbol{\_} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>\AgdaFunction{pre-nf-is-nf-red} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{S}\AgdaSymbol{\}} \AgdaBound{φ} \AgdaSymbol{\{}\AgdaArgument{χ} \AgdaSymbol{=} \AgdaBound{χ}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{RTClose.trans} \AgdaSymbol{\{}\AgdaArgument{y} \AgdaSymbol{=} \AgdaBound{ψ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{z} \AgdaSymbol{=} \AgdaBound{ψ'}\AgdaSymbol{\}} \AgdaBound{φ↠ψ} \AgdaBound{ψ↠ψ'}\AgdaSymbol{)} \AgdaBound{χ≡φ} \AgdaSymbol{=} \<[83]%
+\>[83]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{let} \AgdaBound{χ≡ψ} \AgdaSymbol{:} \AgdaBound{χ} \AgdaDatatype{≡} \AgdaBound{ψ}\<%
+\\
+\>[2]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaBound{χ≡ψ} \AgdaSymbol{=} \AgdaFunction{pre-nf-is-nf-red} \AgdaBound{φ} \AgdaBound{φ↠ψ} \AgdaBound{χ≡φ} \AgdaKeyword{in}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{let} \AgdaBound{ψ≡φ} \AgdaSymbol{:} \AgdaBound{ψ} \AgdaDatatype{≡} \AgdaFunction{decode-Nf} \AgdaBound{φ}\<%
+\\
+\>[2]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaBound{ψ≡φ} \AgdaSymbol{=} \AgdaFunction{Prelims.trans} \AgdaSymbol{(}\AgdaFunction{Prelims.sym} \AgdaBound{χ≡ψ}\AgdaSymbol{)} \AgdaBound{χ≡φ} \AgdaKeyword{in} \<[51]%
+\>[51]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{let} \AgdaBound{ψ≡ψ'} \AgdaSymbol{:} \AgdaBound{ψ} \AgdaDatatype{≡} \AgdaBound{ψ'}\<%
+\\
+\>[2]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaBound{ψ≡ψ'} \AgdaSymbol{=} \AgdaFunction{pre-nf-is-nf-red} \AgdaBound{φ} \AgdaBound{ψ↠ψ'} \AgdaBound{ψ≡φ} \AgdaKeyword{in} \<[44]%
+\>[44]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{Prelims.trans} \AgdaBound{χ≡ψ} \AgdaBound{ψ≡ψ'}\<%
+\\
+%
+\\
+\>\AgdaFunction{nf-is-nf-red} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaSymbol{:} \AgdaDatatype{Nf} \AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ψ} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{decode-Nf} \AgdaBound{φ} \AgdaFunction{↠} \AgdaBound{ψ} \AgdaSymbol{→} \AgdaFunction{decode-Nf} \AgdaBound{φ} \AgdaDatatype{≡} \AgdaBound{ψ}\<%
+\\
+\>\AgdaFunction{nf-is-nf-red} \AgdaSymbol{\{}\AgdaArgument{φ} \AgdaSymbol{=} \AgdaBound{φ}\AgdaSymbol{\}} \AgdaBound{φ↠ψ} \AgdaSymbol{=} \AgdaFunction{pre-nf-is-nf-red} \AgdaBound{φ} \AgdaBound{φ↠ψ} \AgdaInductiveConstructor{refl}\<%
+\\
+%
+\\
+%
+\\
+\>\AgdaFunction{decode-Neutral-inj} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaBound{ψ} \AgdaSymbol{:} \AgdaDatatype{Neutral} \AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{decode-Neutral} \AgdaBound{φ} \AgdaDatatype{≡} \AgdaFunction{decode-Neutral} \AgdaBound{ψ} \AgdaSymbol{→} \AgdaBound{φ} \AgdaDatatype{≡} \AgdaBound{ψ}\<%
+\\
+\>\AgdaFunction{decode-Nf₀-inj} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaBound{ψ} \AgdaSymbol{:} \AgdaDatatype{Nf₀} \AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{decode-Nf₀} \AgdaBound{φ} \AgdaDatatype{≡} \AgdaFunction{decode-Nf₀} \AgdaBound{ψ} \AgdaSymbol{→} \AgdaBound{φ} \AgdaDatatype{≡} \AgdaBound{ψ}\<%
+\\
+\>\AgdaFunction{decode-Nf-inj} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaBound{ψ} \AgdaSymbol{:} \AgdaDatatype{Nf} \AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{decode-Nf} \AgdaBound{φ} \AgdaDatatype{≡} \AgdaFunction{decode-Nf} \AgdaBound{ψ} \AgdaSymbol{→} \AgdaBound{φ} \AgdaDatatype{≡} \AgdaBound{ψ}\<%
+\\
+%
+\\
+\>\AgdaFunction{decode-Neutral-inj} \AgdaSymbol{\{}\AgdaArgument{φ} \AgdaSymbol{=} \AgdaInductiveConstructor{var} \AgdaSymbol{\_\}} \AgdaSymbol{\{}\AgdaInductiveConstructor{var} \AgdaSymbol{\_\}} \AgdaBound{x≡y} \AgdaSymbol{=} \AgdaFunction{cong} \AgdaInductiveConstructor{var} \AgdaSymbol{(}\AgdaFunction{var-inj} \AgdaBound{x≡y}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{decode-Neutral-inj} \AgdaSymbol{\{}\AgdaArgument{φ} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{\_} \AgdaSymbol{\_\}} \AgdaSymbol{\{}\AgdaInductiveConstructor{app} \AgdaSymbol{\_} \AgdaSymbol{\_\}} \AgdaBound{φ≡ψ} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaFunction{decode-Neutral-inj} \AgdaSymbol{(}\AgdaFunction{appT-injl} \AgdaBound{φ≡ψ}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{decode-Nf-inj} \AgdaSymbol{(}\AgdaFunction{appT-injr} \AgdaBound{φ≡ψ}\AgdaSymbol{))}\<%
+\\
+%
+\\
+\>\AgdaFunction{decode-Nf₀-inj} \AgdaSymbol{\{}\AgdaArgument{φ} \AgdaSymbol{=} \AgdaInductiveConstructor{neutral} \AgdaSymbol{\_\}} \AgdaSymbol{\{}\AgdaArgument{ψ} \AgdaSymbol{=} \AgdaInductiveConstructor{neutral} \AgdaSymbol{\_\}} \AgdaBound{φ≡ψ} \AgdaSymbol{=} \AgdaFunction{cong} \AgdaInductiveConstructor{neutral} \AgdaSymbol{(}\AgdaFunction{decode-Neutral-inj} \AgdaBound{φ≡ψ}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{decode-Nf₀-inj} \AgdaSymbol{\{}\AgdaArgument{φ} \AgdaSymbol{=} \AgdaInductiveConstructor{bot}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaInductiveConstructor{bot}\AgdaSymbol{\}} \AgdaSymbol{\_} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+%
+\\
+\>\AgdaFunction{decode-Nf-inj} \AgdaSymbol{\{}\AgdaArgument{S} \AgdaSymbol{=} \AgdaInductiveConstructor{nf₀} \AgdaSymbol{\_\}} \AgdaSymbol{\{}\AgdaInductiveConstructor{nf₀} \AgdaBound{φ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaInductiveConstructor{nf₀} \AgdaBound{ψ}\AgdaSymbol{\}} \AgdaBound{φ≡ψ} \AgdaSymbol{=} \AgdaFunction{cong} \AgdaInductiveConstructor{nf₀} \AgdaSymbol{(}\AgdaFunction{decode-Nf₀-inj} \AgdaBound{φ≡ψ}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{decode-Nf-inj} \AgdaSymbol{\{}\AgdaArgument{S} \AgdaSymbol{=} \AgdaBound{S} \AgdaInductiveConstructor{imp} \AgdaBound{T}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaInductiveConstructor{imp} \AgdaBound{φ'}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ψ} \AgdaInductiveConstructor{imp} \AgdaBound{ψ'}\AgdaSymbol{\}} \AgdaBound{φ≡ψ} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaInductiveConstructor{\_imp\_} \AgdaSymbol{(}\AgdaFunction{decode-Nf-inj} \AgdaSymbol{(}\AgdaFunction{⊃-injl} \AgdaBound{φ≡ψ}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{decode-Nf-inj} \AgdaSymbol{(}\AgdaFunction{⊃-injr} \AgdaBound{φ≡ψ}\AgdaSymbol{))}\<%
 \end{code}
 }

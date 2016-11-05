@@ -159,6 +159,10 @@ domNf : ∀ {V} {S} → Nf V S → ListNf V (domS S)
 domNf (nf₀ _) = []
 domNf (φ imp ψ) = φ ∷ domNf ψ
 
+domNf-rep : ∀ {U V S} {φ : Nf U S} {ρ : Rep U V} → domNf (nfrep φ ρ) ≡ listnfrep (domNf φ) ρ
+domNf-rep {φ = nf₀ x} = refl
+domNf-rep {φ = φ imp ψ} {ρ} = cong (λ x → nfrep φ ρ ∷ x) domNf-rep
+
 codNf : ∀ {V} {S} → Nf V S → Nf₀ V (codS S)
 codNf (nf₀ M) = M
 codNf (_ imp ψ) = codNf ψ
@@ -178,7 +182,6 @@ pre-nf-is-nf-red {V} {S} φ {χ = χ} (RTClose.trans {y = ψ} {z = ψ'} φ↠ψ 
 
 nf-is-nf-red : ∀ {V S} {φ : Nf V S} {ψ : Term V} → decode-Nf φ ↠ ψ → decode-Nf φ ≡ ψ
 nf-is-nf-red {φ = φ} φ↠ψ = pre-nf-is-nf-red φ φ↠ψ refl
-
 
 decode-Neutral-inj : ∀ {V S} {φ ψ : Neutral V S} → decode-Neutral φ ≡ decode-Neutral ψ → φ ≡ ψ
 decode-Nf₀-inj : ∀ {V S} {φ ψ : Nf₀ V S} → decode-Nf₀ φ ≡ decode-Nf₀ ψ → φ ≡ ψ

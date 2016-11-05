@@ -282,21 +282,36 @@ computeP-wd {S = S imp S'} {T imp T'} {φ = φ imp ψ} {φ' imp ψ'} computeδ �
     ∎)
 
 Enf : ∀ {V Γ S} {φ : Nf V S} {δ} → E Γ (decode-Nf φ) δ → computeP Γ φ δ
-Enf {Γ = Γ} {δ = δ} (EI _ (S ,p ψ ,p φ↠ψ ,p computeδ)) = {!!}
+Enf {Γ = Γ} {φ = φ} {δ = δ} (EI _ (S ,p ψ ,p φ↠ψ ,p computeδ)) = computeP-wd computeδ 
+  (Prelims.sym (nf-is-nf-red {φ = φ} φ↠ψ))
 
 EPropE : ∀ {V S} {Γ : Context V} {φ : Nf V S} {δ} {εε} →
                  computeP Γ φ δ → allE Γ (domNf φ) εε → SN (APPP' δ εε)
 EPropE {φ = nf₀ _} computeδ [] = computeδ
-EPropE {Γ = Γ} {φ = φ imp ψ} {εε = ε ∷ εε} computeδ (Eε ∷ Eεε) = EPropE (computeδ Γ idRep-typed 
-  (change-type (E.typed Eε) (Prelims.sym (cong decode-Nf nfrep-id))) 
-  (subst (λ x → computeP Γ x ε) (Prelims.sym nfrep-id) {!E.computable Eε!})) {!!} 
+EPropE {V} {S imp T} {Γ = Γ} {φ = φ imp ψ} {δ} {εε = ε ∷ εε} computeδ (Eε ∷ Eεε) = 
+  EPropE {Γ = Γ} {φ = ψ} {appP δ ε} {εε} 
+  (subst₂ (λ a b → computeP Γ a (appP b ε)) nfrep-id rep-idRep 
+    (computeδ Γ idRep-typed 
+      (change-type (E.typed Eε) (cong decode-Nf {φ} (Prelims.sym nfrep-id)))
+      (subst (λ x → computeP Γ x ε) (Prelims.sym nfrep-id) (Enf Eε)))) 
+  Eεε
 
-postulate EPropI : ∀ {V} {Γ : Context V} {S} {φ : Nf V S} {δ} → valid Γ →
+EPropI : ∀ {V} {Γ : Context V} {S} {φ : Nf V S} {δ} → valid Γ →
                  (∀ {W} {Δ : Context W} {ρ} {εε} → ρ ∶ Γ ⇒R Δ → valid Δ → allE Δ (listnfrep (domNf φ) ρ) εε → SN (APPP' (δ 〈 ρ 〉) εε)) →
                  computeP Γ φ δ
-{- EPropI {φ = nf₀ N} validΓ hyp = subst SN rep-idRep (hyp idRep-typed validΓ [])
-EPropI {φ = φ imp ψ} validΓ hyp Δ {ρ} {ε} ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = EPropI {φ = nfrep ψ ρ} (context-validity Δ⊢ε∶φ)
-  (λ {W'} {Θ} {σ} {εε} σ∶Δ⇒RΘ validΘ allEεε → {!!}) -}
+EPropI {φ = nf₀ N} validΓ hyp = subst SN rep-idRep (hyp idRep-typed validΓ [])
+EPropI {φ = φ imp ψ} {δ} validΓ hyp Δ {ρ} {ε} ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = EPropI {φ = nfrep ψ ρ} (context-validity Δ⊢ε∶φ)
+  (λ {W'} {Θ} {σ} {εε} σ∶Δ⇒RΘ validΘ Eεε → subst (λ a → SN (APPP' (appP a (ε 〈 σ 〉)) εε)) 
+  {!!} (hyp {εε = ε 〈 σ 〉 ∷ εε} (•R-typed ρ∶Γ⇒RΔ σ∶Δ⇒RΘ) validΘ 
+    ({!!} ∷ subst (λ x → allE Θ x εε) (let open ≡-Reasoning in 
+    begin
+      listnfrep (domNf (nfrep ψ ρ)) σ
+    ≡⟨ {!!} ⟩
+      listnfrep (listnfrep (domNf ψ) ρ) σ
+    ≡⟨ {!!} ⟩
+      listnfrep (domNf ψ) (σ •R ρ)
+    ∎) 
+    Eεε)))
 -- TODO Swap arguments in •R-typed
 \end{code}
 It is easy to see that $p \vec{\epsilon}$ is well-typed, so it remains to show that $p \vec{\epsilon} \in \SN$.
