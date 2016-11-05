@@ -1,0 +1,102 @@
+\AgdaHide{
+\begin{code}%
+\>\AgdaKeyword{module} \AgdaModule{PHOPL.Computable.NFProof} \AgdaKeyword{where}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Product}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Grammar}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Neutral}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Red}\<%
+\end{code}
+}
+
+Note first that (using Generation) a normal form of type $\Omega$ is either $\bot$, or a neutral term, or $\phi \supset \psi$ where $\phi$ and $\psi$ are normal forms of type $\Omega$.
+
+\AgdaHide{
+\begin{code}%
+\>\AgdaKeyword{data} \AgdaDatatype{Nf₀} \AgdaSymbol{(}\AgdaBound{V} \AgdaSymbol{:} \AgdaDatatype{Alphabet}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{neutral} \AgdaSymbol{:} \AgdaDatatype{Neutral} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Nf₀} \AgdaBound{V}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{bot} \AgdaSymbol{:} \AgdaDatatype{Nf₀} \AgdaBound{V}\<%
+\\
+%
+\\
+\>\AgdaFunction{nf₀rep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Nf₀} \AgdaBound{U} \AgdaSymbol{→} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Nf₀} \AgdaBound{V}\<%
+\\
+\>\AgdaFunction{nf₀rep} \AgdaSymbol{(}\AgdaInductiveConstructor{neutral} \AgdaBound{N}\AgdaSymbol{)} \AgdaBound{ρ} \AgdaSymbol{=} \AgdaInductiveConstructor{neutral} \AgdaSymbol{(}\AgdaFunction{nrep} \AgdaBound{N} \AgdaBound{ρ}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{nf₀rep} \AgdaInductiveConstructor{bot} \AgdaSymbol{\_} \AgdaSymbol{=} \AgdaInductiveConstructor{bot}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\<%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{Nf} \AgdaSymbol{(}\AgdaBound{V} \AgdaSymbol{:} \AgdaDatatype{Alphabet}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{nf₀} \AgdaSymbol{:} \AgdaDatatype{Nf₀} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Nf} \AgdaBound{V}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{\_imp\_} \AgdaSymbol{:} \AgdaDatatype{Nf} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Nf} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Nf} \AgdaBound{V}\<%
+\\
+%
+\\
+\>\AgdaFunction{nfrep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Nf} \AgdaBound{U} \AgdaSymbol{→} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Nf} \AgdaBound{V}\<%
+\\
+\>\AgdaFunction{nfrep} \AgdaSymbol{(}\AgdaInductiveConstructor{nf₀} \AgdaBound{M}\AgdaSymbol{)} \AgdaBound{ρ} \AgdaSymbol{=} \AgdaInductiveConstructor{nf₀} \AgdaSymbol{(}\AgdaFunction{nf₀rep} \AgdaBound{M} \AgdaBound{ρ}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{nfrep} \AgdaSymbol{(}\AgdaBound{φ} \AgdaInductiveConstructor{imp} \AgdaBound{ψ}\AgdaSymbol{)} \AgdaBound{ρ} \AgdaSymbol{=} \AgdaFunction{nfrep} \AgdaBound{φ} \AgdaBound{ρ} \AgdaInductiveConstructor{imp} \AgdaFunction{nfrep} \AgdaBound{ψ} \AgdaBound{ρ}\<%
+\\
+%
+\\
+\>\AgdaComment{\{-\<\\
+\>lrep-id : ∀ \{V\} \{S\} \{L : Leaves V S\} → lrep L (idRep V) ≡ L\<\\
+\>lrep-id \{L = neutral x\} = cong neutral nrep-id\<\\
+\>lrep-id \{L = bot\} = refl\<\\
+\>lrep-id \{L = imp L L'\} = cong₂ imp lrep-id lrep-id\<\\
+\>\<\\
+\>postulate lrep-comp : ∀ \{U V W S\} \{ρ' : Rep V W\} \{ρ\} \{L : Leaves U S\} →\<\\
+\>                    lrep L (ρ' •R ρ) ≡ lrep (lrep L ρ) ρ'\<\\
+\>\{- lrep-comp \{L = neutral \_\} = cong neutral nrep-comp\<\\
+\>lrep-comp \{L = bot\} = refl\<\\
+\>lrep-comp \{L = imp φ ψ\} = cong₂ imp lrep-comp lrep-comp -\}\<\\
+\>\<\\
+\>decode-Prop : ∀ \{V\} \{S\} → Leaves V S → Term V\<\\
+\>decode-Prop (neutral N) = decode-Neutral N\<\\
+\>decode-Prop bot = ⊥\<\\
+\>decode-Prop (imp φ ψ) = decode-Prop φ ⊃ decode-Prop ψ\<\\
+\>\<\\
+\>postulate decode-rep : ∀ \{U\} \{V\} \{S\} (L : Leaves U S) \{ρ : Rep U V\} →\<\\
+\>                     decode-Prop (lrep L ρ) ≡ decode-Prop L 〈 ρ 〉\<\\
+\>\<\\
+\>postulate leaves-red : ∀ \{V\} \{S\} \{L : Leaves V S\} \{φ : Term V\} →\<\\
+\>                     decode-Prop L ↠ φ →\<\\
+\>                     Σ[ L' ∈ Leaves V S ] decode-Prop L' ≡ φ\<\\
+\>leaves-red \{S = neutral\} \{L = neutral N\} L↠φ = \<\\
+\>  let (N ,p N≡φ) = neutral-red \{N = N\} L↠φ in neutral N ,p N≡φ\<\\
+\>leaves-red \{S = bot\} \{L = bot\} L↠φ = bot ,p Prelims.sym (bot-red L↠φ)\<\\
+\>leaves-red \{S = imp S T\} \{L = imp φ ψ\} φ⊃ψ↠χ = \<\\
+\>  let (φ' ,p ψ' ,p φ↠φ' ,p ψ↠ψ' ,p χ≡φ'⊃ψ') = imp-red φ⊃ψ↠χ in \<\\
+\>  let (L₁ ,p L₁≡φ') = leaves-red \{L = φ\} φ↠φ' in \<\\
+\>  let (L₂ ,p L₂≡ψ') = leaves-red \{L = ψ\} ψ↠ψ' in \<\\
+\>  (imp L₁ L₂) ,p (Prelims.trans (cong₂ \_⊃\_ L₁≡φ' L₂≡ψ') (Prelims.sym χ≡φ'⊃ψ'))\<\\
+\>\<\\
+\>postulate red-decode-rep : ∀ \{U\} \{V\} \{φ : Term U\} \{S\} (L : Leaves U S) \{ρ : Rep U V\} →\<\\
+\>                         φ ↠ decode-Prop L → φ 〈 ρ 〉 ↠ decode-Prop (lrep L ρ)\<\\
+\>red-decode-rep \{V = V\} \{φ\} L \{ρ\} φ↠L = let open Relation.Binary.PreorderReasoning (RED V -Expression (varKind -Term)) in \<\\
+\>  begin\<\\
+\>    φ 〈 ρ 〉\<\\
+\>  ∼⟨ red-rep φ↠L ⟩\<\\
+\>    decode-Prop L 〈 ρ 〉\<\\
+\>  ≈⟨ Prelims.sym (decode-rep L) ⟩\<\\
+\>    decode-Prop (lrep L ρ)\<\\
+\>  ∎ -\}}\<%
+\end{code}
+}
+

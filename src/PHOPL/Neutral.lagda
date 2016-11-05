@@ -14,27 +14,11 @@ open import PHOPL.PathSub
 \end{code}
 }
 
-A term is \emph{neutral} iff it has the form $x M_1 \cdots M_n$.
-
 \begin{code}
-data Neutral (V : Alphabet) : Set where
-  var : Var V -Term → Neutral V
-  app : Neutral V → Term V → Neutral V
 \end{code}
 
 \AgdaHide{
 \begin{code}
-decode-Neutral : ∀ {V} → Neutral V → Term V
-decode-Neutral (var x) = var x
-decode-Neutral (app M N) = appT (decode-Neutral M) N
-
-nrep : ∀ {U} {V} → Neutral U → Rep U V → Neutral V
-nrep (var x) ρ = var (ρ -Term x)
-nrep (app M N) ρ = app (nrep M ρ) (N 〈 ρ 〉)
-
-nrep-comp : ∀ {U V W} {ρ' : Rep V W} {ρ : Rep U V} {N} → nrep N (ρ' •R ρ) ≡ nrep (nrep N ρ) ρ'
-nrep-comp {N = var x} = refl
-nrep-comp {N = app N N'} = cong₂ app nrep-comp (rep-comp N')
 
 private neutral-red' : ∀ {V} {N : Neutral V} {M₁} {M₂} → M₁ ↠ M₂ → decode-Neutral N ≡ M₁ →
                      Σ[ N' ∈ Neutral V ] decode-Neutral N' ≡ M₂
