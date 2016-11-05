@@ -162,5 +162,35 @@ domNf (φ imp ψ) = φ ∷ domNf ψ
 codNf : ∀ {V} {S} → Nf V S → Nf₀ V (codS S)
 codNf (nf₀ M) = M
 codNf (_ imp ψ) = codNf ψ
+
+private pre-nf-is-nf-red : ∀ {V S} (φ : Nf V S) {ψ χ : Term V} → χ ↠ ψ → χ ≡ decode-Nf φ → χ ≡ ψ
+pre-nf-is-nf-red φ {ψ} (inc χ⇒ψ) χ≡φ with nf-is-nf {M = φ} (subst (λ x → x ⇒ ψ) χ≡φ χ⇒ψ)
+pre-nf-is-nf-red φ (inc φ⇒ψ) _ | ()
+pre-nf-is-nf-red _ ref _ = refl
+pre-nf-is-nf-red {V} {S} φ {χ = χ} (RTClose.trans {y = ψ} {z = ψ'} φ↠ψ ψ↠ψ') χ≡φ = 
+  let χ≡ψ : χ ≡ ψ
+      χ≡ψ = pre-nf-is-nf-red φ φ↠ψ χ≡φ in
+  let ψ≡φ : ψ ≡ decode-Nf φ
+      ψ≡φ = Prelims.trans (Prelims.sym χ≡ψ) χ≡φ in 
+  let ψ≡ψ' : ψ ≡ ψ'
+      ψ≡ψ' = pre-nf-is-nf-red φ ψ↠ψ' ψ≡φ in 
+  Prelims.trans χ≡ψ ψ≡ψ'
+
+nf-is-nf-red : ∀ {V S} {φ : Nf V S} {ψ : Term V} → decode-Nf φ ↠ ψ → decode-Nf φ ≡ ψ
+nf-is-nf-red {φ = φ} φ↠ψ = pre-nf-is-nf-red φ φ↠ψ refl
+
+
+decode-Neutral-inj : ∀ {V S} {φ ψ : Neutral V S} → decode-Neutral φ ≡ decode-Neutral ψ → φ ≡ ψ
+decode-Nf₀-inj : ∀ {V S} {φ ψ : Nf₀ V S} → decode-Nf₀ φ ≡ decode-Nf₀ ψ → φ ≡ ψ
+decode-Nf-inj : ∀ {V S} {φ ψ : Nf V S} → decode-Nf φ ≡ decode-Nf ψ → φ ≡ ψ
+
+decode-Neutral-inj {φ = var _} {var _} x≡y = cong var (var-inj x≡y)
+decode-Neutral-inj {φ = app _ _} {app _ _} φ≡ψ = cong₂ app (decode-Neutral-inj (appT-injl φ≡ψ)) (decode-Nf-inj (appT-injr φ≡ψ))
+
+decode-Nf₀-inj {φ = neutral _} {ψ = neutral _} φ≡ψ = cong neutral (decode-Neutral-inj φ≡ψ)
+decode-Nf₀-inj {φ = bot} {bot} _ = refl
+
+decode-Nf-inj {S = nf₀ _} {nf₀ φ} {nf₀ ψ} φ≡ψ = cong nf₀ (decode-Nf₀-inj φ≡ψ)
+decode-Nf-inj {S = S imp T} {φ imp φ'} {ψ imp ψ'} φ≡ψ = cong₂ _imp_ (decode-Nf-inj (⊃-injl φ≡ψ)) (decode-Nf-inj (⊃-injr φ≡ψ))
 \end{code}
 }

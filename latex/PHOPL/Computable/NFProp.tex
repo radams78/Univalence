@@ -1,0 +1,332 @@
+\AgdaHide{
+\begin{code}%
+\>\AgdaKeyword{module} \AgdaModule{PHOPL.Computable.NFProp} \AgdaKeyword{where}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Empty} \AgdaKeyword{renaming} \AgdaSymbol{(}\AgdaDatatype{⊥} \AgdaSymbol{to} \AgdaDatatype{Empty}\AgdaSymbol{)}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Product}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.List}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims.Closure}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Grammar}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Red} \AgdaKeyword{hiding} \AgdaSymbol{(}\AgdaPostulate{nf-is-nf}\AgdaSymbol{)}\<%
+\end{code}
+}
+
+A term is \emph{neutral} iff it has the form $x M_1 \cdots M_n$.
+Note first that (using Generation) a normal form of type $\Omega$ is either $\bot$, or a neutral term, or $\phi \supset \psi$ where $\phi$ and $\psi$ are normal forms of type $\Omega$.
+
+\AgdaHide{
+\begin{code}%
+\>\AgdaComment{--TODO Two characterisations of normal forms???}\<%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{NeutralShape} \AgdaSymbol{:} \AgdaPrimitiveType{Set}\<%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{Nf₀Shape} \AgdaSymbol{:} \AgdaPrimitiveType{Set}\<%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{NfShape} \AgdaSymbol{:} \AgdaPrimitiveType{Set}\<%
+\\
+%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{NeutralShape} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{var} \AgdaSymbol{:} \AgdaDatatype{NeutralShape}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{app} \AgdaSymbol{:} \AgdaDatatype{NeutralShape} \AgdaSymbol{→} \AgdaDatatype{NfShape} \AgdaSymbol{→} \AgdaDatatype{NeutralShape}\<%
+\\
+%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{Nf₀Shape} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{neutral} \AgdaSymbol{:} \AgdaDatatype{NeutralShape} \AgdaSymbol{→} \AgdaDatatype{Nf₀Shape}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{bot} \AgdaSymbol{:} \AgdaDatatype{Nf₀Shape}\<%
+\\
+%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{NfShape} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{nf₀} \AgdaSymbol{:} \AgdaDatatype{Nf₀Shape} \AgdaSymbol{→} \AgdaDatatype{NfShape}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{\_imp\_} \AgdaSymbol{:} \AgdaDatatype{NfShape} \AgdaSymbol{→} \AgdaDatatype{NfShape} \AgdaSymbol{→} \AgdaDatatype{NfShape}\<%
+\\
+%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{Neutral} \AgdaSymbol{(}\AgdaBound{V} \AgdaSymbol{:} \AgdaDatatype{Alphabet}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaDatatype{NeutralShape} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{Nf₀} \AgdaSymbol{(}\AgdaBound{V} \AgdaSymbol{:} \AgdaDatatype{Alphabet}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaDatatype{Nf₀Shape} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{Nf} \AgdaSymbol{(}\AgdaBound{V} \AgdaSymbol{:} \AgdaDatatype{Alphabet}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaDatatype{NfShape} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\\
+%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{Neutral} \AgdaBound{V} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{var} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{V} \AgdaInductiveConstructor{-Term} \AgdaSymbol{→} \AgdaDatatype{Neutral} \AgdaBound{V} \AgdaInductiveConstructor{var}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{app} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{S} \AgdaBound{T}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Neutral} \AgdaBound{V} \AgdaBound{S} \AgdaSymbol{→} \AgdaDatatype{Nf} \AgdaBound{V} \AgdaBound{T} \AgdaSymbol{→} \AgdaDatatype{Neutral} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaBound{S} \AgdaBound{T}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{Nf₀} \AgdaBound{V} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{neutral} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Neutral} \AgdaBound{V} \AgdaBound{S} \AgdaSymbol{→} \AgdaDatatype{Nf₀} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{neutral} \AgdaBound{S}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{bot} \AgdaSymbol{:} \AgdaDatatype{Nf₀} \AgdaBound{V} \AgdaInductiveConstructor{bot}\<%
+\\
+%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{Nf} \AgdaBound{V} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{nf₀} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Nf₀} \AgdaBound{V} \AgdaBound{S} \AgdaSymbol{→} \AgdaDatatype{Nf} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{nf₀} \AgdaBound{S}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{\_imp\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{T}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Nf} \AgdaBound{V} \AgdaBound{S} \AgdaSymbol{→} \AgdaDatatype{Nf} \AgdaBound{V} \AgdaBound{T} \AgdaSymbol{→} \AgdaDatatype{Nf} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{S} \AgdaInductiveConstructor{imp} \AgdaBound{T}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaFunction{nrep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Neutral} \AgdaBound{U} \AgdaBound{S} \AgdaSymbol{→} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Neutral} \AgdaBound{V} \AgdaBound{S}\<%
+\\
+\>\AgdaFunction{nf₀rep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Nf₀} \AgdaBound{U} \AgdaBound{S} \AgdaSymbol{→} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Nf₀} \AgdaBound{V} \AgdaBound{S}\<%
+\\
+\>\AgdaFunction{nfrep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Nf} \AgdaBound{U} \AgdaBound{S} \AgdaSymbol{→} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Nf} \AgdaBound{V} \AgdaBound{S}\<%
+\\
+%
+\\
+\>\AgdaFunction{nrep} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaBound{x}\AgdaSymbol{)} \AgdaBound{ρ} \AgdaSymbol{=} \AgdaInductiveConstructor{var} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaInductiveConstructor{-Term} \AgdaBound{x}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{nrep} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaBound{M} \AgdaBound{N}\AgdaSymbol{)} \AgdaBound{ρ} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaFunction{nrep} \AgdaBound{M} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{nfrep} \AgdaBound{N} \AgdaBound{ρ}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaFunction{nf₀rep} \AgdaSymbol{(}\AgdaInductiveConstructor{neutral} \AgdaBound{N}\AgdaSymbol{)} \AgdaBound{ρ} \AgdaSymbol{=} \AgdaInductiveConstructor{neutral} \AgdaSymbol{(}\AgdaFunction{nrep} \AgdaBound{N} \AgdaBound{ρ}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{nf₀rep} \AgdaInductiveConstructor{bot} \AgdaSymbol{\_} \AgdaSymbol{=} \AgdaInductiveConstructor{bot}\<%
+\\
+%
+\\
+\>\AgdaFunction{nfrep} \AgdaSymbol{(}\AgdaInductiveConstructor{nf₀} \AgdaBound{M}\AgdaSymbol{)} \AgdaBound{ρ} \AgdaSymbol{=} \AgdaInductiveConstructor{nf₀} \AgdaSymbol{(}\AgdaFunction{nf₀rep} \AgdaBound{M} \AgdaBound{ρ}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{nfrep} \AgdaSymbol{(}\AgdaBound{φ} \AgdaInductiveConstructor{imp} \AgdaBound{ψ}\AgdaSymbol{)} \AgdaBound{ρ} \AgdaSymbol{=} \AgdaFunction{nfrep} \AgdaBound{φ} \AgdaBound{ρ} \AgdaInductiveConstructor{imp} \AgdaFunction{nfrep} \AgdaBound{ψ} \AgdaBound{ρ}\<%
+\\
+%
+\\
+\>\AgdaFunction{nrep-id} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N} \AgdaSymbol{:} \AgdaDatatype{Neutral} \AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{nrep} \AgdaBound{N} \AgdaSymbol{(}\AgdaFunction{idRep} \AgdaBound{V}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaBound{N}\<%
+\\
+\>\AgdaFunction{nf₀rep-id} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaDatatype{Nf₀} \AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{nf₀rep} \AgdaBound{M} \AgdaSymbol{(}\AgdaFunction{idRep} \AgdaBound{V}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaBound{M}\<%
+\\
+\>\AgdaFunction{nfrep-id} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaDatatype{Nf} \AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{nfrep} \AgdaBound{M} \AgdaSymbol{(}\AgdaFunction{idRep} \AgdaBound{V}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaBound{M}\<%
+\\
+%
+\\
+\>\AgdaFunction{nrep-id} \AgdaSymbol{\{}\AgdaArgument{N} \AgdaSymbol{=} \AgdaInductiveConstructor{var} \AgdaSymbol{\_\}} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>\AgdaFunction{nrep-id} \AgdaSymbol{\{}\AgdaArgument{N} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaBound{N} \AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaInductiveConstructor{app} \AgdaFunction{nrep-id} \AgdaFunction{nfrep-id}\<%
+\\
+%
+\\
+\>\AgdaFunction{nf₀rep-id} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaInductiveConstructor{neutral} \AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong} \AgdaInductiveConstructor{neutral} \AgdaFunction{nrep-id}\<%
+\\
+\>\AgdaFunction{nf₀rep-id} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaInductiveConstructor{bot}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+%
+\\
+\>\AgdaFunction{nfrep-id} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaInductiveConstructor{nf₀} \AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong} \AgdaInductiveConstructor{nf₀} \AgdaFunction{nf₀rep-id}\<%
+\\
+\>\AgdaFunction{nfrep-id} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaBound{φ} \AgdaInductiveConstructor{imp} \AgdaBound{ψ}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaInductiveConstructor{\_imp\_} \AgdaFunction{nfrep-id} \AgdaFunction{nfrep-id}\<%
+\\
+%
+\\
+\>\AgdaFunction{nrep-comp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N} \AgdaSymbol{:} \AgdaDatatype{Neutral} \AgdaBound{U} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ'} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{nrep} \AgdaBound{N} \AgdaSymbol{(}\AgdaBound{ρ'} \AgdaFunction{•R} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaFunction{nrep} \AgdaSymbol{(}\AgdaFunction{nrep} \AgdaBound{N} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{ρ'}\<%
+\\
+\>\AgdaFunction{nf₀-comp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaDatatype{Nf₀} \AgdaBound{U} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{nf₀rep} \AgdaBound{M} \AgdaSymbol{(}\AgdaBound{σ} \AgdaFunction{•R} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaFunction{nf₀rep} \AgdaSymbol{(}\AgdaFunction{nf₀rep} \AgdaBound{M} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{σ}\<%
+\\
+\>\AgdaFunction{nf-comp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaDatatype{Nf} \AgdaBound{U} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{nfrep} \AgdaBound{M} \AgdaSymbol{(}\AgdaBound{σ} \AgdaFunction{•R} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaFunction{nfrep} \AgdaSymbol{(}\AgdaFunction{nfrep} \AgdaBound{M} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{σ}\<%
+\\
+%
+\\
+\>\AgdaFunction{nrep-comp} \AgdaSymbol{\{}\AgdaArgument{N} \AgdaSymbol{=} \AgdaInductiveConstructor{var} \AgdaBound{x}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>\AgdaFunction{nrep-comp} \AgdaSymbol{\{}\AgdaArgument{N} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaBound{N} \AgdaBound{N'}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaInductiveConstructor{app} \AgdaFunction{nrep-comp} \AgdaFunction{nf-comp}\<%
+\\
+%
+\\
+\>\AgdaFunction{nf₀-comp} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaInductiveConstructor{neutral} \AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong} \AgdaInductiveConstructor{neutral} \AgdaFunction{nrep-comp}\<%
+\\
+\>\AgdaFunction{nf₀-comp} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaInductiveConstructor{bot}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+%
+\\
+\>\AgdaFunction{nf-comp} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaInductiveConstructor{nf₀} \AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong} \AgdaInductiveConstructor{nf₀} \AgdaFunction{nf₀-comp}\<%
+\\
+\>\AgdaFunction{nf-comp} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaBound{φ} \AgdaInductiveConstructor{imp} \AgdaBound{ψ}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaInductiveConstructor{\_imp\_} \AgdaFunction{nf-comp} \AgdaFunction{nf-comp}\<%
+\\
+%
+\\
+\>\AgdaFunction{decode-Neutral} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Neutral} \AgdaBound{V} \AgdaBound{S} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V}\<%
+\\
+\>\AgdaFunction{decode-Nf₀} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Nf₀} \AgdaBound{V} \AgdaBound{S} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V}\<%
+\\
+\>\AgdaFunction{decode-Nf} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Nf} \AgdaBound{V} \AgdaBound{S} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V}\<%
+\\
+%
+\\
+\>\AgdaFunction{decode-Neutral} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaBound{x}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{var} \AgdaBound{x}\<%
+\\
+\>\AgdaFunction{decode-Neutral} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaBound{M} \AgdaBound{N}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{appT} \AgdaSymbol{(}\AgdaFunction{decode-Neutral} \AgdaBound{M}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{decode-Nf} \AgdaBound{N}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaFunction{decode-Nf₀} \AgdaSymbol{(}\AgdaInductiveConstructor{neutral} \AgdaBound{N}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{decode-Neutral} \AgdaBound{N}\<%
+\\
+\>\AgdaFunction{decode-Nf₀} \AgdaInductiveConstructor{bot} \AgdaSymbol{=} \AgdaFunction{⊥}\<%
+\\
+%
+\\
+\>\AgdaFunction{decode-Nf} \AgdaSymbol{(}\AgdaInductiveConstructor{nf₀} \AgdaBound{M}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{decode-Nf₀} \AgdaBound{M}\<%
+\\
+\>\AgdaFunction{decode-Nf} \AgdaSymbol{(}\AgdaBound{φ} \AgdaInductiveConstructor{imp} \AgdaBound{ψ}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{decode-Nf} \AgdaBound{φ} \AgdaFunction{⊃} \AgdaFunction{decode-Nf} \AgdaBound{ψ}\<%
+\\
+%
+\\
+\>\AgdaFunction{decode-Neutral-rep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N} \AgdaSymbol{:} \AgdaDatatype{Neutral} \AgdaBound{U} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{decode-Neutral} \AgdaSymbol{(}\AgdaFunction{nrep} \AgdaBound{N} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaFunction{decode-Neutral} \AgdaBound{N} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\<%
+\\
+\>\AgdaFunction{decode-Nf₀-rep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaDatatype{Nf₀} \AgdaBound{U} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{decode-Nf₀} \AgdaSymbol{(}\AgdaFunction{nf₀rep} \AgdaBound{M} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaFunction{decode-Nf₀} \AgdaBound{M} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\<%
+\\
+\>\AgdaFunction{decode-Nf-rep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{M} \AgdaSymbol{:} \AgdaDatatype{Nf} \AgdaBound{U} \AgdaBound{S}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{decode-Nf} \AgdaSymbol{(}\AgdaFunction{nfrep} \AgdaBound{M} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaFunction{decode-Nf} \AgdaBound{M} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\<%
+\\
+%
+\\
+\>\AgdaFunction{decode-Neutral-rep} \AgdaSymbol{\{}\AgdaArgument{N} \AgdaSymbol{=} \AgdaInductiveConstructor{var} \AgdaSymbol{\_\}} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>\AgdaFunction{decode-Neutral-rep} \AgdaSymbol{\{}\AgdaArgument{N} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{\_} \AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaFunction{appT} \AgdaFunction{decode-Neutral-rep} \AgdaSymbol{(}\AgdaFunction{decode-Nf-rep} \AgdaBound{M}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaFunction{decode-Nf₀-rep} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaInductiveConstructor{neutral} \AgdaSymbol{\_\}} \AgdaSymbol{=} \AgdaFunction{decode-Neutral-rep}\<%
+\\
+\>\AgdaFunction{decode-Nf₀-rep} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaInductiveConstructor{bot}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+%
+\\
+\>\AgdaFunction{decode-Nf-rep} \AgdaSymbol{(}\AgdaInductiveConstructor{nf₀} \AgdaBound{M}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{decode-Nf₀-rep} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaBound{M}\AgdaSymbol{\}}\<%
+\\
+\>\AgdaFunction{decode-Nf-rep} \AgdaSymbol{(}\AgdaBound{φ} \AgdaInductiveConstructor{imp} \AgdaBound{ψ}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaFunction{\_⊃\_} \AgdaSymbol{(}\AgdaFunction{decode-Nf-rep} \AgdaBound{φ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{decode-Nf-rep} \AgdaBound{ψ}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaFunction{neutral-is-nf} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N} \AgdaSymbol{:} \AgdaDatatype{Neutral} \AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{E}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{decode-Neutral} \AgdaBound{N} \AgdaDatatype{⇒} \AgdaBound{E} \AgdaSymbol{→} \AgdaDatatype{Empty}\<%
+\\
+\>\AgdaFunction{nf₀-is-nf} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaDatatype{Nf₀} \AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{E}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{decode-Nf₀} \AgdaBound{M} \AgdaDatatype{⇒} \AgdaBound{E} \AgdaSymbol{→} \AgdaDatatype{Empty}\<%
+\\
+\>\AgdaFunction{nf-is-nf} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaDatatype{Nf} \AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{E}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{decode-Nf} \AgdaBound{M} \AgdaDatatype{⇒} \AgdaBound{E} \AgdaSymbol{→} \AgdaDatatype{Empty}\<%
+\\
+%
+\\
+\>\AgdaFunction{neutral-is-nf} \AgdaSymbol{\{}\AgdaArgument{N} \AgdaSymbol{=} \AgdaInductiveConstructor{var} \AgdaSymbol{\_\}} \AgdaSymbol{()}\<%
+\\
+\>\AgdaFunction{neutral-is-nf} \AgdaSymbol{\{}\AgdaArgument{N} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaSymbol{\_)} \AgdaSymbol{\_\}} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{neutral-is-nf} \AgdaSymbol{\{}\AgdaArgument{N} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaSymbol{\_)} \AgdaSymbol{\_\}} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{neutral-is-nf} \AgdaSymbol{\{}\AgdaArgument{N} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{\_} \AgdaSymbol{\_)} \AgdaSymbol{\_\}} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{neutral-is-nf} \AgdaSymbol{\{}\AgdaArgument{N} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{\_} \AgdaSymbol{\_)} \AgdaSymbol{\_\}} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{neutral-is-nf} \AgdaSymbol{\{}\AgdaArgument{N} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaBound{N} \AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaBound{N⇒E}\AgdaSymbol{))} \AgdaSymbol{=} \AgdaSymbol{(}\AgdaFunction{neutral-is-nf} \AgdaBound{N⇒E}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{neutral-is-nf} \AgdaSymbol{\{}\AgdaArgument{N} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaBound{N} \AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaBound{N⇒E}\AgdaSymbol{)))} \AgdaSymbol{=} \AgdaSymbol{(}\AgdaFunction{nf-is-nf} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaBound{M}\AgdaSymbol{\}} \AgdaBound{N⇒E}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{neutral-is-nf} \AgdaSymbol{\{}\AgdaArgument{N} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaBound{N} \AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{())))}\<%
+\\
+%
+\\
+\>\AgdaFunction{nf₀-is-nf} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaInductiveConstructor{neutral} \AgdaBound{N}\AgdaSymbol{\}} \AgdaBound{M⇒E} \AgdaSymbol{=} \AgdaFunction{neutral-is-nf} \AgdaBound{M⇒E}\<%
+\\
+\>\AgdaFunction{nf₀-is-nf} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaInductiveConstructor{bot}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{nf₀-is-nf} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaInductiveConstructor{bot}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{nf₀-is-nf} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaInductiveConstructor{bot}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{())}\<%
+\\
+%
+\\
+\>\AgdaFunction{nf-is-nf} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaInductiveConstructor{nf₀} \AgdaBound{M}\AgdaSymbol{\}} \AgdaBound{M⇒E} \AgdaSymbol{=} \AgdaFunction{nf₀-is-nf} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaBound{M}\AgdaSymbol{\}} \AgdaBound{M⇒E}\<%
+\\
+\>\AgdaFunction{nf-is-nf} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaSymbol{\_} \AgdaInductiveConstructor{imp} \AgdaSymbol{\_\}} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{nf-is-nf} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaSymbol{\_} \AgdaInductiveConstructor{imp} \AgdaSymbol{\_\}} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{nf-is-nf} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaBound{φ} \AgdaInductiveConstructor{imp} \AgdaSymbol{\_\}} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaBound{φ⇒E}\AgdaSymbol{))} \AgdaSymbol{=} \AgdaFunction{nf-is-nf} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaBound{φ}\AgdaSymbol{\}} \AgdaBound{φ⇒E}\<%
+\\
+\>\AgdaFunction{nf-is-nf} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaSymbol{\_} \AgdaInductiveConstructor{imp} \AgdaBound{ψ}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaBound{ψ⇒E}\AgdaSymbol{)))} \AgdaSymbol{=} \AgdaFunction{nf-is-nf} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaBound{ψ}\AgdaSymbol{\}} \AgdaBound{ψ⇒E}\<%
+\\
+\>\AgdaFunction{nf-is-nf} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaSymbol{\_} \AgdaInductiveConstructor{imp} \AgdaSymbol{\_\}} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{())))}\<%
+\\
+%
+\\
+\>\AgdaFunction{domS} \AgdaSymbol{:} \AgdaDatatype{NfShape} \AgdaSymbol{→} \AgdaDatatype{List} \AgdaDatatype{NfShape}\<%
+\\
+\>\AgdaFunction{domS} \AgdaSymbol{(}\AgdaInductiveConstructor{nf₀} \AgdaSymbol{\_)} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\<%
+\\
+\>\AgdaFunction{domS} \AgdaSymbol{(}\AgdaBound{S} \AgdaInductiveConstructor{imp} \AgdaBound{T}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaBound{S} \AgdaInductiveConstructor{∷} \AgdaFunction{domS} \AgdaBound{T}\<%
+\\
+%
+\\
+\>\AgdaFunction{codS} \AgdaSymbol{:} \AgdaDatatype{NfShape} \AgdaSymbol{→} \AgdaDatatype{Nf₀Shape}\<%
+\\
+\>\AgdaFunction{codS} \AgdaSymbol{(}\AgdaInductiveConstructor{nf₀} \AgdaBound{S}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaBound{S}\<%
+\\
+\>\AgdaFunction{codS} \AgdaSymbol{(\_} \AgdaInductiveConstructor{imp} \AgdaBound{T}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{codS} \AgdaBound{T}\<%
+\\
+%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{ListNf} \AgdaSymbol{(}\AgdaBound{V} \AgdaSymbol{:} \AgdaDatatype{Alphabet}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaDatatype{List} \AgdaDatatype{NfShape} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{[]} \AgdaSymbol{:} \AgdaDatatype{ListNf} \AgdaBound{V} \AgdaInductiveConstructor{[]}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{\_∷\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{S} \AgdaBound{SS}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Nf} \AgdaBound{V} \AgdaBound{S} \AgdaSymbol{→} \AgdaDatatype{ListNf} \AgdaBound{V} \AgdaBound{SS} \AgdaSymbol{→} \AgdaDatatype{ListNf} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{S} \AgdaInductiveConstructor{∷} \AgdaBound{SS}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaFunction{listnfrep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{SS}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{ListNf} \AgdaBound{U} \AgdaBound{SS} \AgdaSymbol{→} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{ListNf} \AgdaBound{V} \AgdaBound{SS}\<%
+\\
+\>\AgdaFunction{listnfrep} \AgdaInductiveConstructor{[]} \AgdaSymbol{\_} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\<%
+\\
+\>\AgdaFunction{listnfrep} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{∷} \AgdaBound{MM}\AgdaSymbol{)} \AgdaBound{ρ} \AgdaSymbol{=} \AgdaFunction{nfrep} \AgdaBound{M} \AgdaBound{ρ} \AgdaInductiveConstructor{∷} \AgdaFunction{listnfrep} \AgdaBound{MM} \AgdaBound{ρ}\<%
+\\
+%
+\\
+\>\AgdaFunction{domNf} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Nf} \AgdaBound{V} \AgdaBound{S} \AgdaSymbol{→} \AgdaDatatype{ListNf} \AgdaBound{V} \AgdaSymbol{(}\AgdaFunction{domS} \AgdaBound{S}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{domNf} \AgdaSymbol{(}\AgdaInductiveConstructor{nf₀} \AgdaSymbol{\_)} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\<%
+\\
+\>\AgdaFunction{domNf} \AgdaSymbol{(}\AgdaBound{φ} \AgdaInductiveConstructor{imp} \AgdaBound{ψ}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaBound{φ} \AgdaInductiveConstructor{∷} \AgdaFunction{domNf} \AgdaBound{ψ}\<%
+\\
+%
+\\
+\>\AgdaFunction{codNf} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Nf} \AgdaBound{V} \AgdaBound{S} \AgdaSymbol{→} \AgdaDatatype{Nf₀} \AgdaBound{V} \AgdaSymbol{(}\AgdaFunction{codS} \AgdaBound{S}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{codNf} \AgdaSymbol{(}\AgdaInductiveConstructor{nf₀} \AgdaBound{M}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaBound{M}\<%
+\\
+\>\AgdaFunction{codNf} \AgdaSymbol{(\_} \AgdaInductiveConstructor{imp} \AgdaBound{ψ}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{codNf} \AgdaBound{ψ}\<%
+\end{code}
+}

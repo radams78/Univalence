@@ -103,6 +103,11 @@ record E {V} {K} (Γ : Context V) (A : Expression V (parent K)) (M : Expression 
   field
     typed : Γ ⊢ M ∶ A
     computable : compute Γ A M
+
+data allE {V} (Γ : Context V) : ∀ {SS} → ListNf V SS → List (Proof V) → Set where
+  [] : allE Γ [] []
+  _∷_ : ∀ {S SS} {L : Nf V S} {LL : ListNf V SS} {δ εε} → 
+    E Γ (decode-Nf L) δ → allE Γ LL εε → allE Γ (L ∷ LL) (δ ∷ εε)
 \end{code}
 \caption{Agda definition of the computable expressions}
 \label{fig:compute}
@@ -239,54 +244,42 @@ where $\chi$ is either $\bot$ or a neutral term.
 \item
 Let $\Delta \supseteq \Gamma$ and $\epsilon_i \in E_\Delta(\psi_i)$ for
 each $i$.
-\begin{code}
-data allE {V} (Γ : Context V) : ∀ {SS} → ListNf V SS → List (Proof V) → Set where
-  [] : allE Γ [] []
-  _∷_ : ∀ {S SS} {L : Nf V S} {LL : ListNf V SS} {δ εε} → 
-    E Γ (decode-Nf L) δ → allE Γ LL εε → allE Γ (L ∷ LL) (δ ∷ εε)
-\end{code}
 We must show that
 \[ p \epsilon_1 \cdots \epsilon_n \in E_\Delta(\chi) \]
 \begin{code}
-private pre-nf-is-nf-red : ∀ {V S} (φ : Nf V S) {ψ χ : Term V} → χ ↠ ψ → χ ≡ decode-Nf φ → χ ≡ ψ
-pre-nf-is-nf-red φ {ψ} (inc χ⇒ψ) χ≡φ with PHOPL.Computable.NFProp.nf-is-nf {M = φ} (subst (λ x → x ⇒ ψ) χ≡φ χ⇒ψ)
-pre-nf-is-nf-red φ (inc φ⇒ψ) _ | ()
-pre-nf-is-nf-red _ ref _ = refl
-pre-nf-is-nf-red {V} {S} φ {χ = χ} (RTClose.trans {y = ψ} {z = ψ'} φ↠ψ ψ↠ψ') χ≡φ = 
-  let χ≡ψ : χ ≡ ψ
-      χ≡ψ = pre-nf-is-nf-red φ φ↠ψ χ≡φ in
-  let ψ≡φ : ψ ≡ decode-Nf φ
-      ψ≡φ = Prelims.trans (Prelims.sym χ≡ψ) χ≡φ in 
-  let ψ≡ψ' : ψ ≡ ψ'
-      ψ≡ψ' = pre-nf-is-nf-red φ ψ↠ψ' ψ≡φ in 
-  Prelims.trans χ≡ψ ψ≡ψ'
-
-nf-is-nf-red : ∀ {V S} {φ : Nf V S} {ψ : Term V} → decode-Nf φ ↠ ψ → decode-Nf φ ≡ ψ
-nf-is-nf-red {φ = φ} φ↠ψ = pre-nf-is-nf-red φ φ↠ψ refl
-
-
-decode-Neutral-inj : ∀ {V S} {φ ψ : Neutral V S} → decode-Neutral φ ≡ decode-Neutral ψ → φ ≡ ψ
-decode-Nf₀-inj : ∀ {V S} {φ ψ : Nf₀ V S} → decode-Nf₀ φ ≡ decode-Nf₀ ψ → φ ≡ ψ
-decode-Nf-inj : ∀ {V S} {φ ψ : Nf V S} → decode-Nf φ ≡ decode-Nf ψ → φ ≡ ψ
-
-decode-Neutral-inj {φ = var _} {var _} x≡y = cong var (var-inj x≡y)
-decode-Neutral-inj {φ = app _ _} {app _ _} φ≡ψ = cong₂ app (decode-Neutral-inj (appT-injl φ≡ψ)) (decode-Nf-inj (appT-injr φ≡ψ))
-
-decode-Nf₀-inj {φ = neutral _} {ψ = neutral _} φ≡ψ = cong neutral (decode-Neutral-inj φ≡ψ)
-decode-Nf₀-inj {φ = bot} {bot} _ = refl
-
-⊃-injl : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ⊃ ψ ≡ φ' ⊃ ψ' → φ ≡ φ'
-⊃-injl refl = refl
-
-⊃-injr : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ⊃ ψ ≡ φ' ⊃ ψ' → ψ ≡ ψ'
-⊃-injr refl = refl
-
-decode-Nf-inj {S = nf₀ _} {nf₀ φ} {nf₀ ψ} φ≡ψ = cong nf₀ (decode-Nf₀-inj φ≡ψ)
-decode-Nf-inj {S = S imp T} {φ imp φ'} {ψ imp ψ'} φ≡ψ = cong₂ _imp_ (decode-Nf-inj (⊃-injl φ≡ψ)) (decode-Nf-inj (⊃-injr φ≡ψ))
-
 computeP-wd : ∀ {V S T Γ} {φ : Nf V S} {ψ : Nf V T} {δ} → computeP Γ φ δ → decode-Nf φ ≡ decode-Nf ψ → computeP Γ ψ δ
-computeP-wd {S = nf₀ x} {T} computeδ φ≡ψ = {!!}
-computeP-wd {S = S imp S₁} computeδ φ≡ψ = {!!}
+computeP-wd {S = nf₀ _} {nf₀ _} {φ = nf₀ _} {nf₀ _} computeδ _ = computeδ
+computeP-wd {S = nf₀ .(neutral var)} {_ imp _} {φ = nf₀ (neutral (var _))} {_ imp _} _ ()
+computeP-wd {S = nf₀ _} {_ imp _} {φ = nf₀ (neutral (app _ _))} {_ imp _} _ ()
+computeP-wd {S = nf₀ .bot} {_ imp _} {φ = nf₀ bot} {_ imp _} _ ()
+computeP-wd {S = S imp S₁} {nf₀ (neutral var)} {φ = _ imp _} {nf₀ (neutral (var _))} _ ()
+computeP-wd {S = S imp S₁} {nf₀ (neutral (app x x₁))} {φ = _ imp _} {nf₀ (neutral (app _ _))}_ ()
+computeP-wd {S = S imp S₁} {nf₀ bot} {φ = _ imp _} {nf₀ bot} _ ()
+computeP-wd {S = S imp S'} {T imp T'} {φ = φ imp ψ} {φ' imp ψ'} computeδ φ≡ψ Δ {ρ} ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = 
+  let φ'ρ≡φρ : decode-Nf (nfrep φ' ρ) ≡ decode-Nf (nfrep φ ρ)
+      φ'ρ≡φρ = let open ≡-Reasoning in
+        begin
+          decode-Nf (nfrep φ' ρ)
+        ≡⟨ decode-Nf-rep φ' ⟩
+          decode-Nf φ' 〈 ρ 〉
+        ≡⟨⟨ rep-congl (⊃-injl φ≡ψ) ⟩⟩
+          decode-Nf φ 〈 ρ 〉
+        ≡⟨⟨ decode-Nf-rep φ ⟩⟩
+          decode-Nf (nfrep φ ρ)
+        ∎ in
+  computeP-wd {S = S'} {T'} {φ = nfrep ψ ρ} {nfrep ψ' ρ} (computeδ Δ ρ∶Γ⇒RΔ 
+    (change-type Δ⊢ε∶φ φ'ρ≡φρ)
+    (computeP-wd {S = T} {S} {φ = nfrep φ' ρ} {nfrep φ ρ} computeε φ'ρ≡φρ)) 
+  (let open ≡-Reasoning in
+    begin
+      decode-Nf (nfrep ψ ρ)
+    ≡⟨ decode-Nf-rep ψ ⟩
+      decode-Nf ψ 〈 ρ 〉
+    ≡⟨ rep-congl (⊃-injr φ≡ψ) ⟩
+      decode-Nf ψ' 〈 ρ 〉
+    ≡⟨⟨ decode-Nf-rep ψ' ⟩⟩
+      decode-Nf (nfrep ψ' ρ)
+    ∎)
 
 Enf : ∀ {V Γ S} {φ : Nf V S} {δ} → E Γ (decode-Nf φ) δ → computeP Γ φ δ
 Enf {Γ = Γ} {δ = δ} (EI _ (S ,p ψ ,p φ↠ψ ,p computeδ)) = {!!}

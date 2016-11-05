@@ -128,7 +128,10 @@ module PHOPLgrammar where
 \begin{code}
 open PHOPLgrammar public
 open import Grammar PHOPL public
+\end{code}
+}
 
+\begin{code}
 Proof : Alphabet → Set
 Proof V = Expression V -vProof
 
@@ -203,16 +206,33 @@ _,P_ = _,_
 infixl 59 _,E_
 _,E_ : ∀ {V} → Context V → Equation V → Context (V , -Path)
 _,E_ = _,_
+\end{code}
 
+\AgdaHide{
+\begin{code}
 yt : ∀ {V} → Expression V (nonVarKind -Type) → Type
 yt (app (-ty A) []) = A
 
-ty-yt : ∀ {V} {A : Expression V (nonVarKind -Type)} → ty (yt A) ≡ A
-ty-yt {A = app (-ty _) []} = refl --TODO Remove?
+typeof' : ∀ {V} → Var V -Term → Context V → Type
+typeof' x Γ  = yt (typeof x Γ)
+
+⊃-injl : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ⊃ ψ ≡ φ' ⊃ ψ' → φ ≡ φ'
+⊃-injl refl = refl
+
+⊃-injr : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ⊃ ψ ≡ φ' ⊃ ψ' → ψ ≡ ψ'
+⊃-injr refl = refl
 
 appT-injl : ∀ {V} {M M' N N' : Term V} → appT M N ≡ appT M' N' → M ≡ M'
 appT-injl refl = refl
 
+appT-injr : ∀ {V} {M N P Q : Term V} → appT M N ≡ appT P Q → N ≡ Q
+appT-injr refl = refl
+\end{code}
+}
+
+We define the operation which, given a vector of $n$ types $A_1$, \ldots, $A_n$ and a type $B$, forms the type $A_1 \rightarrow \cdots \rightarrow A_n \rightarrow B$.  Likewise we define operations for applying a vector of terms, and a vector of proofs.
+
+\begin{code}
 Pi : ∀ {n} → snocVec Type n → Type → Type
 Pi [] B = B
 Pi (AA snoc A) B = Pi AA (A ⇛ B)
@@ -220,19 +240,33 @@ Pi (AA snoc A) B = Pi AA (A ⇛ B)
 APP : ∀ {V n} → Term V → snocVec (Term V) n → Term V
 APP M [] = M
 APP M (NN snoc N) = appT (APP M NN) N
+\end{code}
 
-postulate APP-rep : ∀ {U V n M} (NN : snocVec (Term U) n) {ρ : Rep U V} →
-                  (APP M NN) 〈 ρ 〉 ≡ APP (M 〈 ρ 〉) (snocVec-rep NN ρ)
+\AgdaHide{
+\begin{code}
+APP-rep : ∀ {U V n M} (NN : snocVec (Term U) n) {ρ : Rep U V} →
+  (APP M NN) 〈 ρ 〉 ≡ APP (M 〈 ρ 〉) (snocVec-rep NN ρ)
+APP-rep [] = refl
+APP-rep (NN snoc N) {ρ} = cong (λ x → appT x (N 〈 ρ 〉)) (APP-rep NN)
+\end{code}
+}
 
+\begin{code}
 APPP : ∀ {V} {n} → Proof V → snocVec (Proof V) n → Proof V
 APPP δ [] = δ
 APPP δ (εε snoc ε) = appP (APPP δ εε) ε
+\end{code}
 
+\AgdaHide{
+\begin{code}
 APPP-rep : ∀ {U V n δ} (εε : snocVec (Proof U) n) {ρ : Rep U V} →
   (APPP δ εε) 〈 ρ 〉 ≡ APPP (δ 〈 ρ 〉) (snocVec-rep εε ρ)
 APPP-rep [] = refl
 APPP-rep (εε snoc ε) {ρ} = cong (λ x → appP x (ε 〈 ρ 〉)) (APPP-rep εε)
+\end{code}
+}
 
+\begin{code}
 APPP' : ∀ {V} → Proof V → List (Proof V) → Proof V
 APPP' δ [] = δ
 APPP' δ (ε ∷ εε) = APPP' (appP δ ε) εε
@@ -240,22 +274,28 @@ APPP' δ (ε ∷ εε) = APPP' (appP δ ε) εε
 APP* : ∀ {V n} → snocVec (Term V) n → snocVec (Term V) n → Path V → snocVec (Path V) n → Path V
 APP* [] [] P [] = P
 APP* (MM snoc M) (NN snoc N) P (QQ snoc Q) = app* M N (APP* MM NN P QQ) Q
+\end{code}
 
+\AgdaHide{
+\begin{code}
 APP*-rep : ∀ {U V n} MM {NN : snocVec (Term U) n} {P QQ} {ρ : Rep U V} →
   (APP* MM NN P QQ) 〈 ρ 〉 ≡ APP* (snocVec-rep MM ρ) (snocVec-rep NN ρ) (P 〈 ρ 〉) (snocVec-rep QQ ρ)
 APP*-rep [] {[]} {QQ = []} = refl
 APP*-rep (MM snoc M) {NN snoc N} {QQ = QQ snoc Q} {ρ = ρ} = 
   cong (λ x → app* (M 〈 ρ 〉) (N 〈 ρ 〉) x (Q 〈 ρ 〉)) (APP*-rep MM)
+\end{code}
+}
 
-typeof' : ∀ {V} → Var V -Term → Context V → Type
-typeof' x Γ  = yt (typeof x Γ)
+We define the context\AgdaKeyword{addpath} \, $\Gamma$ \, $A$ to be $\Gamma, x : A, y : A, e : x =_A y$.
 
-typeof-typeof' : ∀ {V} {x : Var V -Term} {Γ} → typeof x Γ ≡ ty (typeof' x Γ)
-typeof-typeof' = sym ty-yt -- TODO Remove?
-
+\begin{code}
 addpath : ∀ {V} → Context V → Type → Context (V , -Term , -Term , -Path)
 addpath Γ A = Γ ,T A ,T A ,E var x₁ ≡〈 A 〉 var x₀
+\end{code}
 
+Given a substitution $\sigma : U \rightarrow V$, we introduce abbreviations for the substitutions $(\sigma, z := x)$ and $(\sigma , z := y) : U \cup \{ z \} \rightarrow V \cup \{ x , y , e \}$.
+
+\begin{code}
 sub↖ : ∀ {U} {V} → Sub U V → Sub (U , -Term) (V , -Term , -Term , -Path)
 sub↖ σ _ x₀ = var x₂
 sub↖ σ _ (↑ x) = σ _ x ⇑ ⇑ ⇑
@@ -275,22 +315,6 @@ postulate sub↗-comp₁ : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} →
                      sub↗ (ρ •RS σ) ∼ liftRep -Path (liftRep -Term (liftRep -Term ρ)) •RS sub↗ σ
 
 --REFACTOR Duplication
-
-var-not-Λ : ∀ {V} {x : Var V -Term} {A} {M : Term (V , -Term)} → var x ≡ ΛT A M → Empty
-var-not-Λ ()
-
-app-not-Λ : ∀ {V} {M N : Term V} {A} {P : Term (V , -Term)} → appT M N ≡ ΛT A P → Empty
-app-not-Λ ()
-
-appT-injr : ∀ {V} {M N P Q : Term V} → appT M N ≡ appT P Q → N ≡ Q
-appT-injr refl = refl
-
-imp-injl : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ⊃ ψ ≡ φ' ⊃ ψ' → φ ≡ φ'
-imp-injl refl = refl
-
-imp-injr : ∀ {V} {φ φ' ψ ψ' : Term V} → φ ⊃ ψ ≡ φ' ⊃ ψ' → ψ ≡ ψ'
-imp-injr refl = refl
---REFACTOR General pattern
 
 toSnocTypes : ∀ {V n} → snocVec Type n → snocTypes V (replicate n -Term)
 toSnocTypes [] = []
@@ -321,20 +345,3 @@ toSnocListExp-rep {MM = []} = refl
 toSnocListExp-rep {MM = MM snoc M} {ρ} = cong (λ x → x snoc M 〈 ρ 〉) toSnocListExp-rep
 \end{code}
 }
-
-\paragraph{Substitution}
-
-We write $t[z:=s]$ for the result of substituting $s$ for $z$ in $t$,
-renaming bound variables to avoid capture.  We write $s[z_1 := t_1, \ldots, z_n := t_n]$
-or $s[\vec{z} := \vec{t}]$ for the result of simultaneously substituting
-each $t_i$ for $z_i$ in $s$.
-
-A \emph{substitution} $\sigma$ is a function whose domain is a finite set of variables, and
-which maps term variables to terms, proof variables to proofs, and path variables to paths.
-Given a substitution $\sigma$ and an expression $t$, we write $t[\sigma]$ for the result
-of simultaneously substituting $\sigma(z)$ for $z$ within $t$, for each variable $z$ in the domain of $\sigma$.
-
-Given two substitutions $\sigma$ and $\rho$, we define their \emph{composition} $\sigma \circ \rho$ to
-be the substitution with the same domain an $\rho$, such that
-\[ (\sigma \circ \rho)(x) \eqdef \rho(x)[\sigma] \enspace . \]
-An easy induction on $t$ shows that we have $t [\sigma \circ \rho] \equiv t [ \rho ] [ \sigma ]$.

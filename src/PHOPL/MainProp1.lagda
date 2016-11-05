@@ -9,7 +9,6 @@ open import PHOPL.Grammar
 open import PHOPL.Rules
 open import PHOPL.PathSub
 open import PHOPL.Red
-open import PHOPL.Neutral
 open import PHOPL.Meta
 open import PHOPL.Computable
 open import PHOPL.SubC
