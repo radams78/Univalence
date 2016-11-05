@@ -77,16 +77,16 @@ nfrep-id {M = φ imp ψ} = cong₂ _imp_ nfrep-id nfrep-id
 
 nrep-comp : ∀ {U V W S} {N : Neutral U S} {ρ' : Rep V W} {ρ : Rep U V} → nrep N (ρ' •R ρ) ≡ nrep (nrep N ρ) ρ'
 nf₀-comp : ∀ {U V W S} {M : Nf₀ U S} {σ : Rep V W} {ρ : Rep U V} → nf₀rep M (σ •R ρ) ≡ nf₀rep (nf₀rep M ρ) σ
-nf-comp : ∀ {U V W S} {M : Nf U S} {σ : Rep V W} {ρ : Rep U V} → nfrep M (σ •R ρ) ≡ nfrep (nfrep M ρ) σ
+nfrep-comp : ∀ {U V W S} {M : Nf U S} {σ : Rep V W} {ρ : Rep U V} → nfrep M (σ •R ρ) ≡ nfrep (nfrep M ρ) σ
 
 nrep-comp {N = var x} = refl
-nrep-comp {N = app N N'} = cong₂ app nrep-comp nf-comp
+nrep-comp {N = app N N'} = cong₂ app nrep-comp nfrep-comp
 
 nf₀-comp {M = neutral N} = cong neutral nrep-comp
 nf₀-comp {M = bot} = refl
 
-nf-comp {M = nf₀ M} = cong nf₀ nf₀-comp
-nf-comp {M = φ imp ψ} = cong₂ _imp_ nf-comp nf-comp
+nfrep-comp {M = nf₀ M} = cong nf₀ nf₀-comp
+nfrep-comp {M = φ imp ψ} = cong₂ _imp_ nfrep-comp nfrep-comp
 
 decode-Neutral : ∀ {V S} → Neutral V S → Term V
 decode-Nf₀ : ∀ {V S} → Nf₀ V S → Term V
@@ -154,6 +154,10 @@ data ListNf (V : Alphabet) : List NfShape → Set where
 listnfrep : ∀ {U V SS} → ListNf U SS → Rep U V → ListNf V SS
 listnfrep [] _ = []
 listnfrep (M ∷ MM) ρ = nfrep M ρ ∷ listnfrep MM ρ
+
+listnfrep-comp : ∀ {U V W SS} {φ : ListNf U SS} {σ : Rep V W} {ρ : Rep U V} → listnfrep φ (σ •R ρ) ≡ listnfrep (listnfrep φ ρ) σ
+listnfrep-comp {φ = []} = refl
+listnfrep-comp {φ = x ∷ φ} = cong₂ _∷_ nfrep-comp listnfrep-comp
 
 domNf : ∀ {V} {S} → Nf V S → ListNf V (domS S)
 domNf (nf₀ _) = []

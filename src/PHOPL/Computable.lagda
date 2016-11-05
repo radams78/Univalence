@@ -302,13 +302,22 @@ EPropI : ∀ {V} {Γ : Context V} {S} {φ : Nf V S} {δ} → valid Γ →
 EPropI {φ = nf₀ N} validΓ hyp = subst SN rep-idRep (hyp idRep-typed validΓ [])
 EPropI {φ = φ imp ψ} {δ} validΓ hyp Δ {ρ} {ε} ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = EPropI {φ = nfrep ψ ρ} (context-validity Δ⊢ε∶φ)
   (λ {W'} {Θ} {σ} {εε} σ∶Δ⇒RΘ validΘ Eεε → subst (λ a → SN (APPP' (appP a (ε 〈 σ 〉)) εε)) 
-  {!!} (hyp {εε = ε 〈 σ 〉 ∷ εε} (•R-typed ρ∶Γ⇒RΔ σ∶Δ⇒RΘ) validΘ 
-    ({!!} ∷ subst (λ x → allE Θ x εε) (let open ≡-Reasoning in 
+  (rep-comp δ) (hyp {εε = ε 〈 σ 〉 ∷ εε} (•R-typed ρ∶Γ⇒RΔ σ∶Δ⇒RΘ) validΘ 
+    (subst (λ a → E Θ a (ε 〈 σ 〉)) (let open ≡-Reasoning in 
+      begin
+        decode-Nf (nfrep φ ρ) 〈 σ 〉
+      ≡⟨⟨ decode-Nf-rep (nfrep φ ρ) ⟩⟩
+        decode-Nf (nfrep (nfrep φ ρ) σ)
+      ≡⟨⟨ cong decode-Nf (nf-comp {M = φ}) ⟩⟩
+        decode-Nf (nfrep φ (σ •R ρ ))
+      ∎) 
+      (E-rep (EI Δ⊢ε∶φ (_ ,p nfrep φ ρ ,p ref ,p computeε)) σ∶Δ⇒RΘ validΘ) 
+    ∷ subst (λ x → allE Θ x εε) (let open ≡-Reasoning in 
     begin
       listnfrep (domNf (nfrep ψ ρ)) σ
-    ≡⟨ {!!} ⟩
+    ≡⟨ cong (λ a → listnfrep a σ) domNf-rep ⟩
       listnfrep (listnfrep (domNf ψ) ρ) σ
-    ≡⟨ {!!} ⟩
+    ≡⟨ {!listnfrep-comp!} ⟩
       listnfrep (domNf ψ) (σ •R ρ)
     ∎) 
     Eεε)))
