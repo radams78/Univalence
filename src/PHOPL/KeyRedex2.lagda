@@ -52,7 +52,7 @@ In this case, the result follows immediately from the hypothesis.
 \end{proof}
 
 \begin{code}
-pre-wte+-computeP : ∀ {m} {n} {V} {Γ : Context V} {S} {L₁ : Whnf V S}
+pre-wte+-computeP : ∀ {m} {n} {V} {Γ : Context V} {S} {L₁ : Meaning V S}
                           {MM NN : snocVec (Term V) m} {P L L' Q RR} {εε : snocVec (Proof V) n} {A} →
                           computeP Γ L₁ (APPP (plus (APP* MM NN (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR)) εε) →
                           valid Γ → SN L → SN L' → SN Q →
@@ -88,7 +88,7 @@ pre-wte+-computeP {m} {n} {V} {Γ} {S₁ imp S₂} {L₁ = L₁ imp L₂} {MM} {
   (SNrep R-creates-rep SNL') 
   (SNrep R-creates-rep SNQ))
 
-postulate pre-wte--computeP : ∀ {m} {n} {V} {Γ : Context V} {S} {L₁ : Whnf V S}
+postulate pre-wte--computeP : ∀ {m} {n} {V} {Γ : Context V} {S} {L₁ : Meaning V S}
                               {MM NN : snocVec (Term V) m} {P L L' Q RR} {εε : snocVec (Proof V) n} {A} →
                               computeP Γ L₁ (APPP (minus (APP* MM NN (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR)) εε) →
                               valid Γ → SN L → SN L' → SN Q →

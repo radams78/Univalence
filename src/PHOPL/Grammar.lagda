@@ -347,5 +347,11 @@ toSnocListExp-rep : ∀ {U V K n} {MM : snocVec (Expression U (varKind K)) n} {�
   snocListExp-rep (toSnocListExp MM) ρ ≡ toSnocListExp (snocVec-rep MM ρ)
 toSnocListExp-rep {MM = []} = refl
 toSnocListExp-rep {MM = MM snoc M} {ρ} = cong (λ x → x snoc M 〈 ρ 〉) toSnocListExp-rep
+
+data not-app V : Set where
+  navar : Var V -Term → not-app V
+  na⊥   : not-app V
+  na⊃   : Term V → Term V → not-app V
+  naΛ   : Type → Term (V , -Term) → not-app V
 \end{code}
 }

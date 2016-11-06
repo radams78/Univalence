@@ -56,10 +56,6 @@ data MeaningShape : Set where
   nf₀ : MeaningShape
   _imp_ : MeaningShape → MeaningShape → MeaningShape
 
-data ListMeaning (V : Alphabet) : List MeaningShape → Set where
-  [] : ListMeaning V []
-  _∷_ : ∀ {S SS} → Meaning V S → ListMeaning V SS → ListMeaning V (S ∷ SS)
-
 domS : MeaningShape → List MeaningShape
 domS nf₀ = []
 domS (S imp T) = S ∷ domS T
@@ -103,6 +99,10 @@ decode-Meaning₀-rep {M = bot} = refl
 decode-Meaning-rep : ∀ {U V S} (M : Meaning U S) {ρ : Rep U V} → decode-Meaning (nfrep M ρ) ≡ decode-Meaning M 〈 ρ 〉
 decode-Meaning-rep (nf₀ M) = decode-Meaning₀-rep {M = M}
 decode-Meaning-rep (φ imp ψ) = cong₂ _⊃_ (decode-Meaning-rep φ) (decode-Meaning-rep ψ)
+
+data ListMeaning (V : Alphabet) : List MeaningShape → Set where
+  [] : ListMeaning V []
+  _∷_ : ∀ {S SS} → Meaning V S → ListMeaning V SS → ListMeaning V (S ∷ SS)
 
 listnfrep : ∀ {U V SS} → ListMeaning U SS → Rep U V → ListMeaning V SS
 listnfrep [] _ = []
@@ -149,9 +149,12 @@ A term is \emph{m-normalizable} iff it reduces to a meaningful term.
 
 \begin{code}
 record MeanTerm {V} (φ : Term V) : Set where
-  constructor WHNPropI
+  constructor MeanTermI
   field
     shape : MeaningShape
     meaning  : Meaning V shape
     red   : φ ↠ decode-Meaning meaning
+
+WHNCtxt : ∀ {V} → Context V → Set
+WHNCtxt {V} Γ = ∀ (p : Var V -Proof) → MeanTerm (typeof p Γ)
 \end{code}

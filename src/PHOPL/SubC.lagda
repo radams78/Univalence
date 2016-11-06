@@ -2,6 +2,7 @@
 \begin{code}
 module PHOPL.SubC where
 open import Data.Nat
+open import Data.Empty renaming (⊥ to Empty)
 open import Data.Fin
 open import Data.List hiding (replicate)
 open import Data.Product renaming (_,_ to _,p_)
@@ -44,47 +45,6 @@ postulate change-codC : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {Δ'} →
 The identity substitution is computable.
 
 \begin{code}
-WHNCtxt : ∀ {V} → Context V → Set
-WHNCtxt {V} Γ = ∀ (p : Var V -Proof) → WHNProp (typeof p Γ)
-
-data NfDec {V} (M : Term V) : Set where
-  nfNfDec : nf M → NfDec M
-  redNfDec : ∀ {N} → M ⇒ N → NfDec M
-
-nf-decidable : ∀ {V} (M : Term V) → NfDec M
-nf-decidable (var x) = nfNfDec (nfvar x)
-nf-decidable (app -bot []) = nfNfDec nf⊥
-nf-decidable (app -imp (φ ∷ ψ ∷ [])) with nf-decidable φ
-nf-decidable (app -imp (φ ∷ ψ ∷ [])) | nfNfDec nfφ with nf-decidable ψ
-nf-decidable (app -imp (φ ∷ ψ ∷ [])) | nfNfDec nfφ | nfNfDec nfψ = nfNfDec (nf⊃ nfφ nfψ)
-nf-decidable (app -imp (φ ∷ ψ ∷ [])) | nfNfDec nfφ | redNfDec ψ⇒ψ' = redNfDec (app (appr (appl ψ⇒ψ')))
-nf-decidable (app -imp (φ ∷ ψ ∷ [])) | redNfDec φ⇒φ' = redNfDec (app (appl φ⇒φ'))
-nf-decidable (app (-lamTerm A) (M ∷ [])) with nf-decidable M
-nf-decidable (app (-lamTerm A) (M ∷ [])) | nfNfDec nfM = nfNfDec (nfΛT A nfM)
-nf-decidable (app (-lamTerm A) (M ∷ [])) | redNfDec M⇒M' = redNfDec (app (appl M⇒M'))
-nf-decidable (app -appTerm (M ∷ N ∷ [])) with nf-decidable M
-nf-decidable (app -appTerm (M ∷ N ∷ [])) | nfNfDec nfM with nf-decidable N
-nf-decidable (app -appTerm (var x ∷ N ∷ [])) | nfNfDec nfM | nfNfDec nfN = nfNfDec (nfappTvar x nfN)
-nf-decidable (app -appTerm (app -bot [] ∷ N ∷ [])) | nfNfDec nfM | nfNfDec nfN = nfNfDec (nfappT⊥ nfN)
-nf-decidable (app -appTerm (app -imp (φ ∷ ψ ∷ []) ∷ N ∷ [])) | nfNfDec (nf⊃ nfφ nfψ) | nfNfDec nfN = nfNfDec (nfappT⊃ nfφ nfψ nfN)
-nf-decidable (app -appTerm (app (-lamTerm A) (M ∷ []) ∷ N ∷ [])) | nfNfDec nfM | nfNfDec nfN = redNfDec (redex (βR βT))
-nf-decidable (app -appTerm (app -appTerm (M₁ ∷ M₂ ∷ []) ∷ N ∷ [])) | nfNfDec nfM | nfNfDec nfN = nfNfDec (nfappTappT nfM nfN)
-nf-decidable (app -appTerm (M ∷ N ∷ [])) | nfNfDec nfM | redNfDec N⇒N' = redNfDec (app (appr (appl N⇒N')))
-nf-decidable (app -appTerm (M ∷ N₁ ∷ [])) | redNfDec M⇒M' = redNfDec (app (appl M⇒M'))
-
-SN-imp-WN : ∀ {V} {M : Term V} → SN M → Σ[ N ∈ Term V ] nf N × M ↠ N
-SN-imp-WN {M = M} (SNI _ SNM) with nf-decidable M
-SN-imp-WN {M = M} (SNI .M SNM) | nfNfDec nfM = M ,p nfM ,p ref
-SN-imp-WN {M = M} (SNI .M SNM) | redNfDec M⇒M' = 
-  let M₀ ,p nfM₀ ,p M'↠M₀ = SN-imp-WN (SNM _ M⇒M') in 
-  M₀ ,p nfM₀ ,p RTClose.trans (inc M⇒M') M'↠M₀
-
-data not-app V : Set where
-  navar : Var V -Term → not-app V
-  na⊥   : not-app V
-  na⊃   : Term V → Term V → not-app V
-  naΛ   : Type → Term (V , -Term) → not-app V
-
 decode-not-app : ∀ {V} → not-app V  → Term V
 decode-not-app (navar x) = var x
 decode-not-app na⊥ = ⊥
@@ -109,33 +69,37 @@ APPn x (MM snoc M) = app (APPn x MM) M
 
 decode-APPn : ∀ {V} {x : Var V -Term} {MM} → decode-Neutral (APPn x MM) ≡ APPl (var x) MM
 decode-APPn {MM = []} = refl
-decode-APPn {MM = MM snoc M} = {!!}
+decode-APPn {MM = MM snoc M} = cong (λ x → appT x M) decode-APPn
 
-htnf-is-Whnf : ∀ {V} {M : not-app V} {NN : snocList (Term V)} {Γ} →
-  Γ ⊢ APPl (decode-not-app M) NN ∶ ty Ω → nf (APPl (decode-not-app M) NN) →
-  Σ[ S ∈ WhnfShape ] Σ[ φ ∈ Whnf V S ] APPl (decode-not-app M) NN ≡ decode-Whnf φ
-htnf-is-Whnf {M = navar x} {NN} Γ⊢MNN∶Ω nfMNN = nf₀ ,p nf₀ (neutral (APPn x NN)) ,p {!!}
-htnf-is-Whnf {M = na⊥} Γ⊢MNN∶Ω nfMNN = {!!}
-htnf-is-Whnf {M = na⊃ x x₁} Γ⊢MNN∶Ω nfMNN = {!!}
-htnf-is-Whnf {M = naΛ x x₁} Γ⊢MNN∶Ω nfMNN = {!!}
+⊥MM-not-func : ∀ {V Γ} (MM : snocList (Term V)) {A B} →
+  Γ ⊢ APPl ⊥ MM ∶ ty (A ⇛ B) → Empty
+⊥MM-not-func [] ()
+⊥MM-not-func (MM snoc _) (appR Γ⊢⊥MM∶A⇛B⇛C _) = ⊥MM-not-func MM Γ⊢⊥MM∶A⇛B⇛C
 
-nf-is-Whnf : ∀ {V} {M : Term V} {Γ} → Γ ⊢ M ∶ ty Ω → nf M → Σ[ S ∈ WhnfShape ] Σ[ φ ∈ Whnf V S ] M ≡ decode-Whnf φ
-nf-is-Whnf = {!!}
+⊃MM-not-func : ∀ {V Γ φ ψ} (MM : snocList (Term V)) {A B} →
+  Γ ⊢ APPl (φ ⊃ ψ) MM ∶ ty (A ⇛ B) → Empty
+⊃MM-not-func [] ()
+⊃MM-not-func (MM snoc _) (appR Γ⊢⊥MM∶A⇛B⇛C _) = ⊃MM-not-func MM Γ⊢⊥MM∶A⇛B⇛C
 
-valid-WN : ∀ {V} {Γ : Context V} → valid Γ → WHNCtxt Γ
-idSubC : ∀ {V} {Γ : Context V} → valid Γ → idSub V ∶ Γ ⇒C Γ
+head-tail : ∀ {V} {M : Term V} → M ≡ APPl (decode-not-app (head M)) (tail M)
+head-tail {M = var x} = refl
+head-tail {M = app -bot []} = refl
+head-tail {M = app -imp (φ ∷ ψ ∷ [])} = refl
+head-tail {M = app (-lamTerm A) (M ∷ [])} = refl
+head-tail {M = app -appTerm (M ∷ N ∷ [])} = cong (λ x → appT x N) (head-tail {M = M})
+
+postulate nf-is-Meaning : ∀ {V} {M : Term V} {Γ} → Γ ⊢ M ∶ ty Ω → nf M → Σ[ S ∈ MeaningShape ] Σ[ φ ∈ Meaning V S ] M ≡ decode-Meaning φ
+
+idSubC : ∀ {V} {Γ : Context V} → valid Γ → WHNCtxt Γ → idSub V ∶ Γ ⇒C Γ
 \end{code}
 
 \AgdaHide{
 \begin{code}
-valid-WN {Γ = 〈〉} validΓ ()
-valid-WN {Γ = Γ , φ} (ctxPR Γ⊢φ∶Ω) x₀ = {!SN-imp-WN!}
-valid-WN {Γ = Γ , x} validΓ (↑ p) = {!!}
-
-idSubC {Γ = Γ} validΓ {K = -Proof} p = subst (λ x → E Γ x (var p)) (Prelims.sym sub-idSub) 
-  (var-EP validΓ (WHNProp.red (valid-WN validΓ p)))
-idSubC validΓ {K = -Term} x = {!!}
-idSubC validΓ {K = -Path} x = {!!}
+idSubC {Γ = Γ} validΓ WHNΓ {K = -Proof} p = 
+  let MeanTermI S φ₀ φ↠φ₀ = WHNΓ p in
+  subst (λ x → E Γ x (var p)) (Prelims.sym sub-idSub) (var-EP {S = S} {L = φ₀} validΓ φ↠φ₀)
+idSubC {Γ = Γ} validΓ WHNΓ {K = -Term} x = subst (λ a → E Γ a (var x)) (Prelims.sym sub-idSub) (E-varT validΓ)
+idSubC {Γ = Γ} validΓ WHNΓ {K = -Path} e = subst (λ a → E Γ a (var e)) (Prelims.sym sub-idSub) (E-varE validΓ)
 \end{code}
 }
 

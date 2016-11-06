@@ -1,6 +1,8 @@
 \AgdaHide{
 \begin{code}
 module PHOPL.Red.Base where
+open import Prelims.Closure
+open import Data.Product renaming (_,_ to _,p_)
 open import PHOPL.Grammar
 open import PHOPL.PathSub
 \end{code}
@@ -139,4 +141,36 @@ data R : Reduction where
   R₀R : ∀ {V AA K} {c : Con (SK AA K)} {EE : ListAbs V AA} {F} → R₀ c EE F → R c EE F
 
 open import Reduction PHOPL R public 
+
+data NfDec {V} (M : Term V) : Set where
+  nfNfDec : nf M → NfDec M
+  redNfDec : ∀ {N} → M ⇒ N → NfDec M
+
+nf-decidable : ∀ {V} (M : Term V) → NfDec M
+nf-decidable (var x) = nfNfDec (nfvar x)
+nf-decidable (app -bot []) = nfNfDec nf⊥
+nf-decidable (app -imp (φ ∷ ψ ∷ [])) with nf-decidable φ
+nf-decidable (app -imp (φ ∷ ψ ∷ [])) | nfNfDec nfφ with nf-decidable ψ
+nf-decidable (app -imp (φ ∷ ψ ∷ [])) | nfNfDec nfφ | nfNfDec nfψ = nfNfDec (nf⊃ nfφ nfψ)
+nf-decidable (app -imp (φ ∷ ψ ∷ [])) | nfNfDec nfφ | redNfDec ψ⇒ψ' = redNfDec (app (appr (appl ψ⇒ψ')))
+nf-decidable (app -imp (φ ∷ ψ ∷ [])) | redNfDec φ⇒φ' = redNfDec (app (appl φ⇒φ'))
+nf-decidable (app (-lamTerm A) (M ∷ [])) with nf-decidable M
+nf-decidable (app (-lamTerm A) (M ∷ [])) | nfNfDec nfM = nfNfDec (nfΛT A nfM)
+nf-decidable (app (-lamTerm A) (M ∷ [])) | redNfDec M⇒M' = redNfDec (app (appl M⇒M'))
+nf-decidable (app -appTerm (M ∷ N ∷ [])) with nf-decidable M
+nf-decidable (app -appTerm (M ∷ N ∷ [])) | nfNfDec nfM with nf-decidable N
+nf-decidable (app -appTerm (var x ∷ N ∷ [])) | nfNfDec nfM | nfNfDec nfN = nfNfDec (nfappTvar x nfN)
+nf-decidable (app -appTerm (app -bot [] ∷ N ∷ [])) | nfNfDec nfM | nfNfDec nfN = nfNfDec (nfappT⊥ nfN)
+nf-decidable (app -appTerm (app -imp (φ ∷ ψ ∷ []) ∷ N ∷ [])) | nfNfDec (nf⊃ nfφ nfψ) | nfNfDec nfN = nfNfDec (nfappT⊃ nfφ nfψ nfN)
+nf-decidable (app -appTerm (app (-lamTerm A) (M ∷ []) ∷ N ∷ [])) | nfNfDec nfM | nfNfDec nfN = redNfDec (redex (βR βT))
+nf-decidable (app -appTerm (app -appTerm (M₁ ∷ M₂ ∷ []) ∷ N ∷ [])) | nfNfDec nfM | nfNfDec nfN = nfNfDec (nfappTappT nfM nfN)
+nf-decidable (app -appTerm (M ∷ N ∷ [])) | nfNfDec nfM | redNfDec N⇒N' = redNfDec (app (appr (appl N⇒N')))
+nf-decidable (app -appTerm (M ∷ N₁ ∷ [])) | redNfDec M⇒M' = redNfDec (app (appl M⇒M'))
+
+SN-imp-WN : ∀ {V} {M : Term V} → SN M → Σ[ N ∈ Term V ] nf N × M ↠ N
+SN-imp-WN {M = M} (SNI _ SNM) with nf-decidable M
+SN-imp-WN {M = M} (SNI .M SNM) | nfNfDec nfM = M ,p nfM ,p ref
+SN-imp-WN {M = M} (SNI .M SNM) | redNfDec M⇒M' = 
+  let M₀ ,p nfM₀ ,p M'↠M₀ = SN-imp-WN (SNM _ M⇒M') in 
+  M₀ ,p nfM₀ ,p RTClose.trans (inc M⇒M') M'↠M₀
 \end{code}
