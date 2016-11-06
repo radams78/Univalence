@@ -288,7 +288,7 @@ A term is \emph{m-normalizable} iff it reduces to a meaningful term.
 \>\AgdaKeyword{record} \AgdaRecord{MeanTerm} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{φ} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{constructor} \AgdaInductiveConstructor{WHNPropI}\<%
+\>[2]\AgdaKeyword{constructor} \AgdaInductiveConstructor{MeanTermI}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{field}\<%
@@ -303,4 +303,10 @@ A term is \emph{m-normalizable} iff it reduces to a meaningful term.
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaField{red} \<[10]%
 \>[10]\AgdaSymbol{:} \AgdaBound{φ} \AgdaFunction{↠} \AgdaFunction{decode-Meaning} \AgdaField{meaning}\<%
+\\
+%
+\\
+\>\AgdaFunction{WHNCtxt} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaBound{V} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\\
+\>\AgdaFunction{WHNCtxt} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{Γ} \AgdaSymbol{=} \AgdaSymbol{∀} \AgdaSymbol{(}\AgdaBound{p} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{V} \AgdaInductiveConstructor{-Proof}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaRecord{MeanTerm} \AgdaSymbol{(}\AgdaFunction{typeof} \AgdaBound{p} \AgdaBound{Γ}\AgdaSymbol{)}\<%
 \end{code}

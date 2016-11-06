@@ -158,3 +158,83 @@ pre-wte-compute {n} {Γ = Γ} {A} {P} {M} {BB} {C ⇛ C₁} {M'} {L} {L'} {Q} {N
   (EI (app*R Δ⊢N∶C Δ⊢N'∶C (weakening Γ⊢PRR∶NN≡NN' validΔ ρ∶Γ⇒RΔ) Δ⊢Q∶N≡N') 
   (computePLL' Δ ρ∶Γ⇒RΔ Δ⊢Q∶N≡N' computeN computeN' computeQ))))
 \end{code}
+
+\begin{lemma}
+\label{lm:wte}
+$ $
+\begin{enumerate}
+\item
+\label{lm:wteE}
+Let $\Gamma, x : A, y : A, e : x =_A y \vdash P : M x =_B N y$.  If
+$L, L' \in E_\Gamma(A)$; $Q \in E_\Gamma(L =_A L')$ and $P[ x := L, y := L', e
+:= Q ] \in E_\Gamma(M L =_B N L')$, then $(\triplelambda e : x =_A y . P)_{L L'} Q \in E_\Gamma(ML =_B NL')$.
+\begin{code}
+postulate wteE : ∀ {V} {Γ : Context V} {A P M B N L L' Q} →
+               addpath Γ A ⊢ P ∶ appT (M ⇑ ⇑ ⇑) (var x₂) ≡〈 B 〉 appT (N ⇑ ⇑ ⇑) (var x₁) →
+               E Γ (ty A) L → E Γ (ty A) L' → E Γ (L ≡〈 A 〉 L') Q → E Γ (appT M L ≡〈 B 〉 appT N L') (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) →
+               E Γ (appT M L ≡〈 B 〉 appT N L') (app* L L' (λλλ A P) Q)
+\end{code}
+\item
+\label{lm:wteP}
+Let $\Gamma, p : \phi \vdash \delta : \psi$.  If $\epsilon \in E_\Gamma(\phi)$
+and $\delta [p := \epsilon] \in E_\Gamma(\psi)$ then $(\lambda p:\phi.\delta) \epsilon \in E_\Gamma(\psi)$.
+\begin{code}
+postulate wteP : ∀ {V} {Γ : Context V} {φ ψ : Term V} {δ ε} →
+               Γ ,P φ ⊢ δ ∶ ψ ⇑ → E Γ φ ε → E Γ ψ (δ ⟦ x₀:= ε ⟧) → E Γ ψ (appP (ΛP φ δ) ε)
+\end{code}
+\item
+\label{lm:wteT}
+Let $\Gamma, x : A \vdash M : B$ and let $N \in E_\Gamma(A)$. If $M[x:=N] \in E_\Gamma(B)$ then $(\lambda x:A.M)N \in E_\Gamma(B)$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+We prove part \ref{lm:wteT} here; the proofs for the other parts are similar.
+
+We shall prove the following stronger statement:
+
+Suppose $\Gamma, x : A \vdash M : B_1 \rightarrow \cdots \rightarrow B_n \rightarrow C$.  Let $N \in E_\Gamma(A)$ and $N_i \in E_\Gamma(B_i)$ for $i = 1, \ldots, n$.  If
+$M[x:=N]N_1 \cdots N_n \in E_\Gamma(C)$ then $(\lambda x:A.M)NN_1 \cdots N_n \in E_\Gamma(C)$.
+
+The proof is by induction on the type $C$.
+
+If $C \equiv \Omega$: it is easy to verify that $\Gamma \vdash (\lambda x:A.M)NN_1 \cdots N_n : \Omega$.  Proposition \ref{prop:SN}.\ref{prop:SNT}
+gives that $(\lambda x:A.M)NN_1 \cdots N_n \in \SN$.
+
+Now let $\Delta \supseteq \Gamma$ and $\delta \in E_\Delta((\lambda x:A.M)N \vec{N})$.  Let $\nf{(\lambda x:A.M)N \vec{N}} \equiv \phi_1 \supset \cdots \supset \phi_n \supset \chi$ where $\chi$ is $\bot$ or neutral.  Let $\epsilon_j \in E_\Delta(\phi_j)$ for each $j$.  We must show that
+\[ ((\lambda x:A.M)N \vec{N})\{\}^+ \delta \epsilon_1 \cdots \epsilon_m
+\in E_\Delta(\chi) \]
+i.e.
+\[ ((\triplelambda e:x =_A y. M \{ x:=e : x \sim y \})_{NN} N\{\}_{N_1 N_1}
+N_1\{\} \cdots_{N_n N_n} N_n\{\})^+ \delta \vec{\epsilon} \in E_\Delta(\chi) \enspace . \]
+It is easy to check that this proof is well-typed.  We need to prove that it is strongly normalizing.
+
+By hypothesis, we have
+\[ (M[x:=N] \vec{N})\{\}^+ \delta \vec{\epsilon} \in E_\Delta(\chi) \subseteq \SN \]
+i.e.
+\[ (M\{x:=N\{\} : N \sim N\} N_1 \{\} \cdots N_n \{\})^+ \delta \vec{\epsilon}
+\in \SN \]
+and so the result follows by Proposition \ref{prop:SN}.\ref{prop:SNE}.
+
+The proof for $(\lambda x:A.M)N \vec{N})\{\}^-$ is similar.
+
+If $C \equiv B_{n+1} \rightarrow D$: let $N_{n+1} \in E_{\Gamma}(B_{n+1})$.  Then
+\begin{align*}
+M[x:=N]\vec{N} N_{n+1} & \in E_\Gamma(C) \\
+\therefore (\lambda x:A.M)N \vec{N} N_{n+1} & \in E_\Gamma(C)
+\end{align*}
+by the induction hypothesis, as required.
+
+Now let $N_{n+1}, N_{n+1}' \in E_\Gamma(B_{n+1})$ and $P \in E_\Gamma(N_{n+1} =_{B_{n+1}} N_{n+1}')$.  We must show that
+\begin{align*}
+((\lambda x:A.M)N \vec{N}) \{\}_{N_{n+1}N_{n+1}'}P \\
+\quad \in E_\Gamma((\lambda x:A.M) N \vec{N} N_{n+1} =_C (\lambda x:A.M) N \vec{N} N_{n+1}')
+\end{align*}
+i.e.
+\begin{align*}
+(\triplelambda e:x =_A y . M \{ x:=e \})_{NN} N \{ \}_{N_1 N_1} N_1\{\} \cdots_{N_n N_n} N_n\{\}_{N_{n+1} N_{n+1}'} P \\
+\quad \in E_\Gamma(M[x:=N] N \vec{N} N_{n+1} = M[x:=N] N \vec{N} N_{n+1}')
+\end{align*}
+This follows from part \ref{lm:wteE}, since we have
+\[ M[x:=N]\{\} \equiv M \{ x:= N \{ \} : N \sim N \} \in E_\Gamma(M[x:=N] = M[x:=N]) \]
+\end{proof}

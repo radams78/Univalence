@@ -262,9 +262,10 @@ Finally, if $P$ is a path of type $F =_{A \rightarrow B} G$, and $Q$ is a path $
 \>\AgdaKeyword{open} \AgdaModule{PHOPLgrammar} \AgdaKeyword{public}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar} \AgdaFunction{PHOPL} \AgdaKeyword{public}\<%
-\\
-%
-\\
+\end{code}
+}
+
+\begin{code}%
 \>\AgdaFunction{Proof} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
 \\
 \>\AgdaFunction{Proof} \AgdaBound{V} \AgdaSymbol{=} \AgdaFunction{Expression} \AgdaBound{V} \AgdaFunction{-vProof}\<%
@@ -412,18 +413,32 @@ Finally, if $P$ is a path of type $F =_{A \rightarrow B} G$, and $Q$ is a path $
 \>\AgdaFunction{\_,E\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Equation} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Path}\AgdaSymbol{)}\<%
 \\
 \>\AgdaFunction{\_,E\_} \AgdaSymbol{=} \AgdaInductiveConstructor{\_,\_}\<%
-\\
-%
-\\
+\end{code}
+
+\AgdaHide{
+\begin{code}%
 \>\AgdaFunction{yt} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{nonVarKind} \AgdaInductiveConstructor{-Type}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{Type}\<%
 \\
 \>\AgdaFunction{yt} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-ty} \AgdaBound{A}\AgdaSymbol{)} \AgdaInductiveConstructor{[]}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaBound{A}\<%
 \\
 %
 \\
-\>\AgdaFunction{ty-yt} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{nonVarKind} \AgdaInductiveConstructor{-Type}\AgdaSymbol{)\}} \AgdaSymbol{→} \AgdaFunction{ty} \AgdaSymbol{(}\AgdaFunction{yt} \AgdaBound{A}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaBound{A}\<%
+\>\AgdaFunction{typeof'} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Var} \AgdaBound{V} \AgdaInductiveConstructor{-Term} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Type}\<%
 \\
-\>\AgdaFunction{ty-yt} \AgdaSymbol{\{}\AgdaArgument{A} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{-ty} \AgdaSymbol{\_)} \AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaInductiveConstructor{refl} \AgdaComment{--TODO Remove?}\<%
+\>\AgdaFunction{typeof'} \AgdaBound{x} \AgdaBound{Γ} \<[13]%
+\>[13]\AgdaSymbol{=} \AgdaFunction{yt} \AgdaSymbol{(}\AgdaFunction{typeof} \AgdaBound{x} \AgdaBound{Γ}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaFunction{⊃-injl} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaBound{φ'} \AgdaBound{ψ} \AgdaBound{ψ'} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{φ} \AgdaFunction{⊃} \AgdaBound{ψ} \AgdaDatatype{≡} \AgdaBound{φ'} \AgdaFunction{⊃} \AgdaBound{ψ'} \AgdaSymbol{→} \AgdaBound{φ} \AgdaDatatype{≡} \AgdaBound{φ'}\<%
+\\
+\>\AgdaFunction{⊃-injl} \AgdaInductiveConstructor{refl} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+%
+\\
+\>\AgdaFunction{⊃-injr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaBound{φ'} \AgdaBound{ψ} \AgdaBound{ψ'} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{φ} \AgdaFunction{⊃} \AgdaBound{ψ} \AgdaDatatype{≡} \AgdaBound{φ'} \AgdaFunction{⊃} \AgdaBound{ψ'} \AgdaSymbol{→} \AgdaBound{ψ} \AgdaDatatype{≡} \AgdaBound{ψ'}\<%
+\\
+\>\AgdaFunction{⊃-injr} \AgdaInductiveConstructor{refl} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
 \\
 %
 \\
@@ -433,6 +448,15 @@ Finally, if $P$ is a path of type $F =_{A \rightarrow B} G$, and $Q$ is a path $
 \\
 %
 \\
+\>\AgdaFunction{appT-injr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{N} \AgdaBound{P} \AgdaBound{Q} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{appT} \AgdaBound{M} \AgdaBound{N} \AgdaDatatype{≡} \AgdaFunction{appT} \AgdaBound{P} \AgdaBound{Q} \AgdaSymbol{→} \AgdaBound{N} \AgdaDatatype{≡} \AgdaBound{Q}\<%
+\\
+\>\AgdaFunction{appT-injr} \AgdaInductiveConstructor{refl} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\end{code}
+}
+
+We define the operation which, given a vector of $n$ types $A_1$, \ldots, $A_n$ and a type $B$, forms the type $A_1 \rightarrow \cdots \rightarrow A_n \rightarrow B$.  Likewise we define operations for applying a vector of terms, and a vector of proofs.
+
+\begin{code}%
 \>\AgdaFunction{Pi} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{n}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{snocVec} \AgdaDatatype{Type} \AgdaBound{n} \AgdaSymbol{→} \AgdaDatatype{Type} \AgdaSymbol{→} \AgdaDatatype{Type}\<%
 \\
 \>\AgdaFunction{Pi} \AgdaInductiveConstructor{[]} \AgdaBound{B} \AgdaSymbol{=} \AgdaBound{B}\<%
@@ -441,29 +465,44 @@ Finally, if $P$ is a path of type $F =_{A \rightarrow B} G$, and $Q$ is a path $
 \\
 %
 \\
+\>\AgdaFunction{APPl} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{snocList} \AgdaSymbol{(}\AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V}\<%
+\\
+\>\AgdaFunction{APPl} \AgdaBound{M} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaBound{M}\<%
+\\
+\>\AgdaFunction{APPl} \AgdaBound{M} \AgdaSymbol{(}\AgdaBound{NN} \AgdaInductiveConstructor{snoc} \AgdaBound{N}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{appT} \AgdaSymbol{(}\AgdaFunction{APPl} \AgdaBound{M} \AgdaBound{NN}\AgdaSymbol{)} \AgdaBound{N}\<%
+\\
+%
+\\
 \>\AgdaFunction{APP} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{n}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{snocVec} \AgdaSymbol{(}\AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{)} \AgdaBound{n} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V}\<%
 \\
 \>\AgdaFunction{APP} \AgdaBound{M} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaBound{M}\<%
 \\
 \>\AgdaFunction{APP} \AgdaBound{M} \AgdaSymbol{(}\AgdaBound{NN} \AgdaInductiveConstructor{snoc} \AgdaBound{N}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{appT} \AgdaSymbol{(}\AgdaFunction{APP} \AgdaBound{M} \AgdaBound{NN}\AgdaSymbol{)} \AgdaBound{N}\<%
+\end{code}
+
+\AgdaHide{
+\begin{code}%
+\>\AgdaFunction{APP-rep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{n} \AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{NN} \AgdaSymbol{:} \AgdaDatatype{snocVec} \AgdaSymbol{(}\AgdaFunction{Term} \AgdaBound{U}\AgdaSymbol{)} \AgdaBound{n}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
-%
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{(}\AgdaFunction{APP} \AgdaBound{M} \AgdaBound{NN}\AgdaSymbol{)} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaDatatype{≡} \AgdaFunction{APP} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{snocVec-rep} \AgdaBound{NN} \AgdaBound{ρ}\AgdaSymbol{)}\<%
 \\
-\>\AgdaKeyword{postulate} \AgdaPostulate{APP-rep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{n} \AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{NN} \AgdaSymbol{:} \AgdaDatatype{snocVec} \AgdaSymbol{(}\AgdaFunction{Term} \AgdaBound{U}\AgdaSymbol{)} \AgdaBound{n}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\>\AgdaFunction{APP-rep} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
 \\
-\>[6]\AgdaIndent{18}{}\<[18]%
-\>[18]\AgdaSymbol{(}\AgdaFunction{APP} \AgdaBound{M} \AgdaBound{NN}\AgdaSymbol{)} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaDatatype{≡} \AgdaFunction{APP} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{snocVec-rep} \AgdaBound{NN} \AgdaBound{ρ}\AgdaSymbol{)}\<%
-\\
-%
-\\
+\>\AgdaFunction{APP-rep} \AgdaSymbol{(}\AgdaBound{NN} \AgdaInductiveConstructor{snoc} \AgdaBound{N}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong} \AgdaSymbol{(λ} \AgdaBound{x} \AgdaSymbol{→} \AgdaFunction{appT} \AgdaBound{x} \AgdaSymbol{(}\AgdaBound{N} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{APP-rep} \AgdaBound{NN}\AgdaSymbol{)}\<%
+\end{code}
+}
+
+\begin{code}%
 \>\AgdaFunction{APPP} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{n}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Proof} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{snocVec} \AgdaSymbol{(}\AgdaFunction{Proof} \AgdaBound{V}\AgdaSymbol{)} \AgdaBound{n} \AgdaSymbol{→} \AgdaFunction{Proof} \AgdaBound{V}\<%
 \\
 \>\AgdaFunction{APPP} \AgdaBound{δ} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaBound{δ}\<%
 \\
 \>\AgdaFunction{APPP} \AgdaBound{δ} \AgdaSymbol{(}\AgdaBound{εε} \AgdaInductiveConstructor{snoc} \AgdaBound{ε}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{appP} \AgdaSymbol{(}\AgdaFunction{APPP} \AgdaBound{δ} \AgdaBound{εε}\AgdaSymbol{)} \AgdaBound{ε}\<%
-\\
-%
-\\
+\end{code}
+
+\AgdaHide{
+\begin{code}%
 \>\AgdaFunction{APPP-rep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{n} \AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{εε} \AgdaSymbol{:} \AgdaDatatype{snocVec} \AgdaSymbol{(}\AgdaFunction{Proof} \AgdaBound{U}\AgdaSymbol{)} \AgdaBound{n}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
@@ -472,6 +511,15 @@ Finally, if $P$ is a path of type $F =_{A \rightarrow B} G$, and $Q$ is a path $
 \>\AgdaFunction{APPP-rep} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
 \\
 \>\AgdaFunction{APPP-rep} \AgdaSymbol{(}\AgdaBound{εε} \AgdaInductiveConstructor{snoc} \AgdaBound{ε}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong} \AgdaSymbol{(λ} \AgdaBound{x} \AgdaSymbol{→} \AgdaFunction{appP} \AgdaBound{x} \AgdaSymbol{(}\AgdaBound{ε} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{APPP-rep} \AgdaBound{εε}\AgdaSymbol{)}\<%
+\end{code}
+}
+
+\begin{code}%
+\>\AgdaFunction{APPP'} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Proof} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{List} \AgdaSymbol{(}\AgdaFunction{Proof} \AgdaBound{V}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaFunction{Proof} \AgdaBound{V}\<%
+\\
+\>\AgdaFunction{APPP'} \AgdaBound{δ} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaBound{δ}\<%
+\\
+\>\AgdaFunction{APPP'} \AgdaBound{δ} \AgdaSymbol{(}\AgdaBound{ε} \AgdaInductiveConstructor{∷} \AgdaBound{εε}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{APPP'} \AgdaSymbol{(}\AgdaFunction{appP} \AgdaBound{δ} \AgdaBound{ε}\AgdaSymbol{)} \AgdaBound{εε}\<%
 \\
 %
 \\
@@ -480,9 +528,10 @@ Finally, if $P$ is a path of type $F =_{A \rightarrow B} G$, and $Q$ is a path $
 \>\AgdaFunction{APP*} \AgdaInductiveConstructor{[]} \AgdaInductiveConstructor{[]} \AgdaBound{P} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaBound{P}\<%
 \\
 \>\AgdaFunction{APP*} \AgdaSymbol{(}\AgdaBound{MM} \AgdaInductiveConstructor{snoc} \AgdaBound{M}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{NN} \AgdaInductiveConstructor{snoc} \AgdaBound{N}\AgdaSymbol{)} \AgdaBound{P} \AgdaSymbol{(}\AgdaBound{QQ} \AgdaInductiveConstructor{snoc} \AgdaBound{Q}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{app*} \AgdaBound{M} \AgdaBound{N} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaBound{P} \AgdaBound{QQ}\AgdaSymbol{)} \AgdaBound{Q}\<%
-\\
-%
-\\
+\end{code}
+
+\AgdaHide{
+\begin{code}%
 \>\AgdaFunction{APP*-rep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{n}\AgdaSymbol{\}} \AgdaBound{MM} \AgdaSymbol{\{}\AgdaBound{NN} \AgdaSymbol{:} \AgdaDatatype{snocVec} \AgdaSymbol{(}\AgdaFunction{Term} \AgdaBound{U}\AgdaSymbol{)} \AgdaBound{n}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaBound{QQ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
@@ -495,28 +544,21 @@ Finally, if $P$ is a path of type $F =_{A \rightarrow B} G$, and $Q$ is a path $
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{cong} \AgdaSymbol{(λ} \AgdaBound{x} \AgdaSymbol{→} \AgdaFunction{app*} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{N} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaBound{x} \AgdaSymbol{(}\AgdaBound{Q} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{APP*-rep} \AgdaBound{MM}\AgdaSymbol{)}\<%
-\\
-%
-\\
-\>\AgdaFunction{typeof'} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Var} \AgdaBound{V} \AgdaInductiveConstructor{-Term} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Type}\<%
-\\
-\>\AgdaFunction{typeof'} \AgdaBound{x} \AgdaBound{Γ} \<[13]%
-\>[13]\AgdaSymbol{=} \AgdaFunction{yt} \AgdaSymbol{(}\AgdaFunction{typeof} \AgdaBound{x} \AgdaBound{Γ}\AgdaSymbol{)}\<%
-\\
-%
-\\
-\>\AgdaFunction{typeof-typeof'} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{x} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{V} \AgdaInductiveConstructor{-Term}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{typeof} \AgdaBound{x} \AgdaBound{Γ} \AgdaDatatype{≡} \AgdaFunction{ty} \AgdaSymbol{(}\AgdaFunction{typeof'} \AgdaBound{x} \AgdaBound{Γ}\AgdaSymbol{)}\<%
-\\
-\>\AgdaFunction{typeof-typeof'} \AgdaSymbol{=} \AgdaFunction{sym} \AgdaFunction{ty-yt} \AgdaComment{-- TODO Remove?}\<%
-\\
-%
-\\
+\end{code}
+}
+
+We define the context\AgdaKeyword{addpath} \, $\Gamma$ \, $A$ to be $\Gamma, x : A, y : A, e : x =_A y$.
+
+\begin{code}%
 \>\AgdaFunction{addpath} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Type} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Path}\AgdaSymbol{)}\<%
 \\
 \>\AgdaFunction{addpath} \AgdaBound{Γ} \AgdaBound{A} \AgdaSymbol{=} \AgdaBound{Γ} \AgdaFunction{,T} \AgdaBound{A} \AgdaFunction{,T} \AgdaBound{A} \AgdaFunction{,E} \AgdaInductiveConstructor{var} \AgdaFunction{x₁} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaInductiveConstructor{var} \AgdaInductiveConstructor{x₀}\<%
-\\
-%
-\\
+\end{code}
+
+Given a substitution $\sigma : U \rightarrow V$, we introduce abbreviations for the substitutions $(\sigma, z := x)$ and $(\sigma , z := y) : U \cup \{ z \} \rightarrow V \cup \{ x , y , e \}$.
+
+\AgdaHide{
+\begin{code}%
 \>\AgdaFunction{sub↖} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Sub} \AgdaSymbol{(}\AgdaBound{U} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Term}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Term} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Path}\AgdaSymbol{)}\<%
 \\
 \>\AgdaFunction{sub↖} \AgdaBound{σ} \AgdaSymbol{\_} \AgdaInductiveConstructor{x₀} \AgdaSymbol{=} \AgdaInductiveConstructor{var} \AgdaFunction{x₂}\<%
@@ -556,38 +598,6 @@ Finally, if $P$ is a path of type $F =_{A \rightarrow B} G$, and $Q$ is a path $
 %
 \\
 \>\AgdaComment{--REFACTOR Duplication}\<%
-\\
-%
-\\
-\>\AgdaFunction{var-not-Λ} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{x} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{V} \AgdaInductiveConstructor{-Term}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Term}\AgdaSymbol{)\}} \AgdaSymbol{→} \AgdaInductiveConstructor{var} \AgdaBound{x} \AgdaDatatype{≡} \AgdaFunction{ΛT} \AgdaBound{A} \AgdaBound{M} \AgdaSymbol{→} \AgdaDatatype{Empty}\<%
-\\
-\>\AgdaFunction{var-not-Λ} \AgdaSymbol{()}\<%
-\\
-%
-\\
-\>\AgdaFunction{app-not-Λ} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{N} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Term}\AgdaSymbol{)\}} \AgdaSymbol{→} \AgdaFunction{appT} \AgdaBound{M} \AgdaBound{N} \AgdaDatatype{≡} \AgdaFunction{ΛT} \AgdaBound{A} \AgdaBound{P} \AgdaSymbol{→} \AgdaDatatype{Empty}\<%
-\\
-\>\AgdaFunction{app-not-Λ} \AgdaSymbol{()}\<%
-\\
-%
-\\
-\>\AgdaFunction{appT-injr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{N} \AgdaBound{P} \AgdaBound{Q} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{appT} \AgdaBound{M} \AgdaBound{N} \AgdaDatatype{≡} \AgdaFunction{appT} \AgdaBound{P} \AgdaBound{Q} \AgdaSymbol{→} \AgdaBound{N} \AgdaDatatype{≡} \AgdaBound{Q}\<%
-\\
-\>\AgdaFunction{appT-injr} \AgdaInductiveConstructor{refl} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
-\\
-%
-\\
-\>\AgdaFunction{imp-injl} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaBound{φ'} \AgdaBound{ψ} \AgdaBound{ψ'} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{φ} \AgdaFunction{⊃} \AgdaBound{ψ} \AgdaDatatype{≡} \AgdaBound{φ'} \AgdaFunction{⊃} \AgdaBound{ψ'} \AgdaSymbol{→} \AgdaBound{φ} \AgdaDatatype{≡} \AgdaBound{φ'}\<%
-\\
-\>\AgdaFunction{imp-injl} \AgdaInductiveConstructor{refl} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
-\\
-%
-\\
-\>\AgdaFunction{imp-injr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaBound{φ'} \AgdaBound{ψ} \AgdaBound{ψ'} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{φ} \AgdaFunction{⊃} \AgdaBound{ψ} \AgdaDatatype{≡} \AgdaBound{φ'} \AgdaFunction{⊃} \AgdaBound{ψ'} \AgdaSymbol{→} \AgdaBound{ψ} \AgdaDatatype{≡} \AgdaBound{ψ'}\<%
-\\
-\>\AgdaFunction{imp-injr} \AgdaInductiveConstructor{refl} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
-\\
-\>\AgdaComment{--REFACTOR General pattern}\<%
 \\
 %
 \\
@@ -650,22 +660,24 @@ Finally, if $P$ is a path of type $F =_{A \rightarrow B} G$, and $Q$ is a path $
 \>\AgdaFunction{toSnocListExp-rep} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
 \\
 \>\AgdaFunction{toSnocListExp-rep} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaBound{MM} \AgdaInductiveConstructor{snoc} \AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong} \AgdaSymbol{(λ} \AgdaBound{x} \AgdaSymbol{→} \AgdaBound{x} \AgdaInductiveConstructor{snoc} \AgdaBound{M} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\AgdaSymbol{)} \AgdaFunction{toSnocListExp-rep}\<%
+\\
+%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{not-app} \AgdaBound{V} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{navar} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{V} \AgdaInductiveConstructor{-Term} \AgdaSymbol{→} \AgdaDatatype{not-app} \AgdaBound{V}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{na⊥} \<[8]%
+\>[8]\AgdaSymbol{:} \AgdaDatatype{not-app} \AgdaBound{V}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{na⊃} \<[8]%
+\>[8]\AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{not-app} \AgdaBound{V}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{naΛ} \<[8]%
+\>[8]\AgdaSymbol{:} \AgdaDatatype{Type} \AgdaSymbol{→} \AgdaFunction{Term} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Term}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{not-app} \AgdaBound{V}\<%
 \end{code}
 }
-
-\paragraph{Substitution}
-
-We write $t[z:=s]$ for the result of substituting $s$ for $z$ in $t$,
-renaming bound variables to avoid capture.  We write $s[z_1 := t_1, \ldots, z_n := t_n]$
-or $s[\vec{z} := \vec{t}]$ for the result of simultaneously substituting
-each $t_i$ for $z_i$ in $s$.
-
-A \emph{substitution} $\sigma$ is a function whose domain is a finite set of variables, and
-which maps term variables to terms, proof variables to proofs, and path variables to paths.
-Given a substitution $\sigma$ and an expression $t$, we write $t[\sigma]$ for the result
-of simultaneously substituting $\sigma(z)$ for $z$ within $t$, for each variable $z$ in the domain of $\sigma$.
-
-Given two substitutions $\sigma$ and $\rho$, we define their \emph{composition} $\sigma \circ \rho$ to
-be the substitution with the same domain an $\rho$, such that
-\[ (\sigma \circ \rho)(x) \eqdef \rho(x)[\sigma] \enspace . \]
-An easy induction on $t$ shows that we have $t [\sigma \circ \rho] \equiv t [ \rho ] [ \sigma ]$.

@@ -112,5 +112,15 @@
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaInductiveConstructor{trans} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{x} \AgdaBound{y} \AgdaBound{z}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{RSTClose} \AgdaBound{R} \AgdaBound{x} \AgdaBound{y} \AgdaSymbol{→} \AgdaDatatype{RSTClose} \AgdaBound{R} \AgdaBound{y} \AgdaBound{z} \AgdaSymbol{→} \AgdaDatatype{RSTClose} \AgdaBound{R} \AgdaBound{x} \AgdaBound{z}\<%
+\\
+%
+\\
+\>\AgdaFunction{RT-sub-RST} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{A} \AgdaBound{R} \AgdaBound{x} \AgdaBound{y}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{RTClose} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaBound{R} \AgdaBound{x} \AgdaBound{y} \AgdaSymbol{→} \AgdaDatatype{RSTClose} \AgdaBound{R} \AgdaBound{x} \AgdaBound{y}\<%
+\\
+\>\AgdaFunction{RT-sub-RST} \AgdaSymbol{(}\AgdaInductiveConstructor{inc} \AgdaBound{xRy}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{inc} \AgdaBound{xRy}\<%
+\\
+\>\AgdaFunction{RT-sub-RST} \AgdaInductiveConstructor{ref} \AgdaSymbol{=} \AgdaInductiveConstructor{ref}\<%
+\\
+\>\AgdaFunction{RT-sub-RST} \AgdaSymbol{(}\AgdaInductiveConstructor{trans} \AgdaBound{xRTy} \AgdaBound{yRTz}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{trans} \AgdaSymbol{(}\AgdaFunction{RT-sub-RST} \AgdaBound{xRTy}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{RT-sub-RST} \AgdaBound{yRTz}\AgdaSymbol{)}\<%
 \end{code}
 }

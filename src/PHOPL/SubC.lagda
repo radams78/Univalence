@@ -90,16 +90,18 @@ head-tail {M = app -appTerm (M ∷ N ∷ [])} = cong (λ x → appT x N) (head-t
 
 postulate nf-is-Meaning : ∀ {V} {M : Term V} {Γ} → Γ ⊢ M ∶ ty Ω → nf M → Σ[ S ∈ MeaningShape ] Σ[ φ ∈ Meaning V S ] M ≡ decode-Meaning φ
 
-idSubC : ∀ {V} {Γ : Context V} → valid Γ → WHNCtxt Γ → idSub V ∶ Γ ⇒C Γ
+Ectxt : ∀ {V} → Context V → Set
+Ectxt {V} Γ = (∀ (p : Var V -Proof) → E Γ (ty Ω) (typeof p Γ)) × 
+              (∀ (e : Var V -Path) → E-eq Γ (typeof e Γ))
+
+idSubC : ∀ {V} {Γ : Context V} → valid Γ → Ectxt Γ → idSub V ∶ Γ ⇒C Γ
 \end{code}
 
 \AgdaHide{
 \begin{code}
-idSubC {Γ = Γ} validΓ WHNΓ {K = -Proof} p = 
-  let MeanTermI S φ₀ φ↠φ₀ = WHNΓ p in
-  subst (λ x → E Γ x (var p)) (Prelims.sym sub-idSub) (var-EP {S = S} {L = φ₀} validΓ φ↠φ₀)
-idSubC {Γ = Γ} validΓ WHNΓ {K = -Term} x = subst (λ a → E Γ a (var x)) (Prelims.sym sub-idSub) (E-varT validΓ)
-idSubC {Γ = Γ} validΓ WHNΓ {K = -Path} e = subst (λ a → E Γ a (var e)) (Prelims.sym sub-idSub) (E-varE validΓ)
+idSubC {Γ = Γ} validΓ EctxtΓ {K = -Proof} p = subst (λ a → E Γ a (var p)) (Prelims.sym sub-idSub) (E-varP validΓ (proj₁ EctxtΓ p))
+idSubC {Γ = Γ} validΓ EctxtΓ {K = -Term} x = subst (λ a → E Γ a (var x)) (Prelims.sym sub-idSub) (E-varT validΓ)
+idSubC {Γ = Γ} validΓ EctxtΓ {K = -Path} e = subst (λ a → E Γ a (var e)) (Prelims.sym sub-idSub) (E-varE validΓ (proj₂ EctxtΓ e))
 \end{code}
 }
 
@@ -215,17 +217,6 @@ wteE : ∀ {V} {Γ : Context V} {A P M B N L L' Q} →
   E Γ (appT M L ≡〈 B 〉 appT N L') (app* L L' (λλλ A P) Q)
 wteE {V} {Γ} {A} {P} {M} {B} {N} {L} {L'} {Q} ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' PLL'P∈EΓML≡NL' = 
   pre-wteE {BB = []} {NN = []} {[]} {[]} ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' [] [] [] PLL'P∈EΓML≡NL'
-
---TODO Duplications with PL
-postulate extend-subC : ∀ {U} {V} {σ : Sub U V} {Γ : Context U} {Δ : Context V} {K} {M : Expression V (varKind K)} {A : Expression U (parent K)} →
-                      σ ∶ Γ ⇒C Δ → E Δ (A ⟦ σ ⟧) M → 
-                      x₀:= M • liftSub K σ ∶ Γ , A ⇒C Δ
-
-subCRS : ∀ {U V W} {ρ : Rep V W} {σ : Sub U V} {Γ Δ Θ} →
-         ρ ∶ Δ ⇒R Θ → σ ∶ Γ ⇒C Δ → valid Θ → ρ •RS σ ∶ Γ ⇒C Θ
-subCRS {ρ = ρ} {σ = σ} {Γ} {Θ = Θ} ρ∶Δ⇒RΘ σ∶Γ⇒CΔ validΘ x = 
-  subst (λ a → E Θ a ((σ _ x) 〈 ρ 〉)) {typeof x Γ ⟦ σ ⟧ 〈 ρ 〉} {typeof x Γ ⟦ ρ •RS σ ⟧} 
-    (Prelims.sym (sub-compRS (typeof x Γ))) (E-rep (σ∶Γ⇒CΔ x) ρ∶Δ⇒RΘ validΘ)
 \end{code}
 }
 \end{lemma}

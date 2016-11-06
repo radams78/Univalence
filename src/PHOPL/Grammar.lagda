@@ -299,6 +299,7 @@ addpath Γ A = Γ ,T A ,T A ,E var x₁ ≡〈 A 〉 var x₀
 
 Given a substitution $\sigma : U \rightarrow V$, we introduce abbreviations for the substitutions $(\sigma, z := x)$ and $(\sigma , z := y) : U \cup \{ z \} \rightarrow V \cup \{ x , y , e \}$.
 
+\AgdaHide{
 \begin{code}
 sub↖ : ∀ {U} {V} → Sub U V → Sub (U , -Term) (V , -Term , -Term , -Path)
 sub↖ σ _ x₀ = var x₂

@@ -17,13 +17,14 @@ open import PHOPL.Rules
 open import PHOPL.Meta
 open import PHOPL.KeyRedex
 \end{code}
+}
 
 \section{Computable Expressions}
 
 We define a model of the type theory with types as sets of terms.  For every type (proposition, equation) $T$ in context $\Gamma$, define
 the set of \emph{computable} terms (proofs, paths) $E_\Gamma(T)$.
 
-\input{Computable/Meaning}
+\input{PHOPL/Computable/Meaning}
 \AgdaHide{
 \begin{code}
 open import PHOPL.Computable.Meaning public
@@ -204,7 +205,7 @@ postulate E-rep : ∀ {U V Γ Δ} {ρ : Rep U V} {K} {A : Expression U (parent K
 \end{code}
 }
 
-\begin{lm}
+\begin{lemma}
 \label{lm:varcompute1}
 Let $\phi$ be a weakly normalizable term.
 \begin{enumerate}
@@ -214,6 +215,8 @@ If $\Gamma \vald$, $φ$ is weakly normalizable and $p : \phi \in \Gamma$ then $p
 \begin{code}
 var-EP : ∀ {V S} {L : Meaning V S} {Γ : Context V} {p : Var V -Proof} → 
          valid Γ → typeof p Γ ↠ decode-Meaning L → E Γ (typeof p Γ) (var p)
+
+postulate E-varP : ∀ {V} {Γ : Context V} {p : Var V -Proof} → valid Γ → E Γ (ty Ω) (typeof p Γ) → E Γ (typeof p Γ) (var p)
 \end{code}
 
 \item
@@ -223,7 +226,7 @@ $E_\Gamma(\phi) \subseteq \SN$.
 E-SNP : ∀ {V} {Γ : Context V} {φ : Term V} {δ : Proof V} → E Γ φ δ → SN δ
 \end{code}
 \end{enumerate}
-\end{lm}
+\end{lemma}
 
 \begin{proof}
 The two parts are proved simultaneously by induction on $\nf{\phi}$.
@@ -357,13 +360,18 @@ postulate E-SNT : ∀ {V} {Γ : Context V} {A} {M : Term V} → E Γ (ty A) M �
 If $\Gamma \vald$ and $e : M =_A N \in \Gamma$ and $M, N \in E_\Gamma(A)$ then $e \in E_\Gamma(M =_A N)$.
 
 \begin{code}
-postulate E-varE : ∀ {V} {Γ : Context V} {x : Var V -Path} → valid Γ → E Γ (typeof x Γ) (var x)
+E-eq : ∀ {V} → Context V → Equation V → Set
+E-eq Γ (app (-eq A) (M ∷ N ∷ [])) = E Γ (ty A) M × E Γ (ty A) N
+
+postulate E-varE : ∀ {V} {Γ : Context V} {x : Var V -Path} → valid Γ → E-eq Γ (typeof x Γ) → E Γ (typeof x Γ) (var x)
 \end{code}
 \item
 For all $M, N \in E_\Gamma(A)$, we have $E_\Gamma(M =_A N) \subseteq \SN$.
 
 \begin{code}
 postulate E-SNE : ∀ {V} {Γ : Context V} {Eq : Equation V} {P : Path V} → E Γ Eq P → SN P
+
+postulate E-SN : ∀ {V} {Γ : Context V} {K} {A : Expression V (parent K)} {M : Expression V (varKind K)} → E Γ A M → SN M
 \end{code}
 \end{enumerate}
 \end{lemma}
@@ -535,7 +543,8 @@ postulate convE-E : ∀ {V} {Γ : Context V} {M N M' N' : Term V} {A} {P : Path 
 
 \AgdaHide{
 \begin{code}
-postulate ⊥-E : ∀ {V} {Γ : Context V} → valid Γ → E Γ (ty Ω) ⊥
+E-⊥ : ∀ {V} {Γ : Context V} → valid Γ → E Γ (ty Ω) ⊥
+E-⊥ validΓ = EI (⊥R validΓ) SN⊥
 
 postulate ⊃-E : ∀ {V} {Γ : Context V} {φ} {ψ} → E Γ (ty Ω) φ → E Γ (ty Ω) ψ → E Γ (ty Ω) (φ ⊃ ψ)
 

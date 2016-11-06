@@ -10,11 +10,10 @@ open import PHOPL.Grammar
 open import PHOPL.Rules
 open import PHOPL.PathSub
 open import PHOPL.Red
-open import PHOPL.Neutral
 open import PHOPL.Meta
 open import PHOPL.Computable
 open import PHOPL.SubC
-open import PHOPL.SN
+--open import PHOPL.SN
 \end{code}
 }
 
@@ -28,8 +27,8 @@ If $\Gamma \vdash t : T$ and $\sigma : \Gamma \Rightarrow \Delta$ is computable,
 
 \begin{code}
 Computable-Sub : ∀ {U V K} (σ : Sub U V) {Γ Δ} 
-  {M : Expression U (varKind K)} {A} →
-  σ ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → E Δ (A ⟦ σ ⟧) (M ⟦ σ ⟧)
+                 {M : Expression U (varKind K)} {A} →
+                 σ ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → E Δ (A ⟦ σ ⟧) (M ⟦ σ ⟧)
 \end{code}
 
 \item
@@ -39,8 +38,8 @@ and $\rho$ are all computable, and $\Delta \vald$, then $M \{ \tau : \sigma \sim
 
 \begin{code}
 computable-path-substitution : ∀ {U V} (τ : PathSub U V) {σ σ' Γ Δ M A} → 
-  σ ∶ Γ ⇒C Δ → σ' ∶ Γ ⇒C Δ → τ ∶ σ ∼ σ' ∶ Γ ⇒C Δ → Γ ⊢ M ∶ ty A → valid Δ → 
-  E Δ (M ⟦ σ ⟧ ≡〈 A 〉 M ⟦ σ' ⟧) (M ⟦⟦ τ ∶ σ ∼ σ' ⟧⟧) 
+                               σ ∶ Γ ⇒C Δ → σ' ∶ Γ ⇒C Δ → τ ∶ σ ∼ σ' ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → 
+                               E Δ (M ⟦ σ ⟧ ≡〈 yt A 〉 M ⟦ σ' ⟧) (M ⟦⟦ τ ∶ σ ∼ σ' ⟧⟧) 
 \end{code}
 
 \end{enumerate}
@@ -72,38 +71,122 @@ $\bot\{\} \in E_\Delta(\bot =_\Omega \bot)$.
 
 \AgdaHide{
 \begin{code}
-Computable-Sub σ σ∶Γ⇒CΔ (⊥R validΓ) validΔ = {!!}
+
+Computable-Sub _ _ (⊥R _) validΔ = E-⊥ validΔ
 \end{code}
 }
 
-\AgdaHide{
+\item
+$$ \infer{\Gamma \vdash \phi \supset \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} $$
+
+By the induction hypothesis, $\phi[\sigma], \psi[\sigma] \in \SN$, hence $\phi[\sigma] \supset \psi[\sigma] \in \SN$.
+
+Also by the induction hypothesis, we have $\phi[\sigma]\{\} \in E_\Delta(\phi[\sigma] =_\Omega \phi[\sigma])$, and
+$\psi[\sigma]\{\} \in E_\Delta(\psi[\sigma] =_\Omega \psi[\sigma])$.  Therefore, $\phi[\sigma]\{\} \supset^* \psi[\sigma]\{\}
+\in E_\Delta(\phi[\sigma] \supset \psi[\sigma] =_\Omega \phi[\sigma] \supset \psi[\sigma])$ by Lemma \ref{lm:Esupset}.
+
+\begin{code}
+Computable-Sub σ σ∶Γ⇒CΔ (⊃R Γ⊢φ∶Ω Γ⊢ψ∶Ω) validΔ = 
+  ⊃-E (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢φ∶Ω validΔ) (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢ψ∶Ω validΔ)
+\end{code}
+
+\item
+$$ \infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} $$
+
+\begin{enumerate}
+\item[1]
+We have $M[\sigma] \in E_\Delta(A \rightarrow B)$ and $N[\sigma] \in E_\Delta(A)$, so $M[\sigma] N[\sigma] \in E_\Delta(B)$.
+
 \begin{code}
 Computable-Sub σ σ∶Γ⇒CΔ (appR Γ⊢M∶A⇛B Γ⊢N∶A) validΔ = appT-E validΔ (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢M∶A⇛B validΔ) (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢N∶A validΔ)
-Computable-Sub σ {Δ = Δ} σ∶Γ⇒CΔ (ΛR {A = A} {M} {B} Γ,A⊢M∶B) validΔ = 
-  let Δ,A⊢M⟦σ⟧∶B : Δ ,T A ⊢ M ⟦ liftSub _ σ ⟧ ∶ ty B
-      Δ,A⊢M⟦σ⟧∶B = substitution Γ,A⊢M∶B (ctxTR validΔ) (liftSub-typed (subC-typed σ∶Γ⇒CΔ)) in
-  EI 
-  (ΛR Δ,A⊢M⟦σ⟧∶B) 
-  ((λ Θ {ρ} {N} ρ∶Δ⇒RΘ Θ⊢N∶A computeN → 
-    let validΘ : valid Θ
-        validΘ = context-validity Θ⊢N∶A in
-    E.computable (wteT (weakening Δ,A⊢M⟦σ⟧∶B (ctxTR validΘ) (liftRep-typed ρ∶Δ⇒RΘ)) (EI Θ⊢N∶A computeN) 
-    (subst (E Θ (ty B)) 
-      (let open ≡-Reasoning in 
-      begin
-        M ⟦ x₀:= N • liftSub _ (ρ •RS σ) ⟧
-      ≡⟨ sub-comp M ⟩
-        M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧
-      ≡⟨ sub-congl (sub-congr M liftSub-compRS) ⟩
-        M ⟦ liftRep _ ρ •RS liftSub _ σ ⟧ ⟦ x₀:= N ⟧
-      ≡⟨ sub-congl (sub-compRS M) ⟩
-        M ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 ⟦ x₀:= N ⟧
-      ∎) 
-      (Computable-Sub (x₀:= N • liftSub _ (ρ •RS σ)) 
-      (extend-subC (subCRS ρ∶Δ⇒RΘ σ∶Γ⇒CΔ validΘ) (EI Θ⊢N∶A computeN)) Γ,A⊢M∶B validΘ)))) ,p 
-  (λ Θ ρ∶Γ⇒RΔ Θ⊢Q∶N≡N' computeN computeN' computeQ → {!!}))
-Computable-Sub σ σ∶Γ⇒CΔ (⊃R Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
-Computable-Sub σ σ∶Γ⇒CΔ (appPR Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
+\end{code}
+
+\item[4]
+We have $M\{\tau\} \in E_\Delta(M [ \rho ] =_{A \rightarrow B} M [ \sigma ])$ and $N[\rho], N[\sigma] \in E_\Delta(A)$,
+$N \{ \tau \} \in E_\Delta(N[ \rho ] =_A N[\sigma])$ by the induction hypothesis (1) and (4).  Therefore,
+$M \{ \tau \}_{N[\rho] N[\sigma]} N \{ \tau \} \in E_\Delta(M[\rho] N[\rho] =_B M[\sigma] N[\sigma])$.
+
+\end{enumerate}
+
+\item
+$$\infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \phi}$$
+
+We have $\delta [ \sigma ] \in E_\Delta(\phi [ \sigma ] \supset \psi [ \sigma ])$ and $\epsilon [ \sigma ] \in E_\Delta(\phi [ \sigma ])$,
+hence $\delta [ \sigma ] \epsilon [\sigma] \in E_\Delta(\psi [ \sigma ])$.
+
+\begin{code}
+Computable-Sub σ σ∶Γ⇒CΔ (appPR Γ⊢δ∶φ⊃ψ Γ⊢ε∶φ) validΔ = appP-E 
+  (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢δ∶φ⊃ψ validΔ) 
+  (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢ε∶φ validΔ)
+\end{code}
+
+\item
+$$ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B}$$
+
+\begin{enumerate}
+\item[1]
+\begin{code}
+Computable-Sub σ {Γ = Γ} {Δ = Δ} σ∶Γ⇒CΔ (ΛR {A = A} {M} {B} Γ,A⊢M∶B) validΔ = EI
+\end{code}
+Typability is easy to check.
+
+\begin{code}
+  (ΛR (substitution Γ,A⊢M∶B (ctxTR validΔ) (liftSub-typed (subC-typed σ∶Γ⇒CΔ)))) (
+\end{code}
+We must also check the following.
+\begin{itemize}
+\item
+Let $\Theta \supseteq \Delta$ and $N \in E_\Theta(A)$.  We must show that $(\lambda x:A.M[\sigma])N \in E_\Theta(B)$.
+\begin{code}
+  (λ {W} Θ {ρ} {N} ρ∶Δ⇒RΘ Θ⊢N∶A computeN → 
+\end{code}
+
+We have that $(\sigma, x:=N) : (\Gamma, x : A) \rightarrow \Theta$ is computable, 
+\begin{code}
+  let σN∶ΓA⇒CΘ : extendSub (ρ •RS σ) N ∶ Γ ,T A ⇒C Θ
+      σN∶ΓA⇒CΘ = extendSubC (compRSC ρ∶Δ⇒RΘ σ∶Γ⇒CΔ) (EI Θ⊢N∶A computeN) in
+\end{code}
+and so the induction hypothesis gives
+$M[\sigma, x:=N] \in E_\Theta(B)$.
+\begin{code}
+  let EΘMN : E Θ (ty B) (M ⟦ extendSub (ρ •RS σ) N ⟧)
+      EΘMN = Computable-Sub (extendSub (ρ •RS σ) N) σN∶ΓA⇒CΘ Γ,A⊢M∶B (context-validity Θ⊢N∶A) in 
+\end{code}
+The result follows by Lemma \ref{lm:wte}.\ref{lm:wteT}.
+\begin{code}
+  {!!})
+\end{code}
+\item
+\begin{code}
+  ,p {!!}
+\end{code}
+We must show that $\triplelambda e:x =_A y. M [ \sigma ] \{ x := e : x \sim y \} \equiv
+\triplelambda e:x =_A y. M \{ z_1 := \sigma(z_1) \{ \}, \ldots, z_n := \sigma(z_n)\{\}, x := e \} \in E_\Delta(\lambda x:A.M[\sigma] =_{A \rightarrow B} \lambda x:A.M[\sigma])$.
+
+So let $\Theta \supseteq \Delta$ and $N, N' \in E_\Theta(A)$, $P \in E_\Theta(N =_A N')$.  Then $(z_1 := \sigma(z_1)\{\}, \ldots, z_n := \sigma(z_n)\{\}, x := P) : (\sigma, x:=N) \sim (\sigma, x:=N') : (\Gamma, x:A) \rightarrow \Theta$
+is computable, and so the induction hypothesis gives
+\[ M \{ z_i := \sigma(z_i) \{\}, x := P \} \in E_\Theta(M [ \sigma, x:=N] =_B M [\sigma, x:=N']) \enspace . \]
+Therefore, by Lemma \ref{lm:wte}.\ref{lm:wteE}, we have that $(\triplelambda e:x =_A y. M \{ z_i := \sigma(z_i) \{\}, x := e \})_{N N'} P \in E_\Theta(M[\sigma, x:=N] =_B M[\sigma, x:=N'])$.
+
+Hence Lemma \ref{lm:conv-compute} gives $(\triplelambda e:x =_A y. M \{ z_i := \sigma(z_i) \{\}, x := e \})_{N N'} P \in E_\Theta((\lambda x:A.M[\sigma])N =_B (\lambda x:A.M[\sigma])N')$
+as required.
+\begin{code}
+  )
+\end{code}
+\end{itemize}
+\item[4]
+Let $\Theta \supseteq \Delta$ and $N, N' \in E_\Theta(A)$, $P \in E_\Theta(N =_A N')$.  Then $(\tau, x:=P) : (\rho, x:=N) \sim (\sigma, x:=N') : (\Gamma, x :A) \rightarrow \Delta$ is computable,
+and so the induction hypothesis gives
+\[ M \{ \tau, x := P \} \in E_\Theta(M[\rho, x:=N] =_B M[\sigma, x:=N']) \enspace . \]
+By Lemma \ref{lm:conv-compute},
+\[ M \{ \tau, x := P \} \in E_\Theta((\lambda x:A.M[\rho]) N =_B (\lambda x:A.M[\sigma]) N') \]
+and so Lemma \ref{lm:wte}.\ref{lm:wteE} gives
+\[ (\triplelambda e:x=_A y.M \{ \tau, x:=e \})_{N N'} P \in E_\Theta((\lambda x:A.M[\rho]) N =_B (\lambda x:A.M[\sigma]) N') \]
+as required.
+\end{enumerate}
+
+\AgdaHide{
+\begin{code}
 Computable-Sub σ σ∶Γ⇒CΔ (ΛPR Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (convR Γ⊢M∶A Γ⊢M∶A₁ x) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (refR Γ⊢M∶A) validΔ = {!!}
@@ -115,7 +198,16 @@ Computable-Sub σ σ∶Γ⇒CΔ (lllR Γ⊢M∶A) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (app*R Γ⊢M∶A Γ⊢M∶A₁ Γ⊢M∶A₂ Γ⊢M∶A₃) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (convER Γ⊢M∶A Γ⊢M∶A₁ Γ⊢M∶A₂ M≃M' N≃N') validΔ = {!!}
 
-computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' Γ⊢M∶A validΔ = {!!}
+computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' (varR x validΓ) validΔ = τ∶σ∼σ' x
+computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' (appR Γ⊢M∶A⇛B Γ⊢N∶A) validΔ = 
+  app*-E 
+    (computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' Γ⊢M∶A⇛B validΔ) 
+    (computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' Γ⊢N∶A validΔ) 
+    (Computable-Sub _ σ∶Γ⇒CΔ Γ⊢N∶A validΔ) 
+    (Computable-Sub _ σ'∶Γ⇒CΔ Γ⊢N∶A validΔ)
+computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' (ΛR Γ⊢M∶A) validΔ = {!!}
+computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' (⊥R validΓ) validΔ = {!!}
+computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' (⊃R Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
 
 {- Computable-Sub σ σ∶Γ⇒Δ (varR x validΓ) validΔ _ = σ∶Γ⇒Δ x
 Computable-Sub {V = V} σ {Δ = Δ} σ∶Γ⇒Δ (appR Γ⊢M∶A⇛B Γ⊢N∶A) validΔ _ = 
@@ -422,63 +514,6 @@ computable-path-substitution U V τ σ σ' Γ Δ ._ ._ σ∶Γ⇒CΔ σ'∶Γ⇒
 \end{code}
 }
 
-\item
-$$ \infer{\Gamma \vdash \phi \supset \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} $$
-
-By the induction hypothesis, $\phi[\sigma], \psi[\sigma] \in \SN$, hence $\phi[\sigma] \supset \psi[\sigma] \in \SN$.
-
-Also by the induction hypothesis, we have $\phi[\sigma]\{\} \in E_\Delta(\phi[\sigma] =_\Omega \phi[\sigma])$, and
-$\psi[\sigma]\{\} \in E_\Delta(\psi[\sigma] =_\Omega \psi[\sigma])$.  Therefore, $\phi[\sigma]\{\} \supset^* \psi[\sigma]\{\}
-\in E_\Delta(\phi[\sigma] \supset \psi[\sigma] =_\Omega \phi[\sigma] \supset \psi[\sigma])$ by Lemma \ref{lm:Esupset}.
-\item
-$$ \infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} $$
-
-\begin{enumerate}
-\item[1]
-We have $M[\sigma] \in E_\Delta(A \rightarrow B)$ and $N[\sigma] \in E_\Delta(A)$, so $M[\sigma] N[\sigma] \in E_\Delta(B)$.
-\item[4]
-We have $M\{\tau\} \in E_\Delta(M [ \rho ] =_{A \rightarrow B} M [ \sigma ])$ and $N[\rho], N[\sigma] \in E_\Delta(A)$,
-$N \{ \tau \} \in E_\Delta(N[ \rho ] =_A N[\sigma])$ by the induction hypothesis (1) and (4).  Therefore,
-$M \{ \tau \}_{N[\rho] N[\sigma]} N \{ \tau \} \in E_\Delta(M[\rho] N[\rho] =_B M[\sigma] N[\sigma])$.
-\end{enumerate}
-\item
-$$\infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \phi}$$
-
-We have $\delta [ \sigma ] \in E_\Delta(\phi [ \sigma ] \supset \psi [ \sigma ])$ and $\epsilon [ \sigma ] \in E_\Delta(\phi [ \sigma ])$,
-hence $\delta [ \sigma ] \epsilon [\sigma] \in E_\Delta(\psi [ \sigma ])$.
-\item
-$$ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B}$$
-
-\begin{enumerate}
-\item[1]
-\begin{itemize}
-\item
-Let $\Theta \supseteq \Delta$ and $N \in E_\Theta(A)$.  We must show that $(\lambda x:A.M[\sigma])N \in E_\Theta(B)$.
-
-We have that $(\sigma, x:=N) : (\Gamma, x : A) \rightarrow \Theta$ is computable, and so the induction hypothesis gives
-$M[\sigma, x:=N] \in E_\Theta(B)$.  The result follows by Lemma \ref{lm:wte}.\ref{lm:wteT}.
-\item
-We must show that $\triplelambda e:x =_A y. M [ \sigma ] \{ x := e : x \sim y \} \equiv
-\triplelambda e:x =_A y. M \{ z_1 := \sigma(z_1) \{ \}, \ldots, z_n := \sigma(z_n)\{\}, x := e \} \in E_\Delta(\lambda x:A.M[\sigma] =_{A \rightarrow B} \lambda x:A.M[\sigma])$.
-
-So let $\Theta \supseteq \Delta$ and $N, N' \in E_\Theta(A)$, $P \in E_\Theta(N =_A N')$.  Then $(z_1 := \sigma(z_1)\{\}, \ldots, z_n := \sigma(z_n)\{\}, x := P) : (\sigma, x:=N) \sim (\sigma, x:=N') : (\Gamma, x:A) \rightarrow \Theta$
-is computable, and so the induction hypothesis gives
-\[ M \{ z_i := \sigma(z_i) \{\}, x := P \} \in E_\Theta(M [ \sigma, x:=N] =_B M [\sigma, x:=N']) \enspace . \]
-Therefore, by Lemma \ref{lm:wte}.\ref{lm:wteE}, we have that $(\triplelambda e:x =_A y. M \{ z_i := \sigma(z_i) \{\}, x := e \})_{N N'} P \in E_\Theta(M[\sigma, x:=N] =_B M[\sigma, x:=N'])$.
-
-Hence Lemma \ref{lm:conv-compute} gives $(\triplelambda e:x =_A y. M \{ z_i := \sigma(z_i) \{\}, x := e \})_{N N'} P \in E_\Theta((\lambda x:A.M[\sigma])N =_B (\lambda x:A.M[\sigma])N')$
-as required.
-\end{itemize}
-\item[4]
-Let $\Theta \supseteq \Delta$ and $N, N' \in E_\Theta(A)$, $P \in E_\Theta(N =_A N')$.  Then $(\tau, x:=P) : (\rho, x:=N) \sim (\sigma, x:=N') : (\Gamma, x :A) \rightarrow \Delta$ is computable,
-and so the induction hypothesis gives
-\[ M \{ \tau, x := P \} \in E_\Theta(M[\rho, x:=N] =_B M[\sigma, x:=N']) \enspace . \]
-By Lemma \ref{lm:conv-compute},
-\[ M \{ \tau, x := P \} \in E_\Theta((\lambda x:A.M[\rho]) N =_B (\lambda x:A.M[\sigma]) N') \]
-and so Lemma \ref{lm:wte}.\ref{lm:wteE} gives
-\[ (\triplelambda e:x=_A y.M \{ \tau, x:=e \})_{N N'} P \in E_\Theta((\lambda x:A.M[\rho]) N =_B (\lambda x:A.M[\sigma]) N') \]
-as required.
-\end{enumerate}
 \item
 $$\infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \supset \psi}{\Gamma, p : \phi \vdash \delta : \psi}$$
 
@@ -880,6 +915,8 @@ Every well-typed term, proof and path is strongly normalizing.
 
 %<*Strong-Normalization>
 \begin{code}
+postulate all-Ectxt : ∀ {V} {Γ : Context V} → valid Γ → Ectxt Γ
+
 Strong-Normalization : ∀ V K (Γ : Context V) 
   (M : Expression V (varKind K)) A → Γ ⊢ M ∶ A → SN M
 \end{code}
@@ -887,9 +924,9 @@ Strong-Normalization : ∀ V K (Γ : Context V)
 
 \AgdaHide{
 \begin{code}
-Strong-Normalization V K Γ M A Γ⊢M∶A = E-SN 
+Strong-Normalization V K Γ M A Γ⊢M∶A = E-SN
   (subst (E Γ _) sub-idSub
-  (Computable-Sub (idSub V) idSubC Γ⊢M∶A (context-validity Γ⊢M∶A)))
+  (Computable-Sub (idSub V) (idSubC (context-validity Γ⊢M∶A) (all-Ectxt (context-validity Γ⊢M∶A))) Γ⊢M∶A (context-validity Γ⊢M∶A)))
 \end{code}
 }
 
