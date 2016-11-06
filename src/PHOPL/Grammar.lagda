@@ -237,6 +237,10 @@ Pi : ∀ {n} → snocVec Type n → Type → Type
 Pi [] B = B
 Pi (AA snoc A) B = Pi AA (A ⇛ B)
 
+APPl : ∀ {V} → Term V → snocList (Term V) → Term V
+APPl M [] = M
+APPl M (NN snoc N) = appT (APPl M NN) N
+
 APP : ∀ {V n} → Term V → snocVec (Term V) n → Term V
 APP M [] = M
 APP M (NN snoc N) = appT (APP M NN) N
