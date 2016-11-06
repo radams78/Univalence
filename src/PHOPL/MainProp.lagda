@@ -26,6 +26,11 @@ Our main theorem is as follows.
 If $\Gamma \vdash t : T$ and $\sigma : \Gamma \Rightarrow \Delta$ is computable, and $\Delta \vald$, then $t[\sigma] \in E_\Delta(T[\sigma])$.
 
 \begin{code}
+toPath : ∀ {U V} → Sub U V → PathSub U V
+toPath σ x = reff (σ _ x)
+
+postulate toPathC : ∀ {U V} {σ : Sub U V} {Γ Δ} → σ ∶ Γ ⇒C Δ → toPath σ ∶ σ ∼ σ ∶ Γ ⇒C Δ
+
 Computable-Sub : ∀ {U V K} (σ : Sub U V) {Γ Δ} 
                  {M : Expression U (varKind K)} {A} →
                  σ ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → E Δ (A ⟦ σ ⟧) (M ⟦ σ ⟧)
@@ -126,7 +131,7 @@ $$ \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M 
 \begin{enumerate}
 \item[1]
 \begin{code}
-Computable-Sub σ {Γ = Γ} {Δ = Δ} σ∶Γ⇒CΔ (ΛR {A = A} {M} {B} Γ,A⊢M∶B) validΔ = EI
+Computable-Sub {U} σ {Γ = Γ} {Δ = Δ} σ∶Γ⇒CΔ (ΛR {A = A} {M} {B} Γ,A⊢M∶B) validΔ = EI
 \end{code}
 Typability is easy to check.
 
@@ -181,12 +186,37 @@ We must show that $\triplelambda e:x =_A y. M [ \sigma ] \{ x := e : x \sim y \}
 
 So let $\Theta \supseteq \Delta$ and $N, N' \in E_\Theta(A)$, $P \in E_\Theta(N =_A N')$.
 \begin{code}
-  (λ Θ ρ∶Δ⇒RΘ Θ⊢P∶N≡N' computeN computeN' computeP → {!!})
+  (λ {W} Θ {ρ} {N} {N'} {P} ρ∶Δ⇒RΘ Θ⊢P∶N≡N' computeN computeN' computeP → 
 \end{code}
 Then $(z_1 := \sigma(z_1)\{\}, \ldots, z_n := \sigma(z_n)\{\}, x := P) : (\sigma, x:=N) \sim (\sigma, x:=N') : (\Gamma, x:A) \rightarrow \Theta$
-is computable, and so the induction hypothesis gives
+is computable,
+\begin{code}
+  let ρσC : ρ •RS σ ∶ Γ ⇒C Θ
+      ρσC = compRSC ρ∶Δ⇒RΘ σ∶Γ⇒CΔ in
+  let pathρσC : toPath (ρ •RS σ) ∶ ρ •RS σ ∼ ρ •RS σ ∶ Γ ⇒C Θ
+      pathρσC = toPathC ρσC in
+  let σ₁ : Sub (U , -Term) W
+      σ₁ = extendSub (ρ •RS σ) N in
+  let σ₂ : Sub (U , -Term) W
+      σ₂ = extendSub (ρ •RS σ) N' in
+  let τ : PathSub (U , -Term) W
+      τ = extendPS (toPath (ρ •RS σ)) P in
+  let σP∶σN∼σN' : τ ∶ σ₁ ∼ σ₂ ∶ Γ ,T A ⇒C Θ
+      σP∶σN∼σN' = extendPSC pathρσC (EI Θ⊢P∶N≡N' computeP) in 
+\end{code}
+ and so the induction hypothesis gives
 \[ M \{ z_i := \sigma(z_i) \{\}, x := P \} \in E_\Theta(M [ \sigma, x:=N] =_B M [\sigma, x:=N']) \enspace . \]
+\begin{code}
+  let MP∈EΘMN≡MN' : E Θ (M ⟦ σ₁ ⟧ ≡〈 B 〉 M ⟦ σ₂ ⟧) (M ⟦⟦ τ ∶ σ₁ ∼ σ₂ ⟧⟧)
+      MP∈EΘMN≡MN' = computable-path-substitution τ (extendSubC ρσC (EI (equation-validity₁ Θ⊢P∶N≡N') computeN)) (extendSubC ρσC (EI (equation-validity₂ Θ⊢P∶N≡N') computeN')) (extendPSC pathρσC (EI Θ⊢P∶N≡N' computeP)) Γ,A⊢M∶B (context-validity Θ⊢P∶N≡N') in 
+  let ⇑⇑⇑ρσ : Sub U (W , -Term , -Term , -Path)
+      ⇑⇑⇑ρσ = upRep •RS (upRep •RS (upRep •RS (ρ •RS σ))) in
+\end{code}
 Therefore, by Lemma \ref{lm:wte}.\ref{lm:wteE}, we have that $(\triplelambda e:x =_A y. M \{ z_i := \sigma(z_i) \{\}, x := e \})_{N N'} P \in E_\Theta(M[\sigma, x:=N] =_B M[\sigma, x:=N'])$.
+\begin{code}
+  let λλλPM∈EΘMN≡MN' : E Θ (M ⟦ σ₁ ⟧ ≡〈 B 〉 M ⟦ σ₂ ⟧) (app* N N' (λλλ A (M ⟦⟦ extendPS (toPath ⇑⇑⇑ρσ) (var x₀) ∶ extendSub ⇑⇑⇑ρσ (var x₂) ∼ extendSub ⇑⇑⇑ρσ (var x₁) ⟧⟧)) P)
+      λλλPM∈EΘMN≡MN' = {!!} in {!!})
+\end{code}
 
 Hence Lemma \ref{lm:conv-compute} gives $(\triplelambda e:x =_A y. M \{ z_i := \sigma(z_i) \{\}, x := e \})_{N N'} P \in E_\Theta((\lambda x:A.M[\sigma])N =_B (\lambda x:A.M[\sigma])N')$
 as required.
