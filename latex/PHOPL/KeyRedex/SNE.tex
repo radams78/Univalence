@@ -1,0 +1,297 @@
+\AgdaHide{
+\begin{code}%
+\>\AgdaKeyword{module} \AgdaModule{PHOPL.KeyRedex.SNE} \AgdaKeyword{where}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Nat}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims.Closure}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Grammar}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Red}\<%
+\end{code}
+}
+
+\begin{proposition}
+\label{prop:SNE}
+If $(P[x:=L, y:=L', e:=Q]_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^+ \delta_1 \cdots \delta_m \in \SN$ and $L, L', Q \in \SN$ then $((\triplelambda e:x =_A y.P)_{L L'} Q_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^+ \delta_1 \cdots \delta_m \in \SN$.
+\end{proposition}
+
+\AgdaHide{
+\begin{code}%
+\>\AgdaFunction{pre-lmSNE₁} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaBound{Q} \AgdaBound{A} \AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C} \AgdaSymbol{:} \AgdaFunction{Path} \AgdaBound{V} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaBound{C} \AgdaSymbol{(}\AgdaBound{P} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{L₁} \AgdaSymbol{→} \AgdaBound{L} \AgdaDatatype{⇒} \AgdaBound{L₁} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L₁} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{L'₁} \AgdaSymbol{→} \AgdaBound{L'} \AgdaDatatype{⇒} \AgdaBound{L'₁} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'₁} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{P₁} \AgdaSymbol{→} \AgdaBound{P} \AgdaDatatype{⇒} \AgdaBound{P₁} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P₁}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{Q₁} \AgdaSymbol{→} \AgdaBound{Q} \AgdaDatatype{⇒} \AgdaBound{Q₁} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q₁}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q} \AgdaDatatype{⇒} \AgdaBound{F} \AgdaSymbol{→} \AgdaBound{C} \AgdaBound{F}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₁} \AgdaBound{hyp-red} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₁} \AgdaBound{hyp-red} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{(}\AgdaInductiveConstructor{βE} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_)))} \AgdaSymbol{=} \AgdaBound{hyp-red}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₁} \AgdaSymbol{\_} \AgdaBound{hypL} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaBound{L⇒L'}\AgdaSymbol{))} \AgdaSymbol{=} \AgdaBound{hypL} \AgdaSymbol{\_} \AgdaBound{L⇒L'}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₁} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaBound{hypL'} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaBound{L₁⇒L'₁}\AgdaSymbol{)))} \AgdaSymbol{=} \AgdaBound{hypL'} \AgdaSymbol{\_} \AgdaBound{L₁⇒L'₁}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₁} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaSymbol{()))))))}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₁} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{()))))))}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₁} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaBound{hypP} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaBound{P⇒P'}\AgdaSymbol{))))))} \AgdaSymbol{=} \AgdaBound{hypP} \AgdaSymbol{\_} \AgdaBound{P⇒P'}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₁} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{()))))))}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₁} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaBound{hypQ} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaBound{Q⇒Q'}\AgdaSymbol{)))))} \AgdaSymbol{=} \AgdaBound{hypQ} \AgdaSymbol{\_} \AgdaBound{Q⇒Q'}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₁} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{())))))}\<%
+\\
+%
+\\
+\>\AgdaFunction{pre-lmSNE₂} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{n}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaBound{Q} \AgdaBound{A} \AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{:} \AgdaDatatype{snocVec} \AgdaSymbol{(}\AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{)} \AgdaBound{n}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{PP}\AgdaSymbol{\}} \<[83]%
+\>[83]\<%
+\\
+\>[0]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{\{}\AgdaBound{C} \AgdaSymbol{:} \AgdaFunction{Path} \AgdaBound{V} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaBound{P} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{)} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{MM'} \AgdaSymbol{→} \AgdaDatatype{redVT} \AgdaBound{MM} \AgdaBound{MM'} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM'} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{NN'} \AgdaSymbol{→} \AgdaDatatype{redVT} \AgdaBound{NN} \AgdaBound{NN'} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN'} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{L₁} \AgdaSymbol{→} \AgdaBound{L} \AgdaDatatype{⇒} \AgdaBound{L₁} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L₁} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{L'₁} \AgdaSymbol{→} \AgdaBound{L'} \AgdaDatatype{⇒} \AgdaBound{L'₁} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'₁} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{P₁} \AgdaSymbol{→} \AgdaBound{P} \AgdaDatatype{⇒} \AgdaBound{P₁} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P₁}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{Q₁} \AgdaSymbol{→} \AgdaBound{Q} \AgdaDatatype{⇒} \AgdaBound{Q₁} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q₁}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{PP'} \AgdaSymbol{→} \AgdaDatatype{osrVPa} \AgdaBound{PP} \AgdaBound{PP'} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP'}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP} \AgdaDatatype{⇒} \AgdaBound{F} \AgdaSymbol{→} \AgdaBound{C} \AgdaBound{F}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₂} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaBound{hyp-red} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaBound{hypL} \AgdaBound{hypL'} \AgdaBound{hypP} \AgdaBound{hypQ} \AgdaSymbol{\_} \AgdaBound{PQPP⇒F} \AgdaSymbol{=} \AgdaFunction{pre-lmSNE₁} \AgdaBound{hyp-red} \AgdaBound{hypL} \AgdaBound{hypL'} \AgdaBound{hypP} \AgdaBound{hypQ} \AgdaBound{PQPP⇒F}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₂} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaInductiveConstructor{[]} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{}\AgdaInductiveConstructor{[]} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{}\AgdaInductiveConstructor{[]} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₂} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaInductiveConstructor{[]} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{}\AgdaInductiveConstructor{[]} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{}\AgdaInductiveConstructor{[]} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₂} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\_} \AgdaBound{hypMM} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaBound{M⇒M'}\AgdaSymbol{))} \AgdaSymbol{=} \AgdaBound{hypMM} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redright} \AgdaBound{M⇒M'}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₂} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaBound{hypNN} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaBound{N⇒N'}\AgdaSymbol{)))} \AgdaSymbol{=} \AgdaBound{hypNN} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redright} \AgdaBound{N⇒N'}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₂} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{\_} \AgdaInductiveConstructor{snoc} \AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaBound{hypPP} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaBound{P⇒P'}\AgdaSymbol{)))))} \AgdaSymbol{=} \AgdaBound{hypPP} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redright} \AgdaBound{P⇒P'}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₂} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{())))))}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₂} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₂} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₂} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaBound{MM} \AgdaInductiveConstructor{snoc} \AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{NN} \AgdaInductiveConstructor{snoc} \AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{PP} \AgdaInductiveConstructor{snoc} \AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{C} \AgdaSymbol{=} \AgdaBound{C}\AgdaSymbol{\}} \AgdaBound{hyp-red} \AgdaBound{hypMM} \AgdaBound{hypNN} \AgdaBound{hypL} \AgdaBound{hypL'} \AgdaBound{hypP} \AgdaBound{hypQ} \AgdaBound{hypPP} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaBound{PQPP⇒F}\AgdaSymbol{))))} \AgdaSymbol{=} \<[143]%
+\>[143]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{pre-lmSNE₂} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaBound{MM}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{NN}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{PP}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{C} \AgdaSymbol{=} \AgdaSymbol{λ} \AgdaBound{x} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{M} \AgdaBound{N} \AgdaBound{x} \AgdaBound{P}\AgdaSymbol{)\}} \<[62]%
+\>[62]\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaBound{hyp-red} \<[12]%
+\>[12]\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaSymbol{(λ} \AgdaBound{\_} \AgdaBound{MM⇒MM'} \AgdaSymbol{→} \AgdaBound{hypMM} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redleft} \AgdaBound{MM⇒MM'}\AgdaSymbol{))} \AgdaSymbol{(λ} \AgdaBound{\_} \AgdaBound{NN⇒NN'} \AgdaSymbol{→} \AgdaBound{hypNN} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redleft} \AgdaBound{NN⇒NN'}\AgdaSymbol{))}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaBound{hypL} \AgdaBound{hypL'} \AgdaBound{hypP} \AgdaBound{hypQ} \<[25]%
+\>[25]\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaSymbol{(λ} \AgdaBound{\_} \AgdaBound{PP⇒PP'} \AgdaSymbol{→} \AgdaBound{hypPP} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redleft} \AgdaBound{PP⇒PP'}\AgdaSymbol{))} \<[44]%
+\>[44]\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaBound{PQPP⇒F}\<%
+\\
+%
+\\
+\>\AgdaFunction{pre-lmSNE₃} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{n}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaBound{Q} \AgdaBound{A} \AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{:} \AgdaDatatype{snocVec} \AgdaSymbol{(}\AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{)} \AgdaBound{n}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{PP}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C} \AgdaSymbol{:} \AgdaFunction{Proof} \AgdaBound{V} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[4]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaBound{P} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[4]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{MM'} \AgdaSymbol{→} \AgdaDatatype{redVT} \AgdaBound{MM} \AgdaBound{MM'} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM'} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{)))} \AgdaSymbol{→}\<%
+\\
+\>[4]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{NN'} \AgdaSymbol{→} \AgdaDatatype{redVT} \AgdaBound{NN} \AgdaBound{NN'} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN'} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{)))} \AgdaSymbol{→}\<%
+\\
+\>[4]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{L₁} \AgdaSymbol{→} \AgdaBound{L} \AgdaDatatype{⇒} \AgdaBound{L₁} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L₁} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{)))} \AgdaSymbol{→}\<%
+\\
+\>[4]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{L'₁} \AgdaSymbol{→} \AgdaBound{L'} \AgdaDatatype{⇒} \AgdaBound{L'₁} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'₁} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{)))} \AgdaSymbol{→}\<%
+\\
+\>[4]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{P₁} \AgdaSymbol{→} \AgdaBound{P} \AgdaDatatype{⇒} \AgdaBound{P₁} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P₁}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{)))} \AgdaSymbol{→}\<%
+\\
+\>[4]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{Q₁} \AgdaSymbol{→} \AgdaBound{Q} \AgdaDatatype{⇒} \AgdaBound{Q₁} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q₁}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{)))} \AgdaSymbol{→}\<%
+\\
+\>[4]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{PP'} \AgdaSymbol{→} \AgdaDatatype{osrVPa} \AgdaBound{PP} \AgdaBound{PP'} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP'}\AgdaSymbol{)))} \AgdaSymbol{→}\<%
+\\
+\>[4]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{)} \AgdaDatatype{⇒} \AgdaBound{F} \AgdaSymbol{→} \AgdaBound{C} \AgdaBound{F}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₃} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₃} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₃} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₃} \AgdaSymbol{\{}\AgdaArgument{MM} \AgdaSymbol{=} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₃} \AgdaSymbol{\{}\AgdaArgument{C} \AgdaSymbol{=} \AgdaBound{C}\AgdaSymbol{\}} \AgdaBound{hyp-red} \AgdaBound{hypMM} \AgdaBound{hypNN} \AgdaBound{hypL} \AgdaBound{hypL'} \AgdaBound{hypP} \AgdaBound{hypQ} \AgdaBound{hypPP} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaBound{plusPQPP⇒F}\AgdaSymbol{))} \AgdaSymbol{=} \<[92]%
+\>[92]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{pre-lmSNE₂} \AgdaSymbol{\{}\AgdaArgument{C} \AgdaSymbol{=} \AgdaSymbol{λ} \AgdaBound{x} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaBound{x}\AgdaSymbol{)\}} \AgdaBound{hyp-red} \AgdaBound{hypMM} \AgdaBound{hypNN} \AgdaBound{hypL} \AgdaBound{hypL'} \AgdaBound{hypP} \AgdaBound{hypQ} \AgdaBound{hypPP} \AgdaBound{plusPQPP⇒F}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₃} \AgdaBound{hyp-red} \AgdaBound{hypMM} \AgdaBound{hypNN} \AgdaBound{hypL} \AgdaBound{hypL'} \AgdaBound{hypP} \AgdaBound{hypQ} \AgdaBound{hypPP} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{()))}\<%
+\\
+%
+\\
+\>\AgdaFunction{pre-lmSNE₄} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{m} \AgdaBound{n} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaBound{Q} \AgdaBound{A} \AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{:} \AgdaDatatype{snocVec} \AgdaSymbol{(}\AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{)} \AgdaBound{n}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{PP}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δδ} \AgdaSymbol{:} \AgdaDatatype{snocVec} \AgdaSymbol{(}\AgdaFunction{Proof} \AgdaBound{V}\AgdaSymbol{)} \AgdaBound{m}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C} \AgdaSymbol{:} \AgdaFunction{Proof} \AgdaBound{V} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[2]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{APPP} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaBound{P} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{))} \AgdaBound{δδ}\AgdaSymbol{)} \AgdaSymbol{→}\<%
+\\
+\>[2]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{MM'} \AgdaSymbol{→} \AgdaDatatype{redVT} \AgdaBound{MM} \AgdaBound{MM'} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{APPP} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM'} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{))} \AgdaBound{δδ}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[2]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{NN'} \AgdaSymbol{→} \AgdaDatatype{redVT} \AgdaBound{NN} \AgdaBound{NN'} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{APPP} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN'} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{))} \AgdaBound{δδ}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[2]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{L₁} \AgdaSymbol{→} \AgdaBound{L} \AgdaDatatype{⇒} \AgdaBound{L₁} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{APPP} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L₁} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{))} \AgdaBound{δδ}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[2]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{L'₁} \AgdaSymbol{→} \AgdaBound{L'} \AgdaDatatype{⇒} \AgdaBound{L'₁} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{APPP} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'₁} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{))} \AgdaBound{δδ}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[2]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{P₁} \AgdaSymbol{→} \AgdaBound{P} \AgdaDatatype{⇒} \AgdaBound{P₁} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{APPP} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P₁}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{))} \AgdaBound{δδ}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[2]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{Q₁} \AgdaSymbol{→} \AgdaBound{Q} \AgdaDatatype{⇒} \AgdaBound{Q₁} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{APPP} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q₁}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{))} \AgdaBound{δδ}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[2]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{PP'} \AgdaSymbol{→} \AgdaDatatype{osrVPa} \AgdaBound{PP} \AgdaBound{PP'} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{APPP} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP'}\AgdaSymbol{))} \AgdaBound{δδ}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[2]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaSymbol{(∀} \AgdaBound{δδ'} \AgdaSymbol{→} \AgdaDatatype{osrVP} \AgdaBound{δδ} \AgdaBound{δδ'} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{APPP} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{))} \AgdaBound{δδ'}\AgdaSymbol{))} \AgdaSymbol{→}\<%
+\\
+\>[2]\AgdaIndent{21}{}\<[21]%
+\>[21]\AgdaFunction{APPP} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{))} \AgdaBound{δδ} \AgdaDatatype{⇒} \AgdaBound{F} \AgdaSymbol{→} \AgdaBound{C} \AgdaBound{F}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₄} \AgdaSymbol{\{}\AgdaArgument{δδ} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{C} \AgdaSymbol{=} \AgdaBound{C}\AgdaSymbol{\}} \AgdaBound{hyp-red} \AgdaBound{hypMM} \AgdaBound{hypNN} \AgdaBound{hypL} \AgdaBound{hypL'} \AgdaBound{hypP} \AgdaBound{hypQ} \AgdaBound{hypPP} \AgdaSymbol{\_} \AgdaBound{plusPQPP⇒F} \AgdaSymbol{=} \AgdaFunction{pre-lmSNE₃} \AgdaSymbol{\{}\AgdaArgument{C} \AgdaSymbol{=} \AgdaBound{C}\AgdaSymbol{\}} \AgdaBound{hyp-red} \AgdaBound{hypMM} \AgdaBound{hypNN} \AgdaBound{hypL} \AgdaBound{hypL'} \AgdaBound{hypP} \AgdaBound{hypQ} \AgdaBound{hypPP} \AgdaBound{plusPQPP⇒F}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₄} \AgdaSymbol{\{}\AgdaArgument{δδ} \AgdaSymbol{=} \AgdaInductiveConstructor{[]} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₄} \AgdaSymbol{\{}\AgdaArgument{δδ} \AgdaSymbol{=} \AgdaInductiveConstructor{[]} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₄} \AgdaSymbol{\{}\AgdaArgument{δδ} \AgdaSymbol{=} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₄} \AgdaSymbol{\{}\AgdaArgument{δδ} \AgdaSymbol{=} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redex} \AgdaSymbol{(}\AgdaInductiveConstructor{R₀R} \AgdaSymbol{()))}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₄} \AgdaSymbol{\{}\AgdaArgument{δδ} \AgdaSymbol{=} \AgdaBound{δδ} \AgdaInductiveConstructor{snoc} \AgdaBound{δ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{C} \AgdaSymbol{=} \AgdaBound{C}\AgdaSymbol{\}} \AgdaBound{hyp-red} \AgdaBound{hypMM} \AgdaBound{hypNN} \AgdaBound{hypL} \AgdaBound{hypL'} \AgdaBound{hypP} \AgdaBound{hypQ} \AgdaBound{hypPP} \AgdaBound{hypδδ} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaBound{plusPQPPδδ⇒F}\AgdaSymbol{))} \AgdaSymbol{=} \<[117]%
+\>[117]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{pre-lmSNE₄} \AgdaSymbol{\{}\AgdaArgument{δδ} \AgdaSymbol{=} \AgdaBound{δδ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{C} \AgdaSymbol{=} \AgdaSymbol{λ} \AgdaBound{x} \AgdaSymbol{→} \AgdaBound{C} \AgdaSymbol{(}\AgdaFunction{appP} \AgdaBound{x} \AgdaBound{δ}\AgdaSymbol{)\}} \AgdaBound{hyp-red} \AgdaBound{hypMM} \AgdaBound{hypNN} \AgdaBound{hypL} \AgdaBound{hypL'} \AgdaBound{hypP} \AgdaBound{hypQ} \AgdaBound{hypPP} \<[95]%
+\>[95]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{(λ} \AgdaBound{\_} \AgdaBound{δδ⇒δδ'} \AgdaSymbol{→} \AgdaBound{hypδδ} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redleft} \AgdaBound{δδ⇒δδ'}\AgdaSymbol{))} \AgdaBound{plusPQPPδδ⇒F}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₄} \AgdaSymbol{\{}\AgdaArgument{δδ} \AgdaSymbol{=} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaBound{hypδδ} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaBound{δ⇒δ'}\AgdaSymbol{)))} \AgdaSymbol{=} \AgdaBound{hypδδ} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{redright} \AgdaBound{δ⇒δ'}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{pre-lmSNE₄} \AgdaSymbol{\{}\AgdaArgument{δδ} \AgdaSymbol{=} \AgdaSymbol{\_} \AgdaInductiveConstructor{snoc} \AgdaSymbol{\_\}} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{(}\AgdaInductiveConstructor{appr} \AgdaSymbol{())))}\<%
+\\
+%
+\\
+\>\AgdaFunction{lmSNE} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{m} \AgdaBound{n} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaBound{Q} \AgdaBound{A}\AgdaSymbol{\}} \AgdaBound{MM} \AgdaSymbol{\{}\AgdaBound{NN} \AgdaSymbol{:} \AgdaDatatype{snocVec} \AgdaSymbol{(}\AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{)} \AgdaBound{n}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{PP}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{δδ} \AgdaSymbol{:} \AgdaDatatype{snocVec} \AgdaSymbol{(}\AgdaFunction{Proof} \AgdaBound{V}\AgdaSymbol{)} \AgdaBound{m}\AgdaSymbol{)} \AgdaSymbol{→}\<%
+\\
+\>[2]\AgdaIndent{16}{}\<[16]%
+\>[16]\AgdaDatatype{SN} \AgdaSymbol{(}\AgdaFunction{APPP} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaBound{P} \AgdaFunction{⟦} \AgdaFunction{x₂:=} \AgdaBound{L} \AgdaFunction{,x₁:=} \AgdaBound{L'} \AgdaFunction{,x₀:=} \AgdaBound{Q} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{))} \AgdaBound{δδ}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{L} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{L'} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{Q} \AgdaSymbol{→}\<%
+\\
+\>[2]\AgdaIndent{16}{}\<[16]%
+\>[16]\AgdaDatatype{SN} \AgdaSymbol{(}\AgdaFunction{APPP} \AgdaSymbol{(}\AgdaFunction{plus} \AgdaSymbol{(}\AgdaFunction{APP*} \AgdaBound{MM} \AgdaBound{NN} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{L} \AgdaBound{L'} \AgdaSymbol{(}\AgdaFunction{λλλ} \AgdaBound{A} \AgdaBound{P}\AgdaSymbol{)} \AgdaBound{Q}\AgdaSymbol{)} \AgdaBound{PP}\AgdaSymbol{))} \AgdaBound{δδ}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{lmSNE} \AgdaSymbol{\{}\AgdaArgument{L} \AgdaSymbol{=} \AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L'}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Q}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaBound{MM} \AgdaSymbol{\{}\AgdaBound{NN}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{PP}\AgdaSymbol{\}} \AgdaBound{δδ} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNPPPδδ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNL}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNL'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNQ}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaSymbol{(λ} \AgdaBound{F} \AgdaBound{plusPQPPδδ⇒F} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{pre-lmSNE₄} \AgdaSymbol{\{}\AgdaArgument{L} \AgdaSymbol{=} \AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L'}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Q}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{MM}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{NN}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{PP}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δδ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{C} \AgdaSymbol{=} \AgdaDatatype{SN}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNPPPδδ}\AgdaSymbol{)} \<[87]%
+\>[87]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{(λ} \AgdaBound{MM'} \AgdaBound{MM⇒MM'} \AgdaSymbol{→} \AgdaFunction{lmSNE} \AgdaBound{MM'} \AgdaBound{δδ} \AgdaSymbol{(}\AgdaBound{SNPPPδδ} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaPostulate{APPP-osrl} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaSymbol{(}\AgdaPostulate{APP*-osr₁} \AgdaBound{MM⇒MM'}\AgdaSymbol{)))} \AgdaBound{δδ}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNL}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNL'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNQ}\AgdaSymbol{))} \<[128]%
+\>[128]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{(λ} \AgdaBound{NN'} \AgdaBound{NN⇒NN'} \AgdaSymbol{→} \AgdaFunction{lmSNE} \AgdaBound{MM} \AgdaBound{δδ} \AgdaSymbol{(}\AgdaBound{SNPPPδδ} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaPostulate{APPP-osrl} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaSymbol{(}\AgdaPostulate{APP*-osr₂} \AgdaBound{MM} \AgdaBound{NN⇒NN'}\AgdaSymbol{)))} \AgdaBound{δδ}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNL}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNL'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNQ}\AgdaSymbol{))} \<[130]%
+\>[130]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{(λ} \AgdaBound{L₁} \AgdaBound{L⇒L₁} \AgdaSymbol{→} \AgdaFunction{lmSNE} \AgdaBound{MM} \AgdaBound{δδ} \AgdaSymbol{(}\AgdaFunction{SNred} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNPPPδδ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{APPP-redl} \AgdaSymbol{(}\AgdaPostulate{plus-red} \AgdaSymbol{(}\AgdaFunction{APP*-red₃} \AgdaBound{MM} \AgdaSymbol{(}\AgdaPostulate{red-subr} \AgdaBound{P} \AgdaSymbol{(}\AgdaFunction{botsub₃-red} \AgdaSymbol{(}\AgdaInductiveConstructor{inc} \AgdaBound{L⇒L₁}\AgdaSymbol{)} \AgdaInductiveConstructor{ref} \AgdaInductiveConstructor{ref}\AgdaSymbol{))))} \AgdaBound{δδ}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaBound{SNL} \AgdaSymbol{\_} \AgdaBound{L⇒L₁}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNL'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNQ}\AgdaSymbol{))}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{(λ} \AgdaBound{L'₁} \AgdaBound{L'⇒L'₁} \AgdaSymbol{→} \AgdaFunction{lmSNE} \AgdaBound{MM} \AgdaBound{δδ} \AgdaSymbol{(}\AgdaFunction{SNred} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNPPPδδ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{APPP-redl} \AgdaSymbol{(}\AgdaPostulate{plus-red} \AgdaSymbol{(}\AgdaFunction{APP*-red₃} \AgdaBound{MM} \AgdaSymbol{(}\AgdaPostulate{red-subr} \AgdaBound{P} \AgdaSymbol{(}\AgdaFunction{botsub₃-red} \AgdaInductiveConstructor{ref} \AgdaSymbol{(}\AgdaInductiveConstructor{inc} \AgdaBound{L'⇒L'₁}\AgdaSymbol{)} \AgdaInductiveConstructor{ref}\AgdaSymbol{))))} \AgdaBound{δδ}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNL}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{SNL'} \AgdaSymbol{\_} \AgdaBound{L'⇒L'₁}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNQ}\AgdaSymbol{))} \<[184]%
+\>[184]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{(λ} \AgdaBound{P'} \AgdaBound{P⇒P'} \AgdaSymbol{→} \AgdaFunction{lmSNE} \AgdaBound{MM} \AgdaBound{δδ} \AgdaSymbol{(}\AgdaBound{SNPPPδδ} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaPostulate{APPP-osrl} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaSymbol{(}\AgdaPostulate{APP*-osr₃} \AgdaBound{MM} \AgdaSymbol{(}\AgdaPostulate{osr-subl} \AgdaBound{P⇒P'}\AgdaSymbol{))))} \AgdaBound{δδ}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNL}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNL'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNQ}\AgdaSymbol{))} \<[136]%
+\>[136]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{(λ} \AgdaBound{Q'} \AgdaBound{Q⇒Q'} \AgdaSymbol{→} \AgdaFunction{lmSNE} \AgdaBound{MM} \AgdaBound{δδ} \AgdaSymbol{(}\AgdaFunction{SNred} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNPPPδδ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaPostulate{APPP-redl} \AgdaSymbol{(}\AgdaPostulate{plus-red} \AgdaSymbol{(}\AgdaFunction{APP*-red₃} \AgdaBound{MM} \AgdaSymbol{(}\AgdaPostulate{red-subr} \AgdaBound{P} \AgdaSymbol{(}\AgdaFunction{botsub₃-red} \AgdaInductiveConstructor{ref} \AgdaInductiveConstructor{ref} \AgdaSymbol{(}\AgdaInductiveConstructor{inc} \AgdaBound{Q⇒Q'}\AgdaSymbol{)))))} \AgdaBound{δδ}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNL}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNL'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{SNQ} \AgdaSymbol{\_} \AgdaBound{Q⇒Q'}\AgdaSymbol{))} \<[177]%
+\>[177]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{(λ} \AgdaBound{PP'} \AgdaBound{PP⇒PP'} \AgdaSymbol{→} \AgdaFunction{lmSNE} \AgdaBound{MM} \AgdaBound{δδ} \AgdaSymbol{(}\AgdaBound{SNPPPδδ} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaPostulate{APPP-osrl} \AgdaSymbol{(}\AgdaInductiveConstructor{app} \AgdaSymbol{(}\AgdaInductiveConstructor{appl} \AgdaSymbol{(}\AgdaPostulate{APP*-osr₄} \AgdaBound{MM} \AgdaBound{PP⇒PP'}\AgdaSymbol{)))} \AgdaBound{δδ}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNL}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNL'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNQ}\AgdaSymbol{))} \<[130]%
+\>[130]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{(λ} \AgdaBound{δδ'} \AgdaBound{δδ⇒δδ'} \AgdaSymbol{→} \AgdaFunction{lmSNE} \AgdaBound{MM} \AgdaBound{δδ'} \AgdaSymbol{(}\AgdaBound{SNPPPδδ} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaPostulate{APPP-osrr} \AgdaBound{δδ⇒δδ'}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNL}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNL'}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaInductiveConstructor{SNI} \AgdaSymbol{\_} \AgdaBound{SNQ}\AgdaSymbol{))} \<[100]%
+\>[100]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaBound{plusPQPPδδ⇒F}\AgdaSymbol{)}\<%
+\end{code}
+}

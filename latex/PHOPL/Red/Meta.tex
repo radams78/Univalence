@@ -677,5 +677,11 @@ Contraction is a relation between closed expressions only: if $s \rhd t$ then $s
 \>\AgdaFunction{APP*-red₃} \AgdaBound{MM} \AgdaInductiveConstructor{ref} \AgdaSymbol{=} \AgdaInductiveConstructor{ref}\<%
 \\
 \>\AgdaFunction{APP*-red₃} \AgdaBound{MM} \AgdaSymbol{(}\AgdaInductiveConstructor{trans} \AgdaBound{P₁↠P₂} \AgdaBound{P₂↠P₃}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{RTClose.trans} \AgdaSymbol{(}\AgdaFunction{APP*-red₃} \AgdaBound{MM} \AgdaBound{P₁↠P₂}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{APP*-red₃} \AgdaBound{MM} \AgdaBound{P₂↠P₃}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaFunction{nf-SN} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{nf} \AgdaBound{M} \AgdaSymbol{→} \AgdaDatatype{Red.SN} \AgdaBound{M}\<%
+\\
+\>\AgdaFunction{nf-SN} \AgdaBound{nfM} \AgdaSymbol{=} \AgdaInductiveConstructor{Red.SNI} \AgdaSymbol{\_} \AgdaSymbol{(λ} \AgdaBound{M'} \AgdaBound{M⇒M'} \AgdaSymbol{→} \AgdaFunction{⊥-elim} \AgdaSymbol{(}\AgdaPostulate{nf-is-nf} \AgdaBound{nfM} \AgdaBound{M⇒M'}\AgdaSymbol{))}\<%
 \end{code}
 }

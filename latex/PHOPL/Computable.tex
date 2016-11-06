@@ -24,13 +24,9 @@
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Red.Confluent}\<%
 \\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.SN}\<%
-\\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Rules}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Meta}\<%
-\\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.KeyRedex}\<%
 \end{code}
 }
 
@@ -334,7 +330,7 @@ The two parts are proved simultaneously by induction on $\nf{\phi}$.
 \begin{code}%
 \>\AgdaKeyword{postulate} \AgdaPostulate{var-computeP} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L} \AgdaSymbol{:} \AgdaDatatype{Meaning} \AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{p} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{V} \AgdaInductiveConstructor{-Proof}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{computeP} \AgdaBound{Γ} \AgdaBound{L} \AgdaSymbol{(}\AgdaInductiveConstructor{var} \AgdaBound{p}\AgdaSymbol{)}\<%
 \\
-\>\AgdaKeyword{postulate} \AgdaPostulate{computeP-SN} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L} \AgdaSymbol{:} \AgdaDatatype{Meaning} \AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{δ} \AgdaSymbol{:} \AgdaFunction{Proof} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{computeP} \AgdaBound{Γ} \AgdaBound{L} \AgdaBound{δ} \AgdaSymbol{→} \AgdaDatatype{valid} \AgdaBound{Γ} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{δ}\<%
+\>\AgdaKeyword{postulate} \AgdaPostulate{computeP-SN} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{L} \AgdaSymbol{:} \AgdaDatatype{Meaning} \AgdaBound{V} \AgdaBound{S}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{δ} \AgdaSymbol{:} \AgdaFunction{Proof} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{computeP} \AgdaBound{Γ} \AgdaBound{L} \AgdaBound{δ} \AgdaSymbol{→} \AgdaDatatype{valid} \AgdaBound{Γ} \AgdaSymbol{→} \AgdaDatatype{SN} \AgdaBound{δ}\<%
 \\
 %
 \\
@@ -581,7 +577,7 @@ It follows that $\delta \in \SN$.
 \\
 %
 \\
-\>\AgdaFunction{E-SNP} \AgdaSymbol{(}\AgdaInductiveConstructor{EI} \AgdaBound{Γ⊢δ∶φ} \AgdaSymbol{(}\AgdaBound{S} \AgdaInductiveConstructor{,p} \AgdaBound{L} \AgdaInductiveConstructor{,p} \AgdaSymbol{\_} \AgdaInductiveConstructor{,p} \AgdaBound{computeδ}\AgdaSymbol{))} \AgdaSymbol{=} \AgdaPostulate{computeP-SN} \AgdaSymbol{\{}\AgdaArgument{S} \AgdaSymbol{=} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{L} \AgdaSymbol{=} \AgdaBound{L}\AgdaSymbol{\}} \AgdaBound{computeδ} \AgdaSymbol{(}\AgdaFunction{context-validity} \AgdaBound{Γ⊢δ∶φ}\AgdaSymbol{)}\<%
+\>\AgdaFunction{E-SNP} \AgdaSymbol{(}\AgdaInductiveConstructor{EI} \AgdaBound{Γ⊢δ∶φ} \AgdaSymbol{(}\AgdaBound{S} \AgdaInductiveConstructor{,p} \AgdaBound{L} \AgdaInductiveConstructor{,p} \AgdaSymbol{\_} \AgdaInductiveConstructor{,p} \AgdaBound{computeδ}\AgdaSymbol{))} \AgdaSymbol{=} \AgdaPostulate{computeP-SN} \AgdaBound{L} \AgdaBound{computeδ} \AgdaSymbol{(}\AgdaFunction{context-validity} \AgdaBound{Γ⊢δ∶φ}\AgdaSymbol{)}\<%
 \end{code}
 }
 \end{proof}
@@ -813,7 +809,9 @@ If $P \in E_\Gamma(M =_A N)$, $M \simeq M'$, $N \simeq N'$ and $\Gamma \vdash M 
 
 \AgdaHide{
 \begin{code}%
-\>\AgdaKeyword{postulate} \AgdaPostulate{⊥-E} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{valid} \AgdaBound{Γ} \AgdaSymbol{→} \AgdaRecord{E} \AgdaBound{Γ} \AgdaSymbol{(}\AgdaFunction{ty} \AgdaInductiveConstructor{Ω}\AgdaSymbol{)} \AgdaFunction{⊥}\<%
+\>\AgdaFunction{E-⊥} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{valid} \AgdaBound{Γ} \AgdaSymbol{→} \AgdaRecord{E} \AgdaBound{Γ} \AgdaSymbol{(}\AgdaFunction{ty} \AgdaInductiveConstructor{Ω}\AgdaSymbol{)} \AgdaFunction{⊥}\<%
+\\
+\>\AgdaFunction{E-⊥} \AgdaBound{validΓ} \AgdaSymbol{=} \AgdaInductiveConstructor{EI} \AgdaSymbol{(}\AgdaInductiveConstructor{⊥R} \AgdaBound{validΓ}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{nf-SN} \AgdaInductiveConstructor{nf⊥}\AgdaSymbol{)}\<%
 \\
 %
 \\

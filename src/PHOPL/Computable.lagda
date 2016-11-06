@@ -12,10 +12,8 @@ open import PHOPL.Grammar
 open import PHOPL.PathSub
 open import PHOPL.Red
 open import PHOPL.Red.Confluent
-open import PHOPL.SN
 open import PHOPL.Rules
 open import PHOPL.Meta
-open import PHOPL.KeyRedex
 \end{code}
 }
 
@@ -233,7 +231,7 @@ The two parts are proved simultaneously by induction on $\nf{\phi}$.
 \AgdaHide{
 \begin{code}
 postulate var-computeP : ∀ {V S} {Γ : Context V} {L : Meaning V S} {p : Var V -Proof} → computeP Γ L (var p)
-postulate computeP-SN : ∀ {V S} {Γ : Context V} {L : Meaning V S} {δ : Proof V} → computeP Γ L δ → valid Γ → SN δ
+postulate computeP-SN : ∀ {V S} {Γ : Context V} (L : Meaning V S) {δ : Proof V} → computeP Γ L δ → valid Γ → SN δ
 
 --var-computeP = {!!}
 --computeP-SN = {!!}
@@ -335,7 +333,7 @@ It follows that $\delta \in \SN$.
 \begin{code}
 var-EP {S = S} {L} {p = p} validΓ φ↠L = EI (varR p validΓ) (S ,p L ,p φ↠L ,p var-computeP {S = S})
 
-E-SNP (EI Γ⊢δ∶φ (S ,p L ,p _ ,p computeδ)) = computeP-SN {S = S} {L = L} computeδ (context-validity Γ⊢δ∶φ)
+E-SNP (EI Γ⊢δ∶φ (S ,p L ,p _ ,p computeδ)) = computeP-SN L computeδ (context-validity Γ⊢δ∶φ)
 \end{code}
 }
 \end{proof}
@@ -544,7 +542,7 @@ postulate convE-E : ∀ {V} {Γ : Context V} {M N M' N' : Term V} {A} {P : Path 
 \AgdaHide{
 \begin{code}
 E-⊥ : ∀ {V} {Γ : Context V} → valid Γ → E Γ (ty Ω) ⊥
-E-⊥ validΓ = EI (⊥R validΓ) SN⊥
+E-⊥ validΓ = EI (⊥R validΓ) (nf-SN nf⊥)
 
 postulate ⊃-E : ∀ {V} {Γ : Context V} {φ} {ψ} → E Γ (ty Ω) φ → E Γ (ty Ω) ψ → E Γ (ty Ω) (φ ⊃ ψ)
 

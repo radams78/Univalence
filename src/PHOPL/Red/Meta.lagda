@@ -398,5 +398,8 @@ APP*-red₃ : ∀ {V n} MM {NN : snocVec (Term V) n} {P P' PP} → P Red.↠ P' 
 APP*-red₃ MM (inc P⇒P') = inc (APP*-osr₃ MM P⇒P')
 APP*-red₃ MM ref = ref
 APP*-red₃ MM (trans P₁↠P₂ P₂↠P₃) = RTClose.trans (APP*-red₃ MM P₁↠P₂) (APP*-red₃ MM P₂↠P₃)
+
+nf-SN : ∀ {V} {M : Term V} → nf M → Red.SN M
+nf-SN nfM = Red.SNI _ (λ M' M⇒M' → ⊥-elim (nf-is-nf nfM M⇒M'))
 \end{code}
 }

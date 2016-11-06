@@ -37,9 +37,9 @@ If $\Gamma \vdash M : A$, $\tau : \sigma \sim \rho : \Gamma \Rightarrow \Delta$,
 and $\rho$ are all computable, and $\Delta \vald$, then $M \{ \tau : \sigma \sim \rho \} \in E_\Delta(M [ \sigma ] =_A M [ \rho ])$.
 
 \begin{code}
-computable-path-substitution : ∀ {U V} (τ : PathSub U V) {σ σ' Γ Δ M A} → 
-                               σ ∶ Γ ⇒C Δ → σ' ∶ Γ ⇒C Δ → τ ∶ σ ∼ σ' ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → 
-                               E Δ (M ⟦ σ ⟧ ≡〈 yt A 〉 M ⟦ σ' ⟧) (M ⟦⟦ τ ∶ σ ∼ σ' ⟧⟧) 
+postulate computable-path-substitution : ∀ {U V} (τ : PathSub U V) {σ σ' Γ Δ M A} → 
+                                       σ ∶ Γ ⇒C Δ → σ' ∶ Γ ⇒C Δ → τ ∶ σ ∼ σ' ∶ Γ ⇒C Δ → Γ ⊢ M ∶ A → valid Δ → 
+                                       E Δ (M ⟦ σ ⟧ ≡〈 yt A 〉 M ⟦ σ' ⟧) (M ⟦⟦ τ ∶ σ ∼ σ' ⟧⟧) 
 \end{code}
 
 \end{enumerate}
@@ -117,7 +117,7 @@ hence $\delta [ \sigma ] \epsilon [\sigma] \in E_\Delta(\psi [ \sigma ])$.
 \begin{code}
 Computable-Sub σ σ∶Γ⇒CΔ (appPR Γ⊢δ∶φ⊃ψ Γ⊢ε∶φ) validΔ = appP-E 
   (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢δ∶φ⊃ψ validΔ) 
-  (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢ε∶φ validΔ)
+  (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢ε∶φ validΔ) 
 \end{code}
 
 \item
@@ -154,16 +154,36 @@ $M[\sigma, x:=N] \in E_\Theta(B)$.
 \end{code}
 The result follows by Lemma \ref{lm:wte}.\ref{lm:wteT}.
 \begin{code}
-  {!!})
+  E.computable (wteT 
+    (weakening {ρ = liftRep _ ρ} {M = M ⟦ liftSub _ σ ⟧} 
+      (substitution {σ = liftSub _ σ} {M = M} Γ,A⊢M∶B (ctxTR validΔ) (liftSub-typed (subC-typed σ∶Γ⇒CΔ))) 
+      (ctxTR (context-validity Θ⊢N∶A)) (liftRep-typed ρ∶Δ⇒RΘ))
+    (EI Θ⊢N∶A computeN) 
+    (subst (E Θ (ty B)) 
+      (let open ≡-Reasoning in 
+      begin
+        M ⟦ extendSub (ρ •RS σ) N ⟧
+      ≡⟨⟨ extendSub-decomp M ⟩⟩
+        M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧
+      ≡⟨ sub-congl (sub-congr M liftSub-compRS) ⟩
+        M ⟦ liftRep _ ρ •RS liftSub _ σ ⟧ ⟦ x₀:= N ⟧
+      ≡⟨ sub-congl (sub-compRS M) ⟩
+        M ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 ⟦ x₀:= N ⟧
+      ∎) 
+    EΘMN)))
 \end{code}
 \item
 \begin{code}
-  ,p {!!}
+  ,p 
 \end{code}
 We must show that $\triplelambda e:x =_A y. M [ \sigma ] \{ x := e : x \sim y \} \equiv
 \triplelambda e:x =_A y. M \{ z_1 := \sigma(z_1) \{ \}, \ldots, z_n := \sigma(z_n)\{\}, x := e \} \in E_\Delta(\lambda x:A.M[\sigma] =_{A \rightarrow B} \lambda x:A.M[\sigma])$.
 
-So let $\Theta \supseteq \Delta$ and $N, N' \in E_\Theta(A)$, $P \in E_\Theta(N =_A N')$.  Then $(z_1 := \sigma(z_1)\{\}, \ldots, z_n := \sigma(z_n)\{\}, x := P) : (\sigma, x:=N) \sim (\sigma, x:=N') : (\Gamma, x:A) \rightarrow \Theta$
+So let $\Theta \supseteq \Delta$ and $N, N' \in E_\Theta(A)$, $P \in E_\Theta(N =_A N')$.
+\begin{code}
+  (λ Θ ρ∶Δ⇒RΘ Θ⊢P∶N≡N' computeN computeN' computeP → {!!})
+\end{code}
+Then $(z_1 := \sigma(z_1)\{\}, \ldots, z_n := \sigma(z_n)\{\}, x := P) : (\sigma, x:=N) \sim (\sigma, x:=N') : (\Gamma, x:A) \rightarrow \Theta$
 is computable, and so the induction hypothesis gives
 \[ M \{ z_i := \sigma(z_i) \{\}, x := P \} \in E_\Theta(M [ \sigma, x:=N] =_B M [\sigma, x:=N']) \enspace . \]
 Therefore, by Lemma \ref{lm:wte}.\ref{lm:wteE}, we have that $(\triplelambda e:x =_A y. M \{ z_i := \sigma(z_i) \{\}, x := e \})_{N N'} P \in E_\Theta(M[\sigma, x:=N] =_B M[\sigma, x:=N'])$.
@@ -198,7 +218,7 @@ Computable-Sub σ σ∶Γ⇒CΔ (lllR Γ⊢M∶A) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (app*R Γ⊢M∶A Γ⊢M∶A₁ Γ⊢M∶A₂ Γ⊢M∶A₃) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (convER Γ⊢M∶A Γ⊢M∶A₁ Γ⊢M∶A₂ M≃M' N≃N') validΔ = {!!}
 
-computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' (varR x validΓ) validΔ = τ∶σ∼σ' x
+{- computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' (varR x validΓ) validΔ = τ∶σ∼σ' x
 computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' (appR Γ⊢M∶A⇛B Γ⊢N∶A) validΔ = 
   app*-E 
     (computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' Γ⊢M∶A⇛B validΔ) 
@@ -207,7 +227,7 @@ computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' (appR
     (Computable-Sub _ σ'∶Γ⇒CΔ Γ⊢N∶A validΔ)
 computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' (ΛR Γ⊢M∶A) validΔ = {!!}
 computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' (⊥R validΓ) validΔ = {!!}
-computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' (⊃R Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
+computable-path-substitution τ σ∶Γ⇒CΔ σ'∶Γ⇒CΔ τ∶σ∼σ' (⊃R Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!} -}
 
 {- Computable-Sub σ σ∶Γ⇒Δ (varR x validΓ) validΔ _ = σ∶Γ⇒Δ x
 Computable-Sub {V = V} σ {Δ = Δ} σ∶Γ⇒Δ (appR Γ⊢M∶A⇛B Γ⊢N∶A) validΔ _ = 

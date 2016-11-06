@@ -1,6 +1,6 @@
 \AgdaHide{
 \begin{code}
-module PHOPL.KeyRedex2.SNE where
+module PHOPL.KeyRedex.SNE where
 open import Data.Nat
 open import Prelims
 open import Prelims.Closure
