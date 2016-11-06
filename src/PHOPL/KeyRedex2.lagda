@@ -52,17 +52,17 @@ In this case, the result follows immediately from the hypothesis.
 \end{proof}
 
 \begin{code}
-pre-wte+-computeP : ∀ {m} {n} {V} {Γ : Context V} {S} {L₁ : Leaves V S}
+pre-wte+-computeP : ∀ {m} {n} {V} {Γ : Context V} {S} {L₁ : Whnf V S}
                           {MM NN : snocVec (Term V) m} {P L L' Q RR} {εε : snocVec (Proof V) n} {A} →
                           computeP Γ L₁ (APPP (plus (APP* MM NN (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR)) εε) →
                           valid Γ → SN L → SN L' → SN Q →
                           computeP Γ L₁ (APPP (plus (APP* MM NN (app* L L' (λλλ A P) Q) RR)) εε)
-pre-wte+-computeP {L₁ = neutral x} {MM} {NN} {P} {L} {L'} {Q} {RR} {εε} computePRRεε validΓ SNL SNL' SNQ = 
-  lmSNE MM εε (computeP-SN {L = neutral x} computePRRεε validΓ) SNL SNL' SNQ
-pre-wte+-computeP {L₁ = bot} {MM} {NN} {P} {L} {L'} {Q} {RR} {εε} computePRRεε validΓ SNL SNL' SNQ = 
-  lmSNE MM εε (computeP-SN {L = bot} computePRRεε validΓ) SNL SNL' SNQ
-pre-wte+-computeP {m} {n} {V} {Γ} {imp S₁ S₂} {L₁ = imp L₁ L₂} {MM} {NN} {P} {L} {L'} {Q} {RR} {εε} {A} computePRRεε validΓ SNL SNL' SNQ {W} Δ {ρ = ρ} {ε = ε} ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = 
-  subst (computeP Δ (lrep L₂ ρ)) (let open ≡-Reasoning in 
+pre-wte+-computeP {L₁ = nf₀ (neutral x)} {MM} {NN} {P} {L} {L'} {Q} {RR} {εε} computePRRεε validΓ SNL SNL' SNQ = 
+  lmSNE MM εε (computeP-SN {L = nf₀ (neutral x)} computePRRεε validΓ) SNL SNL' SNQ
+pre-wte+-computeP {L₁ = nf₀ bot} {MM} {NN} {P} {L} {L'} {Q} {RR} {εε} computePRRεε validΓ SNL SNL' SNQ = 
+  lmSNE MM εε (computeP-SN {L = nf₀ bot} computePRRεε validΓ) SNL SNL' SNQ
+pre-wte+-computeP {m} {n} {V} {Γ} {S₁ imp S₂} {L₁ = L₁ imp L₂} {MM} {NN} {P} {L} {L'} {Q} {RR} {εε} {A} computePRRεε validΓ SNL SNL' SNQ {W} Δ {ρ = ρ} {ε = ε} ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = 
+  subst (computeP Δ (nfrep L₂ ρ)) (let open ≡-Reasoning in 
   begin
     appP (APPP (plus (APP* (snocVec-rep MM ρ) (snocVec-rep NN ρ) (app* (L 〈 ρ 〉) (L' 〈 ρ 〉) (λλλ A (P 〈 liftsRep pathDom ρ 〉)) (Q 〈 ρ 〉)) (snocVec-rep RR ρ))) (snocVec-rep εε ρ)) ε
   ≡⟨⟨ cong (λ x → appP (APPP (plus x) (snocVec-rep εε ρ)) ε) (APP*-rep MM) ⟩⟩
@@ -70,8 +70,8 @@ pre-wte+-computeP {m} {n} {V} {Γ} {imp S₁ S₂} {L₁ = imp L₁ L₂} {MM} {
   ≡⟨⟨ cong (λ x → appP x ε) (APPP-rep εε) ⟩⟩
     appP (APPP (plus (APP* MM NN (app* L L' (λλλ A P) Q) RR)) εε 〈 ρ 〉) ε
   ∎)
-  (pre-wte+-computeP {m} {suc n} {W} {Δ} {S₂} {lrep L₂ ρ} {snocVec-rep MM ρ} {snocVec-rep NN ρ} {P 〈 liftsRep pathDom ρ 〉} {L 〈 ρ 〉} {L' 〈 ρ 〉} {Q 〈 ρ 〉} {snocVec-rep RR ρ} {εε = snocVec-rep εε ρ snoc ε} {A}
-  (subst (computeP Δ (lrep L₂ ρ)) 
+  (pre-wte+-computeP {m} {suc n} {W} {Δ} {S₂} {nfrep L₂ ρ} {snocVec-rep MM ρ} {snocVec-rep NN ρ} {P 〈 liftsRep pathDom ρ 〉} {L 〈 ρ 〉} {L' 〈 ρ 〉} {Q 〈 ρ 〉} {snocVec-rep RR ρ} {εε = snocVec-rep εε ρ snoc ε} {A}
+  (subst (computeP Δ (nfrep L₂ ρ)) 
   (let open ≡-Reasoning in 
   begin
     appP (APPP (plus (APP* MM NN (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR)) εε 〈 ρ 〉) ε
@@ -88,7 +88,7 @@ pre-wte+-computeP {m} {n} {V} {Γ} {imp S₁ S₂} {L₁ = imp L₁ L₂} {MM} {
   (SNrep R-creates-rep SNL') 
   (SNrep R-creates-rep SNQ))
 
-postulate pre-wte--computeP : ∀ {m} {n} {V} {Γ : Context V} {S} {L₁ : Leaves V S}
+postulate pre-wte--computeP : ∀ {m} {n} {V} {Γ : Context V} {S} {L₁ : Whnf V S}
                               {MM NN : snocVec (Term V) m} {P L L' Q RR} {εε : snocVec (Proof V) n} {A} →
                               computeP Γ L₁ (APPP (minus (APP* MM NN (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR)) εε) →
                               valid Γ → SN L → SN L' → SN Q →
@@ -100,12 +100,12 @@ pre-wte-compute : ∀ {n} {V} {Γ : Context V} {A P M} {BB : snocVec Type n} {C 
                         Emult Γ (toSnocTypes BB) (toSnocListExp NN) → Emult Γ (toSnocTypes BB) (toSnocListExp NN') → Emult Γ (eqmult NN BB NN') (toSnocListExp RR) →
                         E Γ (APP (appT M L) NN ≡〈 C 〉 APP (appT M' L') NN') (APP* NN NN' (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR) →
                         computeE Γ (APP (appT M L) NN) C (APP (appT M' L') NN') (APP* NN NN' (app* L L' (λλλ A P) Q) RR)
-pre-wte-compute {A = A} {P} {C = Ω} {L = L} {L'} {Q} {NN} {NN'} {RR} ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' Ni∈EΓBi N'i∈EΓBi Ri∈EΓNi≡N'i (EI Γ⊢PLL'Q∶MNN≡M'NN' (S₁ ,p S₂ ,p L₁ ,p L₂ ,p MLNN↠L₁ ,p M'L'NN'↠L₂ ,p computeP+ ,p computeP- )) =
-  S₁ ,p S₂ ,p L₁ ,p L₂ ,p MLNN↠L₁ ,p M'L'NN'↠L₂ ,p 
-  (λ Δ {ρ} {ε} ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε → subst (computeP Δ (lrep L₂ ρ)) 
+pre-wte-compute {A = A} {P} {C = Ω} {L = L} {L'} {Q} {NN} {NN'} {RR} ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' Ni∈EΓBi N'i∈EΓBi Ri∈EΓNi≡N'i (EI Γ⊢PLL'Q∶MNN≡M'NN' (S ,p φ ,p ψ ,p MLNN↠φ ,p M'L'NN'↠ψ ,p computeP+ ,p computeP- )) =
+  S ,p φ ,p ψ ,p MLNN↠φ ,p M'L'NN'↠ψ ,p 
+  (λ Δ {ρ} {ε} ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε → subst (computeP Δ (nfrep ψ ρ)) 
     (cong (λ x → appP (plus x) ε) (Prelims.sym (APP*-rep NN))) 
-    (pre-wte+-computeP {Γ = Δ} {S₂} {lrep L₂ ρ} {snocVec-rep NN ρ} {snocVec-rep NN' ρ} {P 〈 liftsRep pathDom ρ 〉} {L 〈 ρ 〉} {L' 〈 ρ 〉} {Q 〈 ρ 〉} {snocVec-rep RR ρ} {εε = [] snoc ε} {A}
-      (subst (computeP Δ (lrep L₂ ρ)) 
+    (pre-wte+-computeP {Γ = Δ} {S} {nfrep ψ ρ} {snocVec-rep NN ρ} {snocVec-rep NN' ρ} {P 〈 liftsRep pathDom ρ 〉} {L 〈 ρ 〉} {L' 〈 ρ 〉} {Q 〈 ρ 〉} {snocVec-rep RR ρ} {εε = [] snoc ε} {A}
+      (subst (computeP Δ (nfrep ψ ρ)) 
         (cong (λ x → appP (plus x) ε) (let open ≡-Reasoning in 
           begin
             (APP* NN NN' (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR) 〈 ρ 〉
@@ -114,11 +114,11 @@ pre-wte-compute {A = A} {P} {C = Ω} {L = L} {L'} {Q} {NN} {NN'} {RR} ΓAAE⊢P�
           ≡⟨⟨ cong (λ x → APP* (snocVec-rep NN ρ) (snocVec-rep NN' ρ) x (snocVec-rep RR ρ)) (botSub₃-liftRep₃ P) ⟩⟩
             APP* (snocVec-rep NN ρ) (snocVec-rep NN' ρ) (P 〈 liftsRep pathDom ρ 〉 ⟦ x₂:= L 〈 ρ 〉 ,x₁:= L' 〈 ρ 〉 ,x₀:= Q 〈 ρ 〉 ⟧) (snocVec-rep RR ρ)
           ∎)) 
-        (computeP+ Δ ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε)) (context-validity Δ⊢ε∶φ) (SNrep R-creates-rep (E-SN L∈EΓA)) (SNrep R-creates-rep (E-SN L'∈EΓA)) (SNrep R-creates-rep (E-SN Q∈EΓL≡L')))) ,p
-  (λ Δ {ρ} {ε} ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε → subst (computeP Δ (lrep L₁ ρ)) 
+        (computeP+ Δ ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε)) (context-validity Δ⊢ε∶φ) (SNrep R-creates-rep (E-SNT L∈EΓA)) (SNrep R-creates-rep (E-SNT L'∈EΓA)) (SNrep R-creates-rep (E-SNE Q∈EΓL≡L')))) ,p
+  (λ Δ {ρ} {ε} ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε → subst (computeP Δ (nfrep φ ρ)) 
     (cong (λ x → appP (minus x) ε) (Prelims.sym (APP*-rep NN))) 
-    (pre-wte--computeP {Γ = Δ} {S₁} {lrep L₁ ρ} {snocVec-rep NN ρ} {snocVec-rep NN' ρ} {P 〈 liftsRep pathDom ρ 〉} {L 〈 ρ 〉} {L' 〈 ρ 〉} {Q 〈 ρ 〉} {snocVec-rep RR ρ} {εε = [] snoc ε} {A}
-      (subst (computeP Δ (lrep L₁ ρ)) 
+    (pre-wte--computeP {Γ = Δ} {S} {nfrep φ ρ} {snocVec-rep NN ρ} {snocVec-rep NN' ρ} {P 〈 liftsRep pathDom ρ 〉} {L 〈 ρ 〉} {L' 〈 ρ 〉} {Q 〈 ρ 〉} {snocVec-rep RR ρ} {εε = [] snoc ε} {A}
+      (subst (computeP Δ (nfrep φ ρ)) 
         (cong (λ x → appP (minus x) ε) (let open ≡-Reasoning in 
           begin
             (APP* NN NN' (P ⟦ x₂:= L ,x₁:= L' ,x₀:= Q ⟧) RR) 〈 ρ 〉
@@ -127,7 +127,7 @@ pre-wte-compute {A = A} {P} {C = Ω} {L = L} {L'} {Q} {NN} {NN'} {RR} ΓAAE⊢P�
           ≡⟨⟨ cong (λ x → APP* (snocVec-rep NN ρ) (snocVec-rep NN' ρ) x (snocVec-rep RR ρ)) (botSub₃-liftRep₃ P) ⟩⟩
             APP* (snocVec-rep NN ρ) (snocVec-rep NN' ρ) (P 〈 liftsRep pathDom ρ 〉 ⟦ x₂:= L 〈 ρ 〉 ,x₁:= L' 〈 ρ 〉 ,x₀:= Q 〈 ρ 〉 ⟧) (snocVec-rep RR ρ)
           ∎)) 
-        (computeP- Δ ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε)) (context-validity Δ⊢ε∶φ) (SNrep R-creates-rep (E-SN L∈EΓA)) (SNrep R-creates-rep (E-SN L'∈EΓA)) (SNrep R-creates-rep (E-SN Q∈EΓL≡L'))))
+        (computeP- Δ ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε)) (context-validity Δ⊢ε∶φ) (SNrep R-creates-rep (E-SNT L∈EΓA)) (SNrep R-creates-rep (E-SNT L'∈EΓA)) (SNrep R-creates-rep (E-SNE Q∈EΓL≡L'))))
 pre-wte-compute {n} {Γ = Γ} {A} {P} {M} {BB} {C ⇛ C₁} {M'} {L} {L'} {Q} {NN} {NN'} {RR} 
   ΓAAE⊢P∶Mx≡Ny L∈EΓA L'∈EΓA Q∈EΓL≡L' NN∈EΓBB NN'∈EΓBB RR∈EΓNN≡NN' (EI Γ⊢PRR∶NN≡NN' computePLL') Δ {ρ} {N} {N'} {Q'} ρ∶Γ⇒RΔ Δ⊢Q∶N≡N' computeN computeN' computeQ = 
   let validΔ : valid Δ

@@ -157,13 +157,13 @@ Note first that (using Generation) a normal form of type $\Omega$ is either $\bo
 \\
 \>\AgdaFunction{nf₀-comp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaDatatype{Nf₀} \AgdaBound{U} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{nf₀rep} \AgdaBound{M} \AgdaSymbol{(}\AgdaBound{σ} \AgdaFunction{•R} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaFunction{nf₀rep} \AgdaSymbol{(}\AgdaFunction{nf₀rep} \AgdaBound{M} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{σ}\<%
 \\
-\>\AgdaFunction{nf-comp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaDatatype{Nf} \AgdaBound{U} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{nfrep} \AgdaBound{M} \AgdaSymbol{(}\AgdaBound{σ} \AgdaFunction{•R} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaFunction{nfrep} \AgdaSymbol{(}\AgdaFunction{nfrep} \AgdaBound{M} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{σ}\<%
+\>\AgdaFunction{nfrep-comp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaDatatype{Nf} \AgdaBound{U} \AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{nfrep} \AgdaBound{M} \AgdaSymbol{(}\AgdaBound{σ} \AgdaFunction{•R} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaFunction{nfrep} \AgdaSymbol{(}\AgdaFunction{nfrep} \AgdaBound{M} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{σ}\<%
 \\
 %
 \\
 \>\AgdaFunction{nrep-comp} \AgdaSymbol{\{}\AgdaArgument{N} \AgdaSymbol{=} \AgdaInductiveConstructor{var} \AgdaBound{x}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
 \\
-\>\AgdaFunction{nrep-comp} \AgdaSymbol{\{}\AgdaArgument{N} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaBound{N} \AgdaBound{N'}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaInductiveConstructor{app} \AgdaFunction{nrep-comp} \AgdaFunction{nf-comp}\<%
+\>\AgdaFunction{nrep-comp} \AgdaSymbol{\{}\AgdaArgument{N} \AgdaSymbol{=} \AgdaInductiveConstructor{app} \AgdaBound{N} \AgdaBound{N'}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaInductiveConstructor{app} \AgdaFunction{nrep-comp} \AgdaFunction{nfrep-comp}\<%
 \\
 %
 \\
@@ -173,9 +173,9 @@ Note first that (using Generation) a normal form of type $\Omega$ is either $\bo
 \\
 %
 \\
-\>\AgdaFunction{nf-comp} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaInductiveConstructor{nf₀} \AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong} \AgdaInductiveConstructor{nf₀} \AgdaFunction{nf₀-comp}\<%
+\>\AgdaFunction{nfrep-comp} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaInductiveConstructor{nf₀} \AgdaBound{M}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong} \AgdaInductiveConstructor{nf₀} \AgdaFunction{nf₀-comp}\<%
 \\
-\>\AgdaFunction{nf-comp} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaBound{φ} \AgdaInductiveConstructor{imp} \AgdaBound{ψ}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaInductiveConstructor{\_imp\_} \AgdaFunction{nf-comp} \AgdaFunction{nf-comp}\<%
+\>\AgdaFunction{nfrep-comp} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaBound{φ} \AgdaInductiveConstructor{imp} \AgdaBound{ψ}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaInductiveConstructor{\_imp\_} \AgdaFunction{nfrep-comp} \AgdaFunction{nfrep-comp}\<%
 \\
 %
 \\
@@ -312,6 +312,14 @@ Note first that (using Generation) a normal form of type $\Omega$ is either $\bo
 \>\AgdaFunction{listnfrep} \AgdaInductiveConstructor{[]} \AgdaSymbol{\_} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\<%
 \\
 \>\AgdaFunction{listnfrep} \AgdaSymbol{(}\AgdaBound{M} \AgdaInductiveConstructor{∷} \AgdaBound{MM}\AgdaSymbol{)} \AgdaBound{ρ} \AgdaSymbol{=} \AgdaFunction{nfrep} \AgdaBound{M} \AgdaBound{ρ} \AgdaInductiveConstructor{∷} \AgdaFunction{listnfrep} \AgdaBound{MM} \AgdaBound{ρ}\<%
+\\
+%
+\\
+\>\AgdaFunction{listnfrep-comp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W} \AgdaBound{SS}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaSymbol{:} \AgdaDatatype{ListNf} \AgdaBound{U} \AgdaBound{SS}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{listnfrep} \AgdaBound{φ} \AgdaSymbol{(}\AgdaBound{σ} \AgdaFunction{•R} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaFunction{listnfrep} \AgdaSymbol{(}\AgdaFunction{listnfrep} \AgdaBound{φ} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{σ}\<%
+\\
+\>\AgdaFunction{listnfrep-comp} \AgdaSymbol{\{}\AgdaArgument{φ} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>\AgdaFunction{listnfrep-comp} \AgdaSymbol{\{}\AgdaArgument{φ} \AgdaSymbol{=} \AgdaBound{x} \AgdaInductiveConstructor{∷} \AgdaBound{φ}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaInductiveConstructor{\_∷\_} \AgdaFunction{nfrep-comp} \AgdaFunction{listnfrep-comp}\<%
 \\
 %
 \\

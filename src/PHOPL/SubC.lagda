@@ -6,8 +6,9 @@ open import Data.Fin
 open import Data.List hiding (replicate)
 open import Data.Product renaming (_,_ to _,p_)
 open import Prelims
+open import Prelims.Closure
 open import PHOPL.Grammar
-open import PHOPL.Red
+open import PHOPL.Red hiding (nf)
 open import PHOPL.Rules
 open import PHOPL.Meta
 open import PHOPL.Computable
@@ -43,12 +44,40 @@ postulate change-codC : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {Δ'} →
 The identity substitution is computable.
 
 \begin{code}
-idSubC : ∀ {V} {Γ : Context V} → idSub V ∶ Γ ⇒C Γ
+record WNProp {V} (φ : Term V) : Set where
+  constructor WNPropI
+  field
+    shape : WhnfShape
+    nf    : Whnf V shape
+    red   : φ ↠ decode-Whnf nf
+
+WN : ∀ {V} → Context V → Set
+WN {V} Γ = ∀ (p : Var V -Proof) → WNProp (typeof p Γ)
+
+SN-imp-WN : ∀ {V} {Γ} {φ : Term V} → Γ ⊢ φ ∶ ty Ω → SN φ → WNProp φ
+SN-imp-WN {φ = var x} _ _ = record { shape = nf₀ ; nf = nf₀ (neutral (var x)) ; red = ref }
+SN-imp-WN {φ = app -bot []} Γ⊢φ∶Ω (SNI .(app -bot []) SNφ) = record { shape = nf₀ ; nf = nf₀ bot ; red = ref }
+SN-imp-WN {φ = app -imp (φ ∷ ψ ∷ [])} (⊃R Γ⊢φ∶Ω Γ⊢ψ∶Ω) (SNI .(app -imp (φ ∷ ψ ∷ [])) SNφ) = 
+  let WNPropI S φnf φ↠φnf = SN-imp-WN {φ = φ} Γ⊢φ∶Ω (SNI _ (λ φ' φ⇒φ' → SNappl' (SNapp' (SNφ _ (app (appl φ⇒φ')))))) in
+  let WNPropI T ψnf ψ↠ψnf = SN-imp-WN {φ = ψ} Γ⊢ψ∶Ω (SNI _ (λ ψ' ψ⇒ψ' → SNappl' (SNappr' (SNapp' (SNφ _ (app (appr (appl ψ⇒ψ')))))))) in 
+  WNPropI (S imp T) (φnf imp ψnf) (app-resp-red (∷-red φ↠φnf (appl-resp-red ψ↠ψnf)))
+SN-imp-WN {φ = app (-lamTerm _) _} () _
+SN-imp-WN {φ = app -appTerm _} (appR Γ⊢F∶A⇛Ω Γ⊢M∶A) (SNI _ SNφ) = {!Γ⊢F∶A⇛Ω!}
+
+valid-WN : ∀ {V} {Γ : Context V} → valid Γ → WN Γ
+idSubC : ∀ {V} {Γ : Context V} → valid Γ → idSub V ∶ Γ ⇒C Γ
 \end{code}
 
 \AgdaHide{
 \begin{code}
-idSubC {V} {Γ} x = subst (λ a → E Γ a (var x)) (sym sub-idSub) var-E
+valid-WN {Γ = 〈〉} validΓ ()
+valid-WN {Γ = Γ , φ} (ctxPR Γ⊢φ∶Ω) x₀ = {!SN-imp-WN!}
+valid-WN {Γ = Γ , x} validΓ (↑ p) = {!!}
+
+idSubC {Γ = Γ} validΓ {K = -Proof} p = subst (λ x → E Γ x (var p)) (Prelims.sym sub-idSub) 
+  (var-EP validΓ (WNProp.red (valid-WN validΓ p)))
+idSubC validΓ {K = -Term} x = {!!}
+idSubC validΓ {K = -Path} x = {!!}
 \end{code}
 }
 
@@ -174,7 +203,7 @@ subCRS : ∀ {U V W} {ρ : Rep V W} {σ : Sub U V} {Γ Δ Θ} →
          ρ ∶ Δ ⇒R Θ → σ ∶ Γ ⇒C Δ → valid Θ → ρ •RS σ ∶ Γ ⇒C Θ
 subCRS {ρ = ρ} {σ = σ} {Γ} {Θ = Θ} ρ∶Δ⇒RΘ σ∶Γ⇒CΔ validΘ x = 
   subst (λ a → E Θ a ((σ _ x) 〈 ρ 〉)) {typeof x Γ ⟦ σ ⟧ 〈 ρ 〉} {typeof x Γ ⟦ ρ •RS σ ⟧} 
-    (sym (sub-compRS (typeof x Γ))) (E-rep (σ∶Γ⇒CΔ x) ρ∶Δ⇒RΘ validΘ)
+    (Prelims.sym (sub-compRS (typeof x Γ))) (E-rep (σ∶Γ⇒CΔ x) ρ∶Δ⇒RΘ validΘ)
 \end{code}
 }
 \end{lemma}
