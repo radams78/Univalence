@@ -6,6 +6,7 @@ open import Data.Unit
 open import Data.Product renaming (_,_ to _,p_)
 open import Data.List
 open import Prelims
+open import Prelims.Closure
 open import PHOPL.Grammar
 open import PHOPL.Rules
 open import PHOPL.PathSub
@@ -13,7 +14,10 @@ open import PHOPL.Red
 open import PHOPL.Meta
 open import PHOPL.Computable
 open import PHOPL.SubC
---open import PHOPL.SN
+open import PHOPL.KeyRedex
+
+βsub : ∀ {U V A} M {σ : Sub U V} {N} → appT (ΛT A M ⟦ σ ⟧) N ⇒ M ⟦ extendSub σ N ⟧
+βsub {U} {V} {A} M {σ} {N} = subst (λ x → appT (ΛT A M ⟦ σ ⟧) N ⇒ x) (extendSub-decomp M) (redex (βR βT))
 \end{code}
 }
 
@@ -26,9 +30,6 @@ Our main theorem is as follows.
 If $\Gamma \vdash t : T$ and $\sigma : \Gamma \Rightarrow \Delta$ is computable, and $\Delta \vald$, then $t[\sigma] \in E_\Delta(T[\sigma])$.
 
 \begin{code}
-toPath : ∀ {U V} → Sub U V → PathSub U V
-toPath σ x = reff (σ _ x)
-
 postulate toPathC : ∀ {U V} {σ : Sub U V} {Γ Δ} → σ ∶ Γ ⇒C Δ → toPath σ ∶ σ ∼ σ ∶ Γ ⇒C Δ
 
 Computable-Sub : ∀ {U V K} (σ : Sub U V) {Γ Δ} 
@@ -170,9 +171,7 @@ The result follows by Lemma \ref{lm:wte}.\ref{lm:wteT}.
         M ⟦ extendSub (ρ •RS σ) N ⟧
       ≡⟨⟨ extendSub-decomp M ⟩⟩
         M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧
-      ≡⟨ sub-congl (sub-congr M liftSub-compRS) ⟩
-        M ⟦ liftRep _ ρ •RS liftSub _ σ ⟧ ⟦ x₀:= N ⟧
-      ≡⟨ sub-congl (sub-compRS M) ⟩
+      ≡⟨ sub-congl (liftSub-compRS M) ⟩
         M ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 ⟦ x₀:= N ⟧
       ∎) 
     EΘMN)))
@@ -187,12 +186,22 @@ We must show that $\triplelambda e:x =_A y. M [ \sigma ] \{ x := e : x \sim y \}
 So let $\Theta \supseteq \Delta$ and $N, N' \in E_\Theta(A)$, $P \in E_\Theta(N =_A N')$.
 \begin{code}
   (λ {W} Θ {ρ} {N} {N'} {P} ρ∶Δ⇒RΘ Θ⊢P∶N≡N' computeN computeN' computeP → 
+  let validΘ : valid Θ
+      validΘ = context-validity Θ⊢P∶N≡N' in
+  let validΘA : valid (Θ ,T A)
+      validΘA = ctxTR validΘ in
+  let Θ⊢N∶A : Θ ⊢ N ∶ ty A
+      Θ⊢N∶A = equation-validity₁ Θ⊢P∶N≡N' in
+  let Θ⊢N'∶A : Θ ⊢ N' ∶ ty A
+      Θ⊢N'∶A = equation-validity₂ Θ⊢P∶N≡N' in
 \end{code}
 Then $(z_1 := \sigma(z_1)\{\}, \ldots, z_n := \sigma(z_n)\{\}, x := P) : (\sigma, x:=N) \sim (\sigma, x:=N') : (\Gamma, x:A) \rightarrow \Theta$
 is computable,
 \begin{code}
   let ρσC : ρ •RS σ ∶ Γ ⇒C Θ
       ρσC = compRSC ρ∶Δ⇒RΘ σ∶Γ⇒CΔ in
+  let ΘA⊢Mρσ∶B : Θ ,T A ⊢ M ⟦ liftSub _ (ρ •RS σ) ⟧ ∶ ty B
+      ΘA⊢Mρσ∶B = substitution Γ,A⊢M∶B validΘA (liftSub-typed (subC-typed ρσC)) in
   let pathρσC : toPath (ρ •RS σ) ∶ ρ •RS σ ∼ ρ •RS σ ∶ Γ ⇒C Θ
       pathρσC = toPathC ρσC in
   let σ₁ : Sub (U , -Term) W
@@ -208,20 +217,42 @@ is computable,
 \[ M \{ z_i := \sigma(z_i) \{\}, x := P \} \in E_\Theta(M [ \sigma, x:=N] =_B M [\sigma, x:=N']) \enspace . \]
 \begin{code}
   let MP∈EΘMN≡MN' : E Θ (M ⟦ σ₁ ⟧ ≡〈 B 〉 M ⟦ σ₂ ⟧) (M ⟦⟦ τ ∶ σ₁ ∼ σ₂ ⟧⟧)
-      MP∈EΘMN≡MN' = computable-path-substitution τ (extendSubC ρσC (EI (equation-validity₁ Θ⊢P∶N≡N') computeN)) (extendSubC ρσC (EI (equation-validity₂ Θ⊢P∶N≡N') computeN')) (extendPSC pathρσC (EI Θ⊢P∶N≡N' computeP)) Γ,A⊢M∶B (context-validity Θ⊢P∶N≡N') in 
-  let ⇑⇑⇑ρσ : Sub U (W , -Term , -Term , -Path)
-      ⇑⇑⇑ρσ = upRep •RS (upRep •RS (upRep •RS (ρ •RS σ))) in
+      MP∈EΘMN≡MN' = computable-path-substitution τ (extendSubC ρσC (EI Θ⊢N∶A computeN)) (extendSubC ρσC (EI (equation-validity₂ Θ⊢P∶N≡N') computeN')) (extendPSC pathρσC (EI Θ⊢P∶N≡N' computeP)) Γ,A⊢M∶B validΘ in
 \end{code}
-Therefore, by Lemma \ref{lm:wte}.\ref{lm:wteE}, we have that $(\triplelambda e:x =_A y. M \{ z_i := \sigma(z_i) \{\}, x := e \})_{N N'} P \in E_\Theta(M[\sigma, x:=N] =_B M[\sigma, x:=N'])$.
+that is,
+\[ M [ \sigma ] \{ x := P : N \sim N' \} \in E_\Theta(M [ \sigma, x:=N] =_B M [\sigma, x:=N']) \enspace . \]
 \begin{code}
-  let λλλPM∈EΘMN≡MN' : E Θ (M ⟦ σ₁ ⟧ ≡〈 B 〉 M ⟦ σ₂ ⟧) (app* N N' (λλλ A (M ⟦⟦ extendPS (toPath ⇑⇑⇑ρσ) (var x₀) ∶ extendSub ⇑⇑⇑ρσ (var x₂) ∼ extendSub ⇑⇑⇑ρσ (var x₁) ⟧⟧)) P)
-      λλλPM∈EΘMN≡MN' = {!!} in {!!})
+  let MP∈EΘMN≡MN'₂ : E Θ (M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧ ≡〈 B 〉 M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N' ⟧) (M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦⟦ x₀::= P ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
+      MP∈EΘMN≡MN'₂ = subst₃ (λ a b c → E Θ (a ≡〈 B 〉 b) c) (Prelims.sym (extendSub-decomp M)) (Prelims.sym (extendSub-decomp M)) (extendPS-decomp {M = M}) MP∈EΘMN≡MN' in 
 \end{code}
-
-Hence Lemma \ref{lm:conv-compute} gives $(\triplelambda e:x =_A y. M \{ z_i := \sigma(z_i) \{\}, x := e \})_{N N'} P \in E_\Theta((\lambda x:A.M[\sigma])N =_B (\lambda x:A.M[\sigma])N')$
-as required.
+Therefore, by Lemma \ref{lm:wte}.\ref{lm:wteE'},
+\[ \reff{\lambda x:A.M[\sigma]}_{N N'} P \in E_\Theta(M [ \sigma, x:=N] =_B M [\sigma, x:=N']) \]
 \begin{code}
-  )
+  let ΛMP∈EΘMN≡MN' : E Θ (M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧ ≡〈 B 〉 M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N' ⟧) (app* N N' (reff (ΛT A M ⟦ ρ •RS σ ⟧)) P)
+      ΛMP∈EΘMN≡MN' = wteE' ΘA⊢Mρσ∶B (EI Θ⊢N∶A computeN) (EI Θ⊢N'∶A computeN') (EI Θ⊢P∶N≡N' computeP) MP∈EΘMN≡MN'₂ in 
+  let ΛMP∈EΘMN≡MN'₂ : E Θ (M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧ ≡〈 B 〉 M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N' ⟧) (app* N N' (reff (ΛT A M ⟦ σ ⟧ 〈 ρ 〉)) P)
+      ΛMP∈EΘMN≡MN'₂ = subst (λ x → E Θ (M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧ ≡〈 B 〉 M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N' ⟧) (app* N N' (reff (ΛT A x)) P)) (liftSub-compRS M)
+        ΛMP∈EΘMN≡MN' in
+\end{code}
+and so
+\[ \reff{\lambda x:A.M[\sigma]}_{N N'} P \in E_\Theta(M [ (\lambda x:A.M[\sigma]) N =_B (\lambda x:A.M [\sigma]) N') \]
+by Lemma \ref{lm:conv-compute}.
+\begin{code}
+  let Mρσt : ∀ t → Θ ⊢ t ∶ ty A → Θ ⊢ M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= t ⟧ ∶ ty B
+      Mρσt _ Θ⊢t∶A = substitution ΘA⊢Mρσ∶B validΘ (botsub-typed Θ⊢t∶A) in
+  let ΛMρσt : ∀ t → Θ ⊢ t ∶ ty A → Θ ⊢ appT (ΛT A M ⟦ σ ⟧ 〈 ρ 〉) t ∶ ty B
+      ΛMρσt _ Θ⊢t∶A = appR (ΛR (subst (λ x → Θ ,T A ⊢ x ∶ ty B) (liftSub-compRS M) ΘA⊢Mρσ∶B)) Θ⊢t∶A in
+  let βM : ∀ t → M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= t ⟧ ≃ appT (ΛT A M ⟦ σ ⟧ 〈 ρ 〉) t
+      βM t = let open EqReasoning (CONV W -Expression (varKind -Term)) in 
+        begin
+          M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= t ⟧
+        ≈⟨⟨ inc (redex (βR βT)) ⟩⟩
+          appT (ΛT A M ⟦ ρ •RS σ ⟧) t
+        ≡⟨ cong (λ x → appT (ΛT A x) t) (liftSub-compRS M) ⟩
+          appT (ΛT A M ⟦ σ ⟧ 〈 ρ 〉) t
+        ∎ in
+  conv-computeE (E.computable ΛMP∈EΘMN≡MN'₂) (Mρσt N Θ⊢N∶A) (Mρσt N' Θ⊢N'∶A) (ΛMρσt N Θ⊢N∶A) (ΛMρσt N' Θ⊢N'∶A) 
+    (βM N) (βM N')))
 \end{code}
 \end{itemize}
 \item[4]

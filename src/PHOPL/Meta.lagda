@@ -393,6 +393,12 @@ postulate extendPS-typed : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {Δ} {P
                            τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → Δ ⊢ P ∶ M ≡〈 A 〉 N →
                            extendPS τ P ∶ extendSub ρ M ∼ extendSub σ N ∶ Γ ,T A ⇒ Δ
 
+toPath : ∀ {U V} → Sub U V → PathSub U V
+toPath σ x = reff (σ _ x)
+
+postulate extendPS-decomp : ∀ {U V} {M : Term (U , -Term)} {σ : Sub U V} {P N N'} →
+                          M ⟦⟦ extendPS (toPath σ) P ∶ extendSub σ N ∼ extendSub σ N' ⟧⟧ ≡ (M ⟦ liftSub _ σ ⟧) ⟦⟦ x₀::= P ∶ x₀:= N ∼ x₀:= N' ⟧⟧
+
 postulate pathsub-extendPS : ∀ {U} {V} M {τ} {P : Path V} {N : Term V} {σ : Sub U V} {N' : Term V} {σ'} →
                            M ⟦⟦ extendPS τ P ∶ extendSub σ N ∼ extendSub σ' N' ⟧⟧
                            ≡ M ⟦⟦ liftPathSub τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧ ⟦ x₂:= N ,x₁:= N' ,x₀:= P ⟧

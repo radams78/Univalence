@@ -9,8 +9,12 @@ module EqReasoning {s₁ s₂} (S : Setoid s₁ s₂) where
   open Relation.Binary.EqReasoning S public
 
   infixr 2 _≡⟨⟨_⟩⟩_
-  _≡⟨⟨_⟩⟩_ : ∀ x {y z} → y ≈ x → y ≈ z → x ≈ z
-  _ ≡⟨⟨ y≈x ⟩⟩ y≈z = Setoid.trans S (Setoid.sym S y≈x) y≈z
+  _≡⟨⟨_⟩⟩_ : ∀ x {y z} → y ≡ x → y IsRelatedTo z → x IsRelatedTo z
+  x ≡⟨⟨ y≡x ⟩⟩ y≈z = x ≡⟨ sym y≡x ⟩ y≈z
+
+  infixr 2 _≈⟨⟨_⟩⟩_
+  _≈⟨⟨_⟩⟩_ : ∀ x {y z} → y ≈ x → y IsRelatedTo z → x IsRelatedTo z
+  x ≈⟨⟨ y≈x ⟩⟩ y≈z = x ≈⟨ Setoid.sym S  y≈x ⟩ y≈z
 
 module ≡-Reasoning {a} {A : Set a} where
   open Relation.Binary.PropositionalEquality

@@ -57,6 +57,9 @@ RED V C K = RTCLOSE (_⇒_ {V} {C} {K})
 
 _≃_ : Rewrite
 _≃_ = RSTClose _⇒_
+
+CONV : Alphabet → ∀ C → Kind C → Setoid _ _
+CONV V C K = RSTCLOSE {Subexp V C K} _⇒_
 \end{code}
 
 \AgdaHide{

@@ -30,7 +30,7 @@ record Composition (F G H : LiftFamily) : Set where
   infix 25 _∘_
   field
     _∘_ : ∀ {U} {V} {W} → Op F V W → Op G U V → Op H U W
-    liftOp-comp : ∀ {U V W K σ ρ} → 
+    liftOp-comp' : ∀ {U V W K σ ρ} → 
       _∼op_ H (liftOp H K (_∘_ {U} {V} {W} σ ρ)) 
         (liftOp F K σ ∘ liftOp G K ρ)
     apV-comp : ∀ {U} {V} {W} {K} {σ} {ρ} {x : Var U K} → 
@@ -89,7 +89,7 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
   liftsOp-comp {U} {V} {W} (K ∷ A) {σ} {ρ} = let open EqReasoning (OP H _ _) in 
     begin
       liftsOp H A (liftOp H K (σ ∘ ρ))
-    ≈⟨ liftsOp-cong H A liftOp-comp ⟩
+    ≈⟨ liftsOp-cong H A liftOp-comp' ⟩
       liftsOp H A (liftOp F K σ ∘ liftOp G K ρ)
     ≈⟨ liftsOp-comp A ⟩
       liftsOp F A (liftOp F K σ) ∘ liftsOp G A (liftOp G K ρ)
@@ -117,6 +117,17 @@ $E [ \sigma \circ \rho ] \equiv E [ \rho ] [ \sigma ]$
       ap F (liftsOp F A σ) (ap G (liftsOp G A ρ) E)
     ∎) 
     (ap-comp E')
+
+  liftOp-comp : ∀ {U V W K C L ρ σ} {M : Subexp (U , K) C L} →
+    ap H (liftOp H K (_∘_ {U} {V} {W} σ ρ)) M ≡ ap F (liftOp F K σ) (ap G (liftOp G K ρ) M)
+  liftOp-comp {U} {V} {W} {K} {C} {L} {ρ} {σ} {M} = let open ≡-Reasoning in 
+    begin 
+      ap H (liftOp H K (σ ∘ ρ)) M
+    ≡⟨ ap-congl H liftOp-comp' M ⟩
+      ap H (liftOp F K σ ∘ liftOp G K ρ) M
+    ≡⟨ ap-comp M ⟩
+      ap F (liftOp F K σ) (ap G (liftOp G K ρ) M)
+    ∎
 \end{code}
 }
 

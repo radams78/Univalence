@@ -45,6 +45,15 @@ data RSTClose {A : Set} (R : Relation A) : Relation A where
   sym : ∀ {x y} → RSTClose R x y → RSTClose R y x
   trans : ∀ {x y z} → RSTClose R x y → RSTClose R y z → RSTClose R x z
 
+RSTCLOSE : ∀ {A} → Relation A → Setoid _ _
+RSTCLOSE {A} R = record { 
+  Carrier = A ; 
+  _≈_ = RSTClose R ; 
+  isEquivalence = record { 
+    refl = ref ; 
+    sym = sym ; 
+    trans = trans } }
+
 RT-sub-RST : ∀ {A R x y} → RTClose {A} R x y → RSTClose R x y
 RT-sub-RST (inc xRy) = inc xRy
 RT-sub-RST ref = ref

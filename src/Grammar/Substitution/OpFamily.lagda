@@ -21,13 +21,13 @@ infixl 60 _•RS_
 _•RS_ : ∀ {U} {V} {W} → Rep V W → Sub U V → Sub U W
 (ρ •RS σ) K x = (σ K x) 〈 ρ 〉
 
-liftSub-compRS : ∀ {U} {V} {W} {K} {ρ : Rep V W} {σ : Sub U V} → liftSub K (ρ •RS σ) ∼ liftRep K ρ •RS liftSub K σ
+liftSub-compRS' : ∀ {U} {V} {W} {K} {ρ : Rep V W} {σ : Sub U V} → liftSub K (ρ •RS σ) ∼ liftRep K ρ •RS liftSub K σ
 \end{code}
 
 \AgdaHide{
 \begin{code}
-liftSub-compRS {K = K} x₀ = refl
-liftSub-compRS {U} {V} {W} {K} {ρ} {σ} {L} (↑ x) = let open ≡-Reasoning {A = Expression (W , K) (varKind L)} in 
+liftSub-compRS' {K = K} x₀ = refl
+liftSub-compRS' {U} {V} {W} {K} {ρ} {σ} {L} (↑ x) = let open ≡-Reasoning {A = Expression (W , K) (varKind L)} in 
   begin 
     (σ L x) 〈 ρ 〉 〈 upRep 〉
   ≡⟨⟨ rep-comp (σ L x) ⟩⟩
@@ -45,7 +45,7 @@ liftSub-compRS {U} {V} {W} {K} {ρ} {σ} {L} (↑ x) = let open ≡-Reasoning {A
 COMPRS : Composition Rep∶LF SubLF SubLF
 COMPRS = record { 
   _∘_ = _•RS_ ; 
-  liftOp-comp = liftSub-compRS ; 
+  liftOp-comp' = liftSub-compRS' ; 
   apV-comp = refl }
 
 sub-compRS : ∀ {U} {V} {W} {C} {K} 
@@ -72,7 +72,7 @@ liftSub-compSR (↑ x) = refl
 COMPSR : Composition SubLF Rep∶LF SubLF
 COMPSR = record { 
   _∘_ = _•SR_ ; 
-  liftOp-comp = liftSub-compSR ; 
+  liftOp-comp' = liftSub-compSR ; 
   apV-comp = refl }
 
 sub-compSR : ∀ {U} {V} {W} {C} {K} 
@@ -157,7 +157,7 @@ SUB = record {
   liftFamily = SubLF;
   comp = record { 
     _∘_ = _•_ ; 
-    liftOp-comp = liftSub-comp ; 
+    liftOp-comp' = liftSub-comp ; 
     apV-comp = refl }
   }
 \end{code}
@@ -177,6 +177,9 @@ open OpFamily SUB using (comp-congl;comp-congr)
 
 sub-congr : ∀ {U V C K} {ρ σ : Sub U V} (E : Subexp U C K) → ρ ∼ σ → E ⟦ ρ ⟧ ≡ E ⟦ σ ⟧
 sub-congr E ρ∼σ = OpFamily.ap-congl SUB ρ∼σ E
+
+liftSub-compRS : ∀ {U V W K C L} {ρ : Rep V W} {σ : Sub U V} (M : Subexp (U , K) C L) → M ⟦ liftSub K (ρ •RS σ) ⟧ ≡ M ⟦ liftSub K σ ⟧ 〈 liftRep K ρ 〉
+liftSub-compRS M = Composition.liftOp-comp COMPRS {M = M}
 \end{code}
 }
 

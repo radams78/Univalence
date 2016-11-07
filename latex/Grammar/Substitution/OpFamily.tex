@@ -365,5 +365,11 @@ We can now prove general results such as:
 \AgdaHide{
 \begin{code}%
 \>\AgdaFunction{sub-comp} \AgdaSymbol{=} \AgdaFunction{OpFamily.ap-comp} \AgdaFunction{SUB}\<%
+\\
+%
+\\
+\>\AgdaFunction{liftsSub} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{KK} \AgdaSymbol{→} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Sub} \AgdaSymbol{(}\AgdaFunction{extend} \AgdaBound{U} \AgdaBound{KK}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{extend} \AgdaBound{V} \AgdaBound{KK}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{liftsSub} \AgdaSymbol{=} \AgdaFunction{OpFamily.liftsOp} \AgdaFunction{SUB}\<%
 \end{code}
 }
