@@ -118,7 +118,7 @@ data _⊢_∶_ where
   appPR : ∀ {V} {Γ : Context V} {δ ε : Proof V} {φ ψ : Term V} →
     Γ ⊢ δ ∶ φ ⊃ ψ → Γ ⊢ ε ∶ φ → Γ ⊢ appP δ ε ∶ ψ
   ΛPR : ∀ {V} {Γ : Context V} {δ : Proof (V , -Proof)} {φ ψ : Term V} → 
-    Γ ⊢ φ ∶ ty Ω → Γ ,P φ ⊢ δ ∶ ψ 〈 upRep 〉 → Γ ⊢ ΛP φ δ ∶ φ ⊃ ψ
+    Γ ⊢ φ ∶ ty Ω → Γ ⊢ ψ ∶ ty Ω → Γ ,P φ ⊢ δ ∶ ψ 〈 upRep 〉 → Γ ⊢ ΛP φ δ ∶ φ ⊃ ψ
   convR : ∀ {V} {Γ : Context V} {δ : Proof V} {φ ψ : Term V} →
     Γ ⊢ δ ∶ φ → Γ ⊢ ψ ∶ ty Ω → φ ≃ ψ → Γ ⊢ δ ∶ ψ
 

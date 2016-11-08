@@ -52,7 +52,7 @@ context-validity (ΛR _) | ctxTR validΓ = validΓ
 context-validity (⊥R validΓ) = validΓ
 context-validity (⊃R Γ⊢φ∶Ω _) = context-validity Γ⊢φ∶Ω
 context-validity (appPR Γ⊢δ∶φ⊃ψ _) = context-validity Γ⊢δ∶φ⊃ψ
-context-validity (ΛPR Γ⊢φ∶Ω _) = context-validity Γ⊢φ∶Ω
+context-validity (ΛPR Γ⊢φ∶Ω _ _) = context-validity Γ⊢φ∶Ω
 context-validity (convR Γ⊢M∶A _ _) = context-validity Γ⊢M∶A
 context-validity (refR Γ⊢M∶A) = context-validity Γ⊢M∶A
 context-validity (⊃*R Γ⊢φ∶Ω _) = context-validity Γ⊢φ∶Ω
@@ -79,10 +79,12 @@ weakening (ΛR Γ,A⊢M∶B) validΔ ρ∶Γ⇒RΔ = ΛR (weakening Γ,A⊢M∶B
 weakening (⊥R _) validΔ _ = ⊥R validΔ
 weakening (⊃R Γ⊢φ∶Ω Γ⊢ψ∶Ω) validΔ ρ∶Γ⇒RΔ = ⊃R (weakening Γ⊢φ∶Ω validΔ ρ∶Γ⇒RΔ) (weakening Γ⊢ψ∶Ω validΔ ρ∶Γ⇒RΔ)
 weakening (appPR Γ⊢δ∶φ⊃ψ Γ⊢ε∶φ) validΔ ρ∶Γ⇒RΔ = appPR (weakening Γ⊢δ∶φ⊃ψ validΔ ρ∶Γ⇒RΔ) (weakening Γ⊢ε∶φ validΔ ρ∶Γ⇒RΔ)
-weakening {ρ = ρ} {Δ = Δ} (ΛPR {φ = φ} {ψ} Γ⊢φ∶Ω Γ,φ⊢δ∶ψ) validΔ ρ∶Γ⇒RΔ = 
+weakening {ρ = ρ} {Δ = Δ} (ΛPR {φ = φ} {ψ} Γ⊢φ∶Ω Γ⊢ψ∶Ω Γ,φ⊢δ∶ψ) validΔ ρ∶Γ⇒RΔ = 
   let Δ⊢φ∶Ω : Δ ⊢ φ 〈 ρ 〉 ∶ ty Ω
       Δ⊢φ∶Ω = weakening Γ⊢φ∶Ω validΔ ρ∶Γ⇒RΔ in
-  ΛPR Δ⊢φ∶Ω (change-type (weakening Γ,φ⊢δ∶ψ (ctxPR Δ⊢φ∶Ω) (liftRep-typed ρ∶Γ⇒RΔ)) (liftRep-upRep ψ))
+  ΛPR Δ⊢φ∶Ω
+      (weakening Γ⊢ψ∶Ω validΔ ρ∶Γ⇒RΔ) 
+      (change-type (weakening Γ,φ⊢δ∶ψ (ctxPR Δ⊢φ∶Ω) (liftRep-typed ρ∶Γ⇒RΔ)) (liftRep-upRep ψ))
 weakening (convR Γ⊢δ∶φ Γ⊢ψ∶Ω φ≃ψ) validΔ ρ∶Γ⇒RΔ = convR (weakening Γ⊢δ∶φ validΔ ρ∶Γ⇒RΔ) (weakening Γ⊢ψ∶Ω validΔ ρ∶Γ⇒RΔ) (conv-rep φ≃ψ)
 weakening (refR Γ⊢M∶A) validΔ ρ∶Γ⇒RΔ = refR (weakening Γ⊢M∶A validΔ ρ∶Γ⇒RΔ)
 weakening (⊃*R Γ⊢P∶φ≡φ' Γ⊢Q∶ψ≡ψ') validΔ ρ∶Γ⇒RΔ = ⊃*R (weakening Γ⊢P∶φ≡φ' validΔ ρ∶Γ⇒RΔ) (weakening Γ⊢Q∶ψ≡ψ' validΔ ρ∶Γ⇒RΔ)
@@ -125,9 +127,6 @@ postulate change-codR : ∀ {U} {V} {ρ : Rep U V} {Γ : Context U} {Δ Δ' : Co
                       ρ ∶ Γ ⇒R Δ → Δ ≡ Δ' → ρ ∶ Γ ⇒R Δ'
 
 postulate upRep-typed : ∀ {V} {Γ : Context V} {K} A → upRep ∶ Γ ⇒R _,_ {K = K} Γ A
-
-postulate compR-typed : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Rep U V} {Γ} {Δ} {Θ : Context W} →
-                        ρ ∶ Δ ⇒R Θ → σ ∶ Γ ⇒R Δ → ρ •R σ ∶ Γ ⇒R Θ
 \end{code}
 }
 
@@ -219,10 +218,10 @@ postulate substitution : ∀ {U} {V} {σ : Sub U V} {K}
                        {Γ : Context U} {M : Expression U (varKind K)} {A} {Δ} →
                        Γ ⊢ M ∶ A → valid Δ → σ ∶ Γ ⇒ Δ → Δ ⊢ M ⟦ σ ⟧ ∶ A ⟦ σ ⟧
 
-postulate comp-typed : ∀ {U} {V} {W} {σ : Sub V W} {ρ : Sub U V} {Γ} {Δ} {Θ} →
+postulate •-typed : ∀ {U} {V} {W} {σ : Sub V W} {ρ : Sub U V} {Γ} {Δ} {Θ} →
                          σ ∶ Δ ⇒ Θ → ρ ∶ Γ ⇒ Δ → σ • ρ ∶ Γ ⇒ Θ
 
-postulate compRS-typed : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} {Γ} {Δ} {Θ} →
+postulate •RS-typed : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} {Γ} {Δ} {Θ} →
                       ρ ∶ Δ ⇒R Θ → σ ∶ Γ ⇒ Δ → ρ •RS σ ∶ Γ ⇒ Θ
 
 postulate liftSub-typed : ∀ {U} {V} {K} {σ : Sub U V} {Γ} {Δ} {A} →
@@ -258,15 +257,18 @@ lemma {U} {V} {W} M Q N' N ρ σ = let open ≡-Reasoning in
 
 postulate change-cod' : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {Δ'} → σ ∶ Γ ⇒ Δ → Δ ≡ Δ' → σ ∶ Γ ⇒ Δ'
 
-extendSub : ∀ {U} {V} → Sub U V → Term V → Sub (U , -Term) V
+extendSub : ∀ {U} {V} {K} → Sub U V → Expression V (varKind K) → Sub (U , K) V
 extendSub σ M _ x₀ = M
 extendSub σ M _ (↑ x) = σ _ x
 
 postulate extendSub-typed : ∀ {U} {V} {σ : Sub U V} {M : Term V} {Γ} {Δ} {A} →
                           σ ∶ Γ ⇒ Δ → Δ ⊢ M ∶ ty A → extendSub σ M ∶ Γ ,T A ⇒ Δ
                                                                               
-postulate extendSub-decomp : ∀ {U} {V} {σ : Sub U V} {M : Term V} {C} {K} (E : Subexp (U , -Term) C K) →
-                           E ⟦ liftSub -Term σ ⟧ ⟦ x₀:= M ⟧ ≡ E ⟦ extendSub σ M ⟧
+postulate extendSub-decomp : ∀ {U} {V} {σ : Sub U V} {K} {M : Expression V (varKind K)} {C} {L} (E : Subexp (U , K) C L) →
+                           E ⟦ extendSub σ M ⟧ ≡ E ⟦ liftSub K σ ⟧ ⟦ x₀:= M ⟧
+
+postulate extendSub-upRep : ∀ {U} {V} {σ : Sub U V} {K} {M : Expression V (varKind K)} {C L} {E : Subexp U C L} →
+                          E ⇑ ⟦ extendSub σ M ⟧ ≡ E ⟦ σ ⟧
 
 postulate ⊃-gen₁ : ∀ {V} {Γ : Context V} {φ} {ψ} → Γ ⊢ φ ⊃ ψ ∶ ty Ω → Γ ⊢ φ ∶ ty Ω
 
@@ -300,7 +302,7 @@ postulate rep-comp₃ : ∀ {U V₁ V₂ V₃ C K} (E : Subexp U C K) {ρ₃ : R
 
 weakening-addpath : ∀ {V} {Γ : Context V} {K} {E : Expression V (varKind K)} {T : Expression V (parent K)} {A} → Γ ⊢ E ∶ T → addpath Γ A ⊢ E ⇑ ⇑ ⇑ ∶ T ⇑ ⇑ ⇑
 weakening-addpath {Γ = Γ} {E = E} {T} {A = A} Γ⊢T∶E = subst₂ (λ t e → addpath Γ A ⊢ t ∶ e) (rep-comp₃ E) (rep-comp₃ T) (weakening Γ⊢T∶E (valid-addpath (context-validity Γ⊢T∶E)) 
-  (compR-typed {Θ = addpath Γ A} (compR-typed {Θ = addpath Γ A} (upRep-typed (var x₁ ≡〈 A 〉 var x₀)) (upRep-typed (ty A))) (upRep-typed (ty A))))
+  (•R-typed {Θ = addpath Γ A} (•R-typed {Θ = addpath Γ A} (upRep-typed (var x₁ ≡〈 A 〉 var x₀)) (upRep-typed (ty A))) (upRep-typed (ty A))))
 
 liftPathSub-typed : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {A} {Δ} → 
   τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → valid Δ → liftPathSub τ ∶ sub↖ ρ ∼ sub↗ σ ∶ Γ ,T A ⇒ Δ ,T  A ,T  A ,E var x₁ ≡〈 A 〉 var x₀

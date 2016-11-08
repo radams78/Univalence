@@ -115,10 +115,10 @@ postulate compC : ∀ {U} {V} {W} {ρ : Sub V W} {σ : Sub U V} {Γ} {Δ} {Θ} �
 
 \AgdaHide{
 \begin{code}
-postulate compRSC : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} {Γ} {Δ} {Θ} →
+postulate •RSC : ∀ {U} {V} {W} {ρ : Rep V W} {σ : Sub U V} {Γ} {Δ} {Θ} →
                  ρ ∶ Δ ⇒R Θ → σ ∶ Γ ⇒C Δ → ρ •RS σ ∶ Γ ⇒C Θ
 
-postulate compSRC : ∀ {U} {V} {W} {σ : Sub V W} {ρ : Rep U V} {Γ} {Δ} {Θ} →
+postulate •SRC : ∀ {U} {V} {W} {σ : Sub V W} {ρ : Rep U V} {Γ} {Δ} {Θ} →
                  σ ∶ Δ ⇒C Θ → ρ ∶ Γ ⇒R Δ → σ •SR ρ ∶ Γ ⇒C Θ
 \end{code}
 }
@@ -150,8 +150,8 @@ postulate botsub₃C : ∀ {V} {Γ : Context V} {A} {M} {N} {P} →
 If $\sigma : \Gamma \Rightarrow_C \Delta$ and $M \in E_\Delta(A)$ then $(\sigma , x := M) : (\Gamma , x : A) \Rightarrow_C \Delta$.
 
 \begin{code}
-postulate extendSubC : ∀ {U} {V} {σ : Sub U V} {M : Term V} {Γ} {Δ} {A} →
-                          σ ∶ Γ ⇒C Δ → E Δ (ty A) M → extendSub σ M ∶ Γ ,T A ⇒C Δ
+postulate extendSubC : ∀ {U} {V} {σ : Sub U V} {K} {M} {Γ} {Δ} {A} →
+                          σ ∶ Γ ⇒C Δ → E Δ (A ⟦ σ ⟧) M → extendSub σ M ∶ _,_ {K = K} Γ A ⇒C Δ
 \end{code}
 \end{enumerate}
 \end{lemma}
@@ -191,7 +191,7 @@ postulate extendPSC : ∀ {U} {V} {τ : PathSub U V} {ρ σ : Sub U V} {Γ : Con
 
 \AgdaHide{
 \begin{code}
-postulate compRPC : ∀ {U} {V} {W} {ρ : Rep V W} {τ : PathSub U V} {σ} {σ'} {Γ} {Δ} {Θ} →
+postulate •RPC : ∀ {U} {V} {W} {ρ : Rep V W} {τ : PathSub U V} {σ} {σ'} {Γ} {Δ} {Θ} →
                          τ ∶ σ ∼ σ' ∶ Γ ⇒C Δ → ρ ∶ Δ ⇒R Θ → ρ •RP τ ∶ ρ •RS σ ∼ ρ •RS σ' ∶ Γ ⇒C Θ
 
 \end{code}

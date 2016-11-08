@@ -717,6 +717,19 @@ Induction on derivations.
 \\
 %
 \\
+\>\AgdaFunction{toPath} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{PathSub} \AgdaBound{U} \AgdaBound{V}\<%
+\\
+\>\AgdaFunction{toPath} \AgdaBound{σ} \AgdaBound{x} \AgdaSymbol{=} \AgdaFunction{reff} \AgdaSymbol{(}\AgdaBound{σ} \AgdaSymbol{\_} \AgdaBound{x}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaKeyword{postulate} \AgdaPostulate{extendPS-decomp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaSymbol{(}\AgdaBound{U} \AgdaInductiveConstructor{,} \AgdaInductiveConstructor{-Term}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaBound{N} \AgdaBound{N'}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{26}{}\<[26]%
+\>[26]\AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaFunction{extendPS} \AgdaSymbol{(}\AgdaFunction{toPath} \AgdaBound{σ}\AgdaSymbol{)} \AgdaBound{P} \AgdaFunction{∶} \AgdaFunction{extendSub} \AgdaBound{σ} \AgdaBound{N} \AgdaFunction{∼} \AgdaFunction{extendSub} \AgdaBound{σ} \AgdaBound{N'} \AgdaFunction{⟧⟧} \AgdaDatatype{≡} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaSymbol{\_} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaFunction{⟦⟦} \AgdaFunction{x₀::=} \AgdaBound{P} \AgdaFunction{∶} \AgdaFunction{x₀:=} \AgdaBound{N} \AgdaFunction{∼} \AgdaFunction{x₀:=} \AgdaBound{N'} \AgdaFunction{⟧⟧}\<%
+\\
+%
+\\
 \>\AgdaKeyword{postulate} \AgdaPostulate{pathsub-extendPS} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{M} \AgdaSymbol{\{}\AgdaBound{τ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{P} \AgdaSymbol{:} \AgdaFunction{Path} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N'} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ'}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
 \\
 \>[26]\AgdaIndent{27}{}\<[27]%

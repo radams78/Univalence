@@ -23,6 +23,8 @@
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Red}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.KeyRedex.SNE}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.PathSub}\<%
 \end{code}
 }
 
@@ -42,6 +44,9 @@ If $M[x:=N]L_1 \cdots L_n \in \SN$ and $N \in \SN$ then $(\lambda x:A.M)NL_1 \cd
 If $\delta[p:=\epsilon], \phi, \epsilon \in \SN$ then $(\lambda p:\phi.\delta)\epsilon \in \SN$.
 \item
 If $(P[x:=L, y:=L', e:=Q]_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^- \delta_1 \cdots \delta_m \in \SN$ and $L, L', Q \in \SN$ then $((\triplelambda e:x =_A y.P)_{L L'} Q_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^- \delta_1 \cdots \delta_m \in \SN$.
+\item
+\label{prop:SNE'}
+If $(M \{ x:=P : N \sim N' \} \vec{Q})^+ \vec{\delta} \in \SN$ and $P, N, N' \in \SN$ then $(\reff{\lambda x:A.M}_{N N'} P \vec{O})^+ \vec{\delta} \in \SN$, and similarly with $+$ replaced with $-$.
 \end{enumerate}
 \end{proposition}
 
@@ -499,6 +504,19 @@ and $\delta [p := \epsilon] \in E_\Gamma(\psi)$ then $(\lambda p:\phi.\delta) \e
 \item
 \label{lm:wteT}
 Let $\Gamma, x : A \vdash M : B$ and let $N \in E_\Gamma(A)$. If $M[x:=N] \in E_\Gamma(B)$ then $(\lambda x:A.M)N \in E_\Gamma(B)$.
+\item
+\label{lm:wteE'}
+Let $\Gamma, x : A \vdash M : B$ and let $N, N' \in E_\Gamma(A)$ and $P \in E_\Gamma(N =_A N')$.
+If $M \{ x := P : N \sim N' \} \in E_\Gamma(M[x:=N] =_B M[x:=N'])$ then $\reff{\lambda x:A.M}_{N N'} P \in E_\Gamma(M[x:=N] =_B M[x:=N'])$.
+\begin{code}%
+\>\AgdaKeyword{postulate} \AgdaPostulate{wteE'} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{Γ} \AgdaSymbol{:} \AgdaDatatype{Context} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A} \AgdaBound{M} \AgdaBound{B} \AgdaBound{N} \AgdaBound{N'} \AgdaBound{P}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{Γ} \AgdaFunction{,T} \AgdaBound{A} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{B} \AgdaSymbol{→} \AgdaRecord{E} \AgdaBound{Γ} \AgdaSymbol{(}\AgdaFunction{ty} \AgdaBound{A}\AgdaSymbol{)} \AgdaBound{N} \AgdaSymbol{→} \AgdaRecord{E} \AgdaBound{Γ} \AgdaSymbol{(}\AgdaFunction{ty} \AgdaBound{A}\AgdaSymbol{)} \AgdaBound{N'} \AgdaSymbol{→} \AgdaRecord{E} \AgdaBound{Γ} \AgdaSymbol{(}\AgdaBound{N} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{N'}\AgdaSymbol{)} \AgdaBound{P} \AgdaSymbol{→}\<%
+\\
+\>[15]\AgdaIndent{16}{}\<[16]%
+\>[16]\AgdaRecord{E} \AgdaBound{Γ} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{N} \AgdaFunction{⟧} \AgdaFunction{≡〈} \AgdaBound{B} \AgdaFunction{〉} \AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{N'} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦⟦} \AgdaSymbol{(}\AgdaFunction{x₀::=} \AgdaBound{P}\AgdaSymbol{)} \AgdaFunction{∶} \AgdaSymbol{(}\AgdaFunction{x₀:=} \AgdaBound{N}\AgdaSymbol{)} \AgdaFunction{∼} \AgdaSymbol{(}\AgdaFunction{x₀:=} \AgdaBound{N'}\AgdaSymbol{)} \AgdaFunction{⟧⟧}\AgdaSymbol{)} \AgdaSymbol{→}\<%
+\\
+\>[15]\AgdaIndent{16}{}\<[16]%
+\>[16]\AgdaRecord{E} \AgdaBound{Γ} \AgdaSymbol{(}\AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{N} \AgdaFunction{⟧} \AgdaFunction{≡〈} \AgdaBound{B} \AgdaFunction{〉} \AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{N'} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{app*} \AgdaBound{N} \AgdaBound{N'} \AgdaSymbol{(}\AgdaFunction{reff} \AgdaSymbol{(}\AgdaFunction{ΛT} \AgdaBound{A} \AgdaBound{M}\AgdaSymbol{))} \AgdaBound{P}\AgdaSymbol{)}\<%
+\end{code}
 \end{enumerate}
 \end{lemma}
 
