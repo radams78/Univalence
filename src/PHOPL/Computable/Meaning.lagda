@@ -155,6 +155,6 @@ record MeanTerm {V} (φ : Term V) : Set where
     meaning  : Meaning V shape
     red   : φ ↠ decode-Meaning meaning
 
-WHNCtxt : ∀ {V} → Context V → Set
-WHNCtxt {V} Γ = ∀ (p : Var V -Proof) → MeanTerm (typeof p Γ)
+MeanCtxt : ∀ {V} → Context V → Set
+MeanCtxt {V} Γ = ∀ (p : Var V -Proof) → MeanTerm (typeof p Γ)
 \end{code}

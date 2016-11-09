@@ -116,12 +116,12 @@ If $\rho : \Gamma \rightarrow \Delta$ and $\sigma : \Delta \rightarrow \Theta$ t
 
 \begin{code}
 •R-typed : ∀ {U V W} {σ : Rep V W} {ρ : Rep U V} {Γ} {Δ} {Θ} → 
-  ρ ∶ Γ ⇒R Δ → σ ∶ Δ ⇒R Θ → (σ •R ρ) ∶ Γ ⇒R Θ
+  σ ∶ Δ ⇒R Θ → ρ ∶ Γ ⇒R Δ → (σ •R ρ) ∶ Γ ⇒R Θ
 \end{code}
 
 \AgdaHide{
 \begin{code}
-•R-typed {U} {V} {W} {σ} {ρ} {Γ} {Δ} {Θ} ρ∶Γ⇒RΔ σ∶Δ⇒RΘ {K} x = let open ≡-Reasoning in 
+•R-typed {U} {V} {W} {σ} {ρ} {Γ} {Δ} {Θ} σ∶Δ⇒RΘ ρ∶Γ⇒RΔ {K} x = let open ≡-Reasoning in 
   begin
     typeof (σ K (ρ K x)) Θ
   ≡⟨ σ∶Δ⇒RΘ (ρ K x) ⟩

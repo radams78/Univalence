@@ -23,10 +23,22 @@
 \>[2]\AgdaKeyword{infixr} \AgdaNumber{2} \AgdaFixityOp{\_≡⟨⟨\_⟩⟩\_}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{\_≡⟨⟨\_⟩⟩\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaBound{x} \AgdaSymbol{\{}\AgdaBound{y} \AgdaBound{z}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{y} \AgdaField{≈} \AgdaBound{x} \AgdaSymbol{→} \AgdaBound{y} \AgdaField{≈} \AgdaBound{z} \AgdaSymbol{→} \AgdaBound{x} \AgdaField{≈} \AgdaBound{z}\<%
+\>[2]\AgdaFunction{\_≡⟨⟨\_⟩⟩\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaBound{x} \AgdaSymbol{\{}\AgdaBound{y} \AgdaBound{z}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{y} \AgdaDatatype{≡} \AgdaBound{x} \AgdaSymbol{→} \AgdaBound{y} \AgdaDatatype{IsRelatedTo} \AgdaBound{z} \AgdaSymbol{→} \AgdaBound{x} \AgdaDatatype{IsRelatedTo} \AgdaBound{z}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaSymbol{\_} \AgdaFunction{≡⟨⟨} \AgdaBound{y≈x} \AgdaFunction{⟩⟩} \AgdaBound{y≈z} \AgdaSymbol{=} \AgdaFunction{Setoid.trans} \AgdaBound{S} \AgdaSymbol{(}\AgdaFunction{Setoid.sym} \AgdaBound{S} \AgdaBound{y≈x}\AgdaSymbol{)} \AgdaBound{y≈z}\<%
+\>[2]\AgdaBound{x} \AgdaFunction{≡⟨⟨} \AgdaBound{y≡x} \AgdaFunction{⟩⟩} \AgdaBound{y≈z} \AgdaSymbol{=} \AgdaBound{x} \AgdaFunction{≡⟨} \AgdaFunction{sym} \AgdaBound{y≡x} \AgdaFunction{⟩} \AgdaBound{y≈z}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{infixr} \AgdaNumber{2} \AgdaFixityOp{\_≈⟨⟨\_⟩⟩\_}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{\_≈⟨⟨\_⟩⟩\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaBound{x} \AgdaSymbol{\{}\AgdaBound{y} \AgdaBound{z}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{y} \AgdaField{≈} \AgdaBound{x} \AgdaSymbol{→} \AgdaBound{y} \AgdaDatatype{IsRelatedTo} \AgdaBound{z} \AgdaSymbol{→} \AgdaBound{x} \AgdaDatatype{IsRelatedTo} \AgdaBound{z}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaBound{x} \AgdaFunction{≈⟨⟨} \AgdaBound{y≈x} \AgdaFunction{⟩⟩} \AgdaBound{y≈z} \AgdaSymbol{=} \AgdaBound{x} \AgdaFunction{≈⟨} \AgdaFunction{Setoid.sym} \AgdaBound{S} \<[40]%
+\>[40]\AgdaBound{y≈x} \AgdaFunction{⟩} \AgdaBound{y≈z}\<%
 \\
 %
 \\

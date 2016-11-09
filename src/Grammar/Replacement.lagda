@@ -102,7 +102,7 @@ REP = record {
   comp = record { 
     _∘_ = _•R_ ; 
     apV-comp = refl ; 
-    liftOp-comp = liftRep-comp } }
+    liftOp-comp' = liftRep-comp } }
 \end{code}
 
 \AgdaHide{

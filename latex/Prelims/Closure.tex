@@ -115,6 +115,36 @@
 \\
 %
 \\
+\>\AgdaFunction{RSTCLOSE} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Relation} \AgdaBound{A} \AgdaSymbol{→} \AgdaRecord{Setoid} \AgdaSymbol{\_} \AgdaSymbol{\_}\<%
+\\
+\>\AgdaFunction{RSTCLOSE} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaBound{R} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{} \<[26]%
+\>[26]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{Carrier} \AgdaSymbol{=} \AgdaBound{A} \AgdaSymbol{;} \<[16]%
+\>[16]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{\_≈\_} \AgdaSymbol{=} \AgdaDatatype{RSTClose} \AgdaBound{R} \AgdaSymbol{;} \<[21]%
+\>[21]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{isEquivalence} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{} \<[27]%
+\>[27]\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{refl} \AgdaSymbol{=} \AgdaInductiveConstructor{ref} \AgdaSymbol{;} \<[17]%
+\>[17]\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{sym} \AgdaSymbol{=} \AgdaInductiveConstructor{sym} \AgdaSymbol{;} \<[16]%
+\>[16]\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{trans} \AgdaSymbol{=} \AgdaInductiveConstructor{trans} \AgdaSymbol{\}} \AgdaSymbol{\}}\<%
+\\
+%
+\\
 \>\AgdaFunction{RT-sub-RST} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{A} \AgdaBound{R} \AgdaBound{x} \AgdaBound{y}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{RTClose} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaBound{R} \AgdaBound{x} \AgdaBound{y} \AgdaSymbol{→} \AgdaDatatype{RSTClose} \AgdaBound{R} \AgdaBound{x} \AgdaBound{y}\<%
 \\
 \>\AgdaFunction{RT-sub-RST} \AgdaSymbol{(}\AgdaInductiveConstructor{inc} \AgdaBound{xRy}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{inc} \AgdaBound{xRy}\<%

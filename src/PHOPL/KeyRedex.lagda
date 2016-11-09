@@ -12,6 +12,7 @@ open import PHOPL.Meta
 open import PHOPL.Computable
 open import PHOPL.Red
 open import PHOPL.KeyRedex.SNE
+open import PHOPL.PathSub
 \end{code}
 }
 
@@ -31,6 +32,9 @@ If $M[x:=N]L_1 \cdots L_n \in \SN$ and $N \in \SN$ then $(\lambda x:A.M)NL_1 \cd
 If $\delta[p:=\epsilon], \phi, \epsilon \in \SN$ then $(\lambda p:\phi.\delta)\epsilon \in \SN$.
 \item
 If $(P[x:=L, y:=L', e:=Q]_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^- \delta_1 \cdots \delta_m \in \SN$ and $L, L', Q \in \SN$ then $((\triplelambda e:x =_A y.P)_{L L'} Q_{M_1 N_1} Q_1 \cdots_{M_n N_n} Q_n)^- \delta_1 \cdots \delta_m \in \SN$.
+\item
+\label{prop:SNE'}
+If $(M \{ x:=P : N \sim N' \} \vec{Q})^+ \vec{\delta} \in \SN$ and $P, N, N' \in \SN$ then $(\reff{\lambda x:A.M}_{N N'} P \vec{O})^+ \vec{\delta} \in \SN$, and similarly with $+$ replaced with $-$.
 \end{enumerate}
 \end{proposition}
 
@@ -213,6 +217,15 @@ postulate wteP : ∀ {V} {Γ : Context V} {φ ψ : Term V} {δ ε} →
 \item
 \label{lm:wteT}
 Let $\Gamma, x : A \vdash M : B$ and let $N \in E_\Gamma(A)$. If $M[x:=N] \in E_\Gamma(B)$ then $(\lambda x:A.M)N \in E_\Gamma(B)$.
+\item
+\label{lm:wteE'}
+Let $\Gamma, x : A \vdash M : B$ and let $N, N' \in E_\Gamma(A)$ and $P \in E_\Gamma(N =_A N')$.
+If $M \{ x := P : N \sim N' \} \in E_\Gamma(M[x:=N] =_B M[x:=N'])$ then $\reff{\lambda x:A.M}_{N N'} P \in E_\Gamma(M[x:=N] =_B M[x:=N'])$.
+\begin{code}
+postulate wteE' : ∀ {V} {Γ : Context V} {A M B N N' P} → Γ ,T A ⊢ M ∶ ty B → E Γ (ty A) N → E Γ (ty A) N' → E Γ (N ≡〈 A 〉 N') P →
+                E Γ (M ⟦ x₀:= N ⟧ ≡〈 B 〉 M ⟦ x₀:= N' ⟧) (M ⟦⟦ (x₀::= P) ∶ (x₀:= N) ∼ (x₀:= N') ⟧⟧) →
+                E Γ (M ⟦ x₀:= N ⟧ ≡〈 B 〉 M ⟦ x₀:= N' ⟧) (app* N N' (reff (ΛT A M)) P)
+\end{code}
 \end{enumerate}
 \end{lemma}
 

@@ -218,7 +218,7 @@ postulate eq-resp-conv : ∀ {V} {M M' N N' : Term V} {A : Type} →
 
 postulate R-creates-rep : Red.creates' REP
 
-postulate R-respects-replacement : Red.respects' REP
+postulate R-respects-rep : Red.respects' REP
 
 postulate osr-rep : ∀ {U} {V} {C} {K} {E E' : Subexp U C K} {ρ : Rep U V} →
                   E Red.⇒ E' → E 〈 ρ 〉 Red.⇒ E' 〈 ρ 〉

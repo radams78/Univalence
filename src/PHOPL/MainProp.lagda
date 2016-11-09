@@ -6,6 +6,7 @@ open import Data.Unit
 open import Data.Product renaming (_,_ to _,p_)
 open import Data.List
 open import Prelims
+open import Prelims.Closure
 open import PHOPL.Grammar
 open import PHOPL.Rules
 open import PHOPL.PathSub
@@ -13,7 +14,13 @@ open import PHOPL.Red
 open import PHOPL.Meta
 open import PHOPL.Computable
 open import PHOPL.SubC
---open import PHOPL.SN
+open import PHOPL.KeyRedex
+
+βsub : ∀ {U V A} M {σ : Sub U V} {N} → appT (ΛT A M ⟦ σ ⟧) N ⇒ M ⟦ extendSub σ N ⟧
+βsub {U} {V} {A} M {σ} {N} = subst (λ x → appT (ΛT A M ⟦ σ ⟧) N ⇒ x) (Prelims.sym (extendSub-decomp M)) (redex (βR βT))
+
+E-MeanTerm : ∀ {V} {Γ : Context V} {φ} → E Γ (ty Ω) φ → MeanTerm φ
+E-MeanTerm (EI typed computable) = {!!}
 \end{code}
 }
 
@@ -26,9 +33,6 @@ Our main theorem is as follows.
 If $\Gamma \vdash t : T$ and $\sigma : \Gamma \Rightarrow \Delta$ is computable, and $\Delta \vald$, then $t[\sigma] \in E_\Delta(T[\sigma])$.
 
 \begin{code}
-toPath : ∀ {U V} → Sub U V → PathSub U V
-toPath σ x = reff (σ _ x)
-
 postulate toPathC : ∀ {U V} {σ : Sub U V} {Γ Δ} → σ ∶ Γ ⇒C Δ → toPath σ ∶ σ ∼ σ ∶ Γ ⇒C Δ
 
 Computable-Sub : ∀ {U V K} (σ : Sub U V) {Γ Δ} 
@@ -149,7 +153,7 @@ Let $\Theta \supseteq \Delta$ and $N \in E_\Theta(A)$.  We must show that $(\lam
 We have that $(\sigma, x:=N) : (\Gamma, x : A) \rightarrow \Theta$ is computable, 
 \begin{code}
   let σN∶ΓA⇒CΘ : extendSub (ρ •RS σ) N ∶ Γ ,T A ⇒C Θ
-      σN∶ΓA⇒CΘ = extendSubC (compRSC ρ∶Δ⇒RΘ σ∶Γ⇒CΔ) (EI Θ⊢N∶A computeN) in
+      σN∶ΓA⇒CΘ = extendSubC (•RSC ρ∶Δ⇒RΘ σ∶Γ⇒CΔ) (EI Θ⊢N∶A computeN) in
 \end{code}
 and so the induction hypothesis gives
 $M[\sigma, x:=N] \in E_\Theta(B)$.
@@ -168,11 +172,9 @@ The result follows by Lemma \ref{lm:wte}.\ref{lm:wteT}.
       (let open ≡-Reasoning in 
       begin
         M ⟦ extendSub (ρ •RS σ) N ⟧
-      ≡⟨⟨ extendSub-decomp M ⟩⟩
+      ≡⟨ extendSub-decomp M ⟩
         M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧
-      ≡⟨ sub-congl (sub-congr M liftSub-compRS) ⟩
-        M ⟦ liftRep _ ρ •RS liftSub _ σ ⟧ ⟦ x₀:= N ⟧
-      ≡⟨ sub-congl (sub-compRS M) ⟩
+      ≡⟨ sub-congl (liftSub-compRS M) ⟩
         M ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 ⟦ x₀:= N ⟧
       ∎) 
     EΘMN)))
@@ -187,12 +189,22 @@ We must show that $\triplelambda e:x =_A y. M [ \sigma ] \{ x := e : x \sim y \}
 So let $\Theta \supseteq \Delta$ and $N, N' \in E_\Theta(A)$, $P \in E_\Theta(N =_A N')$.
 \begin{code}
   (λ {W} Θ {ρ} {N} {N'} {P} ρ∶Δ⇒RΘ Θ⊢P∶N≡N' computeN computeN' computeP → 
+  let validΘ : valid Θ
+      validΘ = context-validity Θ⊢P∶N≡N' in
+  let validΘA : valid (Θ ,T A)
+      validΘA = ctxTR validΘ in
+  let Θ⊢N∶A : Θ ⊢ N ∶ ty A
+      Θ⊢N∶A = equation-validity₁ Θ⊢P∶N≡N' in
+  let Θ⊢N'∶A : Θ ⊢ N' ∶ ty A
+      Θ⊢N'∶A = equation-validity₂ Θ⊢P∶N≡N' in
 \end{code}
 Then $(z_1 := \sigma(z_1)\{\}, \ldots, z_n := \sigma(z_n)\{\}, x := P) : (\sigma, x:=N) \sim (\sigma, x:=N') : (\Gamma, x:A) \rightarrow \Theta$
 is computable,
 \begin{code}
   let ρσC : ρ •RS σ ∶ Γ ⇒C Θ
-      ρσC = compRSC ρ∶Δ⇒RΘ σ∶Γ⇒CΔ in
+      ρσC = •RSC ρ∶Δ⇒RΘ σ∶Γ⇒CΔ in
+  let ΘA⊢Mρσ∶B : Θ ,T A ⊢ M ⟦ liftSub _ (ρ •RS σ) ⟧ ∶ ty B
+      ΘA⊢Mρσ∶B = substitution Γ,A⊢M∶B validΘA (liftSub-typed (subC-typed ρσC)) in
   let pathρσC : toPath (ρ •RS σ) ∶ ρ •RS σ ∼ ρ •RS σ ∶ Γ ⇒C Θ
       pathρσC = toPathC ρσC in
   let σ₁ : Sub (U , -Term) W
@@ -208,20 +220,42 @@ is computable,
 \[ M \{ z_i := \sigma(z_i) \{\}, x := P \} \in E_\Theta(M [ \sigma, x:=N] =_B M [\sigma, x:=N']) \enspace . \]
 \begin{code}
   let MP∈EΘMN≡MN' : E Θ (M ⟦ σ₁ ⟧ ≡〈 B 〉 M ⟦ σ₂ ⟧) (M ⟦⟦ τ ∶ σ₁ ∼ σ₂ ⟧⟧)
-      MP∈EΘMN≡MN' = computable-path-substitution τ (extendSubC ρσC (EI (equation-validity₁ Θ⊢P∶N≡N') computeN)) (extendSubC ρσC (EI (equation-validity₂ Θ⊢P∶N≡N') computeN')) (extendPSC pathρσC (EI Θ⊢P∶N≡N' computeP)) Γ,A⊢M∶B (context-validity Θ⊢P∶N≡N') in 
-  let ⇑⇑⇑ρσ : Sub U (W , -Term , -Term , -Path)
-      ⇑⇑⇑ρσ = upRep •RS (upRep •RS (upRep •RS (ρ •RS σ))) in
+      MP∈EΘMN≡MN' = computable-path-substitution τ (extendSubC ρσC (EI Θ⊢N∶A computeN)) (extendSubC ρσC (EI (equation-validity₂ Θ⊢P∶N≡N') computeN')) (extendPSC pathρσC (EI Θ⊢P∶N≡N' computeP)) Γ,A⊢M∶B validΘ in
 \end{code}
-Therefore, by Lemma \ref{lm:wte}.\ref{lm:wteE}, we have that $(\triplelambda e:x =_A y. M \{ z_i := \sigma(z_i) \{\}, x := e \})_{N N'} P \in E_\Theta(M[\sigma, x:=N] =_B M[\sigma, x:=N'])$.
+that is,
+\[ M [ \sigma ] \{ x := P : N \sim N' \} \in E_\Theta(M [ \sigma, x:=N] =_B M [\sigma, x:=N']) \enspace . \]
 \begin{code}
-  let λλλPM∈EΘMN≡MN' : E Θ (M ⟦ σ₁ ⟧ ≡〈 B 〉 M ⟦ σ₂ ⟧) (app* N N' (λλλ A (M ⟦⟦ extendPS (toPath ⇑⇑⇑ρσ) (var x₀) ∶ extendSub ⇑⇑⇑ρσ (var x₂) ∼ extendSub ⇑⇑⇑ρσ (var x₁) ⟧⟧)) P)
-      λλλPM∈EΘMN≡MN' = {!!} in {!!})
+  let MP∈EΘMN≡MN'₂ : E Θ (M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧ ≡〈 B 〉 M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N' ⟧) (M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦⟦ x₀::= P ∶ x₀:= N ∼ x₀:= N' ⟧⟧)
+      MP∈EΘMN≡MN'₂ = subst₃ (λ a b c → E Θ (a ≡〈 B 〉 b) c) (extendSub-decomp M) (extendSub-decomp M) (extendPS-decomp {M = M}) MP∈EΘMN≡MN' in 
 \end{code}
-
-Hence Lemma \ref{lm:conv-compute} gives $(\triplelambda e:x =_A y. M \{ z_i := \sigma(z_i) \{\}, x := e \})_{N N'} P \in E_\Theta((\lambda x:A.M[\sigma])N =_B (\lambda x:A.M[\sigma])N')$
-as required.
+Therefore, by Lemma \ref{lm:wte}.\ref{lm:wteE'},
+\[ \reff{\lambda x:A.M[\sigma]}_{N N'} P \in E_\Theta(M [ \sigma, x:=N] =_B M [\sigma, x:=N']) \]
 \begin{code}
-  )
+  let ΛMP∈EΘMN≡MN' : E Θ (M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧ ≡〈 B 〉 M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N' ⟧) (app* N N' (reff (ΛT A M ⟦ ρ •RS σ ⟧)) P)
+      ΛMP∈EΘMN≡MN' = wteE' ΘA⊢Mρσ∶B (EI Θ⊢N∶A computeN) (EI Θ⊢N'∶A computeN') (EI Θ⊢P∶N≡N' computeP) MP∈EΘMN≡MN'₂ in 
+  let ΛMP∈EΘMN≡MN'₂ : E Θ (M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧ ≡〈 B 〉 M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N' ⟧) (app* N N' (reff (ΛT A M ⟦ σ ⟧ 〈 ρ 〉)) P)
+      ΛMP∈EΘMN≡MN'₂ = subst (λ x → E Θ (M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N ⟧ ≡〈 B 〉 M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= N' ⟧) (app* N N' (reff (ΛT A x)) P)) (liftSub-compRS M)
+        ΛMP∈EΘMN≡MN' in
+\end{code}
+and so
+\[ \reff{\lambda x:A.M[\sigma]}_{N N'} P \in E_\Theta(M [ (\lambda x:A.M[\sigma]) N =_B (\lambda x:A.M [\sigma]) N') \]
+by Lemma \ref{lm:conv-compute}.
+\begin{code}
+  let Mρσt : ∀ t → Θ ⊢ t ∶ ty A → Θ ⊢ M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= t ⟧ ∶ ty B
+      Mρσt _ Θ⊢t∶A = substitution ΘA⊢Mρσ∶B validΘ (botsub-typed Θ⊢t∶A) in
+  let ΛMρσt : ∀ t → Θ ⊢ t ∶ ty A → Θ ⊢ appT (ΛT A M ⟦ σ ⟧ 〈 ρ 〉) t ∶ ty B
+      ΛMρσt _ Θ⊢t∶A = appR (ΛR (subst (λ x → Θ ,T A ⊢ x ∶ ty B) (liftSub-compRS M) ΘA⊢Mρσ∶B)) Θ⊢t∶A in
+  let βM : ∀ t → M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= t ⟧ ≃ appT (ΛT A M ⟦ σ ⟧ 〈 ρ 〉) t
+      βM t = let open EqReasoning (CONV W -Expression (varKind -Term)) in 
+        begin
+          M ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= t ⟧
+        ≈⟨⟨ inc (redex (βR βT)) ⟩⟩
+          appT (ΛT A M ⟦ ρ •RS σ ⟧) t
+        ≡⟨ cong (λ x → appT (ΛT A x) t) (liftSub-compRS M) ⟩
+          appT (ΛT A M ⟦ σ ⟧ 〈 ρ 〉) t
+        ∎ in
+  conv-computeE (E.computable ΛMP∈EΘMN≡MN'₂) (Mρσt N Θ⊢N∶A) (Mρσt N' Θ⊢N'∶A) (ΛMρσt N Θ⊢N∶A) (ΛMρσt N' Θ⊢N'∶A) 
+    (βM N) (βM N')))
 \end{code}
 \end{itemize}
 \item[4]
@@ -234,10 +268,73 @@ and so Lemma \ref{lm:wte}.\ref{lm:wteE} gives
 \[ (\triplelambda e:x=_A y.M \{ \tau, x:=e \})_{N N'} P \in E_\Theta((\lambda x:A.M[\rho]) N =_B (\lambda x:A.M[\sigma]) N') \]
 as required.
 \end{enumerate}
+\item
+$$\infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \supset \psi}{\Gamma, p : \phi \vdash \delta : \psi}$$
+
+\begin{code}
+Computable-Sub σ {Γ} σ∶Γ⇒CΔ (ΛPR {δ = δ} {φ = φ} {ψ = ψ} Γ⊢φ∶Ω Γ⊢ψ∶Ω Γ,φ⊢δ∶ψ) validΔ = EI 
+  (substitution (ΛPR Γ⊢φ∶Ω Γ⊢ψ∶Ω Γ,φ⊢δ∶ψ) validΔ (subC-typed σ∶Γ⇒CΔ)) 
+  (let MeanTermI S φ' φ↠φ' = E-MeanTerm (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢φ∶Ω validΔ) in 
+  let MeanTermI T ψ' ψ↠ψ' = E-MeanTerm (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢ψ∶Ω validΔ) in 
+  S imp T ,p φ' imp ψ' ,p ⊃-red φ↠φ' ψ↠ψ' ,p 
+\end{code}
+
+Let $\Theta \supseteq \Delta$ and $\epsilon \in E_\Theta(\phi[\sigma])$.
+\begin{code}
+  (λ {W} Θ {ρ} {ε} ρ∶Δ⇒RΘ Θ⊢ε∶φ computeε →
+\end{code}
+  Then $(\sigma, p:=\epsilon) : (\Gamma, p : \phi) \rightarrow \Theta$
+is computable,
+\begin{code}
+  let validΘ : valid Θ
+      validΘ = context-validity Θ⊢ε∶φ in
+  let φσρ↠φ'ρ : φ ⟦ σ ⟧ 〈 ρ 〉 ↠ decode-Meaning (nfrep φ' ρ)
+      φσρ↠φ'ρ = let open PreorderReasoning (RED W -Expression (varKind -Term)) in begin
+              φ ⟦ σ ⟧ 〈 ρ 〉
+            ∼⟨ apredr REP R-respects-rep (MeanTerm.red (E-MeanTerm (Computable-Sub σ σ∶Γ⇒CΔ Γ⊢φ∶Ω validΔ))) ⟩
+              (decode-Meaning φ') 〈 ρ 〉
+            ≈⟨⟨ decode-Meaning-rep φ' {ρ} ⟩⟩
+              decode-Meaning (nfrep φ' ρ)
+            ∎ in
+  let φρσ↠φ'ρ : φ ⟦ ρ •RS σ ⟧ ↠ decode-Meaning (nfrep φ' ρ)
+      φρσ↠φ'ρ = subst (λ x → x ↠ decode-Meaning (nfrep φ' ρ)) (Prelims.sym (sub-compRS φ)) φσρ↠φ'ρ in
+  let σε∶Γφ⇒CΘ : extendSub (ρ •RS σ) ε ∶ Γ ,P φ ⇒C Θ
+      σε∶Γφ⇒CΘ = extendSubC (•RSC ρ∶Δ⇒RΘ σ∶Γ⇒CΔ) (EI 
+        (convR Θ⊢ε∶φ (substitution Γ⊢φ∶Ω (context-validity Θ⊢ε∶φ) (•RS-typed ρ∶Δ⇒RΘ (subC-typed σ∶Γ⇒CΔ))) 
+          (RSTClose.sym (RT-sub-RST φρσ↠φ'ρ)))
+          (S ,p nfrep φ' ρ ,p φρσ↠φ'ρ ,p computeε)) in
+\end{code}
+ and so the induction hypothesis gives
+\[ \delta[\sigma, p:=\epsilon] \in E_\Theta(\psi[\sigma)) \enspace . \]
+\begin{code}
+  let EΘψδ : E Θ (ψ ⟦ ρ •RS σ ⟧) (δ ⟦ extendSub (ρ •RS σ) ε ⟧)
+      EΘψδ = subst (λ x → E Θ x (δ ⟦ extendSub (ρ •RS σ) ε ⟧)) (extendSub-upRep {E = ψ})
+        (Computable-Sub (extendSub (ρ •RS σ) ε) σε∶Γφ⇒CΘ Γ,φ⊢δ∶ψ (context-validity Θ⊢ε∶φ)) in
+\end{code}
+Hence by Lemma \ref{lm:wte}.\ref{lm:wteP}, we have $(\lambda p:\phi[\sigma].\delta[\sigma]) \epsilon \in E_\Theta(\psi[\sigma])$, as required.
+\begin{code}
+  let ρσ∶Γ⇒Θ : ρ •RS σ ∶ Γ ⇒ Θ
+      ρσ∶Γ⇒Θ = •RS-typed ρ∶Δ⇒RΘ (subC-typed σ∶Γ⇒CΔ) in
+  let EΘψΛφδ : E Θ (ψ ⟦ ρ •RS σ ⟧) (appP (ΛP φ δ ⟦ σ ⟧ 〈 ρ 〉) ε)
+      EΘψΛφδ = wteP 
+        (subst₃ (λ x y z → Θ ,P x ⊢ y ∶ z) (sub-compRS φ) (liftSub-compRS δ) (liftSub-upRep ψ) 
+          (substitution Γ,φ⊢δ∶ψ (ctxPR (substitution Γ⊢φ∶Ω validΘ ρσ∶Γ⇒Θ)) (liftSub-typed ρσ∶Γ⇒Θ)))
+        (EI 
+        (convR Θ⊢ε∶φ (weakening (substitution Γ⊢φ∶Ω validΔ (subC-typed σ∶Γ⇒CΔ)) validΘ ρ∶Δ⇒RΘ) (RSTClose.sym (RT-sub-RST φσρ↠φ'ρ)))
+        (S ,p nfrep φ' ρ ,p φσρ↠φ'ρ ,p computeε)) (subst (E Θ (ψ ⟦ ρ •RS σ ⟧)) 
+        (let open ≡-Reasoning in begin
+          δ ⟦ extendSub (ρ •RS σ) ε ⟧
+        ≡⟨ extendSub-decomp δ ⟩
+          δ ⟦ liftSub _ (ρ •RS σ) ⟧ ⟦ x₀:= ε ⟧
+        ≡⟨ sub-congl (liftSub-compRS δ) ⟩
+          δ ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 ⟦ x₀:= ε ⟧
+        ∎) 
+        EΘψδ) in 
+  {!!}))
+\end{code}
 
 \AgdaHide{
 \begin{code}
-Computable-Sub σ σ∶Γ⇒CΔ (ΛPR Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (convR Γ⊢M∶A Γ⊢M∶A₁ x) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (refR Γ⊢M∶A) validΔ = {!!}
 Computable-Sub σ σ∶Γ⇒CΔ (⊃*R Γ⊢M∶A Γ⊢M∶A₁) validΔ = {!!}
@@ -564,13 +661,6 @@ computable-path-substitution U V τ σ σ' Γ Δ ._ ._ σ∶Γ⇒CΔ σ'∶Γ⇒
 \end{code}
 }
 
-\item
-$$\infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \supset \psi}{\Gamma, p : \phi \vdash \delta : \psi}$$
-
-Let $\Theta \supseteq \Delta$ and $\epsilon \in E_\Theta(\phi[\sigma])$.  Then $(\sigma, p:=\epsilon) : (\Gamma, p : \phi) \rightarrow \Theta$
-is computable, and so the induction hypothesis gives
-\[ \delta[\sigma, p:=\epsilon] \in E_\Theta(\psi[\sigma)) \enspace . \]
-Hence by Lemma \ref{lm:wte}.\ref{lm:wteP}, we have $(\lambda p:\phi[\sigma].\delta[\sigma]) \epsilon \in E_\Theta(\psi[\sigma])$, as required.
 \item
 $$ \infer[(\phi \simeq \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} $$
 
