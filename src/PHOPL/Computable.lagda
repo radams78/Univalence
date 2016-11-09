@@ -249,10 +249,8 @@ We must show that
 \begin{code}
 computeP-wd : ∀ {V S T Γ} {φ : Meaning V S} {ψ : Meaning V T} {δ} → computeP Γ φ δ → decode-Meaning φ ≡ decode-Meaning ψ → computeP Γ ψ δ
 computeP-wd {S = nf₀} {nf₀} {φ = nf₀ _} {nf₀ _} computeδ _ = computeδ
-computeP-wd {S = nf₀} {_ imp _} {φ = nf₀ (neutral (var _))} {_ imp _} _ ()
 computeP-wd {S = nf₀} {_ imp _} {φ = nf₀ (neutral (app _ _))} {_ imp _} _ ()
 computeP-wd {S = nf₀} {_ imp _} {φ = nf₀ bot} {_ imp _} _ ()
-computeP-wd {S = S imp S₁} {nf₀} {φ = _ imp _} {nf₀ (neutral (var _))} _ ()
 computeP-wd {S = S imp S₁} {nf₀} {φ = _ imp _} {nf₀ (neutral (app _ _))}_ ()
 computeP-wd {S = S imp S₁} {nf₀} {φ = _ imp _} {nf₀ bot} _ ()
 computeP-wd {S = S imp S'} {T imp T'} {φ = φ imp ψ} {φ' imp ψ'} computeδ φ≡ψ Δ {ρ} ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = 
@@ -436,9 +434,19 @@ $(P \vec{e})^+ \in E_\Gamma(M \vec{x} \supset N \vec{y}) \subseteq \SN$, hence $
 \item
 If $\delta \in E_\Gamma(\phi)$, $\phi \simeq \psi$ and $\Gamma \vdash \psi : \Omega$, then $\delta \in E_\Gamma(\psi)$.
 \begin{code}
-postulate conv-computeP : ∀ {V S} {Γ : Context V} {L M : Meaning V S} {δ} →
-                        computeP Γ L δ → decode-Meaning L ≃ decode-Meaning M →
-                        Γ ⊢ decode-Meaning M ∶ ty Ω → computeP Γ M δ
+osr-computeP : ∀ {V S T} {Γ : Context V} {L : Meaning V S} {M : Meaning V T} {δ} →
+               computeP Γ L δ → decode-Meaning L ⇒ decode-Meaning M →
+               Γ ⊢ decode-Meaning M ∶ ty Ω → computeP Γ M δ
+osr-computeP {L = nf₀ (neutral (app x x₁))} {nf₀ (neutral (app x₂ x₃))} computeLδ _ _ = computeLδ
+osr-computeP {L = nf₀ (neutral (app x x₁))} {nf₀ bot} computeLδ _ _ = computeLδ
+osr-computeP {L = nf₀ (neutral x)} {M imp M₁} computeLδ L⇒M x₁ Δ ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = {!!}
+osr-computeP {L = nf₀ bot} computeLδ L⇒M Γ⊢M∶Ω = {!!}
+osr-computeP {L = L imp L₁} computeLδ L⇒M Γ⊢M∶Ω = {!!}
+
+conv-computeP : ∀ {V S T} {Γ : Context V} {L : Meaning V S} {M : Meaning V T} {δ} →
+                computeP Γ L δ → decode-Meaning L ≃ decode-Meaning M →
+                Γ ⊢ decode-Meaning M ∶ ty Ω → computeP Γ M δ
+conv-computeP = {!!}
 \end{code}
 \item
 If $P \in E_\Gamma(M =_A N)$, $M \simeq M'$, $N \simeq N'$ and $\Gamma \vdash M : A$ and $\Gamma \vdash N : A$, then $P \in E_\Gamma(M' =_A N')$.

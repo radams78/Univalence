@@ -5,7 +5,7 @@ module PHOPL.Grammar where
 open import Data.Nat
 open import Data.Empty renaming (⊥ to Empty)
 open import Data.List hiding (replicate)
-open import Data.Vec hiding (replicate)
+open import Data.Vec hiding (map;replicate)
 open import Prelims
 open import Grammar.Taxonomy
 open import Grammar.Base
@@ -237,9 +237,21 @@ Pi : ∀ {n} → snocVec Type n → Type → Type
 Pi [] B = B
 Pi (AA snoc A) B = Pi AA (A ⇛ B)
 
+APP' : ∀ {V} → Term V → List (Term V) → Term V
+APP' M [] = M
+APP' M (N ∷ NN) = APP' (appT M N) NN
+
+APP'-rep : ∀ {U V} (M : Term U) (NN : List (Term U)) (ρ : Rep U V) → (APP' M NN) 〈 ρ 〉 ≡ APP' (M 〈 ρ 〉) (Data.List.map (λ x → x 〈 ρ 〉) NN)
+APP'-rep M [] ρ = refl
+APP'-rep M (N ∷ NN) ρ = APP'-rep (appT M N) NN ρ
+
 APPl : ∀ {V} → Term V → snocList (Term V) → Term V
 APPl M [] = M
 APPl M (NN snoc N) = appT (APPl M NN) N
+
+APPl-rep : ∀ {U V} {M : Term U} {NN : snocList (Term U)} {ρ : Rep U V} → (APPl M NN) 〈 ρ 〉 ≡ APPl (M 〈 ρ 〉) (Prelims.map (λ x → x 〈 ρ 〉) NN)
+APPl-rep {NN = []} = refl
+APPl-rep {NN = NN snoc N} {ρ} = cong (λ x → appT x (N 〈 ρ 〉)) (APPl-rep {NN = NN} {ρ})
 
 APP : ∀ {V n} → Term V → snocVec (Term V) n → Term V
 APP M [] = M

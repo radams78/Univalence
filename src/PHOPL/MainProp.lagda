@@ -19,8 +19,7 @@ open import PHOPL.KeyRedex
 βsub : ∀ {U V A} M {σ : Sub U V} {N} → appT (ΛT A M ⟦ σ ⟧) N ⇒ M ⟦ extendSub σ N ⟧
 βsub {U} {V} {A} M {σ} {N} = subst (λ x → appT (ΛT A M ⟦ σ ⟧) N ⇒ x) (Prelims.sym (extendSub-decomp M)) (redex (βR βT))
 
-E-MeanTerm : ∀ {V} {Γ : Context V} {φ} → E Γ (ty Ω) φ → MeanTerm φ
-E-MeanTerm (EI typed computable) = {!!}
+postulate E-MeanTerm : ∀ {V} {Γ : Context V} {φ} → E Γ (ty Ω) φ → MeanTerm φ
 \end{code}
 }
 
@@ -330,7 +329,8 @@ Hence by Lemma \ref{lm:wte}.\ref{lm:wteP}, we have $(\lambda p:\phi[\sigma].\del
           δ ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 ⟦ x₀:= ε ⟧
         ∎) 
         EΘψδ) in 
-  {!!}))
+  let S'' ,p ψ'' ,p ψ↠ψ'' ,p ψ''computable = E.computable EΘψΛφδ in 
+  {!conv-computeP {Γ = Θ} {L = ψ''} {M = nfrep ψ' ρ} !}))
 \end{code}
 
 \AgdaHide{
