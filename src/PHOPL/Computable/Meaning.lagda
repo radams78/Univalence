@@ -17,6 +17,10 @@ data Neutral (V : Alphabet) : Set where
   var : Var V -Term → Neutral V
   app : Neutral V → Term V → Neutral V
 
+nAPP : ∀ {V} → Neutral V → snocList (Term V) → Neutral V
+nAPP M [] = M
+nAPP M (NN snoc N) = app (nAPP M NN) N
+
 nrep : ∀ {U V} → Neutral U → Rep U V → Neutral V
 nrep (var x) ρ = var (ρ -Term x)
 nrep (app M N) ρ = app (nrep M ρ) (N 〈 ρ 〉)
@@ -32,6 +36,11 @@ nrep-comp {N = app N N'} = cong₂ app nrep-comp (rep-comp N')
 decode-Neutral : ∀ {V} → Neutral V → Term V
 decode-Neutral (var x) = var x
 decode-Neutral (app M N) = appT (decode-Neutral M) N
+
+decode-Neutral-nAPP : ∀ {V} {M : Neutral V} {NN : snocList (Term V)} →
+  decode-Neutral (nAPP M NN) ≡ APPl (decode-Neutral M) NN
+decode-Neutral-nAPP {NN = []} = refl
+decode-Neutral-nAPP {NN = NN snoc N} = cong (λ x → appT x N) (decode-Neutral-nAPP {NN = NN})
 
 decode-Neutral-rep : ∀ {U V} {N : Neutral U} {ρ : Rep U V} → decode-Neutral (nrep N ρ) ≡ decode-Neutral N 〈 ρ 〉
 decode-Neutral-rep {N = var _} = refl

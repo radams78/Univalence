@@ -182,6 +182,10 @@ postulate Generation-ΛP : ∀ {V} {Γ : Context V} {φ} {δ} {ε} {ψ} →
                           Γ ⊢ appP (ΛP φ δ) ε ∶ ψ →
                           Σ[ χ ∈ Term V ] 
                           (ψ ≃ φ ⊃ χ × Γ ,P φ ⊢ δ ∶ χ ⇑)
+
+Generation-appT : ∀ {V} {Γ : Context V} {M N : Term V} {B} →
+  Γ ⊢ appT M N ∶ ty B → Σ[ A ∈ Type ] Γ ⊢ M ∶ ty (A ⇛ B) × Γ ⊢ N ∶ ty A
+Generation-appT (appR {V} {Γ} {M} {N} {A} {B} Γ⊢M∶A⇛B Γ⊢N∶A) = A ,p Γ⊢M∶A⇛B ,p Γ⊢N∶A
 \end{code}
 }
 

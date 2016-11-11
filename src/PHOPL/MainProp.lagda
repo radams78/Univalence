@@ -19,8 +19,34 @@ open import PHOPL.KeyRedex
 βsub : ∀ {U V A} M {σ : Sub U V} {N} → appT (ΛT A M ⟦ σ ⟧) N ⇒ M ⟦ extendSub σ N ⟧
 βsub {U} {V} {A} M {σ} {N} = subst (λ x → appT (ΛT A M ⟦ σ ⟧) N ⇒ x) (Prelims.sym (extendSub-decomp M)) (redex (βR βT))
 
+infix 10 _⊩_∶_
+_⊩_∶_ : ∀ {V n} → Context V → snocVec (Term V) n → snocVec Type n → Set
+Γ ⊩ [] ∶ [] = valid Γ
+Γ ⊩ MM snoc M ∶ AA snoc A = Γ ⊩ MM ∶ AA × Γ ⊢ M ∶ ty A
+
+Generation-APP : ∀ {V n} {Γ : Context V} {M : Term V} {NN : snocVec (Term V) n} {B} → Γ ⊢ APP M NN ∶ ty B → Σ[ AA ∈ snocVec Type n ] Γ ⊢ M ∶ ty (Pi AA B) × Γ ⊩ NN ∶ AA
+Generation-APP {NN = []} Γ⊢M∶B = [] ,p Γ⊢M∶B ,p context-validity Γ⊢M∶B
+Generation-APP {NN = NN snoc N} (appR {A = A} Γ⊢MNN∶A⇛B Γ⊢N∶A) = let AA ,p Γ⊢M∶AAAB ,p Γ⊩NN∶AA = Generation-APP Γ⊢MNN∶A⇛B in AA snoc A ,p Γ⊢M∶AAAB ,p Γ⊩NN∶AA ,p Γ⊢N∶A
+
+not-⊥MMM-typed : ∀ {V} {Γ : Context V} {NN : snocList (Term V)} {N A} → 
+  Γ ⊢ appT (APPl ⊥ NN) N ∶ A → Empty
+not-⊥MMM-typed {NN = []} (appR () _)
+not-⊥MMM-typed {NN = NN snoc N} (appR Γ⊢⊥NN∶A _) = not-⊥MMM-typed {NN = NN} Γ⊢⊥NN∶A
+
+SN-headtail-MeanTerm : ∀ {V} {Γ : Context V} {M : not-app V} {NN : snocList (Term V)} →
+  SN (APPl (decode-not-app M) NN) → Γ ⊢ APPl (decode-not-app M) NN ∶ ty Ω → MeanTerm (APPl (decode-not-app M) NN)
+SN-headtail-MeanTerm {M = navar x} {NN} SNMNN Γ⊢MNN∶Ω = MeanTermI nf₀ (nf₀ (neutral (nAPP (var x) NN))) (subst (λ P → APPl (var x) NN ↠ P) (Prelims.sym (decode-Neutral-nAPP {M = var x} {NN})) ref)
+SN-headtail-MeanTerm {M = na⊥} {[]} SNMNN Γ⊢MNN∶Ω = MeanTermI nf₀ (nf₀ bot) ref
+SN-headtail-MeanTerm {M = na⊥} {NN snoc N} SNMNN (appR Γ⊢⊥NN∶A⇛Ω Γ⊢N∶A) with not-⊥MMM-typed {NN = NN} (appR Γ⊢⊥NN∶A⇛Ω Γ⊢N∶A) 
+SN-headtail-MeanTerm {M = na⊥} {NN snoc N} SNMNN (appR Γ⊢⊥NN∶A⇛Ω Γ⊢N∶A) | ()
+SN-headtail-MeanTerm {M = na⊃ x x₁} SNMNN Γ⊢MNN∶Ω = {!!}
+SN-headtail-MeanTerm {M = naΛ x x₁} SNMNN Γ⊢MNN∶Ω = {!!}
+
+SN-MeanTerm : ∀ {V} {Γ : Context V} {φ} → SN φ → Γ ⊢ φ ∶ ty Ω → MeanTerm φ
+SN-MeanTerm SNφ Γ⊢φ∶Ω = {!!}
+
 E-MeanTerm : ∀ {V} {Γ : Context V} {φ} → E Γ (ty Ω) φ → MeanTerm φ
-E-MeanTerm (EI typed computable) = {!!}
+E-MeanTerm (EI typed (SNI φ' SNφ')) = {!SN-MeanTerm!}
 \end{code}
 }
 

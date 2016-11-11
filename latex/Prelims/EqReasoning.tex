@@ -3,9 +3,29 @@
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Relation.Binary} \AgdaKeyword{public} \AgdaKeyword{hiding} \AgdaSymbol{(}\AgdaFunction{\_⇒\_}\AgdaSymbol{)}\<%
 \\
+\>\AgdaKeyword{import} \AgdaModule{Relation.Binary.PreorderReasoning}\<%
+\\
 \>\AgdaKeyword{import} \AgdaModule{Relation.Binary.EqReasoning}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Relation.Binary.PropositionalEquality} \AgdaKeyword{public} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaDatatype{\_≡\_}\AgdaSymbol{;}\AgdaInductiveConstructor{refl}\AgdaSymbol{;}\AgdaFunction{sym}\AgdaSymbol{;}\AgdaFunction{trans}\AgdaSymbol{;}\AgdaFunction{cong}\AgdaSymbol{;}\AgdaFunction{cong₂}\AgdaSymbol{;}\AgdaFunction{subst}\AgdaSymbol{;}\AgdaFunction{subst₂}\AgdaSymbol{;}\AgdaFunction{setoid}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaKeyword{module} \AgdaModule{PreorderReasoning} \AgdaSymbol{\{}\AgdaBound{p₁} \AgdaBound{p₂} \AgdaBound{p₃}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{P} \AgdaSymbol{:} \AgdaRecord{Preorder} \AgdaBound{p₁} \AgdaBound{p₂} \AgdaBound{p₃}\AgdaSymbol{)} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{open} \AgdaModule{Relation.Binary.PreorderReasoning} \AgdaBound{P} \AgdaKeyword{public}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{infixr} \AgdaNumber{2} \AgdaFixityOp{\_≈⟨⟨\_⟩⟩\_}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{\_≈⟨⟨\_⟩⟩\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaBound{x} \AgdaSymbol{\{}\AgdaBound{y} \AgdaBound{z}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaField{Preorder.\_≈\_} \AgdaBound{P} \AgdaBound{y} \AgdaBound{x} \AgdaSymbol{→} \AgdaBound{y} \AgdaDatatype{IsRelatedTo} \AgdaBound{z} \AgdaSymbol{→} \AgdaBound{x} \AgdaDatatype{IsRelatedTo} \AgdaBound{z}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaBound{x} \AgdaFunction{≈⟨⟨} \AgdaBound{y≈x} \AgdaFunction{⟩⟩} \AgdaBound{y∼z} \AgdaSymbol{=} \AgdaBound{x} \AgdaFunction{≈⟨} \AgdaFunction{Preorder.Eq.sym} \AgdaBound{P} \AgdaBound{y≈x} \AgdaFunction{⟩} \AgdaBound{y∼z}\<%
 \\
 %
 \\
