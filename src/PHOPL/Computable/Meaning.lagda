@@ -2,7 +2,7 @@
 \begin{code}
 module PHOPL.Computable.Meaning where
 open import Data.Empty renaming (⊥ to Empty)
-open import Data.Product
+open import Data.Product hiding (map)
 open import Data.List
 open import Prelims
 open import Prelims.Closure
@@ -14,37 +14,28 @@ open import PHOPL.Red hiding (nf-is-nf)
 A term is \emph{neutral} iff it has the form $x M_1 \cdots M_n$.
 \begin{code}
 data Neutral (V : Alphabet) : Set where
-  var : Var V -Term → Neutral V
-  app : Neutral V → Term V → Neutral V
-
-nAPP : ∀ {V} → Neutral V → snocList (Term V) → Neutral V
-nAPP M [] = M
-nAPP M (NN snoc N) = app (nAPP M NN) N
+  app : Var V -Term → snocList (Term V) → Neutral V
 
 nrep : ∀ {U V} → Neutral U → Rep U V → Neutral V
-nrep (var x) ρ = var (ρ -Term x)
-nrep (app M N) ρ = app (nrep M ρ) (N 〈 ρ 〉)
+nrep (app x MM) ρ = app (ρ _ x) (Prelims.map (λ M → M 〈 ρ 〉) MM)
 
 nrep-id : ∀ {V} {N : Neutral V} → nrep N (idRep V) ≡ N
-nrep-id {N = var _} = refl
-nrep-id {N = app N M} = cong₂ app nrep-id rep-idRep
+nrep-id {N = app x MM} = cong (app x) (map-id (λ _ → rep-idRep))
 
 nrep-comp : ∀ {U V W} {N : Neutral U} {ρ' : Rep V W} {ρ : Rep U V} → nrep N (ρ' •R ρ) ≡ nrep (nrep N ρ) ρ'
-nrep-comp {N = var x} = refl
-nrep-comp {N = app N N'} = cong₂ app nrep-comp (rep-comp N')
+nrep-comp {N = app x MM} {ρ'} {ρ} = cong (app (ρ' _ (ρ _ x))) (let open ≡-Reasoning in begin 
+   Prelims.map (λ M → M 〈 ρ' •R ρ 〉) MM
+  ≡⟨ map-cong (λ M → rep-comp M) ⟩
+    Prelims.map (λ M → M 〈 ρ 〉 〈 ρ' 〉) MM
+  ≡⟨ map-comp ⟩
+    Prelims.map (λ M → M 〈 ρ' 〉) (Prelims.map (λ M → M 〈 ρ 〉) MM)
+  ∎)
 
 decode-Neutral : ∀ {V} → Neutral V → Term V
-decode-Neutral (var x) = var x
-decode-Neutral (app M N) = appT (decode-Neutral M) N
-
-decode-Neutral-nAPP : ∀ {V} {M : Neutral V} {NN : snocList (Term V)} →
-  decode-Neutral (nAPP M NN) ≡ APPl (decode-Neutral M) NN
-decode-Neutral-nAPP {NN = []} = refl
-decode-Neutral-nAPP {NN = NN snoc N} = cong (λ x → appT x N) (decode-Neutral-nAPP {NN = NN})
+decode-Neutral (app x MM) = APPl (var x) MM
 
 decode-Neutral-rep : ∀ {U V} {N : Neutral U} {ρ : Rep U V} → decode-Neutral (nrep N ρ) ≡ decode-Neutral N 〈 ρ 〉
-decode-Neutral-rep {N = var _} = refl
-decode-Neutral-rep {N = app _ M} {ρ} = cong₂ appT decode-Neutral-rep refl
+decode-Neutral-rep {N = app x MM} {ρ} = Prelims.sym (APPl-rep {NN = MM})
 \end{code}
 
 Let us say that a term is \emph{meaningful} iff it is neutral, or $\bot$, or of the form $\phi \supset \psi$ where $\phi$ and $\psi$ are meaningful.  Given a proposition $\phi$, we will have that $E_\Gamma(\phi)$ is defined if and only if $\phi$ reduces to a meaningful proposition.
@@ -102,7 +93,7 @@ decode-Meaning (nf₀ M) = decode-Meaning₀ M
 decode-Meaning (φ imp ψ) = decode-Meaning φ ⊃ decode-Meaning ψ
 
 decode-Meaning₀-rep : ∀ {U V} {M : Meaning₀ U} {ρ : Rep U V} → decode-Meaning₀ (nf₀rep M ρ) ≡ decode-Meaning₀ M 〈 ρ 〉
-decode-Meaning₀-rep {M = neutral _} = decode-Neutral-rep
+decode-Meaning₀-rep {M = neutral M} = decode-Neutral-rep {N = M}
 decode-Meaning₀-rep {M = bot} = refl
 
 decode-Meaning-rep : ∀ {U V S} (M : Meaning U S) {ρ : Rep U V} → decode-Meaning (nfrep M ρ) ≡ decode-Meaning M 〈 ρ 〉
@@ -137,16 +128,27 @@ decode-Neutral-inj : ∀ {V} {φ ψ : Neutral V} → decode-Neutral φ ≡ decod
 decode-Meaning₀-inj : ∀ {V} {φ ψ : Meaning₀ V} → decode-Meaning₀ φ ≡ decode-Meaning₀ ψ → φ ≡ ψ
 decode-Meaning-inj : ∀ {V S} {φ ψ : Meaning V S} → decode-Meaning φ ≡ decode-Meaning ψ → φ ≡ ψ
 
-decode-Neutral-inj {φ = var _} {var _} x≡y = cong var (var-inj x≡y)
-decode-Neutral-inj {φ = var _} {app _ _} ()
-decode-Neutral-inj {φ = app _ _} {var _} ()
-decode-Neutral-inj {φ = app M N} {app M' N'} φ≡ψ = cong₂ app (decode-Neutral-inj (appT-injl φ≡ψ)) (appT-injr φ≡ψ)
+APPvar-injl : ∀ {V} {x y : Var V -Term} {MM NN : snocList (Term V)} →
+  APPl (var x) MM ≡ APPl (var y) NN → x ≡ y
+APPvar-injl {MM = []} {[]} x≡y = var-inj x≡y
+APPvar-injl {MM = []} {_ snoc _} ()
+APPvar-injl {MM = _ snoc _} {[]} ()
+APPvar-injl {MM = MM snoc M} {NN snoc N} xMM≡yNN = APPvar-injl {MM = MM} {NN} (appT-injl xMM≡yNN)
+
+APPvar-injr : ∀ {V} {x y : Var V -Term} {MM NN : snocList (Term V)} →
+  APPl (var x) MM ≡ APPl (var y) NN → MM ≡ NN
+APPvar-injr {MM = []} {[]} _ = refl
+APPvar-injr {MM = []} {_ snoc _} ()
+APPvar-injr {MM = _ snoc _} {[]} ()
+APPvar-injr {MM = MM snoc M} {NN snoc N} xMM≡yNN = cong₂ _snoc_ (APPvar-injr {MM = MM} {NN} (appT-injl xMM≡yNN)) (appT-injr xMM≡yNN)
+
+decode-Neutral-inj {φ = app x MM} {app y NN} xMM≡yNN = cong₂ app (APPvar-injl {MM = MM} {NN} xMM≡yNN) (APPvar-injr xMM≡yNN)
 
 decode-Meaning₀-inj {φ = neutral _} {ψ = neutral _} φ≡ψ = cong neutral (decode-Neutral-inj φ≡ψ)
-decode-Meaning₀-inj {φ = neutral (var _)} {ψ = bot} ()
-decode-Meaning₀-inj {φ = neutral (app _ _)} {ψ = bot} ()
-decode-Meaning₀-inj {φ = bot} {ψ = neutral (var _)} ()
-decode-Meaning₀-inj {φ = bot} {ψ = neutral (app _ _)} ()
+decode-Meaning₀-inj {φ = neutral (app _ [])} {bot} ()
+decode-Meaning₀-inj {φ = neutral (app _ (_ snoc _))} {bot} ()
+decode-Meaning₀-inj {φ = bot} {neutral (app x [])} ()
+decode-Meaning₀-inj {φ = bot} {neutral (app x (MM snoc x₁))} ()
 decode-Meaning₀-inj {φ = bot} {bot} _ = refl
 
 decode-Meaning-inj {S = nf₀} {nf₀ φ} {nf₀ ψ} φ≡ψ = cong nf₀ (decode-Meaning₀-inj φ≡ψ)

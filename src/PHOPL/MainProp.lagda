@@ -356,7 +356,8 @@ Hence by Lemma \ref{lm:wte}.\ref{lm:wteP}, we have $(\lambda p:\phi[\sigma].\del
           δ ⟦ liftSub _ σ ⟧ 〈 liftRep _ ρ 〉 ⟦ x₀:= ε ⟧
         ∎) 
         EΘψδ) in 
-  {!!}))
+  let S'' ,p ψ'' ,p ψ↠ψ'' ,p ψ''computable = E.computable EΘψΛφδ in 
+  {!conv-computeP {Γ = Θ} {L = ψ''} {M = nfrep ψ' ρ} !}))
 \end{code}
 
 \AgdaHide{
