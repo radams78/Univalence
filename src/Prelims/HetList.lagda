@@ -17,5 +17,9 @@ data all {A} {B : A → Set} (C : ∀ {a} → B a → Set) : ∀ (aa : List A) �
   HetList B aa → Set where
   [] : all C [] []
   _∷_ : ∀ {a} {aa} {b} {bb} → C {a} b → all C aa bb → all C (a ∷ aa) (b ∷ bb)
+
+unhet : ∀ {A B aa} → HetList {A} (λ _ → B) aa → List B
+unhet [] = []
+unhet (b ∷ bb) = b ∷ unhet bb
 \end{code}
 }

@@ -4,8 +4,8 @@ module PHOPL.Computable where
 import Relation.Binary.PreorderReasoning
 open import Data.Empty renaming (⊥ to Empty)
 open import Data.Unit
-open import Data.Product renaming (_,_ to _,p_)
-open import Data.List hiding (all)
+open import Data.Product hiding (zip) renaming (_,_ to _,p_)
+open import Data.List hiding (all;zip)
 open import Prelims
 open import Prelims.Closure
 open import PHOPL.Grammar
@@ -103,8 +103,8 @@ record E {V} {K} (Γ : Context V) (A : Expression V (parent K)) (M : Expression 
     typed : Γ ⊢ M ∶ A
     computable : compute Γ A M
 
-allE : ∀ {V} (Γ : Context V) {SS} → ListMeaning V SS → List (Proof V) → Set
-allE {V} Γ {SS} φφ pp = all (λ {φ} {(φ , δ) → E Γ (decode-Meaning φ) δ}) SS (zip φφ pp)
+allE : ∀ {V} (Γ : Context V) {SS} → ListMeaning V SS → HetList (λ _ → Proof V) SS → Set
+allE {V} Γ {SS} φφ pp = all (λ {φ} → λ {(φ ,p δ) → E Γ (decode-Meaning φ) δ}) SS (zip φφ pp)
 \end{code}
 \caption{Agda definition of the computable expressions}
 \label{fig:compute}
@@ -280,7 +280,7 @@ computeP-wd {S = S imp S'} {T imp T'} {φ = φ imp ψ} {φ' imp ψ'} computeδ �
 postulate Enf : ∀ {V Γ S} {φ : Meaning V S} {δ} → E Γ (decode-Meaning φ) δ → computeP Γ φ δ
 
 EPropE : ∀ {V S} {Γ : Context V} {φ : Meaning V S} {δ} {εε} →
-                 computeP Γ φ δ → allE Γ (domMeaning φ) εε → SN (APPP' δ εε)
+                 computeP Γ φ δ → allE Γ (domMeaning φ) εε → SN (APPP' δ (unhet εε))
 EPropE {φ = nf₀ _} computeδ [] = computeδ
 EPropE {V} {S imp T} {Γ = Γ} {φ = φ imp ψ} {δ} {εε = ε ∷ εε} computeδ (Eε ∷ Eεε) = 
   EPropE {Γ = Γ} {φ = ψ} {appP δ ε} {εε} 
