@@ -2,7 +2,7 @@
 \begin{code}
 module PHOPL.Computable.Meaning where
 open import Data.Empty renaming (⊥ to Empty)
-open import Data.Product hiding (map)
+open import Data.Product hiding (map) renaming (_,_ to _,p_)
 open import Data.List
 open import Prelims
 open import Prelims.Closure
@@ -13,6 +13,53 @@ open import PHOPL.Red hiding (nf-is-nf)
 
 A term is \emph{neutral} iff it has the form $x M_1 \cdots M_n$.
 \begin{code}
+SUBEXP : ∀ {C} → Kind C → SetFunctor
+SUBEXP {C} K = record { 
+  Fib = λ V → Subexp V C K ; 
+  _〈〈_〉〉 = _〈_〉 ; 
+  〈〈〉〉-id = rep-idRep ; 
+  〈〈〉〉-comp = λ {_} {_} {_} {_} {_} {a} → rep-comp a }
+
+snocList-rep : ∀ (F : SetFunctor) {U V} → snocList (SetFunctor.Fib F U) → Rep U V → snocList (SetFunctor.Fib F V)
+snocList-rep _ [] _ = []
+snocList-rep F (aa snoc a) ρ = snocList-rep F aa ρ snoc SetFunctor._〈〈_〉〉 F a ρ
+
+snocList-rep-id : ∀ {F : SetFunctor} {V} {l : snocList (SetFunctor.Fib F V)} →
+  snocList-rep F l (idRep V) ≡ l
+snocList-rep-id {l = []} = refl
+snocList-rep-id {F} {l = aa snoc a} = cong₂ _snoc_ (snocList-rep-id {F}) (SetFunctor.〈〈〉〉-id F)
+
+snocList-rep-comp : ∀ {F : SetFunctor} {U V W} {l : snocList (SetFunctor.Fib F U)}
+  {σ : Rep V W} {ρ : Rep U V} → snocList-rep F l (σ •R ρ) ≡ snocList-rep F (snocList-rep F l ρ) σ
+snocList-rep-comp {l = []} = refl
+snocList-rep-comp {F} {l = aa snoc a} = cong₂ _snoc_ (snocList-rep-comp {F}) (SetFunctor.〈〈〉〉-comp F)
+
+SNOCLIST : SetFunctor → SetFunctor
+SNOCLIST F = record { 
+  Fib = λ V → snocList (SetFunctor.Fib F V) ; 
+  _〈〈_〉〉 = snocList-rep F ; 
+  〈〈〉〉-id = snocList-rep-id ; 
+  〈〈〉〉-comp = snocList-rep-comp }
+
+prod-rep : ∀ {F G : SetFunctor} {U V : Alphabet} → 
+  SetFunctor.Fib F U × SetFunctor.Fib G U → Rep U V → SetFunctor.Fib F V × SetFunctor.Fib G V
+prod-rep {F} {G} {U} {V} (a ,p b) ρ = (SetFunctor._〈〈_〉〉 F a ρ ,p SetFunctor._〈〈_〉〉 G b ρ)
+
+prod-rep-id : ∀ {F G : SetFunctor} {V : Alphabet} {p : SetFunctor.Fib F V × SetFunctor.Fib G V} → prod-rep {F} {G} {V} p (idRep V) ≡ p
+prod-rep-id {F} {G} {p = (_ ,p _)} = cong₂ _,p_ (SetFunctor.〈〈〉〉-id F) (SetFunctor.〈〈〉〉-id G)
+
+prod-rep-comp : ∀ {F G : SetFunctor} {U V W : Alphabet} {σ : Rep V W} {ρ : Rep U V} →
+  {p : SetFunctor.Fib F U × SetFunctor.Fib G U} →
+  prod-rep {F} {G} {U} p (σ •R ρ) ≡ prod-rep {F} {G} (prod-rep {F} {G} p ρ) σ
+prod-rep-comp {F} {G} {p = (_ ,p _)} = cong₂ _,p_ (SetFunctor.〈〈〉〉-comp F) (SetFunctor.〈〈〉〉-comp G)
+
+PROD : SetFunctor → SetFunctor → SetFunctor
+PROD F G = record { 
+  Fib = λ V → SetFunctor.Fib F V × SetFunctor.Fib G V ; 
+  _〈〈_〉〉 = prod-rep {F} {G};
+  〈〈〉〉-id = prod-rep-id {F} {G} ; 
+  〈〈〉〉-comp = prod-rep-comp {F} {G} }
+
 data Neutral (V : Alphabet) : Set where
   app : Var V -Term → snocList (Term V) → Neutral V
 
@@ -100,9 +147,8 @@ decode-Meaning-rep : ∀ {U V S} (M : Meaning U S) {ρ : Rep U V} → decode-Mea
 decode-Meaning-rep (nf₀ M) = decode-Meaning₀-rep {M = M}
 decode-Meaning-rep (φ imp ψ) = cong₂ _⊃_ (decode-Meaning-rep φ) (decode-Meaning-rep ψ)
 
-data ListMeaning (V : Alphabet) : List MeaningShape → Set where
-  [] : ListMeaning V []
-  _∷_ : ∀ {S SS} → Meaning V S → ListMeaning V SS → ListMeaning V (S ∷ SS)
+ListMeaning : ∀ (V : Alphabet) → List MeaningShape → Set
+ListMeaning V = HetList (Meaning V)
 
 listnfrep : ∀ {U V SS} → ListMeaning U SS → Rep U V → ListMeaning V SS
 listnfrep [] _ = []

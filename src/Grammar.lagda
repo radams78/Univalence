@@ -29,6 +29,13 @@ open import Grammar.Replacement G public
 \end{code}
 }
 
+\input{Grammar/Replacement/SetFunctor}
+\AgdaHide{
+\begin{code}
+open import Grammar.Replacement.SetFunctor G public
+\end{code}
+}
+
 \input{Grammar/Substitution}
 \AgdaHide{
 \begin{code}

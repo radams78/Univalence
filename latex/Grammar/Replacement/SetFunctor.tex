@@ -1,0 +1,67 @@
+\AgdaHide{
+\begin{code}%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar.Base}\<%
+\\
+%
+\\
+\>\AgdaKeyword{module} \AgdaModule{Grammar.Replacement.SetFunctor} \AgdaSymbol{(}\AgdaBound{G} \AgdaSymbol{:} \AgdaRecord{Grammar}\AgdaSymbol{)} \AgdaKeyword{where}\<%
+\\
+\>\AgdaKeyword{open} \AgdaModule{Grammar} \AgdaBound{G}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar.Replacement} \AgdaBound{G}\<%
+\end{code}
+}
+
+Let $\mathbb{A}$ be the category of alphabets and replacements.  We introduce the type of
+all functors $\mathbb{A} \rightarrow \mathbf{Set}$:
+
+\begin{code}%
+\>\AgdaKeyword{record} \AgdaRecord{SetFunctor} \AgdaSymbol{:} \AgdaPrimitiveType{Set₁} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{field}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{Fib} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{\_〈〈\_〉〉} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaField{Fib} \AgdaBound{U} \AgdaSymbol{→} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaField{Fib} \AgdaBound{V}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{〈〈〉〉-id} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{a} \AgdaSymbol{:} \AgdaField{Fib} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{a} \AgdaField{〈〈} \AgdaFunction{idRep} \AgdaBound{V} \AgdaField{〉〉} \AgdaDatatype{≡} \AgdaBound{a}\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{〈〈〉〉-comp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{a} \AgdaSymbol{:} \AgdaField{Fib} \AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{→} \<[68]%
+\>[68]\<%
+\\
+\>[4]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaBound{a} \AgdaField{〈〈} \AgdaBound{ρ} \AgdaFunction{•R} \AgdaBound{σ} \AgdaField{〉〉} \AgdaDatatype{≡} \AgdaBound{a} \AgdaField{〈〈} \AgdaBound{σ} \AgdaField{〉〉} \AgdaField{〈〈} \AgdaBound{ρ} \AgdaField{〉〉}\<%
+\end{code}
+
+\begin{lemma}
+For any kind $K$, the operation $\AgdaKeyword{Var} \, - \, K$ is a functor $\mathbb{A} \rightarrow \mathbf{Set}$.
+\end{lemma}
+
+\begin{code}%
+\>\AgdaFunction{VAR} \AgdaSymbol{:} \AgdaFunction{VarKind} \AgdaSymbol{→} \AgdaRecord{SetFunctor}\<%
+\\
+\>\AgdaFunction{VAR} \AgdaBound{K} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{} \<[17]%
+\>[17]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{Fib} \AgdaSymbol{=} \AgdaSymbol{λ} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Var} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{;} \<[24]%
+\>[24]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{\_〈〈\_〉〉} \AgdaSymbol{=} \AgdaSymbol{λ} \AgdaBound{x} \AgdaBound{ρ} \AgdaSymbol{→} \AgdaBound{ρ} \AgdaBound{K} \AgdaBound{x} \AgdaSymbol{;} \<[27]%
+\>[27]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{〈〈〉〉-id} \AgdaSymbol{=} \AgdaInductiveConstructor{refl} \AgdaSymbol{;} \<[19]%
+\>[19]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{〈〈〉〉-comp} \AgdaSymbol{=} \AgdaInductiveConstructor{refl} \AgdaSymbol{\}}\<%
+\end{code}

@@ -5,7 +5,7 @@ import Relation.Binary.PreorderReasoning
 open import Data.Empty renaming (⊥ to Empty)
 open import Data.Unit
 open import Data.Product renaming (_,_ to _,p_)
-open import Data.List
+open import Data.List hiding (all)
 open import Prelims
 open import Prelims.Closure
 open import PHOPL.Grammar
@@ -103,10 +103,8 @@ record E {V} {K} (Γ : Context V) (A : Expression V (parent K)) (M : Expression 
     typed : Γ ⊢ M ∶ A
     computable : compute Γ A M
 
-data allE {V} (Γ : Context V) : ∀ {SS} → ListMeaning V SS → List (Proof V) → Set where
-  [] : allE Γ [] []
-  _∷_ : ∀ {S SS} {L : Meaning V S} {LL : ListMeaning V SS} {δ εε} → 
-    E Γ (decode-Meaning L) δ → allE Γ LL εε → allE Γ (L ∷ LL) (δ ∷ εε)
+allE : ∀ {V} (Γ : Context V) {SS} → ListMeaning V SS → List (Proof V) → Set
+allE {V} Γ {SS} φφ pp = all (λ {φ} {(φ , δ) → E Γ (decode-Meaning φ) δ}) SS (zip φφ pp)
 \end{code}
 \caption{Agda definition of the computable expressions}
 \label{fig:compute}
@@ -434,12 +432,17 @@ $(P \vec{e})^+ \in E_\Gamma(M \vec{x} \supset N \vec{y}) \subseteq \SN$, hence $
 \item
 If $\delta \in E_\Gamma(\phi)$, $\phi \simeq \psi$ and $\Gamma \vdash \psi : \Omega$, then $\delta \in E_\Gamma(\psi)$.
 \begin{code}
+not-APPl-var-osr-imp : ∀ {V} {x : Var V -Term} {MM : snocList (Term V)} {φ ψ : Term V} →
+  APPl (var x) MM ⇒ φ ⊃ ψ → Empty
+not-APPl-var-osr-imp {MM = []} ()
+not-APPl-var-osr-imp {MM = MM snoc M} xMM⇒φ⊃ψ = {!!}
+
 osr-computeP : ∀ {V S T} {Γ : Context V} {L : Meaning V S} {M : Meaning V T} {δ} →
                computeP Γ L δ → decode-Meaning L ⇒ decode-Meaning M →
                Γ ⊢ decode-Meaning M ∶ ty Ω → computeP Γ M δ
 osr-computeP {L = nf₀ (neutral (app x x₁))} {nf₀ (neutral (app x₂ x₃))} computeLδ _ _ = computeLδ
 osr-computeP {L = nf₀ (neutral (app x x₁))} {nf₀ bot} computeLδ _ _ = computeLδ
-osr-computeP {L = nf₀ (neutral x)} {M imp M₁} computeLδ L⇒M x₁ Δ ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = {!!}
+osr-computeP {L = nf₀ (neutral (app x x₁))} {M imp M₁} computeLδ L⇒M x₂ Δ ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = {!!}
 osr-computeP {L = nf₀ bot} computeLδ L⇒M Γ⊢M∶Ω = {!!}
 osr-computeP {L = L imp L₁} computeLδ L⇒M Γ⊢M∶Ω = {!!}
 

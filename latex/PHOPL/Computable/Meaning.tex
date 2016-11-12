@@ -4,7 +4,7 @@
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Empty} \AgdaKeyword{renaming} \AgdaSymbol{(}\AgdaDatatype{⊥} \AgdaSymbol{to} \AgdaDatatype{Empty}\AgdaSymbol{)}\<%
 \\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Product} \AgdaKeyword{hiding} \AgdaSymbol{(}\AgdaFunction{map}\AgdaSymbol{)}\<%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Product} \AgdaKeyword{hiding} \AgdaSymbol{(}\AgdaFunction{map}\AgdaSymbol{)} \AgdaKeyword{renaming} \AgdaSymbol{(}\AgdaInductiveConstructor{\_,\_} \AgdaSymbol{to} \AgdaInductiveConstructor{\_,p\_}\AgdaSymbol{)}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.List}\<%
 \\
@@ -20,6 +20,129 @@
 
 A term is \emph{neutral} iff it has the form $x M_1 \cdots M_n$.
 \begin{code}%
+\>\AgdaFunction{SUBEXP} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Kind} \AgdaBound{C} \AgdaSymbol{→} \AgdaRecord{SetFunctor}\<%
+\\
+\>\AgdaFunction{SUBEXP} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaBound{K} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{} \<[24]%
+\>[24]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{Fib} \AgdaSymbol{=} \AgdaSymbol{λ} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Subexp} \AgdaBound{V} \AgdaBound{C} \AgdaBound{K} \AgdaSymbol{;} \<[29]%
+\>[29]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{\_〈〈\_〉〉} \AgdaSymbol{=} \AgdaFunction{\_〈\_〉} \AgdaSymbol{;} \<[18]%
+\>[18]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{〈〈〉〉-id} \AgdaSymbol{=} \AgdaFunction{rep-idRep} \AgdaSymbol{;} \<[24]%
+\>[24]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{〈〈〉〉-comp} \AgdaSymbol{=} \AgdaSymbol{λ} \AgdaSymbol{\{}\AgdaBound{\_}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{\_}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{\_}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{\_}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{\_}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{a}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{rep-comp} \AgdaBound{a} \AgdaSymbol{\}}\<%
+\\
+%
+\\
+\>\AgdaFunction{snocList-rep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{(}\AgdaBound{F} \AgdaSymbol{:} \AgdaRecord{SetFunctor}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{snocList} \AgdaSymbol{(}\AgdaField{SetFunctor.Fib} \AgdaBound{F} \AgdaBound{U}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{snocList} \AgdaSymbol{(}\AgdaField{SetFunctor.Fib} \AgdaBound{F} \AgdaBound{V}\AgdaSymbol{)}\<%
+\\
+\>\AgdaFunction{snocList-rep} \AgdaSymbol{\_} \AgdaInductiveConstructor{[]} \AgdaSymbol{\_} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\<%
+\\
+\>\AgdaFunction{snocList-rep} \AgdaBound{F} \AgdaSymbol{(}\AgdaBound{aa} \AgdaInductiveConstructor{snoc} \AgdaBound{a}\AgdaSymbol{)} \AgdaBound{ρ} \AgdaSymbol{=} \AgdaFunction{snocList-rep} \AgdaBound{F} \AgdaBound{aa} \AgdaBound{ρ} \AgdaInductiveConstructor{snoc} \AgdaField{SetFunctor.\_〈〈\_〉〉} \AgdaBound{F} \AgdaBound{a} \AgdaBound{ρ}\<%
+\\
+%
+\\
+\>\AgdaFunction{snocList-rep-id} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{F} \AgdaSymbol{:} \AgdaRecord{SetFunctor}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{l} \AgdaSymbol{:} \AgdaDatatype{snocList} \AgdaSymbol{(}\AgdaField{SetFunctor.Fib} \AgdaBound{F} \AgdaBound{V}\AgdaSymbol{)\}} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{snocList-rep} \AgdaBound{F} \AgdaBound{l} \AgdaSymbol{(}\AgdaFunction{idRep} \AgdaBound{V}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaBound{l}\<%
+\\
+\>\AgdaFunction{snocList-rep-id} \AgdaSymbol{\{}\AgdaArgument{l} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>\AgdaFunction{snocList-rep-id} \AgdaSymbol{\{}\AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{l} \AgdaSymbol{=} \AgdaBound{aa} \AgdaInductiveConstructor{snoc} \AgdaBound{a}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaInductiveConstructor{\_snoc\_} \AgdaSymbol{(}\AgdaFunction{snocList-rep-id} \AgdaSymbol{\{}\AgdaBound{F}\AgdaSymbol{\})} \AgdaSymbol{(}\AgdaField{SetFunctor.〈〈〉〉-id} \AgdaBound{F}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaFunction{snocList-rep-comp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{F} \AgdaSymbol{:} \AgdaRecord{SetFunctor}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{l} \AgdaSymbol{:} \AgdaDatatype{snocList} \AgdaSymbol{(}\AgdaField{SetFunctor.Fib} \AgdaBound{F} \AgdaBound{U}\AgdaSymbol{)\}}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{snocList-rep} \AgdaBound{F} \AgdaBound{l} \AgdaSymbol{(}\AgdaBound{σ} \AgdaFunction{•R} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaFunction{snocList-rep} \AgdaBound{F} \AgdaSymbol{(}\AgdaFunction{snocList-rep} \AgdaBound{F} \AgdaBound{l} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{σ}\<%
+\\
+\>\AgdaFunction{snocList-rep-comp} \AgdaSymbol{\{}\AgdaArgument{l} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
+\\
+\>\AgdaFunction{snocList-rep-comp} \AgdaSymbol{\{}\AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{l} \AgdaSymbol{=} \AgdaBound{aa} \AgdaInductiveConstructor{snoc} \AgdaBound{a}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaInductiveConstructor{\_snoc\_} \AgdaSymbol{(}\AgdaFunction{snocList-rep-comp} \AgdaSymbol{\{}\AgdaBound{F}\AgdaSymbol{\})} \AgdaSymbol{(}\AgdaField{SetFunctor.〈〈〉〉-comp} \AgdaBound{F}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaFunction{SNOCLIST} \AgdaSymbol{:} \AgdaRecord{SetFunctor} \AgdaSymbol{→} \AgdaRecord{SetFunctor}\<%
+\\
+\>\AgdaFunction{SNOCLIST} \AgdaBound{F} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{} \<[22]%
+\>[22]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{Fib} \AgdaSymbol{=} \AgdaSymbol{λ} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{snocList} \AgdaSymbol{(}\AgdaField{SetFunctor.Fib} \AgdaBound{F} \AgdaBound{V}\AgdaSymbol{)} \AgdaSymbol{;} \<[46]%
+\>[46]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{\_〈〈\_〉〉} \AgdaSymbol{=} \AgdaFunction{snocList-rep} \AgdaBound{F} \AgdaSymbol{;} \<[28]%
+\>[28]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{〈〈〉〉-id} \AgdaSymbol{=} \AgdaFunction{snocList-rep-id} \AgdaSymbol{;} \<[30]%
+\>[30]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{〈〈〉〉-comp} \AgdaSymbol{=} \AgdaFunction{snocList-rep-comp} \AgdaSymbol{\}}\<%
+\\
+%
+\\
+\>\AgdaFunction{prod-rep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{F} \AgdaBound{G} \AgdaSymbol{:} \AgdaRecord{SetFunctor}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaSymbol{:} \AgdaDatatype{Alphabet}\AgdaSymbol{\}} \AgdaSymbol{→} \<[51]%
+\>[51]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{SetFunctor.Fib} \AgdaBound{F} \AgdaBound{U} \AgdaFunction{×} \AgdaField{SetFunctor.Fib} \AgdaBound{G} \AgdaBound{U} \AgdaSymbol{→} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaField{SetFunctor.Fib} \AgdaBound{F} \AgdaBound{V} \AgdaFunction{×} \AgdaField{SetFunctor.Fib} \AgdaBound{G} \AgdaBound{V}\<%
+\\
+\>\AgdaFunction{prod-rep} \AgdaSymbol{\{}\AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{G}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{a} \AgdaInductiveConstructor{,p} \AgdaBound{b}\AgdaSymbol{)} \AgdaBound{ρ} \AgdaSymbol{=} \AgdaSymbol{(}\AgdaField{SetFunctor.\_〈〈\_〉〉} \AgdaBound{F} \AgdaBound{a} \AgdaBound{ρ} \AgdaInductiveConstructor{,p} \AgdaField{SetFunctor.\_〈〈\_〉〉} \AgdaBound{G} \AgdaBound{b} \AgdaBound{ρ}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaFunction{prod-rep-id} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{F} \AgdaBound{G} \AgdaSymbol{:} \AgdaRecord{SetFunctor}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V} \AgdaSymbol{:} \AgdaDatatype{Alphabet}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{p} \AgdaSymbol{:} \AgdaField{SetFunctor.Fib} \AgdaBound{F} \AgdaBound{V} \AgdaFunction{×} \AgdaField{SetFunctor.Fib} \AgdaBound{G} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{prod-rep} \AgdaSymbol{\{}\AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{G}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{p} \AgdaSymbol{(}\AgdaFunction{idRep} \AgdaBound{V}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaBound{p}\<%
+\\
+\>\AgdaFunction{prod-rep-id} \AgdaSymbol{\{}\AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{G}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{p} \AgdaSymbol{=} \AgdaSymbol{(\_} \AgdaInductiveConstructor{,p} \AgdaSymbol{\_)\}} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaInductiveConstructor{\_,p\_} \AgdaSymbol{(}\AgdaField{SetFunctor.〈〈〉〉-id} \AgdaBound{F}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaField{SetFunctor.〈〈〉〉-id} \AgdaBound{G}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaFunction{prod-rep-comp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{F} \AgdaBound{G} \AgdaSymbol{:} \AgdaRecord{SetFunctor}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W} \AgdaSymbol{:} \AgdaDatatype{Alphabet}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{\{}\AgdaBound{p} \AgdaSymbol{:} \AgdaField{SetFunctor.Fib} \AgdaBound{F} \AgdaBound{U} \AgdaFunction{×} \AgdaField{SetFunctor.Fib} \AgdaBound{G} \AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{prod-rep} \AgdaSymbol{\{}\AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{G}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaBound{p} \AgdaSymbol{(}\AgdaBound{σ} \AgdaFunction{•R} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaFunction{prod-rep} \AgdaSymbol{\{}\AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{G}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaFunction{prod-rep} \AgdaSymbol{\{}\AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{G}\AgdaSymbol{\}} \AgdaBound{p} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{σ}\<%
+\\
+\>\AgdaFunction{prod-rep-comp} \AgdaSymbol{\{}\AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{G}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaArgument{p} \AgdaSymbol{=} \AgdaSymbol{(\_} \AgdaInductiveConstructor{,p} \AgdaSymbol{\_)\}} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaInductiveConstructor{\_,p\_} \AgdaSymbol{(}\AgdaField{SetFunctor.〈〈〉〉-comp} \AgdaBound{F}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaField{SetFunctor.〈〈〉〉-comp} \AgdaBound{G}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>\AgdaFunction{PROD} \AgdaSymbol{:} \AgdaRecord{SetFunctor} \AgdaSymbol{→} \AgdaRecord{SetFunctor} \AgdaSymbol{→} \AgdaRecord{SetFunctor}\<%
+\\
+\>\AgdaFunction{PROD} \AgdaBound{F} \AgdaBound{G} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{} \<[20]%
+\>[20]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{Fib} \AgdaSymbol{=} \AgdaSymbol{λ} \AgdaBound{V} \AgdaSymbol{→} \AgdaField{SetFunctor.Fib} \AgdaBound{F} \AgdaBound{V} \AgdaFunction{×} \AgdaField{SetFunctor.Fib} \AgdaBound{G} \AgdaBound{V} \AgdaSymbol{;} \<[56]%
+\>[56]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{\_〈〈\_〉〉} \AgdaSymbol{=} \AgdaFunction{prod-rep} \AgdaSymbol{\{}\AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{G}\AgdaSymbol{\};}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{〈〈〉〉-id} \AgdaSymbol{=} \AgdaFunction{prod-rep-id} \AgdaSymbol{\{}\AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{G}\AgdaSymbol{\}} \AgdaSymbol{;} \<[34]%
+\>[34]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{〈〈〉〉-comp} \AgdaSymbol{=} \AgdaFunction{prod-rep-comp} \AgdaSymbol{\{}\AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{G}\AgdaSymbol{\}} \AgdaSymbol{\}}\<%
+\\
+%
+\\
 \>\AgdaKeyword{data} \AgdaDatatype{Neutral} \AgdaSymbol{(}\AgdaBound{V} \AgdaSymbol{:} \AgdaDatatype{Alphabet}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
@@ -199,17 +322,13 @@ Note that (using Generation) a normal form of type $\Omega$ is meaningful.
 \\
 %
 \\
-\>\AgdaKeyword{data} \AgdaDatatype{ListMeaning} \AgdaSymbol{(}\AgdaBound{V} \AgdaSymbol{:} \AgdaDatatype{Alphabet}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaDatatype{List} \AgdaDatatype{MeaningShape} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\>\AgdaFunction{ListMeaning} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{(}\AgdaBound{V} \AgdaSymbol{:} \AgdaDatatype{Alphabet}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{List} \AgdaDatatype{MeaningShape} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
 \\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaInductiveConstructor{[]} \AgdaSymbol{:} \AgdaDatatype{ListMeaning} \AgdaBound{V} \AgdaInductiveConstructor{[]}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaInductiveConstructor{\_∷\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{S} \AgdaBound{SS}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Meaning} \AgdaBound{V} \AgdaBound{S} \AgdaSymbol{→} \AgdaDatatype{ListMeaning} \AgdaBound{V} \AgdaBound{SS} \AgdaSymbol{→} \AgdaDatatype{ListMeaning} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{S} \AgdaInductiveConstructor{∷} \AgdaBound{SS}\AgdaSymbol{)}\<%
+\>\AgdaFunction{ListMeaning} \AgdaBound{V} \AgdaSymbol{=} \AgdaDatatype{HetList} \AgdaSymbol{(}\AgdaDatatype{Meaning} \AgdaBound{V}\AgdaSymbol{)}\<%
 \\
 %
 \\
-\>\AgdaFunction{listnfrep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{SS}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{ListMeaning} \AgdaBound{U} \AgdaBound{SS} \AgdaSymbol{→} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{ListMeaning} \AgdaBound{V} \AgdaBound{SS}\<%
+\>\AgdaFunction{listnfrep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{SS}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{ListMeaning} \AgdaBound{U} \AgdaBound{SS} \AgdaSymbol{→} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{ListMeaning} \AgdaBound{V} \AgdaBound{SS}\<%
 \\
 \>\AgdaFunction{listnfrep} \AgdaInductiveConstructor{[]} \AgdaSymbol{\_} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\<%
 \\
@@ -217,7 +336,7 @@ Note that (using Generation) a normal form of type $\Omega$ is meaningful.
 \\
 %
 \\
-\>\AgdaFunction{listnfrep-comp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W} \AgdaBound{SS}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaSymbol{:} \AgdaDatatype{ListMeaning} \AgdaBound{U} \AgdaBound{SS}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{listnfrep} \AgdaBound{φ} \AgdaSymbol{(}\AgdaBound{σ} \AgdaFunction{•R} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaFunction{listnfrep} \AgdaSymbol{(}\AgdaFunction{listnfrep} \AgdaBound{φ} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{σ}\<%
+\>\AgdaFunction{listnfrep-comp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W} \AgdaBound{SS}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaSymbol{:} \AgdaFunction{ListMeaning} \AgdaBound{U} \AgdaBound{SS}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{listnfrep} \AgdaBound{φ} \AgdaSymbol{(}\AgdaBound{σ} \AgdaFunction{•R} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaDatatype{≡} \AgdaFunction{listnfrep} \AgdaSymbol{(}\AgdaFunction{listnfrep} \AgdaBound{φ} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{σ}\<%
 \\
 \>\AgdaFunction{listnfrep-comp} \AgdaSymbol{\{}\AgdaArgument{φ} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
 \\
@@ -225,7 +344,7 @@ Note that (using Generation) a normal form of type $\Omega$ is meaningful.
 \\
 %
 \\
-\>\AgdaFunction{domMeaning} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Meaning} \AgdaBound{V} \AgdaBound{S} \AgdaSymbol{→} \AgdaDatatype{ListMeaning} \AgdaBound{V} \AgdaSymbol{(}\AgdaFunction{domS} \AgdaBound{S}\AgdaSymbol{)}\<%
+\>\AgdaFunction{domMeaning} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{S}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Meaning} \AgdaBound{V} \AgdaBound{S} \AgdaSymbol{→} \AgdaFunction{ListMeaning} \AgdaBound{V} \AgdaSymbol{(}\AgdaFunction{domS} \AgdaBound{S}\AgdaSymbol{)}\<%
 \\
 \>\AgdaFunction{domMeaning} \AgdaSymbol{(}\AgdaInductiveConstructor{nf₀} \AgdaSymbol{\_)} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\<%
 \\
