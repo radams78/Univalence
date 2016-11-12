@@ -8,6 +8,9 @@ data HetList {A : Set} (B : A → Set) : List A → Set where
   [] : HetList B []
   _∷_ : ∀ {a aa} → B a → HetList B aa → HetList B (a ∷ aa)
 
+K : ∀ A B → List A → Set
+K A B = HetList {A} (λ _ → B)
+
 zip : ∀ {A : Set} {B C : A → Set} {aa : List A} → HetList B aa → HetList C aa → 
   HetList (λ a → B a × C a) aa
 zip [] [] = []
@@ -18,7 +21,7 @@ data all {A} {B : A → Set} (C : ∀ {a} → B a → Set) : ∀ (aa : List A) �
   [] : all C [] []
   _∷_ : ∀ {a} {aa} {b} {bb} → C {a} b → all C aa bb → all C (a ∷ aa) (b ∷ bb)
 
-unhet : ∀ {A B aa} → HetList {A} (λ _ → B) aa → List B
+unhet : ∀ {A B aa} → K A B aa → List B
 unhet [] = []
 unhet (b ∷ bb) = b ∷ unhet bb
 \end{code}

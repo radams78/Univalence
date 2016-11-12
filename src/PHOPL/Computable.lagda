@@ -103,7 +103,7 @@ record E {V} {K} (Γ : Context V) (A : Expression V (parent K)) (M : Expression 
     typed : Γ ⊢ M ∶ A
     computable : compute Γ A M
 
-allE : ∀ {V} (Γ : Context V) {SS} → ListMeaning V SS → HetList (λ _ → Proof V) SS → Set
+allE : ∀ {V} (Γ : Context V) {SS} → ListMeaning V SS → K MeaningShape (Proof V) SS → Set
 allE {V} Γ {SS} φφ pp = all (λ {φ} → λ {(φ ,p δ) → E Γ (decode-Meaning φ) δ}) SS (zip φφ pp)
 \end{code}
 \caption{Agda definition of the computable expressions}
@@ -245,8 +245,9 @@ each $i$.
 We must show that
 \[ p \epsilon_1 \cdots \epsilon_n \in E_\Delta(\chi) \]
 \begin{code}
-computeP-wd : ∀ {V S T Γ} {φ : Meaning V S} {ψ : Meaning V T} {δ} → computeP Γ φ δ → decode-Meaning φ ≡ decode-Meaning ψ → computeP Γ ψ δ
-computeP-wd {S = nf₀} {nf₀} {φ = nf₀ _} {nf₀ _} computeδ _ = computeδ
+postulate computeP-wd : ∀ {V S T Γ} {φ : Meaning V S} {ψ : Meaning V T} {δ} → computeP Γ φ δ → decode-Meaning φ ≡ decode-Meaning ψ → computeP Γ ψ δ
+--TODO Repair this proof
+{- computeP-wd {S = nf₀} {nf₀} {φ = nf₀ _} {nf₀ _} computeδ _ = computeδ
 computeP-wd {S = nf₀} {_ imp _} {φ = nf₀ (neutral (app _ _))} {_ imp _} _ ()
 computeP-wd {S = nf₀} {_ imp _} {φ = nf₀ bot} {_ imp _} _ ()
 computeP-wd {S = S imp S₁} {nf₀} {φ = _ imp _} {nf₀ (neutral (app _ _))}_ ()
@@ -275,27 +276,27 @@ computeP-wd {S = S imp S'} {T imp T'} {φ = φ imp ψ} {φ' imp ψ'} computeδ �
       decode-Meaning ψ' 〈 ρ 〉
     ≡⟨⟨ decode-Meaning-rep ψ' ⟩⟩
       decode-Meaning (nfrep ψ' ρ)
-    ∎)
+    ∎) -}
 
 postulate Enf : ∀ {V Γ S} {φ : Meaning V S} {δ} → E Γ (decode-Meaning φ) δ → computeP Γ φ δ
 
-EPropE : ∀ {V S} {Γ : Context V} {φ : Meaning V S} {δ} {εε} →
+postulate EPropE : ∀ {V S} {Γ : Context V} {φ : Meaning V S} {δ} {εε} →
                  computeP Γ φ δ → allE Γ (domMeaning φ) εε → SN (APPP' δ (unhet εε))
-EPropE {φ = nf₀ _} computeδ [] = computeδ
+{- EPropE {φ = nf₀ _} {εε = []} computeδ [] = computeδ
 EPropE {V} {S imp T} {Γ = Γ} {φ = φ imp ψ} {δ} {εε = ε ∷ εε} computeδ (Eε ∷ Eεε) = 
   EPropE {Γ = Γ} {φ = ψ} {appP δ ε} {εε} 
   (subst₂ (λ a b → computeP Γ a (appP b ε)) nfrep-id rep-idRep 
     (computeδ Γ idRep-typed 
       (change-type (E.typed Eε) (cong decode-Meaning {φ} (Prelims.sym nfrep-id)))
       (subst (λ x → computeP Γ x ε) (Prelims.sym nfrep-id) (Enf Eε)))) 
-  Eεε
+  Eεε -}
 
-EPropI : ∀ {V} {Γ : Context V} {S} {φ : Meaning V S} {δ} → valid Γ →
-                 (∀ {W} {Δ : Context W} {ρ} {εε} → ρ ∶ Γ ⇒R Δ → valid Δ → allE Δ (listnfrep (domMeaning φ) ρ) εε → SN (APPP' (δ 〈 ρ 〉) εε)) →
+postulate EPropI : ∀ {V} {Γ : Context V} {S} {φ : Meaning V S} {δ} → valid Γ →
+                 (∀ {W} {Δ : Context W} {ρ} {εε} → ρ ∶ Γ ⇒R Δ → valid Δ → allE Δ (listnfrep (domMeaning φ) ρ) εε → SN (APPP' (δ 〈 ρ 〉) (unhet εε))) →
                  computeP Γ φ δ
-EPropI {φ = nf₀ N} validΓ hyp = subst SN rep-idRep (hyp idRep-typed validΓ [])
+{- EPropI {φ = nf₀ N} validΓ hyp = subst SN rep-idRep (hyp idRep-typed validΓ [])
 EPropI {φ = φ imp ψ} {δ} validΓ hyp Δ {ρ} {ε} ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = EPropI {φ = nfrep ψ ρ} (context-validity Δ⊢ε∶φ)
-  (λ {W'} {Θ} {σ} {εε} σ∶Δ⇒RΘ validΘ Eεε → subst (λ a → SN (APPP' (appP a (ε 〈 σ 〉)) εε)) 
+  (λ {W'} {Θ} {σ} {εε} σ∶Δ⇒RΘ validΘ Eεε → subst (λ a → SN (APPP' (appP a (ε 〈 σ 〉)) (unhet εε))) 
   (rep-comp δ) (hyp {εε = ε 〈 σ 〉 ∷ εε} (•R-typed σ∶Δ⇒RΘ ρ∶Γ⇒RΔ) validΘ 
     (subst (λ a → E Θ a (ε 〈 σ 〉)) (let open ≡-Reasoning in 
       begin
@@ -314,7 +315,7 @@ EPropI {φ = φ imp ψ} {δ} validΓ hyp Δ {ρ} {ε} ρ∶Γ⇒RΔ Δ⊢ε∶φ
     ≡⟨⟨ listnfrep-comp ⟩⟩
       listnfrep (domMeaning ψ) (σ •R ρ)
     ∎) 
-    Eεε)))
+    Eεε))) -}
 -- TODO Swap arguments in •R-typed
 \end{code}
 It is easy to see that $p \vec{\epsilon}$ is well-typed, so it remains to show that $p \vec{\epsilon} \in \SN$.
@@ -432,17 +433,20 @@ $(P \vec{e})^+ \in E_\Gamma(M \vec{x} \supset N \vec{y}) \subseteq \SN$, hence $
 \item
 If $\delta \in E_\Gamma(\phi)$, $\phi \simeq \psi$ and $\Gamma \vdash \psi : \Omega$, then $\delta \in E_\Gamma(\psi)$.
 \begin{code}
-not-APPl-var-osr-imp : ∀ {V} {x : Var V -Term} {MM : snocList (Term V)} {φ ψ : Term V} →
+not-APPl-var-osr-imp : ∀ {V} {x : Var V -Term} (MM : snocList (Term V)) {φ ψ : Term V} →
   APPl (var x) MM ⇒ φ ⊃ ψ → Empty
-not-APPl-var-osr-imp {MM = []} ()
-not-APPl-var-osr-imp {MM = MM snoc M} xMM⇒φ⊃ψ = {!!}
+not-APPl-var-osr-imp [] ()
+not-APPl-var-osr-imp ([] snoc _) (redex (βR ()))
+not-APPl-var-osr-imp (_ snoc _ snoc _) (redex (βR ()))
+not-APPl-var-osr-imp ([] snoc _) (redex (R₀R ()))
+not-APPl-var-osr-imp (_ snoc _ snoc _) (redex (R₀R ()))
 
 osr-computeP : ∀ {V S T} {Γ : Context V} {L : Meaning V S} {M : Meaning V T} {δ} →
                computeP Γ L δ → decode-Meaning L ⇒ decode-Meaning M →
                Γ ⊢ decode-Meaning M ∶ ty Ω → computeP Γ M δ
 osr-computeP {L = nf₀ (neutral (app x x₁))} {nf₀ (neutral (app x₂ x₃))} computeLδ _ _ = computeLδ
 osr-computeP {L = nf₀ (neutral (app x x₁))} {nf₀ bot} computeLδ _ _ = computeLδ
-osr-computeP {L = nf₀ (neutral (app x x₁))} {M imp M₁} computeLδ L⇒M x₂ Δ ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = {!!}
+osr-computeP {L = nf₀ (neutral (app x x₁))} {M imp M₁} computeLδ L⇒M x₂ Δ ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = ⊥-elim (not-APPl-var-osr-imp x₁ L⇒M)
 osr-computeP {L = nf₀ bot} computeLδ L⇒M Γ⊢M∶Ω = {!!}
 osr-computeP {L = L imp L₁} computeLδ L⇒M Γ⊢M∶Ω = {!!}
 
