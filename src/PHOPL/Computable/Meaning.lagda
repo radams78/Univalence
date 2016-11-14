@@ -201,7 +201,6 @@ decode-Meaning-inj {S = nf₀} {nf₀ φ} {nf₀ ψ} φ≡ψ = cong nf₀ (decod
 decode-Meaning-inj {S = S imp T} {φ imp φ'} {ψ imp ψ'} φ≡ψ = cong₂ _imp_ (decode-Meaning-inj (⊃-injl φ≡ψ)) (decode-Meaning-inj (⊃-injr φ≡ψ))
 \end{code}
 }
-
 A term is \emph{m-normalizable} iff it reduces to a meaningful term.
 
 \begin{code}
@@ -214,4 +213,14 @@ record MeanTerm {V} (φ : Term V) : Set where
 
 MeanCtxt : ∀ {V} → Context V → Set
 MeanCtxt {V} Γ = ∀ (p : Var V -Proof) → MeanTerm (typeof p Γ)
+\end{code}
+
+\begin{lemma}
+Every strongly normalizable term is m-normalizable.
+\end{lemma}
+
+%TODO Agda
+
+\begin{code}
+postulate not-nf₀-conv-imp : ∀ {V} {M : Meaning₀ V} {φ ψ : Term V} → decode-Meaning₀ M ≃ φ ⊃ ψ → Empty
 \end{code}

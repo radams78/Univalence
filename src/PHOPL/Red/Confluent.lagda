@@ -1,6 +1,7 @@
 \AgdaHide{
 \begin{code}
 module PHOPL.Red.Confluent where
+open import Data.Empty renaming (⊥ to Empty)
 open import Data.Sum
 open import Data.Product renaming (_,_ to _,p_)
 open import Prelims
@@ -202,3 +203,11 @@ If $r \simeq s$, then there exists $t$ such that $r \twoheadrightarrow t$ and $s
 \end{enumerate}
 \end{cor}
 
+\begin{code}
+postulate imp-convl' : ∀ {V} {φ ψ φ' ψ' : Term V} → φ ⊃ ψ Red.≃ φ' ⊃ ψ' → φ Red.≃ φ'
+
+postulate imp-convr' : ∀ {V} {φ ψ φ' ψ' : Term V} → φ ⊃ ψ Red.≃ φ' ⊃ ψ' → ψ Red.≃ ψ'
+
+postulate not-APPl-var-conv-imp : ∀ {V} {x : Var V -Term} (MM : snocList (Term V)) {φ ψ : Term V} →
+                               APPl (var x) MM Red.≃ φ ⊃ ψ → Empty
+\end{code}

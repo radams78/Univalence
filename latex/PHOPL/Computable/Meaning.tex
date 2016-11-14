@@ -430,7 +430,6 @@ Note that (using Generation) a normal form of type $\Omega$ is meaningful.
 \>\AgdaFunction{decode-Meaning-inj} \AgdaSymbol{\{}\AgdaArgument{S} \AgdaSymbol{=} \AgdaBound{S} \AgdaInductiveConstructor{imp} \AgdaBound{T}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{φ} \AgdaInductiveConstructor{imp} \AgdaBound{φ'}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ψ} \AgdaInductiveConstructor{imp} \AgdaBound{ψ'}\AgdaSymbol{\}} \AgdaBound{φ≡ψ} \AgdaSymbol{=} \AgdaFunction{cong₂} \AgdaInductiveConstructor{\_imp\_} \AgdaSymbol{(}\AgdaFunction{decode-Meaning-inj} \AgdaSymbol{(}\AgdaFunction{⊃-injl} \AgdaBound{φ≡ψ}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaFunction{decode-Meaning-inj} \AgdaSymbol{(}\AgdaFunction{⊃-injr} \AgdaBound{φ≡ψ}\AgdaSymbol{))}\<%
 \end{code}
 }
-
 A term is \emph{m-normalizable} iff it reduces to a meaningful term.
 
 \begin{code}%
@@ -459,3 +458,10 @@ A term is \emph{m-normalizable} iff it reduces to a meaningful term.
 \\
 \>\AgdaFunction{MeanCtxt} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{Γ} \AgdaSymbol{=} \AgdaSymbol{∀} \AgdaSymbol{(}\AgdaBound{p} \AgdaSymbol{:} \AgdaDatatype{Var} \AgdaBound{V} \AgdaInductiveConstructor{-Proof}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaRecord{MeanTerm} \AgdaSymbol{(}\AgdaFunction{typeof} \AgdaBound{p} \AgdaBound{Γ}\AgdaSymbol{)}\<%
 \end{code}
+
+\begin{lemma}
+Every strongly normalizable term is m-normalizable.
+\end{lemma}
+
+%TODO Agda
+

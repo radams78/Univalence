@@ -228,6 +228,8 @@ postulate red-rep : ∀ {U} {V} {C} {K} {E E' : Subexp U C K} {ρ : Rep U V} →
                   E Red.↠ E' → E 〈 ρ 〉 Red.↠ E' 〈 ρ 〉
 -- red-rep = apredr REP R-respects-replacement
 
+postulate conv-rep : ∀ {U V C K} {E E' : Subexp U C K} {ρ : Rep U V} → E Red.≃ E' → E 〈 ρ 〉 Red.≃ E' 〈 ρ 〉
+
 postulate R-creates-replacement : Red.creates' REP
 
 postulate R-respects-sub : Red.respects' SUB
@@ -353,8 +355,6 @@ imp-red' (trans φRed.↠ψ ψRed.↠ψ') φ≡χ⊃θ =
 postulate imp-red : ∀ {V} {χ θ ψ : Term V} → χ ⊃ θ Red.↠ ψ →
                   Σ[ χ' ∈ Term V ] Σ[ θ' ∈ Term V ] χ Red.↠ χ' × θ Red.↠ θ' × ψ ≡ χ' ⊃ θ'
 --imp-red χ⊃θRed.↠ψ = imp-red' χ⊃θRed.↠ψ refl
-
-postulate conv-rep : ∀ {U} {V} {C} {K} {ρ : Rep U V} {M N : Subexp U C K} → M Red.≃ N → M 〈 ρ 〉 Red.≃ N 〈 ρ 〉
 
 postulate conv-sub : ∀ {U} {V} {C} {K} {σ : Sub U V} {M N : Subexp U C K} → M Red.≃ N → M ⟦ σ ⟧ Red.≃ N ⟦ σ ⟧
 

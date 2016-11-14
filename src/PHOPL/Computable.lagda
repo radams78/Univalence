@@ -111,12 +111,6 @@ allE {V} Γ {SS} φφ pp = all (λ {φ} → λ {(φ ,p δ) → E Γ (decode-Mean
 \end{figure}
 
 \begin{lemma}
-Every strongly normalizable term is weakly normalizable.
-\end{lemma}
-
-%TODO Agda
-
-\begin{lemma}
 If $M, N \in E_\Gamma(A)$ then $E_\Gamma(M =_A N)$ is defined.
 \end{lemma}
 
@@ -130,6 +124,8 @@ and so $E_\Delta(N =_A N')$ and $E_\Delta(MN =_B M'N')$ are both defined by the 
 \end{proof}
 
 %TODO Agda
+
+\input{Computable/Meta}
 
 Note that, if $\Gamma \subseteq \Delta$, then $E_\Gamma(T) \subseteq E_\Delta(T)$.  Note also that, if $M \in E_\Gamma(A)$,
 then $M \{\} \in E_\Gamma(M =_A M)$. %TODO Agda
@@ -245,39 +241,6 @@ each $i$.
 We must show that
 \[ p \epsilon_1 \cdots \epsilon_n \in E_\Delta(\chi) \]
 \begin{code}
-postulate computeP-wd : ∀ {V S T Γ} {φ : Meaning V S} {ψ : Meaning V T} {δ} → computeP Γ φ δ → decode-Meaning φ ≡ decode-Meaning ψ → computeP Γ ψ δ
---TODO Repair this proof
-{- computeP-wd {S = nf₀} {nf₀} {φ = nf₀ _} {nf₀ _} computeδ _ = computeδ
-computeP-wd {S = nf₀} {_ imp _} {φ = nf₀ (neutral (app _ _))} {_ imp _} _ ()
-computeP-wd {S = nf₀} {_ imp _} {φ = nf₀ bot} {_ imp _} _ ()
-computeP-wd {S = S imp S₁} {nf₀} {φ = _ imp _} {nf₀ (neutral (app _ _))}_ ()
-computeP-wd {S = S imp S₁} {nf₀} {φ = _ imp _} {nf₀ bot} _ ()
-computeP-wd {S = S imp S'} {T imp T'} {φ = φ imp ψ} {φ' imp ψ'} computeδ φ≡ψ Δ {ρ} ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = 
-  let φ'ρ≡φρ : decode-Meaning (nfrep φ' ρ) ≡ decode-Meaning (nfrep φ ρ)
-      φ'ρ≡φρ = let open ≡-Reasoning in
-        begin
-          decode-Meaning (nfrep φ' ρ)
-        ≡⟨ decode-Meaning-rep φ' ⟩
-          decode-Meaning φ' 〈 ρ 〉
-        ≡⟨⟨ rep-congl (⊃-injl φ≡ψ) ⟩⟩
-          decode-Meaning φ 〈 ρ 〉
-        ≡⟨⟨ decode-Meaning-rep φ ⟩⟩
-          decode-Meaning (nfrep φ ρ)
-        ∎ in
-  computeP-wd {S = S'} {T'} {φ = nfrep ψ ρ} {nfrep ψ' ρ} (computeδ Δ ρ∶Γ⇒RΔ 
-    (change-type Δ⊢ε∶φ φ'ρ≡φρ)
-    (computeP-wd {S = T} {S} {φ = nfrep φ' ρ} {nfrep φ ρ} computeε φ'ρ≡φρ)) 
-  (let open ≡-Reasoning in
-    begin
-      decode-Meaning (nfrep ψ ρ)
-    ≡⟨ decode-Meaning-rep ψ ⟩
-      decode-Meaning ψ 〈 ρ 〉
-    ≡⟨ rep-congl (⊃-injr φ≡ψ) ⟩
-      decode-Meaning ψ' 〈 ρ 〉
-    ≡⟨⟨ decode-Meaning-rep ψ' ⟩⟩
-      decode-Meaning (nfrep ψ' ρ)
-    ∎) -}
-
 postulate Enf : ∀ {V Γ S} {φ : Meaning V S} {δ} → E Γ (decode-Meaning φ) δ → computeP Γ φ δ
 
 postulate EPropE : ∀ {V S} {Γ : Context V} {φ : Meaning V S} {δ} {εε} →
@@ -433,27 +396,40 @@ $(P \vec{e})^+ \in E_\Gamma(M \vec{x} \supset N \vec{y}) \subseteq \SN$, hence $
 \item
 If $\delta \in E_\Gamma(\phi)$, $\phi \simeq \psi$ and $\Gamma \vdash \psi : \Omega$, then $\delta \in E_\Gamma(\psi)$.
 \begin{code}
-not-APPl-var-osr-imp : ∀ {V} {x : Var V -Term} (MM : snocList (Term V)) {φ ψ : Term V} →
-  APPl (var x) MM ⇒ φ ⊃ ψ → Empty
-not-APPl-var-osr-imp [] ()
-not-APPl-var-osr-imp ([] snoc _) (redex (βR ()))
-not-APPl-var-osr-imp (_ snoc _ snoc _) (redex (βR ()))
-not-APPl-var-osr-imp ([] snoc _) (redex (R₀R ()))
-not-APPl-var-osr-imp (_ snoc _ snoc _) (redex (R₀R ()))
+nf-conv-rep : ∀ {U V S T} (φ : Meaning U S) (ψ : Meaning U T) {ρ : Rep U V} → decode-Meaning φ ≃ decode-Meaning ψ → decode-Meaning (nfrep φ ρ) ≃ decode-Meaning (nfrep ψ ρ)
+nf-conv-rep {V = V} φ ψ {ρ} φ≃ψ = let open EqReasoning (CONV V -Expression (varKind -Term)) in 
+        begin
+          decode-Meaning (nfrep φ ρ)
+        ≡⟨ decode-Meaning-rep φ ⟩
+          (decode-Meaning φ) 〈 ρ 〉
+        ≈⟨ conv-rep φ≃ψ ⟩
+          (decode-Meaning ψ) 〈 ρ 〉
+        ≡⟨⟨ decode-Meaning-rep ψ ⟩⟩
+          decode-Meaning (nfrep ψ ρ)
+        ∎
 
-osr-computeP : ∀ {V S T} {Γ : Context V} {L : Meaning V S} {M : Meaning V T} {δ} →
-               computeP Γ L δ → decode-Meaning L ⇒ decode-Meaning M →
-               Γ ⊢ decode-Meaning M ∶ ty Ω → computeP Γ M δ
-osr-computeP {L = nf₀ (neutral (app x x₁))} {nf₀ (neutral (app x₂ x₃))} computeLδ _ _ = computeLδ
-osr-computeP {L = nf₀ (neutral (app x x₁))} {nf₀ bot} computeLδ _ _ = computeLδ
-osr-computeP {L = nf₀ (neutral (app x x₁))} {M imp M₁} computeLδ L⇒M x₂ Δ ρ∶Γ⇒RΔ Δ⊢ε∶φ computeε = ⊥-elim (not-APPl-var-osr-imp x₁ L⇒M)
-osr-computeP {L = nf₀ bot} computeLδ L⇒M Γ⊢M∶Ω = {!!}
-osr-computeP {L = L imp L₁} computeLδ L⇒M Γ⊢M∶Ω = {!!}
+nf-weaken : ∀ {U V S Γ Δ} (φ : Meaning U S) {ρ : Rep U V} → Γ ⊢ decode-Meaning φ ∶ ty Ω → ρ ∶ Γ ⇒R Δ → valid Δ → Δ ⊢ decode-Meaning (nfrep φ ρ) ∶ ty Ω
+nf-weaken {U} {V} {S} {Γ} {Δ} φ {ρ} Γ⊢φ∶Ω ρ∶Γ⇒RΔ validΔ = subst (λ x → Δ ⊢ x ∶ ty Ω) (Prelims.sym (decode-Meaning-rep φ)) (weakening Γ⊢φ∶Ω validΔ ρ∶Γ⇒RΔ)
 
 conv-computeP : ∀ {V S T} {Γ : Context V} {L : Meaning V S} {M : Meaning V T} {δ} →
                 computeP Γ L δ → decode-Meaning L ≃ decode-Meaning M →
+                Γ ⊢ decode-Meaning L ∶ ty Ω →
                 Γ ⊢ decode-Meaning M ∶ ty Ω → computeP Γ M δ
-conv-computeP = {!!}
+conv-computeP {L = nf₀ _} {nf₀ _} SNδ _ _ _ = SNδ
+conv-computeP {L = nf₀ L} {φ imp ψ} _ L≃φ⊃ψ _ _ = ⊥-elim (not-nf₀-conv-imp {M = L} {decode-Meaning φ} {decode-Meaning ψ} L≃φ⊃ψ)
+conv-computeP {L = φ imp ψ} {nf₀ M} _ φ⊃ψ≃M _ _ = ⊥-elim (not-nf₀-conv-imp {M = M} {decode-Meaning φ} {decode-Meaning ψ} (RSTClose.sym φ⊃ψ≃M))
+conv-computeP {L = φ imp ψ} {φ' imp ψ'} computeδ φ⊃ψ≃φ'⊃ψ' (⊃R Γ⊢φ∶Ω Γ⊢ψ∶Ω) (⊃R Γ⊢φ'∶Ω Γ⊢ψ'∶Ω) {W} Δ {ρ} ρ∶Γ⇒RΔ Δ⊢ε∶φ' computeε =
+  let validΔ : valid Δ
+      validΔ = context-validity Δ⊢ε∶φ' in
+  let φ'ρ≃φρ : decode-Meaning (nfrep φ' ρ) ≃ decode-Meaning (nfrep φ ρ)
+      φ'ρ≃φρ = nf-conv-rep φ' φ (RSTClose.sym (imp-convl' φ⊃ψ≃φ'⊃ψ')) in
+  let Δ⊢φρ∶Ω : Δ ⊢ decode-Meaning (nfrep φ ρ) ∶ ty Ω
+      Δ⊢φρ∶Ω = nf-weaken φ Γ⊢φ∶Ω ρ∶Γ⇒RΔ validΔ in
+  conv-computeP {L = nfrep ψ ρ} {nfrep ψ' ρ} (computeδ Δ ρ∶Γ⇒RΔ 
+  (convR Δ⊢ε∶φ' Δ⊢φρ∶Ω φ'ρ≃φρ) 
+    (conv-computeP computeε φ'ρ≃φρ (subst (λ x → Δ ⊢ x ∶ ty Ω) (Prelims.sym (decode-Meaning-rep φ')) (weakening Γ⊢φ'∶Ω validΔ ρ∶Γ⇒RΔ)) 
+    Δ⊢φρ∶Ω)) (nf-conv-rep ψ ψ' (imp-convr' φ⊃ψ≃φ'⊃ψ')) 
+    (nf-weaken ψ Γ⊢ψ∶Ω ρ∶Γ⇒RΔ validΔ) (nf-weaken ψ' Γ⊢ψ'∶Ω ρ∶Γ⇒RΔ validΔ)
 \end{code}
 \item
 If $P \in E_\Gamma(M =_A N)$, $M \simeq M'$, $N \simeq N'$ and $\Gamma \vdash M : A$ and $\Gamma \vdash N : A$, then $P \in E_\Gamma(M' =_A N')$.
@@ -556,8 +532,8 @@ postulate convE-E : ∀ {V} {Γ : Context V} {M N M' N' : Term V} {A} {P : Path 
 
 \AgdaHide{
 \begin{code}
-E-⊥ : ∀ {V} {Γ : Context V} → valid Γ → E Γ (ty Ω) ⊥
-E-⊥ validΓ = EI (⊥R validΓ) (nf-SN nf⊥)
+postulate E-⊥ : ∀ {V} {Γ : Context V} → valid Γ → E Γ (ty Ω) ⊥
+--E-⊥ validΓ = EI (⊥R validΓ) (nf-SN nf⊥)
 
 postulate ⊃-E : ∀ {V} {Γ : Context V} {φ} {ψ} → E Γ (ty Ω) φ → E Γ (ty Ω) ψ → E Γ (ty Ω) (φ ⊃ ψ)
 
