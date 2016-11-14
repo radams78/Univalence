@@ -11,14 +11,15 @@ open import PHOPL.Red
 open import PHOPL.Rules
 open import PHOPL.PathSub
 
-valid-addpath : ∀ {V} {Γ : Context V} {A} → valid Γ → valid (addpath Γ A)
-valid-addpath validΓ = ctxER (varR x₁ (ctxTR (ctxTR validΓ))) (varR x₀ (ctxTR (ctxTR validΓ)))
+postulate valid-addpath : ∀ {V} {Γ : Context V} {A} → valid Γ → valid (addpath Γ A)
+--valid-addpath validΓ = ctxER (varR x₁ (ctxTR (ctxTR validΓ))) (varR x₀ (ctxTR (ctxTR validΓ)))
 
-context-validity' : ∀ {V} {Γ : Context V} {A} → valid (addpath Γ A) → valid Γ
-context-validity' (ctxER (varR _ (ctxTR (ctxTR validΓ))) _) = validΓ
+postulate context-validity' : ∀ {V} {Γ : Context V} {A} → valid (addpath Γ A) → valid Γ
+--context-validity' (ctxER (varR _ (ctxTR (ctxTR validΓ))) _) = validΓ
 
-postulate change-type : ∀ {V} {Γ} {K} {M : Expression V (varKind K)} {A} {B} →
-                      Γ ⊢ M ∶ A → A ≡ B → Γ ⊢ M ∶ B
+change-type : ∀ {V} {Γ} {K} {M : Expression V (varKind K)} {A} {B} → 
+  Γ ⊢ M ∶ A → A ≡ B → Γ ⊢ M ∶ B
+change-type {Γ = Γ} {M = M} Γ⊢M∶A A≡B = subst (λ x → Γ ⊢ M ∶ x) A≡B Γ⊢M∶A
 
 postulate liftsRep-typed : ∀ {U} {V} {ρ : Rep U V} {Γ} {Δ} {A} →
                            ρ ∶ Γ ⇒R Δ → liftsRep pathDom ρ ∶ addpath Γ A ⇒R addpath Δ A
