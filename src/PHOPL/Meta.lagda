@@ -1,6 +1,7 @@
 \AgdaHide{
 \begin{code}
 module PHOPL.Meta where
+open import Data.Empty renaming (⊥ to Empty)
 open import Data.Fin
 open import Data.Product renaming (_,_ to _,p_)
 open import Prelims
@@ -529,4 +530,9 @@ This follows easily from the Generation Lemma.
 Generation-APP : ∀ {V n} {Γ : Context V} {M : Term V} {NN : snocVec (Term V) n} {B} → Γ ⊢ APP M NN ∶ ty B → Σ[ AA ∈ snocVec Type n ] Γ ⊢ M ∶ ty (Pi AA B) × Γ ⊩ NN ∶ AA
 Generation-APP {NN = []} Γ⊢M∶B = [] ,p Γ⊢M∶B ,p context-validity Γ⊢M∶B
 Generation-APP {NN = NN snoc N} (appR {A = A} Γ⊢MNN∶A⇛B Γ⊢N∶A) = let AA ,p Γ⊢M∶AAAB ,p Γ⊩NN∶AA = Generation-APP Γ⊢MNN∶A⇛B in AA snoc A ,p Γ⊢M∶AAAB ,p Γ⊩NN∶AA ,p Γ⊢N∶A
+
+not-⊥MMM-typed : ∀ {V} {Γ : Context V} {NN : snocList (Term V)} {N A} → 
+  Γ ⊢ appT (APPl ⊥ NN) N ∶ A → Empty
+not-⊥MMM-typed {NN = []} (appR () _)
+not-⊥MMM-typed {NN = NN snoc N} (appR Γ⊢⊥NN∶A _) = not-⊥MMM-typed {NN = NN} Γ⊢⊥NN∶A
 \end{code}

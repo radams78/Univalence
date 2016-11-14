@@ -16,10 +16,13 @@ open import PHOPL.Computable
 open import PHOPL.SubC
 open import PHOPL.KeyRedex
 
-not-⊥MMM-typed : ∀ {V} {Γ : Context V} {NN : snocList (Term V)} {N A} → 
-  Γ ⊢ appT (APPl ⊥ NN) N ∶ A → Empty
-not-⊥MMM-typed {NN = []} (appR () _)
-not-⊥MMM-typed {NN = NN snoc N} (appR Γ⊢⊥NN∶A _) = not-⊥MMM-typed {NN = NN} Γ⊢⊥NN∶A
+private ind-principle : ∀ {V Γ} {C : Term V → Set} →
+                      (∀ x MM → C (APPl (var x) MM)) →
+                      C ⊥ →
+                      (∀ φ ψ → C φ → C ψ → C (φ ⊃ ψ)) →
+                      (∀ M N → M ⇒ N → C N → C M) →
+                      ∀ M NN → Γ ⊢ APPl (decode-not-app M) NN ∶ ty Ω → C (APPl (decode-not-app M) NN)
+ind-principle {V} {Γ} {C} hypapp hypbot hypimp hypred M NN Γ⊢MNN∶Ω = {!!}
 
 SN-headtail-MeanTerm : ∀ {V} {Γ : Context V} {M : not-app V} {NN : snocList (Term V)} →
   SN (APPl (decode-not-app M) NN) → Γ ⊢ APPl (decode-not-app M) NN ∶ ty Ω → MeanTerm (APPl (decode-not-app M) NN)
