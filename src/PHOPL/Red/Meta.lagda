@@ -401,5 +401,8 @@ APP*-red₃ MM (trans P₁↠P₂ P₂↠P₃) = RTClose.trans (APP*-red₃ MM P
 
 nf-SN : ∀ {V} {M : Term V} → nf M → Red.SN M
 nf-SN nfM = Red.SNI _ (λ M' M⇒M' → ⊥-elim (nf-is-nf nfM M⇒M'))
+
+βsub : ∀ {U V A} M {σ : Sub U V} {N} → appT (ΛT A M ⟦ σ ⟧) N Red.⇒ M ⟦ extendSub σ N ⟧
+βsub {U} {V} {A} M {σ} {N} = subst (λ x → appT (ΛT A M ⟦ σ ⟧) N Red.⇒ x) (Prelims.sym (extendSub-decomp M)) (Red.redex (βR βT))
 \end{code}
 }

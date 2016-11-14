@@ -63,14 +63,6 @@ tail (var _) = []
 tail (app -appTerm (M ∷ N ∷ [])) = tail M snoc N
 tail (app _ _) = []
 
-APPn : ∀ {V} → Var V -Term → snocList (Term V) → Neutral V
-APPn x [] = var x
-APPn x (MM snoc M) = app (APPn x MM) M
-
-decode-APPn : ∀ {V} {x : Var V -Term} {MM} → decode-Neutral (APPn x MM) ≡ APPl (var x) MM
-decode-APPn {MM = []} = refl
-decode-APPn {MM = MM snoc M} = cong (λ x → appT x M) decode-APPn
-
 ⊥MM-not-func : ∀ {V Γ} (MM : snocList (Term V)) {A B} →
   Γ ⊢ APPl ⊥ MM ∶ ty (A ⇛ B) → Empty
 ⊥MM-not-func [] ()

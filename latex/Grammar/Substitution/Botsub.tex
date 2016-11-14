@@ -491,5 +491,20 @@ $ E [ \uparrow ] [ x_0 := F ] \equiv E$
 \>\AgdaComment{--TODO General lemma for this}\<%
 \\
 \>\AgdaComment{--TODO Deletable?}\<%
+\\
+%
+\\
+\>\AgdaFunction{extendSub} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaFunction{Sub} \AgdaSymbol{(}\AgdaBound{U} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{)} \AgdaBound{V}\<%
+\\
+\>\AgdaFunction{extendSub} \AgdaBound{σ} \AgdaBound{M} \AgdaSymbol{\_} \AgdaInductiveConstructor{x₀} \AgdaSymbol{=} \AgdaBound{M}\<%
+\\
+\>\AgdaFunction{extendSub} \AgdaBound{σ} \AgdaBound{M} \AgdaSymbol{\_} \AgdaSymbol{(}\AgdaInductiveConstructor{↑} \AgdaBound{x}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaBound{σ} \AgdaSymbol{\_} \AgdaBound{x}\<%
+\\
+%
+\\
+\>\AgdaKeyword{postulate} \AgdaPostulate{extendSub-decomp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{E} \AgdaSymbol{:} \AgdaDatatype{Subexp} \AgdaSymbol{(}\AgdaBound{U} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{)} \AgdaBound{C} \AgdaBound{L}\AgdaSymbol{)} \AgdaSymbol{→}\<%
+\\
+\>[14]\AgdaIndent{27}{}\<[27]%
+\>[27]\AgdaBound{E} \AgdaFunction{⟦} \AgdaFunction{extendSub} \AgdaBound{σ} \AgdaBound{M} \AgdaFunction{⟧} \AgdaDatatype{≡} \AgdaBound{E} \AgdaFunction{⟦} \AgdaFunction{liftSub} \AgdaBound{K} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaFunction{x₀:=} \AgdaBound{M} \AgdaFunction{⟧}\<%
 \end{code}
 }

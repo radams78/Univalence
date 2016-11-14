@@ -223,5 +223,12 @@ botSub₃-liftRep₃ {M2 = M2} {M1} {M0} {ρ} N = let open ≡-Reasoning in
               ∎
 --TODO General lemma for this
 --TODO Deletable?
+
+extendSub : ∀ {U} {V} {K} → Sub U V → Expression V (varKind K) → Sub (U , K) V
+extendSub σ M _ x₀ = M
+extendSub σ M _ (↑ x) = σ _ x
+
+postulate extendSub-decomp : ∀ {U} {V} {σ : Sub U V} {K} {M : Expression V (varKind K)} {C} {L} (E : Subexp (U , K) C L) →
+                           E ⟦ extendSub σ M ⟧ ≡ E ⟦ liftSub K σ ⟧ ⟦ x₀:= M ⟧
 \end{code}
 }

@@ -1,6 +1,8 @@
 \AgdaHide{
 \begin{code}
 module PHOPL.Rules where
+open import Data.Product using (_×_)
+open import Prelims.Snoclist
 open import PHOPL.Grammar
 open import PHOPL.Red
 \end{code}
@@ -173,4 +175,8 @@ data _⊢_∶_ where
          (M≃M' : M ≃ M') (N≃N' : N ≃ N') → ------------------------------------------------------------------------------------
                                                                              Γ ⊢ P ∶ M' ≡〈 A 〉 N'
 
+infix 10 _⊩_∶_
+_⊩_∶_ : ∀ {V n} → Context V → snocVec (Term V) n → snocVec Type n → Set
+Γ ⊩ [] ∶ [] = valid Γ
+Γ ⊩ MM snoc M ∶ AA snoc A = Γ ⊩ MM ∶ AA × Γ ⊢ M ∶ ty A
 \end{code}

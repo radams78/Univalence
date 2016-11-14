@@ -261,16 +261,9 @@ lemma {U} {V} {W} M Q N' N ρ σ = let open ≡-Reasoning in
 
 postulate change-cod' : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {Δ'} → σ ∶ Γ ⇒ Δ → Δ ≡ Δ' → σ ∶ Γ ⇒ Δ'
 
-extendSub : ∀ {U} {V} {K} → Sub U V → Expression V (varKind K) → Sub (U , K) V
-extendSub σ M _ x₀ = M
-extendSub σ M _ (↑ x) = σ _ x
-
 postulate extendSub-typed : ∀ {U} {V} {σ : Sub U V} {M : Term V} {Γ} {Δ} {A} →
                           σ ∶ Γ ⇒ Δ → Δ ⊢ M ∶ ty A → extendSub σ M ∶ Γ ,T A ⇒ Δ
                                                                               
-postulate extendSub-decomp : ∀ {U} {V} {σ : Sub U V} {K} {M : Expression V (varKind K)} {C} {L} (E : Subexp (U , K) C L) →
-                           E ⟦ extendSub σ M ⟧ ≡ E ⟦ liftSub K σ ⟧ ⟦ x₀:= M ⟧
-
 postulate extendSub-upRep : ∀ {U} {V} {σ : Sub U V} {K} {M : Expression V (varKind K)} {C L} {E : Subexp U C L} →
                           E ⇑ ⟦ extendSub σ M ⟧ ≡ E ⟦ σ ⟧
 
@@ -531,3 +524,9 @@ If $\vdash t : T$ and $t$ is in normal form, then $t$ is a canonical object (pro
 \begin{proof}
 This follows easily from the Generation Lemma.
 \end{proof}
+
+\begin{code}
+Generation-APP : ∀ {V n} {Γ : Context V} {M : Term V} {NN : snocVec (Term V) n} {B} → Γ ⊢ APP M NN ∶ ty B → Σ[ AA ∈ snocVec Type n ] Γ ⊢ M ∶ ty (Pi AA B) × Γ ⊩ NN ∶ AA
+Generation-APP {NN = []} Γ⊢M∶B = [] ,p Γ⊢M∶B ,p context-validity Γ⊢M∶B
+Generation-APP {NN = NN snoc N} (appR {A = A} Γ⊢MNN∶A⇛B Γ⊢N∶A) = let AA ,p Γ⊢M∶AAAB ,p Γ⊩NN∶AA = Generation-APP Γ⊢MNN∶A⇛B in AA snoc A ,p Γ⊢M∶AAAB ,p Γ⊩NN∶AA ,p Γ⊢N∶A
+\end{code}

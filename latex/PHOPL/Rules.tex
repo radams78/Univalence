@@ -2,6 +2,10 @@
 \begin{code}%
 \>\AgdaKeyword{module} \AgdaModule{PHOPL.Rules} \AgdaKeyword{where}\<%
 \\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Product} \AgdaKeyword{using} \AgdaSymbol{(}\AgdaFunction{\_×\_}\AgdaSymbol{)}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims.Snoclist}\<%
+\\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Grammar}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{PHOPL.Red}\<%
@@ -386,5 +390,13 @@ The rules of deduction of $\lambda o e$ are given in Figure \ref{fig:lambdaoe}.
 \>[9]\AgdaIndent{77}{}\<[77]%
 \>[77]\AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{P} \AgdaDatatype{∶} \AgdaBound{M'} \AgdaFunction{≡〈} \AgdaBound{A} \AgdaFunction{〉} \AgdaBound{N'}\<%
 \\
-\>\<%
+%
+\\
+\>\AgdaKeyword{infix} \AgdaNumber{10} \AgdaFixityOp{\_⊩\_∶\_}\<%
+\\
+\>\AgdaFunction{\_⊩\_∶\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{n}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Context} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{snocVec} \AgdaSymbol{(}\AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{)} \AgdaBound{n} \AgdaSymbol{→} \AgdaDatatype{snocVec} \AgdaDatatype{Type} \AgdaBound{n} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\\
+\>\AgdaBound{Γ} \AgdaFunction{⊩} \AgdaInductiveConstructor{[]} \AgdaFunction{∶} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaDatatype{valid} \AgdaBound{Γ}\<%
+\\
+\>\AgdaBound{Γ} \AgdaFunction{⊩} \AgdaBound{MM} \AgdaInductiveConstructor{snoc} \AgdaBound{M} \AgdaFunction{∶} \AgdaBound{AA} \AgdaInductiveConstructor{snoc} \AgdaBound{A} \AgdaSymbol{=} \AgdaBound{Γ} \AgdaFunction{⊩} \AgdaBound{MM} \AgdaFunction{∶} \AgdaBound{AA} \AgdaFunction{×} \AgdaBound{Γ} \AgdaDatatype{⊢} \AgdaBound{M} \AgdaDatatype{∶} \AgdaFunction{ty} \AgdaBound{A}\<%
 \end{code}

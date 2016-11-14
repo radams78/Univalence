@@ -344,6 +344,10 @@ one of $\phi$, $\psi$, $\delta$, $\epsilon$.
 \\
 %
 \\
+\>\AgdaKeyword{postulate} \AgdaPostulate{conv-rep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{E} \AgdaBound{E'} \AgdaSymbol{:} \AgdaDatatype{Subexp} \AgdaBound{U} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{E} \AgdaFunction{Red.≃} \AgdaBound{E'} \AgdaSymbol{→} \AgdaBound{E} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaFunction{Red.≃} \AgdaBound{E'} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\<%
+\\
+%
+\\
 \>\AgdaKeyword{postulate} \AgdaPostulate{R-creates-replacement} \AgdaSymbol{:} \AgdaFunction{Red.creates'} \AgdaFunction{REP}\<%
 \\
 %
@@ -583,10 +587,6 @@ Contraction is a relation between closed expressions only: if $s \rhd t$ then $s
 \\
 %
 \\
-\>\AgdaKeyword{postulate} \AgdaPostulate{conv-rep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{N} \AgdaSymbol{:} \AgdaDatatype{Subexp} \AgdaBound{U} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{M} \AgdaFunction{Red.≃} \AgdaBound{N} \AgdaSymbol{→} \AgdaBound{M} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉} \AgdaFunction{Red.≃} \AgdaBound{N} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\<%
-\\
-%
-\\
 \>\AgdaKeyword{postulate} \AgdaPostulate{conv-sub} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaBound{N} \AgdaSymbol{:} \AgdaDatatype{Subexp} \AgdaBound{U} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{M} \AgdaFunction{Red.≃} \AgdaBound{N} \AgdaSymbol{→} \AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{Red.≃} \AgdaBound{N} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\<%
 \\
 %
@@ -683,5 +683,11 @@ Contraction is a relation between closed expressions only: if $s \rhd t$ then $s
 \>\AgdaFunction{nf-SN} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaFunction{Term} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{nf} \AgdaBound{M} \AgdaSymbol{→} \AgdaDatatype{Red.SN} \AgdaBound{M}\<%
 \\
 \>\AgdaFunction{nf-SN} \AgdaBound{nfM} \AgdaSymbol{=} \AgdaInductiveConstructor{Red.SNI} \AgdaSymbol{\_} \AgdaSymbol{(λ} \AgdaBound{M'} \AgdaBound{M⇒M'} \AgdaSymbol{→} \AgdaFunction{⊥-elim} \AgdaSymbol{(}\AgdaPostulate{nf-is-nf} \AgdaBound{nfM} \AgdaBound{M⇒M'}\AgdaSymbol{))}\<%
+\\
+%
+\\
+\>\AgdaFunction{βsub} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{A}\AgdaSymbol{\}} \AgdaBound{M} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{appT} \AgdaSymbol{(}\AgdaFunction{ΛT} \AgdaBound{A} \AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaBound{N} \AgdaDatatype{Red.⇒} \AgdaBound{M} \AgdaFunction{⟦} \AgdaFunction{extendSub} \AgdaBound{σ} \AgdaBound{N} \AgdaFunction{⟧}\<%
+\\
+\>\AgdaFunction{βsub} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaBound{M} \AgdaSymbol{\{}\AgdaBound{σ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{N}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{subst} \AgdaSymbol{(λ} \AgdaBound{x} \AgdaSymbol{→} \AgdaFunction{appT} \AgdaSymbol{(}\AgdaFunction{ΛT} \AgdaBound{A} \AgdaBound{M} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\AgdaSymbol{)} \AgdaBound{N} \AgdaDatatype{Red.⇒} \AgdaBound{x}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{Prelims.sym} \AgdaSymbol{(}\AgdaFunction{extendSub-decomp} \AgdaBound{M}\AgdaSymbol{))} \AgdaSymbol{(}\AgdaInductiveConstructor{Red.redex} \AgdaSymbol{(}\AgdaInductiveConstructor{βR} \AgdaInductiveConstructor{βT}\AgdaSymbol{))}\<%
 \end{code}
 }
