@@ -809,6 +809,9 @@ postulate Emult-rep : ∀ {U V Γ Δ KK AA} {MM : snocListExp U KK} {ρ : Rep U 
 {- Emult-rep [] _ _ = []
 Emult-rep {U} {V} {Γ} {Δ = Δ} {KK snoc K} {AA = AA snoc A} {MM = MM snoc M} {ρ} (MM∈EΓAA snoc M∈EΓA) ρ∶Γ⇒RΔ validΔ = 
   (Emult-rep MM∈EΓAA ρ∶Γ⇒RΔ validΔ) snoc subst (λ x → E Δ x (M 〈 ρ 〉)) (liftsnocRep-botSub {U} {V} {KK} {E = A}) (E-rep M∈EΓA ρ∶Γ⇒RΔ validΔ) -}
+
+E-MeanTerm : ∀ {V} {Γ : Context V} {φ} → E Γ (ty Ω) φ → MeanTerm φ
+E-MeanTerm (EI typed (SNI φ' SNφ')) = {!SN-MeanTerm!}
 \end{code}
 }
 

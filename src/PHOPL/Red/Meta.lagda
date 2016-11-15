@@ -14,15 +14,13 @@ open import PHOPL.Red.Base
 open import Reduction PHOPL β as Redβ
 open import Reduction PHOPL R₀ as Red₀
 open import Reduction PHOPL R as Red
+open import Reduction.Subred PHOPL
 \end{code}
 }
 
 \begin{code}
 R₀-imp-R : ∀ {V C K} {E F : Subexp V C K} → E Red₀.⇒ F → E Red.⇒ F
-R₀-imp-R (Red₀.redex cE▷F) = Red.redex (R₀R cE▷F)
-R₀-imp-R (Red₀.app EE⇒FF) = Red.app (R₀-imp-R EE⇒FF)
-R₀-imp-R (Red₀.appl E⇒F) = Red.appl (R₀-imp-R E⇒F)
-R₀-imp-R (Red₀.appr EE⇒FF) = Red.appr (R₀-imp-R EE⇒FF)
+R₀-imp-R = Subred.sub-osr R₀ R {!R₀R!}
 
 ↠₀-imp-↠ : ∀ {V C K} {E F : Subexp V C K} → E Red₀.↠ F → E Red.↠ F
 ↠₀-imp-↠ (inc E⇒F) = inc (R₀-imp-R E⇒F)
@@ -247,6 +245,8 @@ postulate red₀-subr : ∀ {U} {V} {C} {K} (E : Subexp U C K) {ρ σ : Sub U V}
 postulate ⊥SN : ∀ {V} → Red.SN {V} ⊥
 
 postulate ⊃SN : ∀ {V} {φ ψ : Term V} → Red.SN φ → Red.SN ψ → Red.SN (φ ⊃ ψ)
+
+postulate appT-red : ∀ {V} {M M' N N' : Term V} → M Red.↠ M' → N Red.↠ N' → appT M N Red.↠ appT M' N'
 
 postulate SN-βexp : ∀ {V} {φ : Term V} {δ : Proof (V , -Proof)} {ε : Proof V} →
                         Red.SN ε → Red.SN (δ ⟦ x₀:= ε ⟧) → Red.SN (appP (ΛP φ δ) ε) 

@@ -45,24 +45,6 @@ postulate change-codC : ∀ {U} {V} {σ : Sub U V} {Γ} {Δ} {Δ'} →
 The identity substitution is computable.
 
 \begin{code}
-decode-not-app : ∀ {V} → not-app V  → Term V
-decode-not-app (navar x) = var x
-decode-not-app na⊥ = ⊥
-decode-not-app (na⊃ φ ψ) = φ ⊃ ψ
-decode-not-app (naΛ A M) = ΛT A M
-
-head : ∀ {V} → Term V → not-app V
-head (var x) = navar x
-head (app -bot _) = na⊥
-head (app -imp (φ ∷ ψ ∷ [])) = na⊃ φ ψ
-head (app (-lamTerm A) (M ∷ [])) = naΛ A M
-head (app -appTerm (M ∷ _ ∷ [])) = head M
-
-tail : ∀ {V} → Term V → snocList (Term V)
-tail (var _) = []
-tail (app -appTerm (M ∷ N ∷ [])) = tail M snoc N
-tail (app _ _) = []
-
 ⊥MM-not-func : ∀ {V Γ} (MM : snocList (Term V)) {A B} →
   Γ ⊢ APPl ⊥ MM ∶ ty (A ⇛ B) → Empty
 ⊥MM-not-func [] ()
@@ -72,13 +54,6 @@ tail (app _ _) = []
   Γ ⊢ APPl (φ ⊃ ψ) MM ∶ ty (A ⇛ B) → Empty
 ⊃MM-not-func [] ()
 ⊃MM-not-func (MM snoc _) (appR Γ⊢⊥MM∶A⇛B⇛C _) = ⊃MM-not-func MM Γ⊢⊥MM∶A⇛B⇛C
-
-head-tail : ∀ {V} {M : Term V} → M ≡ APPl (decode-not-app (head M)) (tail M)
-head-tail {M = var x} = refl
-head-tail {M = app -bot []} = refl
-head-tail {M = app -imp (φ ∷ ψ ∷ [])} = refl
-head-tail {M = app (-lamTerm A) (M ∷ [])} = refl
-head-tail {M = app -appTerm (M ∷ N ∷ [])} = cong (λ x → appT x N) (head-tail {M = M})
 
 postulate nf-is-Meaning : ∀ {V} {M : Term V} {Γ} → Γ ⊢ M ∶ ty Ω → nf M → Σ[ S ∈ MeaningShape ] Σ[ φ ∈ Meaning V S ] M ≡ decode-Meaning φ
 

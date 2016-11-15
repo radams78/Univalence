@@ -8,6 +8,8 @@ open import Prelims
 open import Prelims.Closure
 open import PHOPL.Grammar
 open import PHOPL.Red hiding (nf-is-nf)
+open import PHOPL.Rules
+open import PHOPL.Meta
 \end{code}
 }
 
@@ -223,4 +225,44 @@ Every strongly normalizable term is m-normalizable.
 
 \begin{code}
 postulate not-nf₀-conv-imp : ∀ {V} {M : Meaning₀ V} {φ ψ : Term V} → decode-Meaning₀ M ≃ φ ⊃ ψ → Empty
+
+decode-not-app : ∀ {V} → not-app V  → Term V
+decode-not-app (navar x) = var x
+decode-not-app na⊥ = ⊥
+decode-not-app (na⊃ φ ψ) = φ ⊃ ψ
+decode-not-app (naΛ A M) = ΛT A M
+
+head : ∀ {V} → Term V → not-app V
+head (var x) = navar x
+head (app -bot _) = na⊥
+head (app -imp (φ ∷ ψ ∷ [])) = na⊃ φ ψ
+head (app (-lamTerm A) (M ∷ [])) = naΛ A M
+head (app -appTerm (M ∷ _ ∷ [])) = head M
+
+tail : ∀ {V} → Term V → snocList (Term V)
+tail (var _) = []
+tail (app -appTerm (M ∷ N ∷ [])) = tail M snoc N
+tail (app _ _) = []
+
+head-tail : ∀ {V} {M : Term V} → M ≡ APPl (decode-not-app (head M)) (tail M)
+head-tail {M = var x} = refl
+head-tail {M = app -bot []} = refl
+head-tail {M = app -imp (φ ∷ ψ ∷ [])} = refl
+head-tail {M = app (-lamTerm A) (M ∷ [])} = refl
+head-tail {M = app -appTerm (M ∷ N ∷ [])} = cong (λ x → appT x N) (head-tail {M = M})
+
+SN-MeanTerm : ∀ {V} {Γ : Context V} {φ} → SN φ → Γ ⊢ φ ∶ ty Ω → MeanTerm φ
+SN-MeanTerm {φ = var x} _ _ = MeanTermI nf₀ (nf₀ (neutral (app x []))) ref
+SN-MeanTerm {φ = app -bot []} _ _ = MeanTermI nf₀ (nf₀ bot) ref
+SN-MeanTerm {φ = app -imp (φ ∷ ψ ∷ [])} SNφ⊃ψ (⊃R Γ⊢φ∶Ω Γ⊢ψ∶Ω) = 
+  let MeanTermI S φ' φ↠φ' = SN-MeanTerm (SNappl' (SNapp' SNφ⊃ψ)) Γ⊢φ∶Ω in
+  let MeanTermI T ψ' ψ↠ψ' = SN-MeanTerm (SNappl' (SNappr' (SNapp' SNφ⊃ψ))) Γ⊢ψ∶Ω in
+  MeanTermI (S imp T) (φ' imp ψ') (⊃-red φ↠φ' ψ↠ψ')
+SN-MeanTerm {φ = app (-lamTerm _) _} _ ()
+SN-MeanTerm {φ = app -appTerm (M ∷ N ∷ [])} SNMN Γ⊢MN∶Ω with head M 
+SN-MeanTerm {φ = app -appTerm (M ∷ N ∷ [])} SNMN Γ⊢MN∶Ω | M₀ with head-tail {M = M}
+SN-MeanTerm {V} {Γ} {app -appTerm (M ∷ N ∷ [])} SNMN Γ⊢MN∶Ω | navar x | M≡M₀N = MeanTermI nf₀ (nf₀ (neutral (app x (tail M snoc N)))) {!app-red!}
+SN-MeanTerm {V} {Γ} {app -appTerm (M ∷ N ∷ [])} SNMN Γ⊢MN∶Ω | na⊥ | M≡M₀N = {!!}
+SN-MeanTerm {V} {Γ} {app -appTerm (M ∷ N ∷ [])} SNMN Γ⊢MN∶Ω | na⊃ x x₁ | M≡M₀N = {!!}
+SN-MeanTerm {V} {Γ} {app -appTerm (M ∷ N ∷ [])} SNMN Γ⊢MN∶Ω | naΛ x x₁ | M≡M₀N = {!!}
 \end{code}

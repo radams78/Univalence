@@ -16,31 +16,7 @@ open import PHOPL.Computable
 open import PHOPL.SubC
 open import PHOPL.KeyRedex
 
-private ind-principle : ∀ {V Γ} {C : Term V → Set} →
-                      (∀ x MM → C (APPl (var x) MM)) →
-                      C ⊥ →
-                      (∀ φ ψ → C φ → C ψ → C (φ ⊃ ψ)) →
-                      (∀ M N → M ⇒ N → C N → C M) →
-                      ∀ M NN → Γ ⊢ APPl (decode-not-app M) NN ∶ ty Ω → C (APPl (decode-not-app M) NN)
-ind-principle {V} {Γ} {C} hypapp hypbot hypimp hypred M NN Γ⊢MNN∶Ω = {!!}
-
-SN-headtail-MeanTerm : ∀ {V} {Γ : Context V} {M : not-app V} {NN : snocList (Term V)} →
-  SN (APPl (decode-not-app M) NN) → Γ ⊢ APPl (decode-not-app M) NN ∶ ty Ω → MeanTerm (APPl (decode-not-app M) NN)
-SN-headtail-MeanTerm {M = navar x} {NN} SNMNN Γ⊢MNN∶Ω = MeanTermI nf₀ (nf₀ (neutral (app x NN))) ref
-SN-headtail-MeanTerm {M = na⊥} {[]} SNMNN Γ⊢MNN∶Ω = MeanTermI nf₀ (nf₀ bot) ref
-SN-headtail-MeanTerm {M = na⊥} {NN snoc N} SNMNN (appR Γ⊢⊥NN∶A⇛Ω Γ⊢N∶A) with not-⊥MMM-typed {NN = NN} (appR Γ⊢⊥NN∶A⇛Ω Γ⊢N∶A) 
-SN-headtail-MeanTerm {M = na⊥} {NN snoc N} SNMNN (appR Γ⊢⊥NN∶A⇛Ω Γ⊢N∶A) | ()
-SN-headtail-MeanTerm {M = na⊃ φ ψ} {[]} SNφ⊃ψ (⊃R Γ⊢φ∶Ω Γ⊢ψ∶Ω) = 
-  {!let φ' : MeanTerm φ
-        φ' = ? in ?!}
-SN-headtail-MeanTerm {M = na⊃ x x₁} {NN snoc x₂} SNMNN Γ⊢MNN∶Ω = {!!}
-SN-headtail-MeanTerm {M = naΛ x x₁} SNMNN Γ⊢MNN∶Ω = {!!}
-
-SN-MeanTerm : ∀ {V} {Γ : Context V} {φ} → SN φ → Γ ⊢ φ ∶ ty Ω → MeanTerm φ
-SN-MeanTerm SNφ Γ⊢φ∶Ω = {!!}
-
-E-MeanTerm : ∀ {V} {Γ : Context V} {φ} → E Γ (ty Ω) φ → MeanTerm φ
-E-MeanTerm (EI typed (SNI φ' SNφ')) = {!SN-MeanTerm!}
+  {!let φ' : MeanTerm φ        φ' = ? in ?!}
 \end{code}
 }
 
@@ -1078,16 +1054,16 @@ Every well-typed term, proof and path is strongly normalizing.
 \begin{code}
 postulate all-Ectxt : ∀ {V} {Γ : Context V} → valid Γ → Ectxt Γ
 
-Strong-Normalization : ∀ V K (Γ : Context V) 
-  (M : Expression V (varKind K)) A → Γ ⊢ M ∶ A → SN M
+postulate Strong-Normalization : ∀ V K (Γ : Context V) 
+                               (M : Expression V (varKind K)) A → Γ ⊢ M ∶ A → SN M
 \end{code}
 %</Strong-Normalization>
 
 \AgdaHide{
 \begin{code}
-Strong-Normalization V K Γ M A Γ⊢M∶A = E-SN
-  (subst (E Γ _) sub-idSub
-  (Computable-Sub (idSub V) (idSubC (context-validity Γ⊢M∶A) (all-Ectxt (context-validity Γ⊢M∶A))) Γ⊢M∶A (context-validity Γ⊢M∶A)))
+--Strong-Normalization V K Γ M A Γ⊢M∶A = E-SN
+--  (subst (E Γ _) sub-idSub
+--  (Computable-Sub (idSub V) (idSubC (context-validity Γ⊢M∶A) (all-Ectxt (context-validity Γ⊢M∶A))) Γ⊢M∶A (context-validity Γ⊢M∶A)))
 \end{code}
 }
 
