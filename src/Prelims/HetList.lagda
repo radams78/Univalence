@@ -3,6 +3,7 @@
 module Prelims.HetList where
 open import Data.Product hiding (zip)
 open import Data.List hiding (all;zip)
+open import Prelims.Snoclist
 
 data HetList {A : Set} (B : A → Set) : List A → Set where
   [] : HetList B []
@@ -24,5 +25,10 @@ data all {A} {B : A → Set} (C : ∀ {a} → B a → Set) : ∀ (aa : List A) �
 unhet : ∀ {A B aa} → K A B aa → List B
 unhet [] = []
 unhet (b ∷ bb) = b ∷ unhet bb
+
+infixl 20 _snoc_
+data HetsnocList {A} (B : A → Set) : snocList A → Set where
+  [] : HetsnocList B []
+  _snoc_ : ∀ {aa} {a} → HetsnocList B aa → B a → HetsnocList B (aa snoc a)
 \end{code}
 }

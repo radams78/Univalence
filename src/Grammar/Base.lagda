@@ -8,6 +8,7 @@
   K, L    range over expression kinds including variable kinds
   M, N, P range over expressions
   U, V, W range over alphabets -}
+open import Level
 open import Function
 open import Data.List
 open import Prelims
@@ -57,21 +58,14 @@ We prove that the constructor \AgdaRef{var} is injective.
   var-inj refl = refl
 \end{code}
 
-For the future, we also define the type of all snoc-lists of expressions $(M_1, \ldots, M_n)$
-such that $M_i$ is of type $K_i$, given a snoc-list of variable kinds $(K_1, \ldots, K_n)$.
-
-\begin{code}
-  infixl 20 _snoc_
-  data snocListExp V : snocList VarKind → Set where
-    [] : snocListExp V []
-    _snoc_ : ∀ {KK} {K} → snocListExp V KK → Expression V (varKind K) → snocListExp V (KK snoc K)
-\end{code}
-
 A \emph{reduction} is a relation $\rhd$ between expressions such that, if $E \rhd F$,
 then $E$ is not a variable.  It is given by a term $R : \AgdaRef{Reduction}$ such that
 $R\, c\, MM\, N$ iff $c[MM] \rhd N$.
 
 \begin{code}
+  Rewrite : Set₁
+  Rewrite = ∀ {V C K} → Rel (Subexp V C K) zero
+
   Reduction : Set₁
   Reduction = ∀ {V} {AA} {K} → Con (SK AA K) → ListAbs V AA → Expression V K → Set
 

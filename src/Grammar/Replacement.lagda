@@ -264,7 +264,7 @@ snocTypes-rep : ∀ {U V KK} → snocTypes U KK → Rep U V → snocTypes V KK
 snocTypes-rep [] _ = []
 snocTypes-rep {KK = KK snoc _} (AA snoc A) ρ = snocTypes-rep AA ρ snoc A 〈 liftsnocRep KK ρ 〉
 
-snocListExp-rep : ∀ {U V KK} → snocListExp U KK → Rep U V → snocListExp V KK
+snocListExp-rep : ∀ {U V KK} → HetsnocList (VExpression U) KK → Rep U V → HetsnocList (VExpression V) KK
 snocListExp-rep [] _ = []
 snocListExp-rep (MM snoc M) ρ = snocListExp-rep MM ρ snoc (M 〈 ρ 〉)
 
