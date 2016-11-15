@@ -1,0 +1,60 @@
+\begin{code}%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims.Closure}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar.Base}\<%
+\\
+%
+\\
+\>\AgdaKeyword{module} \AgdaModule{Reduction.Subred} \AgdaSymbol{(}\AgdaBound{G} \AgdaSymbol{:} \AgdaRecord{Grammar}\AgdaSymbol{)} \AgdaKeyword{where}\<%
+\\
+\>\AgdaKeyword{open} \AgdaModule{Grammar} \AgdaBound{G}\<%
+\\
+%
+\\
+\>\AgdaFunction{\_⊆\_} \AgdaSymbol{:} \AgdaFunction{Reduction} \AgdaSymbol{→} \AgdaFunction{Reduction} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\\
+\>\AgdaBound{R} \AgdaFunction{⊆} \AgdaBound{S} \AgdaSymbol{=} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{AA}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{c} \AgdaSymbol{:} \AgdaFunction{Con} \AgdaSymbol{(}\AgdaInductiveConstructor{SK} \AgdaBound{AA} \AgdaBound{K}\AgdaSymbol{)\}} \AgdaSymbol{\{}\AgdaBound{E} \AgdaSymbol{:} \AgdaFunction{ListAbs} \AgdaBound{V} \AgdaBound{AA}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{F}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{R} \AgdaBound{c} \AgdaBound{E} \AgdaBound{F} \AgdaSymbol{→} \AgdaBound{S} \AgdaBound{c} \AgdaBound{E} \AgdaBound{F}\<%
+\\
+%
+\\
+\>\AgdaKeyword{module} \AgdaModule{Subred} \AgdaSymbol{(}\AgdaBound{R} \AgdaBound{S} \AgdaSymbol{:} \AgdaFunction{Reduction}\AgdaSymbol{)} \AgdaKeyword{where}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Reduction} \AgdaBound{G} \AgdaBound{R} \AgdaSymbol{as} \AgdaModule{RedR}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Reduction} \AgdaBound{G} \AgdaBound{S} \AgdaSymbol{as} \AgdaModule{RedS}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{sub-osr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{E} \AgdaBound{F} \AgdaSymbol{:} \AgdaDatatype{Subexp} \AgdaBound{V} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{R} \AgdaFunction{⊆} \AgdaBound{S} \AgdaSymbol{→} \AgdaBound{E} \AgdaDatatype{RedR.⇒} \AgdaBound{F} \AgdaSymbol{→} \AgdaBound{E} \AgdaDatatype{RedS.⇒} \AgdaBound{F}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{sub-osr} \AgdaBound{R⊆S} \AgdaSymbol{(}\AgdaInductiveConstructor{RedR.redex} \AgdaBound{E▷F}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{RedS.redex} \AgdaSymbol{(}\AgdaBound{R⊆S} \AgdaBound{E▷F}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{sub-osr} \AgdaBound{R⊆S} \AgdaSymbol{(}\AgdaInductiveConstructor{RedR.app} \AgdaBound{EE⇒FF}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{RedS.app} \AgdaSymbol{(}\AgdaFunction{sub-osr} \AgdaBound{R⊆S} \AgdaBound{EE⇒FF}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{sub-osr} \AgdaBound{R⊆S} \AgdaSymbol{(}\AgdaInductiveConstructor{RedR.appl} \AgdaBound{E⇒F}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{RedS.appl} \AgdaSymbol{(}\AgdaFunction{sub-osr} \AgdaBound{R⊆S} \AgdaBound{E⇒F}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{sub-osr} \AgdaBound{R⊆S} \AgdaSymbol{(}\AgdaInductiveConstructor{RedR.appr} \AgdaBound{E⇒F}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{RedS.appr} \AgdaSymbol{(}\AgdaFunction{sub-osr} \AgdaBound{R⊆S} \AgdaBound{E⇒F}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{sub-red} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{E} \AgdaBound{F} \AgdaSymbol{:} \AgdaDatatype{Subexp} \AgdaBound{V} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{R} \AgdaFunction{⊆} \AgdaBound{S} \AgdaSymbol{→} \AgdaBound{E} \AgdaFunction{RedR.↠} \AgdaBound{F} \AgdaSymbol{→} \AgdaBound{E} \AgdaFunction{RedS.↠} \AgdaBound{F}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{sub-red} \AgdaBound{R⊆S} \AgdaSymbol{(}\AgdaInductiveConstructor{inc} \AgdaBound{E⇒F}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{inc} \AgdaSymbol{(}\AgdaFunction{sub-osr} \AgdaBound{R⊆S} \AgdaBound{E⇒F}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{sub-red} \AgdaBound{R⊆S} \AgdaInductiveConstructor{ref} \AgdaSymbol{=} \AgdaInductiveConstructor{ref}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{sub-red} \AgdaBound{R⊆S} \AgdaSymbol{(}\AgdaInductiveConstructor{trans} \AgdaBound{E↠F} \AgdaBound{F↠G}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaInductiveConstructor{trans} \AgdaSymbol{(}\AgdaFunction{sub-red} \AgdaBound{R⊆S} \AgdaBound{E↠F}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{sub-red} \AgdaBound{R⊆S} \AgdaBound{F↠G}\AgdaSymbol{)}\<%
+\end{code}
