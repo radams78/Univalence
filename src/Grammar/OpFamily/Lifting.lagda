@@ -3,9 +3,12 @@
 open import Grammar.Base
 
 module Grammar.OpFamily.Lifting (G : Grammar) where
+open import Level
 open import Function.Equality hiding (setoid)
-open import Data.List
-open import Prelims
+open import Data.Product hiding (map) renaming (_,_ to _,p_)
+open import Data.List hiding (foldr;map)
+open import Algebra
+open import Prelims hiding (map)
 open Grammar G renaming (_⟶_ to _⇒_)
 open import Grammar.OpFamily.PreOpFamily G
 \end{code}

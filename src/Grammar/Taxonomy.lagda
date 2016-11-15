@@ -7,6 +7,7 @@
 module Grammar.Taxonomy where
 open import Data.List
 open import Prelims
+open import Prelims.Foldable
 \end{code}
 }
 
@@ -132,5 +133,8 @@ A constructor kind is a simple kind over abstraction kinds and expression kinds.
   Kind : KindClass → Set
   Kind -Expression = ExpKind
   Kind -ListAbs = List AbsKind
+
+  extend' : ∀ (F : FoldFunc) → Alphabet → FoldFunc.o F VarKind → Alphabet
+  extend' F V KK = FoldFunc.fold F {M = FoldFunc.Endo F Alphabet} (FoldFunc.map F (λ K V → V , K) KK) V
 \end{code}
 
