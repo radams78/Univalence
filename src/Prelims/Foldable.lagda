@@ -2,6 +2,7 @@
 module Prelims.Foldable where
 open import Level
 open import Data.Product renaming (_,_ to _,p_) hiding (map)
+open import Data.List hiding (map;foldr)
 open import Algebra
 open import Prelims hiding (sym;map)
 
@@ -29,4 +30,10 @@ record FoldFunc : Set₁ where
         assoc = λ _ _ _ _ → refl ; 
         ∙-cong = λ {_} {g} g≡g' f≡f' x → trans (g≡g' _) (Prelims.cong g (f≡f' x)) } ; 
       identity = (λ _ _ → refl) ,p (λ _ _ → refl) } }
+
+  LIST : FoldFunc
+  LIST = record { 
+    o = List ; 
+    map = Data.List.map ; 
+    foldr = Data.List.foldr }
 \end{code}

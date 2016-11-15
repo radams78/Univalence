@@ -48,12 +48,6 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
   extend' : ∀ (F : FoldFunc) → Alphabet → FoldFunc.o F VarKind → Alphabet
   extend' F V KK = FoldFunc.fold F {M = FoldFunc.Endo F Alphabet} (FoldFunc.map F (λ K V → V , K) KK) V
 
-  LIST : FoldFunc
-  LIST = record { 
-    o = List ; 
-    map = Data.List.map ; 
-    foldr = Data.List.foldr }
-
   snocfoldr : ∀ {A B : Set} → (A → B → B) → B → snocList A → B
   snocfoldr _ b [] = b
   snocfoldr f b (aa snoc a) = snocfoldr f (f a b) aa
