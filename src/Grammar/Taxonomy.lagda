@@ -45,13 +45,30 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
 
 \AgdaHide{
 \begin{code}
+  extend' : ∀ (F : FoldFunc) → Alphabet → FoldFunc.o F VarKind → Alphabet
+  extend' F V KK = FoldFunc.fold F {M = FoldFunc.Endo F Alphabet} (FoldFunc.map F (λ K V → V , K) KK) V
+
+  LIST : FoldFunc
+  LIST = record { 
+    o = List ; 
+    map = Data.List.map ; 
+    foldr = Data.List.foldr }
+
+  snocfoldr : ∀ {A B : Set} → (A → B → B) → B → snocList A → B
+  snocfoldr _ b [] = b
+  snocfoldr f b (aa snoc a) = snocfoldr f (f a b) aa
+
+  SNOCLIST : FoldFunc
+  SNOCLIST = record { 
+    o = snocList ; 
+    map = Prelims.map ; 
+    foldr = snocfoldr }
+
   extend : Alphabet → List VarKind → Alphabet
-  extend A [] = A
-  extend A (K ∷ KK) = extend (A , K) KK
+  extend = extend' LIST
 
   snoc-extend : Alphabet → snocList VarKind → Alphabet
-  snoc-extend A [] = A
-  snoc-extend A (KK snoc K) = snoc-extend A KK , K
+  snoc-extend = extend' SNOCLIST
 \end{code}
 }
 
@@ -133,8 +150,5 @@ A constructor kind is a simple kind over abstraction kinds and expression kinds.
   Kind : KindClass → Set
   Kind -Expression = ExpKind
   Kind -ListAbs = List AbsKind
-
-  extend' : ∀ (F : FoldFunc) → Alphabet → FoldFunc.o F VarKind → Alphabet
-  extend' F V KK = FoldFunc.fold F {M = FoldFunc.Endo F Alphabet} (FoldFunc.map F (λ K V → V , K) KK) V
 \end{code}
 
