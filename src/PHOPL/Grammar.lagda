@@ -352,7 +352,7 @@ eqmult-rep {n = suc n} {MM = MM snoc M} {AA snoc A} {NN snoc N} = cong₃ (λ a 
   eqmult-rep 
   (liftsnocRep-ups (Prelims.replicate n -Path) M) (liftsnocRep-ups (Prelims.replicate n -Path) N)
 
-toSnocListExp : ∀ {V K n} → snocVec (Expression V (varKind K)) n → snocListExp V (replicate n K)
+toSnocListExp : ∀ {V K n} → snocVec (Expression V (varKind K)) n → HetsnocList (VExpression V) (replicate n K)
 toSnocListExp [] = []
 toSnocListExp (MM snoc M) = toSnocListExp MM snoc M
 
@@ -366,5 +366,47 @@ data not-app V : Set where
   na⊥   : not-app V
   na⊃   : Term V → Term V → not-app V
   naΛ   : Type → Term (V , -Term) → not-app V
+
+sub↖-•SR : ∀ {U V W} {σ : Sub V W} {ρ : Rep U V} → sub↖ (σ •SR ρ) ∼ sub↖ σ •SR liftRep _ ρ
+sub↖-•SR x₀ = refl
+sub↖-•SR (↑ x) = refl
+
+sub↗-•SR : ∀ {U V W} {σ : Sub V W} {ρ : Rep U V} → sub↗ (σ •SR ρ) ∼ sub↗ σ •SR liftRep _ ρ
+sub↗-•SR x₀ = refl
+sub↗-•SR (↑ x) = refl
+
+sub↖-• : ∀ {U V W} {σ : Sub V W} {ρ : Sub U V} → sub↖ (σ • ρ) ∼ sub↖ σ • liftSub _ ρ
+sub↖-• x₀ = refl
+sub↖-• {σ = σ} {ρ} (↑ x) = let open ≡-Reasoning in 
+  begin
+    ρ _ x ⟦ σ ⟧ ⇑ ⇑ ⇑
+  ≡⟨⟨ rep-congl (rep-congl (sub-•RS (ρ _ x))) ⟩⟩
+    ρ _ x ⟦ upRep •RS σ ⟧ ⇑ ⇑
+  ≡⟨⟨ rep-congl (sub-•RS (ρ _ x)) ⟩⟩
+    ρ _ x ⟦ upRep •RS (upRep •RS σ) ⟧ ⇑
+  ≡⟨⟨ sub-•RS (ρ _ x) ⟩⟩
+    ρ _ x ⟦ upRep •RS (upRep •RS (upRep •RS σ)) ⟧
+  ≡⟨⟩
+    ρ _ x ⟦ sub↖ σ •SR upRep ⟧
+  ≡⟨ sub-•SR (ρ _ x) ⟩
+    ρ _ x ⇑ ⟦ sub↖ σ ⟧
+  ∎
+
+sub↗-• : ∀ {U V W} {σ : Sub V W} {ρ : Sub U V} → sub↗ (σ • ρ) ∼ sub↗ σ • liftSub _ ρ
+sub↗-• x₀ = refl
+sub↗-• {σ = σ} {ρ} (↑ x) = let open ≡-Reasoning in 
+  begin
+    ρ _ x ⟦ σ ⟧ ⇑ ⇑ ⇑
+  ≡⟨⟨ rep-congl (rep-congl (sub-•RS (ρ _ x))) ⟩⟩
+    ρ _ x ⟦ upRep •RS σ ⟧ ⇑ ⇑
+  ≡⟨⟨ rep-congl (sub-•RS (ρ _ x)) ⟩⟩
+    ρ _ x ⟦ upRep •RS (upRep •RS σ) ⟧ ⇑
+  ≡⟨⟨ sub-•RS (ρ _ x) ⟩⟩
+    ρ _ x ⟦ upRep •RS (upRep •RS (upRep •RS σ)) ⟧
+  ≡⟨⟩
+    ρ _ x ⟦ sub↗ σ •SR upRep ⟧
+  ≡⟨ sub-•SR (ρ _ x) ⟩
+    ρ _ x ⇑ ⟦ sub↗ σ ⟧
+  ∎
 \end{code}
 }

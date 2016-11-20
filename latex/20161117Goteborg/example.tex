@@ -1,0 +1,143 @@
+\begin{code}%
+\>\AgdaKeyword{module} \AgdaModule{20161117Goteborg.example} \AgdaKeyword{where}\<%
+\\
+%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{Maybe} \AgdaSymbol{(}\AgdaBound{A} \AgdaSymbol{:} \AgdaPrimitiveType{Set}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{nothing} \AgdaSymbol{:} \AgdaDatatype{Maybe} \AgdaBound{A}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{just} \AgdaSymbol{:} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{Maybe} \AgdaBound{A}\<%
+\end{code}
+
+%<*Term>
+\begin{code}%
+\>\AgdaKeyword{data} \AgdaDatatype{Term} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{var} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Term} \AgdaBound{V}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{app} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Term} \AgdaBound{V}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{Λ} \<[6]%
+\>[6]\AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Term} \AgdaSymbol{(}\AgdaDatatype{Maybe} \AgdaBound{V}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{Term} \AgdaBound{V}\<%
+\end{code}
+%</Term>
+
+\begin{code}%
+\>\AgdaKeyword{postulate} \AgdaPostulate{Sub} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\\
+\>\AgdaKeyword{postulate} \AgdaPostulate{\_•\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaPostulate{Sub} \AgdaBound{V} \AgdaBound{W} \AgdaSymbol{→} \AgdaPostulate{Sub} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaPostulate{Sub} \AgdaBound{U} \AgdaBound{W}\<%
+\\
+\>\AgdaKeyword{postulate} \AgdaPostulate{\_≡\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{A} \AgdaSymbol{:} \AgdaPrimitiveType{Set}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{A} \AgdaSymbol{→} \AgdaBound{A} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
+\\
+\>\AgdaKeyword{postulate} \AgdaPostulate{sub} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaPostulate{Sub} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Term} \AgdaBound{U} \AgdaSymbol{→} \AgdaDatatype{Term} \AgdaBound{V}\<%
+\\
+\>\AgdaKeyword{postulate} \AgdaPostulate{sublm'} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaPostulate{Sub} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaPostulate{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaDatatype{Term} \AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[2]\AgdaIndent{19}{}\<[19]%
+\>[19]\AgdaPostulate{sub} \AgdaSymbol{(}\AgdaBound{σ} \AgdaPostulate{•} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{M} \AgdaPostulate{≡} \AgdaPostulate{sub} \AgdaBound{σ} \AgdaSymbol{(}\AgdaPostulate{sub} \AgdaBound{ρ} \AgdaBound{M}\AgdaSymbol{)}\<%
+\end{code}
+
+%<*Sub>
+\begin{code}%
+\>\AgdaFunction{sublm} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \<[18]%
+\>[18]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaPostulate{Sub} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaPostulate{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{M} \AgdaSymbol{:} \AgdaDatatype{Term} \AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaPostulate{sub} \AgdaSymbol{(}\AgdaBound{σ} \AgdaPostulate{•} \AgdaBound{ρ}\AgdaSymbol{)} \AgdaBound{M} \AgdaPostulate{≡} \AgdaPostulate{sub} \AgdaBound{σ} \AgdaSymbol{(}\AgdaPostulate{sub} \AgdaBound{ρ} \AgdaBound{M}\AgdaSymbol{)}\<%
+\end{code}
+%</Sub>
+
+\begin{code}%
+\>\AgdaFunction{sublm} \AgdaSymbol{=} \AgdaPostulate{sublm'}\<%
+\\
+%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar.Taxonomy}\<%
+\end{code}
+
+%<*Taxonomy>
+\begin{code}%
+\>\AgdaKeyword{data} \AgdaDatatype{lmmVK} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{-producer} \AgdaSymbol{:} \AgdaDatatype{lmmVK}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{-consumer} \AgdaSymbol{:} \AgdaDatatype{lmmVK}\<%
+\\
+%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{lmmNVK} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{-command} \AgdaSymbol{:} \AgdaDatatype{lmmNVK}\<%
+\\
+%
+\\
+\>\AgdaFunction{lmmKinds} \AgdaSymbol{:} \AgdaRecord{Taxonomy}\<%
+\\
+\>\AgdaFunction{lmmKinds} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{} \<[20]%
+\>[20]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{VarKind} \AgdaSymbol{=} \AgdaDatatype{lmmVK} \AgdaSymbol{;} \<[20]%
+\>[20]\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaField{NonVarKind} \AgdaSymbol{=} \AgdaDatatype{lmmNVK} \AgdaSymbol{\}}\<%
+\end{code}
+%</Taxonomy>
+
+\begin{code}%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Grammar.Base}\<%
+\\
+\>\AgdaKeyword{open} \AgdaModule{Taxonomy} \AgdaFunction{lmmKinds}\<%
+\\
+%
+\\
+\>\AgdaFunction{prod} \AgdaSymbol{:} \AgdaDatatype{ExpKind}\<%
+\\
+\>\AgdaFunction{prod} \AgdaSymbol{=} \AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-producer}\<%
+\\
+%
+\\
+\>\AgdaFunction{cons} \AgdaSymbol{:} \AgdaDatatype{ExpKind}\<%
+\\
+\>\AgdaFunction{cons} \AgdaSymbol{=} \AgdaInductiveConstructor{varKind} \AgdaInductiveConstructor{-consumer}\<%
+\\
+%
+\\
+\>\AgdaFunction{comm} \AgdaSymbol{:} \AgdaDatatype{ExpKind}\<%
+\\
+\>\AgdaFunction{comm} \AgdaSymbol{=} \AgdaInductiveConstructor{nonVarKind} \AgdaInductiveConstructor{-command}\<%
+\end{code}
+
+%<*Grammar>
+\begin{code}%
+\>\AgdaKeyword{data} \AgdaDatatype{lmmCon} \AgdaSymbol{:} \AgdaFunction{ConKind} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{Λ} \AgdaSymbol{:} \AgdaDatatype{lmmCon} \AgdaSymbol{((}\AgdaInductiveConstructor{-producer} \AgdaFunction{⟶} \AgdaFunction{prod} \AgdaFunction{✧}\AgdaSymbol{)} \AgdaFunction{⟶} \AgdaFunction{prod} \AgdaFunction{✧}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{μ} \AgdaSymbol{:} \AgdaDatatype{lmmCon} \AgdaSymbol{((}\AgdaInductiveConstructor{-producer} \AgdaFunction{⟶} \AgdaFunction{comm} \AgdaFunction{✧}\AgdaSymbol{)} \AgdaFunction{⟶} \AgdaFunction{prod} \AgdaFunction{✧}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{μ∼} \AgdaSymbol{:} \AgdaDatatype{lmmCon} \AgdaSymbol{((}\AgdaInductiveConstructor{-producer} \AgdaFunction{⟶} \AgdaFunction{comm} \AgdaFunction{✧}\AgdaSymbol{)} \AgdaFunction{⟶} \AgdaFunction{cons} \AgdaFunction{✧}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{app} \AgdaSymbol{:} \AgdaDatatype{lmmCon} \AgdaSymbol{(}\AgdaFunction{prod} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{cons} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{cons} \AgdaFunction{✧}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{〈|〉} \AgdaSymbol{:} \AgdaDatatype{lmmCon} \AgdaSymbol{(}\AgdaFunction{prod} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{cons} \AgdaFunction{✧} \AgdaFunction{⟶} \AgdaFunction{comm} \AgdaFunction{✧}\AgdaSymbol{)}\<%
+\end{code}
+%</Grammar>

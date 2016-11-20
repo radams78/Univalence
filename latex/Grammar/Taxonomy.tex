@@ -9,6 +9,8 @@
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.List}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims.Foldable}\<%
 \end{code}
 }
 
@@ -21,6 +23,7 @@ A \emph{taxononmy} consists of:
 \item a subset of expression kinds, called the \emph{variable kinds}.  We refer to the other expession kinds as \emph{non-variable kinds}.
 \end{itemize}
 
+%<*Taxonomy>
 \begin{code}%
 \>\AgdaKeyword{record} \AgdaRecord{Taxonomy} \AgdaSymbol{:} \AgdaPrimitiveType{Set₁} \AgdaKeyword{where}\<%
 \\
@@ -44,12 +47,14 @@ A \emph{taxononmy} consists of:
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaInductiveConstructor{nonVarKind} \AgdaSymbol{:} \AgdaField{NonVarKind} \AgdaSymbol{→} \AgdaDatatype{ExpKind}\<%
 \end{code}
+%</Taxonomy>
 
 An \emph{alphabet} $A$ consists of a finite set of \emph{variables},
 to each of which is assigned a variable kind $K$.
 Let $\emptyset$ be the empty alphabet, and $(A , K)$ be the result of extending the alphabet $A$ with one
 fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of all variables in $A$ of kind $K$.
 
+%<*Alphabet>
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{infixl} \AgdaNumber{55} \AgdaFixityOp{\_,\_}\<%
@@ -63,17 +68,57 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaInductiveConstructor{\_,\_} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaField{VarKind} \AgdaSymbol{→} \AgdaDatatype{Alphabet}\<%
 \end{code}
+%</Alphabet>
 
 \AgdaHide{
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{extend'} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{(}\AgdaBound{F} \AgdaSymbol{:} \AgdaRecord{FoldFunc}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaField{FoldFunc.o} \AgdaBound{F} \AgdaField{VarKind} \AgdaSymbol{→} \AgdaDatatype{Alphabet}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{extend'} \AgdaBound{F} \AgdaBound{V} \AgdaBound{KK} \AgdaSymbol{=} \AgdaFunction{FoldFunc.fold} \AgdaBound{F} \AgdaSymbol{\{}\AgdaArgument{M} \AgdaSymbol{=} \AgdaFunction{FoldFunc.Endo} \AgdaBound{F} \AgdaDatatype{Alphabet}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaField{FoldFunc.map} \AgdaBound{F} \AgdaSymbol{(λ} \AgdaBound{K} \AgdaBound{V} \AgdaSymbol{→} \AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{)} \AgdaBound{KK}\AgdaSymbol{)} \AgdaBound{V}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{snocfoldr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{A} \AgdaBound{B} \AgdaSymbol{:} \AgdaPrimitiveType{Set}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaSymbol{(}\AgdaBound{A} \AgdaSymbol{→} \AgdaBound{B} \AgdaSymbol{→} \AgdaBound{B}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaBound{B} \AgdaSymbol{→} \AgdaDatatype{snocList} \AgdaBound{A} \AgdaSymbol{→} \AgdaBound{B}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{snocfoldr} \AgdaSymbol{\_} \AgdaBound{b} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaBound{b}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{snocfoldr} \AgdaBound{f} \AgdaBound{b} \AgdaSymbol{(}\AgdaBound{aa} \AgdaInductiveConstructor{snoc} \AgdaBound{a}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{snocfoldr} \AgdaBound{f} \AgdaSymbol{(}\AgdaBound{f} \AgdaBound{a} \AgdaBound{b}\AgdaSymbol{)} \AgdaBound{aa}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{SNOCLIST} \AgdaSymbol{:} \AgdaRecord{FoldFunc}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{SNOCLIST} \AgdaSymbol{=} \AgdaKeyword{record} \AgdaSymbol{\{} \<[22]%
+\>[22]\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{o} \AgdaSymbol{=} \AgdaDatatype{snocList} \AgdaSymbol{;} \<[19]%
+\>[19]\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{map} \AgdaSymbol{=} \AgdaFunction{Prelims.map} \AgdaSymbol{;} \<[24]%
+\>[24]\<%
+\\
+\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaField{foldr} \AgdaSymbol{=} \AgdaFunction{snocfoldr} \AgdaSymbol{\}}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{extend} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaDatatype{List} \AgdaField{VarKind} \AgdaSymbol{→} \AgdaDatatype{Alphabet}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{extend} \AgdaBound{A} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaBound{A}\<%
+\>[2]\AgdaFunction{extend} \AgdaBound{V} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaBound{V}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{extend} \AgdaBound{A} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{∷} \AgdaBound{KK}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{extend} \AgdaSymbol{(}\AgdaBound{A} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{)} \AgdaBound{KK}\<%
+\>[2]\AgdaFunction{extend} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{K} \AgdaInductiveConstructor{∷} \AgdaBound{KK}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{extend} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{)} \AgdaBound{KK}\<%
 \\
 %
 \\
@@ -81,13 +126,14 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
 \>[2]\AgdaFunction{snoc-extend} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaDatatype{snocList} \AgdaField{VarKind} \AgdaSymbol{→} \AgdaDatatype{Alphabet}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{snoc-extend} \AgdaBound{A} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaBound{A}\<%
+\>[2]\AgdaFunction{snoc-extend} \AgdaBound{V} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaBound{V}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{snoc-extend} \AgdaBound{A} \AgdaSymbol{(}\AgdaBound{KK} \AgdaInductiveConstructor{snoc} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{snoc-extend} \AgdaBound{A} \AgdaBound{KK} \AgdaInductiveConstructor{,} \AgdaBound{K}\<%
+\>[2]\AgdaFunction{snoc-extend} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{KK} \AgdaInductiveConstructor{snoc} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{snoc-extend} \AgdaBound{V} \AgdaBound{KK} \AgdaInductiveConstructor{,} \AgdaBound{K}\<%
 \end{code}
 }
 
+%<*Var>
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{data} \AgdaDatatype{Var} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaField{VarKind} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
@@ -98,6 +144,7 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaInductiveConstructor{↑} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{L}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Var} \AgdaBound{V} \AgdaBound{L} \AgdaSymbol{→} \AgdaDatatype{Var} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{)} \AgdaBound{L}\<%
 \end{code}
+%</Var>
 
 \AgdaHide{
 \begin{code}%
@@ -143,6 +190,7 @@ We formalise this as follows.  First, a \emph{simple kind} over the sets $A$ and
 \[ a_1 \longrightarrow \cdots \longrightarrow a_n \longrightarrow b \]
 where each $a_i \in A$ and $b \in B$.
 
+%<*SimpleKind>
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{record} \AgdaRecord{SimpleKind} \AgdaSymbol{(}\AgdaBound{A} \AgdaBound{B} \AgdaSymbol{:} \AgdaPrimitiveType{Set}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
@@ -158,9 +206,10 @@ where each $a_i \in A$ and $b \in B$.
 \\
 \>[4]\AgdaIndent{6}{}\<[6]%
 \>[6]\AgdaField{cod} \AgdaSymbol{:} \AgdaBound{B}\<%
-\\
-%
-\\
+\end{code}
+%</SimpleKind>
+
+\begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{infix} \AgdaNumber{71} \AgdaFixityOp{\_✧}\<%
 \\
@@ -185,6 +234,7 @@ where each $a_i \in A$ and $b \in B$.
 An abstraction kind is a simple kind over variable kinds and expression kinds.
 A constructor kind is a simple kind over abstraction kinds and expression kinds.
 
+%<*ConKind>
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{AbsKind} \AgdaSymbol{=} \AgdaRecord{SimpleKind} \AgdaField{VarKind} \AgdaDatatype{ExpKind}\<%
@@ -192,6 +242,7 @@ A constructor kind is a simple kind over abstraction kinds and expression kinds.
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{ConKind} \AgdaSymbol{=} \AgdaRecord{SimpleKind} \AgdaFunction{AbsKind} \AgdaDatatype{ExpKind}\<%
 \end{code}
+%</ConKind>
 
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%

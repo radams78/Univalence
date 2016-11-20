@@ -31,13 +31,15 @@ that maps every variable in $U$ to a variable in $V$ of the same kind.  Applicat
 function application, the identity function and function composition.  The successor is the canonical injection $V \rightarrow (V, K)$,
 and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
 
+%<*Rep>
 \begin{code}%
 \>\AgdaFunction{Rep} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
 \\
 \>\AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{=} \AgdaSymbol{∀} \AgdaBound{K} \AgdaSymbol{→} \AgdaDatatype{Var} \AgdaBound{U} \AgdaBound{K} \AgdaSymbol{→} \AgdaDatatype{Var} \AgdaBound{V} \AgdaBound{K}\<%
-\\
-%
-\\
+\end{code}
+%</Rep>
+
+\begin{code}%
 \>\AgdaFunction{upRep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Rep} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{K}\AgdaSymbol{)}\<%
 \\
 \>\AgdaFunction{upRep} \AgdaSymbol{\_} \AgdaSymbol{=} \AgdaInductiveConstructor{↑}\<%
@@ -579,7 +581,7 @@ We define the unique replacement $\emptyset \rightarrow V$ for any V, and prove 
 \\
 %
 \\
-\>\AgdaFunction{snocListExp-rep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{KK}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{snocListExp} \AgdaBound{U} \AgdaBound{KK} \AgdaSymbol{→} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{snocListExp} \AgdaBound{V} \AgdaBound{KK}\<%
+\>\AgdaFunction{snocListExp-rep} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V} \AgdaBound{KK}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{HetsnocList} \AgdaSymbol{(}\AgdaFunction{VExpression} \AgdaBound{U}\AgdaSymbol{)} \AgdaBound{KK} \AgdaSymbol{→} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{HetsnocList} \AgdaSymbol{(}\AgdaFunction{VExpression} \AgdaBound{V}\AgdaSymbol{)} \AgdaBound{KK}\<%
 \\
 \>\AgdaFunction{snocListExp-rep} \AgdaInductiveConstructor{[]} \AgdaSymbol{\_} \AgdaSymbol{=} \AgdaInductiveConstructor{[]}\<%
 \\

@@ -1,4 +1,3 @@
-\begin{code}
 module Prelims.Snoclist where
 open import Relation.Binary.PropositionalEquality
 open import Data.Nat
@@ -39,4 +38,3 @@ data snocVec (A : Set) : ℕ → Set where
 lookup : ∀ {A : Set} {n} → Fin n → snocVec A n → A
 lookup zero (_ snoc x) = x
 lookup (suc i) (v snoc _) = lookup i v
-\end{code}

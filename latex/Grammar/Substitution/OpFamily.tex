@@ -96,8 +96,8 @@ We now define two compositions $\bullet_1 : \mathrm{replacement} ; \mathrm{subst
 \\
 %
 \\
-\>\AgdaFunction{sub-compRS} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \<[35]%
-\>[35]\<%
+\>\AgdaFunction{sub-•RS} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \<[32]%
+\>[32]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaSymbol{(}\AgdaBound{E} \AgdaSymbol{:} \AgdaDatatype{Subexp} \AgdaBound{U} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
@@ -105,7 +105,7 @@ We now define two compositions $\bullet_1 : \mathrm{replacement} ; \mathrm{subst
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaBound{E} \AgdaFunction{⟦} \AgdaBound{ρ} \AgdaFunction{•RS} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaDatatype{≡} \AgdaBound{E} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧} \AgdaFunction{〈} \AgdaBound{ρ} \AgdaFunction{〉}\<%
 \\
-\>\AgdaFunction{sub-compRS} \AgdaBound{E} \AgdaSymbol{=} \AgdaFunction{Composition.ap-comp} \AgdaFunction{COMPRS} \AgdaBound{E}\<%
+\>\AgdaFunction{sub-•RS} \AgdaBound{E} \AgdaSymbol{=} \AgdaFunction{Composition.ap-comp} \AgdaFunction{COMPRS} \AgdaBound{E}\<%
 \\
 %
 \\
@@ -151,8 +151,8 @@ We now define two compositions $\bullet_1 : \mathrm{replacement} ; \mathrm{subst
 \\
 %
 \\
-\>\AgdaFunction{sub-compSR} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \<[35]%
-\>[35]\<%
+\>\AgdaFunction{sub-•SR} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \<[32]%
+\>[32]\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaSymbol{(}\AgdaBound{E} \AgdaSymbol{:} \AgdaDatatype{Subexp} \AgdaBound{U} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Rep} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \<[51]%
@@ -164,7 +164,7 @@ We now define two compositions $\bullet_1 : \mathrm{replacement} ; \mathrm{subst
 
 \AgdaHide{
 \begin{code}%
-\>\AgdaFunction{sub-compSR} \AgdaBound{E} \AgdaSymbol{=} \AgdaFunction{Composition.ap-comp} \AgdaFunction{COMPSR} \AgdaBound{E}\<%
+\>\AgdaFunction{sub-•SR} \AgdaBound{E} \AgdaSymbol{=} \AgdaFunction{Composition.ap-comp} \AgdaFunction{COMPSR} \AgdaBound{E}\<%
 \end{code}
 }
 
@@ -290,7 +290,7 @@ able to prove that this is a composition $\mathrm{substitution} ; \mathrm{substi
 \>[0]\AgdaIndent{12}{}\<[12]%
 \>[12]\AgdaBound{ρ} \AgdaFunction{•} \AgdaSymbol{(}\AgdaBound{σ} \AgdaFunction{•RS} \AgdaBound{τ}\AgdaSymbol{)} \AgdaFunction{∼} \AgdaSymbol{(}\AgdaBound{ρ} \AgdaFunction{•SR} \AgdaBound{σ}\AgdaSymbol{)} \AgdaFunction{•} \AgdaBound{τ}\<%
 \\
-\>\AgdaFunction{assocRSSR} \AgdaSymbol{\{}\AgdaArgument{ρ} \AgdaSymbol{=} \AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{τ}\AgdaSymbol{\}} \AgdaBound{x} \AgdaSymbol{=} \AgdaFunction{sym} \AgdaSymbol{(}\AgdaFunction{sub-compSR} \AgdaSymbol{(}\AgdaBound{τ} \AgdaSymbol{\_} \AgdaBound{x}\AgdaSymbol{))}\<%
+\>\AgdaFunction{assocRSSR} \AgdaSymbol{\{}\AgdaArgument{ρ} \AgdaSymbol{=} \AgdaBound{ρ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{τ}\AgdaSymbol{\}} \AgdaBound{x} \AgdaSymbol{=} \AgdaFunction{sym} \AgdaSymbol{(}\AgdaFunction{sub-•SR} \AgdaSymbol{(}\AgdaBound{τ} \AgdaSymbol{\_} \AgdaBound{x}\AgdaSymbol{))}\<%
 \end{code}
 }
 
@@ -362,10 +362,13 @@ We can now prove general results such as:
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaSymbol{(}\AgdaBound{E} \AgdaSymbol{:} \AgdaDatatype{Subexp} \AgdaBound{U} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{V} \AgdaBound{W}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{ρ} \AgdaSymbol{:} \AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
-\\
+\end{code}
+%<*sub-comp>
+\begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaBound{E} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{•} \AgdaBound{ρ} \AgdaFunction{⟧} \AgdaDatatype{≡} \AgdaBound{E} \AgdaFunction{⟦} \AgdaBound{ρ} \AgdaFunction{⟧} \AgdaFunction{⟦} \AgdaBound{σ} \AgdaFunction{⟧}\<%
 \end{code}
+%</sub-comp>
 \end{frame}
 
 \AgdaHide{

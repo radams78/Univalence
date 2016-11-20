@@ -1,0 +1,290 @@
+\documentclass[a4paper,UKenglish]{lipics-v2016}
+% for section-numbered lemmas etc., use "numberwithinsect"
+ 
+\usepackage{microtype}%if unwanted, comment out or use option "draft"
+
+%\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
+
+\bibliographystyle{plainurl}
+
+% Author macros::begin %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{A Strongly Normalizing Computation Rule for Propositional Extensionality in Higher-Order Minimal Logic
+%\footnote{This work was partially supported by someone.}
+}
+\titlerunning{Strong Normalization for Propositional Extensionality in Minimal Logic} %optional, in case that the title is too long; the running title should fit into the top page column
+
+%% Please provide for each author the \author and \affil macro, even when authors have the same affiliation, i.e. for each author there needs to be the  \author and \affil macros
+\author[1]{Robin Adams}
+\author[1]{Marc Bezem}
+\author[3]{Thierry Coquand}
+\affil[1]{Universitetet i Bergen, Institutt for Informatikk, Postboks 7800, N-5020 BERGEN, Norway \\
+  \texttt{\{robin.adams,bezem\}@ii.uib.no}}
+\affil[3]{Chalmers tekniska högskola, Data- och informationsteknik, 412 96 Göteborg, Sweden \\
+  \texttt{coquand@chalmers.se}}
+\authorrunning{R. Adams, M. Bezem and T. Coquand} %mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et. al.'
+
+\Copyright{Robin Adams and Marc Bezem and Thierry Coquand}%mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+
+\subjclass{Dummy classification -- please refer to \url{http://www.acm.org/about/class/ccs98-html}}% mandatory: Please choose ACM 1998 classifications from http://www.acm.org/about/class/ccs98-html . E.g., cite as "F.1.1 Models of Computation". 
+\keywords{Dummy keyword -- please provide 1--5 keywords}% mandatory: Please provide 1-5 keywords
+% Author macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\EventEditors{John Q. Open and Joan R. Acces}
+\EventNoEds{2}
+\EventLongTitle{42nd Conference on Very Important Topics (CVIT 2016)}
+\EventShortTitle{CVIT 2016}
+\EventAcronym{CVIT}
+\EventYear{2016}
+\EventDate{December 24--27, 2016}
+\EventLocation{Little Whinging, United Kingdom}
+\EventLogo{}
+\SeriesVolume{42}
+\ArticleNo{23}
+% Editor-only macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand*{\eqdef}{\mathrel{\smash{\stackrel{\text{def}}{=}}}}
+\newcommand*{\isotoid}{\ensuremath{\mathrm{isotoid}}}
+\newcommand*{\reff}[1]{\ensuremath{\mathrm{ref} \left( {#1} \right)}}
+\newcommand*{\univ}[4]{\ensuremath{\mathrm{univ}_{{#1}, {#2}} \left({#3} , {#4} \right)}}
+\newcommand*{\triplelambda}{\ensuremath{\lambda \!\! \lambda \!\! \lambda}}
+\newcommand*{\vald}{\ensuremath{\vdash \mathrm{valid}}}
+
+\theoremstyle{definition}
+\newtheorem{note}[theorem]{Note}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+    Homotopy type theory offers the promise of a formal system for the univalent foundations of mathematics. However, if we simply add the univalence axiom to type theory, then we lose the property of canonicity --- that every term computes to a normal form. A computation becomes `stuck' when it reaches the point that it needs to evaluate a proof term that is an application of the univalence axiom. So we wish to find a way to compute with the univalence axiom.
+
+    As a first step, we present here a system of higher-order propositional logic, with a universe Omega of propositions closed under implication and quantification over any simple type over Omega. We add a type $M =_A N$ for any terms $M$, $N$ of type $A$, and two ways to prove an equality: reflexivity, and \emph{propositional extensionality} --- logically equivalent propositions are equal. We present reduction relations for this system, and prove that the system satisfies canonicity and strong normalization.
+ \end{abstract}
+
+%\item Fill out the \verb+\subjclass+ and \verb+\keywords+ macros. For the \verb+\subjclass+, please refer to the ACM classification at \url{http://www.acm.org/about/class/ccs98-html}.
+%\item Take care of suitable linebreaks and pagebreaks. No overfull \verb+\hboxes+ should occur in the warnings log.
+
+\section{Introduction}
+
+The rules of deduction of a type theory are traditionally justified by a \emph{meaning explanation} \cite{ML:ITT}, in which to know that a given term has a given type is to know that it computes to a \emph{canonical object} of that type.  A necessary condition for such a meaning explanation is that the type theory should have the following syntactic properties:
+\begin{itemize}
+\item \textbf{Confluence} --- The reduction relation should be confluent.
+\item \textbf{Normalization} --- Every well-typed term should reduce to a normal form.
+\item Every closed normal form of type $A$ is a canonical object of type $A$.
+\end{itemize}
+From these three properties, we have:
+\begin{itemize}
+\item \textbf{Canonicity} --- Every term of type $A$ reduces to a unique canonical object of type $A$.
+\end{itemize}
+
+It is desirable to have, in addition, \emph{strong normalization}, so that we know that we are free to choose whatever reduction strategy we please.
+
+The \emph{univalence axiom} of Homotopy Type theory (HoTT) \cite{hottbook} breaks the property of canonicity.  It postulates a
+constant
+\[ \isotoid : A \simeq B \rightarrow A = B \]
+that is an inverse to the canonical function $A = B \rightarrow A \simeq B$.  When a computation reaches a point
+where we eliminate a path (proof of equality) formed by $\isotoid$, it gets 'stuck'.
+
+As possible solutions to this problem, we may try to do with a weaker property than canonicity, such as \emph{propositional canonicity}.
+We may attempt to prove that every closed term of type $\mathbb{N}$ is \emph{propositionally} equal to a numeral, as conjectured by Voevodsky.  Or we may attempt to change the definition of equality to make $\isotoid$ definable\cite{Polonsky14a}, or extend the type theory with higher dimensions (e.g. Cubical Type Theory\cite{cchm:cubical}).
+
+We could also try a more conservative approach, and simply attempt to find a reduction relation for a type theory involving $\isotoid$ that satisfies
+all three of the properties above.  There seems to be no reason \emph{a priori} to believe this is not possible, but it is difficult to do because
+the full Homotopy Type Theory is a complex and interdependent system.  We can tackle the problem by adding univalence to a much simpler system, finding
+a well-behaved reduction relation, then doing the same for more and more complex systems, gradually approaching the full strength of HoTT.
+
+In this paper, we present a system we call $\lambda o e$, or predicative higher-order minimal logic.  It is a type theory with two universes: the universe $\Omega$
+of \emph{propositions}, and the universe of \emph{types}.  The propositions are closed under $\supset$ (implication) and include $\bot$ (falsehood), and an equality proposition $M =_A N$ for
+any type $A$ and terms $M : A$ and $N : A$.  The types include $\Omega$ itself and are closed under $\rightarrow$ (non-dependent function type).
+
+There are two canonical forms for proofs of $M =_\Omega N$.  For any term $M : \Omega$, we have $\reff{M} : M =_\Omega M$.  We also add univalence for this system, in this form:
+if $\delta : \varphi \supset \psi$ and $\epsilon : \psi \supset\varphi$, then $\univ{\varphi}{\psi}{\delta}{\epsilon} : \varphi =_\Omega \psi$.  
+
+We present a deteriministic head reduction relation for this system, and prove that every typable term head reduces to a canonical form.  From this, it follows that the system is consistent.  In the appendix, we present a proof of strong normalization for a different reduction relation.
+%confluence (Corollary \ref{cor:confluence}), strong normalization (Corollary \ref{cor:SN}) and canonicity (Corollary \ref{cor:canon}).
+
+For the future, we wish to expand the system with universal quantification, and expand it to a 2-dimensional system (with equations between proofs).
+
+The proofs in this paper have been formalized in Agda.  The formalization is available at \texttt{github.com/radams78/univalence}.
+
+\section{Predicative Higher-Order Minimal Logic with Extensional Equality}
+
+We call the following type theory $\lambda o e$, or \emph{predicative higher-order minimal logic with extensional equality}.  
+
+\subsection{Syntax}
+
+Fix three disjoint, infinite sets of variables, which we shall call \emph{term variables}, \emph{proof variables}
+and \emph{path variables}.  We shall use $x$ and $y$ as term variables, $p$ and $q$ as proof variables,
+$e$ as a path variable, and $z$ for a variable that may come from any of these three sets.
+
+The syntax of $\lambda o e$ is given by the grammar:
+
+\[
+\begin{array}{lrcl}
+\text{Type} & A,B,C & ::= & \Omega \mid A \rightarrow B \\
+\text{Term} & L,M,N, \phi,\psi,\chi & ::= & x \mid \bot \mid \phi \supset \psi \mid \lambda x:A.M \mid MN \\
+\text{Proof} & \delta, \epsilon & ::= & p \mid \lambda p:\phi.\delta \mid \delta \epsilon \mid P^+ \mid P^- \\
+\text{Path} & P, Q & ::= & e \mid \reff{M} \mid P \supset^* Q \mid \univ{\phi}{\psi}{P}{Q} \mid \\
+& & & \triplelambda e : x =_A y. P \mid P_{MN} Q \\
+\text{Context} & \Gamma, \Delta, \Theta & ::= & \langle \rangle \mid \Gamma, x : A \mid \Gamma, p : \phi \mid \Gamma, e : M =_A N \\
+\text{Judgement} & \mathbf{J} & ::= & \Gamma \vald \mid \Gamma \vdash M : A \mid \Gamma \vdash \delta : \phi \mid \\
+& & & \Gamma \vdash P : M =_A N
+\end{array}
+\]
+
+In the path $\triplelambda e : x =_A y . P$, the term variables $x$ and $y$ must be distinct.  (We also have $x \not\equiv e \not\equiv y$, thanks to our
+stipulation that term variables and path variables are disjoint.)  The term variable $x$ is bound within $M$ in the term $\lambda x:A.M$,
+and the proof variable $p$ is bound within $\delta$ in $\lambda p:\phi.\delta$.  The three variables $e$, $x$ and $y$ are bound within $P$ in the path
+$\triplelambda e:x =_A y.P$.  We identify terms, proofs and paths up to $\alpha$-conversion.
+
+We shall use the word 'expression' to mean either a type, term, proof, path, or equation (an equation having the form $M =_A N$).  We shall use $r$, $s$, $t$, $S$ and $T$ as metavariables that range over expressions.
+
+Note that we use both Roman letters $M$, $N$ and Greek letters $\phi$, $\psi$, $\chi$ to range over terms.  Intuitively, a term is understood as either a proposition or a function,
+and we shall use Greek letters for terms that are intended to be propositions.  Formally, there is no significance to which letter we choose.
+
+Note also that the types of $\lambda o e$ are just the simple types over $\Omega$; therefore, no variable can occur in a type.
+
+The intuition behind the new expressions is as follows (see also the rules of deduction in Figure \ref{fig:lambdaoe}).  For any object $M : A$, there is the trivial path $\reff{M} : M =_A M$.  The constructor $\supset^*$ ensures congruence for $\supset$ --- if $P : \phi =_\Omega \phi'$ and $Q : \psi =_\Omega \psi'$ then $P \supset^* Q : \phi \supset \psi =_\Omega \phi' \supset \psi'$.  The constructor $\mathsf{univ}$ gives univalence for our propositions: if $\delta : \phi \supset \psi$ and $\epsilon : \psi \supset \phi$, then $\univ{\phi}{\psi}{\delta}{\epsilon}$ is a path of type $\phi =_\Omega \psi$.  The constructors $^+$ and $^-$ are the converses: if $P$ is a path of type $\phi =_\Omega \psi$, then $P^+$ is a proof of $\phi \supset \psi$, and $P^-$ is a proof of $\psi \supset \phi$.
+
+The constructor $\triplelambda$ gives functional extensionality.  Let $F$ and $G$ be functions of type $A \rightarrow B$.  If $F x =_B G y$ whenever $x =_A y$, then $F =_{A \rightarrow B} G$.  More formally, if $P$ is a path of type $Fx =_B Gy$ that depends on $x : A$, $y : A$ and $e : x =_A y$, then $\triplelambda e : x =_A y . P$ is a path of type $F =_{A \rightarrow B} G$.
+
+Finally, if $P$ is a path of type $F =_{A \rightarrow B} G$, and $Q$ is a path $M =_A N$, then $P_{MN} Q$ is a path $FM =_B G N$.
+
+\subsection{Path Substitution}
+
+Intuitively, if $N$ and $N'$ are equal then $M[x:=N]$ and $M[x:=N']$ should be equal.  To handle this syntactically,
+we introduce a notion of \emph{path substitution}.  If $N$, $M$ and $M'$ are terms, $x$ a term variable, and $P$ a path, then we shall define a path $N \{ x := P : M \sim M' \}$.  The intention is that, if
+$\Gamma \vdash P : M =_A M'$ and $\Gamma, x : A \vdash N : B$ then $\Gamma \vdash N \{ x := P : M \sim M' \} : N [ x:= M ] =_B N [ x := M' ]$ (see Lemma \ref{lm:pathsub}). 
+
+\begin{definition}[Path Substitution]
+Given terms $M_1$, \ldots, $M_n$ and $N_1$, \ldots, $N_n$; paths $P_1$, \ldots, $P_n$; term variables $x_1$, \ldots, $x_n$; and a term $L$, define the path $L \{ x_1 := P_1 : M_1 \sim N_1 , \ldots, x_n := P_n : M_n \sim N_n \}$ as follows.
+\begin{align*}
+x_i \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef P_i \\
+y \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef \reff{y} \qquad (y \not\equiv x_1, \ldots, x_n) \\
+\bot \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef \reff{\bot} \\
+(LL') \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} \\
+\omit\rlap{\qquad \qquad $\eqdef L \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \}_{L' [\vec{x} := \vec{M}] L' [\vec{x} := \vec{N}]} L' \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \}$} \\
+(\lambda y:A.L) \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \\
+\omit\rlap{\qquad\qquad $\eqdef \triplelambda e : a =_A a' . L \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} , y := e : a \sim a' \}$} \\
+(\phi \supset \psi) \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef \phi \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} \supset^* \psi \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \}
+\end{align*}
+\end{definition}
+
+We shall often omit the endpoints $\vec{M}$ and $\vec{N}$.
+
+\begin{note}
+The case $n = 0$ is permitted, and we shall have that, if $\Gamma \vdash M : A$ then $\Gamma \vdash M \{\} : M =_A M$.  There are thus two paths from a term $M$ to itself: $\reff{M}$ and $M \{\}$.  There are not always equal; for example, $(\lambda x:A.x) \{\} \equiv \triplelambda e : x =_A y. e$, which (after we define the reduction relation) will not be convertible with $\reff{\lambda x:A.x}$.
+\end{note}
+
+\begin{lemma}
+\[ M \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} \equiv M \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N}, y := \reff{y} : y \sim y \} \]
+\end{lemma}
+
+\begin{proof}
+An easy induction on $M$.
+\end{proof}
+
+The following lemma shows how substitution and path substitution interact.
+
+\begin{lemma}[Substitution]
+\label{lm:subpathsub}
+Let $\vec{x}$ and $\vec{y}$ be a disjoint sequences of variables.  Then
+\begin{enumerate}
+\item
+\label{lm:subpathsubi}
+$ \begin{aligned}[t]
+& M [ x:= N ] \{ \vec{y} := \vec{P} : \vec{L} \sim \vec{L'} \} \\
+& \equiv M \{ x := N \{ \vec{y} := \vec{P} : \vec{L} \sim \vec{L'} \} : N [ \vec{y}:= \vec{L} ] \sim N [ \vec{y} := \vec{L'} ], \vec{y} := \vec{P} : \vec{L} \sim \vec{L'} \}
+\end{aligned} $
+\item
+\label{lm:subpathsubii}
+$ \begin{aligned}[t]
+& M \{ \vec{y} := \vec{P} : \vec{L} \sim \vec{L'} \} [ x := N ] \\
+& \equiv M \{ \vec{y} := \vec{P} [x := N] : \vec{L} [x := N] \sim \vec{L'} [x := N], x := \reff{N} : N \sim N \}
+\end{aligned} $
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+An easy induction on $M$ in all cases.
+\end{proof}
+
+\begin{note}
+The familiar substitution lemma also holds: $t [\vec{z_1} := \vec{s_1}] [\vec{z_2} := \vec{s_2}] \equiv t [\vec{z_1} := \vec{s_1}[\vec{z_2} := \vec{s_2}], 
+\vec{z_2} := \vec{s_2}]$.  We cannot form a lemma about the fourth case, simplifying $M \{ \vec{x} := \vec{P} \} \{ \vec{y} := \vec{Q} \}$, because
+$M \{ \vec{x} := \vec{P} \}$ is a path, and path substitution can only be applied to a term.
+\end{note}
+
+\begin{definition}
+A \emph{path substitution} $\tau$ is a function whose domain is a finite set of term variables,
+and which maps each term variable to a path.  Given a path substitution $\tau$ and substitutions $\rho$, $\sigma$
+with the same domain $\{ x_1, \ldots, x_n \}$, we write
+\[ M \{ \tau : \rho \sim \sigma \} \text{ for } M \{ x_1 := \tau(x_1) : \rho(x_1) \sim \sigma(x_1), \ldots, \tau(x_n) : \rho(x_n) \sim \sigma(x_n) \} \enspace . \]
+
+Given substitutions $\sigma$, $\rho$, $\rho'$ and a path substitution $\tau$, let $\tau \bullet_{\rho, \rho'} \sigma$ be the path substitution defined by
+\[ (\tau \bullet_{\rho, \rho'} \sigma)(x) \eqdef \sigma(x)\{ \tau : \rho \sim \rho' \} \]
+\end{definition}
+
+\begin{lemma}
+$M[\sigma]\{ \tau : \rho \sim \rho' \} \equiv
+M\{ \tau \bullet_{\rho \rho'} \sigma : \rho \circ \sigma \sim \rho' \circ \sigma \}$
+\end{lemma}
+
+\begin{proof}
+An easy induction on $M$.
+\end{proof}
+
+\subsection{Rules of Deduction}
+
+The rules of deduction of $\lambda o e$ are given in Figure \ref{fig:lambdaoe}.
+
+\newcommand{\RvarT}{\ensuremath(\mathsf{varT})}
+\begin{figure}
+\begin{framed}
+\paragraph{Contexts}
+\[ \infer{\langle \rangle \vald}{} \qquad
+\infer{\Gamma, x : A \vald}{\Gamma \vald} \qquad 
+\infer{\Gamma, p : \phi \vald}{\Gamma \vdash \phi : \Omega} \qquad
+\infer{\Gamma, e : M =_A N \vald}{\Gamma \vdash M : A \quad \Gamma \vdash N : A} \]
+\[ \infer[(x : A \in \Gamma)]{\Gamma \vdash x : A}{\Gamma \vald} \qquad
+\infer[(p : \phi \in \Gamma)]{\Gamma \vdash p : \phi}{\Gamma \vald} \]
+\[ \infer[(e : M =_A N \in \Gamma)]{\Gamma \vdash e : M =_A N}{\Gamma \vald} \]
+
+\paragraph{Terms}
+\[ \infer{\Gamma \vdash \bot : \Omega}{\Gamma \vald} \qquad
+\infer{\Gamma \vdash \phi \supset \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} \]
+\[ \infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \qquad
+\infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \]
+
+\paragraph{Proofs}
+\[ \infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \phi} \qquad
+\infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \supset \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
+\[ \infer[(\phi \simeq \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
+
+\paragraph{Paths}
+\[ \infer{\Gamma \vdash \reff{M} : M =_A M}{\Gamma \vdash M : A}
+\qquad
+\infer{\Gamma \vdash P \supset^* Q : \phi \supset \psi =_\Omega \phi' \supset \psi'}{\Gamma \vdash P : \phi =_\Omega \phi' \quad \Gamma \vdash Q : \psi =_\Omega \psi'} \]
+\[ \infer{\Gamma \vdash \univ{\phi}{\psi}{\delta}{\epsilon} : \phi =_\Omega \psi}{\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \psi \supset \phi} 
+\qquad
+\infer{\Gamma \vdash P^+ : \phi \supset \psi}{\Gamma \vdash P : \phi =_\Omega \psi}
+\qquad
+\infer{\Gamma \vdash P^- : \psi \supset \phi}{\Gamma \vdash P : \psi =_\Omega \psi} \]
+\[ \infer{\Gamma \vdash \triplelambda e : x =_A y . P : M =_{A \rightarrow B} N}
+  {\begin{array}{c}
+     \Gamma, x : A, y : A, e : x =_A y \vdash P : M x =_B N y \\
+     \Gamma \vdash M : A \rightarrow B \quad
+\Gamma \vdash N : A \rightarrow B
+     \end{array}} \]
+\[ \infer{\Gamma \vdash P_{NN'}Q : MN =_B M' N'}{\Gamma \vdash P : M =_{A \rightarrow B} M' \quad \Gamma \vdash Q : N =_A N' \quad \Gamma \vdash N : A \quad \Gamma \vdash N' : A} \]
+\[ \infer[(M \simeq M', N \simeq N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
+\end{framed}
+\caption{Rules of Deduction of $\lambda oe$}
+\label{fig:lambdaoe}
+\end{figure}
+
+\bibliography{../type}
+
+\end{document}

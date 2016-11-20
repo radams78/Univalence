@@ -20,6 +20,7 @@ A \emph{taxononmy} consists of:
 \item a subset of expression kinds, called the \emph{variable kinds}.  We refer to the other expession kinds as \emph{non-variable kinds}.
 \end{itemize}
 
+%<*Taxonomy>
 \begin{code}
 record Taxonomy : Set₁ where
   field
@@ -30,18 +31,21 @@ record Taxonomy : Set₁ where
     varKind : VarKind → ExpKind
     nonVarKind : NonVarKind → ExpKind
 \end{code}
+%</Taxonomy>
 
 An \emph{alphabet} $A$ consists of a finite set of \emph{variables},
 to each of which is assigned a variable kind $K$.
 Let $\emptyset$ be the empty alphabet, and $(A , K)$ be the result of extending the alphabet $A$ with one
 fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of all variables in $A$ of kind $K$.
 
+%<*Alphabet>
 \begin{code}
   infixl 55 _,_
   data Alphabet : Set where
     ∅ : Alphabet
     _,_ : Alphabet → VarKind → Alphabet
 \end{code}
+%</Alphabet>
 
 \AgdaHide{
 \begin{code}
@@ -59,18 +63,22 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
     foldr = snocfoldr }
 
   extend : Alphabet → List VarKind → Alphabet
-  extend = extend' LIST
+  extend V [] = V
+  extend V (K ∷ KK) = extend (V , K) KK
 
   snoc-extend : Alphabet → snocList VarKind → Alphabet
-  snoc-extend = extend' SNOCLIST
+  snoc-extend V [] = V
+  snoc-extend V (KK snoc K) = snoc-extend V KK , K
 \end{code}
 }
 
+%<*Var>
 \begin{code}
   data Var : Alphabet → VarKind → Set where
     x₀ : ∀ {V} {K} → Var (V , K) K
     ↑ : ∀ {V} {K} {L} → Var V L → Var (V , K) L
 \end{code}
+%</Var>
 
 \AgdaHide{
 \begin{code}
@@ -112,13 +120,17 @@ We formalise this as follows.  First, a \emph{simple kind} over the sets $A$ and
 \[ a_1 \longrightarrow \cdots \longrightarrow a_n \longrightarrow b \]
 where each $a_i \in A$ and $b \in B$.
 
+%<*SimpleKind>
 \begin{code}
   record SimpleKind (A B : Set) : Set where
     constructor SK
     field
       dom : List A
       cod : B
+\end{code}
+%</SimpleKind>
 
+\begin{code}
   infix 71 _✧
   _✧ : ∀ {A} {B} → B → SimpleKind A B
   b ✧ = SK [] b
@@ -131,10 +143,12 @@ where each $a_i \in A$ and $b \in B$.
 An abstraction kind is a simple kind over variable kinds and expression kinds.
 A constructor kind is a simple kind over abstraction kinds and expression kinds.
 
+%<*ConKind>
 \begin{code}
   AbsKind = SimpleKind VarKind ExpKind
   ConKind = SimpleKind AbsKind ExpKind
 \end{code}
+%</ConKind>
 
 \begin{code}
   data KindClass : Set where

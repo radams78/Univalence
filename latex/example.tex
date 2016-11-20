@@ -1,0 +1,29 @@
+\begin{code}%
+\>\AgdaKeyword{module} \AgdaModule{example} \AgdaKeyword{where}\<%
+\\
+%
+\\
+\>\AgdaKeyword{data} \AgdaDatatype{Maybe} \AgdaSymbol{(}\AgdaBound{A} \AgdaSymbol{:} \AgdaPrimitiveType{Set}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{nothing} \AgdaSymbol{:} \AgdaDatatype{Maybe} \AgdaBound{A}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{just} \AgdaSymbol{:} \AgdaBound{A} \AgdaSymbol{→} \AgdaDatatype{Maybe} \AgdaBound{A}\<%
+\end{code}
+
+%<*Term>
+\begin{code}%
+\>\AgdaKeyword{data} \AgdaDatatype{Term} \AgdaSymbol{:} \AgdaPrimitiveType{Set} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{var} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Term} \AgdaBound{V}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{app} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Term} \AgdaBound{V} \AgdaSymbol{→} \AgdaDatatype{Term} \AgdaBound{V}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaInductiveConstructor{Λ} \<[6]%
+\>[6]\AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Term} \AgdaSymbol{(}\AgdaDatatype{Maybe} \AgdaBound{V}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{Term} \AgdaBound{V}\<%
+\end{code}
+%</Term>

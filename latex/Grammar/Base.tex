@@ -9,6 +9,8 @@
 \>  M, N, P range over expressions\<\\
 \>  U, V, W range over alphabets -\}}\<%
 \\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Level}\<%
+\\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Function}\<%
 \\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.List}\<%
@@ -20,9 +22,11 @@
 %
 \\
 \>\AgdaKeyword{module} \AgdaModule{Grammar.Base} \AgdaKeyword{where}\<%
-\\
-%
-\\
+\end{code}
+}
+
+%<*Grammar>
+\begin{code}%
 \>\AgdaKeyword{record} \AgdaRecord{IsGrammar} \AgdaSymbol{(}\AgdaBound{T} \AgdaSymbol{:} \AgdaRecord{Taxonomy}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaPrimitiveType{Set₁} \AgdaKeyword{where}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
@@ -34,7 +38,11 @@
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaField{Con} \<[11]%
 \>[11]\AgdaSymbol{:} \AgdaFunction{ConKind} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
-\\
+\end{code}
+%</Grammar>
+
+\AgdaHide{
+\begin{code}%
 \>[2]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaField{parent} \AgdaSymbol{:} \AgdaFunction{VarKind} \AgdaSymbol{→} \AgdaDatatype{ExpKind}\<%
 \\
@@ -74,9 +82,10 @@
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{ListAbs} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaDatatype{List} \AgdaFunction{AbsKind} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
-\\
-%
-\\
+\end{code}
+
+%<*Subexp>
+\begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{=} \AgdaDatatype{Subexp} \AgdaBound{V} \AgdaInductiveConstructor{-Expression} \AgdaBound{K}\<%
 \\
@@ -101,14 +110,23 @@
 \>[4]\AgdaInductiveConstructor{var} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{Var} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{→} \AgdaFunction{VExpression} \AgdaBound{V} \AgdaBound{K}\<%
 \\
 \>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{app} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{AA}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Con} \AgdaSymbol{(}\AgdaInductiveConstructor{SK} \AgdaBound{AA} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaFunction{ListAbs} \AgdaBound{V} \AgdaBound{AA} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K}\<%
+\>[4]\AgdaInductiveConstructor{app} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{AA}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Con} \AgdaSymbol{(}\AgdaInductiveConstructor{SK} \AgdaBound{AA} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \<[39]%
+\>[39]\<%
 \\
-\>[2]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaFunction{ListAbs} \AgdaBound{V} \AgdaBound{AA} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K}\<%
+\\
+\>[0]\AgdaIndent{4}{}\<[4]%
 \>[4]\AgdaInductiveConstructor{[]} \AgdaSymbol{:} \AgdaFunction{ListAbs} \AgdaBound{V} \AgdaInductiveConstructor{[]}\<%
 \\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{\_∷\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{AA}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Abs} \AgdaBound{V} \AgdaBound{A} \AgdaSymbol{→} \AgdaFunction{ListAbs} \AgdaBound{V} \AgdaBound{AA} \AgdaSymbol{→} \AgdaFunction{ListAbs} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{A} \AgdaInductiveConstructor{∷} \AgdaBound{AA}\AgdaSymbol{)}\<%
+\>[0]\AgdaIndent{4}{}\<[4]%
+\>[4]\AgdaInductiveConstructor{\_∷\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{AA}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Abs} \AgdaBound{V} \AgdaBound{A} \AgdaSymbol{→} \<[33]%
+\>[33]\<%
+\\
+\>[4]\AgdaIndent{6}{}\<[6]%
+\>[6]\AgdaFunction{ListAbs} \AgdaBound{V} \AgdaBound{AA} \AgdaSymbol{→} \AgdaFunction{ListAbs} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{A} \AgdaInductiveConstructor{∷} \AgdaBound{AA}\AgdaSymbol{)}\<%
 \end{code}
+%</Subexp>
 
 We prove that the constructor \AgdaRef{var} is injective.
 
@@ -120,36 +138,29 @@ We prove that the constructor \AgdaRef{var} is injective.
 \>[2]\AgdaFunction{var-inj} \AgdaInductiveConstructor{refl} \AgdaSymbol{=} \AgdaInductiveConstructor{refl}\<%
 \end{code}
 
-For the future, we also define the type of all snoc-lists of expressions $(M_1, \ldots, M_n)$
-such that $M_i$ is of type $K_i$, given a snoc-list of variable kinds $(K_1, \ldots, K_n)$.
-
-\begin{code}%
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{infixl} \AgdaNumber{20} \AgdaFixityOp{\_snoc\_}\<%
-\\
-\>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaKeyword{data} \AgdaDatatype{snocListExp} \AgdaBound{V} \AgdaSymbol{:} \AgdaDatatype{snocList} \AgdaFunction{VarKind} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
-\\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{[]} \AgdaSymbol{:} \AgdaDatatype{snocListExp} \AgdaBound{V} \AgdaInductiveConstructor{[]}\<%
-\\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaInductiveConstructor{\_snoc\_} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{KK}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaDatatype{snocListExp} \AgdaBound{V} \AgdaBound{KK} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaDatatype{snocListExp} \AgdaBound{V} \AgdaSymbol{(}\AgdaBound{KK} \AgdaInductiveConstructor{snoc} \AgdaBound{K}\AgdaSymbol{)}\<%
-\end{code}
-
 A \emph{reduction} is a relation $\rhd$ between expressions such that, if $E \rhd F$,
 then $E$ is not a variable.  It is given by a term $R : \AgdaRef{Reduction}$ such that
 $R\, c\, MM\, N$ iff $c[MM] \rhd N$.
 
 \begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{Rewrite} \AgdaSymbol{:} \AgdaPrimitiveType{Set₁}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{Rewrite} \AgdaSymbol{=} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Rel} \AgdaSymbol{(}\AgdaDatatype{Subexp} \AgdaBound{V} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{)} \AgdaPrimitive{zero}\<%
+\end{code}
+
+%<*Red>
+\begin{code}%
+\>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{Reduction} \AgdaSymbol{:} \AgdaPrimitiveType{Set₁}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{Reduction} \AgdaSymbol{=} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{AA}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaFunction{Con} \AgdaSymbol{(}\AgdaInductiveConstructor{SK} \AgdaBound{AA} \AgdaBound{K}\AgdaSymbol{)} \AgdaSymbol{→} \AgdaFunction{ListAbs} \AgdaBound{V} \AgdaBound{AA} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaBound{K} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
-\\
-%
-\\
+\end{code}
+%</Red>
+
+\begin{code}%
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaKeyword{data} \AgdaDatatype{ListExp} \AgdaSymbol{(}\AgdaBound{V} \AgdaSymbol{:} \AgdaDatatype{Alphabet}\AgdaSymbol{)} \AgdaSymbol{:} \AgdaDatatype{List} \AgdaFunction{VarKind} \AgdaSymbol{→} \AgdaPrimitiveType{Set} \AgdaKeyword{where}\<%
 \\

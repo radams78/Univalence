@@ -36,8 +36,8 @@ snocList-rep-comp : ∀ {F : SetFunctor} {U V W} {l : snocList (SetFunctor.Fib F
 snocList-rep-comp {l = []} = refl
 snocList-rep-comp {F} {l = aa snoc a} = cong₂ _snoc_ (snocList-rep-comp {F}) (SetFunctor.〈〈〉〉-comp F)
 
-SNOCLIST : SetFunctor → SetFunctor
-SNOCLIST F = record { 
+SNOCLISTF : SetFunctor → SetFunctor
+SNOCLISTF F = record { 
   Fib = λ V → snocList (SetFunctor.Fib F V) ; 
   _〈〈_〉〉 = snocList-rep F ; 
   〈〈〉〉-id = snocList-rep-id ; 
@@ -251,18 +251,7 @@ head-tail {M = app -imp (φ ∷ ψ ∷ [])} = refl
 head-tail {M = app (-lamTerm A) (M ∷ [])} = refl
 head-tail {M = app -appTerm (M ∷ N ∷ [])} = cong (λ x → appT x N) (head-tail {M = M})
 
-SN-MeanTerm : ∀ {V} {Γ : Context V} {φ} → SN φ → Γ ⊢ φ ∶ ty Ω → MeanTerm φ
-SN-MeanTerm {φ = var x} _ _ = MeanTermI nf₀ (nf₀ (neutral (app x []))) ref
-SN-MeanTerm {φ = app -bot []} _ _ = MeanTermI nf₀ (nf₀ bot) ref
-SN-MeanTerm {φ = app -imp (φ ∷ ψ ∷ [])} SNφ⊃ψ (⊃R Γ⊢φ∶Ω Γ⊢ψ∶Ω) = 
-  let MeanTermI S φ' φ↠φ' = SN-MeanTerm (SNappl' (SNapp' SNφ⊃ψ)) Γ⊢φ∶Ω in
-  let MeanTermI T ψ' ψ↠ψ' = SN-MeanTerm (SNappl' (SNappr' (SNapp' SNφ⊃ψ))) Γ⊢ψ∶Ω in
-  MeanTermI (S imp T) (φ' imp ψ') (⊃-red φ↠φ' ψ↠ψ')
-SN-MeanTerm {φ = app (-lamTerm _) _} _ ()
-SN-MeanTerm {φ = app -appTerm (M ∷ N ∷ [])} SNMN Γ⊢MN∶Ω with head M 
-SN-MeanTerm {φ = app -appTerm (M ∷ N ∷ [])} SNMN Γ⊢MN∶Ω | M₀ with head-tail {M = M}
-SN-MeanTerm {V} {Γ} {app -appTerm (M ∷ N ∷ [])} SNMN Γ⊢MN∶Ω | navar x | M≡M₀N = MeanTermI nf₀ (nf₀ (neutral (app x (tail M snoc N)))) {!app-red!}
-SN-MeanTerm {V} {Γ} {app -appTerm (M ∷ N ∷ [])} SNMN Γ⊢MN∶Ω | na⊥ | M≡M₀N = {!!}
-SN-MeanTerm {V} {Γ} {app -appTerm (M ∷ N ∷ [])} SNMN Γ⊢MN∶Ω | na⊃ x x₁ | M≡M₀N = {!!}
-SN-MeanTerm {V} {Γ} {app -appTerm (M ∷ N ∷ [])} SNMN Γ⊢MN∶Ω | naΛ x x₁ | M≡M₀N = {!!}
+not-⊃MMM-typed : ∀ {V} {Γ : Context V} {φ ψ} MM {N A} → Γ ⊢ appT (APPl (φ ⊃ ψ) MM) N ∶ A → Empty
+not-⊃MMM-typed [] (appR () _)
+not-⊃MMM-typed (MM snoc M) (appR Γ⊢MMM∶A⇛B Γ⊢N∶A) = not-⊃MMM-typed MM Γ⊢MMM∶A⇛B
 \end{code}

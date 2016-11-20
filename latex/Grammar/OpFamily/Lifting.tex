@@ -6,11 +6,17 @@
 \\
 \>\AgdaKeyword{module} \AgdaModule{Grammar.OpFamily.Lifting} \AgdaSymbol{(}\AgdaBound{G} \AgdaSymbol{:} \AgdaRecord{Grammar}\AgdaSymbol{)} \AgdaKeyword{where}\<%
 \\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Level}\<%
+\\
 \>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Function.Equality} \AgdaKeyword{hiding} \AgdaSymbol{(}\AgdaFunction{setoid}\AgdaSymbol{)}\<%
 \\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.List}\<%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.Product} \AgdaKeyword{hiding} \AgdaSymbol{(}\AgdaFunction{map}\AgdaSymbol{)} \AgdaKeyword{renaming} \AgdaSymbol{(}\AgdaInductiveConstructor{\_,\_} \AgdaSymbol{to} \AgdaInductiveConstructor{\_,p\_}\AgdaSymbol{)}\<%
 \\
-\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims}\<%
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Data.List} \AgdaKeyword{hiding} \AgdaSymbol{(}\AgdaFunction{foldr}\AgdaSymbol{;}\AgdaFunction{map}\AgdaSymbol{)}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Algebra}\<%
+\\
+\>\AgdaKeyword{open} \AgdaKeyword{import} \AgdaModule{Prelims} \AgdaKeyword{hiding} \AgdaSymbol{(}\AgdaFunction{map}\AgdaSymbol{)}\<%
 \\
 \>\AgdaKeyword{open} \AgdaModule{Grammar} \AgdaBound{G} \AgdaKeyword{renaming} \AgdaSymbol{(}\_⟶\_ \AgdaSymbol{to} \_⇒\_\AgdaSymbol{)}\<%
 \\
@@ -57,7 +63,7 @@ the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \c
 \>[2]\AgdaFunction{LIFTSOP} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaFunction{id}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{LIFTSOP} \AgdaSymbol{(}\AgdaBound{A} \AgdaInductiveConstructor{∷} \AgdaBound{AA}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{LIFTSOP} \AgdaBound{AA} \AgdaFunction{∘} \AgdaFunction{LIFTOP} \AgdaBound{A}\<%
+\>[2]\AgdaFunction{LIFTSOP} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{(}\AgdaBound{A} \AgdaInductiveConstructor{∷} \AgdaBound{AA}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{LIFTSOP} \AgdaSymbol{\{}\AgdaBound{U} \AgdaInductiveConstructor{,} \AgdaBound{A}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V} \AgdaInductiveConstructor{,} \AgdaBound{A}\AgdaSymbol{\}} \AgdaBound{AA} \AgdaFunction{∘} \AgdaFunction{LIFTOP} \AgdaBound{A}\<%
 \\
 %
 \\
@@ -74,6 +80,25 @@ the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \c
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{liftsOp-cong} \AgdaBound{A} \AgdaSymbol{=} \AgdaField{Π.cong} \AgdaSymbol{(}\AgdaFunction{LIFTSOP} \AgdaBound{A}\AgdaSymbol{)}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{LIFTSNOCOP} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{VV} \AgdaSymbol{→} \AgdaFunction{OP} \AgdaBound{U} \AgdaBound{V} \AgdaFunction{⟶} \AgdaFunction{OP} \AgdaSymbol{(}\AgdaFunction{snoc-extend} \AgdaBound{U} \AgdaBound{VV}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{snoc-extend} \AgdaBound{V} \AgdaBound{VV}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{LIFTSNOCOP} \AgdaInductiveConstructor{[]} \AgdaSymbol{=} \AgdaFunction{id}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{LIFTSNOCOP} \AgdaSymbol{(}\AgdaBound{AA} \AgdaInductiveConstructor{snoc} \AgdaBound{A}\AgdaSymbol{)} \AgdaSymbol{=} \AgdaFunction{LIFTOP} \AgdaBound{A} \AgdaFunction{∘} \AgdaFunction{LIFTSNOCOP} \AgdaBound{AA}\<%
+\\
+%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{liftsnocOp} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaBound{KK} \AgdaSymbol{→} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{→} \AgdaFunction{Op} \AgdaSymbol{(}\AgdaFunction{snoc-extend} \AgdaBound{U} \AgdaBound{KK}\AgdaSymbol{)} \AgdaSymbol{(}\AgdaFunction{snoc-extend} \AgdaBound{V} \AgdaBound{KK}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaIndent{2}{}\<[2]%
+\>[2]\AgdaFunction{liftsnocOp} \AgdaBound{KK} \AgdaSymbol{=} \AgdaField{Π.\_⟨\$⟩\_} \AgdaSymbol{(}\AgdaFunction{LIFTSNOCOP} \AgdaBound{KK}\AgdaSymbol{)}\<%
 \end{code}
 
 This allows us to define the action of \emph{application} $E[\sigma]$:
@@ -130,13 +155,7 @@ We prove that application respects $\sim$.
 %
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
-\>[2]\AgdaFunction{ap-congr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}}\<%
-\\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{E} \AgdaBound{F} \AgdaSymbol{:} \AgdaDatatype{Subexp} \AgdaBound{U} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→}\<%
-\\
-\>[2]\AgdaIndent{4}{}\<[4]%
-\>[4]\AgdaBound{E} \AgdaDatatype{≡} \AgdaBound{F} \AgdaSymbol{→} \AgdaFunction{ap} \AgdaBound{σ} \AgdaBound{E} \AgdaDatatype{≡} \AgdaFunction{ap} \AgdaBound{σ} \AgdaBound{F}\<%
+\>[2]\AgdaFunction{ap-congr} \AgdaSymbol{:} \AgdaSymbol{∀} \AgdaSymbol{\{}\AgdaBound{U}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{C}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{σ} \AgdaSymbol{:} \AgdaFunction{Op} \AgdaBound{U} \AgdaBound{V}\AgdaSymbol{\}} \AgdaSymbol{\{}\AgdaBound{E} \AgdaBound{F} \AgdaSymbol{:} \AgdaDatatype{Subexp} \AgdaBound{U} \AgdaBound{C} \AgdaBound{K}\AgdaSymbol{\}} \AgdaSymbol{→} \AgdaBound{E} \AgdaDatatype{≡} \AgdaBound{F} \AgdaSymbol{→} \AgdaFunction{ap} \AgdaBound{σ} \AgdaBound{E} \AgdaDatatype{≡} \AgdaFunction{ap} \AgdaBound{σ} \AgdaBound{F}\<%
 \\
 \>[0]\AgdaIndent{2}{}\<[2]%
 \>[2]\AgdaFunction{ap-congr} \AgdaSymbol{\{}\AgdaArgument{σ} \AgdaSymbol{=} \AgdaBound{σ}\AgdaSymbol{\}} \AgdaSymbol{=} \AgdaFunction{Prelims.cong} \AgdaSymbol{(}\AgdaFunction{ap} \AgdaBound{σ}\AgdaSymbol{)}\<%

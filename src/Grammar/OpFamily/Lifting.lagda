@@ -35,7 +35,7 @@ the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \c
 \begin{code}
   LIFTSOP : ∀ {U} {V} AA → OP U V ⟶ OP (extend U AA) (extend V AA)
   LIFTSOP [] = id
-  LIFTSOP (A ∷ AA) = LIFTSOP AA ∘ LIFTOP A
+  LIFTSOP {U} {V} (A ∷ AA) = LIFTSOP {U , A} {V , A} AA ∘ LIFTOP A
 
   liftsOp : ∀ {U} {V} VV → Op U V → Op (extend U VV) (extend V VV)
   liftsOp A = Π._⟨$⟩_ (LIFTSOP A)

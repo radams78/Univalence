@@ -48,10 +48,10 @@ COMPRS = record {
   liftOp-comp' = liftSub-compRS' ; 
   apV-comp = refl }
 
-sub-compRS : ∀ {U} {V} {W} {C} {K} 
+sub-•RS : ∀ {U} {V} {W} {C} {K} 
   (E : Subexp U C K) {ρ : Rep V W} {σ : Sub U V} →
   E ⟦ ρ •RS σ ⟧ ≡ E ⟦ σ ⟧ 〈 ρ 〉
-sub-compRS E = Composition.ap-comp COMPRS E
+sub-•RS E = Composition.ap-comp COMPRS E
 
 infixl 60 _•SR_
 _•SR_ : ∀ {U} {V} {W} → Sub V W → Rep U V → Sub U W
@@ -75,14 +75,14 @@ COMPSR = record {
   liftOp-comp' = liftSub-compSR ; 
   apV-comp = refl }
 
-sub-compSR : ∀ {U} {V} {W} {C} {K} 
+sub-•SR : ∀ {U} {V} {W} {C} {K} 
   (E : Subexp U C K) {σ : Sub V W} {ρ : Rep U V} → 
   E ⟦ σ •SR ρ ⟧ ≡ E 〈 ρ 〉 ⟦ σ ⟧
 \end{code}
 
 \AgdaHide{
 \begin{code}
-sub-compSR E = Composition.ap-comp COMPSR E
+sub-•SR E = Composition.ap-comp COMPSR E
 \end{code}
 }
 
@@ -147,7 +147,7 @@ liftRep-liftSub-upRep₃ M σ ρ = trans (rep-congl (liftSub-upRep₃ M {σ})) (
 
 assocRSSR : ∀ {U} {V} {W} {X} {ρ : Sub W X} {σ : Rep V W} {τ : Sub U V} →
             ρ • (σ •RS τ) ∼ (ρ •SR σ) • τ
-assocRSSR {ρ = ρ} {σ} {τ} x = sym (sub-compSR (τ _ x))
+assocRSSR {ρ = ρ} {σ} {τ} x = sym (sub-•SR (τ _ x))
 \end{code}
 }
 
@@ -190,8 +190,12 @@ We can now prove general results such as:
 \begin{code}
 sub-comp : ∀ {U} {V} {W} {C} {K}
   (E : Subexp U C K) {σ : Sub V W} {ρ : Sub U V} →
+\end{code}
+%<*sub-comp>
+\begin{code}
   E ⟦ σ • ρ ⟧ ≡ E ⟦ ρ ⟧ ⟦ σ ⟧
 \end{code}
+%</sub-comp>
 \end{frame}
 
 \AgdaHide{

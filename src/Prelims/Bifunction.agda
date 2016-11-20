@@ -1,4 +1,3 @@
-\begin{code}
 open import Relation.Binary public
 
 module Prelims.Bifunction
@@ -22,4 +21,4 @@ module Prelims.Bifunction
 
   cong2 : wdl → wdr → wd2
   cong2 wdl wdr {_} {a'} {b} a≈a' b≈b' = Setoid.trans C (wdl a≈a' b) (wdr a' b≈b')
-\end{code}
+

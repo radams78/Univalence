@@ -1,0 +1,207 @@
+\documentclass{beamer}
+
+\title{An Agda Library for Metatheory of Syntax with Binding}
+\author{Robin Adams}
+\date{17 November 2016}
+
+\usepackage{../agda}
+\usepackage{catchfilebetweentags}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{autofe}
+\usepackage{bbm}
+\usepackage[greek,english]{babel}
+\usepackage{etex}
+\usepackage{framed}
+\usepackage[utf8x]{inputenc}
+\usepackage{proof}
+\usepackage{stmaryrd}
+\usepackage{suffix}
+\usepackage{textalpha}
+\usepackage{ucs}
+\input{../unicode}
+
+\begin{document}
+
+\begin{frame}
+\maketitle
+\end{frame}
+
+\begin{frame}
+\frametitle{How Do We Formalize Metatheory?}
+We give the terms as an inductive datatype / family:
+
+\ExecuteMetaData[example.tex]{Term}
+
+then prove statements by induction:
+
+\ExecuteMetaData[example.tex]{Sub}
+
+\begin{itemize}
+\item
+Code cannot be reused when we start a new formalization with a different object theory.
+\item
+A change to the object theory means a lot of work must be redone.
+\item
+One similar case for each binding constructor --- repeated work.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Principles for Formalization}
+\begin{itemize}[<+->]
+\item
+DRY --- Don't Repeat Yourself
+\item
+YAGNI --- You Ain't Gonna Need It
+\item
+Refactor early, refactor often
+\item
+Work in type theory, not in Haskell
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Running Example}
+The syntax of the $\overline{\lambda} \mu \tilde{\mu}$-calculus:
+\[ \begin{array}{lrcl}
+\text{Producer} & M & ::= & x \mid \lambda x M \mid \mu \alpha C \\
+\text{Consumer} & E & ::= & \alpha \mid \tilde{\mu} x C \mid M E \\
+\text{Command} & C & ::= & \langle M | E \rangle
+\end{array} \]
+\end{frame}
+
+\begin{frame}
+\frametitle{Taxonomy}
+A \emph{taxonomy} consists of a set of \emph{expression kinds}, divided into \emph{variable kinds} and \emph{non-variable kinds}.
+
+\ExecuteMetaData[../Grammar/Taxonomy.tex]{Taxonomy}
+\end{frame}
+
+\begin{frame}
+\frametitle{Taxonomy --- Example}
+\ExecuteMetaData[example.tex]{Taxonomy}
+\end{frame}
+
+\begin{frame}
+\frametitle{Alphabets}
+An \emph{alphabet} $A$ is a finite set of \emph{variables}, each with
+a variable kind $K$.
+
+We write $\mathsf{Var}\ A\ K$ for the set of all variables in $A$ of kind $K$.
+
+\ExecuteMetaData[../Grammar/Taxonomy.tex]{Alphabet}
+
+\ExecuteMetaData[../Grammar/Taxonomy.tex]{Var}
+\end{frame}
+
+\begin{frame}
+\[ \begin{array}{lrcl}
+\text{Producer} & M & ::= & x \mid \lambda x M \mid \mu \alpha C \\
+\text{Consumer} & E & ::= & \alpha \mid \tilde{\mu} x C \mid M E \\
+\text{Command} & C & ::= & \langle M | E \rangle
+\end{array} \]
+
+A grammar is given by a set of \emph{constructors}:
+\newcommand{\prd}{\mathrm{Prod}}
+\newcommand{\cons}{\mathrm{Cons}}
+\newcommand{\comm}{\mathrm{Comm}}
+\begin{align*}
+\lambda & : (\prd \rightarrow \prd) \rightarrow \prd \\
+\mu & : (\cons \rightarrow \comm) \rightarrow \prd \\
+\tilde{\mu} & : (\prd \rightarrow \comm) \rightarrow \cons \\
+\mathrm{app} & : \prd \rightarrow \cons \rightarrow \cons \\
+\langle | \rangle & : \prd \rightarrow \cons \rightarrow \comm
+\end{align*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Constructor Kinds}
+\newcommand{\prd}{\mathrm{Prod}}
+\newcommand{\cons}{\mathrm{Cons}}
+\newcommand{\comm}{\mathrm{Comm}}
+
+An expression like $(\prd \rightarrow \prd)$ is an \emph{abstraction kind}.
+
+An expression like $(\prd \rightarrow \prd) \rightarrow \prd$ is a \emph{constructor kind}.
+
+\ExecuteMetaData[../Grammar/Taxonomy.tex]{SimpleKind}
+
+\ExecuteMetaData[../Grammar/Taxonomy.tex]{ConKind}
+\end{frame}
+
+\begin{frame}
+\frametitle{Grammar}
+A \emph{grammar} is a set of \emph{constructors}, each with a constructor kind.
+
+\ExecuteMetaData[../Grammar/Base.tex]{Grammar}
+
+Example --- $\overline{\lambda} \mu \tilde{\mu}$:
+
+\ExecuteMetaData[example.tex]{Grammar}
+\end{frame}
+
+\begin{frame}
+\frametitle{Expressions}
+Define simultaneously:
+\begin{itemize}
+\item
+If $x$ is a variable of kind $K$ in $V$ \\
+then $x$ is an expression of kind $K$ over $V$
+\item
+If $c$ is a constructor of kind $\vec{A} \longrightarrow K$ over $V$, \\
+and $\vec{E}$ an abstraction list of kind $\vec{A}$ over $V$, \\
+then $c \vec{E}$ is an expression of kind $K$ over $V$.
+\item
+An abstraction of kind $\vec{A} \rightarrow K$ over $V$ \\
+is an expression of kind $K$ over $(V , \vec{A})$.
+\item
+An abstraction list of kind $A_1, \ldots, A_n$ \\
+is an abstraction of kind $A_1$, \ldots, an abstraction of kind $A_n$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Expressions}
+\ExecuteMetaData[../Grammar/Base.tex]{Subexp}
+\end{frame}
+
+\begin{frame}
+\frametitle{Replacement and Substitution}
+A \emph{replacement} is a mapping from variables to variables:
+
+\ExecuteMetaData[../Grammar/Replacement.tex]{Rep}
+
+A \emph{substitution} is a mapping from variables to expressions:
+
+\ExecuteMetaData[../Grammar/Substitution/PreOpFamily.tex]{Sub}
+
+With these definitions, we can prove general results such as:
+
+\ExecuteMetaData[../Grammar/Substitution/OpFamily.tex]{sub-comp}
+\end{frame}
+
+\begin{frame}
+\frametitle{Reduction Relations}
+A \emph{reduction relation} is a relation $R$ between expressions of the same kind such that,
+if $E R F$, then $E$ is not a variable.
+\ExecuteMetaData[../Grammar/Base.tex]{Red}
+We can define $\rightarrow_R$, $\twoheadrightarrow_R$, $\simeq_R$ and prove results like:
+\ExecuteMetaData[../PHOPL/Red/Meta.tex]{osr-subl}
+\end{frame}
+
+\begin{frame}
+\frametitle{Future Work}
+\begin{itemize}
+\item
+Translation between two grammars.
+\item
+General 
+\item
+Reduction relation and rules as instantiations of \emph{patterns} with second-order variables.
+\item
+The POPLMark challenge.
+\end{itemize}
+\end{frame}
+
+\end{document}

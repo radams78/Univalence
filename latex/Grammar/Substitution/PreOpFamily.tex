@@ -23,11 +23,13 @@
 A \emph{substitution} $\sigma$ from alphabet $U$ to alphabet $V$, $\sigma : U \Rightarrow V$, is a function $\sigma$ that maps every variable $x$ of kind $K$ in $U$ to an
 \emph{expression} $\sigma(x)$ of kind $K$ over $V$.  We now aim to prov that the substitutions form a family of operations, with application and identity being simply function application and identity.
 
+%<*Sub>
 \begin{code}%
 \>\AgdaFunction{Sub} \AgdaSymbol{:} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaDatatype{Alphabet} \AgdaSymbol{→} \AgdaPrimitiveType{Set}\<%
 \\
-\>\AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{=} \AgdaSymbol{∀} \AgdaBound{K} \AgdaSymbol{→} \AgdaDatatype{Var} \AgdaBound{U} \AgdaBound{K} \AgdaSymbol{→} \AgdaFunction{Expression} \AgdaBound{V} \AgdaSymbol{(}\AgdaInductiveConstructor{varKind} \AgdaBound{K}\AgdaSymbol{)}\<%
+\>\AgdaFunction{Sub} \AgdaBound{U} \AgdaBound{V} \AgdaSymbol{=} \AgdaSymbol{∀} \AgdaBound{K} \AgdaSymbol{→} \AgdaDatatype{Var} \AgdaBound{U} \AgdaBound{K} \AgdaSymbol{→} \AgdaFunction{VExpression} \AgdaBound{V} \AgdaBound{K}\<%
 \end{code}
+%</Sub>
 
 \AgdaHide{
 \begin{code}%

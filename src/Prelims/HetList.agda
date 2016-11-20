@@ -1,5 +1,3 @@
-\AgdaHide{
-\begin{code}
 module Prelims.HetList where
 open import Data.Product hiding (zip)
 open import Data.List hiding (all;zip)
@@ -30,5 +28,3 @@ infixl 20 _snoc_
 data HetsnocList {A} (B : A → Set) : snocList A → Set where
   [] : HetsnocList B []
   _snoc_ : ∀ {aa} {a} → HetsnocList B aa → B a → HetsnocList B (aa snoc a)
-\end{code}
-}

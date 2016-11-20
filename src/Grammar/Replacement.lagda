@@ -21,10 +21,14 @@ that maps every variable in $U$ to a variable in $V$ of the same kind.  Applicat
 function application, the identity function and function composition.  The successor is the canonical injection $V \rightarrow (V, K)$,
 and $(\sigma , K)$ is the extension of $\sigma$ that maps $x_0$ to $x_0$.
 
+%<*Rep>
 \begin{code}
 Rep : Alphabet → Alphabet → Set
 Rep U V = ∀ K → Var U K → Var V K
+\end{code}
+%</Rep>
 
+\begin{code}
 upRep : ∀ {V} {K} → Rep V (V , K)
 upRep _ = ↑
 

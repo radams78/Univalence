@@ -31,9 +31,9 @@ record FoldFunc : Set₁ where
         ∙-cong = λ {_} {g} g≡g' f≡f' x → trans (g≡g' _) (Prelims.cong g (f≡f' x)) } ; 
       identity = (λ _ _ → refl) ,p (λ _ _ → refl) } }
 
-  LIST : FoldFunc
-  LIST = record { 
-    o = List ; 
-    map = Data.List.map ; 
-    foldr = Data.List.foldr }
+LIST : FoldFunc
+LIST = record { 
+  o = List ; 
+  map = Data.List.map ; 
+  foldr = Data.List.foldr }
 \end{code}

@@ -1,4 +1,3 @@
-\begin{code}
 module Prelims.EqReasoning where
 open import Relation.Binary public hiding (_⇒_)
 import Relation.Binary.PreorderReasoning
@@ -49,4 +48,3 @@ subst₄ : ∀ {A1 A2 A3 A4 : Set} (P : A1 → A2 -> A3 -> A4  → Set)
            a1 ≡ a1' -> a2 ≡ a2' -> a3 ≡ a3' -> a4 ≡ a4' ->
            P a1 a2 a3 a4 -> P a1' a2' a3' a4'
 subst₄ _ refl refl refl refl Paaaa = Paaaa
-\end{code}

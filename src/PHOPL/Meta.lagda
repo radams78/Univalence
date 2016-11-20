@@ -257,7 +257,7 @@ lemma {U} {V} {W} M Q N' N ρ σ = let open ≡-Reasoning in
             M ⟦ ρ •RS σ ⟧ ⇑ ⟦ x₀:= N ⟧
           ≡⟨ botSub-upRep _ ⟩
             M ⟦ ρ •RS σ ⟧
-          ≡⟨ sub-compRS M ⟩
+          ≡⟨ sub-•RS M ⟩
             M ⟦ σ ⟧ 〈 ρ 〉
           ∎
 
@@ -374,10 +374,6 @@ path-substitution {U} {V} {Γ} {Δ} {ρ} {σ} {τ} (ΛR .{U} .{Γ} {A} {M} {B} �
 
 postulate idPathSub : ∀ V → PathSub V V
 
-infixr 75 _•RP_
-_•RP_ : ∀ {U} {V} {W} → Rep V W → PathSub U V → PathSub U W
-(ρ •RP τ) x = τ x 〈 ρ 〉
-
 postulate compRP-typed : ∀ {U} {V} {W} {ρ : Rep V W} {τ : PathSub U V} {σ σ' : Sub U V}
                            {Γ} {Δ} {Θ} →
                            ρ ∶ Δ ⇒R Θ → τ ∶ σ ∼ σ' ∶ Γ ⇒ Δ →
@@ -385,10 +381,6 @@ postulate compRP-typed : ∀ {U} {V} {W} {ρ : Rep V W} {τ : PathSub U V} {σ �
 
 postulate liftPathSub-compRP : ∀ {U} {V} {W} {ρ : Rep V W} {τ : PathSub U V} →
                           liftPathSub (ρ •RP τ) ∼∼ liftRep -Path (liftRep -Term (liftRep -Term ρ)) •RP liftPathSub τ
-
-extendPS : ∀ {U} {V} → PathSub U V → Path V → PathSub (U , -Term) V
-extendPS τ P x₀ = P
-extendPS τ P (↑ x) = τ x
 
 postulate extendPS-typed : ∀ {U} {V} {τ : PathSub U V} {ρ} {σ} {Γ} {Δ} {P} {M} {N} {A} →
                            τ ∶ ρ ∼ σ ∶ Γ ⇒ Δ → Δ ⊢ P ∶ M ≡〈 A 〉 N →
@@ -403,9 +395,6 @@ postulate extendPS-decomp : ∀ {U V} {M : Term (U , -Term)} {σ : Sub U V} {P N
 postulate pathsub-extendPS : ∀ {U} {V} M {τ} {P : Path V} {N : Term V} {σ : Sub U V} {N' : Term V} {σ'} →
                            M ⟦⟦ extendPS τ P ∶ extendSub σ N ∼ extendSub σ' N' ⟧⟧
                            ≡ M ⟦⟦ liftPathSub τ ∶ sub↖ σ ∼ sub↗ σ' ⟧⟧ ⟦ x₂:= N ,x₁:= N' ,x₀:= P ⟧
-
-postulate pathsub-compRP : ∀ {U} {V} {W} M {ρ : Rep V W} {τ : PathSub U V} {σ σ' : Sub U V} →
-                         M ⟦⟦ ρ •RP τ ∶ ρ •RS σ ∼ ρ •RS σ' ⟧⟧ ≡ M ⟦⟦ τ ∶ σ ∼ σ' ⟧⟧ 〈 ρ 〉
 
 postulate sub↖-compRP : ∀ {U} {V} {W} {σ : Sub U V} {ρ : Rep V W} →
                       sub↖ (ρ •RS σ) ∼ liftRep -Path (liftRep -Term (liftRep -Term ρ)) •RS sub↖ σ

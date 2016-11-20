@@ -15,11 +15,20 @@ open import Prelims
 open import Grammar.Taxonomy
 
 module Grammar.Base where
+\end{code}
+}
 
+%<*Grammar>
+\begin{code}
 record IsGrammar (T : Taxonomy) : Set₁ where
   open Taxonomy T
   field
     Con    : ConKind → Set
+\end{code}
+%</Grammar>
+
+\AgdaHide{
+\begin{code}
     parent : VarKind → ExpKind
 
 record Grammar : Set₁ where
@@ -37,7 +46,10 @@ record Grammar : Set₁ where
   VExpression : Alphabet → VarKind → Set
   Abs : Alphabet → AbsKind → Set
   ListAbs : Alphabet → List AbsKind → Set
+\end{code}
 
+%<*Subexp>
+\begin{code}
   Expression V K = Subexp V -Expression K
   VExpression V K = Expression V (varKind K)
   Abs V (SK AA K) = Expression (extend V AA) K
@@ -46,10 +58,13 @@ record Grammar : Set₁ where
   infixr 5 _∷_
   data Subexp V where
     var : ∀ {K} → Var V K → VExpression V K
-    app : ∀ {AA} {K} → Con (SK AA K) → ListAbs V AA → Expression V K
+    app : ∀ {AA} {K} → Con (SK AA K) → 
+      ListAbs V AA → Expression V K
     [] : ListAbs V []
-    _∷_ : ∀ {A} {AA} → Abs V A → ListAbs V AA → ListAbs V (A ∷ AA)
+    _∷_ : ∀ {A} {AA} → Abs V A → 
+      ListAbs V AA → ListAbs V (A ∷ AA)
 \end{code}
+%</Subexp>
 
 We prove that the constructor \AgdaRef{var} is injective.
 
@@ -65,10 +80,16 @@ $R\, c\, MM\, N$ iff $c[MM] \rhd N$.
 \begin{code}
   Rewrite : Set₁
   Rewrite = ∀ {V C K} → Rel (Subexp V C K) zero
+\end{code}
 
+%<*Red>
+\begin{code}
   Reduction : Set₁
   Reduction = ∀ {V} {AA} {K} → Con (SK AA K) → ListAbs V AA → Expression V K → Set
+\end{code}
+%</Red>
 
+\begin{code}
   data ListExp (V : Alphabet) : List VarKind → Set where
     [] : ListExp V []
     _∷_ : ∀ {K AA} → Expression V (varKind K) → ListExp V AA → ListExp V (K ∷ AA)

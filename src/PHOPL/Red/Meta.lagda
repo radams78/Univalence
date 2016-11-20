@@ -20,7 +20,7 @@ open import Reduction.Subred PHOPL
 
 \begin{code}
 R₀-imp-R : ∀ {V C K} {E F : Subexp V C K} → E Red₀.⇒ F → E Red.⇒ F
-R₀-imp-R = Subred.sub-osr R₀ R {!R₀R!}
+R₀-imp-R = Subred.sub-osr R₀ R R₀R
 
 ↠₀-imp-↠ : ∀ {V C K} {E F : Subexp V C K} → E Red₀.↠ F → E Red.↠ F
 ↠₀-imp-↠ (inc E⇒F) = inc (R₀-imp-R E⇒F)
@@ -233,7 +233,18 @@ postulate R-creates-replacement : Red.creates' REP
 postulate R-respects-sub : Red.respects' SUB
 postulate R₀-respects-sub : Red₀.respects' SUB
 
-postulate osr-subl : ∀ {U} {V} {C} {K} {E F : Subexp U C K} {σ : Sub U V} → E Red.⇒ F → E ⟦ σ ⟧ Red.⇒ F ⟦ σ ⟧
+postulate osr-subl : ∀ {U} {V} {C} {K} {E F : Subexp U C K} {σ : Sub U V} → 
+\end{code}
+}
+
+%<*osr-subl>
+\begin{code}
+                    E Red.⇒ F → E ⟦ σ ⟧ Red.⇒ F ⟦ σ ⟧
+\end{code}
+%</osr-subl>
+
+\AgdaHide{
+\begin{code}
 --osr-subl = aposrr SUB R-respects-sub
 
 postulate red-subl : ∀ {U} {V} {C} {K} {E F : Subexp U C K} {σ : Sub U V} → E Red.↠ F → E ⟦ σ ⟧ Red.↠ F ⟦ σ ⟧
