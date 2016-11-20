@@ -63,8 +63,7 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
     foldr = snocfoldr }
 
   extend : Alphabet → List VarKind → Alphabet
-  extend V [] = V
-  extend V (K ∷ KK) = extend (V , K) KK
+  extend = extend' LIST
 
   snoc-extend : Alphabet → snocList VarKind → Alphabet
   snoc-extend V [] = V
