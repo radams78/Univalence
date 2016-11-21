@@ -5,3 +5,4 @@ open import Prelims.Bifunction public
 open import Prelims.EqReasoning public
 open import Prelims.Snoclist public
 open import Prelims.HetList public
+open import Prelims.Foldable public

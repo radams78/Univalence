@@ -803,7 +803,7 @@ E-SN (app (-eq _) (_ ,, _ ,, out)) (Γ⊢P∶E ,p computeP) = computeE-SN comput
 
 data Emult {V} (Γ : Context V) : ∀ {AA} → snocTypes V AA → HetsnocList (VExpression V) AA → Set where
   [] : Emult Γ [] []
-  _snoc_ : ∀ {KK K AA} {A : Expression (snoc-extend V KK) (parent K)} {MM M} → Emult Γ {KK} AA MM → E {K = K} Γ (A ⟦ xx₀:= MM ⟧) M → Emult Γ (AA snoc A) (MM snoc M)
+  _snoc_ : ∀ {KK K AA} {A : Expression (extend SNOCLIST V KK) (parent K)} {MM M} → Emult Γ {KK} AA MM → E {K = K} Γ (A ⟦ xx₀:= MM ⟧) M → Emult Γ (AA snoc A) (MM snoc M)
 
 postulate Emult-rep : ∀ {U V Γ Δ KK AA} {MM : HetsnocList (VExpression U) KK} {ρ : Rep U V} → Emult Γ AA MM → ρ ∶ Γ ⇒R Δ → valid Δ → Emult Δ (snocTypes-rep AA ρ) (snocListExp-rep MM ρ)
 {- Emult-rep [] _ _ = []

@@ -33,22 +33,23 @@ Given an operation $\sigma : U \rightarrow V$ and a list of variable kinds $A \e
 the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \cdots ) , A_n)$.
 
 \begin{code}
-  LIFTSOP : ∀ {U} {V} AA → OP U V ⟶ OP (extend U AA) (extend V AA)
-  LIFTSOP [] = id
-  LIFTSOP {U} {V} (A ∷ AA) = LIFTSOP {U , A} {V , A} AA ∘ LIFTOP A
+  LIFTSOP' : ∀ {U V} F (AA : FoldFunc.o F VarKind) → OP U V ⟶ OP (extend F U AA) (extend F V AA)
+  LIFTSOP' F _ = FoldFunc.depfold₂ F {C = OP} (λ _ _ → LIFTOP)
 
-  liftsOp : ∀ {U} {V} VV → Op U V → Op (extend U VV) (extend V VV)
-  liftsOp A = Π._⟨$⟩_ (LIFTSOP A)
+  liftsOp' : ∀ {U V} F AA → Op U V → Op (extend F U AA) (extend F V AA)
+  liftsOp' F AA = Π._⟨$⟩_ (LIFTSOP' F AA)
+
+  liftsOp'-cong : ∀ {U V} F AA {ρ σ : Op U V} → ρ ∼op σ → liftsOp' F AA ρ ∼op liftsOp' F AA σ
+  liftsOp'-cong F AA = Π.cong (LIFTSOP' F AA)
+
+  liftsOp : ∀ {U} {V} VV → Op U V → Op (extend LIST U VV) (extend LIST V VV)
+  liftsOp = liftsOp' LIST
 
   liftsOp-cong : ∀ {U} {V} A {ρ σ : Op U V} → ρ ∼op σ → liftsOp A ρ ∼op liftsOp A σ
-  liftsOp-cong A = Π.cong (LIFTSOP A)
+  liftsOp-cong = liftsOp'-cong LIST
 
-  LIFTSNOCOP : ∀ {U} {V} VV → OP U V ⟶ OP (snoc-extend U VV) (snoc-extend V VV)
-  LIFTSNOCOP [] = id
-  LIFTSNOCOP (AA snoc A) = LIFTOP A ∘ LIFTSNOCOP AA
-
-  liftsnocOp : ∀ {U V} KK → Op U V → Op (snoc-extend U KK) (snoc-extend V KK)
-  liftsnocOp KK = Π._⟨$⟩_ (LIFTSNOCOP KK)
+  liftsnocOp : ∀ {U V} KK → Op U V → Op (extend SNOCLIST U KK) (extend SNOCLIST V KK)
+  liftsnocOp = liftsOp' SNOCLIST
 \end{code}
 
 This allows us to define the action of \emph{application} $E[\sigma]$:

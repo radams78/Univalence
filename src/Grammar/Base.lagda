@@ -52,7 +52,7 @@ record Grammar : Set₁ where
 \begin{code}
   Expression V K = Subexp V -Expression K
   VExpression V K = Expression V (varKind K)
-  Abs V (SK AA K) = Expression (extend V AA) K
+  Abs V (SK AA K) = Expression (extend LIST V AA) K
   ListAbs V AA = Subexp V -ListAbs AA
 
   infixr 5 _∷_
@@ -90,9 +90,8 @@ $R\, c\, MM\, N$ iff $c[MM] \rhd N$.
 %</Red>
 
 \begin{code}
-  data ListExp (V : Alphabet) : List VarKind → Set where
-    [] : ListExp V []
-    _∷_ : ∀ {K AA} → Expression V (varKind K) → ListExp V AA → ListExp V (K ∷ AA)
+  ListExp : Alphabet → List VarKind → Set
+  ListExp V = HetList (VExpression V)
 
   data Types : Alphabet → List VarKind → Set where
     [] : ∀ {V} → Types V []
@@ -100,5 +99,5 @@ $R\, c\, MM\, N$ iff $c[MM] \rhd N$.
 
   data snocTypes : Alphabet → snocList VarKind → Set where
     [] : ∀ {V} → snocTypes V []
-    _snoc_ : ∀ {V AA K} → snocTypes V AA → Expression (snoc-extend V AA) (parent K) → snocTypes V (AA snoc K)
+    _snoc_ : ∀ {V AA K} → snocTypes V AA → Expression (extend SNOCLIST V AA) (parent K) → snocTypes V (AA snoc K)
 \end{code}

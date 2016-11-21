@@ -202,7 +202,7 @@ sub-comp : ∀ {U} {V} {W} {C} {K}
 \begin{code}
 sub-comp = OpFamily.ap-comp SUB
 
-liftsSub : ∀ {U V} KK → Sub U V → Sub (extend U KK) (extend V KK)
+liftsSub : ∀ {U V} KK → Sub U V → Sub (extend LIST U KK) (extend LIST V KK)
 liftsSub = OpFamily.liftsOp SUB
 \end{code}
 }

@@ -7,7 +7,6 @@
 module Grammar.Taxonomy where
 open import Data.List
 open import Prelims
-open import Prelims.Foldable
 \end{code}
 }
 
@@ -49,25 +48,8 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
 
 \AgdaHide{
 \begin{code}
-  extend' : ∀ (F : FoldFunc) → Alphabet → FoldFunc.o F VarKind → Alphabet
-  extend' F V KK = FoldFunc.fold F {M = FoldFunc.Endo F Alphabet} (FoldFunc.map F (λ K V → V , K) KK) V
-
-  snocfoldr : ∀ {A B : Set} → (A → B → B) → B → snocList A → B
-  snocfoldr _ b [] = b
-  snocfoldr f b (aa snoc a) = snocfoldr f (f a b) aa
-
-  SNOCLIST : FoldFunc
-  SNOCLIST = record { 
-    o = snocList ; 
-    map = Prelims.map ; 
-    foldr = snocfoldr }
-
-  extend : Alphabet → List VarKind → Alphabet
-  extend = extend' LIST
-
-  snoc-extend : Alphabet → snocList VarKind → Alphabet
-  snoc-extend V [] = V
-  snoc-extend V (KK snoc K) = snoc-extend V KK , K
+  extend : ∀ (F : FoldFunc) → Alphabet → FoldFunc.o F VarKind → Alphabet
+  extend F = FoldFunc.foldl F _,_
 \end{code}
 }
 
@@ -158,4 +140,3 @@ A constructor kind is a simple kind over abstraction kinds and expression kinds.
   Kind -Expression = ExpKind
   Kind -ListAbs = List AbsKind
 \end{code}
-

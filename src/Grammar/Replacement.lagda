@@ -77,10 +77,10 @@ infix 70 _〈_〉
 _〈_〉 : ∀ {U} {V} {C} {K} → Subexp U C K → Rep U V → Subexp V C K
 E 〈 ρ 〉 = LiftFamily.ap Rep∶LF ρ E
 
-liftsRep : ∀ {U V} KK → Rep U V → Rep (extend U KK) (extend V KK)
+liftsRep : ∀ {U V} KK → Rep U V → Rep (extend LIST U KK) (extend LIST V KK)
 liftsRep = LiftFamily.liftsOp Rep∶LF
 
-liftsnocRep : ∀ {U V} KK → Rep U V → Rep (snoc-extend U KK) (snoc-extend V KK)
+liftsnocRep : ∀ {U V} KK → Rep U V → Rep (extend SNOCLIST U KK) (extend SNOCLIST V KK)
 liftsnocRep [] ρ = ρ
 liftsnocRep (KK snoc K) ρ = liftRep K (liftsnocRep KK ρ)
 
@@ -174,12 +174,12 @@ infixl 70 _⇑
 _⇑ : ∀ {V} {K} {C} {L} → Subexp V C L → Subexp (V , K) C L
 E ⇑ = E 〈 upRep 〉
 
-ups : ∀ {V} KK → Rep V (snoc-extend V KK)
+ups : ∀ {V} KK → Rep V (extend SNOCLIST V KK)
 ups [] = idRep _
 ups (KK snoc K) = upRep •R ups KK
 
 infix 70 _⇑⇑
-_⇑⇑ : ∀ {V C K KK} → Subexp V C K → Subexp (snoc-extend V KK) C K
+_⇑⇑ : ∀ {V C K KK} → Subexp V C K → Subexp (extend SNOCLIST V KK) C K
 _⇑⇑ {KK = KK} E = E 〈 ups KK 〉
 
 liftsnocRep-ups : ∀ {U V C K} KK (E : Subexp U C K) {ρ : Rep U V} → (_⇑⇑ {KK = KK} E) 〈 liftsnocRep KK ρ 〉 ≡ (_⇑⇑ {KK = KK} (E 〈 ρ 〉))

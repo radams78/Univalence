@@ -73,19 +73,19 @@ $E[\id{V}] \equiv E$
  
 \begin{code}      
   liftsOp-idOp : ∀ {V} A → 
-    liftsOp A (idOp V) ∼op idOp (extend V A)
+    liftsOp A (idOp V) ∼op idOp (extend LIST V A)
 \end{code}
 
 \AgdaHide{
 \begin{code}
   liftsOp-idOp [] = ∼-refl
-  liftsOp-idOp {V} (K ∷ A) = let open EqReasoning (OP (extend V (K ∷ A)) (extend V (K ∷ A))) in 
+  liftsOp-idOp {V} (K ∷ A) = let open EqReasoning (OP (extend LIST V (K ∷ A)) (extend LIST V (K ∷ A))) in 
     begin
       liftsOp A (liftOp K (idOp V))
     ≈⟨ liftsOp-cong A liftOp-idOp ⟩
       liftsOp A (idOp (V , K))
     ≈⟨ liftsOp-idOp A ⟩
-      idOp (extend V (K ∷ A))
+      idOp (extend LIST V (K ∷ A))
     ∎
 \end{code}
 }
@@ -104,7 +104,7 @@ $E[\id{V}] \equiv E$
     begin
       ap (liftsOp A (idOp V)) E ∷ ap (idOp V) F
     ≡⟨ cong₂ _∷_ (ap-congl (liftsOp-idOp A) E) ap-idOp ⟩
-       ap (idOp (extend V A)) E ∷ F
+       ap (idOp (extend LIST V A)) E ∷ F
     ≡⟨ cong (λ x → x ∷ F) ap-idOp ⟩
        E ∷ F
     ∎

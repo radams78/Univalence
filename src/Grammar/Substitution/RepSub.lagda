@@ -91,7 +91,7 @@ rep-is-sub (var _) = refl
 rep-is-sub (app c E) = cong (app c) (rep-is-sub E)
 rep-is-sub [] = refl
 rep-is-sub {U} {V} (_∷_ {A = SK A _} E F) {ρ} = cong₂ _∷_ 
-  (let open ≡-Reasoning {A = Subexp (extend V A) _ _} in
+  (let open ≡-Reasoning {A = Subexp (extend LIST V A) _ _} in
   begin 
     E 〈 liftsOpR A ρ 〉
   ≡⟨ rep-is-sub E ⟩

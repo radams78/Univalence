@@ -21,7 +21,7 @@ $(V , K) \Rightarrow V$:
 
 \AgdaHide{
 \begin{code}
-botSub : ∀ {V} {A} → HetsnocList (VExpression V) A → Sub (snoc-extend V A) V
+botSub : ∀ {V} {A} → HetsnocList (VExpression V) A → Sub (extend SNOCLIST V A) V
 botSub {A = []} _ _ x = var x
 botSub {A = _ snoc _} (_ snoc E) _ x₀ = E
 botSub {A = _ snoc _} (EE snoc _) L (↑ x) = botSub EE L x
@@ -34,7 +34,7 @@ x₀:=_ : ∀ {V} {K} → Expression V (varKind K) → Sub (V , K) V
 x₀:= E = botSub ([] snoc E)
 
 infix 65 xx₀:=_
-xx₀:=_ : ∀ {V KK} → HetsnocList (VExpression V) KK → Sub (snoc-extend V KK) V
+xx₀:=_ : ∀ {V KK} → HetsnocList (VExpression V) KK → Sub (extend SNOCLIST V KK) V
 xx₀:=_ = botSub -- TODO Inline
 
 liftsnocRep-botSub' : ∀ {U V} KK {MM : HetsnocList (VExpression U) KK} {ρ : Rep U V} → ρ •RS xx₀:= MM ∼ xx₀:= snocListExp-rep MM ρ •SR liftsnocRep KK ρ
@@ -42,7 +42,7 @@ liftsnocRep-botSub' [] _ = refl
 liftsnocRep-botSub' (_ snoc _) {_ snoc _} x₀ = refl
 liftsnocRep-botSub' (KK snoc _) {_ snoc _} (↑ x) = liftsnocRep-botSub' KK x
 
-liftsnocRep-botSub : ∀ {U V KK} {MM : HetsnocList (VExpression U) KK} {ρ : Rep U V} {C K} {E : Subexp (snoc-extend U KK) C K} → E ⟦ xx₀:= MM ⟧ 〈 ρ 〉 ≡ E 〈 liftsnocRep KK ρ 〉 ⟦ xx₀:= snocListExp-rep MM ρ ⟧
+liftsnocRep-botSub : ∀ {U V KK} {MM : HetsnocList (VExpression U) KK} {ρ : Rep U V} {C K} {E : Subexp (extend SNOCLIST U KK) C K} → E ⟦ xx₀:= MM ⟧ 〈 ρ 〉 ≡ E 〈 liftsnocRep KK ρ 〉 ⟦ xx₀:= snocListExp-rep MM ρ ⟧
 liftsnocRep-botSub {KK = KK} {MM = MM} {ρ = ρ} {E = E} = let open ≡-Reasoning in
   begin
     E ⟦ xx₀:= MM ⟧ 〈 ρ 〉

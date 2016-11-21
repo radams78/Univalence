@@ -50,12 +50,12 @@ _∶_⇒R_ : ∀ {U} {V} → Rep U V → Context U → Context V → Set
 ρ ∶ Γ ⇒R Δ = ∀ {K} x → typeof (ρ K x) Δ ≡ typeof x Γ 〈 ρ 〉
 
 infix 25 _,,_
-_,,_ : ∀ {V} {AA} → Context V → Types V AA → Context (extend V AA)
+_,,_ : ∀ {V} {AA} → Context V → Types V AA → Context (extend LIST V AA)
 Γ ,, [] = Γ
 Γ ,, (A , AA) = (Γ , A) ,, AA
 
 infix 25 _,,,_
-_,,,_ : ∀ {V AA} → Context V → snocTypes V AA → Context (snoc-extend V AA)
+_,,,_ : ∀ {V AA} → Context V → snocTypes V AA → Context (extend SNOCLIST V AA)
 Γ ,,, [] = Γ
 Γ ,,, (AA snoc A) = (Γ ,,, AA) , A
 \end{code}
