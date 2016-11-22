@@ -17,8 +17,21 @@ record FoldFunc : Set₁ where
       (∀ a₁ a₂ b → C a₁ a₂ ⟶ C (f a₁ b) (f a₂ b)) →
       C a₁ a₂ ⟶ C (fold (EndoR A) (map (λ y x → f x y) bb) a₁) (fold (EndoR A) (map (λ y x → f x y) bb) a₂)
 
+  foldMap : ∀ {A} M → (A → Monoid.Carrier M) → o A → Monoid.Carrier M
+  foldMap {A} M f aa = fold M (map f aa)
+
+  foldMap-nat : ∀ {A} M {f : A → Monoid.Carrier M} {aa : o A} {g : A → A} {m : Monoid.Carrier M} →
+    (∀ x → Monoid._≈_ M (Monoid._∙_ M m (f (g x))) (Monoid._∙_ M (f x) m)) →
+    Monoid._≈_ M (Monoid._∙_ M m (foldMap M f (map g aa))) (Monoid._∙_ M (foldMap M f aa) m)
+  foldMap-nat M hyp = {!!}
+
   foldl : ∀ {A B : Set} → (A → B → A) → A → o B → A
-  foldl {A} {B} f a bb = fold (EndoR A) (map (λ b a → f a b) bb) a
+  foldl {A} {B} f a bb = foldMap (EndoR A) (λ b a → f a b) bb a
+
+  foldl-map : ∀ {A B : Set} {f : A → B → A} {g : A → A} {h : B → B} {a : A} {bb : o B} →
+    (∀ a b → f (g a) (h b) ≡ g (f a b)) →
+    g (foldl f a bb) ≡ foldl f (g a) (map h bb)
+  foldl-map {A} {B} {f} {g} {h} {a} {bb} hyp = sym (foldMap-nat (EndoR A) {λ x y → f y x} {bb} {h} {g} (λ b a → hyp a b) a)
 
 map-cong : ∀ {A B : Set} {f g : A → B} {aa : List A} → (∀ x → f x ≡ g x) → Data.List.map f aa ≡ Data.List.map g aa
 map-cong {aa = []} f≡g = refl

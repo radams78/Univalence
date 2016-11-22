@@ -18,6 +18,11 @@ snocmap : ∀ {A B} → (A → B) → snocList A → snocList B
 snocmap f [] = []
 snocmap f (aa snoc a) = snocmap f aa snoc f a
 
+snocmapcong : ∀ {A B} {f g : A → B} {l : snocList A} →
+  (∀ x → f x ≡ g x) → snocmap f l ≡ snocmap g l
+snocmapcong {l = []} f≡g = refl
+snocmapcong {l = l snoc x} f≡g = cong₂ _snoc_ (snocmapcong f≡g) (f≡g x)
+
 snocfold : ∀ (M : Monoid Level.zero Level.zero) → snocList (Monoid.Carrier M) → Monoid.Carrier M
 snocfold M [] = Monoid.ε M
 snocfold M (mm snoc m) = Monoid._∙_ M (snocfold M mm) m
@@ -35,13 +40,9 @@ SNOCLIST : FoldFunc
 SNOCLIST = record { 
   o = snocList ; 
   map = snocmap ;
+  map-cong = snocmapcong ;
   fold = snocfold ;
   depfold₂ = snocdepfold₂ }
-
-map-cong : ∀ {A B} {f g : A → B} {l : snocList A} →
-  (∀ x → f x ≡ g x) → snocmap f l ≡ snocmap g l
-map-cong {l = []} f≡g = refl
-map-cong {l = l snoc x} f≡g = cong₂ _snoc_ (map-cong f≡g) (f≡g x)
 
 map-id : ∀ {A} {f : A → A} {l : snocList A} →
   (∀ x → f x ≡ x) → snocmap f l ≡ l

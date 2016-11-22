@@ -8,7 +8,7 @@ open import Function.Equality hiding (setoid)
 open import Data.Product hiding (map) renaming (_,_ to _,p_)
 open import Data.List hiding (foldr;map)
 open import Algebra
-open import Prelims hiding (map)
+open import Prelims
 open Grammar G renaming (_⟶_ to _⇒_)
 open import Grammar.OpFamily.PreOpFamily G
 \end{code}
@@ -34,7 +34,7 @@ the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \c
 
 \begin{code}
   LIFTSOP' : ∀ {U V} F (AA : FoldFunc.o F VarKind) → OP U V ⟶ OP (extend F U AA) (extend F V AA)
-  LIFTSOP' F _ = FoldFunc.depfold₂ F {C = OP} (λ _ _ → LIFTOP)
+  LIFTSOP' F AA = FoldFunc.depfold₂ F {C = OP} AA (λ _ _ → LIFTOP)
 
   liftsOp' : ∀ {U V} F AA → Op U V → Op (extend F U AA) (extend F V AA)
   liftsOp' F AA = Π._⟨$⟩_ (LIFTSOP' F AA)
