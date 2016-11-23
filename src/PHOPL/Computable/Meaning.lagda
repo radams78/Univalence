@@ -162,6 +162,9 @@ listnfrep : ∀ {U V SS} → ListMeaning U SS → Rep U V → ListMeaning V SS
 listnfrep [] _ = []
 listnfrep (M ∷ MM) ρ = nfrep M ρ ∷ listnfrep MM ρ
 
+listnfrep-comp' : ∀ {U V W SS} {φ : ListMeaning' U SS} {σ : Rep V W} {ρ : Rep U V} → listnfrep' {SS = SS} φ (σ •R ρ) ≡ listnfrep' {SS = SS} (listnfrep' {SS = SS} φ ρ) σ
+listnfrep-comp' {U} {V} {W} {SS} {φ} {σ} {ρ} = {!!}
+
 listnfrep-comp : ∀ {U V W SS} {φ : ListMeaning U SS} {σ : Rep V W} {ρ : Rep U V} → listnfrep φ (σ •R ρ) ≡ listnfrep (listnfrep φ ρ) σ
 listnfrep-comp {φ = []} = refl
 listnfrep-comp {φ = x ∷ φ} = cong₂ _∷_ nfrep-comp listnfrep-comp

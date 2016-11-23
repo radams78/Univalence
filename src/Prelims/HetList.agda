@@ -6,18 +6,21 @@ open import Data.Product hiding (zip)
 open import Data.List hiding (zip;all)
 open import Prelims.Functor
 
+prodf : ∀ {A B C D : Set} → (C → D) → (setoid A ⇨ setoid B) ⟶ (setoid (A × C) ⇨ setoid (B × D))
+prodf f = record { 
+  _⟨$⟩_ = λ g → record { 
+    _⟨$⟩_ = λ { (a , c) → (g ⟨$⟩ a , f c) } ; 
+    cong = cong _ } ; -- TODO General construction (A → B) → (setoid A ⟶ setoid B)
+  cong = λ g≡g' p≡p' → cong₂ _,_ (g≡g' (cong proj₁ p≡p')) {!cong proj₂ p≡p'!} }
+
 HetL : ∀ {A} F → (A → Set) → FoldFunc.F F A → Set
 HetL F B aa = FoldFunc.foldl F (λ X a → X × B a) ⊤ aa
 
 HetL-map : ∀ {A F} {B C : A → Set} {aa} → (∀ a → B a → C a) → HetL F B aa → HetL F C aa
 HetL-map {A} {F} {B} {C} {aa} f bb = FoldFunc.depfold₂ F {Set} {A} {λ X Y → setoid X ⇨ setoid Y} {λ X a → X × B a} {λ X a → X × C a} {⊤} {⊤} aa 
-  (λ A₁ A₂ b → record { 
-    _⟨$⟩_ = λ g → record { 
-      _⟨$⟩_ = λ {(x , y) → g ⟨$⟩ x , f b y} ; 
-      cong = cong (λ p → g ⟨$⟩ (proj₁ p) , f b (proj₂ p)) } ; 
-    cong = λ g≡g' x≡y → cong₂ _,_ (g≡g' (cong proj₁ x≡y)) (cong (f b) (cong proj₂ x≡y)) }) ⟨$⟩
+  (λ A₁ A₂ a → prodf (f a))
+  ⟨$⟩
   id ⟨$⟩ bb
---TODO Refactor
 
 data HetList {A : Set} (B : A → Set) : List A → Set where
   [] : HetList B []
