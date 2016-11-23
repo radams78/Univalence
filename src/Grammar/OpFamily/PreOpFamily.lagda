@@ -3,7 +3,7 @@
 open import Grammar.Base
 
 module Grammar.OpFamily.PreOpFamily (G : Grammar) where
-open import Prelims
+open import Prelims.EqReasoning
 open Grammar G
 \end{code}
 }

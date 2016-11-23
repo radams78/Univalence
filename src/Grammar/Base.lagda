@@ -90,8 +90,8 @@ $R\, c\, MM\, N$ iff $c[MM] \rhd N$.
 %</Red>
 
 \begin{code}
-  ListExp : Alphabet → List VarKind → Set
-  ListExp V = HetList (VExpression V)
+  ListExp : ∀ F → Alphabet → FoldFunc.F F VarKind → Set
+  ListExp F V = HetL F (VExpression V)
 
   data Types : Alphabet → List VarKind → Set where
     [] : ∀ {V} → Types V []

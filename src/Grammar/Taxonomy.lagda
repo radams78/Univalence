@@ -48,8 +48,8 @@ fresh variable $x₀$ of kind $K$.  We write $\mathsf{Var}\ A\ K$ for the set of
 
 \AgdaHide{
 \begin{code}
-  extend : ∀ (F : FoldFunc) → Alphabet → FoldFunc.o F VarKind → Alphabet
-  extend F = FoldFunc.foldl F _,_
+  extend : ∀ (F : FoldFunc) → Alphabet → FoldFunc.F F VarKind → Alphabet
+  extend F = FoldFunc.foldl₀ F _,_
 \end{code}
 }
 

@@ -238,12 +238,12 @@ Pi : ∀ {n} → snocVec Type n → Type → Type
 Pi [] B = B
 Pi (AA snoc A) B = Pi AA (A ⇛ B)
 
-APPF : ∀ {F V} → Term V → FoldFunc.o F (Term V) → Term V
-APPF {F} {V} = FoldFunc.foldl F appT
+APPF : ∀ {F V} → Term V → FoldFunc.F F (Term V) → Term V
+APPF {F} {V} = FoldFunc.foldl₀ F appT
 
-APPF-rep : ∀ {F U V} (M : Term U) (NN : FoldFunc.o F (Term U)) (ρ : Rep U V) →
-  (APPF {F} M NN) 〈 ρ 〉 ≡ APPF {F} (M 〈 ρ 〉) (FoldFunc.map F (λ N → N 〈 ρ 〉) NN)
-APPF-rep M NN ρ = {!!}
+--APPF-rep : ∀ {F U V} (M : Term U) (NN : FoldFunc.F F (Term U)) (ρ : Rep U V) →
+--  (APPF {F} M NN) 〈 ρ 〉 ≡ APPF {F} (M 〈 ρ 〉) (FoldFunc.map F (λ N → N 〈 ρ 〉) NN)
+--TODO
 
 APP' : ∀ {V} → Term V → List (Term V) → Term V
 APP' = APPF {LIST}

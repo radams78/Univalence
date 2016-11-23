@@ -1,6 +1,6 @@
 module PHOPL.Rules where
 open import Data.Product using (_×_)
-open import Prelims.Snoclist
+open import Prelims.Functor.Snoclist
 open import PHOPL.Grammar
 open import PHOPL.Red
 

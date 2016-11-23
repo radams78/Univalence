@@ -1,7 +1,23 @@
 module Prelims.HetList where
+open import Function.Equality hiding (setoid;cong)
+open import Relation.Binary.PropositionalEquality
+open import Data.Unit hiding (setoid)
 open import Data.Product hiding (zip)
-open import Data.List hiding (all;zip)
-open import Prelims.Snoclist
+open import Data.List hiding (zip;all)
+open import Prelims.Functor
+
+HetL : ∀ {A} F → (A → Set) → FoldFunc.F F A → Set
+HetL F B aa = FoldFunc.foldl F (λ X a → X × B a) ⊤ aa
+
+HetL-map : ∀ {A F} {B C : A → Set} {aa} → (∀ a → B a → C a) → HetL F B aa → HetL F C aa
+HetL-map {A} {F} {B} {C} {aa} f bb = FoldFunc.depfold₂ F {Set} {A} {λ X Y → setoid X ⇨ setoid Y} {λ X a → X × B a} {λ X a → X × C a} {⊤} {⊤} aa 
+  (λ A₁ A₂ b → record { 
+    _⟨$⟩_ = λ g → record { 
+      _⟨$⟩_ = λ {(x , y) → g ⟨$⟩ x , f b y} ; 
+      cong = cong (λ p → g ⟨$⟩ (proj₁ p) , f b (proj₂ p)) } ; 
+    cong = λ g≡g' x≡y → cong₂ _,_ (g≡g' (cong proj₁ x≡y)) (cong (f b) (cong proj₂ x≡y)) }) ⟨$⟩
+  id ⟨$⟩ bb
+--TODO Refactor
 
 data HetList {A : Set} (B : A → Set) : List A → Set where
   [] : HetList B []

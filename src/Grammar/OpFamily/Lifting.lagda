@@ -4,6 +4,7 @@ open import Grammar.Base
 
 module Grammar.OpFamily.Lifting (G : Grammar) where
 open import Level
+open import Relation.Binary
 open import Function.Equality hiding (setoid)
 open import Data.Product hiding (map) renaming (_,_ to _,p_)
 open import Data.List hiding (foldr;map)
@@ -33,8 +34,8 @@ Given an operation $\sigma : U \rightarrow V$ and a list of variable kinds $A \e
 the \emph{repeated lifting} $\sigma^A$ to be $((\cdots(\sigma , A_1) , A_2) , \cdots ) , A_n)$.
 
 \begin{code}
-  LIFTSOP' : ∀ {U V} F (AA : FoldFunc.o F VarKind) → OP U V ⟶ OP (extend F U AA) (extend F V AA)
-  LIFTSOP' F AA = FoldFunc.depfold₂ F {C = OP} AA (λ _ _ → LIFTOP)
+  LIFTSOP' : ∀ {U V} F (AA : FoldFunc.F F VarKind) → OP U V ⟶ OP (extend F U AA) (extend F V AA)
+  LIFTSOP' F AA = FoldFunc.depfold₂ F {C = λ U V → OP (lower U) (lower V)} AA (λ _ _ → LIFTOP)
 
   liftsOp' : ∀ {U V} F AA → Op U V → Op (extend F U AA) (extend F V AA)
   liftsOp' F AA = Π._⟨$⟩_ (LIFTSOP' F AA)
@@ -85,7 +86,7 @@ We prove that application respects $\sim$.
     {ρ σ : Op U V} {M N : Subexp U C K} →
     ρ ∼op σ → M ≡ N → ap ρ M ≡ ap σ N
   ap-cong {U} {V} {C} {K} =
-    cong2 {A = OP U V} {B = setoid (Subexp U C K)} {C = setoid (Subexp V C K)} 
+    cong2 {A = OP U V} {B = Prelims.EqReasoning.setoid (Subexp U C K)} {C = Prelims.EqReasoning.setoid (Subexp V C K)} 
     ap ap-congl (λ _ → ap-congr)
 \end{code}
 }

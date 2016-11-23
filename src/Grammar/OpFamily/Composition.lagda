@@ -1,14 +1,13 @@
 \AgdaHide{
 \begin{code}
 open import Grammar.Base
+open import Data.List
+open import Prelims
+open import Function.Equality hiding (cong;_∘_)
 
 module Grammar.OpFamily.Composition (A : Grammar) where
-open import Data.List
-open import Function.Equality hiding (cong;_∘_)
-open import Prelims
 open Grammar A hiding (_⟶_)
 open import Grammar.OpFamily.LiftFamily A
-
 open LiftFamily
 \end{code}
 }

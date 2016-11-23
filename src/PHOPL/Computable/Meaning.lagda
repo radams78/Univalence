@@ -66,18 +66,18 @@ data Neutral (V : Alphabet) : Set where
   app : Var V -Term → snocList (Term V) → Neutral V
 
 nrep : ∀ {U V} → Neutral U → Rep U V → Neutral V
-nrep (app x MM) ρ = app (ρ _ x) (Prelims.map (λ M → M 〈 ρ 〉) MM)
+nrep (app x MM) ρ = app (ρ _ x) (snocmap (λ M → M 〈 ρ 〉) MM)
 
 nrep-id : ∀ {V} {N : Neutral V} → nrep N (idRep V) ≡ N
-nrep-id {N = app x MM} = cong (app x) (map-id (λ _ → rep-idRep))
+nrep-id {N = app x MM} = cong (app x) (≡-Reasoning.trans (snocmapcong (λ _ → rep-idRep)) snocmap-id)
 
 nrep-comp : ∀ {U V W} {N : Neutral U} {ρ' : Rep V W} {ρ : Rep U V} → nrep N (ρ' •R ρ) ≡ nrep (nrep N ρ) ρ'
 nrep-comp {N = app x MM} {ρ'} {ρ} = cong (app (ρ' _ (ρ _ x))) (let open ≡-Reasoning in begin 
-   Prelims.map (λ M → M 〈 ρ' •R ρ 〉) MM
-  ≡⟨ map-cong (λ M → rep-comp M) ⟩
-    Prelims.map (λ M → M 〈 ρ 〉 〈 ρ' 〉) MM
-  ≡⟨ map-comp ⟩
-    Prelims.map (λ M → M 〈 ρ' 〉) (Prelims.map (λ M → M 〈 ρ 〉) MM)
+   snocmap (λ M → M 〈 ρ' •R ρ 〉) MM
+  ≡⟨ snocmapcong (λ M → rep-comp M) ⟩
+    snocmap (λ M → M 〈 ρ 〉 〈 ρ' 〉) MM
+  ≡⟨ snocmap-comp ⟩
+    snocmap (λ M → M 〈 ρ' 〉) (snocmap (λ M → M 〈 ρ 〉) MM)
   ∎)
 
 decode-Neutral : ∀ {V} → Neutral V → Term V
@@ -149,8 +149,14 @@ decode-Meaning-rep : ∀ {U V S} (M : Meaning U S) {ρ : Rep U V} → decode-Mea
 decode-Meaning-rep (nf₀ M) = decode-Meaning₀-rep {M = M}
 decode-Meaning-rep (φ imp ψ) = cong₂ _⊃_ (decode-Meaning-rep φ) (decode-Meaning-rep ψ)
 
+ListMeaning' : Alphabet → List MeaningShape → Set
+ListMeaning' V = HetL LIST (Meaning V)
+
 ListMeaning : ∀ (V : Alphabet) → List MeaningShape → Set
 ListMeaning V = HetList (Meaning V)
+
+listnfrep' : ∀ {U V SS} → ListMeaning' U SS → Rep U V → ListMeaning' V SS
+listnfrep' {U} {V} {SS} MM ρ = HetL-map {F = LIST} {aa = SS} (λ _ M → nfrep M ρ) MM
 
 listnfrep : ∀ {U V SS} → ListMeaning U SS → Rep U V → ListMeaning V SS
 listnfrep [] _ = []
