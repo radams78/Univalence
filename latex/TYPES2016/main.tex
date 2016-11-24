@@ -8,7 +8,7 @@
 \bibliographystyle{plainurl}
 
 % Author macros::begin %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\title{A Strongly Normalizing Computation Rule for Propositional Extensionality in Higher-Order Minimal Logic
+\title{A Normalizing Computation Rule for Propositional Extensionality in Higher-Order Minimal Logic
 %\footnote{This work was partially supported by someone.}
 }
 \titlerunning{Strong Normalization for Propositional Extensionality in Minimal Logic} %optional, in case that the title is too long; the running title should fit into the top page column
@@ -49,9 +49,12 @@
 \newcommand*{\univ}[4]{\ensuremath{\mathrm{univ}_{{#1}, {#2}} \left({#3} , {#4} \right)}}
 \newcommand*{\triplelambda}{\ensuremath{\lambda \!\! \lambda \!\! \lambda}}
 \newcommand*{\vald}{\ensuremath{\vdash \mathrm{valid}}}
+\newcommand*{\dom}{\ensuremath{\operatorname{dom}}}
 
-\theoremstyle{definition}
-\newtheorem{note}[theorem]{Note}
+\theoremstyle{plain}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\usepackage{proof}
 
 \begin{document}
 
@@ -174,9 +177,8 @@ y \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} & \eqdef \reff{y} \qquad (y \n
 
 We shall often omit the endpoints $\vec{M}$ and $\vec{N}$.
 
-\begin{note}
+\paragraph*{Note}
 The case $n = 0$ is permitted, and we shall have that, if $\Gamma \vdash M : A$ then $\Gamma \vdash M \{\} : M =_A M$.  There are thus two paths from a term $M$ to itself: $\reff{M}$ and $M \{\}$.  There are not always equal; for example, $(\lambda x:A.x) \{\} \equiv \triplelambda e : x =_A y. e$, which (after we define the reduction relation) will not be convertible with $\reff{\lambda x:A.x}$.
-\end{note}
 
 \begin{lemma}
 \[ M \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N} \} \equiv M \{ \vec{x} := \vec{P} : \vec{M} \sim \vec{N}, y := \reff{y} : y \sim y \} \]
@@ -211,11 +213,10 @@ $ \begin{aligned}[t]
 An easy induction on $M$ in all cases.
 \end{proof}
 
-\begin{note}
+\paragraph*{Note}
 The familiar substitution lemma also holds: $t [\vec{z_1} := \vec{s_1}] [\vec{z_2} := \vec{s_2}] \equiv t [\vec{z_1} := \vec{s_1}[\vec{z_2} := \vec{s_2}], 
 \vec{z_2} := \vec{s_2}]$.  We cannot form a lemma about the fourth case, simplifying $M \{ \vec{x} := \vec{P} \} \{ \vec{y} := \vec{Q} \}$, because
 $M \{ \vec{x} := \vec{P} \}$ is a path, and path substitution can only be applied to a term.
-\end{note}
 
 \begin{definition}
 A \emph{path substitution} $\tau$ is a function whose domain is a finite set of term variables,
@@ -238,12 +239,11 @@ An easy induction on $M$.
 
 \subsection{Rules of Deduction}
 
-The rules of deduction of $\lambda o e$ are given in Figure \ref{fig:lambdaoe}.
+The rules of deduction of $\lambda o e$ are given in Figure \ref{fig:lambdaoe}.  In these rules, $\simeq_\beta$ denotes the usual relation of $\beta$-convertibility between terms.
 
 \newcommand{\RvarT}{\ensuremath(\mathsf{varT})}
 \begin{figure}
-\begin{framed}
-\paragraph{Contexts}
+\paragraph*{Contexts}
 \[ \infer{\langle \rangle \vald}{} \qquad
 \infer{\Gamma, x : A \vald}{\Gamma \vald} \qquad 
 \infer{\Gamma, p : \phi \vald}{\Gamma \vdash \phi : \Omega} \qquad
@@ -252,18 +252,18 @@ The rules of deduction of $\lambda o e$ are given in Figure \ref{fig:lambdaoe}.
 \infer[(p : \phi \in \Gamma)]{\Gamma \vdash p : \phi}{\Gamma \vald} \]
 \[ \infer[(e : M =_A N \in \Gamma)]{\Gamma \vdash e : M =_A N}{\Gamma \vald} \]
 
-\paragraph{Terms}
+\paragraph*{Terms}
 \[ \infer{\Gamma \vdash \bot : \Omega}{\Gamma \vald} \qquad
 \infer{\Gamma \vdash \phi \supset \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} \]
 \[ \infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \qquad
 \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \]
 
-\paragraph{Proofs}
+\paragraph*{Proofs}
 \[ \infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \phi} \qquad
 \infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \supset \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
-\[ \infer[(\phi \simeq \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
+\[ \infer[(\phi \simeq_\beta \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
 
-\paragraph{Paths}
+\paragraph*{Paths}
 \[ \infer{\Gamma \vdash \reff{M} : M =_A M}{\Gamma \vdash M : A}
 \qquad
 \infer{\Gamma \vdash P \supset^* Q : \phi \supset \psi =_\Omega \phi' \supset \psi'}{\Gamma \vdash P : \phi =_\Omega \phi' \quad \Gamma \vdash Q : \psi =_\Omega \psi'} \]
@@ -279,11 +279,193 @@ The rules of deduction of $\lambda o e$ are given in Figure \ref{fig:lambdaoe}.
 \Gamma \vdash N : A \rightarrow B
      \end{array}} \]
 \[ \infer{\Gamma \vdash P_{NN'}Q : MN =_B M' N'}{\Gamma \vdash P : M =_{A \rightarrow B} M' \quad \Gamma \vdash Q : N =_A N' \quad \Gamma \vdash N : A \quad \Gamma \vdash N' : A} \]
-\[ \infer[(M \simeq M', N \simeq N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
-\end{framed}
+\[ \infer[(M \simeq_\beta M', N \simeq_\beta N')]{\Gamma \vdash P : M' =_A N'}{\Gamma \vdash P : M =_A N \quad \Gamma \vdash M' : A \quad \Gamma \vdash N' : A} \]
 \caption{Rules of Deduction of $\lambda oe$}
 \label{fig:lambdaoe}
 \end{figure}
+
+\subsection{Metatheorems}
+
+\label{section:meta}
+
+In the lemmas that follow, the letter $\mathcal{J}$ stands for any of the expressions that may occur to the right of the turnstile in a judgement, i.e.~$\mathrm{valid}$, $M : A$, $\delta : \phi$, or $P : M =_A N$.
+
+\begin{lemma}[Context Validity]
+Every derivation of $\Gamma, \Delta \vdash \mathcal{J}$ has a subderivation of $\Gamma \vald$.
+\end{lemma}
+
+\begin{proof}
+Induction on derivations.
+\end{proof}
+
+\begin{lemma}[Weakening]
+If $\Gamma \vdash \mathcal{J}$, $\Gamma \subseteq \Delta$ and $\Delta \vald$ then $\Delta \vdash \mathcal{J}$.
+\end{lemma}
+
+\begin{proof}
+Induction on derivations.
+\end{proof}
+
+\begin{lemma}[Type Validity]
+$ $
+\begin{enumerate}
+\item
+If $\Gamma \vdash \delta : \phi$ then $\Gamma \vdash \phi : \Omega$.
+\item
+If $\Gamma \vdash P : M =_A N$ then $\Gamma \vdash M : A$ and $\Gamma \vdash N : A$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Induction on derivations.  The cases where $\delta$ or $P$ is a variable use Context Validity.
+\end{proof}
+
+\begin{lemma}[Generation]
+$ $
+\begin{enumerate}
+\item
+If $\Gamma \vdash x : A$ then $x : A \in \Gamma$.
+\item
+If $\Gamma \vdash \bot : A$ then $A \equiv \Omega$.
+\item
+If $\Gamma \vdash \phi \supset \psi : A$ then $\Gamma \vdash \phi : \Omega$, $\Gamma \vdash \psi : \Omega$ and $A \equiv \Omega$.
+\item
+If $\Gamma \vdash \lambda x:A.M : B$ then there exists $C$ such that $\Gamma, x : A \vdash M : C$ and $B \equiv A \rightarrow C$.
+\item
+If $\Gamma \vdash MN : A$ then there exists $B$ such that $\Gamma \vdash M : B \rightarrow A$ and $\Gamma \vdash N : B$.
+\item
+If $\Gamma \vdash p : \phi$, then there exists $\psi$ such that $p : \psi \in \Gamma$ and $\phi \simeq \psi$.
+\item
+If $\Gamma \vdash \lambda p:\phi.\delta : \psi$, then there exists $\chi$ such that $\Gamma, p : \phi \vdash \delta : \chi$ and $\psi \simeq \phi \supset \chi$.
+\item
+If $\Gamma \vdash \delta \epsilon : \phi$ then there exists $\psi$ such that $\Gamma \vdash \delta : \psi \supset \phi$ and $\Gamma \vdash \epsilon : \psi$.
+\item
+If $\Gamma \vdash e : M =_A N$, then there exist $M'$, $N'$ such that $e : M' =_A N' \in \Gamma$ and $M \simeq M'$, $N \simeq N'$.
+\item
+If $\Gamma \vdash \reff{M} : N =_A P$, then we have $\Gamma \vdash M : A$ and $M \simeq N \simeq P$.
+\item
+If $\Gamma \vdash P \supset^* Q : \phi =_A \psi$, then there exist $\phi_1$, $\phi_2$, $\psi_1$, $\psi_2$ such that
+$\Gamma \vdash P : \phi_1 =_\Omega \psi_1$, $\Gamma \vdash Q : \phi_2 =_\Omega \psi_2$, $\phi \simeq \phi_1 \supset \psi_1$, $\psi \simeq \phi_2 \supset \psi_2$, and $A \equiv \Omega$.
+\item
+If $\Gamma \vdash \univ{\phi}{\psi}{P}{Q} : \chi =_A \theta$, then we have $\Gamma \vdash P : \phi \supset \psi$, $\Gamma \vdash Q : \psi \supset \phi$,
+$\Gamma \vdash \chi \simeq_\Delta \phi : \Omega$, $\Gamma \vdash \theta \simeq_\Delta \psi : \Omega$ and $A \equiv \Omega$.
+\item
+If $\Gamma \vdash \triplelambda e : x =_A y. P : M =_B N$ then there exists $C$ such that $\Gamma, x : A, y : A, e : x =_A y \vdash P : M x =_C N y$
+and $B \equiv A \rightarrow C$.
+\item
+If $\Gamma \vdash P_{M M'} Q : N =_A N'$, then there exist $B$, $F$ and $G$ such that $\Gamma \vdash P : F =_{B \rightarrow A} G$, $\Gamma \vdash Q : M =_B M'$, $N \simeq F M$
+and $N' \simeq G M'$.
+\item
+If $\Gamma \vdash P^+ : \phi$, then there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\phi \simeq (\psi \supset \chi)$.
+\item
+If $\Gamma \vdash P^- : \phi$, there exist $\psi$, $\chi$ such that $\Gamma \vdash P : \psi =_\Omega \chi$ and $\phi \simeq (\chi \supset \psi)$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Induction on derivations.
+\end{proof}
+
+\subsubsection{Substitutions}
+
+\begin{definition}
+Let $\Gamma$ and $\Delta$ be contexts.  A \emph{substitution from $\Gamma$ to $\Delta$}\footnote{These have also been called \emph{context morphisms}, for example in Hoffman \cite{Hofmann97syntaxand}.  Note however that what we call a substitution from $\Gamma$ to $\Delta$ is what Hoffman calls a context morphism from $\Delta$ to $\Gamma$.}, $\sigma : \Gamma \Rightarrow \Delta$,
+is a substitution whose domain is $\dom \Gamma$ such that:
+\begin{itemize}
+\item
+for every term variable $x : A \in \Gamma$, we have $\Delta \vdash \sigma(x) : A$;
+\item
+for every proof variable $p : \phi \in \Gamma$, we have $\Delta \vdash \sigma(p) : \phi [ \sigma ]$;
+\item
+for every path variable $e : M =_A N \in \Gamma$, we have $\Delta \vdash \sigma(e) : M [ \sigma ] =_A N [ \sigma ]$.
+\end{itemize}
+\end{definition}
+
+\begin{lemma}[Well-Typed Substitution]
+If $\Gamma \vdash \mathcal{J}$, $\sigma : \Gamma \Rightarrow \Delta$ and $\Delta \vald$, then $\Delta \vdash \mathcal{J} [\sigma]$.
+\end{lemma}
+
+\begin{proof}
+Induction on derivations.
+\end{proof}
+
+\begin{definition}
+If $\rho, \sigma : \Gamma \rightarrow \Delta$ and $\tau$ is a path substitution whose domain
+is the term variables in $\dom \Gamma$, then we write
+$\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$ iff, for each variable $x : A \in \Gamma$, we have
+$\Delta \vdash \tau(x) : \sigma(x) =_A \rho(x)$.
+\end{definition}
+
+\begin{lemma}[Path Substitution]
+\label{lm:pathsub}
+If $\tau : \sigma \sim \rho : \Gamma \rightarrow \Delta$ and $\Gamma \vdash M : A$ and $\Delta \vald$,
+then $\Delta \vdash M \{ \tau : \sigma \sim \rho \} : M [ \sigma ] =_A M [ \rho ]$.
+\end{lemma}
+
+\begin{proof}
+Induction on derivations.
+\end{proof}
+
+\begin{lemma}
+\label{lm:pathsubcomp}
+If $\sigma : \Gamma \rightarrow \Delta$ and $\tau : \rho \sim \rho' : \Delta \rightarrow \Theta$ then $\tau \bullet_{\rho, \rho'} \sigma : \rho \circ \sigma \sim \rho' \circ \sigma : \Gamma \rightarrow \Theta$.
+\end{lemma}
+
+\begin{proof}
+Let $x : A \in \Gamma$.
+We have $\Delta \vdash \sigma(x) : A$, hence $\Theta \vdash \sigma(x) \{ \tau : \rho \sim \rho' \} : \sigma(x) [ \rho ] =_A \sigma(x) [ \rho' ]$.
+\end{proof}
+
+\begin{proposition}[Subject Reduction]
+If $\Gamma \vdash s : T$ and $s \twoheadrightarrow t$ then $\Gamma \vdash t : T$.
+\end{proposition}
+
+\begin{proof}
+It is sufficient to prove the case $s \rightarrow t$.  The proof is by a case analysis on $s \rightarrow t$, using the Generation Lemma.
+\end{proof}
+
+\subsubsection{Canonicity}
+
+\begin{definition}[Canonical Object]
+$ $
+\begin{itemize}
+\item
+The canonical objects $\theta$ of $\Omega$ are given by the grammar
+\[ \theta ::= \bot \mid \theta \supset \theta \]
+\item
+A canonical object of type $A \rightarrow B$ has the form $\lambda x:A.M$, where
+$x : A \vdash M : B$ and $M$ is in normal form.
+\end{itemize}
+We define the \emph{canonical proofs} of a canonical object $\theta$ of $\Omega$ as follows:
+\begin{itemize}
+\item
+There is no canonical proof of $\bot$.
+\item
+A canonical proof of $\phi \supset \psi$ has the form $\lambda p : \phi . \delta$, where $p : \phi \vdash \delta : \psi$ and $\delta$ is in normal form.
+\end{itemize}
+We define the \emph{canonical paths} of an equation $M =_A N$, where $M$ and $N$ are canonical objects of $A$, as follows:
+\begin{itemize}
+\item
+A canonical path of $\phi =_\Omega \psi$ is either $\reff{\phi}$ if $\phi \simeq \psi$, or $\univ{\phi}{\psi}{\delta}{\epsilon}$, where $\delta$ is a canonical
+proof of $\phi \supset \psi$ and $\epsilon$ is a canonical proof of $\psi \supset \phi$.
+\item
+A canonical path of $F =_{A \rightarrow B} G$ is either $\reff{F}$ if $F \simeq G$, or $\triplelambda e:x =_A y.P$ where $x : A, y : A, e : x =_A y \vdash P : Fx =_B Gy$ and $P$ is in normal form.
+\end{itemize}
+\end{definition}
+
+\begin{proposition}[Canonicity]
+If $\vdash t : T$ and $t$ is in normal form, then $t$ is a canonical object (proof, path) of $T$.
+\end{proposition}
+
+\begin{proof}
+This follows easily from the Generation Lemma.
+\end{proof}
+
+\section{Head Reduction}
+
+\section{Computable Expressions}
+
+
 
 \bibliography{../type}
 

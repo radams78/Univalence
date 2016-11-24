@@ -162,6 +162,11 @@ listnfrep : ∀ {U V SS} → ListMeaning U SS → Rep U V → ListMeaning V SS
 listnfrep [] _ = []
 listnfrep (M ∷ MM) ρ = nfrep M ρ ∷ listnfrep MM ρ
 
+HetL-map-comp : ∀ {A : Set} {F : FoldFunc} {B C D : A → Set} {aa : FoldFunc.F F A} 
+  {g : ∀ a → C a → D a} {f : ∀ a → B a → C a} {bb : HetL F B aa} →
+  HetL-map {F = F} (λ a b → g a (f a b)) bb ≡ HetL-map {F = F} g (HetL-map {F = F} f bb)
+HetL-map-comp {A} {F} {B} {C} {D} {aa} {g} {f} {bb} = {!!}
+
 listnfrep-comp' : ∀ {U V W SS} {φ : ListMeaning' U SS} {σ : Rep V W} {ρ : Rep U V} → listnfrep' {SS = SS} φ (σ •R ρ) ≡ listnfrep' {SS = SS} (listnfrep' {SS = SS} φ ρ) σ
 listnfrep-comp' {U} {V} {W} {SS} {φ} {σ} {ρ} = {!!}
 
