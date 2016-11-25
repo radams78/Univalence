@@ -248,19 +248,19 @@ The rules of deduction of $\lambda o e$ are given in Figure \ref{fig:lambdaoe}. 
 \infer{\Gamma, x : A \vald}{\Gamma \vald} \qquad 
 \infer{\Gamma, p : \phi \vald}{\Gamma \vdash \phi : \Omega} \qquad
 \infer{\Gamma, e : M =_A N \vald}{\Gamma \vdash M : A \quad \Gamma \vdash N : A} \]
-\[ \infer[(x : A \in \Gamma)]{\Gamma \vdash x : A}{\Gamma \vald} \qquad
-\infer[(p : \phi \in \Gamma)]{\Gamma \vdash p : \phi}{\Gamma \vald} \]
-\[ \infer[(e : M =_A N \in \Gamma)]{\Gamma \vdash e : M =_A N}{\Gamma \vald} \]
+\[ (\mathrm{var}_T) \quad \infer[(x : A \in \Gamma)]{\Gamma \vdash x : A}{\Gamma \vald} \qquad
+(\mathrm{var}_P) \quad \infer[(p : \phi \in \Gamma)]{\Gamma \vdash p : \phi}{\Gamma \vald} \]
+\[ (\mathrm{var}_E) \quad \infer[(e : M =_A N \in \Gamma)]{\Gamma \vdash e : M =_A N}{\Gamma \vald} \]
 
 \paragraph*{Terms}
-\[ \infer{\Gamma \vdash \bot : \Omega}{\Gamma \vald} \qquad
-\infer{\Gamma \vdash \phi \supset \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} \]
-\[ \infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \qquad
-\infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \]
+\[ (\bot) \quad \infer{\Gamma \vdash \bot : \Omega}{\Gamma \vald} \qquad
+(\supset) \quad \infer{\Gamma \vdash \phi \supset \psi : \Omega}{\Gamma \vdash \phi : \Omega \quad \Gamma \vdash \psi : \Omega} \]
+\[ (\mathrm{app}_T) \quad \infer{\Gamma \vdash M N : B} {\Gamma \vdash M : A \rightarrow B \quad \Gamma \vdash N : A} \qquad
+(\lambda_T) \quad \infer{\Gamma \vdash \lambda x:A.M : A \rightarrow B}{\Gamma, x : A \vdash M : B} \]
 
 \paragraph*{Proofs}
-\[ \infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \phi} \qquad
-\infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \supset \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
+\[ (\mathrm{app}_P) \infer{\Gamma \vdash \delta \epsilon : \psi} {\Gamma \vdash \delta : \phi \supset \psi \quad \Gamma \vdash \epsilon : \phi} \qquad
+(\lambda_P) \infer{\Gamma \vdash \lambda p : \phi . \delta : \phi \supset \psi}{\Gamma, p : \phi \vdash \delta : \psi} \]
 \[ \infer[(\phi \simeq_\beta \psi)]{\Gamma \vdash \delta : \psi}{\Gamma \vdash \delta : \phi \quad \Gamma \vdash \psi : \Omega} \]
 
 \paragraph*{Paths}
@@ -430,7 +430,7 @@ It is sufficient to prove the case $s \rightarrow t$.  The proof is by a case an
 $ $
 \begin{itemize}
 \item
-The canonical objects $\theta$ of $\Omega$ are given by the grammar
+The canonical objects $\theta$ of $\Omega$, or \emph{canonical propositions}, are given by the grammar
 \[ \theta ::= \bot \mid \theta \supset \theta \]
 \item
 A canonical object of type $A \rightarrow B$ has the form $\lambda x:A.M$, where
@@ -453,19 +453,123 @@ A canonical path of $F =_{A \rightarrow B} G$ is either $\reff{F}$ if $F \simeq 
 \end{itemize}
 \end{definition}
 
-\begin{proposition}[Canonicity]
-If $\vdash t : T$ and $t$ is in normal form, then $t$ is a canonical object (proof, path) of $T$.
-\end{proposition}
+\section{Head Reduction}
+
+\begin{definition}[Head Reduction]
+Define the relation of \emph{head reduction} $\rightarrow$ on the expressions as follows:
+\begin{itemize}
+\item
+$(\lambda x:A.M)N \rightarrow M[x:=N]$.
+\item
+If $M \rightarrow M'$ then $MN \rightarrow M'N$.
+\item
+If $\phi \rightarrow \phi'$ and $\psi \rightarrow \psi'$ then $\phi \sup \psi \rightarrow \phi' \sup \psi'$.
+\end{itemize}
+\end{definition}
+
+Note that this relation is \emph{deterministic}: i.e. for any $E$, there is at most one $F$ such that $E \rightarrow F$.
+
+\begin{lemma}
+\label{lm:compat-beta}
+Suppose $\phi$ reduces to a canonical proposition $\phi'$, and $\phi \simeq_\beta \psi$.  Then $\psi$ reduces to $\phi'$.
+\end{lemma}
 
 \begin{proof}
-This follows easily from the Generation Lemma.
+Note that on terms, our head reduction is $\beta$-reduction; that is, if $\phi$ reduces to $\phi'$, then $\phi \twoheadrightarrow_\beta \phi'$.
+The result follows from the Church-Rosser theorem for $\beta$-reduction, and the fact that every canonical proposition is a $\beta$-normal form.
 \end{proof}
-
-\section{Head Reduction}
 
 \section{Computable Expressions}
 
+\begin{definition}[Computable Expression]
+Let $\Gamma$ be a context in which term variables do not occur.
+We define the relation $\Gamma \models E : T$, read '$E$ is a computable expression of type $T$ under $\Gamma$', as follows.
+\begin{itemize}
+\item
+$\Gamma \models \phi : \Omega$ iff $\phi$ reduces to a canonical proposition.
+\item
+$\Gamma \models M : A \rightarrow B$ iff, for all $N$ such that $\Gamma \models N : A$, we have $\Gamma \models MN : B$.
+\item
+For $\phi$ and $\psi$ canonical propositions, $\Gamma \models \delta : \phi \supset \psi$ iff, for all $\epsilon$ such that $\Gamma \models \epsilon : \phi$, we have $\Gamma \models \delta \epsilon : \psi$.
+\item
+If $\phi$ reduces to the canonical proposition $\psi$, then $\Gamma \models \delta : \phi$ iff $\Gamma \models \delta : \psi$.
+\end{itemize}
+\end{definition}
 
+\begin{definition}[Computable Substitution]
+We write $\sigma : \Gamma \rightarrow_C \Delta$, and say $\sigma$ is a \emph{computable} substitution from $\Gamma$ to $\Delta$, iff, for every entry $z : T$ in $\Gamma$, we have $\Delta \models \sigma(z) : T [ \sigma ]$.
+
+We write $\tau : \rho = \sigma : \Gamma \rightarrow_C \Delta$, and say $\tau$ is a \emph{computable} path substitution between $\rho$ and $\sigma$, iff, for every term variable entry $x : A$ in $\Gamma$, we have $\Delta \models \tau(x) : \rho(x) =_A \sigma(x)$.
+\end{definition}
+
+\begin{lemma}[Well-typed Expansion]
+If $\Gamma \models F : T$ and $E \rightarrow F$ then $\Gamma \models E : T$.
+\end{lemma}
+
+\begin{proof}
+Easy induction.
+\end{proof}
+
+\begin{lemma}
+\label{lm:compute-supset}
+If $\Gamma \models \phi : \Omega$ and $\Gamma \models \psi : \Omega$ then $\Gamma \models \phi \supset \psi : \Omega$.
+\end{lemma}
+
+\begin{proof}
+If $\phi$ reduces to the canonical proposition $\phi'$ and $\psi$ reduces to $\psi'$ then $\phi \supset \psi$ reduces to $\phi' \supset \psi'$.
+\end{proof}
+
+\begin{lemma}
+\label{lm:conv-compute}
+If $\Gamma \models \delta : \phi$ and $\phi \simeq_\beta \psi$, 
+then $\Gamma \models \delta : \psi$.
+\end{lemma}
+
+\begin{proof}
+This follows from the definitions and Lemma \ref{lm:compat-beta}.
+\end{proof}
+
+\section{Proof of Canonicity}
+
+\begin{theorem}
+\begin{enumerate}
+\item
+If $\Gamma \vdash \mathcal{J}$ and $\sigma : \Gamma \rightarrow_C \Delta$, then $\Delta \models \mathcal{J} [ \sigma ]$.
+\item
+If $\Gamma \vdash M : A$ and $\tau : \rho = \sigma : \Gamma \rightarrow_C \Delta$, then $\Delta \vdash M \{ \tau : \rho = \sigma \} : M [ \rho ] =_A M [ \sigma ]$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+The proof is by induction on derivations.
+\begin{enumerate}
+\item
+For the (var) rules, the result is immediate from the hypothesis.  The case ($\bot$) is trivial.
+
+For the rule ($\supset$), we use Lemma \ref{lm:compute-supset}.
+
+The case (app$_T$) is trivial.
+
+For the rule ($\lambda_T$), we must show that
+\[ \Delta \models \lambda x:A.M[\sigma] : A \rightarrow B \enspace . \]
+So let $\Delta \models N : A$.  Then the induction hypothesis gives
+\[ \Delta \models M[\sigma, x:=N] : B \]
+and so by well-typed expansion we have
+\[ \Delta \models (\lambda x:A.M[\sigma])N : B \]
+as required.
+
+The case (app$_P$) is trivial.
+
+The case ($\lambda_P$) is similar to ($\lambda_T$), also making use of Lemma \ref{lm:conv-compute}.
+
+
+\item
+\end{enumerate}
+\end{proof}
+
+\section{Example}
+
+\section{Conclusion}
 
 \bibliography{../type}
 
